@@ -140,5 +140,57 @@ Fehler: «E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code 
 ```
 Erfolg: Snackbar «Passwort geändert. Auf anderen Geräten wurdest du abgemeldet.» → /trips.
 
+## Magic-Link-Landeseite (`/auth/magic?token=…&next=…`) – Flow [H.5](../user-flows.md)
+
+Ziel des Links aus der Mail. Token wird erst beim Tippen per **POST** eingelöst (Schutz vor Mail-Scannern). Gleiche zentrierte Karte wie Schritt 1.
+
+```
+┌────────────────────────────────────┐
+│ [Logo]                  ⊕ English  │
+├────────────────────────────────────┤
+│  Fast geschafft!                   │  h1
+│  Tippe auf den Button, um dich in  │
+│  diesem Browser anzumelden.        │
+│  ┌──────────────────────────────┐  │  nur mit next=/i/{token}:
+│  │ Du trittst „Lissabon 2027“   │  │  Reise-Hinweis (role=note)
+│  │ bei.                         │  │
+│  └──────────────────────────────┘  │
+│  ⓘ Du bist gerade als Anna         │  nur wenn anderes Konto
+│    angemeldet. …                   │  angemeldet (H.5 3d)
+│                                    │
+│  [        Jetzt anmelden        ]  │  <form method=post>, Primär,
+│                                    │  autofocus nicht nötig
+│  Lieber mit Code? Anmelden         │  Sekundärlink → /login?next=…
+└────────────────────────────────────┘
+```
+
+Fehlerzustand nach dem POST (abgelaufen/benutzt/ungültig, gleiche URL; Muster W14, `error.svg`):
+```
+│  Dieser Anmeldelink funktioniert   │  h1, erhält Fokus
+│  nicht mehr                        │
+│  Er ist 15 Minuten gültig und      │
+│  funktioniert nur einmal. Hol dir  │
+│  einfach einen neuen Code.         │
+│  [     Neuen Code anfordern     ]  │  → /login?next=… bzw. /i/{token},
+│                                    │    E-Mail vorbelegt (falls bekannt)
+```
+
+| Element | DE | EN |
+|---|---|---|
+| Seitentitel | Anmelden · Wir wollen weg | Sign in · When do we go? |
+| h1 | Fast geschafft! | Almost there! |
+| Text | Tippe auf den Button, um dich in diesem Browser anzumelden. | Tap the button to sign in on this browser. |
+| Reise-Hinweis | Du trittst „{Reise}“ bei. | You're joining "{trip}". |
+| Anderes Konto | Du bist gerade als {Name} angemeldet. Mit diesem Link meldest du dich als jemand anderes an. | You're currently signed in as {name}. This link will sign you in as someone else. |
+| Button | Jetzt anmelden | Sign in now |
+| Button lädt | Einen Moment … | One moment … |
+| Sekundärlink | Lieber mit Code? Anmelden | Prefer a code? Sign in |
+| Fehler h1 | Dieser Anmeldelink funktioniert nicht mehr | This sign-in link no longer works |
+| Fehler Text | Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code. | It's valid for 15 minutes and works only once. Just get a new code. |
+| Fehler Button | Neuen Code anfordern | Get a new code |
+| Netzwerkfehler | Das hat nicht geklappt. Bitte versuch es nochmal. | That didn't work. Please try again. |
+
+A11y: Button ist echtes `<button type="submit">` in `<form method="post">` (funktioniert auch ohne JS); Ladezustand `aria-busy="true"` + `disabled`; Fehler per Fokus auf h1 angesagt.
+
 ## Desktop
 Zentrierte Karte, max. 440 px breit, gleicher Inhalt; links daneben (≥ 960 px) optional dekorative Illustration (Designer). Kein anderes Verhalten.

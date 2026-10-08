@@ -89,9 +89,9 @@ Inhalt:
    - Client: `sessionStorage` **und** `localStorage` (`www.pendingAuth`, max. 30 Min., enthält Einladungs-Token, E-Mail, Schritt, Zeitpunkt – **niemals den Code**).
 2. **Wiederherstellung beim Laden von `/i/{token}`:** Gibt es ein passendes `pendingAuth` (< 30 Min.), springt die Seite direkt in **Schritt Code** mit der E-Mail-Anzeige und Hinweis «Willkommen zurück – gib einfach den Code aus der Mail ein.» Kein erneutes Senden nötig.
 3. **Wiederherstellung auf anderen Seiten:** Lädt der In-App-Browser stattdessen die Startseite o. Ä., zeigt jede Seite bei vorhandenem `pendingAuth` ein Banner «Du warst gerade dabei, „Lissabon 2027“ beizutreten. [Weiter]».
-4. **Magic-Link in anderem Browser:** `/auth/magic?token=…` → Session in *diesem* Browser → Ausführung von `intent` (Beitritt-Schritt mit Name bzw. Bestätigung) → Reise. Kein automatisches Einloggen des ursprünglichen In-App-Fensters (Sicherheitsgrund: sonst könnte ein Angreifer, der die Anforderung ausgelöst hat, durch den Klick des Opfers eingeloggt werden).
+4. **Magic-Link in anderem Browser:** `/auth/magic?token=…` → **Landeseite mit Button „Jetzt anmelden“** (W02 „Magic-Link-Landeseite“; Einlösen per **POST**, s. H.5) → Session in *diesem* Browser → Ausführung von `intent` (Beitritt-Schritt mit Name bzw. Bestätigung) → Reise. Kein automatisches Einloggen des ursprünglichen In-App-Fensters (Sicherheitsgrund: sonst könnte ein Angreifer, der die Anforderung ausgelöst hat, durch den Klick des Opfers eingeloggt werden).
 5. **Hinweis im ursprünglichen Fenster:** Auf Schritt Code steht klein: «Du hast auf den Link in der Mail getippt? Dann geht es im anderen Browser weiter. Hier kannst du stattdessen den Code eingeben.»
-6. **Magic-Link schon benutzt / abgelaufen:** «Dieser Anmeldelink ist abgelaufen oder wurde schon verwendet. [Neuen Code anfordern]» – E-Mail vorbelegt, `returnTo` bleibt erhalten (aus dem Link-Token serverseitig lesbar, solange nicht abgelaufen; sonst Einladung muss neu geöffnet werden).
+6. **Magic-Link schon benutzt / abgelaufen:** (Prüfung erst beim POST, nicht beim Seitenaufruf) «Dieser Anmeldelink funktioniert nicht mehr» + «Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.» `[Neuen Code anfordern]` (Texte s. W02) – E-Mail vorbelegt, `returnTo` bleibt erhalten (aus dem Link-Token serverseitig lesbar, solange nicht abgelaufen; sonst Einladung muss neu geöffnet werden).
 7. **In-App-Browser-Erkennung (User-Agent, best effort):** Kein Blocken und **kein** Zwang, „im Browser zu öffnen“. Nur auf Schritt Code ein zusätzlicher Satz: «Tipp: Lass dieses Fenster offen, hol den Code aus deiner Mail-App und komm hierher zurück.»
 8. **Session im In-App-Browser:** In-App-Browser teilen Cookies nicht mit Safari/Chrome. Nach dem Beitritt einmalig (schließbar) in Meine Reisen/Reise: «Später in deinem Browser weitermachen? Melde dich dort einfach mit deiner E-Mail an.» – kein Zwang.
 
@@ -329,6 +329,21 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 - Bereits angemeldet und `/login` aufgerufen → Weiterleitung `next`/Meine Reisen.
 - Session abgelaufen auf geschützter Seite → `/login?next=…` mit Hinweis «Bitte melde dich erneut an – danach geht es dort weiter, wo du warst.»
 
+### H.5 Magic-Link einlösen (`/auth/magic?token=…&next=…`, W02) – *Entscheidung UI/UX 2026-10-08 (spike-auth §2, R-006)*
+
+**Entscheidung:** Der Link aus der Mail loggt **nicht** direkt ein, sondern öffnet eine Landeseite mit einem Button. Der Token wird erst beim Tippen verbraucht, und zwar per **POST** (Formular/Server Action), nie per GET. **Keine** automatische Weiterleitung per JS: Manche Scanner führen JS aus, und ein Auto-Submit nimmt dem Tipp seinen Sinn.
+*Begründung:* Mail-Scanner (Outlook Safe Links, Firmen-Gateways) rufen Links vorab per GET auf. Ein direkter Link wäre danach verbraucht, die Person sähe „abgelaufen“ – schlimmer als ein Tipp mehr. Der Link ist ohnehin der Zweitweg (A.0), der Code bleibt der Primärweg.
+
+| # | Schritt | Verhalten |
+|---|---|---|
+| 1 | GET `/auth/magic?token=…&next=…` | Seite wird angezeigt, Token wird **nicht** geprüft und nicht verbraucht (keine Aussage über gültig/ungültig vor dem Tippen). Im Einladungskontext (`next=/i/{token}`) steht zusätzlich der Reisename aus der Einladung. Kein Logo-Link zu externen Seiten, `noindex`. |
+| 2 | Tipp auf „Jetzt anmelden“ | POST mit dem Token (verstecktes Feld). Button → Ladezustand «Einen Moment …» (`aria-busy`), doppelt absenden gesperrt. |
+| 3a | Erfolg | Session in *diesem* Browser („Angemeldet bleiben“ = an, wie Standard H.1) → Weiterleitung auf `next` (nur interne Pfade) bzw. Meine Reisen. Neues Konto → erst Schritt Profil (Name), dann `next`. Im Einladungskontext → Beitritt wie A.1. |
+| 3b | Token abgelaufen / schon benutzt / ungültig | Gleiche Seite, Fehlerzustand (W02/W14): Überschrift «Dieser Anmeldelink funktioniert nicht mehr», Text «Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.» Primär `[Neuen Code anfordern]` → `/login?next=…` (bzw. `/i/{token}` im Einladungskontext) mit vorbelegter E-Mail, falls serverseitig bekannt, und direktem Sprung in Schritt Code nach dem Senden. Fokus auf die Überschrift. |
+| 3c | Bereits mit **demselben** Konto angemeldet | Nach dem POST einfach weiter zu `next` (kein Fehler). |
+| 3d | Mit einem **anderen** Konto angemeldet | Vor dem Button Hinweis «Du bist gerade als {Name} angemeldet. Mit diesem Link meldest du dich als jemand anderes an.» Button bleibt; nach Erfolg ersetzt die neue Session die alte. |
+| 3e | Netzwerk-/Serverfehler | Inline-Fehler über dem Button «Das hat nicht geklappt. Bitte versuch es nochmal.», Button wieder aktiv (Token noch nicht verbraucht). |
+
 ### H.2 Abmelden
 
 - Avatar-Menü → `[Abmelden]` (keine Rückfrage) → Landing mit Snackbar «Du bist abgemeldet.»
@@ -405,3 +420,4 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 ## Änderungen
 - 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.
 - 2026-10-08 (Auftraggeber-Entscheidungen): F.3 Produktname je Sprache („When do we go?“ für EN); CEO-Vermerke in H.1, K, D.2 auf „bestätigt (Auftraggeber 2026-10-08)“ umgestellt.
+- 2026-10-08 (Review-Nacharbeit R-006/R-008): A.4 Regel 4/6 und neuer Abschnitt H.5 – Magic-Link-Landeseite mit Button, Einlösen per POST, Fehlerfall → Code-Weg.
