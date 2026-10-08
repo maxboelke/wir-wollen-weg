@@ -12,6 +12,14 @@ const schema = z.object({
   BETTER_AUTH_SECRET: z.string().min(32).optional(),
   BETTER_AUTH_URL: z.url().optional(),
   AUTH_TRUSTED_ORIGINS: z.string().optional(),
+  // Client IP for rate limits (R-005): header set by the proxy in front of the app, and
+  // proxies whose entries in that header are skipped (deployment.md §0.1, §5.2).
+  AUTH_IP_HEADER: z
+    .string()
+    .regex(/^[a-z0-9-]+$/i)
+    .transform((h) => h.toLowerCase())
+    .default("x-forwarded-for"),
+  AUTH_TRUSTED_PROXIES: z.string().optional(),
   SMTP_HOST: z.string().default("localhost"),
   SMTP_PORT: z.coerce.number().int().positive().default(1025),
   SMTP_SECURE: z.stringbool().default(false),

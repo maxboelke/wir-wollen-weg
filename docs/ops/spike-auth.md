@@ -35,12 +35,14 @@ Plugin email-access (Rate-Limit 3/Min./IP, Antwort immer {success:true})
 
 Code-Weg (Primärweg, gleicher Tab):  POST /api/auth/sign-in/email-otp {email, otp, rememberMe}
   → neues Konto? Namensschritt (= Beitrittsschritt auf /i/<token>) → Server Action joinTrip → /trips
-Link-Weg (anderer Browser):  /auth/magic?token=… → Button „Jetzt anmelden“
-  → GET /api/auth/magic-link/verify → Session in DIESEM Browser → zurück auf /i/<token> → Beitreten
+Link-Weg (anderer Browser):  GET /auth/magic?token=… (zeigt nur die Seite, Token unberührt)
+  → Button „Jetzt anmelden“ = <form method="post"> → Server Action redeemMagicLink
+  → auth.api.magicLinkVerify (serverseitig) → Session in DIESEM Browser
+  → zurück auf /i/<token> → Beitreten (neues Konto ohne Einladung: Namensschritt auf /login)
 ```
 
 - Die einzelnen Better-Auth-Sender `/email-otp/send-verification-otp` und `/sign-in/magic-link` sind per Before-Hook gesperrt (404), damit niemand an der Kombi-Mail vorbei Codes/Links anfordert.
-- **Magic-Link-Landeseite mit Button** (`/auth/magic`): Der Token wird erst beim Tippen verbraucht. Grund: Mail-Scanner (z. B. Outlook Safe Links) rufen Links vorab auf und würden einen direkten Verify-Link „verbrennen“. Kostet einen Tipp mehr → **UX bitte bestätigen** (Alternative: automatische Weiterleitung per JS, schützt gegen die meisten Scanner ebenfalls).
+- **Magic-Link-Landeseite mit Button** (`/auth/magic`): Der Token wird erst beim Tippen verbraucht, und zwar per **POST** (Server Action, funktioniert ohne JS, keine JS-Auto-Weiterleitung). Grund: Mail-Scanner (z. B. Outlook Safe Links) rufen Links vorab auf und würden einen direkten Verify-Link „verbrennen“. ✅ **Von UI/UX bestätigt (2026-10-08, user-flows.md H.5, W02; umgesetzt mit R-006).** Der HTTP-GET-Endpunkt `/api/auth/magic-link/verify` ist per Before-Hook gesperrt (404); Fehler (abgelaufen/benutzt/ungültig) erscheinen erst nach dem Tipp mit „Neuen Code anfordern“ → `/i/{token}` bzw. `/login?next=…`.
 - Magic-Link-Token: 32 Zeichen `[a-zA-Z]` ≈ 182 Bit (≥ 128 Bit gefordert), gehasht gespeichert.
 - Der Rücksprung (`/i/<token>`) steht im Magic-Link als `next`/`callbackURL` (validiert: nur interne relative Pfade, `src/lib/safe-path.ts` + Better-Auth-Origin-Check). Die UX-Vorgabe „zusätzlich serverseitig in der Anforderung speichern“ (Flow A.4) ist damit funktional erfüllt; eine echte Server-Ablage folgt mit `pendingAuth` in Inkrement 1.
 
@@ -54,11 +56,13 @@ Link-Weg (anderer Browser):  /auth/magic?token=… → Button „Jetzt anmelden�
 6. next-intl 4.14 markiert `setRequestLocale`/`requestLocale` als veraltet (Ersatz: `next/root-params`). Mit zwei Root-Layouts (öffentliche Seiten mit `[locale]`, App-Routen ohne Präfix) erkennt Next 16.4 noch keine Root-Params → vorerst weiter `setRequestLocale` (lint-Ausnahme dokumentiert). Migration prüfen, sobald Next das unterstützt.
 7. Next 16.4 erzeugt beim `next dev` eine `AGENTS.md` – per `agentRules: false` abgeschaltet (Projektregeln stehen in `CLAUDE.md`). Hinweis an CEO: Next liefert aktuelle Doku unter `node_modules/next/dist/docs/` – lohnt sich als Verweis in `CLAUDE.md`.
 
+8. **Client-IP für Rate-Limits (R-005):** Better Auth liest die IP nur aus Headern, und Next.js übernimmt einen vom Client gesendeten `X-Forwarded-For` ungeprüft (setzt ihn nur, wenn er fehlt). Ohne Proxy ist das IP-Limit daher per Header umgehbar; mehrwertige Header landeten zudem in einem gemeinsamen Topf `no-trusted-ip` (Login-DoS). Lösung: `/api/auth/*` läuft über `handleAuthRequest` (`src/server/auth/index.ts`), das die IP aus `AUTH_IP_HEADER` von rechts auflöst (`AUTH_TRUSTED_PROXIES` werden übersprungen, `src/server/auth/client-ip.ts`) und Better Auth nur noch den internen Header `x-ww-client-ip` lesen lässt; ohne auflösbare IP → 400. Die App ist in Demo und Produktion nur über Caddy erreichbar, der `X-Forwarded-For` überschreibt (deployment.md §0.1, §5.2).
+
 ## 4. Was der Spike bewusst NICHT enthält (→ Inkrement 1, F-040–F-042, F-046)
 
 - Code-Feld in Segment-Optik, „Code erneut senden“ mit 30-s-Countdown, Restversuche-Anzeige, Hilfebereich nach 60 s (ux-spec §4.4, Flow A.2).
 - `pendingAuth` in `sessionStorage`/`localStorage` + Wiederherstellung nach WebView-Reload (Flow A.4 Regeln 1–3), Banner auf anderen Seiten.
-- Rate-Limits **pro E-Mail-Adresse** (5/Std., 20/Tag; Sperre nach 10 Fehlversuchen) – nur IP-Limits aktiv.
+- **Hoch priorisiert (R-005):** Rate-Limits **pro E-Mail-Adresse** (5/Std., 20/Tag; Sperre nach 10 Fehlversuchen) – bisher nur IP-Limits aktiv. IP-Limits allein schützen eine einzelne Adresse nicht vor verteilten Anfragen (Mail-Bombing, Code-Raten über viele IPs) und sind nur so gut wie die Proxy-Konfiguration (`AUTH_IP_HEADER`, deployment.md §0.1).
 - Passwort (optional, Argon2id, `haveIBeenPwned`), Passwort vergessen, E-Mail ändern (Code an neue Adresse), Abmelden überall. **Achtung:** Andere OTP-Typen (`forget-password`, `change-email`) werfen im Spike bewusst einen Fehler – sie brauchen eigene Mails.
 - Kontosprache/Region speichern und beim Login anwenden (Flow F.3), Mail-Sprache aus Konto.
 - React-Email-Vorlage (Spike: schlichte String-Vorlage mit Text- + HTML-Teil, Texte aus `messages/*.json`).
@@ -77,7 +81,8 @@ Voraussetzung: Offline-Demo (`docker/compose.demo.yml`) + kurzlebiger HTTPS-Tunn
 ## 6. Dateien
 
 - `src/server/auth/email-access-plugin.ts` – Plugin (Kombi-Mail, Remember-me-Hook, Sperre der Einzel-Sender)
-- `src/server/auth/index.ts` – Better-Auth-Konfiguration (Sessions 90 Tage, Cookies, Rate-Limit DB, UUIDv7 aus PostgreSQL)
+- `src/server/auth/index.ts` – Better-Auth-Konfiguration (Sessions 90 Tage, Cookies, Rate-Limit DB, UUIDv7 aus PostgreSQL) und `handleAuthRequest` (Client-IP, R-005)
+- `src/server/auth/client-ip.ts` – Auflösung der Client-IP aus dem Proxy-Header (R-005)
 - `src/server/mail/access-email.ts`, `src/server/mail/transport.ts` – Mail-Vorlage DE/EN, SMTP (Mailpit)
 - `src/features/auth/components/email-access-form.tsx`, `src/features/invite/join-form.tsx`, `src/features/auth/actions.ts`
 - `src/app/(app)/i/[token]/page.tsx`, `src/app/(app)/login/page.tsx`, `src/app/(app)/auth/magic/page.tsx`, `src/app/(app)/trips/page.tsx`

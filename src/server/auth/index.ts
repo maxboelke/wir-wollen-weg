@@ -8,6 +8,7 @@ import { inviteTokenFromPath } from "@/lib/safe-path";
 import { db } from "../db/client";
 import * as schema from "../db/schema";
 import { serverEnv } from "../env";
+import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client-ip";
 import { renderAccessEmail } from "../mail/access-email";
 import { sendMail } from "../mail/transport";
 import { findTripByInviteToken } from "../trips";
@@ -73,12 +74,15 @@ function createAuth() {
     rateLimit: {
       enabled: env.RATE_LIMIT_ENABLED,
       storage: "database",
+      // Key = IP resolved by handleAuthRequest (R-005); see client-ip.ts.
       customRules: {
         "/sign-in/email-otp": { window: 60, max: 10 },
       },
     },
     advanced: {
       cookiePrefix: "ww",
+      // Only the header written by handleAuthRequest – never a client-supplied one (R-005).
+      ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
       database: { generateId: false }, // PostgreSQL generates UUIDv7 (schema.ts)
       // First-party cookies only, SameSite=Lax – NOT Strict: links from WhatsApp/mail are
       // cross-site navigations and must still carry the session (tech-stack.md §3.3).
@@ -94,6 +98,33 @@ function createAuth() {
 
 type Auth = ReturnType<typeof createAuth>;
 const globalForAuth = globalThis as unknown as { __wwwAuth?: Auth };
+
+const LOOPBACK = "127.0.0.1";
+let ipConfig: Parameters<typeof resolveClientIp>[1] | undefined;
+
+/**
+ * Entry point for /api/auth/*: resolves the client IP from the trusted proxy header
+ * (AUTH_IP_HEADER, AUTH_TRUSTED_PROXIES) and hands it to Better Auth in an internal header,
+ * overwriting any value the client sent. Requests without a resolvable IP are rejected
+ * outside development/CI instead of sharing one rate-limit bucket (R-005).
+ */
+export async function handleAuthRequest(request: Request): Promise<Response> {
+  const env = serverEnv();
+  ipConfig ??= {
+    header: env.AUTH_IP_HEADER,
+    trustedProxies: parseTrustedProxies(env.AUTH_TRUSTED_PROXIES),
+  };
+  const ip =
+    resolveClientIp(request.headers, ipConfig) ??
+    (env.APP_ENV === "development" || env.APP_ENV === "ci" ? LOOPBACK : undefined);
+  if (!ip) {
+    console.warn(`auth: no client IP in header "${ipConfig.header}" – check the proxy setup`);
+    return Response.json({ message: "Client address could not be determined." }, { status: 400 });
+  }
+  const headers = new Headers(request.headers);
+  headers.set(CLIENT_IP_HEADER, ip);
+  return auth().handler(new Request(request, { headers }));
+}
 
 /** Lazily created Better Auth instance (env is read at request time, not at build time). */
 export function auth(): Auth {

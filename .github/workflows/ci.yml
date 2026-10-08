@@ -16,6 +16,12 @@ concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+# pnpm setup (R-009, checked 2026-10-08): pnpm/action-setup stays on purpose. Its README
+# names pnpm/setup as successor for pnpm >= 11, but pnpm/action-setup still supports pnpm
+# <= 12 (we use 12, version from "packageManager"). pnpm/setup replaces actions/setup-node
+# (installs Node itself, runs `pnpm install` by default, own store cache), so switching means
+# restructuring all three jobs – revisit with pnpm 13 or when action-setup drops pnpm 12.
+# Major bumps of action-setup (v4 → v6) come via Dependabot and are verified by this CI.
 env:
   NODE_VERSION: "24"
   # Next.js telemetry off in CI

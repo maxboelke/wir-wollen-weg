@@ -62,8 +62,13 @@ test("magic link from the same mail works in another browser", async ({ page, br
   // … browser B (default browser opened from the mail app) uses the link.
   const other = await browser.newContext({ locale: "en-GB" });
   const tab = await other.newPage();
+  // GET only shows the landing page – opening it (or a mail scanner prefetching it)
+  // does not consume the token (Flow H.5, R-006).
   await tab.goto(mail.magicLink);
-  await tab.getByRole("link", { name: en.magic.continue }).click();
+  await tab.reload();
+  await expect(tab.getByRole("heading", { level: 1 })).toHaveText(en.magic.heading);
+  await expect(tab.getByRole("note").filter({ hasText: tripName })).toBeVisible();
+  await tab.getByRole("button", { name: en.magic.continue }).click();
 
   // Returned to the invite, signed in, new account → asked for a name, then joins.
   await expect(tab).toHaveURL(new RegExp(`/i/${token}$`));
@@ -72,11 +77,52 @@ test("magic link from the same mail works in another browser", async ({ page, br
   await expect(tab).toHaveURL(/\/trips$/);
   await expect(tab.getByRole("listitem").filter({ hasText: tripName })).toBeVisible();
 
-  // The link is single-use.
+  // The link is single-use: the error shows only after the tap, focus on the heading.
   await tab.goto(mail.magicLink);
-  await tab.getByRole("link", { name: en.magic.continue }).click();
-  await expect(tab.getByText(en.magic.invalid)).toBeVisible();
+  await tab.getByRole("button", { name: en.magic.continue }).click();
+  const invalid = tab.getByRole("heading", { name: en.magic.invalidHeading });
+  await expect(invalid).toBeVisible();
+  await expect(invalid).toBeFocused();
+  await expect(tab.getByRole("link", { name: en.magic.requestNew })).toHaveAttribute(
+    "href",
+    `/i/${token}`,
+  );
   await other.close();
+});
+
+test("magic link: GET never consumes the token, POST signs in without JavaScript", async ({
+  browser,
+  request,
+}) => {
+  const email = uniqueEmail("scanner");
+  const page = await browser.newPage();
+  await page.goto("/login");
+  await page.getByLabel(en.auth.emailLabel).fill(email);
+  await page.getByRole("button", { name: en.auth.sendCode }).click();
+  const mail = await waitForAccessMail(email);
+  await page.close();
+
+  // A mail scanner fetches the link (GET) – and the old GET verify endpoint is closed.
+  expect((await request.get(mail.magicLink)).status()).toBe(200);
+  const token = new URL(mail.magicLink).searchParams.get("token") ?? "";
+  const verify = await request.get(`/api/auth/magic-link/verify?token=${token}`, {
+    maxRedirects: 0,
+  });
+  expect(verify.status()).toBe(404);
+
+  // The real person taps the button in a browser without JavaScript.
+  const noJs = await browser.newContext({ javaScriptEnabled: false, locale: "en-GB" });
+  const tab = await noJs.newPage();
+  await tab.goto(mail.magicLink);
+  await tab.getByRole("button", { name: en.magic.continue }).click();
+
+  // New account without a name → name step on /login, then the default target.
+  await expect(tab.getByRole("heading", { name: en.auth.nameTitle })).toBeVisible();
+  expect(await sessionCookie(noJs)).toBeDefined();
+  await tab.getByLabel(en.auth.nameLabel).fill("Sam");
+  await tab.getByRole("button", { name: en.auth.saveName }).click();
+  await expect(tab).toHaveURL(/\/trips$/);
+  await noJs.close();
 });
 
 test("login with 'keep me signed in' unticked gives a browser-session cookie", async ({ page }) => {

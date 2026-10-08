@@ -158,7 +158,13 @@ export function emailAccess(options: EmailAccessOptions) {
       before: [
         {
           // The single-purpose senders would bypass the combined mail – hide them.
-          matcher: (context) => context.path !== undefined && BLOCKED_PATHS.has(context.path),
+          matcher: (context) =>
+            context.path !== undefined &&
+            (BLOCKED_PATHS.has(context.path) ||
+              // Magic links are redeemed by POST only (Server Action redeemMagicLink, Flow
+              // H.5, R-006): over HTTP the GET verify endpoint would let link scanners burn
+              // the token. Server-side calls (no request object) stay allowed.
+              (context.path === "/magic-link/verify" && context.request !== undefined)),
           handler: createAuthMiddleware(() => {
             throw new APIError("NOT_FOUND");
           }),

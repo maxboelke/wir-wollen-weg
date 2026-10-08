@@ -41,11 +41,20 @@
     }
   },
   "magic": {
-    "title": "Finish signing in",
+    "title": "Sign in",
+    "heading": "Almost there!",
     "lead": "Tap the button to sign in on this browser.",
+    "joining": "You’re joining “{trip}”.",
+    "otherAccount": "You’re currently signed in as {name}. This link will sign you in as someone else.",
     "continue": "Sign in now",
-    "invalid": "This sign-in link has expired or has already been used.",
-    "requestNew": "Request a new code"
+    "pending": "One moment …",
+    "useCodeLead": "Prefer a code?",
+    "useCode": "Sign in",
+    "invalidHeading": "This sign-in link no longer works",
+    "invalid": "It’s valid for 15 minutes and works only once. Just get a new code.",
+    "requestNew": "Get a new code",
+    "failed": "That didn’t work. Please try again.",
+    "retry": "Try again"
   },
   "invite": {
     "title": "Invitation",

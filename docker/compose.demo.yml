@@ -20,6 +20,10 @@ x-app-env: &app-env
   MAIL_FROM_NAME_DE: Wir wollen weg
   MAIL_FROM_NAME_EN: "When do we go?"
   RATE_LIMIT_ENABLED: "true"
+  # Client IP for rate limits (R-005, deployment.md §0.1/§0.5): Caddy below sets
+  # X-Forwarded-For; for a Cloudflare tunnel use AUTH_IP_HEADER=cf-connecting-ip.
+  AUTH_IP_HEADER: ${AUTH_IP_HEADER:-x-forwarded-for}
+  AUTH_TRUSTED_PROXIES: ${AUTH_TRUSTED_PROXIES:-}
 
 services:
   app:
@@ -32,13 +36,26 @@ services:
     environment:
       <<: *app-env
       BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env.demo}
-    ports:
-      - "3000:3000" # reachable in the (trusted!) LAN for phone tests, deployment.md §0.3
+    # No published port: only reachable through Caddy (proxy service, R-005).
+    expose:
+      - "3000"
     depends_on:
       db:
         condition: service_healthy
       mailpit:
         condition: service_started
+    restart: unless-stopped
+
+  # Reverse proxy in front of the app (R-005): overwrites X-Forwarded-For with the real
+  # peer address. DEMO_BIND_ADDRESS=127.0.0.1 keeps it on the laptop (café WLAN, tunnel).
+  proxy:
+    image: caddy:2-alpine
+    volumes:
+      - ./Caddyfile.demo:/etc/caddy/Caddyfile:ro
+    ports:
+      - "${DEMO_BIND_ADDRESS:-0.0.0.0}:3000:3000" # LAN phone tests, deployment.md §0.3
+    depends_on:
+      - app
     restart: unless-stopped
 
   # One-shot helper (migrations, seed): `run --rm tools pnpm db:migrate`
@@ -71,7 +88,7 @@ services:
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - "8025:8025" # web UI + API; SMTP stays internal
+      - "${DEMO_BIND_ADDRESS:-0.0.0.0}:8025:8025" # web UI + API; SMTP stays internal
     restart: unless-stopped
 
 volumes:

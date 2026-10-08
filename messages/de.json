@@ -41,11 +41,20 @@
     }
   },
   "magic": {
-    "title": "Anmeldung abschließen",
+    "title": "Anmelden",
+    "heading": "Fast geschafft!",
     "lead": "Tippe auf den Button, um dich in diesem Browser anzumelden.",
+    "joining": "Du trittst „{trip}“ bei.",
+    "otherAccount": "Du bist gerade als {name} angemeldet. Mit diesem Link meldest du dich als jemand anderes an.",
     "continue": "Jetzt anmelden",
-    "invalid": "Dieser Anmeldelink ist abgelaufen oder wurde schon verwendet.",
-    "requestNew": "Neuen Code anfordern"
+    "pending": "Einen Moment …",
+    "useCodeLead": "Lieber mit Code?",
+    "useCode": "Anmelden",
+    "invalidHeading": "Dieser Anmeldelink funktioniert nicht mehr",
+    "invalid": "Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.",
+    "requestNew": "Neuen Code anfordern",
+    "failed": "Das hat nicht geklappt. Bitte versuch es nochmal.",
+    "retry": "Nochmal versuchen"
   },
   "invite": {
     "title": "Einladung",
