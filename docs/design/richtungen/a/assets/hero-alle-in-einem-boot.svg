@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 196" width="342" height="196" aria-hidden="true" focusable="false">
+  <title>Hero „Alle in einem Boot“ (Richtung A, Startseite W01)</title>
+  <rect width="342" height="196" fill="#FFE3D8"/>
+  <circle cx="214" cy="122" r="96" fill="#FFD9C9"/>
+  <circle cx="214" cy="122" r="72" fill="#FFCDB4"/>
+  <path d="M28 64h52a11 11 0 0 0-9-16 15 15 0 0 0-28-3 10 10 0 0 0-15 19z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M262 40h34a8 8 0 0 0-7-11 11 11 0 0 0-20-1 7 7 0 0 0-7 12z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <circle cx="214" cy="122" r="48" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M250 70q6-7 12 0q6-7 12 0M284 88q4.5-5 9 0q4.5-5 9 0" fill="none" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M150 26l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FFF8EF" stroke="#1D2440" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M120 46V138" stroke="#1D2440" stroke-width="3" stroke-linecap="round"/>
+  <path d="M120 46L101 52L120 58Z" fill="#A995F5" stroke="#1D2440" stroke-width="2" stroke-linejoin="round"/>
+  <rect x="124" y="54" width="60" height="70" rx="9" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M133 54H175a9 9 0 0 1 9 9v8H124v-8a9 9 0 0 1 9-9z" fill="#FF8A6B" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <rect x="137" y="48" width="6" height="12" rx="3" fill="#FFF8EF" stroke="#1D2440" stroke-width="2"/>
+  <rect x="165" y="48" width="6" height="12" rx="3" fill="#FFF8EF" stroke="#1D2440" stroke-width="2"/>
+  <g fill="#B2E4DA"><rect x="131" y="78" width="9" height="9" rx="2"/><rect x="144" y="78" width="9" height="9" rx="2"/><rect x="157" y="78" width="9" height="9" rx="2"/><rect x="170" y="78" width="9" height="9" rx="2"/><rect x="131" y="92" width="9" height="9" rx="2"/><rect x="170" y="92" width="9" height="9" rx="2"/><rect x="131" y="106" width="9" height="9" rx="2"/><rect x="144" y="106" width="9" height="9" rx="2"/></g>
+  <g fill="#0F7D72"><rect x="144" y="92" width="9" height="9" rx="2"/><rect x="157" y="106" width="9" height="9" rx="2"/></g>
+  <rect x="157" y="92" width="9" height="9" rx="2" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5"/>
+  <rect x="170" y="106" width="9" height="9" rx="2" fill="#F1E6D6"/>
+  <g stroke="#1D2440" stroke-width="2.2">
+    <circle cx="86" cy="133" r="8" fill="#FFC9B8"/><circle cx="101" cy="131" r="8" fill="#BFE0FF"/><circle cx="116" cy="133" r="8" fill="#DDEFA8"/><circle cx="131" cy="131" r="8" fill="#D9CCFF"/><circle cx="146" cy="133" r="8" fill="#FFE08A"/><circle cx="161" cy="131" r="8" fill="#B2E4DA"/><circle cx="176" cy="133" r="8" fill="#FFC4DD"/>
+  </g>
+  <path d="M72 138H192L178 160Q176 165 170 165H94Q88 165 86 160Z" fill="#FF7A59" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M82 148H182" stroke="#FFF8EF" stroke-width="3" stroke-linecap="round"/>
+  <path d="M0 152C28 144 56 144 84 152S140 160 168 152S224 144 252 152S308 160 342 152V196H0Z" fill="#6FCFC0"/>
+  <path d="M0 152C28 144 56 144 84 152S140 160 168 152S224 144 252 152S308 160 342 152" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M0 172C34 165 68 165 102 172S170 179 204 172S272 165 306 172S330 175 342 172V196H0Z" fill="#0F7D72"/>
+  <path d="M0 172C34 165 68 165 102 172S170 179 204 172S272 165 306 172S330 175 342 172" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M0 187C40 182 80 182 120 187S200 192 240 187S310 182 342 187V196H0Z" fill="#0B4A52"/>
+  <path d="M228 181h14M58 183h10M286 160h12" stroke="#FFF8EF" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

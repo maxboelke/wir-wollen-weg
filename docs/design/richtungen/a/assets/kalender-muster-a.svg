@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 150" width="400" height="150">
+  <title>Kalender-Muster und Heatmap-Stufen (Richtung A)</title>
+  <desc>Obere Reihe Meine Tage: Geht (glatt), Zur Not (breite Sonnenstreifen 135 Grad), Geht nicht (Kreuzschraffur). Untere Reihe Heatmap: niemand (Schraffur), wenige, einige, viele, alle (mit Sonnen-Siegel). In der App als CSS-Verläufe umgesetzt, siehe richtung-a.md.</desc>
+  <defs>
+    <pattern id="ww-a-stripes" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(135)">
+      <rect width="12" height="12" fill="#FFF1C7"/><rect width="6" height="12" fill="#F5CF63"/>
+    </pattern>
+    <pattern id="ww-a-cross" width="7" height="7" patternUnits="userSpaceOnUse">
+      <rect width="7" height="7" fill="#DCD3C4"/>
+      <path d="M0 0L7 7M7 0L0 7" stroke="#1D2440" stroke-opacity=".26" stroke-width="1.5"/>
+    </pattern>
+    <pattern id="ww-a-hatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#F1E6D6"/><rect width="1.5" height="6" fill="#1D2440" fill-opacity=".2"/>
+    </pattern>
+  </defs>
+  <g font-family="Figtree, system-ui, sans-serif" font-weight="800" font-size="14" text-anchor="middle">
+    <rect x="10" y="10" width="49" height="52" rx="10" fill="#DDF3EE"/>
+    <rect x="66" y="10" width="49" height="52" rx="10" fill="url(#ww-a-stripes)"/>
+    <circle cx="90.5" cy="40" r="12.5" fill="#FFF1C7" stroke="#1D2440" stroke-opacity=".45" stroke-width="1.5"/>
+    <circle cx="90.5" cy="40" r="6.5" fill="none" stroke="#1D2440" stroke-width="1.8"/><path d="M90.5 33.5a6.5 6.5 0 0 0 0 13z" fill="#1D2440"/>
+    <rect x="122" y="10" width="49" height="52" rx="10" fill="url(#ww-a-cross)"/>
+    <circle cx="146.5" cy="40" r="12.5" fill="#DCD3C4" stroke="#1D2440" stroke-opacity=".45" stroke-width="1.5"/>
+    <path d="M142.5 36l8 8M150.5 36l-8 8" stroke="#1D2440" stroke-width="2.2" stroke-linecap="round"/>
+
+    <rect x="10" y="84" width="49" height="52" rx="10" fill="url(#ww-a-hatch)"/><text x="34.5" y="115" fill="#1D2440">0/5</text>
+    <rect x="66" y="84" width="49" height="52" rx="10" fill="#B2E4DA"/><text x="90.5" y="115" fill="#1D2440">2/5</text>
+    <rect x="122" y="84" width="49" height="52" rx="10" fill="#6FCFC0"/><text x="146.5" y="115" fill="#1D2440">3/5</text>
+    <rect x="178" y="84" width="49" height="52" rx="10" fill="#0F7D72"/><text x="202.5" y="115" fill="#FFFFFF">4/5</text>
+    <rect x="234" y="84" width="49" height="52" rx="10" fill="#0B4A52"/><text x="258.5" y="115" fill="#FFFFFF">5/5</text>
+    <circle cx="271.5" cy="124" r="7.6" fill="#FFC93C" stroke="#1D2440" stroke-width="1.6"/>
+    <path d="M268.1 124.3l2.3 2.3 4.6-4.9" fill="none" stroke="#1D2440" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="300" y="84" width="49" height="52" rx="10" fill="#6FCFC0"/>
+    <path d="M335 84h4a10 10 0 0 1 10 10v4z" fill="#E5502B"/>
+    <rect x="300" y="142" width="49" height="4" fill="#E5502B"/><rect x="300" y="138" width="4" height="12" rx="2" fill="#E5502B"/>
+  </g>
+</svg>

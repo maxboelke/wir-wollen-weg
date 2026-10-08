@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 342 150" width="342" height="150" aria-hidden="true" focusable="false">
+  <title>Reise-Motiv „Stadt am Meer“ (Richtung A, Einladungs-Ticket W03)</title>
+  <rect width="342" height="150" fill="#DDF3EE"/>
+  <circle cx="286" cy="44" r="36" fill="#FFF1C7"/>
+  <circle cx="286" cy="44" r="24" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M22 34h40a9 9 0 0 0-7-12 12 12 0 0 0-22-2 8 8 0 0 0-11 14z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M84 28q5-6 10 0q5-6 10 0" fill="none" stroke="#1D2440" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M0 30H342" stroke="#1D2440" stroke-width="1.5" opacity=".45"/>
+  <path d="M0 92C50 70 110 66 170 78S290 66 342 80V150H0Z" fill="#B2E4DA"/>
+  <path d="M0 92C50 70 110 66 170 78S290 66 342 80" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+  <g stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round">
+    <rect x="16" y="70" width="28" height="48" fill="#FFF8EF"/><path d="M12 72L30 58L48 72Z" fill="#FF7A59"/>
+    <rect x="50" y="78" width="24" height="40" fill="#E4DCFF"/><path d="M46 80L62 68L78 80Z" fill="#FF7A59"/>
+    <rect x="262" y="70" width="30" height="48" fill="#FFE3D8"/><path d="M258 72L277 57L296 72Z" fill="#FF7A59"/>
+    <rect x="298" y="76" width="28" height="42" fill="#FFF8EF"/><path d="M294 78L312 64L330 78Z" fill="#FF7A59"/>
+  </g>
+  <g fill="#6FCFC0" stroke="#1D2440" stroke-width="1.5"><rect x="25" y="82" width="9" height="11" rx="2"/><rect x="57" y="88" width="9" height="11" rx="2"/><rect x="272" y="82" width="9" height="11" rx="2"/><rect x="307" y="88" width="9" height="11" rx="2"/></g>
+  <rect x="0" y="118" width="342" height="32" fill="#F1E6D6"/>
+  <path d="M0 141H342" stroke="#1D2440" stroke-width="2"/>
+  <path d="M0 147H342" stroke="#1D2440" stroke-width="1" opacity=".4"/>
+  <path d="M196 68L222 30" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="124" y="64" width="104" height="11" rx="4" fill="#FFF8EF" stroke="#1D2440" stroke-width="2.5"/>
+  <rect x="114" y="73" width="124" height="52" rx="10" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M114 109H238V115a10 10 0 0 1-10 10H124a10 10 0 0 1-10-10Z" fill="#FFF8EF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+  <g fill="#DDF3EE" stroke="#1D2440" stroke-width="2"><rect x="123" y="81" width="17" height="19" rx="3"/><rect x="145" y="81" width="17" height="19" rx="3"/><rect x="167" y="81" width="17" height="19" rx="3"/><rect x="189" y="81" width="17" height="19" rx="3"/><rect x="211" y="81" width="17" height="19" rx="3"/></g>
+  <circle cx="232" cy="117" r="3" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5"/>
+  <circle cx="142" cy="133" r="7" fill="#1D2440"/><circle cx="210" cy="133" r="7" fill="#1D2440"/>
+</svg>

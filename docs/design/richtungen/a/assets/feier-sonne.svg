@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 318" width="390" height="318" aria-hidden="true" focusable="false">
+  <title>Feier-Himmel „Goldene Stunde“ (Richtung A, Termin steht fest W11)</title>
+  <defs>
+    <linearGradient id="ww-a-gold" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFC76B"/>
+      <stop offset=".55" stop-color="#FFDFA0"/>
+      <stop offset="1" stop-color="#FFEBD0"/>
+    </linearGradient>
+  </defs>
+  <rect width="390" height="318" fill="url(#ww-a-gold)"/>
+  <g id="sonne" transform="translate(195 226)">
+    <circle r="96" fill="#FFE7A6" opacity=".7"/>
+    <g id="strahlen" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2">
+      <rect x="-5" y="-88" width="10" height="24" rx="5"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(30)"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(60)"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(90)"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-30)"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-60)"/>
+      <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-90)"/>
+    </g>
+    <circle r="52" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+    <circle r="38" fill="none" stroke="#FFF1C7" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+  </g>
+  <g id="konfetti">
+    <rect x="34" y="170" width="9" height="15" rx="2" fill="#FF7A59" transform="rotate(-24 38 177)"/>
+    <rect x="74" y="140" width="8" height="13" rx="2" fill="#A995F5" transform="rotate(18 78 146)"/>
+    <circle cx="58" cy="212" r="5" fill="#6FCFC0"/>
+    <path d="M18 238q6-8 12 0t12 0" fill="none" stroke="#5B3FC4" stroke-width="3" stroke-linecap="round"/>
+    <rect x="102" y="196" width="8" height="13" rx="2" fill="#FFFFFF" stroke="#1D2440" stroke-width="1.5" transform="rotate(40 106 202)"/>
+    <rect x="300" y="152" width="9" height="15" rx="2" fill="#6FCFC0" transform="rotate(22 304 159)"/>
+    <rect x="340" y="196" width="8" height="13" rx="2" fill="#FF7A59" transform="rotate(-30 344 202)"/>
+    <circle cx="326" cy="128" r="5" fill="#A995F5"/>
+    <path d="M344 236q6-8 12 0t12 0" fill="none" stroke="#E5502B" stroke-width="3" stroke-linecap="round"/>
+    <rect x="282" y="210" width="8" height="12" rx="2" fill="#FFFFFF" stroke="#1D2440" stroke-width="1.5" transform="rotate(-12 286 216)"/>
+    <path d="M22 160l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFF8EF" stroke="#1D2440" stroke-width="1.8" stroke-linejoin="round"/>
+    <path d="M362 160l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFF8EF" stroke="#1D2440" stroke-width="1.8" stroke-linejoin="round"/>
+  </g>
+  <g id="meer">
+    <path d="M0 262C40 252 80 252 120 262S200 272 240 262S330 252 390 262V318H0Z" fill="#6FCFC0"/>
+    <path d="M0 262C40 252 80 252 120 262S200 272 240 262S330 252 390 262" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+    <path d="M0 284C46 276 92 276 138 284S230 292 276 284S350 278 390 284V318H0Z" fill="#0F7D72"/>
+    <path d="M0 284C46 276 92 276 138 284S230 292 276 284S350 278 390 284" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+  </g>
+</svg>

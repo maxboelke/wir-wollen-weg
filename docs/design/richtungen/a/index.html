@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richtung A · Sonnenaufgang · Wir wollen weg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&amp;family=Caveat:wght@600;700&amp;family=Figtree:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+/* Richtung A: Sonnenaufgang. Primitive Farben */
+:root{
+  --ink:#1D2440; --ink-2:#4A5170; --ink-3:#646B88;
+  --paper:#FFF8EF; --sand:#F7EBDA; --line:#EBDDC9; --border:#7C8199;
+  --coral:#FF7A59; --coral-hover:#FF6A45; --coral-600:#D9481F; --coral-strong:#E5502B; --coral-text:#A8360A; --coral-100:#FFE3D8;
+  --sun:#FFC93C; --sun-100:#FFF1C7; --sun-text:#7A5200; --sun-bar:#B98200;
+  --lagoon:#0B6B63; --lagoon-500:#0F7D72; --lagoon-300:#6FCFC0; --lagoon-200:#B2E4DA; --lagoon-100:#DDF3EE; --deep:#0B4A52;
+  --lilac:#A995F5; --lilac-100:#E4DCFF; --lilac-text:#5B3FC4;
+  --stone:#DCD3C4; --stone-100:#ECE6DC;
+  --night:#12162B; --danger:#B42318; --focus:#2B59C3;
+  --f-display:"Bricolage Grotesque","Figtree",system-ui,sans-serif;
+  --f-ui:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --f-hand:"Caveat","Figtree",cursive;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--f-ui);color:var(--ink);background:#EFE5D6;line-height:1.45;
+  background-image:radial-gradient(circle at 12% 4%,#FFE3D8 0,transparent 32%),radial-gradient(circle at 88% 0,#E4DCFF 0,transparent 28%)}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul,ol{list-style:none}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+
+/* Präsentationsseite */
+.doc{max-width:1240px;margin:0 auto;padding:56px 28px 8px}
+.doc-eyebrow{font:700 14px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--coral-text)}
+.doc h1{font:800 clamp(48px,8vw,96px)/.95 var(--f-display);letter-spacing:-.03em;margin:14px 0 6px}
+.doc h1 em{font-style:normal;color:var(--coral-600)}
+.doc-sub{font:600 18px/1.4 var(--f-ui);color:var(--ink-2)}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:28px;margin-top:36px}
+.doc-card{background:#fff;border:2.5px solid var(--ink);border-radius:28px;box-shadow:0 6px 0 var(--ink);padding:24px}
+.doc-card h2{font:800 22px/1.2 var(--f-display);margin-bottom:12px}
+.doc-card p{font-size:16px;color:var(--ink-2);margin-bottom:10px;text-wrap:pretty}
+.doc-card p b{color:var(--ink)}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(136px,1fr));gap:12px}
+.sw{border:2px solid var(--ink);border-radius:18px;overflow:hidden;background:#fff}
+.sw-c{height:64px;border-bottom:2px solid var(--ink)}
+.sw-c.ramp{display:flex}
+.sw-c.ramp span{flex:1}
+.sw-t{padding:8px 10px 10px;font-size:12.5px;line-height:1.35;color:var(--ink-2)}
+.sw-t b{display:block;font-size:14px;color:var(--ink)}
+.fonts{display:grid;gap:14px}
+.font-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1.5px dashed var(--line);padding-bottom:10px}
+.font-row small{font:600 12.5px var(--f-ui);color:var(--ink-3);text-align:right}
+.spec-display{font:800 34px/1 var(--f-display);letter-spacing:-.02em}
+.spec-ui{font:500 19px/1.2 var(--f-ui)}
+.spec-hand{font:700 30px/1 var(--f-hand);color:var(--coral-600)}
+.skies{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:6px}
+.skies div{height:62px;border-radius:14px;border:2px solid var(--ink);position:relative;font:700 12px/1.2 var(--f-ui);padding:6px 8px;display:flex;align-items:flex-end}
+.gallery{display:flex;flex-wrap:wrap;justify-content:center;gap:72px 56px;padding:56px 24px 40px;max-width:1900px;margin:0 auto}
+.shot{display:flex;flex-direction:column;align-items:center;gap:22px}
+.shot figcaption{text-align:center;max-width:390px}
+.shot figcaption b{display:block;font:800 20px/1.2 var(--f-display)}
+.shot figcaption span{font-size:14px;color:var(--ink-2)}
+.phone{width:390px;height:844px;border-radius:50px;overflow:hidden;position:relative;flex:none;
+  box-shadow:0 0 0 10px #1D2440,0 0 0 12px #3A4266,0 40px 70px -26px rgba(29,36,64,.55);margin:12px}
+.section-title{max-width:1240px;margin:24px auto 0;padding:0 28px;font:800 34px/1.1 var(--f-display)}
+.parts{max-width:1240px;margin:0 auto;padding:24px 28px 96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:28px}
+
+/* App: semantische Variablen (hell) */
+.app{--bg:var(--paper);--surface:#fff;--sunken:var(--sand);--text:var(--ink);--text-2:var(--ink-2);--text-3:var(--ink-3);
+  --line-c:var(--line);--border-c:var(--border);--outline:var(--ink);--link:var(--lagoon);
+  --cta:var(--coral);--cta-text:var(--ink);--cta-edge:var(--ink);
+  --yes-bg:var(--lagoon-100);--yes-fg:var(--lagoon);--maybe-bg:var(--sun-100);--maybe-fg:var(--sun-text);--no-bg:var(--stone-100);--no-fg:var(--ink-2);
+  --hol-bg:var(--coral-100);--hol-fg:var(--coral-text);--band:var(--coral-strong);--lane:var(--sun-100);--sel:var(--lagoon);
+  position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font:400 16px/1.45 var(--f-ui);overflow:hidden}
+/* App: Dunkelmodus "Nacht am Meer" */
+.app.dark{--bg:#12162B;--surface:#1B2140;--sunken:#151A33;--text:#F5EEE3;--text-2:#B7BAD6;--text-3:#9A9EC0;
+  --line-c:#2E3560;--border-c:#7A80A8;--outline:#F5EEE3;--link:#6FE0CF;
+  --cta:#FF8A6B;--cta-text:#0E1226;--cta-edge:#05070F;
+  --yes-bg:#173F45;--yes-fg:#6FE0CF;--maybe-bg:#3B3216;--maybe-fg:#FFE08A;--no-bg:#2A3157;--no-fg:#D7DAF0;
+  --hol-bg:#4A2418;--hol-fg:#FFB59E;--band:#FF8A6B;--lane:rgba(255,224,138,.08);--sel:#6FE0CF}
+
+.status{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0 36px;font:700 15px/1 var(--f-ui);position:relative;z-index:3}
+.status svg{width:68px;height:12px}
+.home{position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:var(--text);z-index:30}
+.ic{width:20px;height:20px;flex:none;display:inline-block;vertical-align:middle}
+.ic-s{width:16px;height:16px}
+.pad{padding:0 16px}
+
+/* Kopf & Marke */
+.apphead{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 10px 0 14px;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:7px;text-decoration:none;min-width:0}
+.brand svg{width:32px;height:32px;flex:none}
+.wm{font:800 17px/1 var(--f-display);letter-spacing:-.015em;white-space:nowrap}
+.wm em{font-style:normal;color:var(--coral-600);padding-bottom:4px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='5' viewBox='0 0 12 5'%3E%3Cpath d='M0 2.5C1.5 0.5 4.5 0.5 6 2.5S10.5 4.5 12 2.5' fill='none' stroke='%23D9481F' stroke-width='1.6'/%3E%3C/svg%3E") repeat-x left bottom}
+.head-actions{display:flex;align-items:center;gap:2px;flex:none}
+.lang{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 6px;border-radius:999px;font:700 14px/1 var(--f-ui);color:var(--link);text-decoration:none}
+.lang .ic{width:18px;height:18px}
+.pill-out{display:inline-flex;align-items:center;min-height:38px;padding:0 11px;border-radius:999px;border:2px solid var(--outline);font:700 14px/1 var(--f-ui);text-decoration:none;background:var(--surface)}
+.back-link{display:inline-flex;align-items:center;gap:4px;min-height:44px;font:700 15px/1 var(--f-ui);text-decoration:none;padding-right:8px}
+
+/* Himmel je Phase */
+.sky{position:relative;flex:none;padding-bottom:24px}
+.sky-p1{background:linear-gradient(180deg,#BFE9E1 0%,#DDF3EE 100%)}
+.sky-p2{background:linear-gradient(180deg,#D7CCFF 0%,#ECE6FF 100%)}
+.sky-p3{background:linear-gradient(180deg,#FFC76B 0%,#FFDFA0 55%,#FFEBD0 100%)}
+.sky-night{background:linear-gradient(180deg,#0B0F22 0%,#1A2048 100%)}
+.sky-deco{position:absolute;left:0;top:0;width:390px;height:171px;pointer-events:none}
+.wave{position:absolute;left:0;bottom:-1px;width:100%;height:20px;display:block;z-index:2}
+.wave path{fill:var(--bg)}
+.trip-head{position:relative;z-index:3;display:flex;align-items:center;gap:8px;padding:2px 12px 10px}
+.round-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(255,255,255,.72);border:2px solid var(--outline);color:var(--text)}
+.dark .round-btn{background:rgba(255,255,255,.07);border-color:#7A80A8}
+.trip-t{flex:1;min-width:0}
+.trip-t b{display:block;font:800 22px/1.1 var(--f-display);letter-spacing:-.015em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trip-t span{display:block;font:600 13px/1.3 var(--f-ui);color:var(--text-2);margin-top:2px}
+.tabs{position:relative;z-index:3;display:flex;gap:2px;margin:0 12px;padding:4px;border-radius:999px;background:rgba(255,255,255,.55);overflow-x:auto;scrollbar-width:none}
+.dark .tabs{background:rgba(255,255,255,.07)}
+.tab{flex:1 0 auto;text-align:center;padding:8px 9px;border-radius:999px;border:2px solid transparent;font:700 14px/1.1 var(--f-ui);color:var(--text-2);text-decoration:none;white-space:nowrap}
+.tab[aria-current]{background:var(--surface);color:var(--text);border-color:var(--outline);box-shadow:0 2px 0 var(--outline)}
+.dark .tab[aria-current]{background:var(--text);color:var(--bg);border-color:var(--text);box-shadow:none}
+
+/* Typo */
+.h-display{font:800 34px/1.06 var(--f-display);letter-spacing:-.025em;text-wrap:balance}
+.h1{font:800 28px/1.1 var(--f-display);letter-spacing:-.02em;text-wrap:balance}
+.h2{font:800 20px/1.2 var(--f-display);letter-spacing:-.01em}
+.lead{font:500 17px/1.45 var(--f-ui);color:var(--text-2);text-wrap:pretty}
+.small{font-size:14px;line-height:1.45;color:var(--text-2)}
+.center{text-align:center}
+mark.hl{color:inherit;background:linear-gradient(transparent 56%,var(--sun) 56%,var(--sun) 90%,transparent 90%);padding:0 2px;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.hand{font:700 22px/1 var(--f-hand);color:var(--coral-600)}
+.link{color:var(--link);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:12px 22px;border-radius:999px;
+  border:2.5px solid var(--cta-edge);font:800 17px/1.2 var(--f-ui);text-decoration:none;text-align:center;
+  background:var(--surface);color:var(--text);box-shadow:0 4px 0 var(--cta-edge)}
+.btn-primary{background:var(--cta);color:var(--cta-text)}
+.dark .btn-primary{border-color:var(--cta)}
+.btn-block{width:100%}
+.btn-sm{min-height:40px;padding:6px 14px;font-size:14px;box-shadow:0 3px 0 var(--cta-edge);border-width:2px}
+
+/* Chips */
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 13px;border-radius:999px;border:1.5px solid var(--border-c);background:var(--surface);font:700 14px/1 var(--f-ui);white-space:nowrap;color:var(--text)}
+.chip .ic{width:16px;height:16px}
+.tag{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:3px 10px;border-radius:999px;font:700 13px/1.2 var(--f-ui)}
+.tag .ic{width:15px;height:15px}
+.tag-maybe{background:var(--maybe-bg);color:var(--maybe-fg)}
+.tag-no{background:var(--no-bg);color:var(--no-fg)}
+.tag-hol{background:var(--hol-bg);color:var(--hol-fg)}
+.tag-yes{background:var(--yes-bg);color:var(--yes-fg)}
+.tri{width:10px;height:10px;background:currentColor;clip-path:polygon(0 0,100% 0,100% 100%);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Avatare als Aufkleber */
+.av{width:32px;height:32px;border-radius:50%;background:var(--c,#B2E4DA);border:2px solid var(--ink);display:inline-grid;place-items:center;
+  font:800 11.5px/1 var(--f-ui);color:var(--ink);flex:none;position:relative;letter-spacing:.02em}
+.av-l{width:40px;height:40px;font-size:13.5px}
+.av.open{background:transparent;border-style:dashed;border-color:var(--border-c);color:var(--text-2)}
+.av .crown{position:absolute;top:-9px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--sun);border:2px solid var(--ink);display:grid;place-items:center}
+.av .crown svg{width:11px;height:11px}
+.dark .av{border-color:#0B0E1F}
+.dark .av.open{border-color:var(--border-c)}
+.avs{display:flex;align-items:center}
+.avs .av+.av{margin-left:-8px}
+.avs .av{box-shadow:0 0 0 2px var(--surface)}
+
+/* Karten */
+.card{background:var(--surface);border:1.5px solid var(--line-c);border-radius:24px;padding:16px}
+.card-sticker{border:2.5px solid var(--outline);box-shadow:0 5px 0 var(--outline)}
+
+/* Kalender (gemeinsam) */
+.cal{padding:0 12px}
+.month{display:flex;align-items:center;justify-content:space-between;padding:0 16px;margin:14px 0 4px}
+.month b{font:800 20px/1.2 var(--f-display);letter-spacing:-.01em}
+.jump{display:flex;gap:6px}
+.jump span{display:inline-grid;place-items:center;min-height:32px;padding:0 12px;border-radius:999px;border:1.5px solid var(--border-c);font:700 13px/1 var(--f-ui);background:var(--surface)}
+.jump span.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.wd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font:700 12px/1 var(--f-ui);color:var(--text-2);padding:8px 0 7px;letter-spacing:.02em;
+  background:linear-gradient(90deg,transparent 71.6%,var(--lane) 71.6%);border-radius:12px 12px 0 0}
+.wd .we{color:var(--text);font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);column-gap:4px;row-gap:10px;padding-bottom:10px;
+  background:linear-gradient(90deg,transparent 71.6%,var(--lane) 71.6%);border-radius:0 0 12px 12px}
+.c{position:relative;height:52px;border-radius:10px;color:var(--text);font-variant-numeric:tabular-nums}
+.c .d{position:absolute;top:5px;left:6px;font:600 12px/1 var(--f-ui)}
+.c .n{position:absolute;left:0;right:0;top:21px;text-align:center;font:800 14px/1 var(--f-ui)}
+.c.l0{background:repeating-linear-gradient(45deg,rgba(29,36,64,.2) 0 1.5px,transparent 1.5px 6px),#F1E6D6}
+.c.l1{background:#B2E4DA}
+.c.l2{background:#6FCFC0}
+.c.l3{background:#0F7D72;color:#fff}
+.c.l4{background:#0B4A52;color:#fff}
+.c.hol::before{content:"";position:absolute;top:0;right:0;width:19px;height:19px;background:var(--bg);clip-path:polygon(0 0,100% 0,100% 100%);border-top-right-radius:10px}
+.c.hol::after{content:"";position:absolute;top:0;right:0;width:14px;height:14px;background:var(--band);clip-path:polygon(0 0,100% 0,100% 100%);border-top-right-radius:10px}
+.mb{position:absolute;left:5px;bottom:5px;width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+.sunb{position:absolute;right:3px;bottom:3px;width:17px;height:17px}
+.band{position:absolute;left:-2px;right:-2px;bottom:-8px;height:4px;background:var(--band)}
+.band.s{left:0;border-radius:2px 0 0 2px}
+.band.e{right:0;border-radius:0 2px 2px 0}
+.band.ol{left:0}
+.band.or{right:0}
+.band.s::before,.band.e::after{content:"";position:absolute;bottom:-4px;width:4px;height:12px;border-radius:2px;background:var(--band)}
+.band.s::before{left:0}
+.band.e::after{right:0}
+/* Meine Tage */
+.c.yes{background:var(--lagoon-100)}
+.c.no{--plq:#DCD3C4;background:repeating-linear-gradient(45deg,rgba(29,36,64,.26) 0 1.5px,transparent 1.5px 7px),repeating-linear-gradient(-45deg,rgba(29,36,64,.26) 0 1.5px,transparent 1.5px 7px),#DCD3C4}
+.c.maybe{--plq:#FFF1C7;background:repeating-linear-gradient(135deg,#F5CF63 0 6px,#FFF1C7 6px 12px)}
+.c.no .d,.c.maybe .d{background:var(--plq);padding:2px 3px;border-radius:5px;top:3px;left:3px}
+.pl{position:absolute;left:50%;top:31px;transform:translate(-50%,-50%);width:25px;height:25px;border-radius:50%;background:var(--plq);display:grid;place-items:center;border:1.5px solid rgba(29,36,64,.45)}
+.pl svg{width:14px;height:14px}
+.hols{padding:2px 16px 0;display:flex;flex-wrap:wrap;gap:4px 12px;font:600 13px/1.4 var(--f-ui);color:var(--text-2)}
+.hols span{display:inline-flex;align-items:center;gap:5px}
+.hols .tri{color:var(--band)}
+
+/* Werkzeugleiste Meine Tage */
+.sheet-bar{position:absolute;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border:2.5px solid var(--outline);border-bottom:0;border-radius:28px 28px 0 0;
+  padding:12px 14px 30px;box-shadow:0 -14px 30px -16px rgba(29,36,64,.35)}
+.dark .sheet-bar{border-color:#2E3560;box-shadow:0 -14px 30px -10px rgba(0,0,0,.6)}
+.tb-top{display:flex;justify-content:space-between;align-items:center;margin:0 2px 8px;font:700 13px/1.2 var(--f-ui);color:var(--text-2)}
+.saved{display:inline-flex;align-items:center;gap:4px;color:var(--lagoon)}
+.saved .ic{width:16px;height:16px}
+.brushes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.brush{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px 8px;border-radius:16px;border:1.5px solid var(--border-c);background:var(--surface);font:600 14px/1.1 var(--f-ui);color:var(--text-2)}
+.brush .swm{width:38px;height:22px;border-radius:7px;border:1.5px solid rgba(29,36,64,.45);display:grid;place-items:center}
+.brush .swm svg{width:13px;height:13px;color:var(--ink)}
+.swm.no{background:repeating-linear-gradient(45deg,rgba(29,36,64,.3) 0 1.5px,transparent 1.5px 6px),repeating-linear-gradient(-45deg,rgba(29,36,64,.3) 0 1.5px,transparent 1.5px 6px),#DCD3C4}
+.swm.maybe{background:repeating-linear-gradient(135deg,#F5CF63 0 5px,#FFF1C7 5px 10px)}
+.swm.yes{background:var(--lagoon-100)}
+.brush.on{border:2.5px solid var(--ink);box-shadow:0 3px 0 var(--ink);background:var(--stone-100);color:var(--ink);font-weight:800}
+.brush.on::after{content:"";position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--ink)}
+.tb-row{display:flex;align-items:center;gap:8px;margin-top:12px}
+.tool{width:48px;height:48px;border-radius:50%;border:2px solid var(--ink);background:var(--surface);display:grid;place-items:center;flex:none}
+.tool[aria-disabled="true"]{border-color:var(--border-c);color:var(--text-3)}
+.tb-row .btn{flex:1;min-height:50px;padding:8px 12px;font-size:16px}
+
+/* Statusband, Segmente */
+.seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:999px;background:var(--sunken);gap:4px}
+.seg span{display:grid;place-items:center;min-height:40px;border-radius:999px;font:700 14px/1 var(--f-ui);color:var(--text-2);border:2px solid transparent}
+.seg span.on{background:var(--surface);color:var(--text);border-color:var(--outline);box-shadow:0 2px 0 var(--outline)}
+.dark .seg span.on{box-shadow:none}
+.statusband{display:flex;gap:10px;align-items:flex-start;background:var(--maybe-bg);border-radius:20px;padding:12px 12px 12px 14px;color:var(--text)}
+.statusband p{font:500 14px/1.4 var(--f-ui);flex:1}
+.statusband p b{font-weight:800}
+.legend{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;text-align:center;font:600 11.5px/1.2 var(--f-ui);color:var(--text-2)}
+.legend .c{height:34px;margin-bottom:4px}
+.legend .c .n{top:11px}
+.c.nodata{border:1.5px dashed var(--border-c);color:var(--text-2)}
+.legend-key{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:8px;font:600 12.5px/1.3 var(--f-ui);color:var(--text-2)}
+.legend-key span{display:inline-flex;align-items:center;gap:5px}
+.legend-key .mbk{width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+.legend-key .bandk{width:18px;height:4px;background:var(--band);border-radius:2px}
+
+/* Vorschlag-Leiste (Gruppe, hell) */
+.sugg-bar{display:flex;align-items:center;gap:8px}
+.sugg-mid{flex:1;min-width:0}
+.eyebrow{display:flex;align-items:center;gap:6px;font:700 13px/1.2 var(--f-ui);color:var(--text-2)}
+.eyebrow .ic{width:16px;height:16px;color:var(--lagoon)}
+.rank{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:999px;background:var(--ink);color:var(--paper);font:800 12px/1 var(--f-ui);padding:0 6px}
+.sugg-date{font:800 20px/1.2 var(--f-display);letter-spacing:-.01em;margin:4px 0 2px}
+.sugg-meta{font:500 14px/1.35 var(--f-ui);color:var(--text-2)}
+
+/* Abstimmung */
+.vcard{position:relative;background:var(--surface);border:2px solid var(--line-c);border-radius:26px;padding:16px}
+.vcard.done{border-color:var(--outline);box-shadow:0 5px 0 var(--outline)}
+.vtop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.vdate{font:800 19px/1.2 var(--f-display);letter-spacing:-.01em}
+.vmeta{font:500 14px/1.4 var(--f-ui);color:var(--text-2);margin-top:2px}
+.vavail{display:flex;align-items:center;gap:6px;font:700 14px/1.3 var(--f-ui);margin-top:6px}
+.top-pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px 4px 8px;border-radius:999px;background:var(--sun);border:2px solid var(--ink);font:800 13px/1 var(--f-ui);white-space:nowrap}
+.top-pill .ic{width:14px;height:14px}
+.vseg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.vopt{position:relative;min-height:60px;border-radius:16px;border:1.5px solid var(--border-c);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:700 14px/1.1 var(--f-ui);color:var(--text-2)}
+.vopt .ic{width:20px;height:20px}
+.vopt.sel-yes{background:var(--yes-bg);color:var(--yes-fg);border:2.5px solid var(--yes-fg);box-shadow:0 3px 0 var(--yes-fg);font-weight:800}
+.vopt .tick{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:var(--yes-fg);color:#fff;display:grid;place-items:center;border:2px solid var(--surface)}
+.vopt .tick svg{width:12px;height:12px}
+.vopt.ghost{border:2px dashed var(--no-fg);color:var(--no-fg)}
+.vlabel{font:700 13px/1.3 var(--f-ui);color:var(--text-2);margin-top:12px}
+.vbar{display:flex;gap:3px;height:10px;margin-top:14px}
+.vbar span{border-radius:999px}
+.vcounts{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin-top:8px;font:800 14px/1.2 var(--f-ui);font-variant-numeric:tabular-nums}
+.vcounts span{display:inline-flex;align-items:center;gap:4px}
+.vcounts .ic{width:16px;height:16px}
+.vwho{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1.5px dashed var(--line-c);font:700 14px/1.2 var(--f-ui)}
+.vph{margin-top:12px;font:400 14px/1.4 var(--f-ui);color:var(--text-2)}
+
+/* Ticket / Perforation */
+.ticket{position:relative;background:var(--surface);border:2.5px solid var(--ink);border-radius:30px;box-shadow:0 6px 0 var(--ink)}
+.ticket-art{height:150px;border-radius:27px 27px 0 0;overflow:hidden;border-bottom:2.5px solid var(--ink)}
+.ticket-art svg{display:block;width:100%;height:150px}
+.perf{position:relative;height:0;border-top:2px dashed #CDBFA8;margin:0 22px}
+.perf::before,.perf::after{content:"";position:absolute;top:-13px;width:24px;height:24px;border-radius:50%;background:var(--bg);border:2.5px solid var(--ink)}
+.perf::before{left:-36px;clip-path:inset(0 0 0 50%)}
+.perf::after{right:-36px;clip-path:inset(0 50% 0 0)}
+.meta{display:grid;gap:8px;margin-top:12px}
+.meta li{display:flex;gap:10px;align-items:flex-start;font:600 15px/1.35 var(--f-ui)}
+.meta .ic{color:var(--lagoon);margin-top:1px}
+
+/* Code-Feld */
+.otp{display:flex;gap:8px;margin-top:8px}
+.otp .gap{width:8px}
+.otp span{width:48px;height:58px;border-radius:14px;border:1.5px solid var(--border-c);background:var(--surface);display:grid;place-items:center;font:800 26px/1 var(--f-ui);font-variant-numeric:tabular-nums;position:relative}
+.otp span.f{border:2px solid var(--ink);box-shadow:0 3px 0 var(--ink)}
+.otp span.act{border:2.5px solid var(--coral-600);box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--focus)}
+.otp span.act::after{content:"";width:2px;height:26px;background:var(--ink);border-radius:1px}
+
+/* Ergebnis */
+.result{position:relative;z-index:4;margin:-70px 16px 0;background:var(--surface);border:2.5px solid var(--ink);border-radius:30px;box-shadow:0 6px 0 var(--ink);padding:24px 20px 20px}
+.stamp{position:absolute;top:-38px;right:12px;width:100px;height:100px;transform:rotate(9deg)}
+.stamp svg{position:absolute;inset:0;width:100%;height:100%}
+.stamp-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:800 12px/1 var(--f-ui);color:var(--ink);gap:1px}
+.stamp-t b{font:800 36px/1 var(--f-display);letter-spacing:-.02em}
+.result-date{font:800 26px/1.15 var(--f-display);letter-spacing:-.015em;margin-top:8px}
+.result-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 18px;font:700 15px/1.2 var(--f-ui);color:var(--text-2)}
+.result-meta span{display:inline-flex;align-items:center;gap:6px}
+.ptrack{display:flex;align-items:center;gap:0;margin:22px 16px 0}
+.ptrack li{display:inline-flex;align-items:center;gap:5px;padding:6px 10px;border-radius:999px;font:700 13px/1 var(--f-ui);white-space:nowrap}
+.ptrack li .ic{width:15px;height:15px}
+.ptrack .done{background:var(--yes-bg);color:var(--yes-fg)}
+.ptrack .now{background:var(--sun);border:2px solid var(--ink);color:var(--ink);font-weight:800}
+.ptrack .con{flex:1;height:0;border-top:2px dashed var(--border-c);min-width:8px;padding:0;margin:0 2px}
+
+/* Vorschlagskarten (dunkel) */
+.sg-h{display:flex;align-items:center;gap:8px;font:800 18px/1.2 var(--f-display);margin:20px 0 10px}
+.sg-h .ic{color:var(--link)}
+.sg-card{background:var(--surface);border:1.5px solid var(--line-c);border-radius:24px;padding:14px 16px 12px;margin-bottom:12px}
+.sg-card.picked{border:2.5px solid var(--sel);box-shadow:0 4px 0 #0A3A3F}
+.sg-meta{display:flex;align-items:center;gap:4px;font:500 14px/1.35 var(--f-ui);color:var(--text-2);margin:2px 0 10px}
+.sg-meta .ic{width:16px;height:16px}
+.pearls{display:flex;gap:4px;margin:0 0 10px}
+.pearls i{flex:1;height:10px;border-radius:999px;position:relative}
+.pearls .p1{background:#1F4A57}.pearls .p2{background:#23716D}.pearls .p3{background:#6FE0CF}.pearls .p4{background:#CFF7EF}
+.pearls .p4::after{content:"";position:absolute;right:-1px;top:-3px;width:8px;height:8px;border-radius:50%;background:#FFC93C;border:1.5px solid #0E1226}
+.sg-act{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;min-height:44px}
+.chk{display:inline-flex;align-items:center;gap:8px;font:700 14px/1.2 var(--f-ui)}
+.chk .box{width:24px;height:24px;border-radius:7px;border:2px solid var(--border-c);display:grid;place-items:center}
+.chk.on .box{background:var(--sel);border-color:var(--sel);color:var(--bg)}
+.chk .box svg{width:15px;height:15px}
+
+/* Bausteine-Board */
+.board-row{display:flex;flex-wrap:wrap;gap:14px;align-items:center;margin-bottom:16px}
+.board-row .btn{min-height:50px}
+.state-cap{font:600 12px/1.2 var(--f-ui);color:var(--ink-3);display:block;margin-top:8px;text-align:center}
+.icons-row{display:flex;flex-wrap:wrap;gap:10px}
+.icons-row span{width:44px;height:44px;border-radius:14px;border:1.5px solid var(--line);display:grid;place-items:center;background:var(--paper)}
+.icons-row .ic{width:24px;height:24px}
+</style>
+</head>
+<body>
+
+<!-- Symbol-Bibliothek: Icons (24er Raster, 2-px-Strich, runde Enden) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="18.5" cy="12" r="1.9" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-maybe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+  <symbol id="i-cal-add" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5"/><path d="M3.5 10h17M8 3v4M16 3v4M12 12.5v5M9.5 15h5"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.3"/><path d="M3 19.5c.7-3.2 3-5 6-5s5.3 1.8 6 5"/><circle cx="16.8" cy="9.3" r="2.6"/><path d="M16.4 14.4c2.4 0 4 1.5 4.6 4.3"/></g></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.5 5.2 3.5 8.5s-1.1 6.2-3.5 8.5c-2.4-2.3-3.5-5.2-3.5-8.5s1.1-6.2 3.5-8.5z"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></g></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6L4 11l5 5"/><path d="M4.5 11h10a5 5 0 0 1 0 10H12"/></g></symbol>
+  <symbol id="i-range" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14M20 5v14M8 12h8M10.5 9.5L8 12l2.5 2.5M13.5 9.5L16 12l-2.5 2.5"/></g></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M10.5 3.5l1.7 4.8 4.8 1.7-4.8 1.7-1.7 4.8-1.7-4.8L4 10l4.8-1.7z"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></g></symbol>
+  <symbol id="i-mega" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l7 4.5v-13L7 10z"/><path d="M17.5 9a4 4 0 0 1 0 6"/></g></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/></g><circle cx="12" cy="7.8" r="1.25" fill="currentColor"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5V15M7.5 8L12 3.5 16.5 8"/><path d="M5 12.5v5.5a2.5 2.5 0 0 0 2.5 2.5h9a2.5 2.5 0 0 0 2.5-2.5v-5.5"/></g></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="3"/><path d="M4.5 7.5l7.5 5.5 7.5-5.5"/></g></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l1-4.2L15.6 5.2a2.1 2.1 0 0 1 3 3L9 17.8z"/><path d="M13.8 7l3 3"/></g></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.6-5.1 2.6 1-5.6-4-3.9 5.6-.8z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 18l-1.2-10 5.2 4.2L12 5l4 7.2 5.2-4.2L20 18z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></g></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M5.5 5h13a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5h-6l-4.5 3.5V17.5H5.5A2.5 2.5 0 0 1 3 15V7.5A2.5 2.5 0 0 1 5.5 5z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="3"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></g></symbol>
+  <symbol id="b-sun" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.6" fill="#FFC93C" stroke="#1D2440" stroke-width="1.6"/><path d="M5.6 9.3l2.3 2.3 4.6-4.9" fill="none" stroke="#1D2440" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="sb-icons" viewBox="0 0 68 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/></g><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M23 4.6a10 10 0 0 1 14 0"/><path d="M25.6 7.3a6.3 6.3 0 0 1 8.8 0"/></g><circle cx="30" cy="10.2" r="1.5" fill="currentColor"/><rect x="42.5" y=".9" width="22" height="10.2" rx="3" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55"/><rect x="44.5" y="2.9" width="15" height="6.2" rx="1.6" fill="currentColor"/><rect x="65.6" y="4.2" width="1.8" height="3.6" rx=".9" fill="currentColor" opacity=".55"/></symbol>
+  <symbol id="logo-a2" viewBox="0 0 64 64">
+    <rect x="6" y="11" width="52" height="47" rx="13" fill="#FF8A6B"/>
+    <circle cx="32" cy="41" r="12.5" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+    <path d="M6 43c6-3.5 13-3.5 19 0s13 3.5 19 0c5-3 10-3.2 14-1.5V45a13 13 0 0 1-13 13H19A13 13 0 0 1 6 45z" fill="#0F7D72"/>
+    <path d="M7.5 51c6-3 12-3 18 0s12 3 18 0c5-2.5 9.5-2.7 13-1A13 13 0 0 1 45 58H19A13 13 0 0 1 7.5 51z" fill="#0B4A52"/>
+    <path d="M6 43c6-3.5 13-3.5 19 0s13 3.5 19 0c5-3 10-3.2 14-1.5" fill="none" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="6" y="11" width="52" height="47" rx="13" fill="none" stroke="#1D2440" stroke-width="3"/>
+    <rect x="18" y="4.5" width="7" height="13" rx="3.5" fill="#FFF8EF" stroke="#1D2440" stroke-width="3"/>
+    <rect x="39" y="4.5" width="7" height="13" rx="3.5" fill="#FFF8EF" stroke="#1D2440" stroke-width="3"/>
+  </symbol>
+</svg>
+
+<header class="doc">
+  <p class="doc-eyebrow">Look &amp; Feel 2.0 · Richtung A · Entwurf 2026-10-08</p>
+  <h1>Sonnen<em>aufgang</em></h1>
+  <p class="doc-sub">Wir wollen weg / When do we go? – verspielt, warm, mit Liebe zum Detail. Und trotzdem jede Zahl lesbar.</p>
+
+  <div class="doc-grid">
+    <section class="doc-card" aria-labelledby="t-idee">
+      <h2 id="t-idee">Leitidee</h2>
+      <p><b>Jede Reise ist ein Sonnenaufgang.</b> Solange die Gruppe Tage sammelt, steht die Sonne noch tief über dem Meer; während der Abstimmung steigt sie, und wenn der Termin feststeht, strahlt sie über allem.</p>
+      <p>Der <b>Himmel über jeder Reise</b> zeigt diese Phase – morgens Lagune, nachmittags Flieder, abends Gold – so spürt man den Fortschritt, bevor man ihn liest.</p>
+      <p>Dazu kommt die Liebe zum Detail von <b>Reisepost</b>: Einladungen sind Tickets mit Perforation, der feste Termin bekommt eine Marke, die Gruppe sitzt als bunte Aufkleber im selben Boot. Kräftige Tinte-Konturen machen alles griffig – Zustände bleiben trotzdem über Zahl, Form und Muster lesbar.</p>
+    </section>
+
+    <section class="doc-card" aria-labelledby="t-schrift">
+      <h2 id="t-schrift">Schriften</h2>
+      <div class="fonts">
+        <div class="font-row"><span class="spec-display">Es geht los!</span><small>Bricolage Grotesque<br>700–800 · Titel, Daten, Zahlen groß</small></div>
+        <div class="font-row"><span class="spec-ui">Fertig – abgeben · 4/5 · 12345</span><small>Figtree 400–800<br>UI, Text, Kalenderzahlen</small></div>
+        <div class="font-row"><span class="spec-hand">dauert nur 2 Min.!</span><small>Caveat 700<br>nur Randnotizen, dekorativ</small></div>
+      </div>
+      <p style="margin-top:14px">Phasen-Himmel (dekorativ, Phase steht immer auch als Text):</p>
+      <div class="skies">
+        <div style="background:linear-gradient(180deg,#BFE9E1,#DDF3EE)">Tage sammeln</div>
+        <div style="background:linear-gradient(180deg,#D7CCFF,#ECE6FF)">Abstimmen</div>
+        <div style="background:linear-gradient(180deg,#FFC76B,#FFEBD0)">Steht fest</div>
+        <div style="background:linear-gradient(180deg,#0B0F22,#1A2048);color:#F5EEE3">Dunkel</div>
+      </div>
+    </section>
+  </div>
+
+  <section class="doc-card" style="margin-top:28px" aria-labelledby="t-farbe">
+    <h2 id="t-farbe">Palette (mit Kontrast nach WCAG 2.x, abgerundet)</h2>
+    <div class="swatches">
+      <div class="sw"><div class="sw-c" style="background:#FFF8EF"></div><div class="sw-t"><b>Papier</b>#FFF8EF · Grund</div></div>
+      <div class="sw"><div class="sw-c" style="background:#1D2440"></div><div class="sw-t"><b>Tinte</b>#1D2440 · Text, Konturen · 14,4 : 1 auf Papier</div></div>
+      <div class="sw"><div class="sw-c" style="background:#FF7A59"></div><div class="sw-t"><b>Koralle</b>#FF7A59 · Haupt-Button · Tinte darauf 5,9 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#FFC93C"></div><div class="sw-t"><b>Sonne</b>#FFC93C · „alle“-Siegel, Rang, Marker · Tinte 9,9 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#0B6B63"></div><div class="sw-t"><b>Lagune</b>#0B6B63 · Links, „Ja/Geht“ · 6,0 : 1 auf Papier</div></div>
+      <div class="sw"><div class="sw-c" style="background:#A995F5"></div><div class="sw-t"><b>Flieder</b>#A995F5 · Abstimmungs-Phase · Text #5B3FC4 6,7 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#E5502B"></div><div class="sw-t"><b>Koralle kräftig</b>#E5502B · Feiertag, Vorschlag-Band · 3,6 : 1 (Nicht-Text)</div></div>
+      <div class="sw"><div class="sw-c ramp"><span style="background:#F1E6D6"></span><span style="background:#B2E4DA"></span><span style="background:#6FCFC0"></span><span style="background:#0F7D72"></span><span style="background:#0B4A52"></span></div><div class="sw-t"><b>Meer-Rampe</b>Heatmap niemand → alle · Zahl ≥ 5,0 : 1 auf jeder Stufe</div></div>
+      <div class="sw"><div class="sw-c" style="background:#12162B"></div><div class="sw-t"><b>Nacht</b>#12162B · Dunkel-Grund · Text #F5EEE3 15,5 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#B42318"></div><div class="sw-t"><b>Fehler</b>#B42318 · nur Fehler · 6,2 : 1</div></div>
+    </div>
+  </section>
+</header>
+
+<main class="gallery">
+
+<!-- 01 Startseite -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div style="background:linear-gradient(180deg,#FFE9DF 0%,#FFF8EF 100%)">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <header class="apphead">
+      <a class="brand" href="#" aria-label="Wir wollen weg"><svg aria-hidden="true"><use href="#logo-a2"/></svg><span class="wm" aria-hidden="true">Wir wollen <em>weg</em></span></a>
+      <div class="head-actions">
+        <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+        <a class="pill-out" href="#">Anmelden</a>
+      </div>
+    </header>
+    <div style="margin:2px 16px 0;height:196px;border-radius:28px;overflow:hidden;border:2.5px solid #1D2440">
+      <svg viewBox="0 0 342 196" width="100%" height="191" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false" style="display:block">
+        <rect width="342" height="196" fill="#FFE3D8"/>
+        <circle cx="214" cy="122" r="96" fill="#FFD9C9"/>
+        <circle cx="214" cy="122" r="72" fill="#FFCDB4"/>
+        <path d="M28 64h52a11 11 0 0 0-9-16 15 15 0 0 0-28-3 10 10 0 0 0-15 19z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M262 40h34a8 8 0 0 0-7-11 11 11 0 0 0-20-1 7 7 0 0 0-7 12z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="214" cy="122" r="48" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+        <path d="M250 70q6-7 12 0q6-7 12 0M284 88q4.5-5 9 0q4.5-5 9 0" fill="none" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M150 26l3 7 7 3-7 3-3 7-3-7-7-3 7-3z" fill="#FFF8EF" stroke="#1D2440" stroke-width="2" stroke-linejoin="round"/>
+        <path d="M120 46V138" stroke="#1D2440" stroke-width="3" stroke-linecap="round"/>
+        <path d="M120 46L101 52L120 58Z" fill="#A995F5" stroke="#1D2440" stroke-width="2" stroke-linejoin="round"/>
+        <rect x="124" y="54" width="60" height="70" rx="9" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5"/>
+        <path d="M133 54H175a9 9 0 0 1 9 9v8H124v-8a9 9 0 0 1 9-9z" fill="#FF8A6B" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+        <rect x="137" y="48" width="6" height="12" rx="3" fill="#FFF8EF" stroke="#1D2440" stroke-width="2"/>
+        <rect x="165" y="48" width="6" height="12" rx="3" fill="#FFF8EF" stroke="#1D2440" stroke-width="2"/>
+        <g fill="#B2E4DA"><rect x="131" y="78" width="9" height="9" rx="2"/><rect x="144" y="78" width="9" height="9" rx="2"/><rect x="157" y="78" width="9" height="9" rx="2"/><rect x="170" y="78" width="9" height="9" rx="2"/><rect x="131" y="92" width="9" height="9" rx="2"/><rect x="170" y="92" width="9" height="9" rx="2"/><rect x="131" y="106" width="9" height="9" rx="2"/><rect x="144" y="106" width="9" height="9" rx="2"/></g>
+        <g fill="#0F7D72"><rect x="144" y="92" width="9" height="9" rx="2"/><rect x="157" y="106" width="9" height="9" rx="2"/></g>
+        <rect x="157" y="92" width="9" height="9" rx="2" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5"/>
+        <rect x="170" y="106" width="9" height="9" rx="2" fill="#F1E6D6"/>
+        <g stroke="#1D2440" stroke-width="2.2">
+          <circle cx="86" cy="133" r="8" fill="#FFC9B8"/><circle cx="101" cy="131" r="8" fill="#BFE0FF"/><circle cx="116" cy="133" r="8" fill="#DDEFA8"/><circle cx="131" cy="131" r="8" fill="#D9CCFF"/><circle cx="146" cy="133" r="8" fill="#FFE08A"/><circle cx="161" cy="131" r="8" fill="#B2E4DA"/><circle cx="176" cy="133" r="8" fill="#FFC4DD"/>
+        </g>
+        <path d="M72 138H192L178 160Q176 165 170 165H94Q88 165 86 160Z" fill="#FF7A59" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+        <path d="M82 148H182" stroke="#FFF8EF" stroke-width="3" stroke-linecap="round"/>
+        <path d="M0 152C28 144 56 144 84 152S140 160 168 152S224 144 252 152S308 160 342 152V196H0Z" fill="#6FCFC0"/>
+        <path d="M0 152C28 144 56 144 84 152S140 160 168 152S224 144 252 152S308 160 342 152" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+        <path d="M0 172C34 165 68 165 102 172S170 179 204 172S272 165 306 172S330 175 342 172V196H0Z" fill="#0F7D72"/>
+        <path d="M0 172C34 165 68 165 102 172S170 179 204 172S272 165 306 172S330 175 342 172" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+        <path d="M0 187C40 182 80 182 120 187S200 192 240 187S310 182 342 187V196H0Z" fill="#0B4A52"/>
+        <path d="M228 181h14M58 183h10M286 160h12" stroke="#FFF8EF" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+  <div class="pad" style="padding-top:18px">
+    <h1 class="h-display">Vom Gruppenchat zum <mark class="hl">festen Reisetermin.</mark></h1>
+    <p class="lead" style="margin-top:10px">Alle tragen ein, wann sie können. Wir finden die Zeiträume, in denen alle Zeit haben.</p>
+    <div style="position:relative;margin-top:26px">
+      <span class="hand" aria-hidden="true" style="position:absolute;right:6px;top:-25px;transform:rotate(-5deg)">dauert nur 2 Min.!</span>
+      <a class="btn btn-primary btn-block" href="#">Reise planen <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+    <p class="small center" style="margin-top:12px;font-weight:600">Kostenlos · ohne App · ohne Passwort</p>
+    <h2 class="h2" style="margin-top:26px">So geht’s</h2>
+    <ol style="margin-top:12px;display:grid;gap:14px;position:relative">
+      <li style="display:flex;gap:12px;align-items:center"><span class="av av-l" style="--c:#FFC93C;font:800 18px/1 var(--f-display)">1</span><span><b>Reise anlegen</b><br><span class="small">Link in den Gruppenchat schicken</span></span></li>
+      <li style="display:flex;gap:12px;align-items:center"><span class="av av-l" style="--c:#6FCFC0;font:800 18px/1 var(--f-display)">2</span><span><b>Alle tippen ihre freien Tage</b><br><span class="small">Ohne App, ohne Passwort</span></span></li>
+      <li style="display:flex;gap:12px;align-items:center"><span class="av av-l" style="--c:#D9CCFF;font:800 18px/1 var(--f-display)">3</span><span><b>Vorschläge ansehen, abstimmen, fertig</b></span></li>
+    </ol>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>01 · Startseite</b><span>W01 · Hero „Alle in einem Boot“ – das Segel ist ein Kalenderblatt, ein Tag ist schon sonnengelb.</span></figcaption>
+</figure>
+
+<!-- 02a Einladung -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+  <header class="apphead">
+    <a class="brand" href="#" aria-label="Wir wollen weg"><svg aria-hidden="true"><use href="#logo-a2"/></svg><span class="wm" aria-hidden="true">Wir wollen <em>weg</em></span></a>
+    <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+  </header>
+  <div class="pad">
+    <p style="display:flex;align-items:center;gap:10px;margin:8px 0 14px;font:600 16px/1.3 var(--f-ui)">
+      <span class="av av-l" style="--c:#FFC9B8">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span>
+      <span><b>Lena</b> lädt dich ein</span>
+      <span class="hand" aria-hidden="true" style="margin-left:auto;transform:rotate(-4deg)">für dich!</span>
+    </p>
+    <article class="ticket">
+      <div class="ticket-art">
+        <svg viewBox="0 0 342 150" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <rect width="342" height="150" fill="#DDF3EE"/>
+          <circle cx="286" cy="44" r="36" fill="#FFF1C7"/>
+          <circle cx="286" cy="44" r="24" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+          <path d="M22 34h40a9 9 0 0 0-7-12 12 12 0 0 0-22-2 8 8 0 0 0-11 14z" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M84 28q5-6 10 0q5-6 10 0" fill="none" stroke="#1D2440" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M0 30H342" stroke="#1D2440" stroke-width="1.5" opacity=".45"/>
+          <path d="M0 92C50 70 110 66 170 78S290 66 342 80V150H0Z" fill="#B2E4DA"/>
+          <path d="M0 92C50 70 110 66 170 78S290 66 342 80" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+          <g stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round">
+            <rect x="16" y="70" width="28" height="48" fill="#FFF8EF"/><path d="M12 72L30 58L48 72Z" fill="#FF7A59"/>
+            <rect x="50" y="78" width="24" height="40" fill="#E4DCFF"/><path d="M46 80L62 68L78 80Z" fill="#FF7A59"/>
+            <rect x="262" y="70" width="30" height="48" fill="#FFE3D8"/><path d="M258 72L277 57L296 72Z" fill="#FF7A59"/>
+            <rect x="298" y="76" width="28" height="42" fill="#FFF8EF"/><path d="M294 78L312 64L330 78Z" fill="#FF7A59"/>
+          </g>
+          <g fill="#6FCFC0" stroke="#1D2440" stroke-width="1.5"><rect x="25" y="82" width="9" height="11" rx="2"/><rect x="57" y="88" width="9" height="11" rx="2"/><rect x="272" y="82" width="9" height="11" rx="2"/><rect x="307" y="88" width="9" height="11" rx="2"/></g>
+          <rect x="0" y="118" width="342" height="32" fill="#F1E6D6"/>
+          <path d="M0 141H342" stroke="#1D2440" stroke-width="2"/>
+          <path d="M0 147H342" stroke="#1D2440" stroke-width="1" opacity=".4"/>
+          <path d="M196 68L222 30" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="124" y="64" width="104" height="11" rx="4" fill="#FFF8EF" stroke="#1D2440" stroke-width="2.5"/>
+          <rect x="114" y="73" width="124" height="52" rx="10" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+          <path d="M114 109H238V115a10 10 0 0 1-10 10H124a10 10 0 0 1-10-10Z" fill="#FFF8EF" stroke="#1D2440" stroke-width="2.5" stroke-linejoin="round"/>
+          <g fill="#DDF3EE" stroke="#1D2440" stroke-width="2"><rect x="123" y="81" width="17" height="19" rx="3"/><rect x="145" y="81" width="17" height="19" rx="3"/><rect x="167" y="81" width="17" height="19" rx="3"/><rect x="189" y="81" width="17" height="19" rx="3"/><rect x="211" y="81" width="17" height="19" rx="3"/></g>
+          <circle cx="232" cy="117" r="3" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5"/>
+          <circle cx="142" cy="133" r="7" fill="#1D2440"/><circle cx="210" cy="133" r="7" fill="#1D2440"/>
+        </svg>
+      </div>
+      <div style="padding:16px 18px 18px">
+        <h1 class="h1" style="font-size:32px">Lissabon 2027</h1>
+        <ul class="meta">
+          <li><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg><span>Irgendwann zwischen 1. Mai und 30. Juni 2027</span></li>
+          <li><svg class="ic" aria-hidden="true"><use href="#i-moon"/></svg><span>4–5 Nächte</span></li>
+          <li style="align-items:center;flex-wrap:wrap"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg><span>6 sind schon dabei</span>
+            <span class="avs" aria-hidden="true" style="width:100%;padding-left:30px;margin-top:2px"><span class="av" style="--c:#FFC9B8">LE</span><span class="av" style="--c:#BFE0FF">JO</span><span class="av" style="--c:#DDEFA8">TI</span><span class="av" style="--c:#D9CCFF">AN</span><span class="av" style="--c:#FFE08A">PA</span><span class="av" style="--c:#FFC4DD">SA</span><span class="av open">+1</span></span></li>
+        </ul>
+      </div>
+      <div class="perf" aria-hidden="true"></div>
+      <div style="padding:14px 18px 16px;display:flex;gap:10px;align-items:flex-start">
+        <span style="font:800 40px/0.8 var(--f-display);color:#E5502B" aria-hidden="true">„</span>
+        <p style="font:600 16px/1.4 var(--f-ui);padding-top:4px">Sonne, Pastéis, Surfen. Wer ist dabei?</p>
+      </div>
+    </article>
+    <a class="btn btn-primary btn-block" href="#" style="margin-top:22px">Mitmachen</a>
+    <p class="small center" style="margin-top:10px">Dauert 2 Minuten. Kostenlos, ohne App und ohne Passwort.</p>
+    <p class="small center" style="margin-top:4px">Schon ein Konto? Einfach auf „Mitmachen“ tippen.</p>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>02a · Einladung</b><span>W03 Z1 · Die Reise als Ticket mit Perforation, Reise-Motiv „Stadt am Meer“, der freie Platz „+1“ ist für dich.</span></figcaption>
+</figure>
+
+<!-- 02b Code -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+  <header class="apphead">
+    <a class="back-link" href="#"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Zurück</a>
+    <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+  </header>
+  <div class="pad">
+    <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 14px 10px 10px;border-radius:20px;margin-top:4px">
+      <span style="width:52px;height:52px;border-radius:14px;border:2px solid #1D2440;overflow:hidden;flex:none;background:#DDF3EE">
+        <svg viewBox="0 0 52 52" width="48" height="48" aria-hidden="true" focusable="false" style="display:block"><circle cx="38" cy="15" r="8" fill="#FFC93C" stroke="#1D2440" stroke-width="2"/><path d="M0 32C14 26 30 26 52 30V52H0Z" fill="#B2E4DA" stroke="#1D2440" stroke-width="2"/><rect x="10" y="26" width="30" height="16" rx="4" fill="#FFC93C" stroke="#1D2440" stroke-width="2"/><rect x="14" y="29" width="7" height="6" rx="1.5" fill="#DDF3EE" stroke="#1D2440" stroke-width="1.5"/><rect x="25" y="29" width="7" height="6" rx="1.5" fill="#DDF3EE" stroke="#1D2440" stroke-width="1.5"/></svg>
+      </span>
+      <span><b style="font:800 17px/1.2 var(--f-display)">Lissabon 2027</b><br><span class="small">Lena lädt dich ein · 4–5 Nächte</span></span>
+    </div>
+    <svg viewBox="0 0 140 100" width="128" height="92" aria-hidden="true" focusable="false" style="display:block;margin:18px 0 4px -6px">
+      <path d="M4 44H22M10 56H28M16 68H30" stroke="#646B88" stroke-width="2.5" stroke-linecap="round"/>
+      <g transform="rotate(-6 82 54)">
+        <rect x="36" y="22" width="92" height="62" rx="10" fill="#FFFFFF" stroke="#1D2440" stroke-width="2.5"/>
+        <path d="M40 28L82 58L124 28" fill="none" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="100" y="56" width="20" height="22" rx="3" fill="#FF8A6B" stroke="#1D2440" stroke-width="2"/>
+        <circle cx="110" cy="67" r="5" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5"/>
+        <path d="M48 72h24M48 64h14" stroke="#6FCFC0" stroke-width="3" stroke-linecap="round"/>
+      </g>
+      <path d="M130 8l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFC93C" stroke="#1D2440" stroke-width="1.5" stroke-linejoin="round"/>
+    </svg>
+    <h1 class="h1">Schau in dein Postfach</h1>
+    <p style="margin-top:8px;font-size:16px;color:var(--text-2)">Wir haben einen 6-stelligen Code an <b style="color:var(--text)">kemal@beispiel.de</b> geschickt. <a class="link" href="#">Andere E-Mail?</a></p>
+    <p style="margin-top:20px;font:700 14px/1.2 var(--f-ui)">6-stelliger Code</p>
+    <div class="otp" aria-hidden="true"><span class="f">4</span><span class="f">8</span><span class="f">1</span><span class="gap" style="width:8px;border:0;background:none"></span><span class="act"></span><span></span><span></span></div>
+    <p class="small" style="display:flex;align-items:center;gap:6px;margin-top:10px"><svg class="ic ic-s" aria-hidden="true"><use href="#i-clock"/></svg>Gültig 15 Minuten</p>
+    <a class="btn btn-primary btn-block" href="#" style="margin-top:22px">Bestätigen</a>
+    <p class="small center" style="margin-top:16px">Keine Mail? Schau im Spam-Ordner.</p>
+    <p class="center" style="margin-top:4px;font:700 15px/2.8 var(--f-ui);color:var(--text-3)" aria-disabled="true">Neuen Code senden (in 0:27)</p>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>02b · Code eingeben</b><span>W03 Z3 / W02 · Ruhiger Formular-Ton, ein Brief mit Sonnen-Marke; ausgefüllte Kästchen werden zu „Aufklebern“, das aktive trägt den Fokus-Ring.</span></figcaption>
+</figure>
+
+<!-- 03 Meine Tage -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="sky sky-p1">
+    <svg class="sky-deco" viewBox="0 0 390 171" aria-hidden="true" focusable="false"><path d="M228 100A62 62 0 0 1 352 100" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/><circle cx="236.3" cy="69" r="11" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2"/></svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#" aria-current="page">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <svg class="wave" viewBox="0 0 390 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 12C40 3 80 3 120 11S200 19 240 11S330 3 390 11V20H0Z"/></svg>
+  </div>
+  <div class="pad" style="padding-top:6px">
+    <p style="display:flex;align-items:center;gap:8px;font:500 14px/1.35 var(--f-ui);color:var(--text-2)"><span class="tag" style="background:var(--lilac-100);color:var(--lilac-text)"><svg class="ic" aria-hidden="true"><use href="#i-pencil"/></svg>Entwurf</span>zählt erst, wenn du abgibst.</p>
+    <p style="margin-top:8px;font:500 14px/1.35 var(--f-ui);color:var(--text-2)">Feiertage für: <b style="color:var(--text)">Bayern</b> · <a class="link" href="#">Ändern</a></p>
+  </div>
+  <div class="month"><b>Mai 2027</b><span class="jump" aria-hidden="true"><span class="on">Mai</span><span>Juni</span></span></div>
+  <div class="cal">
+    <div class="wd"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span class="we">Sa</span><span class="we">So</span></div>
+    <div class="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div class="c yes hol"><span class="d">1</span></div>
+      <div class="c yes"><span class="d">2</span></div>
+      <div class="c yes"><span class="d">3</span></div>
+      <div class="c yes"><span class="d">4</span></div>
+      <div class="c yes"><span class="d">5</span></div>
+      <div class="c yes hol"><span class="d">6</span></div>
+      <div class="c yes"><span class="d">7</span></div>
+      <div class="c yes"><span class="d">8</span></div>
+      <div class="c yes"><span class="d">9</span></div>
+      <div class="c yes"><span class="d">10</span></div>
+      <div class="c yes"><span class="d">11</span></div>
+      <div class="c yes"><span class="d">12</span></div>
+      <div class="c yes"><span class="d">13</span></div>
+      <div class="c no"><span class="d">14</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">15</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">16</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no hol"><span class="d">17</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">18</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">19</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">20</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">21</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c yes"><span class="d">22</span></div>
+      <div class="c yes"><span class="d">23</span></div>
+      <div class="c yes"><span class="d">24</span></div>
+      <div class="c yes"><span class="d">25</span></div>
+      <div class="c yes"><span class="d">26</span></div>
+      <div class="c maybe hol"><span class="d">27</span><span class="pl"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span></div>
+      <div class="c maybe"><span class="d">28</span><span class="pl"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span></div>
+      <div class="c yes"><span class="d">29</span></div>
+      <div class="c yes"><span class="d">30</span></div>
+      <div class="c yes"><span class="d">31</span></div>
+    </div>
+  </div>
+  <div class="sheet-bar">
+    <div class="tb-top"><span>Was markierst du?</span><span class="saved"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Gespeichert</span></div>
+    <div class="brushes" role="radiogroup" aria-label="Was markierst du?">
+      <span class="brush on" role="radio" aria-checked="true"><span class="swm no"><svg aria-hidden="true"><use href="#i-cross"/></svg></span>Geht nicht</span>
+      <span class="brush" role="radio" aria-checked="false"><span class="swm maybe"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span>Zur Not</span>
+      <span class="brush" role="radio" aria-checked="false"><span class="swm yes"><svg aria-hidden="true" style="color:#0B6B63"><use href="#i-check"/></svg></span>Geht</span>
+    </div>
+    <div class="tb-row">
+      <span class="tool" role="button" aria-label="Zeitraum wählen"><svg class="ic" aria-hidden="true"><use href="#i-range"/></svg></span>
+      <span class="tool" role="button" aria-label="Rückgängig"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg></span>
+      <span class="tool" role="button" aria-label="Schnellaktionen"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <a class="btn btn-primary" href="#">Fertig – abgeben</a>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>03 · Meine Tage</b><span>W08 · Morgenhimmel (Phase 1), Sonne noch tief. „Geht“ ist ruhige Lagune, „Geht nicht“ Kreuzschraffur + ✕, „Zur Not“ Sonnenstreifen + ◐.</span></figcaption>
+</figure>
+
+<!-- 04 Gruppe Heatmap -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="sky sky-p1">
+    <svg class="sky-deco" viewBox="0 0 390 171" aria-hidden="true" focusable="false"><path d="M228 100A62 62 0 0 1 352 100" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/><circle cx="236.3" cy="69" r="11" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2"/></svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#" aria-current="page">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <svg class="wave" viewBox="0 0 390 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 12C40 3 80 3 120 11S200 19 240 11S330 3 390 11V20H0Z"/></svg>
+  </div>
+  <div class="pad" style="padding-top:4px">
+    <div class="seg" aria-hidden="true"><span>Vorschläge</span><span class="on">Kalender</span></div>
+    <div class="statusband" style="margin-top:10px;flex-direction:column;gap:8px">
+      <p><b>5 von 7 haben abgegeben.</b> Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.</p>
+      <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+        <span class="avs" aria-hidden="true"><span class="av open" style="box-shadow:none">KE</span><span class="av open" style="box-shadow:none">SA</span></span>
+        <a class="btn btn-sm" href="#" style="padding:6px 12px"><svg class="ic ic-s" aria-hidden="true"><use href="#i-mega"/></svg>Erinnern</a>
+      </div>
+    </div>
+    <div class="legend" style="margin-top:12px" aria-label="Legende">
+      <div><div class="c nodata"><span class="n">–</span></div>keine Daten</div>
+      <div><div class="c l0"><span class="n">0</span></div>niemand</div>
+      <div><div class="c l1"><span class="n">2</span></div>wenige</div>
+      <div><div class="c l2"><span class="n">3</span></div>einige</div>
+      <div><div class="c l3"><span class="n">4</span></div>viele</div>
+      <div><div class="c l4"><span class="n">5</span><svg class="sunb" style="width:14px;height:14px;right:2px;bottom:2px" aria-hidden="true"><use href="#b-sun"/></svg></div>alle</div>
+    </div>
+    <p class="legend-key"><span>4/5 = 4 von 5 „Geht“</span><span><svg class="ic ic-s" aria-hidden="true"><use href="#b-sun"/></svg>alle</span><span><i class="mbk"></i>jemand zur Not</span><span><i class="tri" style="color:var(--band)"></i>Feiertag</span><span><i class="bandk"></i>Vorschlag</span></p>
+  </div>
+  <div class="month" style="margin:8px 0 2px"><b>Mai 2027</b></div>
+  <div class="cal">
+    <div class="wd"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span class="we">Sa</span><span class="we">So</span></div>
+    <div class="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div class="c l2 hol"><span class="d">1</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">2</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">3</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">4</span><span class="n">3/5</span><i class="mb"></i></div>
+      <div class="c l3"><span class="d">5</span><span class="n">4/5</span><i class="mb"></i><i class="band s"></i></div>
+      <div class="c l4 hol"><span class="d">6</span><span class="n">5/5</span><svg class="sunb" aria-hidden="true"><use href="#b-sun"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">7</span><span class="n">5/5</span><svg class="sunb" aria-hidden="true"><use href="#b-sun"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">8</span><span class="n">5/5</span><svg class="sunb" aria-hidden="true"><use href="#b-sun"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">9</span><span class="n">5/5</span><svg class="sunb" aria-hidden="true"><use href="#b-sun"/></svg><i class="band or"></i></div>
+      <div class="c l3"><span class="d">10</span><span class="n">4/5</span><i class="mb"></i><i class="band ol e"></i></div>
+      <div class="c l2"><span class="d">11</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">12</span><span class="n">3/5</span></div>
+      <div class="c l3"><span class="d">13</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">14</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">15</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">16</span><span class="n">4/5</span></div>
+      <div class="c l3 hol"><span class="d">17</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">18</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">19</span><span class="n">4/5</span></div>
+      <div class="c l1"><span class="d">20</span><span class="n">2/5</span></div>
+      <div class="c l1"><span class="d">21</span><span class="n">1/5</span></div>
+      <div class="c l0"><span class="d">22</span><span class="n">0/5</span></div>
+      <div class="c l1"><span class="d">23</span><span class="n">1/5</span></div>
+    </div>
+  </div>
+  <div class="sheet-bar" style="padding:14px 10px 30px">
+    <div class="sugg-bar">
+      <span class="round-btn" role="button" aria-label="Vorheriger Vorschlag" style="background:var(--surface)"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg></span>
+      <div class="sugg-mid">
+        <p class="eyebrow"><span class="rank">1</span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Alle dabei · 1 von 5</p>
+        <p class="sugg-date">Mi., 5. Mai – Mo., 10. Mai</p>
+        <p class="sugg-meta">bis zu 5 Nächte · ca. 3 Urlaubstage</p>
+        <div class="chips" style="margin-top:6px"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span><span class="tag tag-hol"><i class="tri"></i>Christi Himmelfahrt</span></div>
+      </div>
+      <span class="round-btn" role="button" aria-label="Nächster Vorschlag" style="background:var(--surface)"><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></span>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>04 · Gruppe: Heatmap + Vorschläge</b><span>W09 · Meer-Rampe hell → tief, Zahl in jeder Zelle, Sonnen-Siegel = alle „Geht“. Vorschlag-Leiste unten blättert, das Korallen-Band zeigt den Zeitraum im Kalender.</span></figcaption>
+</figure>
+
+<!-- 05 Abstimmung -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="sky sky-p2">
+    <svg class="sky-deco" viewBox="0 0 390 171" aria-hidden="true" focusable="false"><path d="M228 100A62 62 0 0 1 352 100" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/><circle cx="246.2" cy="56.2" r="12" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2"/></svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span>Abstimmung läuft</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#" aria-current="page">Abstimmen</a></nav>
+    <svg class="wave" viewBox="0 0 390 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 12C40 3 80 3 120 11S200 19 240 11S330 3 390 11V20H0Z"/></svg>
+  </div>
+  <div class="pad">
+    <h1 class="h1">Abstimmung läuft</h1>
+    <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin-top:10px">
+      <span class="tag" style="background:var(--lilac-100);color:var(--lilac-text);min-height:30px"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg>noch 3 Tage · bis Do., 15. April</span>
+    </div>
+    <p style="display:flex;align-items:center;gap:10px;margin-top:10px;font:600 14px/1.3 var(--f-ui);color:var(--text-2)">
+      <span class="avs" aria-hidden="true"><span class="av" style="--c:#FFC9B8">LE</span><span class="av" style="--c:#BFE0FF">JO</span><span class="av" style="--c:#D9CCFF">AN</span><span class="av" style="--c:#FFE08A">PA</span><span class="av open">TI</span><span class="av open">KE</span><span class="av open">SA</span></span>
+      4 von 7 haben abgestimmt
+    </p>
+
+    <article class="vcard done" style="margin-top:24px">
+      <span class="top-pill" style="position:absolute;top:-15px;right:18px;transform:rotate(3deg)"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>Platz 1</span>
+      <h2 class="vdate">Mi., 5. Mai – Mo., 10. Mai</h2>
+      <p class="vmeta">5 Nächte · ca. 3 Urlaubstage</p>
+      <p class="vavail" style="color:var(--lagoon)"><svg class="ic ic-s" aria-hidden="true"><use href="#i-check"/></svg>laut Kalender: alle können</p>
+      <div class="vseg" role="radiogroup" aria-label="Deine Stimme">
+        <span class="vopt sel-yes" role="radio" aria-checked="true"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ja<span class="tick" aria-hidden="true"><svg><use href="#i-check"/></svg></span></span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>Vielleicht</span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>Nein</span>
+      </div>
+      <div class="vbar" aria-hidden="true"><span style="flex:4;background:#0F7D72"></span><span style="flex:1;background:#B98200"></span></div>
+      <p class="vcounts"><span style="color:var(--lagoon)"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>4 Ja</span><span style="color:var(--sun-text)"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>1 Vielleicht</span><span style="color:var(--text-2)"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>0 Nein</span></p>
+      <div class="vwho"><span>Wer hat wie gestimmt?</span><svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></div>
+    </article>
+
+    <article class="vcard" style="margin-top:18px">
+      <h2 class="vdate">Do., 13. Mai – Di., 18. Mai</h2>
+      <p class="vmeta">5 Nächte · ca. 4 Urlaubstage</p>
+      <p class="vavail" style="color:var(--text-2)"><svg class="ic ic-s" aria-hidden="true"><use href="#i-cross"/></svg>laut Kalender: ohne Jonas</p>
+      <p class="vlabel">Vorschlag aus deinen Tagen: Nein – bitte bestätigen</p>
+      <div class="vseg" role="radiogroup" aria-label="Deine Stimme" style="margin-top:8px">
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ja</span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>Vielleicht</span>
+        <span class="vopt ghost" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>Nein?</span>
+      </div>
+      <p class="vph">Stimm ab, um das Ergebnis zu sehen.</p>
+    </article>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>05 · Abstimmung</b><span>W10 B · Fliederhimmel (Phase 2), Sonne steigt. Gewählt = Fläche + Rahmen + Häkchen-Ecke; Vorschlag aus den eigenen Tagen gestrichelt.</span></figcaption>
+</figure>
+
+<!-- 06 Termin steht fest -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="sky sky-p3" style="height:318px">
+    <svg viewBox="0 0 390 318" width="390" height="318" aria-hidden="true" focusable="false" style="position:absolute;left:0;top:0">
+      <g transform="translate(195 226)">
+        <circle r="96" fill="#FFE7A6" opacity=".7"/>
+        <g fill="#FFC93C" stroke="#1D2440" stroke-width="2.2">
+          <rect x="-5" y="-88" width="10" height="24" rx="5"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(30)"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(60)"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(90)"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-30)"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-60)"/>
+          <rect x="-5" y="-88" width="10" height="24" rx="5" transform="rotate(-90)"/>
+        </g>
+        <circle r="52" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+        <circle r="38" fill="none" stroke="#FFF1C7" stroke-width="3" stroke-dasharray="2 9" stroke-linecap="round"/>
+      </g>
+      <g>
+        <rect x="34" y="170" width="9" height="15" rx="2" fill="#FF7A59" transform="rotate(-24 38 177)"/>
+        <rect x="74" y="140" width="8" height="13" rx="2" fill="#A995F5" transform="rotate(18 78 146)"/>
+        <circle cx="58" cy="212" r="5" fill="#6FCFC0"/>
+        <path d="M18 238q6-8 12 0t12 0" fill="none" stroke="#5B3FC4" stroke-width="3" stroke-linecap="round"/>
+        <rect x="102" y="196" width="8" height="13" rx="2" fill="#FFFFFF" stroke="#1D2440" stroke-width="1.5" transform="rotate(40 106 202)"/>
+        <rect x="300" y="152" width="9" height="15" rx="2" fill="#6FCFC0" transform="rotate(22 304 159)"/>
+        <rect x="340" y="196" width="8" height="13" rx="2" fill="#FF7A59" transform="rotate(-30 344 202)"/>
+        <circle cx="326" cy="128" r="5" fill="#A995F5"/>
+        <path d="M344 236q6-8 12 0t12 0" fill="none" stroke="#E5502B" stroke-width="3" stroke-linecap="round"/>
+        <rect x="282" y="210" width="8" height="12" rx="2" fill="#FFFFFF" stroke="#1D2440" stroke-width="1.5" transform="rotate(-12 286 216)"/>
+        <path d="M22 160l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFF8EF" stroke="#1D2440" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M362 160l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFF8EF" stroke="#1D2440" stroke-width="1.8" stroke-linejoin="round"/>
+      </g>
+      <path d="M0 262C40 252 80 252 120 262S200 272 240 262S330 252 390 262V318H0Z" fill="#6FCFC0"/>
+      <path d="M0 262C40 252 80 252 120 262S200 272 240 262S330 252 390 262" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+      <path d="M0 284C46 276 92 276 138 284S230 292 276 284S350 278 390 284V318H0Z" fill="#0F7D72"/>
+      <path d="M0 284C46 276 92 276 138 284S230 292 276 284S350 278 390 284" fill="none" stroke="#1D2440" stroke-width="2.5"/>
+    </svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span>Steht fest · 7 dabei</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#" aria-current="page">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+  </div>
+  <article class="result">
+    <div class="stamp" aria-hidden="true">
+      <svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="47" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/><circle cx="50" cy="50" r="39" fill="none" stroke="#1D2440" stroke-width="1.5" stroke-dasharray="2.5 4" stroke-linecap="round"/></svg>
+      <span class="stamp-t">noch<b>23</b>Tage</span>
+    </div>
+    <p class="eyebrow" style="color:var(--lagoon)"><svg class="ic" aria-hidden="true" style="color:var(--lagoon)"><use href="#i-check"/></svg>Termin steht fest</p>
+    <h1 class="h-display" style="font-size:36px;margin-top:4px">Es geht los!</h1>
+    <p class="result-date">Mi., 5. Mai –<br>Mo., 10. Mai 2027</p>
+    <p class="result-meta"><span><svg class="ic" aria-hidden="true"><use href="#i-moon"/></svg>5 Nächte</span><span><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>noch 23 Tage</span></p>
+    <div class="perf" aria-hidden="true" style="margin:0 2px 18px"></div>
+    <a class="btn btn-primary btn-block" href="#"><svg class="ic" aria-hidden="true"><use href="#i-cal-add"/></svg>Zum Kalender hinzufügen<svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></a>
+    <a class="btn btn-block" href="#" style="margin-top:12px"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Allen Bescheid geben</a>
+  </article>
+  <ol class="ptrack" aria-label="Fortschritt">
+    <li class="done"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Tage</li><li class="con" aria-hidden="true"></li>
+    <li class="done"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Abstimmen</li><li class="con" aria-hidden="true"></li>
+    <li class="now" aria-current="step"><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>Steht fest</li>
+  </ol>
+  <div class="pad" style="margin-top:18px">
+    <p style="font:800 17px/1.2 var(--f-display);margin-bottom:10px">Wer ist dabei? (7)</p>
+    <div style="display:flex;gap:8px">
+      <span class="av av-l" style="--c:#FFC9B8">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span><span class="av av-l" style="--c:#BFE0FF">JO</span><span class="av av-l" style="--c:#DDEFA8">TI</span><span class="av av-l" style="--c:#D9CCFF">AN</span><span class="av av-l" style="--c:#FFE08A">PA</span><span class="av av-l" style="--c:#B2E4DA">KE</span><span class="av av-l" style="--c:#FFC4DD">SA</span>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>06 · Termin steht fest</b><span>W11 · Goldene Stunde: die Sonne steht ganz oben, Konfetti, die Reise wird zur Bordkarte mit Countdown-Marke. Der eine laute Moment der App.</span></figcaption>
+</figure>
+
+<!-- 07 Dunkel: Vorschläge -->
+<figure class="shot">
+<div class="phone" style="box-shadow:0 0 0 10px #05070F,0 0 0 12px #3A4266,0 40px 70px -26px rgba(29,36,64,.55)"><div class="app dark">
+  <div class="sky sky-night">
+    <svg class="sky-deco" viewBox="0 0 390 171" aria-hidden="true" focusable="false">
+      <path d="M228 100A62 62 0 0 1 352 100" fill="none" stroke="#F5EEE3" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".35"/>
+      <path d="M321 34A12 12 0 0 0 321 58A16 16 0 0 1 321 34Z" fill="#FFE08A"/>
+      <g fill="#F5EEE3"><circle cx="40" cy="20" r="1.3"/><circle cx="120" cy="34" r="1"/><circle cx="182" cy="16" r="1.4"/><circle cx="210" cy="44" r="1"/><circle cx="268" cy="22" r="1.2"/><circle cx="370" cy="70" r="1"/><circle cx="160" cy="58" r=".9"/><circle cx="84" cy="12" r=".9"/></g>
+      <path d="M286 76l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFE08A"/>
+      <path d="M362 26l1.4 3.2 3.2 1.4-3.2 1.4-1.4 3.2-1.4-3.2-3.2-1.4 3.2-1.4z" fill="#F5EEE3"/>
+    </svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#" aria-current="page">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <svg class="wave" viewBox="0 0 390 20" preserveAspectRatio="none" aria-hidden="true" focusable="false"><path d="M0 12C40 3 80 3 120 11S200 19 240 11S330 3 390 11V20H0Z"/></svg>
+  </div>
+  <div class="pad" style="padding-top:4px">
+    <div class="seg" aria-hidden="true"><span class="on">Vorschläge</span><span>Kalender</span></div>
+    <div class="statusband" style="margin-top:10px">
+      <span class="avs" aria-hidden="true" style="margin-top:2px"><span class="av open" style="box-shadow:none">KE</span><span class="av open" style="box-shadow:none">SA</span></span>
+      <p><b>5 von 7 haben abgegeben.</b> Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.</p>
+    </div>
+    <h2 class="sg-h"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Alle dabei (2)</h2>
+    <article class="sg-card picked">
+      <div class="vtop"><h3 class="vdate">Mi., 5. Mai – Mo., 10. Mai</h3><span class="rank" style="background:#F5EEE3;color:#12162B">1</span></div>
+      <p class="sg-meta">bis zu 5 Nächte · ca. 3 Urlaubstage <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg></p>
+      <div class="pearls" aria-hidden="true"><i class="p3"></i><i class="p4"></i><i class="p4"></i><i class="p4"></i><i class="p4"></i><i class="p3"></i></div>
+      <div class="chips"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span><span class="tag tag-hol"><i class="tri"></i>inkl. Christi Himmelfahrt</span></div>
+      <div class="sg-act"><a class="link" href="#">Im Kalender zeigen</a><span class="chk on" role="checkbox" aria-checked="true"><span class="box"><svg aria-hidden="true"><use href="#i-check"/></svg></span>Zur Abstimmung</span></div>
+    </article>
+    <article class="sg-card">
+      <h3 class="vdate">Sa., 12. Juni – Sa., 19. Juni</h3>
+      <p class="sg-meta">bis zu 7 Nächte · ca. 5 Urlaubstage <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg></p>
+      <div class="pearls" aria-hidden="true"><i class="p4"></i><i class="p3"></i><i class="p3"></i><i class="p4"></i><i class="p3"></i><i class="p4"></i><i class="p4"></i><i class="p3"></i></div>
+      <div class="chips"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span></div>
+      <div class="sg-act"><a class="link" href="#">Im Kalender zeigen</a><span class="chk" role="checkbox" aria-checked="false"><span class="box"></span>Zur Abstimmung</span></div>
+    </article>
+    <h2 class="sg-h" style="margin-top:28px"><svg class="ic" aria-hidden="true" style="color:var(--text-2)"><use href="#i-users"/></svg>Fast alle dabei (3)</h2>
+  </div>
+  <div class="sheet-bar" style="padding:12px 16px 30px;display:flex;align-items:center;gap:12px">
+    <span style="font:700 14px/1.2 var(--f-ui);color:var(--text-2);flex:none">1 ausgewählt</span>
+    <a class="btn btn-primary" href="#" style="flex:1;min-height:50px;font-size:16px">Abstimmung erstellen</a>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>07 · Dunkel: Vorschläge</b><span>W09 im Dunkelmodus „Nacht am Meer“ – Mond statt Sonne, Lagune wird Mint, Konturen weichen Flächen. Orga-Sicht mit Auswahl.</span></figcaption>
+</figure>
+
+</main>
+
+<h2 class="section-title">Bausteine</h2>
+<div class="parts">
+  <section class="doc-card" aria-labelledby="t-btn">
+    <h2 id="t-btn">Buttons &amp; Zustände</h2>
+    <div class="board-row app" style="position:static;display:flex;flex-direction:row;background:none;overflow:visible">
+      <div><a class="btn btn-primary" href="#">Mitmachen</a><span class="state-cap">Standard</span></div>
+      <div><a class="btn btn-primary" href="#" style="background:#FF6A45;transform:translateY(-1px);box-shadow:0 5px 0 #1D2440">Mitmachen</a><span class="state-cap">Hover</span></div>
+      <div><a class="btn btn-primary" href="#" style="transform:translateY(3px);box-shadow:0 1px 0 #1D2440">Mitmachen</a><span class="state-cap">Gedrückt (Aufkleber drückt sich an)</span></div>
+      <div><a class="btn btn-primary" href="#" style="outline:3px solid #2B59C3;outline-offset:4px">Mitmachen</a><span class="state-cap">Fokus</span></div>
+      <div><span class="btn" aria-disabled="true" style="background:#F7EBDA;color:#646B88;border:2px dashed #7C8199;box-shadow:none">Mitmachen</span><span class="state-cap">Deaktiviert + Grund daneben</span></div>
+      <div><a class="btn" href="#">Allen Bescheid geben</a><span class="state-cap">Sekundär</span></div>
+    </div>
+  </section>
+  <section class="doc-card" aria-labelledby="t-icons">
+    <h2 id="t-icons">Icons (24er Raster, 2 px, runde Enden)</h2>
+    <div class="icons-row" aria-hidden="true">
+      <span><svg class="ic"><use href="#i-cal"/></svg></span><span><svg class="ic"><use href="#i-moon"/></svg></span><span><svg class="ic"><use href="#i-users"/></svg></span><span><svg class="ic"><use href="#i-check"/></svg></span><span><svg class="ic"><use href="#i-maybe"/></svg></span><span><svg class="ic"><use href="#i-cross"/></svg></span><span><svg class="ic"><use href="#i-sun"/></svg></span><span><svg class="ic"><use href="#i-star"/></svg></span><span><svg class="ic"><use href="#i-crown"/></svg></span><span><svg class="ic"><use href="#i-range"/></svg></span><span><svg class="ic"><use href="#i-undo"/></svg></span><span><svg class="ic"><use href="#i-spark"/></svg></span><span><svg class="ic"><use href="#i-mega"/></svg></span><span><svg class="ic"><use href="#i-share"/></svg></span><span><svg class="ic"><use href="#i-cal-add"/></svg></span><span><svg class="ic"><use href="#i-globe"/></svg></span><span><svg class="ic"><use href="#i-clock"/></svg></span><span><svg class="ic"><use href="#i-mail"/></svg></span><span><svg class="ic"><use href="#i-lock"/></svg></span><span><svg class="ic"><use href="#i-chat"/></svg></span>
+    </div>
+    <p style="margin-top:14px">Neu: <b>Sonnen-Siegel</b> (<svg class="ic ic-s" aria-hidden="true"><use href="#b-sun"/></svg>) ersetzt das ✓-Badge der Heatmap – gleiche Bedeutung „alle: Geht“, gleiche Position unten rechts.</p>
+  </section>
+  <section class="doc-card" aria-labelledby="t-avatar">
+    <h2 id="t-avatar">Avatare als Aufkleber</h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="av av-l" style="--c:#FFC9B8">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span><span class="av av-l" style="--c:#BFE0FF">JO</span><span class="av av-l" style="--c:#DDEFA8">TI</span><span class="av av-l" style="--c:#D9CCFF">AN</span><span class="av av-l" style="--c:#FFE08A">PA</span><span class="av av-l" style="--c:#B2E4DA">KE</span><span class="av av-l" style="--c:#FFC4DD">SA</span><span class="av av-l" style="--c:#F1DCC0">MO</span><span class="av av-l open" style="color:#4A5170;border-color:#7C8199">KE</span>
+    </div>
+    <p style="margin-top:14px">8 helle Töne, Initialen in Tinte (≥ 9 : 1), 2-px-Kontur. Krone = Orga (immer mit Text), gestrichelt = noch offen.</p>
+  </section>
+</div>
+
+</body>
+</html>
