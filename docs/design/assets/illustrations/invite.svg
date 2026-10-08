@@ -1,50 +1,48 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="240" height="160" role="img" aria-labelledby="t d">
-  <title id="t">Du bist eingeladen</title>
-  <desc id="d">Ein Reiseticket: links ein Abschnitt mit Sonne über dem Meer, rechts drei Mitreisende und ein freier, gestrichelter Platz für dich. Motiv für die Einladungs-Vorschau (W03, F-003).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="240" height="160" aria-hidden="true" focusable="false">
+  <title>Einladung</title>
+  <desc>Kleine Einladungs-Illustration (W03, F-003, Fallback ohne Reisekarte, z. B. in Mails oder Fehlerfällen): eine gekippte Indigo-Reisekarte mit Abendsonne und Minze-Wellen, daneben ein Papierflieger. Keine Namen oder Initialen. Dekorativ.</desc>
+  <!-- v1.0, Stil B. In W03 selbst ist die HTML-Reisekarte mit trip-card-motif.svg führend.
+       Ebenen (M-D3): letter (Karte gleitet ein), plane (Flieger). Gekippte Gruppen liegen in äußeren data-anim-Gruppen. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .ink   { fill: var(--ww-illu-ink, #1C2526); }
-    .sub   { fill: var(--ww-illu-subtle, #858C8A); }
-    .subS  { stroke: var(--ww-illu-subtle, #858C8A); }
-    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
-    .deep  { fill: var(--ww-illu-sea, #08403F); }
-    .sun   { fill: var(--ww-illu-sun, #F4B942); }
-    .coral { fill: var(--ww-illu-coral, #E8694A); }
-    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-onb { fill: var(--ww-illu-on-brand, #FFFFFF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-s-brand { stroke: var(--ww-illu-brand, #2B2266); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
-      .sub   { fill: var(--ww-illu-subtle, #6B7775); }
-      .subS  { stroke: var(--ww-illu-subtle, #6B7775); }
-      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .deep  { fill: var(--ww-illu-sea, #287268); }
-      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
-      .coral { fill: var(--ww-illu-coral, #F28A6E); }
-      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-s-brand { stroke: var(--ww-illu-brand, #5B48C9); }
     }
   </style>
   <defs>
-    <clipPath id="inv-stub"><rect x="40" y="46" width="160" height="76" rx="10"/></clipPath>
+    <clipPath id="wwinv-card"><rect x="40" y="34" width="140" height="92" rx="16"/></clipPath>
   </defs>
-  <circle class="plate" cx="120" cy="84" r="72"/>
-  <g transform="rotate(-6 120 84)">
-    <rect class="paper inkS" x="40" y="46" width="160" height="76" rx="10" stroke-width="2"/>
-    <g clip-path="url(#inv-stub)">
-      <rect class="teal" x="40" y="46" width="52" height="76"/>
-      <circle class="sun" cx="66" cy="88" r="13"/>
-      <path class="deep" d="M40 92c6-3 12-3 18 0s12 3 18 0 12-3 16 0v32H40z"/>
+  <rect class="wi-plate" x="20" y="8" width="200" height="144" rx="32"/>
+  <g data-anim="letter">
+    <g transform="rotate(-6 110 80)">
+      <rect class="wi-brand" x="40" y="34" width="140" height="92" rx="16"/>
+      <g clip-path="url(#wwinv-card)">
+        <circle class="wi-sun" cx="150" cy="62" r="24" opacity=".25"/>
+        <circle class="wi-sun" cx="150" cy="62" r="15"/>
+        <path class="wi-mint" d="M40 108c15-5 30-5 45 0s30 5 45 0 30-5 50 0v20H40z"/>
+        <path class="wi-mintd" d="M40 117c15-4 30-4 45 0s30 4 45 0 30-4 50 0v12H40z"/>
+      </g>
+      <rect class="wi-onb" x="54" y="50" width="52" height="8" rx="4" opacity=".9"/>
+      <rect class="wi-onb" x="54" y="64" width="34" height="6" rx="3" opacity=".55"/>
+      <g class="wi-onb" opacity=".8"><circle cx="60" cy="88" r="5"/><circle cx="72" cy="88" r="5"/><circle cx="84" cy="88" r="5"/></g>
     </g>
-    <rect x="40" y="46" width="160" height="76" rx="10" fill="none" class="inkS" stroke-width="2"/>
-    <path class="subS" d="M92 50v68" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
-    <rect class="ink" x="104" y="62" width="58" height="7" rx="3.5"/>
-    <rect class="sub" x="104" y="76" width="80" height="5" rx="2.5"/>
-    <circle class="coral" cx="112" cy="102" r="7"/>
-    <circle class="sun" cx="128" cy="102" r="7"/>
-    <circle class="tealL" cx="144" cy="102" r="7"/>
-    <circle class="paper subS" cx="162" cy="102" r="7" stroke-width="2" stroke-dasharray="3 2.5"/>
+  </g>
+  <g data-anim="plane">
+    <g transform="rotate(-18 196 40)">
+      <path class="wi-paper" d="M176 42l40-14-14 36-8-14z"/>
+      <path class="wi-s-brand" d="M176 42l40-14-14 36-8-14zM194 50l22-22" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
   </g>
 </svg>

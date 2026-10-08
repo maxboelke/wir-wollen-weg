@@ -1,6 +1,6 @@
 # Richtung B – „Reise-Cockpit“
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: **Entwurf zur Auswahl** (Look & Feel 2.0, ersetzt nichts in `docs/design/`, bis der Auftraggeber entschieden hat)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: **gewählt** (Auftraggeber 2026-10-08, PRD §12 Q18, Palette B0) und **überführt in [Design-System v1.0](../../design-system.md)** – dieses Dokument ist ab jetzt Archiv/Begründung; bei Abweichungen gilt das Design-System (u. a. Kalender-Rand 8 px nach U-1, Tippflächen ≥ 44 px, Werkzeugleiste 150 px, keine hochzählenden Zahlen). Endgültige Assets: `docs/design/assets/`.
 Bezug: [index.html](index.html) (7 High-Fidelity-Screens + Bausteine) · Vergleich: [Richtung A](../a/richtung-a.md) · [Design-System v0.5](../../design-system.md) · [tokens.css](../../tokens.css) · UX: [ux-spec](../../../ux/ux-spec.md), Wireframes W01, W02, W03, W08, W09, W10, W11
 
 Anlass: Der Auftraggeber mag die Gestaltung der App **Finanzguru** und möchte eine zweite Richtung sehen, die sich an deren Prinzipien orientiert – ohne Kopie. Ziel bleibt: ansprechend, macht Spaß, nicht spartanisch.
@@ -227,13 +227,13 @@ Grundsatz: **Bewegung zeigt Fortschritt.** Zahlen zählen, Ringe füllen sich, B
 | Moment | Idee | Dauer (Vorschlag) |
 |---|---|---|
 | **Ladezustand** | Logo-Sonne steigt im Kalenderblatt auf, die Wellen schwingen einmal nach (`logo-mark-b-sonnenkalender.svg`, Gruppen `sonne`, `welle`). Dauert das Laden > 5 s: statisch + Text „Lädt …“ | 900 ms, einmal |
-| **Kennzahl ändert sich** (z. B. jemand gibt ab) | Ring wächst per `stroke-dashoffset` um ein Segment, Zahl zählt hoch (4 → 5) | 500–600 ms, ease-out |
+| **Kennzahl ändert sich** (z. B. jemand gibt ab) | Ring wächst per `stroke-dashoffset` um ein Segment; die Zahl wechselt **sofort** (4 → 5, höchstens Überblenden) – **kein Hochzählen** (CEO 2026-10-08, Motion G-16, F-052) | 480 ms (`duration-moderate`) |
 | **Fertig – abgeben** (W08) | Taste füllt sich, Text wird zum Häkchen, Wechsel ins Cockpit: eigener Ring-Schritt kommt dazu | ≤ 700 ms |
 | **Malen in Meine Tage** | Zelle drückt sich kurz an (scale .96, 80 ms), Plakette ✕/◐ ploppt mit kleinem Überschwinger | ≤ 140 ms je Zelle |
 | **Heatmap erscheint** (W09) | Zellen blenden zeilenweise ein (Versatz 20 ms), danach ploppen die Minze-Siegel, Rahmen „alle können“ zeichnet sich | ≤ 500 ms gesamt |
 | **Vorschlag blättern** (W09) | Indigo-Band zeichnet sich von An- zu Abreisetag; auf Karten wachsen die Tages-Balken von unten (Versatz 30 ms) | 300 ms |
 | **Abstimmen** (W10) | gewählte Option füllt sich von der Mitte mit Indigo, Minze-Häkchen ploppt, Stimmen-Balken wächst von links, Zahlen zählen | 220–400 ms |
-| **Termin steht fest** (W11) | Vorfreude-Ring zeichnet sich von 0 auf voll, der Sonnen-Punkt reitet auf der Spitze mit, Countdown zählt 0 → 23, Konfetti fällt einmal, Schein pulsiert einmal (`vorfreude-ring.svg`: `ring`, `ring-sonne`, `konfetti`, `schein`) | 1,4–1,8 s gesamt |
+| **Termin steht fest** (W11) | Vorfreude-Ring zeichnet sich von 0 auf voll, der Sonnen-Punkt reitet auf der Spitze mit, der Countdown **steht sofort** („23“, kein Hochzählen; zusätzlich als Text in der Ergebnis-Karte), Konfetti fällt einmal, Schein hellt einmal auf (endgültig: `assets/illustrations/countdown-ring.svg`, Ebenen `glow`, `confetti`, `track`, `ring`, `knob`, `sparkles`) | Kern ≤ 1 s, Ausklang ≤ 2,6 s |
 | **Einladung öffnen** (W03) | Reisekarte gleitet von unten ein (leichter Überschwinger), Sonne geht in der Karte auf, Avatare reihen sich nacheinander ein, „+1“ pulsiert einmal | ≤ 1 s |
 | **Code unterwegs** (W02/W03) | Brief gleitet in die Kachel, Minze-Häkchen ploppt; Kästchen bekommen beim Tippen ihren Rahmen (80 ms) | 400 ms |
 | **Startseite** | Übersichtskarte schwebt ein, Ring füllt sich auf 5/7, Rahmen „alle können“ zeichnen sich | ≤ 1,5 s, dann still |

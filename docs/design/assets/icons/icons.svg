@@ -3,7 +3,7 @@
   <!--
     Icon-Sprite v1.0 (Richtung B, Palette B0): 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6 px, Chevrons 2,25 px),
     runde Enden und Ecken, Farbe nur über currentColor, weiche Duoton-Füllung (16 Prozent der Strichfarbe) bei Flächen-Icons.
-    Alle IDs aus v0.5 bleiben gültig; neu: chevron-down, arrow-right, calendar-plus, sun, star, sparkle, chart, plane.
+    Alle IDs aus v0.5 bleiben gültig; neu: chevron-down, arrow-right, calendar-plus, sun, star, sparkle, chart, plane, login.
     Verwendung:
       <svg class="icon" width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>
     In Kacheln: Kachel-Fläche aus den Tile-Tokens, Icon-Farbe = passende Tile-Textfarbe.
@@ -213,6 +213,12 @@
     <title>Abmelden</title>
     <path d="M9.5 20.5H6A2.5 2.5 0 0 1 3.5 18V6A2.5 2.5 0 0 1 6 3.5h3.5"/>
     <path d="M15.5 16.5L20 12l-4.5-4.5M20 12H9"/>
+  </symbol>
+  <symbol id="ww-icon-login" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Anmelden</title>
+    <circle cx="9" cy="8" r="3.4" fill="currentColor" fill-opacity=".16"/>
+    <path d="M3 19.5c.7-3.4 3-5.2 6-5.2 1.3 0 2.4.3 3.4.9"/>
+    <path d="M14.5 15.5H21M18 12.5l3 3-3 3"/>
   </symbol>
   <symbol id="ww-icon-help" viewBox="0 0 24 24">
     <title>Hilfe</title>

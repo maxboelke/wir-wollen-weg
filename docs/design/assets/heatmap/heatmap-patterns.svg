@@ -1,59 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 200" width="360" height="200" role="img" aria-labelledby="t d">
-  <title id="t">Heatmap- und Verfügbarkeitsmuster</title>
-  <desc id="d">SVG-Pattern-Definitionen für „niemand kann“ (feine Schraffur), „ginge zur Not“ (breite Streifen) und „geht nicht“ (Kreuzschraffur), jeweils Light und Dark. Entsprechen den CSS-Gradients in tokens.css.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372 120" width="744" height="240" role="img" aria-labelledby="t d">
+  <title id="t">Muster v1.0: Schraffur niemand, Sonnenstreifen Zur Not, Kreuzschraffur Geht nicht</title>
+  <desc id="d">Pattern-Definitionen für hell und dunkel. In der App bevorzugt die CSS-Verläufe aus tokens.css (ww-pattern-hm-none, ww-pattern-avail-maybe, ww-pattern-avail-no) verwenden; diese Datei dient für SVG-Grafiken und als Referenz.</desc>
   <defs>
-    <!-- Light -->
+    <!-- niemand: 45 Grad, Linie 1,5 px, Abstand 6 px -->
     <pattern id="ww-pat-hm-none-light" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="1.5" height="6" fill="#CFC9C0"/>
+      <rect width="6" height="6" fill="#EEECF5"/><rect width="1.5" height="6" fill="#C9C6D4"/>
     </pattern>
-    <pattern id="ww-pat-avail-maybe-light" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="4" height="9" fill="#F1D58C"/>
-    </pattern>
-    <pattern id="ww-pat-avail-no-light" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="1.5" height="7" fill="#A8A196"/>
-      <rect width="7" height="1.5" fill="#A8A196"/>
-    </pattern>
-    <!-- Dark -->
     <pattern id="ww-pat-hm-none-dark" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="1.5" height="6" fill="#3A4544"/>
+      <rect width="6" height="6" fill="#221C4A"/><rect width="1.5" height="6" fill="#3A3370"/>
     </pattern>
-    <pattern id="ww-pat-avail-maybe-dark" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="4" height="9" fill="#54431A"/>
+    <!-- Zur Not: 135 Grad, Streifen 6 px / 12 px -->
+    <pattern id="ww-pat-maybe-light" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="6" height="12" fill="#FFDB73"/><rect x="6" width="6" height="12" fill="#FFF3CC"/>
     </pattern>
-    <pattern id="ww-pat-avail-no-dark" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect width="1.5" height="7" fill="#46504E"/>
-      <rect width="7" height="1.5" fill="#46504E"/>
+    <pattern id="ww-pat-maybe-dark" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(-45)">
+      <rect width="6" height="12" fill="#5A4A17"/><rect x="6" width="6" height="12" fill="#3A3113"/>
+    </pattern>
+    <!-- Geht nicht: Kreuzschraffur 45 und 135 Grad, Linie 1,5 px, Abstand 7 px -->
+    <pattern id="ww-pat-no-light" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#DDD9EA"/><rect width="1.5" height="7" fill="#ABA7BD"/><rect width="7" height="1.5" fill="#ABA7BD"/>
+    </pattern>
+    <pattern id="ww-pat-no-dark" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#2E2860"/><rect width="1.5" height="7" fill="#4A4290"/><rect width="7" height="1.5" fill="#4A4290"/>
     </pattern>
   </defs>
-  <style>
-    .lbl { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; }
-  </style>
-
-  <!-- Vorschau Light -->
-  <rect width="360" height="100" fill="#FBF8F3"/>
-  <rect x="24" y="12" width="64" height="56" rx="8" fill="#F1EEE8"/>
-  <rect x="24" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-hm-none-light)"/>
-  <rect x="148" y="12" width="64" height="56" rx="8" fill="#FDF0CF"/>
-  <rect x="148" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-avail-maybe-light)"/>
-  <rect x="272" y="12" width="64" height="56" rx="8" fill="#CFC9C0"/>
-  <rect x="272" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-avail-no-light)"/>
-  <g class="lbl" fill="#1C2526" text-anchor="middle">
-    <text x="56" y="88">niemand kann</text>
-    <text x="180" y="88">ginge zur Not</text>
-    <text x="304" y="88">geht nicht</text>
-  </g>
-
-  <!-- Vorschau Dark -->
-  <rect y="100" width="360" height="100" fill="#111819"/>
-  <rect x="24" y="112" width="64" height="56" rx="8" fill="#1C2526"/>
-  <rect x="24" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-hm-none-dark)"/>
-  <rect x="148" y="112" width="64" height="56" rx="8" fill="#3A2E12"/>
-  <rect x="148" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-avail-maybe-dark)"/>
-  <rect x="272" y="112" width="64" height="56" rx="8" fill="#262D2C"/>
-  <rect x="272" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-avail-no-dark)"/>
-  <g class="lbl" fill="#ECF1F0" text-anchor="middle">
-    <text x="56" y="188">niemand kann</text>
-    <text x="180" y="188">ginge zur Not</text>
-    <text x="304" y="188">geht nicht</text>
-  </g>
+  <rect width="372" height="60" fill="#FFFFFF"/>
+  <rect y="60" width="372" height="60" fill="#1F1A45"/>
+  <rect x="12" y="8" width="108" height="44" rx="11" fill="url(#ww-pat-hm-none-light)"/>
+  <rect x="132" y="8" width="108" height="44" rx="11" fill="url(#ww-pat-maybe-light)"/>
+  <rect x="252" y="8" width="108" height="44" rx="11" fill="url(#ww-pat-no-light)"/>
+  <rect x="12" y="68" width="108" height="44" rx="11" fill="url(#ww-pat-hm-none-dark)"/>
+  <rect x="132" y="68" width="108" height="44" rx="11" fill="url(#ww-pat-maybe-dark)"/>
+  <rect x="252" y="68" width="108" height="44" rx="11" fill="url(#ww-pat-no-dark)"/>
 </svg>

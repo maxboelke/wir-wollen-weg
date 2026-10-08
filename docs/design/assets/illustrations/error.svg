@@ -1,27 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
-  <title id="t">Hier geht es nicht weiter</title>
-  <desc id="d">Ein Wegweiser mit zwei leeren Schildern, die in verschiedene Richtungen zeigen, und eine gepunktete Route, die endet. Gemeinsames Motiv für ungültigen Link, Reise nicht gefunden, 404 und Serverfehler (W14).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Hier ging etwas schief</title>
+  <desc>Fehlerseiten W14 (Link ungültig, Reise nicht gefunden, 404, Serverfehler): eine Kalenderkarte mit eingerissener Ecke und eine Sonne hinter einer Wolke – ruhig, nicht alarmierend, kein Rot. Dekorativ.</desc>
+  <!-- v1.0, Stil B. Ruhe-Bereich (E0): höchstens Überblenden. Ebenen (M-D3): plate, calendar, cloud. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .ink   { fill: var(--ww-illu-ink, #1C2526); }
-    .coral { fill: var(--ww-illu-coral, #E8694A); }
-    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
-    .route { stroke: var(--ww-illu-teal, #0E6A68); }
-    .shadow{ fill: var(--ww-illu-ink, #1C2526); opacity: 0.12; }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-lav { fill: var(--ww-illu-lavender, #A79AF2); }
+    .wi-lavl { fill: var(--ww-illu-lavender-light, #D6CFFA); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
-      .coral { fill: var(--ww-illu-coral, #F28A6E); }
-      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
-      .route { stroke: var(--ww-illu-teal, #5FC9BA); }
-      .shadow{ fill: #000000; opacity: 0.35; }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-lavl { fill: var(--ww-illu-lavender-light, #362C7A); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
     }
   </style>
-  <circle class="plate" cx="80" cy="62" r="52"/>
-  <path class="route" d="M18 104c14-6 30-8 46-6" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 8"/>
-  <ellipse class="shadow" cx="80" cy="103" rx="22" ry="3"/>
-  <rect class="ink" x="77" y="34" width="6" height="70" rx="2"/>
-  <path class="coral" d="M80 38H50l-10 9 10 9h30z"/>
-  <path class="tealL" d="M80 62h32l10 9-10 9H80z"/>
-  <circle class="ink" cx="80" cy="34" r="4"/>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g data-anim="calendar">
+    <path class="wi-paper" d="M66 58h96a14 14 0 0 1 14 14v34l-22 22H66a14 14 0 0 1-14-14V72a14 14 0 0 1 14-14z"/>
+    <path class="wi-lavl" d="M176 106l-22 22v-12a10 10 0 0 1 10-10z"/>
+    <rect class="wi-brand" x="66" y="70" width="58" height="8" rx="4"/>
+    <g class="wi-lavl"><rect x="66" y="88" width="22" height="18" rx="6"/><rect x="93" y="88" width="22" height="18" rx="6"/><rect x="120" y="88" width="22" height="18" rx="6"/><rect x="66" y="110" width="22" height="10" rx="5"/></g>
+    <rect class="wi-lav" x="80" y="50" width="7" height="14" rx="3.5"/>
+    <rect class="wi-lav" x="140" y="50" width="7" height="14" rx="3.5"/>
+  </g>
+  <g data-anim="cloud">
+    <circle class="wi-sun" cx="176" cy="44" r="16"/>
+    <path class="wi-paper" d="M150 56a10 10 0 0 1 18-6 12 12 0 0 1 22 4 8 8 0 0 1 0 16h-38a7 7 0 0 1-2-14z"/>
+  </g>
 </svg>

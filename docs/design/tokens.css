@@ -211,7 +211,7 @@
 
   /* ---------------- Größen ---------------- */
   --ww-size-touch-min: 44px;
-  --ww-size-control-sm: 40px;
+  --ww-size-control-sm: 44px;     /* kleine Taste – nie unter 44 px (D-20) */
   --ww-size-control-md: 48px;     /* Eingabefeld, Sekundär-Taste */
   --ww-size-control-lg: 54px;     /* Haupt-Taste */
   --ww-size-icon-sm: 16px;
@@ -228,16 +228,32 @@
   --ww-size-seal-sm: 20px;        /* Siegel klein (Beitritt, Abgabe) */
   --ww-size-seal-md: 40px;
   --ww-size-seal-lg: 64px;        /* Siegel groß (Termin steht fest) */
-  --ww-size-cal-cell-min-w: 40px;
-  --ww-size-cal-cell-h: 46px;     /* mobil */
+  /* Kalender mobil (U-1, CEO bestätigt 2026-10-08): 8 px Rand GESAMT je Seite,
+     4 px Spaltenfuge → Zelle (360 − 16 − 24) / 7 = 45,7 px bei 360 px, nie < 44 px.
+     Unter 600 px: Kalender-Karte 4 px vom Bildschirmrand + 4 px Innenrand. */
+  --ww-size-cal-cell-min-w: 44px;
+  --ww-size-cal-cell-h: 46px;     /* mobil (+ 9 px Zeilenfuge = 55 px Zeilenraster) */
   --ww-size-cal-cell-h-lg: 64px;  /* ab 600 px */
   --ww-size-cal-gap: 4px;         /* Spaltenfuge – trägt die Wochenend-Spur */
   --ww-size-cal-row-gap: 9px;     /* Zeilenfuge – trägt das Vorschlag-Band (4 px) */
-  --ww-size-cal-inset-sm: 8px;    /* Kalender-Innenrand < 600 px (Karte 12 + 8) */
+  --ww-size-cal-inset-sm: 8px;    /* Rand gesamt < 600 px (= Karte 4 + innen 4) */
+  --ww-size-cal-card-gutter-sm: 4px; /* Abstand Kalender-Karte zum Bildschirmrand < 600 px */
+  --ww-size-cal-card-pad-sm: 4px;    /* Innenrand der Kalender-Karte < 600 px */
   --ww-size-cal-inset: 16px;
   --ww-size-sheet-half: 50dvh;
   --ww-size-sheet-full: 92dvh;
-  --ww-size-toolbar-max: 160px;   /* Werkzeugleiste „Meine Tage“ ohne Safe-Area */
+  /* Werkzeugleiste „Meine Tage“ ≤ 150 px ohne Safe-Area (D-28, CEO 2026-10-08):
+     8 Polster · 16 Statuszeile · 4 · ≤ 58 Pinsel · 8 · 48 Werkzeugzeile · 8. Kein Griff, kein Label. */
+  --ww-size-toolbar-max: 150px;
+  --ww-size-toolbar-status-h: 16px;
+  --ww-size-toolbar-brush-h: 58px;
+  --ww-size-toolbar-tool-w: 44px;  /* Werkzeug-Kachel < 400 px: 44 × 48 */
+  --ww-size-toolbar-tool-h: 48px;
+  --ww-size-suggest-bar-max: 120px;/* Vorschlag-Leiste W09 ohne Safe-Area */
+  /* Cockpit-Tabs (D-20): Pille 44 px hoch, Spur 48 px (4 px Polster) */
+  --ww-size-tab-h: 44px;
+  --ww-size-tab-track-h: 48px;
+  --ww-size-cockpit-compact-h: 104px; /* sticky kompakter Kopf: Zeile 48 + Tabs 48 + 8 */
   --ww-size-toast-gap: 8px;
   --ww-size-code-box-w: 48px;     /* < 380 px: 44px */
   --ww-size-code-box-h: 58px;     /* < 380 px: 54px */
@@ -1002,14 +1018,16 @@
     var(--ww-hm-weekend-lane)
   );
 
-  /* Cockpit-Lichtflecken: Minze oben rechts, Lavendel oben links */
+  /* Cockpit-Lichtflecken: Minze oben rechts, Lavendel oben links.
+     Feste Höhe 96 px (D-23): die Flecken enden in der Kopfzeile und liegen NIE
+     unter Tabs oder Kennzahl-Box → Kennzahl-Text dort ≥ 6,9 : 1. */
   --ww-cockpit-image: radial-gradient(
-      70% 60% at 100% 0,
+      240px 96px at 100% 0,
       var(--ww-cockpit-glow-mint) 0,
       var(--ww-cockpit-glow-mint-0) 100%
     ),
     radial-gradient(
-      70% 70% at 0 0,
+      220px 96px at 0 0,
       var(--ww-cockpit-glow-lavender) 0,
       var(--ww-cockpit-glow-lavender-0) 100%
     );
@@ -1029,6 +1047,12 @@
   /* Fokus auf Indigo-Flächen (Cockpit, Reisekarte, gewählte Stimme): weißer Ring */
   --ww-focus-ring-on-brand: 0 0 0 var(--ww-focus-offset) var(--ww-cockpit-bg),
     0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus-on-brand);
+  /* Fokus in der Cockpit-Tab-Spur und an Minze-Tasten auf Indigo (D-22):
+     Hof 2 px Indigo + Ring 3 px Weiß + Hof 2 px Indigo – sichtbar auch an der
+     weißen aktiven Pille. Fokussierter Tab z-index: 1. */
+  --ww-focus-ring-on-brand-isolated: 0 0 0 2px var(--ww-cockpit-bg),
+    0 0 0 5px var(--ww-color-focus-on-brand),
+    0 0 0 7px var(--ww-cockpit-bg);
   /* Fokus in dichten Rastern (Kalender, Segmente): Hof auf beiden Seiten.
      Zelle bei Fokus position: relative; z-index: 1. */
   --ww-focus-ring-isolated: 0 0 0 2px var(--ww-color-focus-gap),

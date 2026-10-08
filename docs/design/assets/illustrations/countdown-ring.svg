@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 352" width="390" height="352" aria-hidden="true" focusable="false">
+  <title>Feier: Vorfreude-Ring</title>
+  <desc>Feier-Cockpit „Es geht los!“ (W11, F-012): Indigo-Fläche mit Sonnenschein, Konfetti und einem Ring, der sich von Minze nach Sonne füllt; ein Sonnenpunkt sitzt an der Spitze des Rings. Dekorativ.</desc>
+  <!-- v1.0 – DIE Feier der App (CEO 2026-10-08): ersetzt Siegel + Kalenderblatt aus Motion W11-02.
+       Countdown „noch / 23 / Tage“ liegt als HTML in der Ringmitte (Mittelpunkt 195, 236; Ring-Radius 66, Strich 12)
+       und steht ZUSÄTZLICH als Text in der Ergebnis-Karte (D-24). Zahlen zählen NICHT hoch (G-16, F-052).
+
+       Animierbare Ebenen (data-anim), Reihenfolge für die Zeitleiste des Motion Designers:
+         backdrop   Indigo-Fläche (statisch; inline weglassen, wenn das Cockpit selbst den Grund liefert)
+         glow       Sonnenschein hinter dem Ring (einmal aufhellen, Deckkraft)
+         track      Ring-Spur (statisch)
+         ring       Ring-Füllung: Pfad mit pathLength="100"; zeichnen über stroke-dashoffset 100 → Endwert.
+                    Endwert = 100 − Anteil (hier 96,5 % → dashoffset 3,5; dasharray "96.5 100").
+                    Anteil = vergangene Vorfreude-Zeit; Startpunkt oben (12 Uhr), im Uhrzeigersinn.
+         knob       Sonnenpunkt: äußere Gruppe um den Ring-Mittelpunkt drehen (transform-origin 195px 236px),
+                    von −347° auf 0° synchron zu ring; innere Gruppe trägt die Endlage (rotate 347).
+         confetti   12 Teilchen, jede als eigene Gruppe mit data-piece (1–12) für Staffel/Fall; Formen M-D5.
+         sparkles   3 Funkel, ploppen nach dem Ring (scale-pop).
+       Statischer Endzustand = diese Datei (Reduced Motion). Keine Texte. IDs mit Präfix wwcr. -->
+  <defs>
+    <linearGradient id="wwcr-grad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#52E5B8" style="stop-color: var(--ww-ring-start, #52E5B8)"/>
+      <stop offset="1" stop-color="#FFCF4A" style="stop-color: var(--ww-ring-end, #FFCF4A)"/>
+    </linearGradient>
+  </defs>
+  <g data-anim="backdrop">
+    <rect width="390" height="352" fill="#2B2266" style="fill: var(--ww-cockpit-bg, #2B2266)"/>
+  </g>
+  <g data-anim="glow">
+    <circle cx="195" cy="236" r="150" fill="#FFCF4A" opacity=".08"/>
+    <circle cx="195" cy="236" r="112" fill="#FFCF4A" opacity=".12"/>
+  </g>
+  <g data-anim="confetti">
+    <g data-piece="1"><rect x="34" y="176" width="9" height="15" rx="3" fill="#52E5B8" transform="rotate(-24 38 183)"/></g>
+    <g data-piece="2"><rect x="76" y="232" width="8" height="13" rx="3" fill="#FFCF4A" transform="rotate(18 80 238)"/></g>
+    <g data-piece="3"><circle cx="56" cy="286" r="5" fill="#A79AF2"/></g>
+    <g data-piece="4"><rect x="92" y="170" width="8" height="12" rx="3" fill="#F0503F" transform="rotate(40 96 176)"/></g>
+    <g data-piece="5"><rect x="22" y="236" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(-12 26 242)"/></g>
+    <g data-piece="6"><rect x="300" y="174" width="9" height="15" rx="3" fill="#FFCF4A" transform="rotate(22 304 181)"/></g>
+    <g data-piece="7"><rect x="346" y="226" width="8" height="13" rx="3" fill="#52E5B8" transform="rotate(-30 350 232)"/></g>
+    <g data-piece="8"><circle cx="334" cy="292" r="5" fill="#F0503F"/></g>
+    <g data-piece="9"><rect x="290" y="240" width="8" height="12" rx="3" fill="#A79AF2" transform="rotate(-12 294 246)"/></g>
+    <g data-piece="10"><rect x="358" y="176" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(30 362 182)"/></g>
+    <g data-piece="11"><rect x="128" y="150" width="11" height="2.5" rx="1.25" fill="#FFCF4A" transform="rotate(-35 133 151)"/></g>
+    <g data-piece="12"><rect x="252" y="146" width="11" height="2.5" rx="1.25" fill="#52E5B8" transform="rotate(30 257 147)"/></g>
+  </g>
+  <g data-anim="track">
+    <circle cx="195" cy="236" r="66" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="12"/>
+  </g>
+  <g data-anim="ring">
+    <path id="wwcr-ring" d="M195 170a66 66 0 1 1 0 132a66 66 0 1 1 0-132" pathLength="100" fill="none" stroke="url(#wwcr-grad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="96.5 100" stroke-dashoffset="0"/>
+  </g>
+  <g data-anim="knob">
+    <g transform="rotate(347 195 236)">
+      <circle cx="195" cy="170" r="9" fill="#FFCF4A" stroke="#2B2266" stroke-width="3" style="fill: var(--ww-ring-knob, #FFCF4A); stroke: var(--ww-ring-knob-edge, #2B2266)"/>
+    </g>
+  </g>
+  <g data-anim="sparkles">
+    <path d="M70 196l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#52E5B8"/>
+    <path d="M322 200l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFFFFF"/>
+    <path d="M104 296l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFCF4A"/>
+  </g>
+</svg>

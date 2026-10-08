@@ -1,6 +1,6 @@
 # Abstimmung Design ↔ UI/UX
 
-Stand: 2026-10-08 (Nachtrag Auftraggeber-Entscheidungen, D-19) · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
+Stand: 2026-10-08 (Runde 3: Design-System v1.0 Richtung B/B0, Antworten D-20–D-35 und M-D1–M-D9 – §5–§8) · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
 
 Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (Stand 2026-10-08). Vielen Dank für die sehr präzisen Punkte – fast alles ist übernommen. Abweichungen sind mit **⚠ Abweichung** markiert und begründet.
 
@@ -124,7 +124,7 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 | U-13 | „Noch offen" mit gestricheltem Ring | erledigt | von UX bestätigt |
 | U-14 | Benennung der Vorschlagsgruppen | entschieden (CEO, 2026-10-08) | „Alle dabei" / „Everyone's in"; Folgeentscheid UX „Fast alle dabei" / „Almost everyone's in" (D-14) |
 
-**Bestätigt (Auftraggeber 2026-10-08):**
+**Bestätigt (Auftraggeber 2026-10-08):** *(Hinweis v1.0: Farben, Schrift und Logo-Einfärbung sind durch Q18 – Richtung B/B0 – abgelöst; Plus Jakarta Sans + Figtree statt Figtree + Systemschrift. Struktur- und Namensregeln gelten weiter. Siehe §5–§7.)*
 - **Marke:** zwei Namen, eine Bildmarke – DE „Wir wollen weg", EN **„When do we go?"** (abweichend von der Design-Empfehlung). EN-Wortmarke mit „go?" in Markenfarbe; „Find dates for your group trip" nur noch optionaler Untertitel (design-system §3.1–§3.4, `logo-wordmark-en.svg`, `logo-wordmark-en-tagline.svg`). Schreibregeln: ux-spec §10.6 – design-system verweist darauf.
 - **Logo:** Variante A „Sonnenkalender" (§3.3); Favicon/App-Icon/Wortmarken basieren darauf, Icons sprachneutral.
 - **Dark Mode:** im MVP nur System-folgend (`prefers-color-scheme`), kein Schalter (§13, D-12).
@@ -137,7 +137,66 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 - Teilen-Texte ohne Emojis: einverstanden.
 - „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
 
+## 5. Richtung B (v1.0): Struktur-Abweichungen gegenüber den Wireframes – Notiz an UI/UX
+
+B ändert die Optik; wo dabei Struktur berührt wird, hier die Liste (Stand nach deiner Runde 3, `docs/ux/abstimmung-design.md` §8 – vieles hast du schon entschieden, ich habe es übernommen):
+
+| # | Abweichung | Wireframe | Stand |
+|---|---|---|---|
+| S-1 | **Cockpit-Kopf mit Kennzahl-Box** ersetzt Statusband (W09) und Phasen-Chip im Kopf (W07, W10 ohne Box); kein globaler Header in Reisen; sticky nur der kompakte Kopf (104 px) | W07, W09, W10 | übernommen (B-3), design-system §9.2/§9.3 |
+| S-2 | **Kennzahl-Kacheln** Frist + Beteiligung statt Frist-Chip + Avatar-Reihe; Beteiligung = Button → Sheet | W10 | übernommen (B-4), §9.5 |
+| S-3 | **Kacheln „So geht's“** auf der Startseite, Liste unter 21,5 em; Hero-Karte unter dem CTA | W01 | übernommen (B-7, B-7a), §9.5 |
+| S-4 | **Vorschlag-Leiste unten im Kalender** (< 960 px, ≤ 120 px, kein Griff, keine Orga-Auswahl) | W09 | übernommen (B-6), §9.10 |
+| S-5 | **Werkzeugleiste W08**: Pinsel als Segment-Spur mit Mini-Feld über Label, Werkzeug-Kacheln 44 × 48 neben der Haupt-Taste, Zeitraum als Icon-Taste < 600 px, Statuszeile oben; **150 px, kein Griff, kein Label** | W08 | übernommen (W08, D-28), §9.9 |
+| S-6 | **Einladung W03 als Reisekarte** (Querformat, Indigo-Verlauf) statt Ticket-Illustration; nur Vorname der Orga, neutrale Avatar-Punkte | W03 | übernommen (D-25), §9.6 |
+| S-7 | **Feier W11 = Vorfreude-Ring im Cockpit** + Ergebnis-Karte darunter (Countdown auch als Text), Orga-Variante mit „Allen Bescheid geben“ primär | W11 | CEO 2026-10-08, §9.6/§9.12 |
+| S-8 | Abstimmungs-Optionen immer Icon über Label (60 px), Rang-Chip Sonne in der Kopfzeile | W10 | übernommen, §9.11 |
+| S-9 | Landing-Kopf < 375 px: „Anmelden“ als Icon-Taste | W01 | übernommen (D-29), §3.3 |
+
+Keine weiteren Struktur-Wünsche von meiner Seite.
+
+## 6. Antworten an Motion (M-D1–M-D9)
+
+Bezug: `docs/motion/abstimmung.md` §1. (Ich schreibe nicht in `docs/motion/` – Antworten hier, Motion übernimmt.)
+
+| # | Antwort Design | Wo |
+|---|---|---|
+| **M-D1** Neue Motion-Tokens | **Übernommen, Namen und Werte 1:1** aus motion-system §3 (Dauern, `ease-emphasized`, Federn als `linear()` im `@supports`-Block mit `cubic-bezier`-Fallback, Distanzen, Skalen, Staffel). Reduced-Motion-Werte gemäß §3.7 **zusätzlich unter `:root[data-motion="reduce"]`** (Konto-Schalter, Q17). | tokens.css §6, design-system §8.1 |
+| **M-D2** `duration-fade` bleibt bei reduzierter Bewegung | **Übernommen:** 140 ms in beiden Reduce-Blöcken. | tokens.css §6 |
+| **M-D3** Animierbare Illustrationen | **Umgesetzt** für alle 14 Illustrationen (`data-anim`, transformierte Gruppen in äußerer Gruppe, keine Texte, Endzustand statisch, IDs präfixiert). **Abweichung:** `hero.svg` ist in B die Übersichtskarte – Ebenen `plate`, `calendar`, `ring`, `friends`, `cells`, `band`, `sun`, `seal` (kein `sea`). `vote-done.svg` ist jetzt ein kompakter Vorfreude-Ring (`backdrop`, `glow`, `confetti`, `track`, `ring`, `knob`) statt Kalenderblatt mit Band. `invite.svg` hat `letter` (Reisekarte) und `plane`. | assets/README.md |
+| **M-D4** Siegel als Komponente | **Umgesetzt** als `illustrations/seal.svg` (Ebenen `disc`, `check`, `sparks`), Größen-Tokens 20/40/64. **Abweichung Farbe:** Minze-Kreis mit Indigo-Häkchen statt Sonne – in B bedeutet Minze „passt/geschafft“, Sonne ist „Platz 1/Freude“; so ist das Siegel dasselbe Zeichen wie das Heatmap-Siegel „Alle: Geht“. **Abweichung Einsatz (CEO):** Das Siegel bleibt für Beitritt und Abgabe; die große Feier F-012 ist der **Vorfreude-Ring**, nicht Siegel + Kalenderblatt → Zeitleiste W11-02 bitte auf `countdown-ring.svg` umstellen. | tokens `--ww-seal-*`, design-system §8.3, §9.12 |
+| **M-D5** Konfetti-Material | Formen: abgerundetes Rechteck 8–9 × 12–15 (Radius 3), Kreis Ø 10, Sonnenstrahl 11 × 2,5, Vier-Zack-Funkel 12. Farben `--ww-confetti-1…5` = Minze, Sonne, Lavendel 300, Koralle, Weiß (dunkel Koralle heller). Fällt über dem Indigo-Cockpit, kleine Teilchen ≤ 15 px. | tokens.css, design-system §8.1 |
+| **M-D6** Regler | Tempo **1,0**; Federn unverändert (soft ζ 0,75, bouncy ζ 0,5 nur Siegel); Feier-Material wie M-D5. **Zahlen zählen nicht hoch** (CEO) – in B §10 korrigiert. | design-system §8.1/§8.3, richtung-b.md §10 |
+| **M-D7** Gleitender Pinsel-Indikator | **Einverstanden:** ein Indikator-Element (weiße Fläche + 2 px `selected` + `shadow-selected`), das gleitet; die Punkt-Marke ● sitzt **im Indikator** oben rechts und gleitet mit; Label-Fettung wechselt sofort. | design-system §9.9 |
+| **M-D8** §8 verweisen | **Umgesetzt:** design-system §8 verweist auf motion-system; Heatmap-Überblenden 140 ms ist als Farbwechsel-Ausnahme markiert. | design-system §8 |
+| **M-D9** Hover-Schatten | **Übernommen:** Hover-/Druck-Schatten als Pseudo-Element mit `opacity`-Wechsel, nie `box-shadow` animieren. | design-system §7, §9.6 |
+
+## 7. Antworten auf D-20 bis D-35 (`docs/ux/abstimmung-design.md` §8.3) inkl. CEO-Entscheidungen 2026-10-08
+
+| # | Antwort Design | Wo |
+|---|---|---|
+| **D-20** Touch-Ziele | **Umgesetzt (Pflicht, CEO):** Tab-Pille 44 / Spur 48 (`--ww-size-tab-*`), Segment 44, Monats-Chips sichtbar 36 + Trefferfläche 44, kleine Taste („Erinnern“) 44 (`--ww-size-control-sm`), „Anmelden“ 44, Filter-Chips und Checkbox Trefferfläche 44. | design-system §9.1, §9.4, §9.8, §9.10 |
+| **D-21** Kalenderzelle 360 px | **Korrigiert nach U-1 (CEO):** 8 px Rand gesamt (Karte 4 + innen 4), Fuge 4 → 45,7 px; `--ww-size-cal-cell-min-w` 44, neue Tokens `cal-card-gutter-sm`/`-pad-sm`. Höhe 46 + Zeilenfuge 9: Anatomie in 45,7 × 46 geprüft (Datum 5/5, Zahl ab 20 px, ◐ 11 px unten links, Siegel 16 px unten rechts, Eselsohr 13/18 px oben rechts – keine Überlappung). | tokens.css, design-system §6.1 |
+| **D-22** Fokus am aktiven Tab | **Umgesetzt (Pflicht):** `--ww-focus-ring-on-brand-isolated` (Hof 2 px Indigo + Ring 3 px Weiß + Hof 2 px), Tab `z-index: 1`; gilt auch für Minze-Tasten im Cockpit. | tokens.css §5, design-system §9.4 |
+| **D-23** Kontrast Kennzahl-Box | **Umgesetzt (Pflicht):** Lichtflecken haben feste Höhe 96 px und enden in der Kopfzeile, nie unter Tabs/Box → Box-Text 2 = 6,9 : 1. | tokens `--ww-cockpit-image`, design-system §4.3 |
+| **D-24** Countdown als Text | **Umgesetzt (Pflicht):** Meta-Zeile der Ergebnis-Karte „5 Nächte · 7 dabei · noch 23 Tage“, Zustände DE/EN wie von dir vorgeschlagen; Ring-Text `aria-hidden`. | design-system §9.6, §9.12 |
+| **D-25** Datenschutz Einladung | **Umgesetzt (Pflicht):** neutrale Avatar-Punkte ohne Initialen + „+1“ + Zahl; nur Vorname der Orga („von Lena“). | design-system §9.6, `trip-card-motif.svg` |
+| **D-26** Filterzeile und Legende in W09 | **Umgesetzt:** Filterzeile unter dem Segment (Chips 44, aktiver Filter), Legende als `<details>`. | design-system §9.10 |
+| **D-27** Griffe | **Umgesetzt (Pflicht):** Griff nur an echten Bottom-Sheets; Werkzeugleiste, Vorschlag-Leiste, Auswahlleiste ohne Griff. | design-system §9.9, §9.10, §9.16 |
+| **D-28** Werkzeugleiste 150 px | **Umgesetzt (CEO):** `--ww-size-toolbar-max` 150 px, Aufbau nach deiner Rechnung (8 · 16 · 4 · 58 · 8 · 48 · 8), Kacheln 44 × 48, kein Griff, kein Label. | tokens.css, design-system §9.9 |
+| **D-29** Landing-Kopf 360 px | **Umgesetzt:** neues Icon `ww-icon-login`; < 375 px „Anmelden“ als Icon-Taste 44 × 44. | icons.svg, design-system §3.3 |
+| **D-30** Orga-Variante W11 | **Umgesetzt:** Orga primär „Allen Bescheid geben“, sekundär „Zum Kalender hinzufügen“. | design-system §9.6 |
+| **D-31** Hochzählen | **Entschieden (CEO): kein Hochzählen**, auch nicht der Countdown; Ringe/Balken wachsen. richtung-b.md §10 angepasst. | design-system §2 Nr. 11, §8.3 |
+| **D-32** W07, W04, W13 in B | **Spezifiziert:** W07 Kennzahl je Phase (P1 Abgabe-Ring, P2 Abstimmungs-Ring + Frist, P3 Mini-Vorfreude-Ring); W04 Reisekarten (§9.6); W13 Karte „Darstellung“ mit drei Schalter-Zuständen. Hi-Fi-Mockups liefere ich bei Bedarf nach. | design-system §9.3, §9.6, §9.20 |
+| **D-33** Tab-Überlauf | **Umgesetzt:** Verlaufskante 24 px links/rechts nur bei Überlauf, aktiver Tab in Sicht. | design-system §9.4 |
+| **D-34** „Nein?“ | Zur Kenntnis, Hinweis an Developer in design-system §9.11. | §9.11 |
+| **D-35** Textlängen | Zur Kenntnis; Tabelle in design-system §10 aktualisiert. | §10 |
+
+## 8. Offen für UI/UX
+Keine offenen Punkte. Zur Kenntnis: Die Feier-Zeitleiste (Motion W11-02) muss Motion auf den Vorfreude-Ring umstellen (Ebenen siehe assets/README.md, `countdown-ring.svg`).
+
 ## Changelog
+- 2026-10-08 (Runde 3, v1.0): §5 Struktur-Abweichungen von Richtung B, §6 Antworten an Motion M-D1–M-D9, §7 Antworten D-20–D-35 mit CEO-Entscheidungen (Hochzählen, Kalender U-1, Werkzeugleiste 150 px, Pflichtpunkte, Feier = Vorfreude-Ring), §8 offen: keine.
 - 2026-10-08 (Auftraggeber-Entscheidungen): alle Vorbehalte zu Marke, Logo A, Dark Mode, Figtree, Ergebnis-Sichtbarkeit → „bestätigt (Auftraggeber 2026-10-08)"; EN-Name „When do we go?" eingearbeitet; §1b Antwort auf D-19; neue Kleinpunkte U-15, U-16 (§2).
 - 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
 - 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.

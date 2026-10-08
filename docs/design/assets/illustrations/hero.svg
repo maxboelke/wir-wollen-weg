@@ -1,60 +1,74 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-labelledby="t d">
-  <title id="t">Gemeinsamen Urlaubstermin finden</title>
-  <desc id="d">Reiseplakat-Motiv: Sonne über dem Meer, davor ein Gruppenkalender mit Heatmap-Feldern und einem markierten Zeitraum, daneben drei Freunde. Hero für die Startseite (W01).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 358 210" width="358" height="210" aria-hidden="true" focusable="false">
+  <title>Startseite: Übersichtskarte</title>
+  <desc>Produkt als Illustration: eine weiße Übersichtskarte mit Fortschrittsring, Avataren und einer Indigo-Heatmap, zwei Zeiträume, an denen alle können, sind minzgrün eingerahmt. Dahinter eine gekippte Lavendel-Karte, oben rechts die Sonne. Dekorativ.</desc>
+  <!-- W01 (v1.0). Liegt halb auf dem Indigo-Cockpit, halb auf Nebel (Karte ragt ca. 90 px in den hellen Bereich).
+       Ebenen für den Eintritt (M-D3): plate, calendar, ring, friends, cells, band, sun, seal. Statischer Endzustand = diese Datei.
+       Gruppen mit transform-Attribut liegen in einer äußeren data-anim-Gruppe. IDs mit Präfix wwhero. Keine Texte. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .paperS{ stroke: var(--ww-illu-paper, #FFFFFF); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
-    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
-    .mid   { fill: #5FBFB1; }
-    .deep  { fill: var(--ww-illu-deep, #0B4F4A); }
-    .sea   { fill: var(--ww-illu-sea, #08403F); }
-    .sun   { fill: var(--ww-illu-sun, #F4B942); }
-    .coral { fill: var(--ww-illu-coral, #E8694A); }
-    .band  { fill: var(--ww-illu-coral-strong, #D4552F); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-ink { fill: var(--ww-illu-ink, #1E1A3D); }
+    .wi-lav { fill: var(--ww-illu-lavender, #A79AF2); }
+    .wi-lavl { fill: var(--ww-illu-lavender-light, #D6CFFA); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-none { fill: var(--ww-hm-none-bg, #EEECF5); }
+    .wi-track { stroke: var(--ww-progress-track, #ECE9F7); }
+    .wi-s-mint { stroke: var(--ww-illu-mint, #52E5B8); }
+    .wi-s-paper { stroke: var(--ww-illu-paper, #FFFFFF); }
+    .wi-s-seal { stroke: var(--ww-seal-fg, #2B2266); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .paperS{ stroke: var(--ww-illu-paper, #232E2F); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
-      .mid   { fill: #287268; }
-      .deep  { fill: var(--ww-illu-deep, #B5F0E4); }
-      .sea   { fill: var(--ww-illu-sea, #287268); }
-      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
-      .coral { fill: var(--ww-illu-coral, #F28A6E); }
-      .band  { fill: var(--ww-illu-coral-strong, #F28A6E); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-ink { fill: var(--ww-illu-ink, #F3F1FF); }
+      .wi-lavl { fill: var(--ww-illu-lavender-light, #362C7A); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-none { fill: var(--ww-hm-none-bg, #221C4A); }
+      .wi-track { stroke: var(--ww-progress-track, #2A2458); }
+      .wi-s-paper { stroke: var(--ww-illu-paper, #2E2860); }
+      .wi-s-seal { stroke: var(--ww-seal-fg, #14112E); }
     }
   </style>
   <defs>
-    <clipPath id="hero-poster"><rect x="8" y="8" width="304" height="184" rx="24"/></clipPath>
+    <filter id="wwhero-shadow" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#2B2266" flood-opacity=".3"/></filter>
   </defs>
-  <rect class="plate" x="8" y="8" width="304" height="184" rx="24"/>
-  <g clip-path="url(#hero-poster)">
-    <circle class="sun" cx="236" cy="96" r="46"/>
-    <path class="tealL" d="M0 140c26-8 52-8 78 0s52 8 78 0 52-8 78 0 52 8 78 0 26-8 40-4v70H0z"/>
-    <path class="sea" d="M0 166c26-6 52-6 78 0s52 6 78 0 52-6 78 0 52 6 78 0 26-6 40-3v40H0z" opacity="0.5"/>
+  <g data-anim="plate">
+    <rect class="wi-lav" x="30" y="24" width="300" height="168" rx="22" transform="rotate(-4 180 108)"/>
   </g>
-  <!-- Gruppenkalender -->
-  <g transform="rotate(-4 115 100)">
-    <rect class="paper inkS" x="40" y="40" width="150" height="122" rx="14" stroke-width="2"/>
-    <path class="teal" d="M41 62v-7a14 14 0 0 1 14-14h120a14 14 0 0 1 14 14v7z"/>
-    <g>
-      <rect class="tealL" x="52" y="72" width="20" height="16" rx="4"/><rect class="mid" x="77" y="72" width="20" height="16" rx="4"/><rect class="tealL" x="102" y="72" width="20" height="16" rx="4"/><rect class="mid" x="127" y="72" width="20" height="16" rx="4"/><rect class="teal" x="152" y="72" width="20" height="16" rx="4"/>
-      <rect class="mid" x="52" y="94" width="20" height="16" rx="4"/><rect class="teal" x="77" y="94" width="20" height="16" rx="4"/><rect class="mid" x="102" y="94" width="20" height="16" rx="4"/><rect class="tealL" x="127" y="94" width="20" height="16" rx="4"/><rect class="tealL" x="152" y="94" width="20" height="16" rx="4"/>
-      <rect class="tealL" x="52" y="116" width="20" height="16" rx="4"/><rect class="deep" x="77" y="116" width="20" height="16" rx="4"/><rect class="deep" x="102" y="116" width="20" height="16" rx="4"/><rect class="deep" x="127" y="116" width="20" height="16" rx="4"/><rect class="mid" x="152" y="116" width="20" height="16" rx="4"/>
+  <g data-anim="calendar">
+    <rect class="wi-paper" x="14" y="30" width="330" height="172" rx="24" filter="url(#wwhero-shadow)"/>
+    <rect class="wi-ink" x="92" y="58" width="118" height="10" rx="5"/>
+    <rect class="wi-lavl" x="92" y="76" width="80" height="8" rx="4"/>
+  </g>
+  <g data-anim="ring">
+    <g transform="translate(56 72)">
+      <circle class="wi-track" r="22" fill="none" stroke-width="8"/>
+      <circle class="wi-s-mint" id="wwhero-ring" r="22" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="98.7 138.3" transform="rotate(-90)"/>
     </g>
-    <rect class="band" x="77" y="137" width="70" height="4" rx="2"/>
-    <rect class="band" x="77" y="134" width="3" height="10" rx="1.5"/>
-    <rect class="band" x="144" y="134" width="3" height="10" rx="1.5"/>
   </g>
-  <!-- Freunde -->
-  <g class="paperS" stroke-width="3">
-    <circle class="coral" cx="206" cy="160" r="14"/>
-    <circle class="sun" cx="228" cy="160" r="14"/>
-    <circle class="teal" cx="250" cy="160" r="14"/>
+  <g data-anim="friends">
+    <g class="wi-s-paper" stroke-width="2.5">
+      <circle cx="258" cy="70" r="13" fill="#FFD3C7"/><circle cx="279" cy="70" r="13" fill="#C9DBFF"/><circle cx="300" cy="70" r="13" fill="#D4F2B0"/><circle cx="321" cy="70" r="13" fill="#DCD3FF"/>
+    </g>
+  </g>
+  <g data-anim="cells">
+    <rect class="wi-lavl" x="31" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="117" y="108" width="38" height="24" rx="7"/><rect class="wi-violet" x="160" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="203" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="246" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="289" y="108" width="38" height="24" rx="7"/>
+    <rect class="wi-brand" x="31" y="138" width="38" height="24" rx="7"/><rect class="wi-brand" x="74" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="117" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="160" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="203" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="246" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="289" y="138" width="38" height="24" rx="7"/>
+    <rect class="wi-violet" x="31" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="117" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="160" y="168" width="38" height="24" rx="7"/><rect class="wi-none" x="203" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="246" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="289" y="168" width="38" height="24" rx="7"/>
+    <g class="wi-mint"><circle cx="232" cy="124" r="4.5"/><circle cx="275" cy="124" r="4.5"/><circle cx="318" cy="124" r="4.5"/><circle cx="60" cy="154" r="4.5"/><circle cx="103" cy="154" r="4.5"/></g>
+  </g>
+  <g data-anim="band" class="wi-s-mint" fill="none" stroke-width="3">
+    <rect x="199" y="104" width="132" height="32" rx="10"/>
+    <rect x="27" y="134" width="89" height="32" rx="10"/>
+  </g>
+  <g data-anim="sun">
+    <circle class="wi-sun" cx="336" cy="22" r="22" opacity=".3"/>
+    <circle class="wi-sun" cx="336" cy="22" r="15"/>
+    <path class="wi-mint" d="M24 16l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+  </g>
+  <g data-anim="seal">
+    <circle class="wi-mint" cx="22" cy="194" r="15"/>
+    <path class="wi-s-seal" d="M15 194.5l4.5 4.5 8-8.5" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
 </svg>

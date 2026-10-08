@@ -1,100 +1,105 @@
 # Assets – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Spezifikation: [../design-system.md](../design-system.md) · Tokens: [../tokens.css](../tokens.css)
+Stand: 2026-10-08 · **v1.0 (Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“)** · Verantwortlich: Designer · Spezifikation: [../design-system.md](../design-system.md) · Tokens: [../tokens.css](../tokens.css)
 
-Alle Grafiken sind handgeschriebenes SVG (valide, `xmlns`, `viewBox`, `<title>`; Illustrationen zusätzlich `<desc>`). Keine Bitmaps, keine externen Fonts außer Figtree in der Wortmarke (siehe unten).
+Alle Grafiken sind handgeschriebenes SVG (valide, `xmlns`, `viewBox`, `<title>`/`<desc>`). Keine Bitmaps, keine externen Fonts außer Plus Jakarta Sans/Figtree in den Wortmarken (siehe unten). Die Entwürfe in `../richtungen/` sind Archiv; maßgeblich ist dieser Ordner.
 
 ## Ordner
 
 | Ordner | Inhalt |
 |---|---|
-| `logo/` | Bildmarken A/B/C, Wortmarken DE/EN, Favicon, App-Icon |
-| `icons/` | Icon-Sprite (`icons.svg`, 41 Symbole) + Einzeldateien des Kernsets zur Ansicht |
-| `heatmap/` | Muster (Patterns), Legenden Heatmap/Verfügbarkeit, Markierungen – Referenzgrafiken für Entwicklung und Review |
-| `illustrations/` | 11 Illustrationen für Leerzustände und Momente |
+| `logo/` | Bildmarke hell und auf Indigo/Dunkel, Wortmarken DE/EN (hell + auf Indigo), Favicon 32 und 16, App-Icon 512 |
+| `icons/` | Icon-Sprite `icons.svg` (50 Symbole, Duoton) + Einzeldateien des Kernsets zur Ansicht |
+| `heatmap/` | Referenzgrafiken: Heatmap-Stufen, Verfügbarkeit, Markierungen, Muster (je hell + dunkel) |
+| `illustrations/` | Leerzustände, Momente, Hero, Reisekarte, Vorfreude-Ring (Feier), Siegel |
 
 ## Logo (`logo/`)
 
 | Datei | Zweck | Hinweise |
 |---|---|---|
-| `logo-mark-a-sonnenkalender.svg` | **Bildmarke A – bestätigt (Auftraggeber 2026-10-08)** – Kalenderblatt mit Sonne über dem Meer, sprachneutral für DE und EN | Grundlage für Favicon, App-Icon, beide Wortmarken |
-| `logo-mark-b-weghaken.svg` | Alternative B – nicht gewählt | höchstens Sekundärzeichen (Erfolg) |
-| `logo-mark-c-treffpunkt.svg` | Alternative C – nicht gewählt | Archiv |
-| `logo-wordmark.svg` | Wortmarke DE („Wir wollen **weg**"), 320 × 72, ≥ 120 px | `<text>` mit Figtree → vor Produktion in Pfade umwandeln |
-| `logo-wordmark-en.svg` | Wortmarke EN („When do we **go?**"), 320 × 72 wie DE, ≥ 128 px | eigener EN-Name, bestätigt (Auftraggeber 2026-10-08); „?" gehört zum Namen; vor Produktion in Pfade umwandeln |
-| `logo-wordmark-en-tagline.svg` | EN-Wortmarke + Untertitel „Find dates for your group trip", 320 × 84, ≥ 300 px | nur Startseite W01, OG-Bild EN, Mail-Kopf – nie in der Kopfzeile |
-| `favicon.svg` | Favicon (32er Raster, vereinfachte Marke A, sprachneutral) | `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`; zusätzlich PNG 32/180 (apple-touch-icon) daraus exportieren |
-| `app-icon.svg` | App-/PWA-Icon 512 px, vollflächig, maskable-tauglich | Inhalt in der sicheren Zone (Radius 40 %); PNG 192/512 exportieren; `theme_color` = `#0E6A68`, `background_color` = `#FBF8F3` |
+| `logo-mark.svg` | **Bildmarke „Sonnenkalender“ B0** für helle Flächen: Indigo-Blatt, Sonne, Minze-Wellen, Lavendel-Ringe | sprachneutral; Ebenen `data-anim="sun"` / `"waves"` für den Ladezustand |
+| `logo-mark-on-brand.svg` | Bildmarke für Indigo-Flächen (Cockpit, Reisekarte) und Dunkelmodus: Blatt Violett, Ringe weiß | gleiche Ebenen |
+| `logo-wordmark.svg` | Wortmarke DE „Wir wollen **weg**“, 320 × 72, „weg“ Lavendel `#5A3FD0` (6,1 auf Nebel), dunkel Minze | `prefers-color-scheme` eingebaut; Mindestbreite 128 px |
+| `logo-wordmark-en.svg` | Wortmarke EN „When do we **go?**“, gleiche Box | „go?“ als Einheit in Markenfarbe (D-19); Mindestbreite 136 px |
+| `logo-wordmark-en-tagline.svg` | EN + „Find dates for your group trip“, 320 × 84, ≥ 300 px | nur W01, OG-Bild EN, Mail-Kopf |
+| `logo-wordmark-on-brand.svg` / `logo-wordmark-en-on-brand.svg` | Wortmarken für das Indigo-Cockpit der Startseite: Schrift weiß (13,7), Hervorhebung Minze (8,7) | ohne Farbwechsel im Dunkelmodus |
+| `favicon.svg` | Favicon 32er Raster, vereinfacht (ohne Schein, eine Welle), dunkle Browserleiste: Violett/Weiß | `<link rel="icon" href="/favicon.svg" type="image/svg+xml">` |
+| `favicon-16.svg` | 16er Raster auf ganze Pixel gesetzt (gerade Minze-Kante statt Welle) | daraus `favicon.ico` (16/32) exportieren |
+| `app-icon.svg` | App-/PWA-Icon 512, vollflächig Indigo mit Lichtflecken, maskable (Inhalt ≤ 185 px von der Mitte, sichere Zone 205 px) | PNG 192/512 + apple-touch-icon 180 exportieren; Manifest `theme_color` `#2B2266`, `background_color` `#F4F2FB` |
+| `logo-mark-a-sonnenkalender.svg` | **veraltet** – Inhalt = `logo-mark.svg` (B0), nur damit alte Verweise nicht brechen | kann entfernt werden |
+| `logo-mark-b-weghaken.svg`, `logo-mark-c-treffpunkt.svg` | **Archiv** (v0.x, nicht gewählt, alte Palette) | nicht verwenden; kann entfernt werden |
 
-Welche Wortmarke: immer die der UI-Sprache (design-system §3.2, ux-spec §10.6); Favicon und App-Icon tragen keinen Text, der Name kommt aus HTML/Manifest der Sprache. Dark Mode folgt nur dem System – bestätigt (Auftraggeber 2026-10-08).
-
-Wortmarken enthalten `prefers-color-scheme`-Styles für helle/dunkle Umgebung. Wird das Theme per `[data-theme]` erzwungen, die Wortmarke **inline** einbinden (dann greifen die Seitenfarben) oder die passende Variante per `<picture>` wählen.
+Wortmarken liegen als `<text>` in **Plus Jakarta Sans 800, 28 px, −0,02 em** vor → **vor Produktion in Pfade umwandeln**, dann Mindestbreiten nachmessen. Welche Wortmarke: immer die der UI-Sprache (design-system §3). Wird das Theme per `[data-theme]` erzwungen, Wortmarke inline einbinden oder per `<picture>` wählen.
 
 ## Icons (`icons/`)
 
-- **Sprite:** `icons.svg` mit `<symbol id="ww-icon-…">`. Einbindung: `<svg width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>`.
-- Stil: 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden, `currentColor`. Größen 16/20/24 px.
-- Barrierefreiheit: Icons neben Text → `aria-hidden="true"`. Icon-Buttons → zugänglicher Name am `<button>` (`aria-label`), nicht im SVG.
-- `ww-icon-all-available` = Badge „Alle: Geht“: erscheint nur, wenn **alle, die abgegeben haben, „Geht“** haben (Zählwert x = n, CEO-Entscheid U-4 vom 2026-10-08) – also genau auf der Heatmap-Stufe „alle“. Tage ohne „Geht nicht“, aber mit „Zur Not“, zeigen ◐ und **kein** Badge. Häkchen-Aussparung über `--ww-icon-knockout` (auf die Zellfarbe setzen, z. B. `--ww-icon-knockout: var(--ww-hm-all-bg)`). Die Einzeldatei `all-available.svg` nutzt dafür eine Maske.
+- **Sprite** `icons.svg` mit `<symbol id="ww-icon-…">`. Einbindung: `<svg width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>`.
+- Stil B: 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6 px, Chevrons 2,25 px), runde Enden, `currentColor`, **weiche Duoton-Füllung** (16 % der Strichfarbe) bei Flächen-Icons. Größen 16/20/24 px; in Kacheln 22 px.
+- **Alle IDs aus v0.5 bleiben gültig** (kein Umbau im Code nötig). Neu in v1.0: `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login` (D-29). Geändert: `filter` ist jetzt ein Regler-Symbol (drei Linien) statt Trichter.
+- `ww-icon-all-available` = Heatmap-Siegel „Alle: Geht“ (nur bei x = n, U-4). Farben per CSS: `color` = Kreis, `--ww-icon-knockout` = Häkchen, `--ww-icon-ring` = Ring. Hell: `color: var(--ww-hm-seal-bg); --ww-icon-knockout: var(--ww-hm-seal-fg); --ww-icon-ring: var(--ww-hm-seal-ring)`; dunkel schalten die Tokens automatisch (Mitternacht-Kreis, Minze-Haken, ohne Ring).
+- Barrierefreiheit: Icons neben Text `aria-hidden="true"`; Icon-Buttons → Name am `<button>`.
 
 | ID (`ww-icon-…`) | Bedeutung | ID | Bedeutung |
 |---|---|---|---|
-| `calendar` | Kalender | `info` | Info |
-| `share` | Teilen | `warning` | Hinweis/Warnung (Amber) |
+| `calendar` / `calendar-plus` | Kalender / Reise planen | `info` | Info |
+| `share` | Teilen | `warning` | Hinweis (Amber) |
 | `vote` | Abstimmung | `success` | Erledigt |
 | `crown` | Orga (immer mit Label) | `comment` | Kommentar |
 | `check` | Ja / Geht | `filter` | Filter |
-| `maybe` | Vielleicht / Zur Not | `eye` | Anzeigen / Passwort zeigen |
-| `cross` | Nein / Geht nicht | `eye-off` | Ausblenden / Passwort verbergen |
-| `language` | Sprache | `remind` | Erinnern (Megafon) |
-| `calendar-download` | ICS / zum Kalender | `mail` | E-Mail / Code gesendet |
-| `copy` | Kopieren | `lock` | Gesperrt / schreibgeschützt |
-| `holiday` | Feiertag | `clock` | Frist |
-| `link` | Einladungslink | `nights` | Nächte |
-| `all-available` | Badge „Alle: Geht“ (x = n) | `users` | Gruppe |
-| `arrow-left` | Zurück | `user` | Person / Avatar-Fallback |
-| `chevron-left` / `chevron-right` | Blättern | `edit` | Bearbeiten |
-| `more` | Mehr (⋯) | `trash` | Löschen |
-| `close` | Schließen | `logout` | Abmelden |
-| `plus` / `minus` | Stepper | `help` | Hilfe |
-| `undo` | Rückgängig | `range` | Bereichsmodus (Zeitraum) |
-| `quick-actions` | Schnellaktionen | | |
+| `maybe` | Vielleicht / Zur Not | `eye` / `eye-off` | Anzeigen / Ausblenden |
+| `cross` | Nein / Geht nicht | `remind` | Erinnern (Megafon) |
+| `language` | Sprache | `mail` | E-Mail |
+| `calendar-download` | ICS | `lock` | Gesperrt |
+| `copy` | Kopieren | `clock` | Frist |
+| `holiday` | Feiertag | `nights` | Nächte |
+| `link` | Einladungslink | `users` / `user` | Gruppe / Person |
+| `all-available` | Siegel „Alle: Geht“ | `edit` / `trash` | Bearbeiten / Löschen |
+| `arrow-left` / `arrow-right` | Zurück / Weiter | `logout` / `login` | Abmelden / Anmelden |
+| `chevron-left/-right/-down` | Blättern / Aufklappen | `help` | Hilfe |
+| `more` | Mehr (⋯) | `range` | Zeitraum wählen |
+| `close` | Schließen | `quick-actions` | Schnellaktionen |
+| `plus` / `minus` | Stepper | `undo` | Rückgängig |
+| `sun` | Urlaubstage / Sonne | `star` | Platz 1 |
+| `sparkle` | Vorschlag | `chart` | Übersicht / Kennzahl |
+| `plane` | Reise | | |
 
-Einzeldateien (Kernset, mit `<title>` zur Ansicht): `calendar.svg`, `share.svg`, `vote.svg`, `crown.svg`, `check.svg`, `maybe.svg`, `cross.svg`, `language.svg`, `calendar-download.svg`, `copy.svg`, `holiday.svg`, `link.svg`, `all-available.svg`. Maßgeblich für die Entwicklung ist das Sprite.
+Einzeldateien (Ansicht, gleiche Formen): `calendar`, `share`, `vote`, `crown`, `check`, `maybe`, `cross`, `language`, `calendar-download`, `copy`, `holiday`, `link`, `all-available`. Maßgeblich ist das Sprite.
 
 ## Heatmap (`heatmap/`)
 
 | Datei | Inhalt |
 |---|---|
-| `heatmap-legend.svg` | Sechs Heatmap-Stufen (keine Daten · niemand · wenige · einige · viele · alle) in Light und Dark, mit Zahl (Anzahl „Geht“ / abgegeben), Pegel, ◐ mit Anzahl unten links und ✓ unten rechts (nur Stufe „alle“) – Referenz für Entwicklung und Barrierefreiheits-Review |
-| `heatmap-markers.svg` | Wochenende (Spur), Feiertag (Eselsohr), Heute (Ring), Ausgewählt (Doppelrahmen), Fokus (Ring mit Abstand), Vorschlag (Band mit Endkappen, 9/9-Tage mit ✓) – Light und Dark |
-| `availability-legend.svg` | Eigene Verfügbarkeit: Geht / Zur Not / Geht nicht (Works / If needed / Can't) – Symbol + Muster + Farbe |
-| `heatmap-patterns.svg` | `<pattern>`-Definitionen: Schraffur „niemand", Streifen „Zur Not", Kreuzschraffur „Geht nicht" (Light/Dark). In der App bevorzugt die CSS-Gradients `--ww-pattern-*` aus tokens.css verwenden. |
-
-Hinweis: Die Referenzgrafiken zeigen Desktop-Zellen (64 px) mit Pegel; mobil (52 px Höhe) entfällt der Pegel, ✓ sitzt unten rechts, ◐ unten links (design-system §6.1).
+| `heatmap-legend.svg` | sechs Stufen der **Indigo-Rampe** hell + dunkel, Zahl „x/n“, ◐ unten links, Siegel unten rechts (nur „alle“) |
+| `availability-legend.svg` | Meine Tage: Geht (glatt, Minze), Zur Not (Sonnenstreifen + ◐-Plakette), Geht nicht (Kreuzschraffur + ✕-Plakette), dazu Pinsel-Mini-Felder – hell + dunkel |
+| `heatmap-markers.svg` | Feiertag (Eselsohr mit Kerbe), Heute (Ring), Ausgewählt (Doppelrahmen), Fokus (Ring mit Hof), Vorschlag-Band in der Zeilenfuge, Wochenend-Spur – hell + dunkel |
+| `heatmap-patterns.svg` | `<pattern>`-Definitionen (IDs `ww-pat-…`); in der App die CSS-Verläufe `--ww-pattern-*` verwenden |
 
 ## Illustrationen (`illustrations/`)
 
-Farben über CSS-Klassen mit `var(--ww-illu-*, Fallback)` und eigener Dark-Variante via `prefers-color-scheme`. **Inline** eingebunden übernehmen sie die Token-Farben der Seite (auch bei erzwungenem `[data-theme]`); als `<img>` gelten die eingebauten Fallbacks. Alle dekorativ (`alt=""` bzw. `aria-hidden="true"`), mobil max. 160 px hoch.
+Stil B: flach, **ohne Kontur**, Kachel (abgerundetes Quadrat, Radius 32) statt Teller, max. 5 Palettenfarben, Lichtflecken als halbtransparente Kreise, keine Figuren, **keine Texte**. Farben über Klassen `wi-*` mit `var(--ww-illu-*, Fallback)` und Dunkel-Fallback per `prefers-color-scheme`. **Alle Dateien definieren gleichnamige Klassen identisch** – mehrere Inline-SVGs auf einer Seite stören sich nicht. Alle dekorativ (`aria-hidden="true"` am Wurzelelement; als `<img>` mit `alt=""`). Mobil max. 160 px hoch (Hero ausgenommen).
 
-| Datei | Einsatz |
-|---|---|
-| `hero.svg` | Startseite (W01) |
-| `invite.svg` | Einladungs-Vorschau (W03, F-003) |
-| `code-sent.svg` | Code gesendet (W02/W03, F-040/F-041) |
-| `empty-trips.svg` | Meine Reisen leer (W04, F-044) |
-| `empty-nobody.svg` | Noch niemand eingetragen (W07/W09, F-007/F-008) |
-| `no-matches.svg` | Keine Treffer in Vorschlägen (W09, F-009) |
-| `submitted.svg` | Tage abgegeben (W08, F-005) |
-| `vote-waiting.svg` | Abstimmung noch nicht gestartet (W10) |
-| `vote-done.svg` | Termin festgelegt (W11, F-012) |
-| `error.svg` | Link ungültig / nicht gefunden / Serverfehler (W14) |
-| `goodbye.svg` | Konto gelöscht (W14, F-043) |
+**Animierbare Ebenen (M-D3):** Gruppen mit `data-anim="…"`; Gruppen, die ein `transform`-Attribut brauchen, liegen **in** einer äußeren `data-anim`-Gruppe (CSS-Transform überschreibt sonst das Attribut). Der statische Zustand der Datei ist der Endzustand (Reduced Motion). IDs sind je Datei präfixiert (`wwhero-`, `wwcr-`, …).
+
+| Datei | Einsatz | `data-anim`-Ebenen |
+|---|---|---|
+| `hero.svg` (358 × 210) | Startseite W01 – Übersichtskarte, ragt aus dem Cockpit | `plate`, `calendar`, `ring`, `friends`, `cells`, `band`, `sun`, `seal` |
+| `countdown-ring.svg` (390 × 352) | **Feier W11 / F-012 = Vorfreude-Ring** im Cockpit, Countdown als HTML in der Mitte | `backdrop`, `glow`, `confetti` (Teilchen `data-piece` 1–12), `track`, `ring` (`pathLength` 100), `knob` (dreht um 195/236), `sparkles` |
+| `vote-done.svg` | kompakter Vorfreude-Ring ohne Cockpit (Meine Reisen, Mail, Teilen-Bild) | `backdrop`, `glow`, `confetti`, `track`, `ring`, `knob` |
+| `trip-card-motif.svg` | Hintergrund der Einladungs-Reisekarte W03 (Text als HTML oben links, keine Initialen) | `backdrop`, `rings`, `sun`, `waves`, `sparkles` |
+| `seal.svg` | Siegel-Komponente (M-D4) 20/40/64 px: Beitritt, Abgabe, „alle haben abgestimmt“ | `disc`, `check` (`pathLength` 1), `sparks` |
+| `invite.svg` | Einladung ohne Reisekarte (Mail, Fallback) | `letter`, `plane` |
+| `code-sent.svg` | Code gesendet W02/W03 (klein) | `plate`, `letter`, `seal`, `sparks` |
+| `empty-trips.svg` | Meine Reisen leer W04 | `plate`, `sun`, `sea`, `suitcase` |
+| `empty-nobody.svg` | noch niemand eingetragen W07/W09 | `plate`, `calendar`, `friends` |
+| `no-matches.svg` | keine Treffer W09 | `plate`, `ranges`, `search` |
+| `submitted.svg` | Tage abgegeben W08 | `plate`, `calendar`, `seal`, `sparks` |
+| `vote-waiting.svg` | Abstimmung noch nicht gestartet W10 | `plate`, `cards`, `clock` |
+| `error.svg` | Fehlerseiten W14 | `plate`, `calendar`, `cloud` |
+| `goodbye.svg` | Konto gelöscht W14 | `plate`, `sun`, `sea`, `plane` |
 
 ## Hinweise für die Einbindung
-- **XML-Wohlgeformtheit (Prüfstand 2026-10-08):** Alle SVGs wurden auf wohlgeformtes XML geprüft. Regeln für Änderungen: in Kommentaren kein doppelter Bindestrich (also nie Token-Namen mit Präfix-Strichen in `<!-- … -->` schreiben, sondern z. B. „ww-icon-knockout“); `&` immer als `&amp;`, `<` in Text als `&lt;`; jede ID pro Datei nur einmal; `url(#…)`- und `aria-labelledby`-Bezüge zeigen auf vorhandene IDs. In `<style>` und Attributen (`var(--ww-…)`) sind doppelte Bindestriche erlaubt.
-- Beim **Inline**-Einbinden mehrerer SVGs auf einer Seite die IDs (`t`, `d`, `clipPath`-/`pattern`-IDs) eindeutig machen, z. B. per SVGO-Plugin `prefixIds`; `<title>` bei dekorativen Grafiken entfernen oder `aria-hidden="true"` setzen.
-- SVGO-Optimierung ist erlaubt, aber `viewBox` behalten (`removeViewBox: false`) und Klassen/Styles der Illustrationen nicht zusammenführen (Dark-Mode-Regeln).
+- **XML-Wohlgeformtheit (Prüfstand v1.0, 2026-10-08):** in Kommentaren kein doppelter Bindestrich (Token-Namen ohne Präfix-Striche schreiben); `&` als `&amp;`; IDs je Datei einmalig; `url(#…)`-Bezüge zeigen auf vorhandene IDs. In `<style>` und `style`-Attributen (`var(--ww-…)`) sind doppelte Bindestriche erlaubt.
+- SVGO erlaubt, aber `viewBox`, `data-anim`, `data-piece`, `pathLength` und die `wi-*`-Klassen behalten (`removeViewBox: false`, `cleanupIds` mit Präfix).
 
-## Schrift
-Figtree (SIL Open Font License 1.1) **selbst hosten** – kein Google-Fonts-CDN (DSGVO). Ein variables WOFF2, Subset Latin + Latin Extended, Gewichte 600–800. Lizenzdatei (OFL.txt) mit ausliefern. Details: design-system §5.
+## Schriften
+**Plus Jakarta Sans** (Titel, Zahlen, Wortmarke) und **Figtree** (UI, Fließtext), beide SIL OFL 1.1, **selbst gehostet** – kein Google-Fonts-CDN (DSGVO). Je ein variables WOFF2, Subset Latin + Latin Extended (Plus Jakarta wght 500–800 ≈ 40–50 KB, Figtree wght 400–800 ≈ 35 KB). `OFL.txt` mit ausliefern. `@font-face`-Vorgabe: design-system §5.1.

@@ -1,6 +1,6 @@
 # Richtung B „Reise-Cockpit“: Farbpaletten B0–B3
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: **Entwurf zur Auswahl** (ändert nichts an `docs/design/` oder an Richtung B, bis der Auftraggeber entschieden hat)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: **entschieden** – Auftraggeber wählt **B0 „Indigo & Minze“** (2026-10-08, PRD §12 Q18); B1–B3 sind verworfen (Archiv). Gültig: [Design-System v1.0](../../design-system.md).
 Bezug: [index.html](index.html) (Vergleichsseite mit Umschalter) · [Richtung B](../b/richtung-b.md) · [Richtung B Screens](../b/index.html)
 
 Anlass: Der Auftraggeber wählt Richtung B. Struktur, Formen, Kacheln, Cockpit-Kopf, Kennzahl und Vorfreude-Ring bleiben. Bei der Farbgebung (Indigo/Minze/Lavendel/Sonne) ist er unsicher und möchte drei andere Paletten sehen. B0 ist die bisherige Palette als Referenz.
