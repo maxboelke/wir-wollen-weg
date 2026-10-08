@@ -48,4 +48,4 @@ Der CEO liest zu Beginn jeder Sitzung diesen Abschnitt, `docs/product/PRD.md` (i
 - **Offen beim Auftraggeber (nicht blockierend):** PRD §12 Q7–Q10.
 - **P1-0 Scaffold + P1-0a Auth-Spike:** PR #4 gemergt (2026-10-08). Findings in `docs/review/findings.md` (offen: R-007, R-013, R-014, R-015; Rate-Limits pro E-Mail hoch priorisiert). Lokal Node ≥ 24 verwenden.
 - **Auftraggeber-Feedback 2026-10-08 zum App-Stand:** Optik „zu spartanisch“ – App soll ansprechend sein und Spaß machen; später Animationen/Motion Graphics. Neuer Agent `motion-designer` angelegt.
-- **Nächster Schritt:** Vorgehensvorschlag „Look & Feel 2.0“ (Design-Sprint vor Inkrement 1) liegt beim Auftraggeber zur Freigabe.
+- **Design-Sprint „Look & Feel 2.0“ (freigegeben 2026-10-08):** Designer erstellt zuerst **Richtung A ohne Vorgabe (unbeeinflusst)**, danach **Richtung B mit Inspiration von der App „Finanzguru“** (Wunsch des Auftraggebers – Finanzguru dem Designer erst NACH Fertigstellung von A nennen). Motion Designer parallel (Motion-System, Interaktions-Katalog, Prototypen). Danach Auswahl durch den Auftraggeber → UI-Fundament → Inkremente 1–5 im neuen Look.
