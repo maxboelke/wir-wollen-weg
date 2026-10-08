@@ -142,3 +142,8 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 - 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
 - 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.
 - 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.
+
+## CEO-Entscheidungen 2026-10-08 (nach Abstimmung EN-Name)
+- **D-19:** „go?“ wird als Einheit in Markenfarbe hervorgehoben (Fragezeichen ohne eigene Farbe/Größe) – Designer-Umsetzung gilt.
+- **U-15:** Kopfzeile und W01 mit EN-Namen gelten als geprüft (beide Namen 14 Zeichen, Header-Box 160 px passt bei 360 px).
+- **U-16:** `short_name` im Manifest = voller Name je Sprache; Kürzung erst, falls Gerätetests Abschneiden zeigen (Fallback DE „Wollen weg“, EN ungekürzt).

@@ -610,7 +610,7 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 Zusätzlich bereit (v0.4): Tagesliste bei großer Schrift §6.8, Sprachumschalter §9.8, Code-Feld-Zustände §9.2, Ergebnis-Platzhalter Abstimmung §9.10.
 
-**Offen:** Zwischen Design und UI/UX nichts mehr (alle Punkte D-1–D-18, U-1–U-14 geklärt, siehe [abstimmung-ux.md](abstimmung-ux.md) §3). Auftraggeber-Vorbehalte zu Marke, Logo, Dark Mode, Figtree und Ergebnis-Sichtbarkeit: alle **bestätigt (Auftraggeber 2026-10-08)** – mit einer Abweichung von der Design-Empfehlung: EN-Produktname „When do we go?" (§3). Offen nur noch Kleinkram: `short_name` im Manifest (siehe abstimmung-ux.md), Outline-Umwandlung der Wortmarken nach Einbindung von Figtree.
+**Offen:** D-1–D-19 und U-1–U-14 geklärt (D-19 EN-Wortmarke beantwortet, siehe [abstimmung-ux.md](abstimmung-ux.md) §1b); neu nur die Kleinpunkte U-15 (Kopfzeile/Landing mit EN-Namen gegenprüfen) und U-16 (`short_name`). Auftraggeber-Vorbehalte zu Marke, Logo, Dark Mode, Figtree und Ergebnis-Sichtbarkeit: alle **bestätigt (Auftraggeber 2026-10-08)** – mit einer Abweichung von der Design-Empfehlung: EN-Produktname „When do we go?" (§3). Außerdem offen: Outline-Umwandlung der Wortmarken nach Einbindung von Figtree.
 
 Changelog
 - v0.5 (2026-10-08, Auftraggeber-Entscheidungen): §3 neu gegliedert – zwei Namen, eine Bildmarke (DE „Wir wollen weg", EN „When do we go?"), Hervorhebung „go?", Regeln zur Namenswahl (UI-Sprache, sprachneutrale Icons, OG je Sprache), Mindestbreiten, Längenvergleich DE/EN für die Kopfzeile; Logo A, Dark Mode (nur System), Figtree und Ergebnis-Sichtbarkeit als „bestätigt (Auftraggeber 2026-10-08)". Assets: `logo-wordmark-en.svg` ersetzt (ohne deutschen Namen), neu `logo-wordmark-en-tagline.svg`.

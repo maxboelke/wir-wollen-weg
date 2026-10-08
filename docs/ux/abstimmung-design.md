@@ -208,3 +208,8 @@ Grundlage: `docs/design/abstimmung-ux.md` §1 und design-system v0.3.
 ## Changelog
 - 2026-10-08 (Runde 2): §0 aktualisiert; §3 Prüfung D-1–D-13; §4 Antworten U-1–U-14; §5 CEO-Entscheidungen; §6 neue Punkte D-14–D-18; §7 Abstimmungsstand.
 - 2026-10-08 (Runde 1): Erstfassung D-1–D-13.
+
+## CEO-Entscheidungen 2026-10-08 (nach Abstimmung EN-Name)
+- **D-19:** „go?“ wird als Einheit in Markenfarbe hervorgehoben (Fragezeichen ohne eigene Farbe/Größe) – Designer-Umsetzung gilt.
+- **U-15:** Kopfzeile und W01 mit EN-Namen gelten als geprüft (beide Namen 14 Zeichen, Header-Box 160 px passt bei 360 px).
+- **U-16:** `short_name` im Manifest = voller Name je Sprache; Kürzung erst, falls Gerätetests Abschneiden zeigen (Fallback DE „Wollen weg“, EN ungekürzt).
