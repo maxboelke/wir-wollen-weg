@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 390 352" width="390" height="352" aria-hidden="true" focusable="false">
+  <!-- Feier "Termin steht fest" (W11): Indigo-Cockpit mit Sonnen-Schein, Konfetti und Vorfreude-Ring.
+       Countdown-Text (noch / 23 / Tage) liegt als HTML in der Ringmitte (Mittelpunkt 195, 236).
+       Gruppen-IDs für Animation: schein, konfetti, ring-spur, ring, ring-sonne. -->
+  <defs>
+    <linearGradient id="vr-ring" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#52E5B8"/>
+      <stop offset="1" stop-color="#FFCF4A"/>
+    </linearGradient>
+  </defs>
+  <rect width="390" height="352" fill="#2B2266"/>
+  <g id="schein">
+    <circle cx="195" cy="236" r="150" fill="#FFCF4A" opacity=".08"/>
+    <circle cx="195" cy="236" r="112" fill="#FFCF4A" opacity=".12"/>
+  </g>
+  <g id="konfetti">
+    <rect x="34" y="176" width="9" height="15" rx="3" fill="#52E5B8" transform="rotate(-24 38 183)"/>
+    <rect x="76" y="232" width="8" height="13" rx="3" fill="#FFCF4A" transform="rotate(18 80 238)"/>
+    <circle cx="56" cy="286" r="5" fill="#A79AF2"/>
+    <rect x="92" y="170" width="8" height="12" rx="3" fill="#F0503F" transform="rotate(40 96 176)"/>
+    <rect x="22" y="236" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(-12 26 242)"/>
+    <rect x="300" y="174" width="9" height="15" rx="3" fill="#FFCF4A" transform="rotate(22 304 181)"/>
+    <rect x="346" y="226" width="8" height="13" rx="3" fill="#52E5B8" transform="rotate(-30 350 232)"/>
+    <circle cx="334" cy="292" r="5" fill="#F0503F"/>
+    <rect x="290" y="240" width="8" height="12" rx="3" fill="#A79AF2" transform="rotate(-12 294 246)"/>
+    <rect x="358" y="176" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(30 362 182)"/>
+    <path d="M70 196l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#52E5B8"/>
+    <path d="M322 200l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFFFFF"/>
+    <path d="M104 296l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFCF4A"/>
+  </g>
+  <g transform="translate(117 158)">
+    <circle id="ring-spur" cx="78" cy="78" r="66" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="12"/>
+    <circle id="ring" cx="78" cy="78" r="66" fill="none" stroke="url(#vr-ring)" stroke-width="12" stroke-linecap="round" stroke-dasharray="400 414.7" transform="rotate(-90 78 78)"/>
+    <circle id="ring-sonne" cx="63.4" cy="13.6" r="9" fill="#FFCF4A" stroke="#2B2266" stroke-width="3"/>
+  </g>
+</svg>
