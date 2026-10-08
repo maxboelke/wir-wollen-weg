@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" style="display:none" aria-hidden="true">
+  <title>Wir wollen weg – Icon-Sprite</title>
+  <!--
+    Wir wollen weg – Icon-Sprite (24er Raster, 2px Strich, runde Enden, currentColor)
+    Verwendung:
+      <svg class="icon" width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>
+    Bedeutungstragende Icons ohne sichtbares Label: role="img" + aria-label am äußeren <svg>.
+    Einzeldateien mit <title> zur Ansicht liegen im selben Ordner.
+  -->
+  <symbol id="ww-icon-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Kalender</title>
+    <rect x="3" y="5" width="18" height="16" rx="3"/>
+    <path d="M3 10h18M8 3v4M16 3v4"/>
+  </symbol>
+  <symbol id="ww-icon-share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Teilen</title>
+    <path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/>
+    <path d="M8 11H7a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1"/>
+  </symbol>
+  <symbol id="ww-icon-vote" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Abstimmung</title>
+    <path d="M7 12V4.5A1.5 1.5 0 0 1 8.5 3h7A1.5 1.5 0 0 1 17 4.5V12"/>
+    <path d="M9.75 7.5l1.75 1.75 3-3"/>
+    <path d="M3 13a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+    <path d="M8 15h8"/>
+  </symbol>
+  <symbol id="ww-icon-crown" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Organisator</title>
+    <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/>
+    <path d="M5 21h14"/>
+  </symbol>
+  <symbol id="ww-icon-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <title>Ja / geht</title>
+    <path d="M5 12.5l4.5 4.5L19 7"/>
+  </symbol>
+  <symbol id="ww-icon-maybe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Vielleicht / ginge zur Not</title>
+    <circle cx="12" cy="12" r="8"/>
+    <path d="M12 4a8 8 0 0 1 0 16z" fill="currentColor"/>
+  </symbol>
+  <symbol id="ww-icon-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <title>Nein / geht nicht</title>
+    <path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+  </symbol>
+  <symbol id="ww-icon-language" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Sprache</title>
+    <circle cx="12" cy="12" r="9"/>
+    <path d="M12 3c2.5 2.5 3.6 5.5 3.6 9s-1.1 6.5-3.6 9c-2.5-2.5-3.6-5.5-3.6-9S9.5 5.5 12 3z"/>
+    <path d="M3.6 9h16.8M3.6 15h16.8"/>
+  </symbol>
+  <symbol id="ww-icon-calendar-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Zum Kalender hinzufügen (ICS herunterladen)</title>
+    <path d="M21 11V8a3 3 0 0 0-3-3H6a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h5"/>
+    <path d="M3 10h18M8 3v4M16 3v4"/>
+    <path d="M17.5 13.5v7M14.5 17.5l3 3 3-3"/>
+  </symbol>
+  <symbol id="ww-icon-copy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Kopieren</title>
+    <rect x="8" y="8" width="13" height="13" rx="2.5"/>
+    <path d="M16 8V5.5A2.5 2.5 0 0 0 13.5 3h-8A2.5 2.5 0 0 0 3 5.5v8A2.5 2.5 0 0 0 5.5 16H8"/>
+  </symbol>
+  <symbol id="ww-icon-holiday" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Feiertag</title>
+    <path d="M5 21V4"/>
+    <path d="M5 4h12l-2.5 4.5L17 13H5"/>
+  </symbol>
+  <symbol id="ww-icon-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Einladungslink</title>
+    <path d="M10 14a4.5 4.5 0 0 0 6.4 0l3.2-3.2a4.5 4.5 0 0 0-6.4-6.4L12 5.6"/>
+    <path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3.2 3.2a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/>
+  </symbol>
+  <!-- Ohne Maske (Safari-sicher für externe <use>): Häkchen in --ww-icon-knockout = Hintergrundfarbe der Zelle -->
+  <symbol id="ww-icon-all-available" viewBox="0 0 24 24">
+    <title>Alle können</title>
+    <circle cx="12" cy="12" r="10" fill="currentColor"/>
+    <path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ww-icon-knockout, #ffffff)"/>
+  </symbol>
+</svg>

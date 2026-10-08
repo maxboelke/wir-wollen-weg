@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t d">
+  <title id="t">Wir wollen weg – Bildmarke C „Treffpunkt“</title>
+  <desc id="d">Drei Punkte – drei Freunde – laufen auf eigenen Wegen zusammen und treffen sich an einer Sonne über dem Horizont: viele Kalender, ein gemeinsamer Termin.</desc>
+  <!-- Horizont -->
+  <path d="M8 46h48" stroke="#0E6A68" stroke-width="4" stroke-linecap="round"/>
+  <!-- Sonne -->
+  <path d="M20 46a12 12 0 0 1 24 0z" fill="#F4B942"/>
+  <!-- Wege -->
+  <g fill="none" stroke="#0E6A68" stroke-width="3" stroke-linecap="round">
+    <path d="M10 60c6-2 14-6 22-12"/>
+    <path d="M32 61v-13"/>
+    <path d="M54 60c-6-2-14-6-22-12"/>
+  </g>
+  <!-- Freunde -->
+  <circle cx="10" cy="60" r="3.5" fill="#E8694A"/>
+  <circle cx="32" cy="61" r="3.5" fill="#0B4F4A"/>
+  <circle cx="54" cy="60" r="3.5" fill="#F4B942" stroke="#B87A00" stroke-width="1"/>
+  <!-- Sonnenstrahlen -->
+  <g stroke="#E8694A" stroke-width="3" stroke-linecap="round">
+    <path d="M32 24v6"/>
+    <path d="M16.5 30.5l4.2 4.2"/>
+    <path d="M47.5 30.5l-4.2 4.2"/>
+  </g>
+</svg>

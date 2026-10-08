@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t d">
+  <title id="t">Wir wollen weg – Bildmarke A „Sonnenkalender“</title>
+  <desc id="d">Ein Kalenderblatt, in dem eine Sonne über einem Wellen-Horizont aufgeht: Termin trifft Urlaub. Empfohlene Hauptmarke und Grundlage für Favicon und App-Icon.</desc>
+  <defs>
+    <clipPath id="ww-a-body">
+      <rect x="6" y="10" width="52" height="48" rx="12"/>
+    </clipPath>
+  </defs>
+  <!-- Kalenderblatt -->
+  <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
+  <g clip-path="url(#ww-a-body)">
+    <!-- Sonne -->
+    <circle cx="32" cy="42" r="13" fill="#F4B942"/>
+    <!-- Horizont / Meer -->
+    <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
+    <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>
+  </g>
+  <!-- Kalender-Ringe -->
+  <rect x="18" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+  <rect x="40" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+</svg>

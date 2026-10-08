@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 84" width="320" height="84" role="img" aria-labelledby="t">
+  <title id="t">Wir wollen weg – Find dates for your group trip</title>
+  <style>
+    .ww-ink { fill: #1C2526; }
+    .ww-muted { fill: #55605F; }
+    .ww-accent { fill: #0E6A68; }
+    @media (prefers-color-scheme: dark) {
+      .ww-ink { fill: #ECF1F0; }
+      .ww-muted { fill: #A9B4B2; }
+      .ww-accent { fill: #5FC9BA; }
+    }
+    .ww-word { font-family: Figtree, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 750; font-size: 30px; letter-spacing: -0.01em; }
+    .ww-sub { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.02em; }
+  </style>
+  <g transform="translate(2 6) scale(0.875)">
+    <defs>
+      <clipPath id="ww-wmen-body">
+        <rect x="6" y="10" width="52" height="48" rx="12"/>
+      </clipPath>
+    </defs>
+    <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
+    <g clip-path="url(#ww-wmen-body)">
+      <circle cx="32" cy="42" r="13" fill="#F4B942"/>
+      <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
+      <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>
+    </g>
+    <rect x="18" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+    <rect x="40" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+  </g>
+  <!-- Markenname bleibt deutsch; englischer Untertitel (Deskriptor) darunter. Vor Produktion in Pfade umwandeln. -->
+  <text x="70" y="40" class="ww-word"><tspan class="ww-ink">Wir wollen </tspan><tspan class="ww-accent">weg</tspan></text>
+  <text x="71" y="62" class="ww-sub ww-muted">Find dates for your group trip</text>
+</svg>

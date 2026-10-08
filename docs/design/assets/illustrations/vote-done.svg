@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" role="img" aria-labelledby="t d">
+  <title id="t">Abstimmung fertig – es geht los</title>
+  <desc id="d">Ein Kalenderblatt mit markiertem Reisezeitraum, darüber ein großes Häkchen-Siegel und Konfetti. Zustand nach Festlegung des Ergebnisses (F-012).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .head  { fill: var(--ww-illu-teal, #0E6A68); }
+    .ring  { fill: var(--ww-illu-paper, #FFFFFF); stroke: var(--ww-illu-teal-dark, #08403F); }
+    .cell  { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .range { fill: var(--ww-illu-deep, #0B4F4A); }
+    .band  { fill: var(--ww-illu-coral-strong, #D4552F); }
+    .seal  { fill: var(--ww-illu-sun, #F4B942); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .c1 { fill: var(--ww-illu-coral, #E8694A); }
+    .c2 { fill: var(--ww-illu-sun, #F4B942); }
+    .c3 { fill: var(--ww-illu-teal, #0E6A68); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .head  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .ring  { fill: var(--ww-illu-paper, #232E2F); stroke: var(--ww-illu-teal-dark, #5FC9BA); }
+      .cell  { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .range { fill: var(--ww-illu-deep, #B5F0E4); }
+      .band  { fill: var(--ww-illu-coral-strong, #F28A6E); }
+      .seal  { fill: var(--ww-illu-sun, #F2C46B); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .c1 { fill: var(--ww-illu-coral, #F28A6E); }
+      .c2 { fill: var(--ww-illu-sun, #F2C46B); }
+      .c3 { fill: var(--ww-illu-teal, #5FC9BA); }
+    }
+  </style>
+  <circle class="plate" cx="120" cy="96" r="76"/>
+  <!-- Kalender -->
+  <rect class="paper inkS" x="56" y="62" width="124" height="88" rx="12" stroke-width="2"/>
+  <path class="head" d="M57 80v-6a11 11 0 0 1 11-11h100a11 11 0 0 1 11 11v6z"/>
+  <rect class="ring" x="82" y="54" width="7" height="14" rx="3.5" stroke-width="2"/>
+  <rect class="ring" x="147" y="54" width="7" height="14" rx="3.5" stroke-width="2"/>
+  <!-- Tage -->
+  <g class="cell">
+    <rect x="66" y="90" width="16" height="14" rx="3"/><rect x="87" y="90" width="16" height="14" rx="3"/><rect x="108" y="90" width="16" height="14" rx="3"/><rect x="129" y="90" width="16" height="14" rx="3"/><rect x="150" y="90" width="16" height="14" rx="3"/>
+    <rect x="66" y="135" width="16" height="9" rx="3"/><rect x="150" y="110" width="16" height="14" rx="3"/>
+  </g>
+  <!-- Festgelegter Zeitraum -->
+  <g class="range">
+    <rect x="66" y="110" width="16" height="14" rx="3"/><rect x="87" y="110" width="16" height="14" rx="3"/><rect x="108" y="110" width="16" height="14" rx="3"/><rect x="129" y="110" width="16" height="14" rx="3"/>
+  </g>
+  <rect class="band" x="66" y="128" width="79" height="3" rx="1.5"/>
+  <!-- Siegel -->
+  <circle class="seal" cx="176" cy="62" r="20"/>
+  <path class="inkS" d="M167 62.5l6 6 12-13" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Konfetti -->
+  <rect class="c1" x="46" y="44" width="8" height="4" rx="1" transform="rotate(-25 50 46)"/>
+  <rect class="c2" x="70" y="30" width="8" height="4" rx="1" transform="rotate(30 74 32)"/>
+  <circle class="c3" cx="120" cy="36" r="3"/>
+  <rect class="c1" x="204" y="36" width="8" height="4" rx="1" transform="rotate(40 208 38)"/>
+  <circle class="c2" cx="206" cy="100" r="3.5"/>
+  <rect class="c3" x="198" y="122" width="8" height="4" rx="1" transform="rotate(-35 202 124)"/>
+  <circle class="c1" cx="40" cy="112" r="3"/>
+  <rect class="c2" x="34" y="82" width="8" height="4" rx="1" transform="rotate(15 38 84)"/>
+</svg>

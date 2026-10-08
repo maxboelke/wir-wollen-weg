@@ -1,0 +1,84 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 340" width="360" height="340" role="img" aria-labelledby="t d">
+  <title id="t">Eigene Verfügbarkeit: geht, ginge zur Not, geht nicht</title>
+  <desc id="d">Drei Zustände der eigenen Verfügbarkeit (F-005), dreifach kodiert: Symbol (Häkchen, Halbkreis, Kreuz), Muster (glatt, breite Streifen, Kreuzschraffur) und Farbe (Lagune, Sonne, Stein). Oben Light, unten Dark, mit deutschen und englischen Bezeichnungen.</desc>
+  <defs>
+    <pattern id="av-maybe-l" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="9" fill="#F1D58C"/></pattern>
+    <pattern id="av-no-l" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="1.5" height="7" fill="#A8A196"/><rect width="7" height="1.5" fill="#A8A196"/></pattern>
+    <pattern id="av-maybe-d" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="9" fill="#54431A"/></pattern>
+    <pattern id="av-no-d" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="1.5" height="7" fill="#46504E"/><rect width="7" height="1.5" fill="#46504E"/></pattern>
+  </defs>
+  <style>
+    .t { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; }
+    .d { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 600; }
+    .l { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; }
+    .s { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 400; }
+  </style>
+
+  <!-- ===================== LIGHT ===================== -->
+  <rect width="360" height="170" fill="#FBF8F3"/>
+  <text x="24" y="20" class="t" fill="#1C2526">Light</text>
+
+  <g transform="translate(24 32)">
+    <rect width="64" height="64" rx="8" fill="#C6E9E2"/>
+    <text x="6" y="15" class="d" fill="#1C2526">3</text>
+    <path d="M23.5 38.5l5.5 5.5 11.5-12.5" fill="none" stroke="#0A5654" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(148 32)">
+    <rect width="64" height="64" rx="8" fill="#FDF0CF"/>
+    <rect width="64" height="64" rx="8" fill="url(#av-maybe-l)"/>
+    <text x="6" y="15" class="d" fill="#1C2526">4</text>
+    <circle cx="32" cy="38" r="9" fill="#FDF0CF" stroke="#7A4E00" stroke-width="2.2"/>
+    <path d="M32 29a9 9 0 0 1 0 18z" fill="#7A4E00"/>
+  </g>
+  <g transform="translate(272 32)">
+    <rect width="64" height="64" rx="8" fill="#CFC9C0"/>
+    <rect width="64" height="64" rx="8" fill="url(#av-no-l)"/>
+    <text x="6" y="15" class="d" fill="#1C2526">5</text>
+    <path d="M26 32l12 12M38 32L26 44" fill="none" stroke="#1C2526" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g class="l" fill="#1C2526" text-anchor="middle">
+    <text x="56" y="118">geht</text>
+    <text x="180" y="118">ginge zur Not</text>
+    <text x="304" y="118">geht nicht</text>
+  </g>
+  <g class="s" fill="#55605F" text-anchor="middle">
+    <text x="56" y="134">available</text>
+    <text x="180" y="134">if need be</text>
+    <text x="304" y="134">not available</text>
+  </g>
+  <text x="24" y="158" class="s" fill="#55605F">Symbol + Muster + Farbe · Datumszahl bleibt immer lesbar</text>
+
+  <!-- ===================== DARK ===================== -->
+  <rect y="170" width="360" height="170" fill="#111819"/>
+  <text x="24" y="190" class="t" fill="#ECF1F0">Dark</text>
+
+  <g transform="translate(24 202)">
+    <rect width="64" height="64" rx="8" fill="#1D4B46"/>
+    <text x="6" y="15" class="d" fill="#ECF1F0">3</text>
+    <path d="M23.5 38.5l5.5 5.5 11.5-12.5" fill="none" stroke="#5FC9BA" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g transform="translate(148 202)">
+    <rect width="64" height="64" rx="8" fill="#3A2E12"/>
+    <rect width="64" height="64" rx="8" fill="url(#av-maybe-d)"/>
+    <text x="6" y="15" class="d" fill="#ECF1F0">4</text>
+    <circle cx="32" cy="38" r="9" fill="#3A2E12" stroke="#F2C46B" stroke-width="2.2"/>
+    <path d="M32 29a9 9 0 0 1 0 18z" fill="#F2C46B"/>
+  </g>
+  <g transform="translate(272 202)">
+    <rect width="64" height="64" rx="8" fill="#262D2C"/>
+    <rect width="64" height="64" rx="8" fill="url(#av-no-d)"/>
+    <text x="6" y="15" class="d" fill="#ECF1F0">5</text>
+    <path d="M26 32l12 12M38 32L26 44" fill="none" stroke="#ECF1F0" stroke-width="3" stroke-linecap="round"/>
+  </g>
+  <g class="l" fill="#ECF1F0" text-anchor="middle">
+    <text x="56" y="288">geht</text>
+    <text x="180" y="288">ginge zur Not</text>
+    <text x="304" y="288">geht nicht</text>
+  </g>
+  <g class="s" fill="#A9B4B2" text-anchor="middle">
+    <text x="56" y="304">available</text>
+    <text x="180" y="304">if need be</text>
+    <text x="304" y="304">not available</text>
+  </g>
+  <text x="24" y="328" class="s" fill="#A9B4B2">Rot kommt nicht vor: Rot heißt Fehler, nicht „Nein“.</text>
+</svg>

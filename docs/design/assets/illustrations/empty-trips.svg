@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" role="img" aria-labelledby="t d">
+  <title id="t">Noch keine Reisen</title>
+  <desc id="d">Ein gepackter Koffer steht am Meer, eine gepunktete Route führt zur aufgehenden Sonne. Leerzustand für „Meine Reisen“ (F-044).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .sea   { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .sea2  { fill: var(--ww-illu-teal, #0E6A68); }
+    .sun   { fill: var(--ww-illu-sun, #F4B942); }
+    .case  { fill: var(--ww-illu-coral, #E8694A); }
+    .strap { fill: var(--ww-illu-coral-dark, #B23F22); }
+    .ink   { fill: var(--ww-illu-ink, #1C2526); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .route { stroke: var(--ww-illu-teal, #0E6A68); }
+    .shadow{ fill: var(--ww-illu-ink, #1C2526); opacity: 0.12; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .sea   { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .sea2  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
+      .case  { fill: var(--ww-illu-coral, #F28A6E); }
+      .strap { fill: var(--ww-illu-coral-dark, #B23F22); }
+      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .route { stroke: var(--ww-illu-teal, #5FC9BA); }
+      .shadow{ fill: #000000; opacity: 0.35; }
+    }
+  </style>
+  <defs>
+    <clipPath id="et-plate"><circle cx="120" cy="96" r="76"/></clipPath>
+  </defs>
+  <circle class="plate" cx="120" cy="96" r="76"/>
+  <g clip-path="url(#et-plate)">
+    <circle class="sun" cx="164" cy="92" r="24"/>
+    <path class="sea" d="M30 112c18-6 36-6 54 0s36 6 54 0 36-6 54 0 36 6 54 0v80H30z"/>
+    <path class="sea2" d="M30 132c18-5 36-5 54 0s36 5 54 0 36-5 54 0 36 5 54 0v60H30z" opacity="0.35"/>
+  </g>
+  <!-- Route -->
+  <path class="route" d="M150 126c14-4 24-14 30-30" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0 9"/>
+  <!-- Koffer -->
+  <ellipse class="shadow" cx="112" cy="150" rx="42" ry="4"/>
+  <path class="inkS" d="M100 94v-9a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v9" fill="none" stroke-width="4" stroke-linecap="round"/>
+  <rect class="case" x="76" y="94" width="72" height="52" rx="9"/>
+  <rect class="strap" x="92" y="94" width="5" height="52"/>
+  <rect class="strap" x="127" y="94" width="5" height="52"/>
+  <circle class="sun" cx="112" cy="118" r="8"/>
+  <circle class="ink" cx="88" cy="149" r="4"/>
+  <circle class="ink" cx="136" cy="149" r="4"/>
+</svg>
