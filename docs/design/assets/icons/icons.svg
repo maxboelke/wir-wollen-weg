@@ -212,7 +212,7 @@
     <circle cx="12" cy="16.9" r="1.1" fill="currentColor" stroke="none"/>
   </symbol>
 
-  <!-- Ohne Maske (Safari-sicher für externe <use>): Häkchen in --ww-icon-knockout = Hintergrundfarbe der Zelle -->
+  <!-- Ohne Maske (Safari-sicher für externe <use>): Häkchen in ww-icon-knockout = Hintergrundfarbe der Zelle -->
   <symbol id="ww-icon-all-available" viewBox="0 0 24 24">
     <title>Alle können</title>
     <circle cx="12" cy="12" r="10" fill="currentColor"/>
