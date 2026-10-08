@@ -1,0 +1,221 @@
+/* W01 landing – direction B (design-system §1, §9.5; wireframe 01-landing.md) */
+
+/* Header = top of the Indigo cockpit (light spots end here, D-23) */
+.top {
+  background: var(--ww-cockpit-image), var(--ww-cockpit-bg);
+  background-repeat: no-repeat;
+  color: var(--ww-cockpit-text);
+}
+
+.topInner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  max-width: var(--ww-size-content-wide);
+  min-height: calc(var(--ww-space-12) + var(--ww-space-4));
+  margin-inline: auto;
+  padding: var(--ww-space-2) var(--ww-space-4);
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+}
+
+.signInText {
+  white-space: nowrap;
+}
+
+.signInIcon {
+  display: none;
+  padding: 0;
+}
+
+@media (max-width: 374px) {
+  .signInText {
+    display: none;
+  }
+
+  .signInIcon {
+    display: inline-flex;
+  }
+}
+
+/* Hero = rest of the cockpit, rounded bottom edge 30 */
+.hero {
+  border-end-start-radius: var(--ww-radius-cockpit);
+  border-end-end-radius: var(--ww-radius-cockpit);
+  background: var(--ww-cockpit-bg);
+  color: var(--ww-cockpit-text);
+  border-bottom: var(--ww-border-forced);
+}
+
+.heroInner {
+  display: grid;
+  gap: var(--ww-space-4);
+  max-width: var(--ww-size-content-wide);
+  margin-inline: auto;
+  padding: var(--ww-space-2) var(--ww-space-4) 0;
+}
+
+.heroText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  max-width: var(--ww-size-content-narrow);
+}
+
+.title {
+  font-size: var(--ww-text-display);
+  letter-spacing: var(--ww-tracking-display);
+  line-height: var(--ww-leading-tight);
+}
+
+.highlight {
+  color: var(--ww-cockpit-accent);
+}
+
+.lead {
+  margin-bottom: var(--ww-space-2);
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-medium);
+  max-width: 65ch;
+}
+
+.note {
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+  text-align: center;
+}
+
+/* Hero card rises out of the cockpit by ≈ 96 px (B-7a) */
+.art {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  margin-bottom: calc(-1 * (var(--ww-space-16) + var(--ww-space-8)));
+}
+
+.artSvg {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-10);
+  max-width: var(--ww-size-content-wide);
+  margin-inline: auto;
+  padding: calc(var(--ww-space-16) + var(--ww-space-12)) var(--ww-space-4) var(--ww-space-12);
+}
+
+/* "So geht's": 3 tiles from 21.5 em container width, otherwise a list – one rule for DE and EN */
+.steps {
+  container-type: inline-size;
+}
+
+.stepList {
+  display: grid;
+  gap: var(--ww-space-2);
+  margin: var(--ww-space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: calc(var(--ww-radius-card) - var(--ww-space-1));
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.stepText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+}
+
+.stepTitle {
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-extrabold);
+  line-height: var(--ww-leading-snug);
+  hyphens: auto;
+}
+
+.stepDetail {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  line-height: var(--ww-leading-snug);
+}
+
+@container (min-width: 21.5em) {
+  .stepList {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .step {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--ww-space-3) calc(var(--ww-space-2) + var(--ww-space-0-5));
+  }
+}
+
+.invited {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-2);
+}
+
+.invited p {
+  color: var(--ww-color-text-muted);
+}
+
+.footer {
+  display: flex;
+  justify-content: center;
+  padding: var(--ww-space-4) var(--ww-space-4) var(--ww-space-8);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+@media (min-width: 600px) {
+  .topInner,
+  .heroInner,
+  .content {
+    padding-inline: var(--ww-space-6);
+  }
+}
+
+@media (min-width: 960px) {
+  .heroInner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: center;
+    padding-block: var(--ww-space-8) var(--ww-space-10);
+  }
+
+  .art {
+    margin-bottom: 0;
+  }
+
+  .content {
+    padding-top: var(--ww-space-12);
+  }
+
+  .note {
+    text-align: start;
+  }
+}

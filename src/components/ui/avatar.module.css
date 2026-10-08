@@ -1,0 +1,88 @@
+.avatar {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  border-radius: var(--ww-radius-pill);
+  box-shadow: 0 0 0 var(--ww-border-thick) var(--ww-avatar-ring);
+  color: var(--ww-avatar-fg);
+  font-family: var(--ww-font-sans);
+  font-weight: var(--ww-font-weight-extrabold);
+  line-height: 1;
+  letter-spacing: var(--ww-tracking-tight);
+}
+
+.sm {
+  width: var(--ww-size-avatar-sm);
+  height: var(--ww-size-avatar-sm);
+  font-size: calc(var(--ww-size-avatar-sm) * 0.42);
+}
+
+.md {
+  width: var(--ww-size-avatar-md);
+  height: var(--ww-size-avatar-md);
+  font-size: calc(var(--ww-size-avatar-md) * 0.36);
+}
+
+.lg {
+  width: var(--ww-size-avatar-lg);
+  height: var(--ww-size-avatar-lg);
+  font-size: calc(var(--ww-size-avatar-lg) * 0.34);
+}
+
+.open {
+  background: transparent;
+  border: var(--ww-border-medium) dashed var(--ww-avatar-open-border);
+  color: var(--ww-color-text-muted);
+}
+
+.crown {
+  position: absolute;
+  inset-block-start: calc(-1 * var(--ww-space-1-5));
+  inset-inline-end: calc(-1 * var(--ww-space-1-5));
+  display: grid;
+  place-items: center;
+  width: calc(var(--ww-space-4) + var(--ww-space-0-5));
+  height: calc(var(--ww-space-4) + var(--ww-space-0-5));
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-sun);
+  box-shadow: 0 0 0 var(--ww-border-thick) var(--ww-avatar-ring);
+  color: var(--ww-avatar-fg);
+}
+
+.seal {
+  position: absolute;
+  inset-block-end: calc(-1 * var(--ww-space-1));
+  inset-inline-end: calc(-1 * var(--ww-space-1));
+  display: grid;
+  place-items: center;
+  width: calc(var(--ww-space-3) + var(--ww-space-0-5));
+  height: calc(var(--ww-space-3) + var(--ww-space-0-5));
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-seal-bg);
+  box-shadow: 0 0 0 var(--ww-border-medium) var(--ww-seal-ring);
+  color: var(--ww-seal-fg);
+}
+
+.stack {
+  display: inline-flex;
+  align-items: center;
+}
+
+.stack > * + * {
+  margin-inline-start: calc(-1 * var(--ww-space-2));
+}
+
+.more {
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
+}
+
+.plusOne {
+  border: var(--ww-border-medium) dashed currentColor;
+  background: transparent;
+  box-shadow: none;
+  color: inherit;
+  font-size: var(--ww-text-xs);
+}

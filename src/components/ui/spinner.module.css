@@ -1,0 +1,44 @@
+.spinner {
+  display: inline-block;
+  flex: none;
+  width: var(--ww-size-icon-sm);
+  height: var(--ww-size-icon-sm);
+  border: var(--ww-border-thick) solid currentColor;
+  border-right-color: transparent;
+  border-radius: var(--ww-radius-pill);
+  animation: spin 800ms linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    width: auto;
+    height: auto;
+    border: 0;
+    animation: none;
+  }
+
+  .spinner::before {
+    content: "···";
+    font-weight: var(--ww-font-weight-extrabold);
+    letter-spacing: var(--ww-tracking-wide);
+  }
+}
+
+:global(:root[data-motion="reduce"]) .spinner {
+  width: auto;
+  height: auto;
+  border: 0;
+  animation: none;
+}
+
+:global(:root[data-motion="reduce"]) .spinner::before {
+  content: "···";
+  font-weight: var(--ww-font-weight-extrabold);
+  letter-spacing: var(--ww-tracking-wide);
+}

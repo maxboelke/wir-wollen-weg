@@ -1,0 +1,33 @@
+.switch {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-width: var(--ww-size-touch-min);
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-2);
+  border: 0;
+  border-radius: var(--ww-radius-button-sm);
+  background: transparent;
+  color: var(--ww-color-link);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.onBrand {
+  color: var(--ww-cockpit-accent);
+}
+
+.onBrand:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+@media (hover: hover) {
+  .switch:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+  }
+}

@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState, useId } from "react";
-import ui from "@/components/ui.module.css";
+import { Button } from "@/components/ui/button";
+import { TextField } from "@/components/ui/field";
 import type { ActionResult } from "../actions";
 import styles from "./email-access-form.module.css";
 
@@ -19,29 +20,20 @@ export function NameForm({ action }: NameFormProps) {
 
   return (
     <form className={styles.form} action={formAction} noValidate>
-      <h2>{t("nameTitle")}</h2>
-      <label className={styles.label} htmlFor={`${ids}-name`}>
-        {t("nameLabel")}
-      </label>
-      <input
+      <h1 className={styles.heading}>{t("nameTitle")}</h1>
+      <TextField
         id={`${ids}-name`}
-        className={styles.input}
+        label={t("nameLabel")}
         type="text"
         name="name"
         autoComplete="nickname"
         maxLength={40}
         required
-        aria-invalid={state.error === "nameRequired"}
-        aria-describedby={state.error ? `${ids}-error` : undefined}
+        error={state.error ? t(`errors.${state.error}`) : undefined}
       />
-      {state.error ? (
-        <p id={`${ids}-error`} className={ui.error} role="alert">
-          {t(`errors.${state.error}`)}
-        </p>
-      ) : null}
-      <button className={ui.button} type="submit" disabled={pending}>
+      <Button type="submit" block loading={pending} loadingLabel={t("saving")}>
         {t("saveName")}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -14,15 +14,15 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 | R-004 | niedrig | Landingpage in Demo/Dev indexierbar | verifiziert |
 | R-005 | mittel | Rate-Limit-IP per `X-Forwarded-For` umgehbar / gemeinsamer Topf | verifiziert |
 | R-006 | niedrig | Magic-Link-Landeseite verbraucht Token per GET-Link | verifiziert |
-| R-007 | niedrig | Ungültige Einladung ohne `h1` | offen → Inkrement 1 |
+| R-007 | niedrig | Ungültige Einladung ohne `h1` | behoben – bitte prüfen |
 | R-008 | niedrig | Doku-Abweichungen (sitemap §4, deployment §0.2) | verifiziert |
 | R-009 | niedrig | CI nutzt `pnpm/action-setup@v4` mit pnpm 12 | verifiziert (bewusst gepinnt) |
 | R-010 | niedrig | Client konnte Session-IP über `x-ww-client-ip` fälschen | verifiziert |
 | R-011 | hoch | `handleAuthRequest` stürzt auf Node 24 ab (CI rot) | verifiziert |
 | R-012 | niedrig | Magic-Link-Fehlerseite ohne Seitenrahmen | verifiziert |
-| R-013 | niedrig | Netzwerkfehler weicht von Flow H.5 Schritt 3e ab | offen → Inkrement 1 |
+| R-013 | niedrig | Netzwerkfehler weicht von Flow H.5 Schritt 3e ab | behoben – bitte prüfen |
 | R-014 | niedrig | Eigene IP-Auflösung doppelt zu Better Auth | offen (später entscheiden) |
-| R-015 | niedrig | Hydration-Warnung auf `/auth/magic` (`method="POST"` am Formular mit Action) | offen → Inkrement 1 |
+| R-015 | niedrig | Hydration-Warnung auf `/auth/magic` (`method="POST"` am Formular mit Action) | behoben – bitte prüfen |
 
 ## Details
 
@@ -66,7 +66,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Schwere: niedrig · Datei: `src/app/(app)/i/[token]/page.tsx`
 - Problem: `/i/doesnotexist` → axe `page-has-heading-one`.
 - Erwartet: jede Seite mit `h1`; axe-Tests für `/i/<token>` und `/auth/magic` aufnehmen.
-- Status: offen → Inkrement 1 (mit F-002/Flow A.3)
+- Umsetzung (Schritt 0a UI-Fundament): ungültige Einladung zeigt `h1` „Dieser Link funktioniert nicht mehr“ + gemeinsamen Hinweistext + Taste (`src/app/(app)/i/[token]/page.tsx`); axe hell/dunkel für `/i/<token>`, `/i/<ungültig>`, `/auth/magic` in `tests/e2e/ui-foundation.spec.ts`, eigener Test „R-007“.
+- Status: behoben – bitte prüfen
 
 ### R-008: Doku-Abweichungen nachziehen
 - Schwere: niedrig · Dateien: `docs/ux/sitemap.md` §4, `docs/ops/deployment.md` §0.2
@@ -100,7 +101,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Schwere: niedrig · Datei: `src/app/(app)/auth/magic/error.tsx`
 - Problem: Abgebrochener POST ersetzt die ganze Karte durch die Fehlerseite (Extra-Tipp, Fokus auf `body`).
 - Erwartet: Inline-Fehler über dem aktiven Button; `error.tsx` nur als Rückfall.
-- Status: offen → Inkrement 1
+- Umsetzung (Schritt 0a): `MagicLinkForm` fängt den Submit mit JS ab und ruft die Server Action in einer Transition auf; Netzwerkfehler → Fehlertext (Icon + Text) über der Taste „Nochmal versuchen“, Fokus auf die Taste; Redirects laufen über `unstable_rethrow` weiter. Ohne JS bleibt das echte Formular. `error.tsx` nur noch Rückfall. E2E „R-013“ (POST abgebrochen → Inline-Fehler → Retry meldet an).
+- Status: behoben – bitte prüfen
 
 ### R-014: Eigene IP-Auflösung doppelt zu Better Auth
 - Schwere: niedrig (Codequalität) · Datei: `src/server/auth/client-ip.ts`
@@ -111,4 +113,5 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Schwere: niedrig · Datei: `src/features/auth/components/magic-link-form.tsx`
 - Problem (CEO beim manuellen Durchklicken, `pnpm dev`): React meldet „Cannot specify a encType or method for a form that specifies a function as the action“ und einen Hydration-Mismatch (`method="post"` vs. `"POST"`). Für Nutzer ohne Auswirkung, erzeugt aber das Next-Dev-„Issue“.
 - Erwartet: keine Hydration-Warnungen; Funktion ohne JS bleibt erhalten (React setzt Methode bei Function-Actions selbst).
-- Status: offen → Inkrement 1
+- Umsetzung (Schritt 0a): `method="post"` entfernt; Browser-Konsole auf `/auth/magic` ohne Hydration-Warnung geprüft; E2E „POST signs in without JavaScript“ weiter grün.
+- Status: behoben – bitte prüfen

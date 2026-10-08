@@ -1,0 +1,224 @@
+/* Code field – design-system §9.7 (boxes 48 × 58, < 380 px 44 × 54, radius 14, gap 8 / 16). */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.label {
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.group {
+  --ww-code-w: var(--ww-size-code-box-w);
+  --ww-code-h: var(--ww-size-code-box-h);
+
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  max-width: 100%;
+}
+
+@media (max-width: 379px) {
+  .group {
+    --ww-code-w: calc(var(--ww-size-code-box-w) - var(--ww-space-1));
+    --ww-code-h: calc(var(--ww-size-code-box-h) - var(--ww-space-1));
+  }
+}
+
+.boxes {
+  display: flex;
+  gap: var(--ww-space-2);
+}
+
+.box {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: var(--ww-code-w);
+  height: var(--ww-code-h);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-code);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-numeric);
+  font-size: var(--ww-text-code);
+  font-weight: var(--ww-font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.groupEnd {
+  margin-inline-end: var(--ww-space-2);
+}
+
+.digit {
+  display: inline-block;
+}
+
+/* filled: Lavender-100 + 2 px Indigo (dark: primary-tint + 2 px mint) */
+.filled {
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  background: var(--ww-color-primary-tint);
+}
+
+/* active: 2 px selected + focus ring + caret 2 × 26 px (blinks max. 5 s, W02-07) */
+.active {
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.caret {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--ww-border-thick);
+  height: var(--ww-text-code);
+  margin: calc(var(--ww-text-code) / -2) 0 0 calc(var(--ww-border-thick) / -2);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-text);
+  animation: blink 1000ms steps(1) 5;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .caret {
+    animation: none;
+  }
+}
+
+:global(:root[data-motion="reduce"]) .caret {
+  animation: none;
+}
+
+/* whole value selected: all boxes primary-tint-strong */
+.selected .box {
+  background: var(--ww-color-primary-tint-strong);
+}
+
+.error .box {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.checking .box {
+  border-color: var(--ww-color-border-subtle);
+}
+
+/* success wave (W02-05): left → right, one stagger step per box; reduced: stagger = 0 */
+.success .box {
+  border: var(--ww-border-thick) solid var(--ww-color-accent-text);
+  background: var(--ww-color-accent-tint);
+  transition:
+    background-color 0s linear calc(var(--ww-code-index) * var(--ww-stagger-item)),
+    border-color 0s linear calc(var(--ww-code-index) * var(--ww-stagger-item));
+}
+
+.locked .box {
+  border: var(--ww-border-medium) dashed var(--ww-color-border-strong);
+  background: var(--ww-color-surface-sunken);
+}
+
+.locked .digit {
+  visibility: hidden;
+}
+
+/* The one real input lies transparently over the boxes. */
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  caret-color: transparent;
+  font-size: var(--ww-text-md);
+  letter-spacing: 0;
+  outline: none;
+  cursor: text;
+}
+
+/* Focus is shown on the active box (2 px + focus ring), not around the whole group. */
+.input:focus-visible {
+  outline: none;
+}
+
+.input::selection {
+  background: transparent;
+  color: transparent;
+}
+
+.input:disabled {
+  cursor: not-allowed;
+}
+
+.seal {
+  position: absolute;
+  top: calc(-1 * var(--ww-space-2));
+  right: calc(-1 * var(--ww-space-2));
+  display: grid;
+  place-items: center;
+  width: var(--ww-size-seal-sm);
+  height: var(--ww-size-seal-sm);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-seal-bg);
+  box-shadow: 0 0 0 var(--ww-border-thick) var(--ww-seal-ring);
+  color: var(--ww-seal-fg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.success .seal {
+  opacity: 1;
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  min-height: var(--ww-space-6);
+}
+
+.messages:empty {
+  min-height: 0;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* Hidden until the delay has passed (animation-delay set inline), then simply visible. */
+.delayed {
+  animation: appear 0s linear backwards;
+}
+
+@keyframes appear {
+  from {
+    visibility: hidden;
+  }
+}
+
+.successText {
+  color: var(--ww-color-accent-text);
+}

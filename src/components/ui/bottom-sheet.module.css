@@ -1,0 +1,82 @@
+/* Bottom sheet – design-system §9.16 */
+.sheet {
+  position: fixed;
+  inset: auto 0 0;
+  width: 100%;
+  max-width: none;
+  max-height: var(--ww-size-sheet-full);
+  margin: 0;
+  padding: 0;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-sheet) var(--ww-radius-sheet) 0 0;
+  background: var(--ww-color-surface-raised);
+  color: var(--ww-color-text);
+  box-shadow: var(--ww-shadow-3);
+  overscroll-behavior: contain;
+}
+
+.sheet::backdrop {
+  background: var(--ww-color-scrim);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  padding: var(--ww-space-2) var(--ww-space-4) calc(var(--ww-space-6) + env(safe-area-inset-bottom));
+}
+
+.handle {
+  align-self: center;
+  width: var(--ww-space-10);
+  height: calc(var(--ww-space-1) + var(--ww-border-thin));
+  margin-bottom: var(--ww-space-2);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-border-subtle);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-3);
+}
+
+.title {
+  font-size: var(--ww-text-xl);
+}
+
+.title:focus {
+  outline: none;
+}
+
+.close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-touch-min);
+  height: var(--ww-size-touch-min);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-btn-tool-bg);
+  color: var(--ww-btn-tool-fg);
+  cursor: pointer;
+}
+
+.body {
+  margin-top: var(--ww-space-3);
+  overflow-y: auto;
+}
+
+@media (min-width: 960px) {
+  .sheet {
+    inset: 0;
+    width: min(100% - var(--ww-space-8), 30rem);
+    max-height: calc(100dvh - var(--ww-space-16));
+    margin: auto;
+    border-radius: var(--ww-radius-sheet);
+  }
+
+  .handle {
+    display: none;
+  }
+}

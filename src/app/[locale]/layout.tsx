@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
+import { brandMetadata, brandViewport, DocumentHead } from "@/components/document-head";
+import { MotionPreferenceSync } from "@/components/motion-preference-sync";
 import { isLocale, locales } from "@/i18n/config";
 import "@/styles/globals.css";
 
@@ -23,8 +25,11 @@ export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Pr
     title: { default: t("name"), template: `%s · ${t("name")}` },
     description: t("tagline"),
     alternates: { languages: { de: "/de", en: "/en", "x-default": "/en" } },
+    ...brandMetadata(locale),
   };
 }
+
+export const viewport = brandViewport;
 
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
@@ -33,9 +38,13 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   setRequestLocale(locale);
 
   return (
-    <html lang={locale}>
+    <html lang={locale} suppressHydrationWarning>
+      <head>
+        <DocumentHead />
+      </head>
       <body>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <MotionPreferenceSync />
       </body>
     </html>
   );

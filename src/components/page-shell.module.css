@@ -2,38 +2,17 @@
   position: absolute;
   inset-inline-start: var(--ww-space-2);
   inset-block-start: calc(-1 * var(--ww-space-16));
-  padding: var(--ww-space-2) var(--ww-space-4);
-  background: var(--ww-color-surface-raised);
-  border-radius: var(--ww-radius-sm);
   z-index: var(--ww-z-toast);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-color-surface-raised);
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  box-shadow: var(--ww-shadow-2);
 }
 
 .skipLink:focus {
   inset-block-start: var(--ww-space-2);
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--ww-space-4);
-  padding: var(--ww-space-3) var(--ww-space-4);
-  border-block-end: var(--ww-border-thin) solid var(--ww-color-border-subtle);
-  background: var(--ww-color-surface);
-}
-
-.brand {
-  font-family: var(--ww-font-display);
-  font-weight: var(--ww-font-weight-display);
-  font-size: var(--ww-text-lg);
-  color: var(--ww-color-text);
-  text-decoration: none;
-}
-
-.main {
-  max-width: var(--ww-size-content-narrow);
-  margin-inline: auto;
-  padding: var(--ww-space-6) var(--ww-space-4) var(--ww-space-12);
 }
 
 .demoBanner {
@@ -42,5 +21,53 @@
   background: var(--ww-color-warning-tint);
   color: var(--ww-color-warning-text);
   font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
   text-align: center;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-3);
+  max-width: var(--ww-size-content-narrow);
+  min-height: calc(var(--ww-space-12) + var(--ww-space-2));
+  margin-inline: auto;
+  padding: var(--ww-space-2) var(--ww-space-4);
+}
+
+.headerActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ww-space-1);
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  min-height: var(--ww-size-touch-min);
+  border-radius: var(--ww-radius-sm);
+  color: var(--ww-color-text);
+  text-decoration: none;
+}
+
+.brandOnBrand:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+.main {
+  max-width: var(--ww-size-content-narrow);
+  margin-inline: auto;
+  padding: var(--ww-space-2) var(--ww-space-4) var(--ww-space-16);
+}
+
+@media (min-width: 600px) {
+  .header,
+  .main {
+    padding-inline: var(--ww-space-6);
+  }
 }

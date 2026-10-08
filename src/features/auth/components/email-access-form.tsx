@@ -2,9 +2,12 @@
 
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
-import ui from "@/components/ui.module.css";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { Button } from "@/components/ui/button";
+import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
+import { Checkbox, TextField } from "@/components/ui/field";
 import { normalizeCode, CODE_LENGTH } from "@/lib/code";
+import { DISTANCE, enter } from "@/lib/motion";
 import type { ActionResult } from "../actions";
 import styles from "./email-access-form.module.css";
 
@@ -18,28 +21,42 @@ type ErrorKey =
   | "nameRequired"
   | "generic";
 
+/** Success state stays visible this long before the next step (W02-05: ≤ 450 ms). */
+export const SUCCESS_HOLD_MS = 450;
+
+const STEP_ORDER: Record<Step, number> = { email: 0, code: 1, name: 2 };
+
 interface EmailAccessFormProps {
   /** Internal path to continue at after sign-in (e.g. `/i/<token>` or `/trips`). */
   returnTo: string;
-  /** "login": visible remember-me checkbox; "invite": compact text line (ux-spec §4.4). */
+  /** "login": own h1 + visible remember-me checkbox; "invite": h2 below the trip card. */
   variant: "login" | "invite";
   /** Name step for new accounts – on invites this is the join step (Flow A.1 #6). */
   onNameSubmit: (name: string) => Promise<ActionResult>;
+  /** Decorative "code sent" illustration, rendered on the server (W02/W03). */
+  codeIllustration?: ReactNode;
 }
 
 /**
- * Spike UI for P1-0a: e-mail → 6-digit code → (new accounts) name.
- * Everything happens on the same URL via fetch, so the invite token in the URL
- * survives the whole registration (tech-stack.md §3.4). The full UI
- * (segmented code field, resend countdown, pendingAuth recovery) is Increment 1.
+ * E-mail → 6-digit code → (new accounts) name, all on the same URL via fetch, so the
+ * invite token in the URL survives the whole registration (tech-stack.md §3.4).
+ * Look & motion: direction B, motion package M-1 (W02-01 … W02-08).
  */
-export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccessFormProps) {
+export function EmailAccessForm({
+  returnTo,
+  variant,
+  onNameSubmit,
+  codeIllustration,
+}: EmailAccessFormProps) {
   const t = useTranslations("auth");
   const tInvite = useTranslations("invite");
   const locale = useLocale();
   const router = useRouter();
   const ids = useId();
+  const rootRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
+  const nameRef = useRef<HTMLInputElement>(null);
+  const previousStep = useRef<Step>("email");
 
   const [step, setStep] = useState<Step>("email");
   const [email, setEmail] = useState("");
@@ -48,11 +65,21 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState<ErrorKey | null>(null);
   const [busy, setBusy] = useState(false);
+  const [codeStatus, setCodeStatus] = useState<CodeFieldStatus>("idle");
 
-  // Move focus to the code field once the code step is rendered (the email field it
-  // replaces is unmounted, focus would otherwise fall back to <body>).
+  // W02-01: the new step fades in from the right (back: from the left); reduced = fade.
+  useLayoutEffect(() => {
+    const before = previousStep.current;
+    previousStep.current = step;
+    if (before === step) return;
+    const direction = STEP_ORDER[step] > STEP_ORDER[before] ? 1 : -1;
+    enter(rootRef.current, { x: direction * DISTANCE.sm });
+  }, [step]);
+
+  // Focus moves into the new step right away (R-003; the old field is unmounted).
   useEffect(() => {
     if (step === "code") codeRef.current?.focus();
+    if (step === "name") nameRef.current?.focus();
   }, [step]);
 
   async function post(path: string, body: unknown): Promise<Response> {
@@ -62,6 +89,19 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
       body: JSON.stringify(body),
       credentials: "same-origin",
     });
+  }
+
+  async function sendCode(value: string): Promise<boolean> {
+    const response = await post("/email-access/request", {
+      email: value,
+      callbackURL: returnTo,
+      locale,
+    });
+    if (!response.ok) {
+      setError(response.status === 429 ? "rateLimited" : "generic");
+      return false;
+    }
+    return true;
   }
 
   // Email and name steps use form actions with FormData: values typed before
@@ -78,16 +118,28 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
     }
     setBusy(true);
     try {
-      const response = await post("/email-access/request", {
-        email: value,
-        callbackURL: returnTo,
-        locale,
-      });
-      if (!response.ok) {
-        setError(response.status === 429 ? "rateLimited" : "generic");
-        return;
+      if (await sendCode(value)) {
+        setCode("");
+        setCodeStatus("idle");
+        setStep("code");
       }
-      setStep("code");
+    } catch {
+      setError("generic");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  /** Locked after too many attempts: "Send a new code" is the primary action (ux-spec §4.4). */
+  async function requestNewCode() {
+    setError(null);
+    setBusy(true);
+    try {
+      if (await sendCode(email)) {
+        setCode("");
+        setCodeStatus("idle");
+        requestAnimationFrame(() => codeRef.current?.focus());
+      }
     } catch {
       setError("generic");
     } finally {
@@ -97,38 +149,44 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
 
   async function verifyCode(value: string) {
     setError(null);
-    setBusy(true);
+    setCodeStatus("checking");
     try {
-      const response = await post("/sign-in/email-otp", {
-        email,
-        otp: value,
-        rememberMe,
-      });
+      const response = await post("/sign-in/email-otp", { email, otp: value, rememberMe });
       if (!response.ok) {
         const body = (await response.json().catch(() => ({}))) as { code?: string };
-        setError(errorFromVerification(response.status, body.code));
-        codeRef.current?.select();
+        const key = errorFromVerification(response.status, body.code);
+        setError(key);
+        setCodeStatus(
+          key === "tooManyAttempts" ? "locked" : key === "wrongCode" ? "error" : "idle",
+        );
+        // Keep the value selected for quick overwriting, focus stays (ux-spec §4.4).
+        requestAnimationFrame(() => {
+          codeRef.current?.focus();
+          codeRef.current?.select();
+        });
         return;
       }
       const { user } = (await response.json()) as { user: { name: string } };
-      if (!user.name) {
-        setStep("name");
-        return;
-      }
-      if (variant === "invite") router.refresh();
-      else router.push(returnTo);
+      setCodeStatus("success");
+      window.setTimeout(() => {
+        if (!user.name) setStep("name");
+        else if (variant === "invite") router.refresh();
+        else router.push(returnTo);
+      }, SUCCESS_HOLD_MS);
     } catch {
       setError("generic");
-    } finally {
-      setBusy(false);
+      setCodeStatus("idle");
     }
   }
 
-  function onCodeChange(raw: string) {
-    const value = normalizeCode(raw);
+  function onCodeChange(value: string) {
+    if (codeStatus === "error") {
+      setCodeStatus("idle");
+      setError(null);
+    }
     setCode(value);
     // Auto-submit at 6 digits (ux-spec §4.4).
-    if (value.length === CODE_LENGTH && !busy) void verifyCode(value);
+    if (value.length === CODE_LENGTH && codeStatus !== "checking") void verifyCode(value);
   }
 
   async function submitName(formData: FormData) {
@@ -145,127 +203,141 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
     if (result.error) setError(result.error);
   }
 
-  const errorId = `${ids}-error`;
-  const errorMessage = error ? (
-    <p id={errorId} className={ui.error} role="alert">
-      {t(`errors.${error}`)}
-    </p>
-  ) : null;
+  const Heading = variant === "login" ? "h1" : "h2";
+  const errorText = error ? t(`errors.${error}`) : null;
 
   if (step === "email") {
     return (
-      <form key="email" className={styles.form} action={requestCode} noValidate>
-        <label className={styles.label} htmlFor={`${ids}-email`}>
-          {t("emailLabel")}
-        </label>
-        <input
-          id={`${ids}-email`}
-          className={styles.input}
-          type="email"
-          name="email"
-          autoComplete="email"
-          inputMode="email"
-          required
-          defaultValue={email}
-          aria-invalid={error === "invalidEmail"}
-          aria-describedby={error ? errorId : undefined}
-        />
-        {variant === "login" ? (
-          <label className={styles.checkbox}>
-            <input type="checkbox" name="rememberMe" defaultChecked={rememberMe} />
-            <span>{t("rememberMe")}</span>
-            <span className={ui.muted}>{t("rememberMeHint")}</span>
-          </label>
-        ) : (
-          <p className={ui.muted}>{t("rememberMeInline")}</p>
-        )}
-        {errorMessage}
-        <button className={ui.button} type="submit" disabled={busy}>
-          {t("sendCode")}
-        </button>
-      </form>
+      <div ref={rootRef} className={styles.step}>
+        <div className={styles.intro}>
+          <Heading className={styles.heading}>
+            {variant === "login" ? t("loginTitle") : tInvite("emailTitle")}
+          </Heading>
+          {variant === "login" ? <p className={styles.lead}>{t("loginLead")}</p> : null}
+        </div>
+        <form key="email" className={styles.form} action={requestCode} noValidate>
+          <TextField
+            id={`${ids}-email`}
+            label={t("emailLabel")}
+            type="email"
+            name="email"
+            autoComplete="email"
+            inputMode="email"
+            required
+            defaultValue={email}
+            error={error ? errorText : undefined}
+          />
+          {variant === "login" ? (
+            <Checkbox
+              name="rememberMe"
+              defaultChecked={rememberMe}
+              label={t("rememberMe")}
+              hint={t("rememberMeHint")}
+            />
+          ) : (
+            <p className={styles.small}>{t("rememberMeInline")}</p>
+          )}
+          <Button type="submit" block loading={busy} loadingLabel={t("sendingCode")}>
+            {t("sendCode")}
+          </Button>
+        </form>
+        {variant === "login" ? <p className={styles.small}>{t("newHere")}</p> : null}
+      </div>
     );
   }
 
   if (step === "code") {
+    const locked = codeStatus === "locked";
     return (
-      <form
-        key="code"
-        className={styles.form}
-        onSubmit={(e) => {
-          e.preventDefault();
-          void verifyCode(code);
-        }}
-        noValidate
-      >
-        <p>{t("codeSentLead")}</p>
-        <label className={styles.label} htmlFor={`${ids}-code`}>
-          {t("codeLabel")}
-        </label>
-        <input
-          ref={codeRef}
-          id={`${ids}-code`}
-          className={`${styles.input} ${styles.code}`}
-          type="text"
-          name="code"
-          inputMode="numeric"
-          autoComplete="one-time-code"
-          pattern="[0-9]*"
-          autoCapitalize="off"
-          spellCheck={false}
-          value={code}
-          onChange={(e) => {
-            onCodeChange(e.target.value);
+      <div ref={rootRef} className={styles.step}>
+        {codeIllustration ? <div className={styles.illustration}>{codeIllustration}</div> : null}
+        <div className={styles.intro}>
+          <Heading className={styles.heading}>{t("codeTitle")}</Heading>
+          <p className={styles.lead}>
+            {t.rich("codeSentTo", {
+              email,
+              b: (chunks) => <strong className={styles.email}>{chunks}</strong>,
+            })}{" "}
+            <button
+              type="button"
+              className={styles.inlineLink}
+              onClick={() => {
+                setStep("email");
+                setCode("");
+                setCodeStatus("idle");
+                setError(null);
+              }}
+            >
+              {t("otherEmail")}
+            </button>
+          </p>
+        </div>
+        <form
+          key="code"
+          className={styles.form}
+          onSubmit={(event) => {
+            event.preventDefault();
+            if (locked) void requestNewCode();
+            else if (code.length === CODE_LENGTH) void verifyCode(normalizeCode(code));
+            else codeRef.current?.focus();
           }}
-          aria-invalid={error !== null}
-          aria-describedby={`${ids}-code-hint${error ? ` ${errorId}` : ""}`}
-        />
-        <p id={`${ids}-code-hint`} className={ui.muted}>
-          {t("codeHint", { email })}
-        </p>
-        <div aria-live="polite">{errorMessage}</div>
-        <button className={ui.button} type="submit" disabled={busy || code.length !== CODE_LENGTH}>
-          {t("verify")}
-        </button>
-        <button
-          type="button"
-          className={ui.textButton}
-          onClick={() => {
-            setStep("email");
-            setCode("");
-            setError(null);
-          }}
+          noValidate
         >
-          {t("otherEmail")}
-        </button>
-        <p className={ui.muted}>{t("magicHint")}</p>
-      </form>
+          <CodeField
+            ref={codeRef}
+            id={`${ids}-code`}
+            label={t("codeLabel")}
+            hint={t("codeHint", { email })}
+            value={code}
+            onChange={onCodeChange}
+            status={codeStatus}
+            error={errorText}
+            checkingLabel={t("checkingCode")}
+            successLabel={t("codeConfirmed")}
+          />
+          <Button
+            type="submit"
+            block
+            loading={codeStatus === "checking" || busy}
+            aria-disabled={codeStatus === "success" || undefined}
+          >
+            {locked ? t("requestNewCode") : t("verify")}
+          </Button>
+        </form>
+        <div className={styles.help}>
+          <p className={styles.small}>{t("spamHint")}</p>
+          <p className={styles.small}>{t("magicHint")}</p>
+        </div>
+      </div>
     );
   }
 
   return (
-    <form key="name" className={styles.form} action={submitName} noValidate>
-      <h2>{t("nameTitle")}</h2>
-      <label className={styles.label} htmlFor={`${ids}-name`}>
-        {t("nameLabel")}
-      </label>
-      <input
-        id={`${ids}-name`}
-        className={styles.input}
-        type="text"
-        name="name"
-        autoComplete="nickname"
-        maxLength={40}
-        required
-        defaultValue={name}
-        aria-invalid={error === "nameRequired"}
-        aria-describedby={error ? errorId : undefined}
-      />
-      {errorMessage}
-      <button className={ui.button} type="submit" disabled={busy}>
-        {variant === "invite" ? tInvite("confirmJoin") : t("saveName")}
-      </button>
-    </form>
+    <div ref={rootRef} className={styles.step}>
+      <form key="name" className={styles.form} action={submitName} noValidate>
+        <Heading className={styles.heading}>{t("nameTitle")}</Heading>
+        <TextField
+          ref={nameRef}
+          id={`${ids}-name`}
+          label={t("nameLabel")}
+          type="text"
+          name="name"
+          autoComplete="nickname"
+          maxLength={40}
+          required
+          defaultValue={name}
+          error={error ? errorText : undefined}
+        />
+        <Button
+          type="submit"
+          block
+          loading={busy}
+          loadingLabel={variant === "invite" ? tInvite("joining") : t("saving")}
+        >
+          {variant === "invite" ? tInvite("confirmJoin") : t("saveName")}
+        </Button>
+      </form>
+    </div>
   );
 }
 

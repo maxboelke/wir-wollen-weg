@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
+import { Illustration } from "@/components/illustrations/illustration";
 import { PageShell } from "@/components/page-shell";
-import ui from "@/components/ui.module.css";
 import { saveName, saveNameFormAction } from "@/features/auth/actions";
 import { EmailAccessForm } from "@/features/auth/components/email-access-form";
 import { NameForm } from "@/features/auth/components/name-form";
@@ -15,36 +15,31 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("loginTitle") };
 }
 
+/** W02 – sign in / sign up (e-mail → code → name). */
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const { next } = await searchParams;
   const returnTo = toSafeInternalPath(typeof next === "string" ? next : undefined, "/trips");
   const session = await getSession();
-  const t = await getTranslations("auth");
 
   if (session) {
     if (session.user.name) redirect(returnTo);
     // Signed in without a name (new account via magic link, Flow H.5 3a): name step first.
     return (
       <PageShell homeHref="/" languageSwitch={<LanguageSwitch />}>
-        <div className={ui.stack}>
-          <h1>{t("loginTitle")}</h1>
-          <NameForm action={saveNameFormAction.bind(null, returnTo)} />
-        </div>
+        <NameForm action={saveNameFormAction.bind(null, returnTo)} />
       </PageShell>
     );
   }
 
   return (
     <PageShell homeHref="/" languageSwitch={<LanguageSwitch />}>
-      <div className={ui.stack}>
-        <h1>{t("loginTitle")}</h1>
-        <p>{t("loginLead")}</p>
-        <EmailAccessForm
-          returnTo={returnTo}
-          variant="login"
-          onNameSubmit={saveName.bind(null, returnTo)}
-        />
-      </div>
+      <EmailAccessForm
+        returnTo={returnTo}
+        variant="login"
+        onNameSubmit={saveName.bind(null, returnTo)}
+        // Sign-in stays calm (energy level E0): static illustration.
+        codeIllustration={<Illustration name="code-sent" />}
+      />
     </PageShell>
   );
 }

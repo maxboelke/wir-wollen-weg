@@ -8,19 +8,23 @@ test.describe("landing page", () => {
     await page.goto("/de");
     await expect(page).toHaveTitle("Wir wollen weg");
     await expect(page.locator("html")).toHaveAttribute("lang", "de");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(de.landing.title);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      `${de.landing.titleLead} ${de.landing.titleHighlight}`,
+    );
   });
 
   test("English landing uses the English product name", async ({ page }) => {
     await page.goto("/en");
     await expect(page).toHaveTitle("When do we go?");
     await expect(page.locator("html")).toHaveAttribute("lang", "en");
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(en.landing.title);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+      `${en.landing.titleLead} ${en.landing.titleHighlight}`,
+    );
   });
 
   test("language switch links to the other locale", async ({ page }) => {
     await page.goto("/de");
-    await page.getByRole("link", { name: de.common.switchLanguage }).click();
+    await page.getByRole("banner").getByRole("link", { name: de.common.switchLanguage }).click();
     await expect(page).toHaveURL(/\/en$/);
   });
 

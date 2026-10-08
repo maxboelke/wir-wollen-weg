@@ -1,0 +1,44 @@
+.banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.icon {
+  margin-top: var(--ww-space-0-5);
+}
+
+.body {
+  flex: 1 1 12em;
+  min-width: 0;
+}
+
+.action {
+  margin-inline-start: auto;
+}
+
+.info {
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+}
+
+.warning {
+  background: var(--ww-color-warning-tint);
+  color: var(--ww-color-warning-text);
+}
+
+.success {
+  background: var(--ww-color-success-tint);
+  color: var(--ww-color-success-text);
+}
+
+.danger {
+  background: var(--ww-color-danger-tint);
+  color: var(--ww-color-danger);
+}

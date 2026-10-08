@@ -1,0 +1,111 @@
+/* Inputs – design-system §9.7, ux-spec §5 */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-snug);
+}
+
+.control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-size: var(--ww-text-md);
+  line-height: var(--ww-leading-snug);
+}
+
+.input::placeholder {
+  color: var(--ww-color-text-subtle);
+}
+
+.input:focus-visible {
+  outline: none;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  padding-inline: calc(var(--ww-space-4) - var(--ww-border-thick) + var(--ww-border-medium));
+  box-shadow: var(--ww-focus-ring);
+}
+
+.input[aria-invalid="true"] {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.input.success {
+  border-color: var(--ww-color-accent-text);
+  padding-inline-end: var(--ww-space-10);
+}
+
+.input:read-only {
+  border-style: dashed;
+  background: var(--ww-color-surface-sunken);
+}
+
+.successIcon {
+  position: absolute;
+  inset-inline-end: var(--ww-space-3);
+  color: var(--ww-color-accent-text);
+}
+
+.hint {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-danger);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.messageIcon {
+  margin-top: var(--ww-space-0-5);
+}
+
+.checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ww-space-3);
+  min-height: var(--ww-size-touch-min);
+  padding-block: var(--ww-space-2);
+  cursor: pointer;
+}
+
+.checkboxInput {
+  flex: none;
+  width: var(--ww-size-avatar-sm);
+  height: var(--ww-size-avatar-sm);
+  margin: 0;
+  accent-color: var(--ww-color-selected);
+  cursor: pointer;
+}
+
+.checkboxText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.checkboxHint {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-regular);
+}

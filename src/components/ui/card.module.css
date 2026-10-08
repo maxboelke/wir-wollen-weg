@@ -1,0 +1,95 @@
+.card {
+  position: relative;
+  min-width: 0;
+  padding: var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.padLg {
+  padding: var(--ww-space-6) var(--ww-space-5);
+}
+
+.padNone {
+  padding: 0;
+}
+
+/* Hover shadow as pseudo-element with changing opacity – never animate box-shadow (M-D9). */
+.interactive::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: var(--ww-shadow-2);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--ww-duration-fast) var(--ww-ease-standard);
+}
+
+.interactive {
+  transition: transform var(--ww-duration-fast) var(--ww-ease-standard);
+}
+
+.interactive:active {
+  transform: scale(var(--ww-motion-scale-press));
+}
+
+.interactive:focus-within {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: var(--ww-focus-offset);
+}
+
+@media (hover: hover) {
+  .interactive:hover::after {
+    opacity: 1;
+  }
+
+  .interactive:hover {
+    transform: translateY(calc(-1 * var(--ww-space-0-5)));
+  }
+}
+
+/* Icon tiles – design-system §9.5 */
+.tile {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-tile);
+  height: var(--ww-size-tile);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-tile);
+}
+
+.tileSm {
+  width: var(--ww-size-tile-sm);
+  height: var(--ww-size-tile-sm);
+  border-radius: var(--ww-radius-tile-sm);
+}
+
+.lavender {
+  background: var(--ww-tile-lavender-bg);
+  color: var(--ww-tile-lavender-fg);
+}
+
+.mint {
+  background: var(--ww-tile-mint-bg);
+  color: var(--ww-tile-mint-fg);
+}
+
+.sun {
+  background: var(--ww-tile-sun-bg);
+  color: var(--ww-tile-sun-fg);
+}
+
+.coral {
+  background: var(--ww-tile-coral-bg);
+  color: var(--ww-tile-coral-fg);
+}
+
+.brand {
+  background: var(--ww-tile-brand-bg);
+  color: var(--ww-tile-brand-fg);
+}

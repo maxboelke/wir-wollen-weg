@@ -1,0 +1,186 @@
+/* Cockpit header – design-system §9.2–9.4, ux-spec §4.10 */
+.cockpit {
+  padding: var(--ww-space-2) var(--ww-space-4) calc(var(--ww-space-3) + var(--ww-space-0-5));
+  border-end-start-radius: var(--ww-radius-cockpit);
+  border-end-end-radius: var(--ww-radius-cockpit);
+  background: var(--ww-cockpit-image), var(--ww-cockpit-bg);
+  background-repeat: no-repeat;
+  border: var(--ww-border-forced);
+  color: var(--ww-cockpit-text);
+}
+
+.compact {
+  position: sticky;
+  top: 0;
+  z-index: var(--ww-z-header);
+  min-height: var(--ww-size-cockpit-compact-h);
+  padding-bottom: var(--ww-space-2);
+  box-shadow: var(--ww-shadow-2);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  min-height: var(--ww-space-12);
+}
+
+.roundButton {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-cockpit-button);
+  height: var(--ww-size-cockpit-button);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-cockpit-control-bg);
+  color: var(--ww-cockpit-text);
+  cursor: pointer;
+}
+
+.roundButton:focus-visible,
+.tab:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+.titleBlock {
+  flex: 1;
+  min-width: 0;
+}
+
+.title {
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-2xl);
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-tight);
+  line-height: var(--ww-leading-tight);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.phase {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.dot {
+  flex: none;
+  width: var(--ww-space-2);
+  height: var(--ww-space-2);
+  border-radius: var(--ww-radius-pill);
+}
+
+.collect {
+  background: var(--ww-phase-collect-dot);
+}
+
+.vote {
+  background: var(--ww-phase-vote-dot);
+}
+
+.fixed {
+  background: var(--ww-phase-fixed-dot);
+}
+
+.past {
+  background: var(--ww-phase-past-dot);
+}
+
+/* Tabs: links with aria-current (ux-spec §3), pill track 48 px, pills 44 px */
+.tabs {
+  margin-top: var(--ww-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.track {
+  display: flex;
+  gap: var(--ww-space-1);
+  width: max-content;
+  min-width: 100%;
+  min-height: var(--ww-size-tab-track-h);
+  margin: 0;
+  padding: var(--ww-space-1);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-cockpit-track);
+  list-style: none;
+}
+
+.track > li {
+  display: flex;
+  flex: 1 0 auto;
+}
+
+.tab {
+  position: relative;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ww-size-tab-h);
+  padding-inline: calc(var(--ww-space-2) + var(--ww-space-0-5));
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.tab:focus-visible {
+  z-index: 1;
+}
+
+.tab[aria-current="page"] {
+  background: var(--ww-cockpit-tab-active-bg);
+  color: var(--ww-cockpit-tab-active-fg);
+  font-weight: var(--ww-font-weight-extrabold);
+  box-shadow: var(--ww-shadow-selected);
+}
+
+.kpiSlot {
+  margin-top: var(--ww-space-3);
+}
+
+/* KPI box (design-system §9.3) */
+.kpi {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--ww-space-1) var(--ww-space-3);
+  align-items: center;
+  padding: calc(var(--ww-space-2) + var(--ww-space-0-5)) var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: calc(var(--ww-radius-card) - var(--ww-space-1));
+  background: var(--ww-cockpit-kpi-bg);
+}
+
+.kpiRing {
+  grid-row: span 2;
+}
+
+.kpiTitle {
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-kpi);
+  font-weight: var(--ww-font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  line-height: var(--ww-leading-snug);
+}
+
+.kpiDetail {
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.kpiAction {
+  grid-column: 2;
+  justify-self: end;
+}

@@ -1,0 +1,181 @@
+/* Buttons – design-system §9.1, motion G-03 (press = scale-press, reduced: token = 1). */
+.button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ww-space-2);
+  min-width: var(--ww-size-touch-min);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-button);
+  font-family: var(--ww-font-sans);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-snug);
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    transform var(--ww-duration-fast) var(--ww-ease-spring-soft),
+    background-color var(--ww-duration-fast) var(--ww-ease-standard);
+}
+
+.button:active:not([aria-disabled="true"]) {
+  transform: scale(var(--ww-motion-scale-press));
+  transition-duration: var(--ww-duration-instant);
+  transition-timing-function: var(--ww-ease-standard);
+}
+
+.button:disabled,
+.button[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+
+.button[aria-busy="true"] {
+  cursor: progress;
+}
+
+/* Sizes */
+.lg {
+  min-height: var(--ww-size-control-lg);
+  padding: var(--ww-space-3) calc(var(--ww-space-5) + var(--ww-space-0-5));
+  font-size: var(--ww-text-lg);
+}
+
+.md {
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-5);
+  font-size: var(--ww-text-md);
+}
+
+.sm {
+  min-height: var(--ww-size-control-sm);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-radius: var(--ww-radius-button-sm);
+  font-size: var(--ww-text-sm);
+}
+
+.block {
+  display: flex;
+  width: 100%;
+}
+
+.labels {
+  display: inline-grid;
+}
+
+.label {
+  grid-area: 1 / 1;
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+/* Variants */
+.primary {
+  background: var(--ww-btn-primary-bg);
+  color: var(--ww-btn-primary-fg);
+  box-shadow: var(--ww-shadow-button);
+}
+
+.accent {
+  background: var(--ww-cockpit-accent);
+  color: var(--ww-cockpit-on-accent);
+  box-shadow: var(--ww-shadow-button-accent);
+}
+
+.secondary {
+  border: var(--ww-border-thick) solid var(--ww-btn-secondary-border);
+  background: var(--ww-btn-secondary-bg);
+  color: var(--ww-btn-secondary-fg);
+}
+
+.secondary.lg {
+  min-height: var(--ww-size-control-md);
+}
+
+.secondaryOnBrand {
+  border: var(--ww-border-medium) solid var(--ww-cockpit-outline);
+  background: transparent;
+  color: var(--ww-cockpit-text);
+}
+
+.text {
+  min-height: var(--ww-size-touch-min);
+  padding-inline: var(--ww-space-1);
+  background: transparent;
+  color: var(--ww-color-primary-text);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.text.lg,
+.text.md {
+  padding-block: var(--ww-space-2);
+  font-size: var(--ww-text-md);
+}
+
+.tool {
+  border-radius: var(--ww-radius-tile);
+  background: var(--ww-btn-tool-bg);
+  color: var(--ww-btn-tool-fg);
+}
+
+.danger {
+  background: var(--ww-color-danger);
+  color: var(--ww-color-text-on-danger);
+}
+
+.dangerQuiet {
+  background: transparent;
+  color: var(--ww-color-danger);
+}
+
+/* Focus: white ring on Indigo (D-22) */
+.accent:focus-visible,
+.secondaryOnBrand:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+/* Disabled look (prefer aria-disabled + reason next to the button, ux-spec §4.1) */
+.button:disabled:not([aria-busy="true"]),
+.button[aria-disabled="true"]:not([aria-busy="true"]) {
+  background: var(--ww-color-disabled-bg);
+  color: var(--ww-color-disabled-text);
+  border-color: transparent;
+  box-shadow: none;
+}
+
+.text:disabled:not([aria-busy="true"]),
+.text[aria-disabled="true"]:not([aria-busy="true"]) {
+  background: transparent;
+}
+
+@media (hover: hover) {
+  .primary:hover:not([aria-disabled="true"]):not(:disabled) {
+    background: var(--ww-color-primary-hover);
+  }
+
+  .secondary:hover:not([aria-disabled="true"]):not(:disabled),
+  .tool:hover:not([aria-disabled="true"]):not(:disabled) {
+    background: var(--ww-color-primary-tint);
+  }
+
+  .secondaryOnBrand:hover {
+    background: var(--ww-cockpit-control-bg);
+  }
+
+  .danger:hover:not([aria-disabled="true"]):not(:disabled) {
+    background: var(--ww-color-danger-hover);
+  }
+
+  .text:hover:not([aria-disabled="true"]):not(:disabled) {
+    text-decoration-thickness: 0.14em;
+  }
+}
+
+.primary:active:not([aria-disabled="true"]) {
+  background: var(--ww-color-primary-active);
+}

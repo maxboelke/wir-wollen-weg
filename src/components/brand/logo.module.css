@@ -1,0 +1,78 @@
+/* Brand mark colours: light = Indigo sheet + lavender rings; dark & on Indigo = violet + white. */
+.mark {
+  --ww-logo-sheet: var(--ww-illu-brand);
+  --ww-logo-ring: var(--ww-illu-lavender);
+
+  display: inline-block;
+  flex: none;
+}
+
+.onBrand {
+  --ww-logo-sheet: var(--ww-indigo-500);
+  --ww-logo-ring: var(--ww-illu-on-brand);
+}
+
+@media (prefers-color-scheme: dark) {
+  :global(:root:not([data-theme="light"])) .mark {
+    --ww-logo-ring: var(--ww-illu-on-brand);
+  }
+}
+
+:global([data-theme="dark"]) .mark {
+  --ww-logo-ring: var(--ww-illu-on-brand);
+}
+
+.sheet {
+  fill: var(--ww-logo-sheet);
+}
+
+.ring {
+  fill: var(--ww-logo-ring);
+}
+
+.sun {
+  fill: var(--ww-illu-sun);
+}
+
+.wave {
+  fill: var(--ww-illu-mint);
+}
+
+.waveDeep {
+  fill: var(--ww-illu-mint-deep);
+}
+
+.wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-extrabold);
+  letter-spacing: var(--ww-tracking-tight);
+  line-height: var(--ww-leading-tight);
+  white-space: nowrap;
+}
+
+.wordmarkLg {
+  font-size: var(--ww-text-xl);
+}
+
+.accent {
+  color: var(--ww-color-link);
+  font-style: normal;
+}
+
+.wordmarkOnBrand {
+  color: var(--ww-cockpit-text);
+}
+
+.wordmarkOnBrand .accent {
+  color: var(--ww-cockpit-accent);
+}
+
+.name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

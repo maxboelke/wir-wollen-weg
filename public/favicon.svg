@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-labelledby="wwfav-t">
+  <title id="wwfav-t">Wir wollen weg</title>
+  <!-- Favicon 32 px (B0, vereinfacht): ohne Sonnenschein, eine Welle, kräftigere Ringe.
+       Dunkle Browser-Leisten: Blatt Violett, Ringe weiß (prefers-color-scheme). Für 16 px: favicon-16.svg. -->
+  <style>
+    .sheet { fill: #2B2266; }
+    .ring { fill: #A79AF2; }
+    @media (prefers-color-scheme: dark) {
+      .sheet { fill: #5B48C9; }
+      .ring { fill: #FFFFFF; }
+    }
+  </style>
+  <defs>
+    <clipPath id="wwfav-clip"><rect x="2" y="5.5" width="28" height="24.5" rx="7"/></clipPath>
+  </defs>
+  <rect class="sheet" x="2" y="5.5" width="28" height="24.5" rx="7"/>
+  <g clip-path="url(#wwfav-clip)">
+    <circle cx="16" cy="21.5" r="7" fill="#FFCF4A"/>
+    <path d="M0 23C5 21 10.5 21 16 23S27 25 32 23V32H0Z" fill="#52E5B8"/>
+  </g>
+  <rect class="ring" x="8" y="2" width="4.5" height="7" rx="2.25"/>
+  <rect class="ring" x="19.5" y="2" width="4.5" height="7" rx="2.25"/>
+</svg>

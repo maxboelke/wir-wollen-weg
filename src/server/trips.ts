@@ -1,5 +1,5 @@
 import "server-only";
-import { and, count, eq } from "drizzle-orm";
+import { and, asc, count, eq } from "drizzle-orm";
 import { db } from "./db/client";
 import { trip, tripMember } from "./db/schema";
 
@@ -21,6 +21,21 @@ export async function countMembers(tripId: string): Promise<number> {
     .from(tripMember)
     .where(eq(tripMember.tripId, tripId));
   return row?.value ?? 0;
+}
+
+/**
+ * First name of the organiser for the invite card (design-system §9.6: only the
+ * organiser's first name, never other members). Placeholder until roles exist (F-004,
+ * Increment 2): the earliest member counts as organiser.
+ */
+export async function findOrganizerFirstName(tripId: string): Promise<string | undefined> {
+  const [row] = await db()
+    .select({ displayName: tripMember.displayName })
+    .from(tripMember)
+    .where(eq(tripMember.tripId, tripId))
+    .orderBy(asc(tripMember.joinedAt))
+    .limit(1);
+  return row?.displayName.trim().split(/\s+/)[0];
 }
 
 export async function isMember(tripId: string, userId: string): Promise<boolean> {

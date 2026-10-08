@@ -4,6 +4,7 @@
  * Components use CSS Modules and only `var(--ww-…)` values.
  */
 @import "../../docs/design/tokens.css";
+@import "./fonts.css";
 
 *,
 *::before,
@@ -14,6 +15,8 @@
 html {
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
+  background: var(--ww-color-bg);
+  scroll-padding-bottom: var(--ww-sticky-bar-h, 0px);
 }
 
 body {
@@ -24,27 +27,66 @@ body {
   font-family: var(--ww-font-sans);
   font-size: var(--ww-text-md);
   line-height: var(--ww-leading-normal);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
 }
 
 h1,
 h2,
 h3 {
+  margin: 0;
   font-family: var(--ww-font-display);
+  font-weight: var(--ww-font-weight-display);
   line-height: var(--ww-leading-tight);
+  letter-spacing: var(--ww-tracking-tight);
   text-wrap: balance;
 }
 
+h1 {
+  font-size: var(--ww-text-3xl);
+}
+
+h2 {
+  font-size: var(--ww-text-xl);
+}
+
+h3 {
+  font-size: var(--ww-text-lg);
+}
+
 p {
+  margin: 0;
   text-wrap: pretty;
 }
 
 a {
-  color: var(--ww-color-primary-text);
+  color: var(--ww-color-link);
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 0.08em;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button,
+a {
+  touch-action: manipulation;
 }
 
 :focus-visible {
   outline: var(--ww-focus-width) solid var(--ww-color-focus);
   outline-offset: var(--ww-focus-offset);
+}
+
+::selection {
+  background: var(--ww-color-primary-tint-strong);
+  color: var(--ww-color-text);
 }
 
 .visually-hidden {
@@ -57,4 +99,15 @@ a {
   clip-path: inset(50%);
   white-space: nowrap;
   border: 0;
+}
+
+/* Reduced motion (system OR account switch, F-052): no smooth scrolling. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+:root[data-motion="reduce"] {
+  scroll-behavior: auto;
 }

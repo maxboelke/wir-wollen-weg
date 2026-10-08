@@ -1,39 +1,82 @@
-.form {
+/* Sign-in / invite steps (W02, W03) – calm on light, no cockpit (design-system §1). */
+.step {
   display: flex;
   flex-direction: column;
-  gap: var(--ww-space-3);
+  gap: var(--ww-space-5);
 }
 
-.label {
-  font-size: var(--ww-text-sm);
-  font-weight: var(--ww-font-weight-semibold);
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
 }
 
-.input {
-  min-height: var(--ww-size-control-md);
-  padding-inline: var(--ww-space-3);
-  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
-  border-radius: var(--ww-radius-md);
-  background: var(--ww-color-surface);
-  color: var(--ww-color-text);
-  font: inherit;
+.heading {
+  font-size: var(--ww-text-3xl);
+}
+
+h2.heading {
+  font-size: var(--ww-text-2xl);
+}
+
+.lead {
+  color: var(--ww-color-text-muted);
   font-size: var(--ww-text-md);
 }
 
-.input[aria-invalid="true"] {
-  border-color: var(--ww-color-danger);
+.email {
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-bold);
+  overflow-wrap: anywhere;
 }
 
-.code {
-  font-size: var(--ww-text-code);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: var(--ww-tracking-wide);
-  max-width: calc(var(--ww-size-code-box-w) * 7);
-}
-
-.checkbox {
+.form {
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.illustration {
+  display: flex;
+  margin-bottom: calc(-1 * var(--ww-space-2));
+}
+
+.illustration svg {
+  width: auto;
+  height: calc(var(--ww-space-16) + var(--ww-space-8));
+}
+
+.small {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.help {
+  display: flex;
+  flex-direction: column;
   gap: var(--ww-space-2);
-  min-height: var(--ww-size-touch-min);
+}
+
+.inlineLink {
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+/* Inline text link: enlarge the hit area to 44 px without moving the text (2.5.8). */
+.inlineLink {
+  position: relative;
+}
+
+.inlineLink::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ww-space-3)) calc(-1 * var(--ww-space-1));
 }

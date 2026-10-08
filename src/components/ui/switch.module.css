@@ -1,0 +1,94 @@
+/* Switch "Reduce motion" – design-system §9.20 (track 52 × 32, knob 26) */
+.row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: var(--ww-space-1) var(--ww-space-4);
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  cursor: pointer;
+}
+
+.locked .text {
+  cursor: default;
+}
+
+.label {
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.description {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.switch {
+  position: relative;
+  flex: none;
+  width: calc(var(--ww-space-12) + var(--ww-space-1));
+  height: var(--ww-space-8);
+  padding: 0;
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface-sunken);
+  cursor: pointer;
+}
+
+/* Larger hit area: the whole 44 px row height */
+.switch::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ww-space-1-5)) calc(-1 * var(--ww-space-1));
+}
+
+.knob {
+  position: absolute;
+  top: 50%;
+  left: var(--ww-space-0-5);
+  display: grid;
+  place-items: center;
+  width: calc(var(--ww-space-6) + var(--ww-space-0-5));
+  height: calc(var(--ww-space-6) + var(--ww-space-0-5));
+  margin-top: calc((var(--ww-space-6) + var(--ww-space-0-5)) / -2);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-border-strong);
+  transition: transform var(--ww-duration-fast) var(--ww-ease-spring-soft);
+}
+
+.switch[aria-checked="true"] {
+  border-color: var(--ww-color-primary);
+  background: var(--ww-color-primary);
+}
+
+.switch[aria-checked="true"] .knob {
+  transform: translateX(calc(var(--ww-space-5) - var(--ww-border-medium)));
+  background: var(--ww-color-text-on-primary);
+  color: var(--ww-color-primary);
+}
+
+.switch:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.locked .switch {
+  cursor: not-allowed;
+}
+
+.check {
+  display: block;
+}
+
+.reason {
+  display: flex;
+  grid-column: 1 / -1;
+  align-items: flex-start;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
