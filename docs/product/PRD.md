@@ -1,8 +1,10 @@
 # PRD – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Product Manager · Status: Entwurf v0.3 (Entscheidungen Q1–Q6 sowie Q11–Q16 des Auftraggebers eingearbeitet, siehe §12)
+Stand: 2026-10-08 · Verantwortlich: Product Manager · Status: Entwurf v0.4 (Entscheidungen Q1–Q6 sowie Q11–Q18 des Auftraggebers eingearbeitet, siehe §12)
 
-Verwandte Dokumente: [features.md](features.md) · [roadmap.md](roadmap.md)
+Verwandte Dokumente: [features.md](features.md) · [roadmap.md](roadmap.md) · Motion: [docs/motion/](../motion/interaktionen.md)
+
+**Änderungen v0.4 (2026-10-08):** **Look & Feel 2.0** – Richtung B „Reise-Cockpit“, Palette „Indigo & Minze“ (Q18, §1 „Name, Marke & Design“) · neues Produktprinzip 8 „Macht Spaß – ohne aufzuhalten“ (§5) · neues Querschnitts-Feature **F-052 Bewegung, Animationen & Haptik** inkl. Schalter „Bewegung reduzieren“ im Konto (Q17 a) und dezenter Android-Vibration (Q17 c) (§6) · Feier „Es geht los!“ für alle Mitglieder, einmal pro Person (Q17 b, F-012) · NFR **Motion & Haptik** (Performance, Barrierefreiheit) (§8) · neues Risiko Motion-Aufwand/Performance (§10) · Roadmap: Schritt **„UI-Fundament“** vor Inkrement 1.
 
 **Änderungen v0.3 (2026-10-08):** M0 abgenommen · Produktname sprachabhängig: DE „Wir wollen weg“, EN „When do we go?“ – eine Marke, eine Bildmarke (Logo A „Sonnenkalender“) (Q11, §1, F-046) · Barrierefreiheit auf **WCAG 2.2 AA** angehoben (§8) · Dark Mode folgt der Systemeinstellung als NFR (Q12, §8) · Produktregeln Q13 (a)–(e) in features.md übernommen, neues Feature **F-051 Hilfe-/FAQ-Seite** (§6) · **Offline-Demo-Phase** vor der Beta; Betreiber, Rechtstexte, Domain/Konten als Go-Live-Gate (Q14–Q16, §6a, roadmap.md).
 
@@ -16,11 +18,12 @@ Verwandte Dokumente: [features.md](features.md) · [roadmap.md](roadmap.md)
 
 „Wir wollen weg“ – auf Englisch **„When do we go?“** – ist eine Web-App, in der eine Freundesgruppe mit einem schlanken Konto (Registrierung in unter einer Minute, direkt aus dem Einladungslink) ihre Verfügbarkeit zusammenlegt, sofort sieht, wann ein gemeinsamer Urlaub möglich ist, und per Abstimmung verbindlich einen Zeitraum festlegt. Langfristig begleitet die App die ganze Gruppenreise: Ziel, Unterkunft, Aufgaben und Kostenausgleich – auf Deutsch und Englisch.
 
-### Name & Marke (Q11)
+### Name, Marke & Design (Q11, Q18)
 - **Zwei Namen, eine Marke:** Deutsch „Wir wollen weg“, Englisch „When do we go?“. Beide teilen dieselbe Bildmarke (Logo A „Sonnenkalender“), Farben und Tonalität; nur die Wortmarke wechselt mit der Sprache.
 - Angezeigt wird der Name in der **Oberflächensprache** der Person (Header, Seitentitel, Transaktionsmails, Open-Graph-Vorschau, Teilen-Texte in der gewählten Textsprache) – Details F-046. In gemischtsprachigen Gruppen sieht also jede Person „ihren“ Namen derselben App.
 - Rechtstexte/Impressum nennen beide Namen. URLs, Domain und Code-Bezeichner bleiben sprachneutral bzw. werden mit Go-Live festgelegt (Q15).
 - Der frühere EN-Untertitel „Find dates for your group trip“ ist als Claim weiter nutzbar, aber nicht mehr Ersatz für einen EN-Namen.
+- **Look & Feel 2.0 (Q18):** Die Oberfläche folgt **Richtung B „Reise-Cockpit“** mit der **Palette B0 „Indigo & Minze“** (erste Version, `docs/design/richtungen/b/`); eine gewisse Nähe zu Finanz-Apps wie Finanzguru nimmt der Auftraggeber bewusst in Kauf. Ziel laut Auftraggeber: eine **ansprechende App, die Spaß macht**, mit Animationen/Motion Graphics (Motion-Konzept: `docs/motion/`, Produktanforderungen F-052, NFR §8). Look & Feel 2.0 ändert die Optik, nicht Funktionen, Texte oder Barrierefreiheits-Anforderungen; umgesetzt wird es im Roadmap-Schritt „UI-Fundament“ vor Inkrement 1. Ob die Bildmarke (Logo A) an Richtung B angepasst wird, entscheiden Designer/CEO (offen, siehe Bericht).
 
 ## 2. Problem
 
@@ -79,6 +82,7 @@ Messung über datensparsame, cookie-freie Ereignis-Statistik (aggregiert, kein T
 5. **Tage statt Stunden.** Urlaubsplanung denkt in Tagen/Nächten.
 6. **Die App schlägt vor, die Gruppe entscheidet.** Algorithmus liefert Kandidaten, Abstimmung schafft Legitimität, Organisator schließt ab.
 7. **Zweisprachig von Anfang an.** Deutsch und Englisch sind gleichwertig; Datum, Wochenstart und Feiertage folgen der Region der Person.
+8. **Macht Spaß – ohne aufzuhalten.** Bewegung gibt Rückmeldung und feiert Fortschritt (ein großer Moment: „Es geht los!“), wartet aber nie auf sich selbst: Zustand und Text sind sofort da, Animationen sind Ausklang. Wer weniger Bewegung will, bekommt sie – per Systemeinstellung oder Schalter im Konto (Q17, Q18, F-052).
 
 ## 6. MVP-Scope
 
@@ -94,6 +98,7 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 8. **Deutsch & Englisch** (F-046): vollständige Oberfläche, Teilen-Texte und Transaktionsmails in beiden Sprachen, Sprachumschaltung, lokalisierte Datums-/Wochenstart-Formate.
 9. **Kommunikation über Teilen-Texte** für den Gruppenchat (F-002, F-015). **Keine** E-Mail-Benachrichtigungen im MVP (F-014 → v1). Transaktionsmails fürs Konto (Code/Magic-Link, Passwort-Reset, E-Mail-Änderung, Konto-/Löschhinweise) sind davon ausgenommen und Teil des MVP.
 10. **Hilfe-/FAQ-Seite** (F-051): kleine statische Seite mit den häufigsten Fragen (Code kommt nicht an, Link verloren, In-App-Browser, Daten löschen …) und Kontaktadresse, auf jeder Seite an gleicher Stelle erreichbar (Q13 e).
+11. **Look & Feel 2.0 und Bewegung** (Q17, Q18, F-052): Oberfläche in Richtung B „Reise-Cockpit“; Animationen mit Motion-Priorität „MVP“ (u. a. Tage malen, Heatmap-Aufbau, Vorschlag-Band, Ergebnis-Enthüllung, Feier „Es geht los!“ für alle Mitglieder) werden mit dem jeweiligen Feature gebaut; Schalter „Bewegung reduzieren“ im Konto; dezente Vibration auf Android (vor der Beta, „MVP+“).
 
 ### 6a. Offline-Demo-Phase (Q15, Q14, Q16)
 - Bis zur Beta wird **ohne Hosting, Domain und externe Konten** gearbeitet: Die App läuft als **lokale Offline-Demo** (Entwicklerrechner bzw. lokal gestartete Instanz mit lokaler Datenbank).
@@ -147,7 +152,7 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 
 ## 8. Nicht-funktionale Anforderungen
 
-- **Datenschutz/DSGVO:** Datensparsamkeit (Konto: Anzeigename, E-Mail, optional Passwort-Hash, Sprache, Region); Hosting in der EU; Reisen werden standardmäßig 90 Tage nach Reiseende bzw. nach 12 Monaten Inaktivität gelöscht; Konten nach 24 Monaten Inaktivität (mit Vorabhinweis per Transaktionsmail) gelöscht; Konto-Löschung jederzeit selbst möglich (F-043). Ab v1: Kalender-Rohdaten nur im Arbeitsspeicher verarbeiten und sofort verwerfen; gespeicherte Kalender-URLs/Zugangsdaten verschlüsselt. Datenschutzerklärung & Impressum auf Deutsch, Datenschutzerklärung zusätzlich auf Englisch (→ Operations).
+- **Datenschutz/DSGVO:** Datensparsamkeit (Konto: Anzeigename, E-Mail, optional Passwort-Hash, Sprache, Region, Einstellung „Bewegung reduzieren“; je Mitgliedschaft das Merkmal „Feier gesehen“, F-012); Hosting in der EU; Reisen werden standardmäßig 90 Tage nach Reiseende bzw. nach 12 Monaten Inaktivität gelöscht; Konten nach 24 Monaten Inaktivität (mit Vorabhinweis per Transaktionsmail) gelöscht; Konto-Löschung jederzeit selbst möglich (F-043). Ab v1: Kalender-Rohdaten nur im Arbeitsspeicher verarbeiten und sofort verwerfen; gespeicherte Kalender-URLs/Zugangsdaten verschlüsselt. Datenschutzerklärung & Impressum auf Deutsch, Datenschutzerklärung zusätzlich auf Englisch (→ Operations).
 - **Sicherheit / Authentifizierung:**
   - Einmal-Codes (6 Ziffern) und Magic-Links: einmalig verwendbar, 15 Min. gültig, max. 5 Fehlversuche pro Code, danach neuer Code; Links enthalten Tokens ≥ 128 Bit.
   - Passwörter (optional): min. 10 Zeichen, Hashing mit Argon2id (o. ä. aktueller Standard), Prüfung gegen bekannte geleakte Passwörter wünschenswert.
@@ -158,7 +163,12 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 - **Internationalisierung:** alle Texte externalisiert; Locale `de` und `en`; Datums-, Zahlen- und Wochenstart-Formate per Region (z. B. `de-DE`/`en-GB`: Montag, `en-US`: Sonntag), vom Nutzer überschreibbar; Feiertage für DE (inkl. Bundesländer), AT, CH, UK und US über eine gepflegte Open-Source-Feiertagsbibliothek.
 - **Mobile & Performance:** voll bedienbar ab 360 px Breite und in In-App-Browsern (WhatsApp, Instagram, Facebook); erste Ansicht < 2 s auf 4G.
 - **Barrierefreiheit:** **WCAG 2.2 AA** (angehoben in v0.3; Grundlage auch für BFSG/EN 301 549); Heatmap nicht nur über Farbe kodiert (Zahl/Symbol/Muster), Kalender per Tastatur bedienbar (inkl. Alternative zum Ziehen, SC 2.5.7), Zielgrößen ≥ 24 × 24 px (SC 2.5.8, Projektstandard ≥ 44 px), Fokus nie von fixierten Leisten verdeckt (SC 2.4.11), konsistente Hilfe an gleicher Stelle (SC 3.2.6, F-051), keine redundante Eingabe (SC 3.3.7), barrierefreie Anmeldung ohne kognitiven Test – Code einfügbar, `autocomplete="one-time-code"` (SC 3.3.8); Text bis 200 % ohne Funktionsverlust.
-- **Darstellung / Dark Mode:** Die Oberfläche folgt der System-Einstellung (`prefers-color-scheme`) hell/dunkel; **kein eigener Schalter** im MVP (Q12). Beide Modi erfüllen die Kontrastanforderungen (WCAG 2.2 AA), inkl. Heatmap-Stufen, Symbole und Fokusring; Grundlage sind die Design-Tokens (`tokens.css`).
+- **Darstellung / Dark Mode:** Die Oberfläche folgt der System-Einstellung (`prefers-color-scheme`) hell/dunkel; **kein eigener Schalter** im MVP (Q12). Beide Modi erfüllen die Kontrastanforderungen (WCAG 2.2 AA), inkl. Heatmap-Stufen, Symbole und Fokusring; Grundlage sind die Design-Tokens (`tokens.css`). Look & Feel 2.0 (Richtung B, Palette „Indigo & Minze“, Q18) muss in beiden Modi dieselben Kontrastwerte erfüllen.
+- **Motion & Haptik (neu v0.4, Q17/Q18; Details F-052, `docs/motion/`):**
+  - *Performance:* Animationen nur über `transform`/`opacity` (Ausnahme: kurze Farbwechsel kleiner Elemente ≤ 140 ms); Ziel 60 fps auf Mittelklasse-Android im In-App-Browser, keine Long Tasks > 50 ms während Ziehen und Feier; kein Layout-Shift durch Animationen; sichtbares Tipp-Feedback ≤ 100 ms; Texte, Headline und Haupt-CTA erscheinen ohne Animation (das Budget „erste Ansicht < 2 s auf 4G“ gilt unverändert); keine Animationsbibliothek im MVP, Feier-/Konfetti-Code nur bei Bedarf geladen; Funktionen moderner Browser nur als Progressive Enhancement.
+  - *Barrierefreiheit:* `prefers-reduced-motion` wird immer bedient; zusätzlich Schalter **„Bewegung reduzieren“** im Konto (Q17 a), der Bewegung nur reduzieren kann, sofort wirkt und geräteübergreifend gespeichert wird (über WCAG 2.2 AA hinaus orientiert an SC 2.3.3 „Animation durch Interaktion“). Nichts bewegt sich automatisch länger als 5 s, keine Endlosschleifen (SC 2.2.2), nichts blinkt öfter als 3× pro Sekunde (SC 2.3.1); Informationen werden nie nur durch Bewegung vermittelt; Fokus wird nie durch Animationen verzögert oder verschoben; Bedienfunktionen (z. B. Auto-Scroll beim Ziehen) bleiben bei reduzierter Bewegung erhalten.
+  - *Haptik:* nur dezente Vibration über die Vibrations-API (Android, best effort; iOS unterstützt sie nicht), nur an zwei Stellen (Ziehen nach Halten, Siegel der Feier), aus bei reduzierter Bewegung; **die App gibt nie Töne aus** (Q17 c).
+  - *Datenschutz:* Die Bewegungseinstellung ist ein einfaches Kontofeld; keine personenbezogene Auswertung.
 - **Skalierung:** **max. 30 Mitglieder pro Reise (bestätigt, Q6)**, Suchzeitraum bis 12 Monate; Berechnung < 500 ms.
 - **Zeitzonen:** Tage werden in der Zeitzone der Reise (Standard: Zeitzone des Organisators) ausgewertet.
 
@@ -194,6 +204,7 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 | Offline-Demo verzögert echte Validierung (A2 Beitrittsquote, In-App-Browser, Mailzustellung lassen sich lokal nicht messen) | Späte Überraschungen bei Kontopflicht und Spam-Zustellung | Demo-Phase zeitlich begrenzen; Go-Live-Gate rechtzeitig vorbereiten (Ops-Checkliste); M1-Beta mit echten Gruppen bleibt Pflicht vor M2. |
 | Platzhalter-Rechtstexte/-Betreiberangaben gelangen versehentlich live | Abmahnrisiko, DSGVO-Verstoß | Platzhalter klar markiert; Go-Live-Gate als Pflicht-Checkliste (Operations), Reviewer prüft vor Deployment. |
 | Zwei Produktnamen schwächen Wiedererkennung | Uneinheitlicher Auftritt, Verwechslung | Eine Bildmarke, gleiche Farben/Tonalität; Name strikt an Oberflächensprache gekoppelt; Rechtstexte nennen beide Namen. |
+| Motion/Look & Feel 2.0 bindet zu viel Entwicklungszeit oder ruckelt in In-App-Browsern | MVP verzögert sich; „Spaß“ kippt in Trägheit, Abbrüche bei Nachzüglern | Motion-Prioritäten strikt (nur „MVP“ blockiert Abnahme, „MVP+“ nach Kapazität vor Beta, Rest später); UI-Fundament einmalig vor Inkrement 1 statt Nachrüsten; Zustand immer sofort, Animation nur Ausklang; Performance-Prüfung auf Mittelklasse-Android (F-052); Reduced Motion als Rückfallebene. |
 | Starke Wettbewerber ergänzen Funktion (z. B. Doodle) | Differenzierung schwindet | Fokus auf Urlaubs-Spezifika (Mehrtägigkeit, Heatmap, später Reise + Kosten in einem Fluss). |
 
 ## 11. Wettbewerb & Abgrenzung (Kurzrecherche)

@@ -1,12 +1,14 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 (v0.3, Entscheidungen Q1–Q6 und Q11–Q16 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
+Stand: 2026-10-08 (v0.4, Entscheidungen Q1–Q6 und Q11–Q18 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
 **Änderungen v0.2:** Neu F-040–F-050 (Konto, Sprachen, Apple-Kalender, Premium). F-003, F-004, F-001, F-007, F-013 auf Konto-Modell umgestellt (keine persönlichen Links/Admin-Links mehr). F-006 ICS-Import MVP → v1. F-014 E-Mail-Benachrichtigungen MVP-Should → v1. F-016 Feiertage Should → Must (DE/EN). F-018 durch F-040–F-044 ersetzt. E-Mail-Bezüge in F-010, F-012, F-015, F-017 entfernt.
 
 **Änderungen v0.3 (2026-10-08, Auftraggeber-Entscheidungen Q11–Q13, UX-Abstimmung):** Neu **F-051 Hilfe-/FAQ-Seite** (Must, MVP; Q13 e). F-011: Ergebnis einer Option erst nach eigener Stimme sichtbar, Orga sieht immer alles (Q13 a). F-002/F-004: alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (Q13 b). F-004: UI-Rollenname „Orga“ / „Organizer“ (Q13 c). F-041: „Angemeldet bleiben“ standardmäßig an (Q13 d). F-046: sprachabhängiger Produktname „Wir wollen weg“ / „When do we go?“ (Q11). F-008: Zählregel präzisiert (U-4). F-009: Gruppennamen „Alle dabei“ / „Fast alle dabei“ (U-14). F-040/F-003: Name erst nach dem Code (UX-Abweichung bestätigt). F-015: kein „@“ vor Namen im Erinnerungstext (UX-Abweichung bestätigt).
+
+**Änderungen v0.4 (2026-10-08, Auftraggeber-Entscheidungen Q17/Q18):** Neu **F-052 Bewegung, Animationen & Haptik** (Must, MVP; Querschnitts-Feature) mit Schalter „Bewegung reduzieren“ im Konto zusätzlich zur Systemeinstellung (Q17 a), Reduced-Motion-Regeln, Performance-Leitplanken und dezenter Android-Vibration (Q17 c); Detailkatalog: [docs/motion/interaktionen.md](../motion/interaktionen.md). F-012: Feier „Es geht los!“ für **alle** Mitglieder beim ersten Öffnen nach Festlegung, einmal pro Person (Q17 b). F-043: Abschnitt „Darstellung“ in den Kontoeinstellungen. Look & Feel 2.0 (Q18, Richtung B „Reise-Cockpit“, Palette „Indigo & Minze“) betrifft alle UI-Features optisch, ändert aber keine Akzeptanzkriterien – umgesetzt im Roadmap-Schritt „UI-Fundament“.
 
 ## Übersicht
 
@@ -57,13 +59,15 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | **F-049** | **Apple-/iOS-Kalender Stufe 3: On-Device-Weg (iOS-Kurzbefehl, ggf. native App)** | W | **später** (Spike in v1) | Free |
 | **F-050** | **Premium-Tarif & Bezahlung (Freemium)** | W | später | – |
 | **F-051** | **Hilfe-/FAQ-Seite** | **M** | **MVP** | Free |
+| **F-052** | **Bewegung, Animationen & Haptik (Querschnitt, inkl. Schalter „Bewegung reduzieren“)** | **M** (Basis) | **MVP** (Motion-Prio „MVP+“ vor Beta, „später“ danach) | Free |
 
-**MVP-Umfang (Must):** F-001, F-002, F-003, F-004, F-005, F-007, F-008, F-009, F-010, F-011, F-012, F-013, F-016, F-040, F-041, F-042, F-043, F-044, F-046, F-051 · **Should:** F-015, F-017.
+**MVP-Umfang (Must):** F-001, F-002, F-003, F-004, F-005, F-007, F-008, F-009, F-010, F-011, F-012, F-013, F-016, F-040, F-041, F-042, F-043, F-044, F-046, F-051, F-052 · **Should:** F-015, F-017.
 
 **Bewusst ausgeschlossen (kein Plan):** In-App-Chat, Buchung, Abwicklung von Zahlungen zwischen Reisenden, Schreibzugriff auf Nutzerkalender, stundengenaue Terminplanung, Ranking-/Präferenzwahl, Werbung, Gast-Teilnahme ohne Konto (Rückfallplan siehe PRD Q10).
 
 ### Begriffe
-- **Konto**: Anzeigename, E-Mail (verifiziert), optional Passwort, Sprache, Region (für Datum/Wochenstart/Feiertage).
+- **Konto**: Anzeigename, E-Mail (verifiziert), optional Passwort, Sprache, Region (für Datum/Wochenstart/Feiertage), Einstellung „Bewegung reduzieren“ (F-052).
+- **Reduzierte Bewegung**: gilt, wenn das System `prefers-reduced-motion: reduce` meldet **oder** der Konto-Schalter „Bewegung reduzieren“ an ist (F-052); technisch `data-motion="reduce"` am `<html>`.
 - **Reise**: Planungsobjekt mit Suchzeitraum, Dauer, Mitgliedern (max. 30).
 - **Mitglied**: Konto, das einer Reise beigetreten ist; Rolle Organisator oder Mitglied. **UI-Bezeichnung** der Organisator-Rolle: „Orga“ (DE) / „Organizer“ (EN) (Q13 c); in Dokumenten weiter „Organisator“.
 - **Produktname**: sprachabhängig – DE „Wir wollen weg“, EN „When do we go?“; eine Marke, eine Bildmarke (Q11, F-046).
@@ -116,7 +120,7 @@ Akzeptanzkriterien:
 **Als** Nutzer **möchte ich** meine Kontodaten ändern und mein Konto vollständig löschen können, **damit** ich die Kontrolle über meine Daten behalte.
 
 Akzeptanzkriterien:
-- [ ] Kontoeinstellungen: Anzeigename, Sprache, Region (Datumsformat, Wochenstart, Standard-Feiertagsregion), E-Mail (F-042), Passwort (F-042), Abmelden überall (F-041).
+- [ ] Kontoeinstellungen: Anzeigename, Sprache, Region (Datumsformat, Wochenstart, Standard-Feiertagsregion), E-Mail (F-042), Passwort (F-042), Abmelden überall (F-041), Abschnitt **„Darstellung“ mit Schalter „Bewegung reduzieren“ / „Reduce motion“** (Q17 a, Verhalten siehe F-052). Ein Schalter für hell/dunkel gibt es weiterhin **nicht** (Q12, Dark Mode folgt dem System).
 - [ ] Namensänderung wirkt in allen Reisen.
 - [ ] „Konto löschen“: Re-Authentifizierung (Code oder Passwort) und Bestätigungsdialog; löscht sofort Konto, Sessions, Name, E-Mail, Verfügbarkeiten und Stimmen in allen Reisen; Berechnungen der betroffenen Reisen aktualisieren sich.
 - [ ] Ist die Person **Organisator** einer Reise mit weiteren Mitgliedern, muss sie vor dem Löschen je Reise eine Person als neuen Organisator bestimmen (Vorschlag: am längsten beigetretenes Mitglied) oder die Reise löschen; Reisen ohne weitere Mitglieder werden mitgelöscht.
@@ -283,7 +287,12 @@ Akzeptanzkriterien:
 - [ ] Nach Festlegung zeigt die Reise prominent „Es geht los: <Datum>–<Datum>“ (in der Sprache/im Format des Betrachters); Abstimmen und Verfügbarkeitsänderungen sind gesperrt (Verfügbarkeit wird schreibgeschützt).
 - [ ] „Zum Kalender hinzufügen“: ICS-Download (ganztägiger Termin, An- bis Abreisetag; funktioniert auf iPhone/Apple-Kalender, Outlook, Google) sowie Google-Kalender-Link.
 - [ ] Teilen-Text „Fix: Wir fahren vom … bis …!“ wird angeboten (keine E-Mail im MVP).
-- [ ] Organisator kann die Festlegung wieder aufheben (Abstimmung wird wieder geöffnet, Stimmen bleiben erhalten).
+- [ ] Organisator kann die Festlegung wieder aufheben (Abstimmung wird wieder geöffnet, Stimmen bleiben erhalten). Das Aufheben ist bewusst ruhig (kein „Rückwärts-Konfetti“, W11-07).
+- [ ] **Feier „Es geht los!“ für alle (Q17 b, Motion W11-02):** Die Orga sieht die Feier direkt nach der Bestätigung; **jedes andere Mitglied beim ersten Öffnen der Reise nach der Festlegung** (auch über das Konflikt-Banner, W14-03) – **einmal pro Person und Reise, geräteübergreifend** (serverseitig je Mitgliedschaft gemerkt, nicht nur im Browser). Spätere Besuche zeigen die Ergebnis-Karte statisch (W11-04). Wird die Festlegung aufgehoben und ein **anderer** Zeitraum festgelegt, gibt es die Feier erneut (PM-Annahme, Bestätigung durch CEO offen); bei erneuter Festlegung desselben Zeitraums nicht.
+- [ ] Ablauf: Siegel, Kalenderblatt, Konfetti (mobil ≤ 60, Desktop ≤ 100 Teilchen) in Farben/Formen der Design-Richtung; **spätestens nach 2,6 s vorbei**; jede Berührung/jedes Scrollen beendet das Konfetti sofort. Überschrift „Es geht los!“, Datum und Buttons sind **spätestens nach 120 ms lesbar und bedienbar** – nichts wartet auf die Animation. Der Fokus liegt sofort auf der Überschrift „Es geht los!“ (Screenreader hören zuerst das Ergebnis). Die Konfetti-Ebene ist `aria-hidden` und fängt keine Eingaben ab (`pointer-events: none`).
+- [ ] **Reduzierte Bewegung** (`prefers-reduced-motion: reduce` oder Konto-Schalter, F-052): kein Konfetti, keine Skalierung/Drehung; Ergebnis-Karte und Siegel erscheinen per kurzem Überblenden (≤ 140 ms). Der Text „Es geht los!“ trägt den Moment; die Feier gilt trotzdem als „gesehen“.
+- [ ] **Haptik** (Q17 c): Beim Erscheinen des Siegels kurze Vibration auf Android, nur wenn verfügbar (best effort, iOS: nie), aus bei reduzierter Bewegung; **kein Ton**.
+- [ ] Die Feier verzögert weder das Speichern der Festlegung noch die Seiten-Interaktivität; Konfetti-Code wird erst bei Bedarf geladen (F-052).
 
 ### F-013 Datenschutz: Reise verlassen/löschen & Aufbewahrung
 **Als** Mitglied **möchte ich** meine Daten aus einer Reise löschen können und wissen, dass nichts ewig gespeichert wird, **damit** ich der App vertraue.
@@ -331,6 +340,37 @@ Akzeptanzkriterien:
 - [ ] Mobil ab 360 px ohne horizontales Scrollen, Desktop einspaltig (max. 640 px); Text bis 200 % ohne Funktionsverlust; Dark Mode gemäß System.
 - [ ] Nicht im MVP: Suche, Kontaktformular, Chat-Support.
 - [ ] Inhalte bleiben mit dem tatsächlichen Verhalten konsistent (Reviewer prüft beide Sprachen vor M1/M2).
+
+### F-052 Bewegung, Animationen & Haptik (Querschnitt)
+**Als** Mitglied **möchte ich**, dass die App auf meine Eingaben sofort und lebendig reagiert und wichtige Momente spürbar macht – und Bewegung jederzeit dämpfen kann –, **damit** Planen Spaß macht, ohne mich aufzuhalten, abzulenken oder mir unwohl zu machen.
+
+Neu in v0.4 (Q17 a–c, Q18: „ansprechende App, die Spaß macht, mit Animationen/Motion Graphics“). Querschnitts-Feature: Es liefert die **Motion-Basis** (Tokens, Helfer, Reduced-Motion-Mechanik, Schalter) und die **Regeln**; die einzelnen Bewegungen werden **mit dem jeweiligen Feature** gebaut und abgenommen. Detailkatalog mit IDs (G-xx, Wnn-xx), Dauer, Easing, Reduced-Variante und Priorität: [docs/motion/interaktionen.md](../motion/interaktionen.md); System/Tokens: [docs/motion/motion-system.md](../motion/motion-system.md).
+
+**Prio Must (Basis) – Begründung:** (1) Auftraggeber wünscht ausdrücklich eine App mit Animationen, die Spaß macht (Q18). (2) Reduced Motion und der Schalter sind Barrierefreiheits-Pflicht (WCAG 2.2 AA, PRD §8) – ohne sie dürfte keine Animation live gehen. (3) Basis vor Inkrement 1 ist billiger als Nachrüsten in allen Ansichten.
+
+**Umfang nach Motion-Priorität** (Spalte „Prio“ in interaktionen.md):
+| Motion-Prio | Bedeutung | Phase |
+|---|---|---|
+| **MVP** | wird mit dem jeweiligen Feature gebaut, Teil von dessen Abnahme (Feature-Index interaktionen §3) – inkl. der fünf Kernmomente: Tage malen (W08), Heatmap/Vorschlag-Band (W09-05/-06), Stimme/Ergebnis (W10-04/-05), Feier „Es geht los!“ (W11-02, F-012), Code richtig/„Du bist dabei!“ (W02-05, W03-06) | MVP (bis M0.5) |
+| **MVP+** | wenn Kapazität, spätestens vor der Beta (M1); u. a. Hero-Illustration Landing, Fortschrittsbalken, Hover, **Haptik G-18** | MVP vor M1 |
+| **später** | nach dem MVP-Launch (z. B. View Transitions, Mini-Demos Landing, Konfetti-Easter-Egg) | v1/später |
+
+Akzeptanzkriterien:
+- [ ] **Motion-Basis** vorhanden (UI-Fundament, roadmap.md): Motion-Tokens in `tokens.css`, kleine eigene Hilfsdatei (motion-system §8, z. B. `prefersReducedMotion()`, `animateIfAllowed()`), Reduced-Motion-Mechanik; **keine Animationsbibliothek im MVP** (Lottie/Rive ausgeschlossen).
+- [ ] **Zustand sofort, Bewegung als Ausklang:** Jede Eingabe ändert Zustand/Text/Symbol im selben Frame; sichtbares Feedback ≤ 100 ms nach Tipp. Kein Inhalt, Text oder Button wartet auf eine Animation; Navigation und Speichern werden durch Animationen nie verzögert.
+- [ ] **Fokus** springt nie durch Animationen und wird synchron gesetzt (z. B. Code-Feld, Ergebnis-Überschrift); Sheets/Dialoge geben den Fokus an den Auslöser zurück.
+- [ ] **Reduzierte Bewegung:** Bei `prefers-reduced-motion: reduce` **oder** eingeschaltetem Konto-Schalter verhält sich jede Animation gemäß Spalte „Reduziert“ in interaktionen.md (in der Regel kurzes Überblenden ≤ 140 ms oder sofort): keine Skalierung, kein Gleiten über Strecken, kein Konfetti, keine Wellen/Staffeln, kein Wackeln, kein Smooth-Scroll, keine Parallax, keine Haptik. **Bedienfunktionen bleiben erhalten** (z. B. Auto-Scroll beim Ziehen am Rand, W08-12).
+- [ ] **Schalter „Bewegung reduzieren“ / „Reduce motion“ (Q17 a)** in den Kontoeinstellungen, Abschnitt „Darstellung“ (F-043, W13-01):
+  - Standard **aus** = der Systemeinstellung folgen. **An** = reduzierte Bewegung unabhängig vom System. Der Schalter kann Bewegung nur **reduzieren**, nie gegen eine System-Reduktion erzwingen.
+  - Wirkt **sofort** ohne Neuladen; gespeichert im Konto (gilt geräteübergreifend nach Login) und zusätzlich lokal im Browser, damit schon der erste Frame nach dem Laden korrekt ist (kein kurzes Aufflackern von Animationen).
+  - Nicht angemeldete Personen (Landing, Einladungs-Vorschau, Login) folgen der Systemeinstellung bzw. der lokal gespeicherten Wahl.
+  - Echter Schalter (`role="switch"`, Beschriftung DE/EN, kurzer Hilfetext „Weniger Animationen, kein Konfetti, keine Vibration.“), per Tastatur bedienbar; Hilfe-Seite (F-051) erwähnt ihn.
+- [ ] **Haptik (Q17 c):** Dezente Vibration nur auf Geräten mit Vibrations-API (in der Praxis Android; iOS: nie) und nur an zwei Stellen: Ziehen startet nach Halten (W08-02) und Siegel der Feier (W11-02, F-012). Kurz (≈ 10–60 ms), **best effort** (keine Funktion hängt davon ab, Fehler werden still ignoriert), **aus bei reduzierter Bewegung**. Die App gibt **nie Töne** aus.
+- [ ] **Keine Dauerbewegung:** Nichts läuft automatisch länger als 5 s (Konfetti ≤ 2,6 s, Geste-Hinweis ≤ 3 s, Skelett max. 4 Zyklen, Caret max. 5 s); keine Endlosschleifen; nichts blinkt öfter als 3× pro Sekunde (WCAG 2.3.1); Zahlen zählen nicht hoch (G-16); Fristen pulsieren nicht (W10-10).
+- [ ] **Performance:** Animationen nutzen nur `transform`/`opacity` (Ausnahme: Farbwechsel kleiner Elemente ≤ 140 ms); Ziel 60 fps auf Mittelklasse-Android im WhatsApp-In-App-Browser, keine Long Tasks > 50 ms während Ziehen/Feier (4× CPU-Drosselung); kein Layout-Shift durch Animationen; Landing/Hero-Text ist ohne Animation sofort da (LCP-Budget „erste Ansicht < 2 s auf 4G“, PRD §8 bleibt unverändert); Konfetti/Feier-Code wird erst bei Bedarf geladen.
+- [ ] Moderne CSS-/Browser-Funktionen (z. B. `linear()`, `@starting-style`, Scroll-Timelines, View Transitions) nur als Progressive Enhancement – ohne Unterstützung funktioniert alles, nur ohne Bewegung.
+- [ ] **Abnahme:** Reviewer prüft je Feature die Motion-IDs mit Prio „MVP“ und die Prüfliste interaktionen §4; ein automatischer Test mit `reducedMotion: 'reduce'` stellt sicher, dass keine Bewegungs-Animationen laufen, ein weiterer prüft den Konto-Schalter.
+- [ ] Datensparsam: Die Einstellung ist ein einfaches Kontofeld; keine Erfassung, wer Animationen sieht oder abschaltet (höchstens aggregierter Anteil „Schalter an“, cookie-frei).
 
 ## SHOULD – MVP, wenn Zeit bleibt
 
