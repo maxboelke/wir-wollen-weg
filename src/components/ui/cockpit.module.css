@@ -40,7 +40,8 @@
 
 .roundButton:focus-visible,
 .tab:focus-visible {
-  outline: none;
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
   box-shadow: var(--ww-focus-ring-on-brand-isolated);
 }
 

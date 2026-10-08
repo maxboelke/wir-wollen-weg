@@ -148,7 +148,8 @@
 
 /* Focus is shown on the active box (2 px + focus ring), not around the whole group. */
 .input:focus-visible {
-  outline: none;
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
 }
 
 .input::selection {
