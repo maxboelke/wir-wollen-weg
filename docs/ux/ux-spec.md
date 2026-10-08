@@ -1,6 +1,6 @@
 # UX-Spezifikation – Wir wollen weg (MVP)
 
-Stand: 2026-10-08 · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
+Stand: 2026-10-08 (Abstimmungsrunde 2 mit Design-System v0.3) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
 
 Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, Abstände, Radien, Icons) kommt vom Designer (`docs/design/`). Bei Widersprüchen gilt: Struktur/Verhalten → dieses Dokument; Aussehen → Design-System; Konflikte klärt der CEO.
 
@@ -21,8 +21,8 @@ Breakpoints identisch mit dem Design-System (`docs/design/tokens.css`: 360 Basis
 
 | Name | Breite | Layout-Regeln |
 |---|---|---|
-| Basis (`sm`) | 320–599 px | Entwurfsbreite **360 px**. Einspaltig, Seitenrand 16 px (Kalender: 12 px, s. abstimmung-design.md D-3). Kalender 7 Spalten volle Breite, ein Monat untereinander. Fixierte Aktionsleiste unten. Dialoge als Bottom-Sheets. |
-| `md` | 600–959 px | Einspaltig, max. Inhaltsbreite 640 px (`--ww-size-content-narrow`) zentriert; Meine Reisen zweispaltige Kartenliste; Dialoge zentriert (max. 480 px); Kalenderzellen 64 px hoch. Werkzeugleiste Meine Tage bleibt unten fixiert. |
+| Basis (`sm`) | 320–599 px | Entwurfsbreite **360 px**. Einspaltig, Seitenrand 16 px. **Kalender:** Seitenrand 8 px (`--ww-size-cal-inset-sm`), Fuge 4 px (`--ww-size-cal-gap`) → Zelle **45,7 × 52 px** bei 360 px (CEO-Entscheidung U-1). 7 Spalten volle Breite, ein Monat untereinander. Heatmap-Zelle ohne Pegel, Zählwert „x/n“ bis n ≤ 9, sonst „x“. Fixierte Aktionsleiste unten. Dialoge als Bottom-Sheets. |
+| `md` | 600–959 px | Einspaltig, max. Inhaltsbreite 640 px (`--ww-size-content-narrow`) zentriert; Meine Reisen zweispaltige Kartenliste; Dialoge zentriert (max. 480 px); Kalender-Seitenrand 16 px (`--ww-size-cal-inset`), Zellen 64 px hoch (`--ww-size-cal-cell-h-lg`), Heatmap mit Pegel (4 Segmente) und „x/n“ immer (U-3). Werkzeugleiste Meine Tage bleibt unten fixiert. |
 | `lg` | 960–1199 px | Reise: Inhalt + Seitenspalte (Gruppe: Heatmap links, Vorschläge rechts 340 px). Kalender 2 Monate nebeneinander. Werkzeugleiste Meine Tage oben über dem Kalender (sticky). Tagesdetail als Seitenpanel. |
 | `xl` | ≥ 1200 px | Max. Inhaltsbreite 1040 px (`--ww-size-content-wide`) für Kalender, 1200 px gesamt. Meine Tage: 3 Monate nebeneinander; Gruppe: 2 Monate + Seitenspalte. |
 
@@ -56,19 +56,19 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - Tagesdetail (Heatmap) ist **nicht modal** auf Desktop (Seitenpanel), damit man parallel im Kalender navigieren kann.
 
 ### 4.3 Snackbar (Toast)
-- Position: unten, **über** der fixierten Aktionsleiste (nie verdeckend), Desktop unten links.
+- Position: unten, **über** der fixierten Aktionsleiste (nie verdeckend), Desktop unten links. Technik (U-7): Das Layout misst die fixierte Leiste per `ResizeObserver` und setzt `--ww-sticky-bar-h` am Seitencontainer (ohne Leiste `0px`); Snackbar `bottom: calc(var(--ww-sticky-bar-h) + var(--ww-size-toast-gap) + env(safe-area-inset-bottom))`. Dieselbe Variable speist `scroll-padding-bottom` (§7.2, WCAG 2.4.11).
 - Dauer: 6 s bei Aktion (Rückgängig), 4 s ohne; pausiert bei Hover/Fokus. Maximal eine gleichzeitig (neue ersetzt alte).
 - `role="status"` (höflich). Fehler, die Handeln erfordern, **nicht** als Snackbar, sondern inline oder als Banner.
 - Aktion in der Snackbar ist per Tastatur erreichbar (Kurzbefehl Strg/Cmd+Z für Rückgängig zusätzlich), WCAG 2.2.1: Zeit reicht, weil Rückgängig auch über die Werkzeugleiste dauerhaft erreichbar ist.
 
 ### 4.4 Code-Eingabe (F-040, F-041)
 - **Ein** `<input>`: `type="text"`, `inputmode="numeric"`, `autocomplete="one-time-code"`, `pattern="[0-9]*"`, `maxlength` 6 (nach Bereinigung), `autocapitalize="off"`, `spellcheck="false"`. **Keine** sechs Einzelfelder (brechen Einfügen, Autofill, Screenreader, Korrektur).
-- Optik darf segmentiert wirken (Designer: Zeichenabstand/Hintergrundkästen), technisch bleibt es ein Feld.
+- Optik segmentiert (design-system §9.2: 6 Kästchen, Lücke nach der 3. Ziffer, Zustände leer/Fokus/gefüllt/Fehler/Prüfen/gesperrt/Erfolg), technisch bleibt es ein Feld (Overlay-Variante). Copy der Zustände gilt aus user-flows A.2 (z. B. «Dieser Code stimmt nicht. Noch 3 Versuche.»); im gesperrten Zustand ist `[Neuen Code senden]` die **primäre** Aktion (einzige sinnvolle Handlung).
 - Einfügen: Leerzeichen, Bindestriche und Nicht-Ziffern entfernen; bei genau 6 Ziffern automatisch absenden.
 - Label sichtbar: «6-stelliger Code»; Beschreibung (aria-describedby): «Gesendet an kemal@… · gültig 15 Minuten».
 - Fehler: Feld markieren, Text darunter, Inhalt **markiert lassen** (schnelles Überschreiben), Fokus bleibt.
 - «Code erneut senden»: Textbutton mit Countdown «Neuer Code in 0:27» (Countdown wird für Screenreader nicht sekündlich angesagt; nur „Jetzt verfügbar“ einmal).
-- «Angemeldet bleiben»: Standard **an** (Zielgruppe nutzt eigene Handys; In-App-Browser verlieren Sitzungen sonst oft). Im Login-Formular sichtbar, im Einladungsflow nur als Textzeile «Du bleibst auf diesem Gerät angemeldet. [Ändern]», um das Formular schlank zu halten.
+- «Angemeldet bleiben»: Standard **an** (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) (Zielgruppe nutzt eigene Handys; In-App-Browser verlieren Sitzungen sonst oft). Im Login-Formular sichtbar, im Einladungsflow nur als Textzeile «Du bleibst auf diesem Gerät angemeldet. [Ändern]», um das Formular schlank zu halten.
 
 ### 4.5 Teilen-Sheet (F-002, F-010, F-012, F-015, F-046)
 - Inhalt: Vorschau-Textfeld (editierbar, mehrzeilig, Auto-Höhe), Sprachumschalter `DE | EN` (Radiogruppe; Wechsel ersetzt den Text – wenn bearbeitet, vorher Rückfrage «Deine Änderungen am Text gehen verloren»), Link als eigene Zeile mit `[Kopieren]`.
@@ -85,6 +85,17 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 
 ### 4.8 Karten
 - Ganze Karte klickbar über einen Link im Titel mit erweiterter Klickfläche (Pseudo-Element) – genau **ein** Fokusstopp je Karte plus separat fokussierbare Sekundäraktionen.
+
+### 4.9 Heatmap-Zelle, Legende, Feiertagsliste (F-008, F-016)
+Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
+- **Zell-Anatomie (feste Orte):** Datum + Heute-Ring oben links · Feiertag (Eselsohr) Ecke oben rechts · Zählwert Mitte · ◐ unten links (ab 600 px mit Anzahl „◐2“) · ✓ unten rechts · Pegel (4 Segmente) nur ≥ 600 px · Ausgewählt = Doppelrahmen innen · Fokus = Ring außen (`--ww-focus-ring-isolated`) · Vorschlag = Band in der Fuge darunter (Kappen nur an An-/Abreisetag, am Zeilen-/Monatsende offen). (CEO-Entscheidung U-2.)
+- **Zählwert** = Anzahl „Geht“ / abgegebene Mitglieder (F-008); mobil „x/n“ bis n ≤ 9, sonst „x“ (n im Statusband); ≥ 600 px immer „x/n“. „Zur Not“ zählt nicht in der Zahl, nur in der Intensität (½) und über ◐.
+- **✓ „Alle: Geht“** erscheint genau dann, wenn alle Abgegebenen „Geht“ haben (x = n, = Stufe „alle“). Tage ohne „Geht nicht“, aber mit „Zur Not“ zeigen **nur ◐**, kein ✓. ✓ und ◐ kommen nie gemeinsam vor. (CEO-Entscheidung U-4.)
+- **Begriffe trennen:** Die Vorschlagsgruppe „niemand hat ‚Geht nicht‘“ (F-009) heißt **„Alle dabei“**; sie kann Tage ohne ✓ enthalten – deshalb trägt ihre Überschrift das Strich-Icon `ww-icon-check`, nicht das Abzeichen `ww-icon-all-available`, und Karten mit Zur-Not-Tagen den Chip «◐ 2× zur Not». (CEO-Entscheidung U-14.)
+- **Ausgeblendete Personen** (Was-wäre-wenn-Filter) verringern n lokal; kein eigener Zellzustand, nur aktiver Filter-Chip «✓ 1 ausgeblendet ▾».
+- **Legende (U-6):** Komponente mit echten Mini-Zellen (Stufen „–, 0, 2, 3, 4, 5 ✓“ mit Beispielzahlen der aktuellen Gruppe), danach Zeile «4/5 = 4 von 5 haben „Geht“ · ✓ Alle: Geht · ◐ Jemand nur „Zur Not“ · ◥ Feiertag · Band = Vorschlag». Umsetzung als `<details>`/`<summary>` („Legende“). **Zustand:** mobil beim ersten Besuch der Kalenderansicht aufgeklappt; sobald die Person sie einmal zuklappt, bleibt sie zu (gemerkt pro Gerät, `localStorage`, kein Cookie). ≥ 960 px immer sichtbar in der Filterzeile (genug Platz). Meine Tage: Legende „So funktioniert’s“ aufgeklappt bis zur ersten Abgabe, danach zugeklappt (B.1).
+- **Feiertagsliste (U-11):** unter jedem Monat mit Feiertagen eine Liste (`<ul aria-label="Feiertage im Mai">`), je Eintrag kleines Eselsohr-Dreieck (dekorativ, `aria-hidden`) + «1.5. Tag der Arbeit»; 13 px `--ww-color-text-muted`. Monate ohne Feiertag: keine Zeile. Gleich in Meine Tage, Heatmap und Mini-Kalender (W10).
+- **Mini-Streifen auf Vorschlagskarten (U-10): nicht im MVP** (Information steht als Text auf der Karte; „Im Kalender zeigen“ übernimmt die Wiedererkennung). Kandidat nach Beta-Feedback.
 
 ## 5. Formulare & Validierung
 
@@ -145,14 +156,14 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - **Kontraste:** Text ≥ 4,5:1 (groß ≥ 3:1), UI-Komponenten und Zustandsgrafiken (Heatmap-Stufen gegen Nachbarn, Rahmen, Fokus) ≥ 3:1. Heatmap-Zahlen auf allen Intensitätsstufen ≥ 4,5:1 (Designer, s. abstimmung-design.md).
 - **Nie nur Farbe** (1.4.1): Zustände Tag (Symbol/Muster), Heatmap (Zahl + Symbol „alle“), Stimmen (Text), Fehler (Symbol + Text).
 - **Bewegung:** `prefers-reduced-motion` → keine Animationen außer Opazität; nichts blinkt.
-- **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Zellen wachsen in der Höhe, Labels umbrechen.
-- **Dark Mode** (falls Designer ihn liefert): alle obigen Kontrastregeln gelten auch dort.
+- **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Labels umbrechen. **Kalender bei großer Schrift (U-5):** Umschaltung per Container-Query in `em` (nicht `px`), damit sie auf die Schriftgröße reagiert: Ist die Zelle schmaler als **3,25 em** (bei 360 px ab ca. 175 % Textgröße), wird die **Heatmap** zur **Tagesliste** (je Tag eine Zeile: Datum mit Wochentag · „4 von 5: Geht“ · Abzeichen ◐ n Zur Not / ✓ alle / Feiertag / Vorschlag n; gleiche Reihenfolge, Monatsüberschriften bleiben, Antippen/Enter öffnet das Tagesdetail, Wochenenden über „Sa./So.“ im Datum). **Meine Tage** bleibt ein Raster (Malen braucht die Fläche): Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl, Datumszahl wird nie gekürzt. Kein manueller Umschalter im MVP.
+- **Dark Mode:** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter in Konto/Menü (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*). Alle obigen Kontrastregeln gelten auch dort.
 
 ### 7.2 Zielgrößen & Fokus
-- **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px ≈ 46 × 52 px, s. abstimmung-design.md D-3). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
+- **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px 45,7 × 52 px, bei 320 px 41 × 52 px – U-1). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
 - Abstand zwischen benachbarten Zielen ≥ 4 px **oder** Zellen grenzen ohne Lücke an, sind aber ≥ 44 px (Kalender).
-- **Fokus sichtbar** auf allen Elementen: Fokusring ≥ 2 px, Kontrast ≥ 3:1 gegen Hintergrund **und** gegen Zellfarbe (Heatmap); `:focus-visible`.
-- **Fokus nicht verdeckt (2.4.11):** `scroll-padding-top/bottom` = Höhe der fixierten Leisten, damit fokussierte Kalendertage nie unter Header/Werkzeugleiste liegen.
+- **Fokus sichtbar** auf allen Elementen: Fokusring ≥ 2 px, Kontrast ≥ 3:1 gegen Hintergrund **und** gegen Zellfarbe (Heatmap); `:focus-visible`. Standard `--ww-focus-ring`; in dichten Rastern (Kalender, Segmente) `--ww-focus-ring-isolated` (Hof 2 px + Ring 3 px + Hof 2 px), fokussierte Zelle `z-index: 1`.
+- **Fokus nicht verdeckt (2.4.11):** `scroll-padding-top/bottom` = Höhe der fixierten Leisten (`--ww-sticky-bar-h`, §4.3), damit fokussierte Kalendertage nie unter Header/Werkzeugleiste liegen.
 - Fokusreihenfolge = visuelle Reihenfolge. Fixierte Werkzeugleiste unten steht im DOM **vor** dem Kalender (wird zuerst erreicht) – visuelle Position unten ist zulässig, weil Skip-Links beide Ziele erreichbar machen. (Alternative bei Review-Bedenken: DOM nach Kalender + Skip-Link „Zu den Werkzeugen“.)
 
 ### 7.3 Kalender-Grid (Meine Tage, Heatmap, Mini-Kalender)
@@ -173,7 +184,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 ```
 - Natives `<table>` mit `role="grid"`; je Zelle ein `<button>` (Klickziel). Außerhalb des Suchzeitraums/vergangen: kein Button, `aria-disabled="true"`, aber vorgelesen («nicht im Zeitraum»).
 - **Ein Tab-Stopp für den gesamten Kalender** (Roving Tabindex über alle Monate hinweg): Der zuletzt fokussierte bzw. erste wählbare Tag hat `tabindex="0"`.
-- **Zugänglicher Name** je Tag: Wochentag, Datum, ggf. «heute», «Wochenende», «Feiertag <Name>», Zustand. Heatmap: «6 von 7 können, 1 zur Not, alle können» bzw. «… nicht: Jonas» (Namen max. 3, sonst Anzahl). Die sichtbare Zahl ist Teil der Beschreibung, nicht alleiniger Name.
+- **Zugänglicher Name** je Tag: Wochentag, Datum, ggf. «heute», «Wochenende», «Feiertag <Name>», Zustand. Meine Tage: «…, geht nicht». Heatmap: Muster und Beispiele in §10.2 (Zeile „Zugänglicher Name Heatmap-Zelle“), z. B. «Montag, 10. Mai 2027, 4 von 5 Geht, 1 Zur Not, Teil von Vorschlag 1» bzw. «Donnerstag, 6. Mai 2027, Feiertag Christi Himmelfahrt, 5 von 5 Geht – alle». Die sichtbare Zahl ist Teil der Beschreibung, nicht alleiniger Name.
 - Zustand zusätzlich als `aria-describedby` auf eine kurze Legende (`#cal-help`: «Pfeiltasten zum Bewegen, Leertaste zum Markieren, Umschalt+Pfeil für Zeiträume»).
 - **Ansagen** (eine `aria-live="polite"`-Region pro Seite): nach jeder Änderung «6. Mai: geht nicht» bzw. «3. bis 10. Mai: 8 Tage auf geht nicht gesetzt»; Rückgängig: «Rückgängig: 8 Tage zurückgesetzt».
 
@@ -199,12 +210,12 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 
 **Ziehen (2.5.7):** Jede Zieh-Funktion hat eine Ein-Zeiger-Alternative ohne Ziehen: Tippen einzeln, Bereichsmodus (zwei Tipps). Bottom-Sheets haben neben Wischen immer einen Schließen-Button.
 
-**Hilfe (3.2.6):** «Hilfe» im Footer und im Avatar-Menü an gleicher Stelle auf allen Seiten.
+**Hilfe (3.2.6):** «Hilfe» im Footer und im Avatar-Menü an gleicher Stelle auf allen Seiten; Ziel ist die Hilfe-/FAQ-Seite `/de/hilfe` · `/en/help` (MVP-Seite, W15 – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
 
 ### 7.4 Weitere ARIA-Muster
 - Tabs der Reise: `<nav aria-label="Reise">` mit Links, `aria-current="page"`.
 - Segment Vorschläge/Kalender: zwei Links/Buttons mit `aria-pressed` bzw. `aria-current`, da URL-wirksam.
-- Abstimmen Ja/Vielleicht/Nein: Radiogruppe je Option, `aria-labelledby` = Zeitraum der Option; unbestätigter Vorschlag: Radio **nicht** ausgewählt, Beschreibung «Vorschlag: Nein – aus deinen Tagen».
+- Abstimmen Ja/Vielleicht/Nein: Radiogruppe je Option, `aria-labelledby` = Zeitraum der Option; unbestätigter Vorschlag: Radio **nicht** ausgewählt, Beschreibung «Vorschlag: Nein – aus deinen Tagen». Unter 400 px Viewport-Breite Icon **über** Label, Segmenthöhe 56 px (U-8). Rang-Abzeichen nur für Platz 1 (bei Gleichstand alle Erstplatzierten): «Platz 1» / «Top choice» (U-9).
 - Fortschritt: `<progress>` mit sichtbarem Text «5 von 7».
 - Phasen-Chip: Text, kein reines Icon.
 - Snackbar `role="status"`; kritische Fehler `role="alert"`.
@@ -217,7 +228,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 | Einladung | Ein URL-Zustandsautomat, Kontext-Karte immer sichtbar, `pendingAuth` | A |
 | Meine Tage | Pinsel, Tippen = Umschalten, Ziehen = Datumsbereich, Bereichsmodus, Undo, Autosave, Abgabe | B |
 | Gruppe | Vorschläge zuerst (mobil), lokale Filter, Tagesdetail mit Tag-für-Tag-Navigation | C |
-| Abstimmen | Vorbelegung bestätigen, Sofortspeichern, Ergebnisse nach eigener Stimme | D |
+| Abstimmen | Vorbelegung bestätigen, Sofortspeichern, Ergebnisse erst nach eigener Stimme (Orga sieht immer alles; *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) | D |
 | Meine Reisen | To-dos zuerst, Karten mit Phase + Fortschritt | E |
 
 **Zeit & Datum:** Alle Tage sind Kalendertage in der Zeitzone der Reise (PRD §8); die UI zeigt nie Uhrzeiten, außer «zuletzt geändert 14:32» (lokale Zeit des Betrachters).
@@ -247,21 +258,29 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 
 | Konzept | DE | EN |
 |---|---|---|
-| App-Name | Wir wollen weg | Wir wollen weg (nicht übersetzen; EN-Unterzeile laut Designer-Wortmarke: „Find dates for your group trip“) |
+| App-Name | Wir wollen weg | Wir wollen weg (nicht übersetzen); EN-Untertitel „Find dates for your group trip“ – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber* |
 | Reise | Reise | Trip |
 | Suchzeitraum | Zeitraum (für die Suche) | Date range |
 | Mindestdauer / Wunschdauer | mindestens … Nächte / am liebsten … Nächte | at least … nights / ideally … nights |
+| „können“ (nur in Vorschlägen/Optionen, F-009/F-010) | kann = hat im Zeitraum kein „Geht nicht“ («8 können · ohne Kemal») | can («8 can · without Kemal») |
 | Tageszustand geht | Geht | Works |
 | ginge zur Not | Zur Not | If needed |
 | geht nicht | Geht nicht | Can't |
 | abgeben (Verfügbarkeit) | Tage abgeben / eintragen | Submit dates / add your dates |
 | Heatmap | Kalender (der Gruppe) | Group calendar |
 | Kandidaten | Vorschläge | Suggestions |
-| alle können / fast alle | Alle können / Fast alle können | Everyone's free / Almost everyone |
+| Vorschlagsgruppen (F-009: niemand bzw. 1–k Personen mit „Geht nicht“) | **Alle dabei** / **Fast alle dabei** | **Everyone's in** / **Almost everyone's in** |
+| ✓-Abzeichen Heatmap (alle Abgegebenen haben „Geht“, x = n) | Alle: Geht | Everyone: works |
+| ◐-Hinweis Heatmap (mind. 1 × „Zur Not“) | Zur Not | If needed |
+| Heatmap-Zählwert (Zelle, Tagesdetail) | „4/5“ · Kopf „4 von 5: Geht“ | „4/5“ · “4 of 5: works” |
+| Zugänglicher Name Heatmap-Zelle | «<Datum>[, heute][, Feiertag <Name>], x von n Geht[, k Zur Not][, nicht: <Namen ≤ 3> \| m können nicht][, Teil von Vorschlag i]»; bei x = n «x von n Geht – alle» | «<date>[, today][, holiday <name>], x of n works[, k if needed][, can't: <names> \| m can't][, part of suggestion i]»; x = n: «x of n works – everyone» |
+| Tagesdetail-Zusammenfassung | x = n: «Alle: Geht» · kein „Geht nicht“, aber Zur Not: «Alle dabei – k nur zur Not» · sonst «Nicht: Jonas» | «Everyone: works» · «Everyone's in – k only if needed» · «Can't: Jonas» |
+| Zusatz-Chips Vorschlagskarte | «◐ 2× zur Not» · «✕ ohne Jonas» · «inkl. Pfingstmontag» | «◐ 2× if needed» · «✕ without Jonas» · «incl. Whit Monday» |
 | Abstimmung | Abstimmung / abstimmen | Vote / voting |
 | Ja / Vielleicht / Nein | Ja / Vielleicht / Nein | Yes / Maybe / No |
 | festlegen | Termin festlegen | Lock in dates |
-| Organisator | Orga | Organizer |
+| Organisator (Rolle) | Orga | Organizer – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber* |
+| Rang-Abzeichen Abstimmung | Platz 1 | Top choice |
 | Mitglied | Mitglied | Member |
 | Platzhalter | Platzhalter („fehlt noch“) | Placeholder („not joined yet“) |
 | Einladungslink | Einladungslink | Invite link |
@@ -321,3 +340,6 @@ Regeln: `{names}` als «Kemal, Sara und Jonas» / «Kemal, Sara and Jonas»; ab 
 - Hinweis Datenschutz/Nutzungsbedingungen als Satz unter dem Namensfeld bzw. E-Mail-Feld: «Mit dem Fortfahren akzeptierst du die [Nutzungsbedingungen] und hast den [Datenschutzhinweis] gelesen.» – Links öffnen in neuem Tab (Flow bleibt erhalten).
 - Kommentar-Feld: Hinweis «Alle in der Reise können das lesen.»
 - Keine Tracker, kein Cookie-Banner (F-013); Sprache-Cookie ist technisch notwendig.
+
+## Änderungen
+- 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.

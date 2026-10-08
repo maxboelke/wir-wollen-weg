@@ -20,7 +20,7 @@ Die Code-Komponente (Schritt 2) ist **identisch** im Einladungsflow (W03), bei R
 │  ┌──────────────────────────────┐  │  type=email, autocomplete=email
 │  │ kemal@beispiel.de            │  │
 │  └──────────────────────────────┘  │
-│  ☑ Angemeldet bleiben              │
+│  ☑ Angemeldet bleiben              │  Standard an (CEO 2026-10-08, vorbehaltlich Auftraggeber)
 │                                    │
 │  ┌──────────────────────────────┐  │
 │  │        Code senden           │  │  primär
@@ -64,8 +64,8 @@ Fehler: «E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code 
 │                                    │
 │  6-stelliger Code                  │
 │  ┌──────────────────────────────┐  │  EIN Feld, inputmode=numeric,
-│  │  1  2  3  4  5  6            │  │  autocomplete=one-time-code
-│  └──────────────────────────────┘  │  (Optik segmentiert, technisch 1 Feld)
+│  [1][2][3]  [4][5][6]              │  autocomplete=one-time-code; 6 Kästchen
+│                                    │  rein visuell (design-system §9.2), technisch 1 Feld
 │  Gültig 15 Minuten                 │
 │                                    │
 │  [         Bestätigen          ]   │  Fallback, Auto-Submit bei 6 Ziffern

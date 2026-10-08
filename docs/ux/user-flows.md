@@ -1,6 +1,6 @@
 # User Flows – Wir wollen weg (MVP)
 
-Stand: 2026-10-08 · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
+Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
 
 Notation: `[Button]` = Aktion, `«Text»` = sichtbarer Text (DE; EN-Fassung in [ux-spec.md](ux-spec.md) §10), `◆` = Entscheidung, `⚠` = Fehlerfall, `∅` = Leerzustand, `→` = nächster Schritt. Wireframe-Nummern in Klammern, z. B. (W03).
 
@@ -118,17 +118,17 @@ Inhalt:
   Daneben: `[Zeitraum]`-Schalter (Bereichsmodus), `[↶ Rückgängig]`, `[⋯ Schnellaktionen]`. Darunter bzw. daneben der primäre Button `[Fertig – abgeben]` bzw. nach Abgabe der Speicherstatus.
 - **Kalender:** Monate des Suchzeitraums untereinander (mobil, Endlos-Scroll mit fixierter Monatsüberschrift) bzw. 2–3 Monate nebeneinander (Desktop ≥ 960 px). Oben Sprung-Chips je Monat («Mai · Juni»). Wochenstart nach Region/Konto (Mo oder So); Wochenend-Spalten = Sa/So unabhängig vom Wochenstart.
 - **Tag außerhalb des Suchzeitraums / vergangen:** sichtbar (zur Orientierung), ausgegraut, nicht bedienbar.
-- **Feiertag (F-016):** Markierung in der Zelle + Liste «Feiertage im Mai: 1.5. Tag der Arbeit · 6.5. Christi Himmelfahrt …» unter jedem Monat (Namen in Sprache des Betrachters). Region = Konto-Region; Zusatzoption (Schnellaktion-Menü): «Auch Feiertage der Reise zeigen (Bayern)», falls abweichend.
-- **Legende** über dem Kalender, einklappbar nach erster Abgabe: Zustände + «Nicht markierte Tage zählen als ‚geht‘».
+- **Feiertag (F-016):** Eselsohr oben rechts in der Zelle + Liste «1.5. Tag der Arbeit · 6.5. Christi Himmelfahrt …» unter jedem Monat mit Feiertagen (je Eintrag kleines Eselsohr vorn, ux-spec §4.9) (Namen in Sprache des Betrachters). Region = Konto-Region; Zusatzoption (Schnellaktion-Menü): «Auch Feiertage der Reise zeigen (Bayern)», falls abweichend.
+- **Legende** „So funktioniert’s“ über dem Kalender: aufgeklappt bis zur ersten Abgabe, danach zugeklappt (wieder aufklappbar): Zustände mit Mini-Feld (Fläche + Muster + Symbol) + «Nicht markierte Tage zählen als ‚Geht‘».
 
 ### B.2 Interaktionen
 
 | Eingabe | Verhalten |
 |---|---|
 | **Tippen** auf Tag | Tag bekommt den Zustand des aktiven Pinsels. **Hat er ihn schon → zurück auf „geht“** (Umschalten). |
-| **Ziehen/Wischen** (Maus gedrückt halten bzw. Finger) | Bereich vom Starttag bis zum aktuellen Tag **in Datumsreihenfolge** (wie Textauswahl, auch über Zeilen- und Monatsgrenzen) wird als Vorschau hervorgehoben; beim Loslassen wird angewendet. Regel „erster Tag entscheidet“: War der Starttag bereits im Pinsel-Zustand, setzt der Zug den Bereich auf „geht“ zurück – sonst auf den Pinsel. |
+| **Ziehen/Wischen** (Maus gedrückt halten bzw. Finger) | Bereich vom Starttag bis zum aktuellen Tag **in Datumsreihenfolge** (wie Textauswahl, auch über Zeilen- und Monatsgrenzen) wird als Vorschau angezeigt (Zellen zeigen schon Fläche/Muster des Pinsels, gestrichelter Umriss je Zeilensegment, Ansage «13.–19. Mai · 7 Tage»); beim Loslassen wird angewendet. Regel „erster Tag entscheidet“: War der Starttag bereits im Pinsel-Zustand, setzt der Zug den Bereich auf „geht“ zurück – sonst auf den Pinsel. |
 | **Touch-Gestenkonflikt** (Scrollen vs. Ziehen) | Vertikales Wischen = Seite scrollen. Ziehen startet, wenn die Bewegung **zuerst horizontal** ist (> 10 px, Winkel < 30°) **oder** nach **Gedrückthalten 300 ms** (dann haptisches Feedback, falls verfügbar); danach folgt die Auswahl dem Finger in jede Richtung, Scrollen ist für diese Geste gesperrt. Am oberen/unteren Rand scrollt die Ansicht beim Ziehen automatisch. |
-| **Bereichsmodus** `[Zeitraum]` (barrierefreie Alternative, WCAG 2.5.7) | Erster Tipp = Start (Tag markiert, Hinweis «Jetzt das Ende antippen»), Scrollen erlaubt, zweiter Tipp = Ende → Pinsel wird auf alle Tage dazwischen angewendet. Modus bleibt aktiv, bis er ausgeschaltet wird. `Esc` / erneuter Tipp auf Start bricht ab. |
+| **Bereichsmodus** `[Zeitraum]` (barrierefreie Alternative, WCAG 2.5.7) | Erster Tipp = Start (Doppelrahmen + Ankerpunkt, Hinweiszeile über der Leiste «Jetzt das Ende antippen. [Abbrechen]»), Scrollen erlaubt, zweiter Tipp = Ende → Pinsel wird auf alle Tage dazwischen angewendet. Modus bleibt aktiv, bis er ausgeschaltet wird. `Esc` / erneuter Tipp auf Start bricht ab. |
 | **Shift + Klick** (Desktop) | Bereich vom zuletzt geänderten Tag bis zum geklickten Tag. |
 | **Tastatur** | Siehe ux-spec §7.3 (Pfeile, Leertaste, Shift+Pfeile, 1/2/3 für Pinsel, Strg/Cmd+Z). |
 | **Rückgängig** | Jede Aktion (Tipp, Zug, Bereich, Schnellaktion) ist ein Schritt; Verlauf der Sitzung bis 20 Schritte. Bei Aktionen mit ≥ 2 Tagen zusätzlich Snackbar «8 Tage auf ‚geht nicht‘ gesetzt · [Rückgängig]» (6 s). |
@@ -165,11 +165,11 @@ Inhalt:
 
 ### C.2 Vorschlagsliste (F-009)
 
-1. Zwei Gruppen mit Überschrift und Anzahl: **«Alle können (2)»**, **«Fast alle können (3)»**.
+1. Zwei Gruppen mit Überschrift und Anzahl: **«Alle dabei (2)»** (niemand hat „Geht nicht“, F-009) und **«Fast alle dabei (3)»** (1 bis k fehlen). *Begriff „Alle dabei“ statt „Alle können“: CEO-Entscheidung U-14 vom 2026-10-08* – trennt die Gruppe sprachlich vom ✓ „Alle: Geht“ im Kalender, denn ein „Alle dabei“-Zeitraum kann Zur-Not-Tage ohne ✓ enthalten.
 2. Karte je maximaler Zeitspanne:
    - Zeile 1: «Mi., 5. Mai – Mo., 10. Mai» (Format nach Region)
    - Zeile 2: «bis zu 5 Nächte möglich · ca. 3 Urlaubstage¹» (¹ eigene Feiertage/Region, F-016; Fußnote/Info-Tooltip „Werktage Mo–Fr abzüglich deiner Feiertage“)
-   - Zeile 3 (falls zutreffend): «2× zur Not» · «ohne Jonas» (fehlende Personen namentlich) · Feiertags-Hinweis «inkl. Christi Himmelfahrt»
+   - Zeile 3 (falls zutreffend), Chips: «◐ 2× zur Not» (Zur-Not-Personentage im Zeitraum) · «✕ ohne Jonas» (fehlende Personen namentlich) · «inkl. Christi Himmelfahrt»
    - Aktionen: `[Im Kalender zeigen]`; Orga zusätzlich Checkbox «Zur Abstimmung» (Mehrfachauswahl → fixierte Leiste «2 ausgewählt · [Abstimmung erstellen]»).
 3. Sortierung gemäß F-009 (keine Nutzer-Sortierung im MVP).
 4. Lange Listen: je Gruppe erst 3 Karten, dann `[Alle 7 anzeigen]`.
@@ -182,10 +182,12 @@ Inhalt:
 
 ### C.3 Heatmap (F-008)
 
-- Jede Zelle: Tagesnummer, Anzahl „geht“ (mobil Zahl, Desktop «6/7»), Intensitätsstufe nach Anteil (zur Not = halb), Symbol bei „alle können“, Markierung „jemand zur Not“, Feiertag, Wochenende, heute. Details für Designer: [abstimmung-design.md](abstimmung-design.md) §2.
+- Jede Zelle (Anatomie ux-spec §4.9): Tagesnummer (oben links, Ring = heute), Zählwert „x/n“ = Anzahl „Geht“ / abgegeben (mobil ab n ≥ 10 nur „x“), Intensitätsstufe nach Anteil (Zur Not = halb), **✓ unten rechts nur bei x = n** („Alle: Geht“), **◐ unten links** bei mind. einer Person „Zur Not“ (ab 600 px mit Anzahl), Feiertag als Eselsohr oben rechts, Wochenend-Spur. ✓ und ◐ schließen sich aus (CEO-Entscheidung U-4).
+- **Legende** (Komponente mit Mini-Zellen) über dem Kalender: mobil beim ersten Besuch aufgeklappt, nach dem ersten Zuklappen gemerkt; ab 960 px immer sichtbar (U-6).
+- **Große Schrift (≥ ca. 175 %):** Heatmap wird zur Tagesliste (ux-spec §7.1, U-5).
 - **Antippen eines Tages → Tagesdetail** (mobil Bottom-Sheet, ½ Höhe, nach oben ziehbar; Desktop Seitenpanel/Popover am Tag):
-  - Kopf: «Do., 6. Mai · Christi Himmelfahrt» + «6 von 7 können»
-  - Gruppen: **Geht (5)** Namen · **Zur Not (1)** Namen · **Geht nicht (1)** Namen · **Noch offen (1)** Namen (grau). Kommentar-Symbol bei Personen mit Kommentar; Antippen zeigt den Kommentar.
+  - Kopf: «Do., 6. Mai · Christi Himmelfahrt» + Zählzeile wie in der Zelle «5 von 5: Geht» + Zusammenfassung: x = n → «✓ Alle: Geht»; kein „Geht nicht“, aber Zur Not → «◐ Alle dabei – 1 nur zur Not»; sonst «✕ Nicht: Jonas» (max. 3 Namen, sonst «4 können nicht»).
+  - Gruppen: **Geht (5)** Namen · **Zur Not (1)** Namen · **Geht nicht (1)** Namen · **Noch offen (2)** Namen (`text-muted`, Avatar mit gestricheltem Ring wie Teilnahmestatus F-007, U-13). Kommentar-Symbol bei Personen mit Kommentar; Antippen zeigt den Kommentar.
   - Navigation `[‹ Vortag] [Folgetag ›]` im Sheet (wischen links/rechts auch möglich) – man kann Tag für Tag durchgehen, ohne das Sheet zu schließen.
   - Orga in Phase 1/2: `[Ab hier als Option vorschlagen]` → Abstimmung-Erstellung mit vorgewähltem Starttag (D.1).
 - **Vorschlag im Kalender zeigen:** springt in Ansicht Kalender, scrollt zum Monat, umrandet den Zeitraum (Umriss + Beschriftung, nicht nur Farbe) für 4 s bzw. bis zur nächsten Interaktion; Screenreader-Ansage «Zeitraum 5. bis 10. Mai hervorgehoben».
@@ -212,10 +214,10 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 ### D.2 Abstimmen (alle Mitglieder, `/trips/{id}/poll`, W10)
 
 1. Kopf: «Abstimmung läuft · noch 3 Tage (bis Fr., 14. Mai)» (falls Frist) · «4 von 7 haben abgestimmt».
-2. Je Option eine Karte: Zeitraum, Nächte, Urlaubstage, «laut Kalender: 7 können / ohne Jonas». Darunter **Segment-Schalter** `[Ja] [Vielleicht] [Nein]` (Radiogruppe, jede Schaltfläche ≥ 44 px hoch).
+2. Je Option eine Karte: Zeitraum, Nächte, Urlaubstage, «laut Kalender: 7 können · ohne Jonas» („können“ = kein „Geht nicht“ im Zeitraum, Glossar). Darunter **Segment-Schalter** `[Ja] [Vielleicht] [Nein]` (Radiogruppe, ≥ 48 px hoch; unter 400 px Breite Icon über Label, 56 px hoch – U-8).
 3. **Vorbelegung (F-011):** aus Verfügbarkeit abgeleiteter Vorschlag wird **gestrichelt/hell** angezeigt + Label «Vorschlag aus deinen Tagen». Er zählt erst, wenn bestätigt: Tipp auf den Vorschlag oder `[Alle Vorschläge übernehmen]` (oben, nur sichtbar, wenn es unbestätigte Vorschläge gibt).
 4. Jede Stimme speichert sofort (optimistisch). Statuszeile: «Noch 1 Option offen» → wenn alle beantwortet: «Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Status „abgestimmt“ (F-007/F-011) erst, wenn **alle** Optionen eine bestätigte Stimme haben.
-5. **Ergebnisse** sichtbar für alle, sobald man selbst mind. eine Stimme abgegeben hat (vermeidet Mitläufer-Effekt in der ersten Entscheidung, Transparenz bleibt). *UX-Empfehlung, F-011 sagt „sichtbar für alle“ – bitte PM bestätigen.* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1», «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
+5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber.* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
 6. Sortierung der Karten: in Erstellungsreihenfolge, solange man noch nicht vollständig abgestimmt hat (keine springenden Karten beim Abstimmen); danach nach Rang.
 
 **Leer-/Sonderzustände Tab Abstimmen:**
@@ -278,10 +280,10 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 
 | Ort | Form | Sichtbar für |
 |---|---|---|
-| Header | Textlink in der **Zielsprache**: «English» bzw. «Deutsch» (mit `lang`-Attribut, Globus-Symbol davor) | nicht angemeldet (inkl. Einladungs-Vorschau und Login – wichtig für englischsprachige Eingeladene in deutschen Gruppen) |
+| Header | Direkter Umschalter in der **Zielsprache**: «English» bzw. «Deutsch» (mit `lang`-Attribut, Icon `ww-icon-language` davor, ein Tipp, kein Menü, kein Sprachcode „DE/EN“) | nicht angemeldet (inkl. Einladungs-Vorschau und Login – wichtig für englischsprachige Eingeladene in deutschen Gruppen) |
 | Avatar-Menü | Eintrag «Sprache: Deutsch ▸» → Auswahl | angemeldet |
 | Kontoeinstellungen | Radiogruppe Deutsch / English | angemeldet |
-| Footer | wie Header | alle |
+| Footer | Segment-Umschalter «Deutsch \| English» (aktuelle Sprache markiert, ein Tipp; design-system §9.8) | alle |
 | Teilen-Sheet | Umschalter `DE | EN` nur für den **Text** (ändert nicht die Oberfläche) | alle |
 
 Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown (ein Tipp statt zwei). Bei einer dritten Sprache wird er zum Menü.
@@ -320,7 +322,7 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 
 - **Ein Formular für beides.** Überschrift «Anmelden oder registrieren»; Text «Gib deine E-Mail ein. Wir schicken dir einen Code – ein Passwort brauchst du nicht.»
 - Schritte wie A.1 (E-Mail → Code → [nur neu: Name]) ohne Reise-Karte. Danach → `next` bzw. Meine Reisen.
-- Checkbox «Angemeldet bleiben» (Standard an) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
+- Checkbox «Angemeldet bleiben» (Standard an – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
 - `[Mit Passwort anmelden]` blendet Passwortfeld ein; dort `[Passwort vergessen?]`.
 - Hinweis unter dem Passwortfeld (F-042): «Kein Passwort gesetzt? Melde dich einfach mit einem Code an.»
 - Bereits angemeldet und `/login` aufgerufen → Weiterleitung `next`/Meine Reisen.
@@ -395,4 +397,9 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 3. Auswahl der Personen: Liste mit Checkboxen (alle Fehlenden vorausgewählt), Text aktualisiert sich.
 4. `[Teilen …]` / `[Text kopieren]`. Nach dem Teilen: Hinweis «Zuletzt erinnert: heute, 14:20» an der Fortschrittsanzeige (nur Orga sichtbar) – verhindert Mehrfach-Spam.
 5. ∅ Niemand fehlt → Button entfällt; stattdessen «Alle haben abgegeben → [Abstimmung starten]».
-6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]`.
+6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+
+---
+
+## Änderungen
+- 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.

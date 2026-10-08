@@ -57,7 +57,7 @@ Löschhinweis (F-013, nur Orga, 14 Tage vorher) als Banner **über** „Zu tun�
 ├────────────────────────────────────┤
 │  Meine Reisen                      │
 │                                    │
-│      [ Illustration: Koffer /      │  Designer (Leerzustand 1)
+│      [ empty-trips.svg             │  dekorativ (Leerzustand 1)
 │        Kalender mit Fragezeichen ] │
 │                                    │
 │  Noch keine Reise geplant          │  h2

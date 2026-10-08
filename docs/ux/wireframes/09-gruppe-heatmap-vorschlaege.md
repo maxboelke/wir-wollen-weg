@@ -1,8 +1,10 @@
 # W09 – Reise: Tab „Gruppe“ – Vorschläge & Kalender (`/trips/{id}/group`)
 
-Features: F-008, F-009, F-016, F-010 (Einstieg), F-015 (Erinnern) · Flow: [C](../user-flows.md#c-heatmap--vorschläge-f-008-f-009-f-016) · Interaktive/konsistente Skizze: [09-gruppe-heatmap.html](09-gruppe-heatmap.html) · Zellen-Anforderungen an Design: [abstimmung-design.md §2](../abstimmung-design.md)
+Features: F-008, F-009, F-016, F-010 (Einstieg), F-015 (Erinnern) · Flow: [C](../user-flows.md#c-heatmap--vorschläge-f-008-f-009-f-016) · Regeln: [ux-spec §4.9](../ux-spec.md) (Zelle, Legende, Feiertagsliste), §7.3 (Grid/Tastatur) · Optik: design-system §6, §9.3, §9.7 · **Maßgebliche Skizze: [09-gruppe-heatmap.html](09-gruppe-heatmap.html)** (v2, Abstimmungsrunde 2)
 
-Beispiel: 5 von 7 haben abgegeben (offen: Kemal, Sara). Mindestdauer 4, Wunsch 5 Nächte, Toleranz 1.
+Beispiel: 5 von 7 haben abgegeben (Lena, Jonas, Tim, Anna, Paul; offen: Kemal, Sara). Mindestdauer 4, Wunsch 5 Nächte, Toleranz 1, heute = Mo., 3. Mai 2027. Heatmap und Vorschläge in der HTML-Skizze stammen aus denselben Beispieldaten.
+
+**Begriffe (verbindlich, ux-spec §10.2):** Zahl in der Zelle = Anzahl „Geht“ / abgegeben · ✓ = „Alle: Geht“ (x = n) · ◐ = mind. eine Person „Zur Not“ · Vorschlagsgruppe „Alle dabei“ = niemand hat „Geht nicht“ (F-009), „Fast alle dabei“ = 1 bis k fehlen (CEO-Entscheidungen U-4, U-14).
 
 ## Mobil – Ansicht „Vorschläge“ (Standard)
 
@@ -12,96 +14,140 @@ Beispiel: 5 von 7 haben abgegeben (offen: Kemal, Sara). Mindestdauer 4, Wunsch 5
 │ Übersicht│Meine Tage│Gruppe│Abstimmen│
 ├────────────────────────────────────┤
 │ ┌───────────────┬────────────────┐ │
-│ │■ Vorschläge   │   Kalender     │ │  Segment (URL ?view=)
+│ │▐ Vorschläge ▌ │   Kalender     │ │  Segment (URL ?view=), aktiv = Rahmen + fett
 │ └───────────────┴────────────────┘ │
-│ ┌────────────────────────────────┐ │
-│ │ 5 von 7 haben abgegeben. Noch  │ │  Statusband
-│ │ offen: Kemal, Sara – das Er-   │ │
-│ │ gebnis kann sich noch ändern.  │ │
-│ │                    [Erinnern]  │ │  nur Orga
-│ └────────────────────────────────┘ │
+│ ┃ 5 von 7 haben abgegeben. Noch    │  Statusband (Amber, design-system §9.12)
+│ ┃ offen: Kemal, Sara – das Ergeb-  │
+│ ┃ nis kann sich noch ändern.       │
+│ ┃                     [Erinnern]   │  nur Orga
 │ (Dauer: 5 Nächte ▾)(Darf fehlen: 1 ▾)│  Filter-Chips (lokal)
-│ (Personen ausblenden ▾)            │
+│ (Personen ausblenden ▾)            │  aktiv: (✓ 1 ausgeblendet ▾)
 │                                    │
-│ Alle können (2)                    │  h2
+│ ✓ Alle dabei (2)                   │  h2, Strich-Icon ww-icon-check (nicht Badge)
 │ ┌────────────────────────────────┐ │
 │ │ Mi., 5. Mai – Mo., 10. Mai     │ │
 │ │ bis zu 5 Nächte · ca. 3 Ur-    │ │
 │ │ laubstage ⓘ                    │ │
-│ │ 2× zur Not · inkl. Christi     │ │
-│ │ Himmelfahrt                    │ │
-│ │ [Im Kalender zeigen] ☑ Zur Abst.│ │  Checkbox nur Orga
+│ │ (◐ 2× zur Not) (inkl. Christi  │ │  Zusatz-Chips, umbrechend
+│ │  Himmelfahrt)                  │ │
+│ │ Im Kalender zeigen  ☑ Zur Abst.│ │  Checkbox nur Orga
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │
 │ │ Sa., 12. Juni – Sa., 19. Juni  │ │
 │ │ bis zu 7 Nächte · ca. 5 Ur-    │ │
-│ │ laubstage · 2× zur Not         │ │
-│ │ [Im Kalender zeigen] ☑ Zur Abst.│ │
+│ │ laubstage ⓘ  (◐ 2× zur Not)    │ │
+│ │ Im Kalender zeigen  ☑ Zur Abst.│ │
 │ └────────────────────────────────┘ │
-│                                    │
-│ Fast alle können (3)               │
+│                                    │  32 px Abstand
+│ ⚇ Fast alle dabei (3)              │  h2, Icon ww-icon-users
 │ ┌────────────────────────────────┐ │
 │ │ Do., 13. Mai – Mi., 19. Mai    │ │
 │ │ bis zu 6 Nächte · ca. 4 Ur-    │ │
-│ │ laubstage                      │ │
-│ │ ohne Jonas · inkl. Pfingstmon. │ │
-│ │ [Im Kalender zeigen] ☐ Zur Abst.│ │
+│ │ laubstage ⓘ                    │ │
+│ │ (✕ ohne Jonas) (inkl. Pfingst- │ │
+│ │  montag)                       │ │
+│ │ Im Kalender zeigen  ☐ Zur Abst.│ │
 │ └────────────────────────────────┘ │
 │ … Alle 3 anzeigen                  │
 ├────────────────────────────────────┤
 │ 2 ausgewählt [Abstimmung erstellen]│  fixiert, nur Orga, wenn ≥ 1 gewählt
 └────────────────────────────────────┘
 ```
+Kein Mini-Streifen auf den Karten im MVP (U-10).
 
-**Leerzustände** (Texte: Flow C.2):
+**Leerzustände** (Texte: Flow C.2; Illustrationen aus `docs/design/assets/illustrations/`):
 ```
 Niemand hat abgegeben                 Keine Treffer
 ┌──────────────────────────────┐      ┌──────────────────────────────┐
-│ [Illustration: Rechner wartet]│      │ Leider kein Zeitraum, in dem │
-│ Noch keine Vorschläge –      │      │ alle 5 Nächte können.        │
-│ sobald die ersten ihre Tage  │      │ So klappt es vielleicht:     │
-│ eingetragen haben, rechnen   │      │ [Mit 4 Nächten: 3 Optionen]  │
-│ wir los.                     │      │ [Wenn 1 fehlen darf: 2 Opt.] │
-│ [Meine Tage eintragen]       │      │ Orga: [Suchzeitraum erweitern]│
-└──────────────────────────────┘      └──────────────────────────────┘
+│ [empty-nobody.svg]           │      │ [no-matches.svg]             │
+│ Noch keine Vorschläge –      │      │ Leider kein Zeitraum, in dem │
+│ sobald die ersten ihre Tage  │      │ alle 5 Nächte dabei sind.    │
+│ eingetragen haben, rechnen   │      │ So klappt es vielleicht:     │
+│ wir los.                     │      │ [Mit 4 Nächten: 3 Optionen]  │
+│ [Meine Tage eintragen]       │      │ [Wenn 1 fehlen darf: 2 Opt.] │
+└──────────────────────────────┘      │ Orga: [Suchzeitraum erweitern]│
+                                      └──────────────────────────────┘
 ```
 
 ## Mobil – Ansicht „Kalender“ (Heatmap)
 
+Zell-Anatomie (mobil 45,7 × 52 px, Kalender-Seitenrand 8 px, Fuge 4 px – U-1, U-2):
 ```
-│ (Vorschläge)(■ Kalender)           │
+┌───────────────┐
+│(6)          ◥ │  Datum oben links (Ring = heute) · Feiertag-Eselsohr Ecke oben rechts
+│     5/5       │  Zählwert Mitte: Anzahl „Geht“ / abgegeben (ab n ≥ 10 mobil nur „x“)
+│ ◐           ✓ │  ◐ unten links = jemand „Zur Not“ · ✓ unten rechts = alle „Geht“ (nie beide)
+└───────────────┘
+ ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬  Vorschlag-Band in der Fuge darunter (Kappen nur an An-/Abreisetag)
+```
+
+```
+│ (Vorschläge)(▐Kalender▌)           │
 │ [Statusband] [Filter-Chips]        │
-│ Legende: □ ░ ▒ ▓ █ ★alle  ~ zur Not  ° Feiertag
+│ ▾ Legende                          │  <details>, beim 1. Besuch offen, Zustand gemerkt (U-6)
+│  [–]keine Daten [0]niemand [2]wenige│  echte Mini-Zellen mit Beispielzahlen
+│  [3]einige [4]viele [5✓]alle       │
+│  4/5 = 4 von 5 haben „Geht“        │
+│  ✓ Alle: Geht · ◐ Jemand nur „Zur  │
+│  Not“ · ◥ Feiertag · ▬ Vorschlag   │
 │ Mai 2027                           │
 │ Mo  Di  Mi  Do  Fr  Sa  So         │
-│  ·   ·   ·   ·   ·  1°  2          │  Zelle: Tagesnr. oben links,
-│                     4   4          │  Anzahl „geht“ groß,
-│  3   4 ┏5━━ 6°━━7━━━8━━━9┓         │  ★ oben rechts = alle können,
-│  4   4 ┃4~★ 5★  5★  5★  5★┃        │  ~n unten rechts = n zur Not
-│┏10┛ 11  12  13  14  15  16         │  ┏━┓ = hervorgehobener Vorschlag
-│┗4~★┛ 4   4   4   4   4   4         │
+│  ·   ·   ·   ·   ·   1◥  2         │  1.–2.5. vergangen (nur Datum, ≥ 3:1)
+│ (3)  4   5   6◥  7   8   9         │  heute = 3.5.
+│ 3/5 3/5 4/5 5/5 5/5 5/5 5/5        │
+│          ◐   ✓   ✓   ✓   ✓         │
+│        ▐▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ │  Band ab Anreise (Kappe + Rang „1“), Zeilenende offen
+│ 10  11  12  13  14  15  16         │
+│ 4/5 3/5 3/5 4/5 4/5 4/5 4/5        │
+│  ◐                                 │  10.5.: Zur Not ohne „Geht nicht“ → nur ◐, kein ✓
+│▬▬▬▌                                │  offen am Zeilenanfang, Kappe an Abreise
 │ …                                  │
-│ Feiertage: 1.5. … 6.5. … 17.5. …   │
+│ ◥ 1.5. Tag der Arbeit  ◥ 6.5. Chri-│  Feiertagsliste je Monat (U-11)
+│   sti Himmelfahrt  ◥ 17.5. Pfingst-│
+│   montag  ◥ 27.5. Fronleichnam     │
 │ ▸ Wer hat abgegeben? (5/7)         │
 ```
-(ASCII kann Zellen nur andeuten; maßgeblich ist die HTML-Skizze.)
+(ASCII deutet Zellen nur an; maßgeblich sind HTML-Skizze und design-system §6.1.)
 
-**Tagesdetail** (Antippen eines Tages → Bottom-Sheet ½ Höhe):
+**Tagesdetail** (Antippen eines Tages → Bottom-Sheet, Rastpunkt ½, nach oben ziehbar auf „fast voll“):
 ```
 ┌────────────────────────────────────┐
-│              ─────                 │
-│ [‹]   Do., 6. Mai · Christi    [›] │  Tag-für-Tag blättern (auch wischen)
-│       Himmelfahrt                  │
-│       5 von 5 können               │
-│ Geht (5): Lena, Jonas, Tim, Anna,  │
-│           Paul                     │
-│ Zur Not (0): niemand               │
-│ Geht nicht (0): niemand            │
-│ Noch offen (2): Kemal, Sara        │  grau
-│ Tim [Kommentar] → „Juli nur mit Kindern“     │  Kommentar-Symbol, antippbar
+│              ─────                 │  Griff (nicht einziges Schließmittel)
+│ [‹]  Do., 6. Mai · Christi    [›][×]│  Tag blättern (auch wischen), Schließen
+│      Himmelfahrt                   │
+│      5 von 5: Geht                 │  Zählzeile = Zellwert
+│      (✓ Alle: Geht)                │  Zusammenfassung (s. u.)
+│ ✓ Geht (5)                         │
+│   (LE) Lena (JO) Jonas (TI) Tim [💬]│  Kommentar-Icon antippbar
+│   (AN) Anna (PA) Paul              │
+│ ◐ Zur Not (0)  niemand             │
+│ ✕ Geht nicht (0)  niemand          │
+│ Noch offen (2)                     │  text-muted
+│   (┄KE┄) Kemal (┄SA┄) Sara         │  gestrichelter Avatar-Ring (U-13)
 │ [Ab hier als Option vorschlagen]   │  nur Orga, Phase 1/2
 └────────────────────────────────────┘
 ```
+Zusammenfassung je Fall (CEO-Entscheidung U-4, Wortlaut Glossar):
+- x = n → «✓ Alle: Geht»
+- kein „Geht nicht“, aber „Zur Not“ (z. B. 10. Mai, „4 von 5: Geht“) → «◐ Alle dabei – 1 nur zur Not»
+- sonst (z. B. 13. Mai) → «✕ Nicht: Jonas» (max. 3 Namen, sonst «4 können nicht»)
+
+Zugänglicher Name der Zelle: «Donnerstag, 6. Mai 2027, Feiertag Christi Himmelfahrt, 5 von 5 Geht – alle, Teil von Vorschlag 1» · «Montag, 10. Mai 2027, 4 von 5 Geht, 1 Zur Not, Teil von Vorschlag 1».
+
+## Große Schrift (≥ ca. 175 % Textgröße) – Tagesliste (U-5)
+```
+│ Mai 2027                           │
+│ ────────────────────────────────── │
+│ Mi., 5. Mai                        │  eine Zeile/Kachel je Tag, Link → Tagesdetail
+│ 4 von 5: Geht                      │
+│ (◐ 1 Zur Not) (Vorschlag 1)        │
+│ ────────────────────────────────── │
+│ Do., 6. Mai                        │
+│ 5 von 5: Geht                      │
+│ (✓ alle) (◥ Christi Himmelfahrt)   │
+│ (Vorschlag 1)                      │
+```
+Umschaltung automatisch per `em`-Container-Query (ux-spec §7.1). Meine Tage bleibt ein Raster.
 
 ## Desktop (≥ 960 px)
 
@@ -111,16 +157,17 @@ Niemand hat abgegeben                 Keine Treffer
 │ Übersicht   Meine Tage   Gruppe   Abstimmen                                  │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ [Statusband: 5 von 7 … Noch offen: Kemal, Sara …             [Erinnern]]     │
-│ (Dauer: 5 Nächte ▾) (Darf fehlen: 1 ▾) (Personen ausblenden ▾)   Legende …  │
+│ (Dauer: 5 Nächte ▾) (Darf fehlen: 1 ▾) (Personen ausblenden ▾)              │
+│ Legende (immer sichtbar): [–][0][2][3][4][5✓] · 4/5 = „Geht“ · ✓ · ◐ · ◥ · ▬ │
 ├────────────────────────┬────────────────────────┬───────────────────────────┤
-│ Mai 2027               │ Juni 2027              │ Alle können (2)           │
+│ Mai 2027               │ Juni 2027              │ ✓ Alle dabei (2)          │
 │ Mo Di Mi Do Fr Sa So   │ Mo Di Mi Do Fr Sa So   │ ┌───────────────────────┐ │
-│ …  Zellen „4/5“ …      │ …                      │ │ Mi 5. – Mo 10. Mai …  │ │
-│                        │                        │ └───────────────────────┘ │
-│                        │                        │ Fast alle können (3) …    │
+│ Zellen 64 px: „4/5“,   │ …                      │ │ Mi., 5. Mai – …       │ │
+│ ◐2 / ✓, Pegel ▬▬▬░     │                        │ └───────────────────────┘ │
+│                        │                        │ ⚇ Fast alle dabei (3) …   │
 │                        │                        │ [Abstimmung erstellen (2)]│
 └────────────────────────┴────────────────────────┴───────────────────────────┘
 ```
-- Klick auf Tag → rechte Spalte zeigt Tagesdetail (mit `[× Zurück zu Vorschlägen]`), nicht modal.
-- Hover auf Vorschlagskarte → Zeitraum in der Heatmap umrandet (zusätzlich zu Klick, nie nur Hover).
-- Zellen zeigen „4/5“ (genug Platz).
+- Klick auf Tag → rechte Spalte zeigt Tagesdetail (mit `[× Zurück zu Vorschlägen]`), nicht modal; der Tag erhält den Doppelrahmen „ausgewählt“.
+- Hover oder Klick „Im Kalender zeigen“ auf Vorschlagskarte → Band im Kalender + Karte mit Rahmen `accent-strong` (nie nur Hover).
+- Zellen zeigen „x/n“, ◐ mit Anzahl („◐2“) und den Pegel (4 Segmente, U-3).

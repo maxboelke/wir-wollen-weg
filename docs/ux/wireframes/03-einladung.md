@@ -12,7 +12,7 @@ Features: F-002, F-003, F-007, F-040, F-041, F-046 · Flow: [A](../user-flows.md
 ├────────────────────────────────────┤
 │  Lena lädt dich ein                │  Kleintext über h1
 │  ┌──────────────────────────────┐  │
-│  │ [Illustration/Reise-Motiv]   │  │  (Designer, dekorativ, alt="")
+│  │ [invite.svg]                 │  │  dekorativ, alt="", max. 160 px hoch
 │  │                              │  │
 │  │ Lissabon 2027                │  │  h1 = Reisename (bis 2 Zeilen)
 │  │                              │  │
@@ -125,7 +125,7 @@ Komponente aus [W02 Schritt 2](02-anmelden.md#schritt-2--code-mobil) unter der k
 ```
 Reise voll / Beitritt gesperrt          Link ungültig (→ auch W14)
 ┌──────────────────────────────┐        ┌──────────────────────────────┐
-│ Lissabon 2027 (Vorschau)     │        │ [Illustration: Link kaputt]  │
+│ Lissabon 2027 (Vorschau)     │        │ [error.svg]                  │
 │ ┌──────────────────────────┐ │        │ Dieser Einladungslink        │
 │ │ ⓘ Diese Reise ist voll   │ │        │ funktioniert nicht mehr.     │
 │ │ (30 von 30). Frag Lena,  │ │        │ Vielleicht wurde er erneuert.│

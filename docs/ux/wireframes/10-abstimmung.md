@@ -30,7 +30,7 @@ Features: F-010, F-011, F-017, F-007 (Status „abgestimmt“) · Flow: [D.1, D.
 │ Option 3                           │
 │ ┌────────────────────────────────┐ │
 │ │ Do., 13. Mai – Di., 18. Mai    │ │
-│ │ ⚠ Jonas kann nicht             │ │  Warnung mit Symbol + Text
+│ │ ⚠ Jonas kann nicht             │ │  Warnung Amber (ww-icon-warning), nie Rot
 │ │ …                              │ │
 │ └────────────────────────────────┘ │
 │ [ + Eigenen Zeitraum ]             │  → Sheet mit Mini-Heatmap, Bereichswahl
@@ -66,11 +66,13 @@ Sheet „Eigener Zeitraum“: Mini-Kalender mit Heatmap-Färbung, Bereichsmodus 
 │ │ Mi., 5. Mai – Mo., 10. Mai     │ │
 │ │ 5 Nächte · ca. 3 Urlaubstage   │ │
 │ │ laut Kalender: alle können     │ │
-│ │ ┌────────┬──────────┬────────┐ │ │  Radiogruppe, je ≥ 44 px
-│ │ │ ✓ Ja ● │Vielleicht│  Nein  │ │ │  gewählt = gefüllt
+│ │ ┌────────┬──────────┬────────┐ │ │  Radiogruppe, ≥ 48 px; < 400 px:
+│ │ │   ✓    │    ◐     │   ✕    │ │ │  Icon über Label, 56 px (U-8)
+│ │ │  Ja  ● │Vielleicht│  Nein  │ │ │  gewählt = Fläche + 2-px-Rahmen + Icon gefüllt
 │ │ └────────┴──────────┴────────┘ │ │
-│ │ Ja 4 ████████ Vielleicht 1 ██  │ │  Ergebnisse (nach eigener Stimme)
-│ │ Nein 0         Platz 1         │ │
+│ │ ████████▌██  ✓ 4  ◐ 1  ✕ 0     │ │  Ergebnis erst nach eigener Stimme zu dieser
+│ │ (Platz 1)                      │ │  Option; Orga sieht immer alles (CEO 2026-10-08,
+│ │                                │ │  vorbehaltlich Auftraggeber). Abzeichen „Platz 1“/„Top choice“
 │ │ ▸ Wer hat wie gestimmt?        │ │
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │
@@ -81,6 +83,8 @@ Sheet „Eigener Zeitraum“: Mini-Kalender mit Heatmap-Färbung, Bereichsmodus 
 │ │ └┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┄┄┴┄┄┄┄┄┄┄┄┘ │ │
 │ │ Vorschlag aus deinen Tagen:    │ │
 │ │ Nein – bitte bestätigen        │ │
+│ │ Stimm ab, um das Ergebnis zu   │ │  Platzhalter statt Balken (nicht Orga)
+│ │ sehen.                         │ │
 │ └────────────────────────────────┘ │
 │ …                                  │
 │ Noch 1 Option offen.               │  Statuszeile (role=status)
@@ -99,7 +103,7 @@ Zustand „alle Optionen beantwortet“: Statuszeile «✓ Danke, deine Stimmen 
 ```
 Mitglied                              Orga
 ┌──────────────────────────────┐      ┌──────────────────────────────┐
-│ [Illustration: Urne/Daumen]  │      │ Bereit für die Abstimmung?   │
+│ [vote-waiting.svg]           │      │ Bereit für die Abstimmung?   │
 │ Noch keine Abstimmung.       │      │ Wähle 2–6 Zeiträume aus den  │
 │ Lena startet sie, sobald     │      │ Vorschlägen.                 │
 │ genug Tage eingetragen sind. │      │ ⓘ Noch offen: Kemal, Sara    │

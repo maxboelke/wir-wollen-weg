@@ -36,7 +36,7 @@ Gleichstand: keine Vorauswahl, Hinweis «Gleichstand auf Platz 1 – du entschei
 │ Übersicht│Meine Tage│Gruppe│Abstimmen│
 ├────────────────────────────────────┤
 │ ┌────────────────────────────────┐ │
-│ │ [Illustration: Koffer/Flieger] │ │  Designer (Erfolgsmotiv)
+│ │ [vote-done.svg]                │ │  Erfolgsmotiv, dekorativ
 │ │ Es geht los!                   │ │  h1
 │ │ Mi., 5. Mai –                  │ │  groß
 │ │ Mo., 10. Mai 2027              │ │

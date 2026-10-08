@@ -1,6 +1,6 @@
 # Sitemap & Informationsarchitektur – Wir wollen weg (MVP)
 
-Stand: 2026-10-08 · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ---
 
@@ -44,7 +44,7 @@ Direkte URLs auf einen Tab werden immer respektiert (kein Umleiten).
 │   └── Schritt Profil (nur neue Konten: Name)  (?step=profile)
 ├── Magic-Link-Ziel                  /auth/magic?token=…  F-040, F-041
 ├── Passwort vergessen               /login/reset         F-042
-├── Hilfe (Kurz-FAQ)                 /de/hilfe · /en/help    (Empfehlung UX, s. §6)
+├── Hilfe (Kurz-FAQ)                 /de/hilfe · /en/help    MVP (CEO 2026-10-08, vorbehaltlich Auftraggeber), W15
 ├── Datenschutz                      /de/datenschutz · /en/privacy   F-013, F-046
 └── Impressum                        /de/impressum · /en/imprint     F-046
 
@@ -102,9 +102,9 @@ Systemseiten
 | Element | Nicht angemeldet | Angemeldet |
 |---|---|---|
 | Logo (links) | → Landing | → Meine Reisen |
-| Sprachumschalter | **im Header sichtbar** („English“ / „Deutsch“) | im Avatar-Menü + Konto; im Footer |
-| Rechts | „Anmelden“ | Avatar (Initialen) → Menü: Meine Reisen · Konto · Sprache · Abmelden |
-| Footer | Hilfe · Datenschutz · Impressum · Sprache | identisch (Footer auf Reiseseiten auf Mobil nur am Seitenende, nicht fixiert) |
+| Sprachumschalter | **im Header sichtbar** als direkter Umschalter in der Zielsprache (Globus-Icon `ww-icon-language` + „English“ / „Deutsch“, ein Tipp) | im Avatar-Menü + Konto; im Footer |
+| Rechts | „Anmelden“ | Avatar (Initialen) → Menü: Meine Reisen · Konto · Sprache · Hilfe · Abmelden |
+| Footer | Hilfe · Datenschutz · Impressum · Sprach-Segment „Deutsch \| English“ | identisch (Footer auf Reiseseiten auf Mobil nur am Seitenende, nicht fixiert) |
 
 **In der Reise** (unter dem globalen Header, sticky):
 - Zeile 1: „← Meine Reisen“ (Icon-Button mit Text auf Desktop) · Reisename (1 Zeile, gekürzt) · „⋯“ (Reisemenü)
@@ -116,7 +116,7 @@ Systemseiten
 
 | Eintrag | Orga | Mitglied |
 |---|---|---|
-| Freunde einladen (→ /invite) | ✔ | ✔ (solange Beitritt offen) |
+| Freunde einladen (→ /invite) | ✔ | ✔ (solange Beitritt offen; *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) |
 | Mein Name in dieser Reise | ✔ | ✔ |
 | Reise bearbeiten (→ /settings) | ✔ | – |
 | Gruppe erinnern (F-015) | ✔ | – |
@@ -148,6 +148,10 @@ Systemseiten
 | F-043 Konto & Löschen | /account, /account/delete | [13](wireframes/13-konto.md) |
 | F-044 Meine Reisen | /trips | [04](wireframes/04-meine-reisen.md) |
 | F-046 Sprachen | Header, Footer, Konto, Teilen-Sheet | [13](wireframes/13-konto.md), [ux-spec §9](ux-spec.md) |
-| Hilfe (UX-Empfehlung) | /de/hilfe, /en/help | [14](wireframes/14-system-und-fehler.md) |
+| Hilfe/FAQ (MVP-Seite, kein F-Feature) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
 
-**Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt. Empfehlung UX: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
+**Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt; **im MVP enthalten** (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*; PM bitte als kleines Feature nachtragen). Inhalt: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
+
+**Rollenbezeichnung:** In der Oberfläche heißt die Rolle „Orga“ / „Organizer“ (Kronen-Icon immer mit Text) – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*. „Organisator“ bleibt nur interner/Dokumentbegriff.
+
+**Darstellung (Dark Mode):** kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
