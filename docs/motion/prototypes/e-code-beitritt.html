@@ -1,0 +1,369 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototyp e · Einladung, Code & Beitritt (W03/W02, F-003/F-040) · Wir wollen weg</title>
+<style>
+/* ===== Platzhalter-Optik (aktuelle Tokens, Light) ===== */
+:root{
+  --bg:#fbf8f3;--surface:#fff;--sunken:#f1eee8;--text:#1c2526;--muted:#55605f;--subtle:#667070;
+  --border-subtle:#e4ded4;--border-strong:#858c8a;
+  --primary:#0e6a68;--primary-text:#0a5654;--primary-tint:#ddf1ee;
+  --accent:#e8694a;--sun:#f4b942;--danger:#b3261e;--focus:#2b59c3;
+  --info-tint:#eff8f6;--info-text:#0a5654;
+  --shadow-1:0 1px 2px rgb(28 37 38 / .06),0 1px 3px rgb(28 37 38 / .10);
+  --avatar-1:#bfe6df;--avatar-2:#fbe2a6;--avatar-3:#f9cdbe;--avatar-4:#cfe2f7;--avatar-5:#e1d6f5;
+}
+/* ===== Motion-Tokens (Vorschlag motion-system.md §3) ===== */
+:root{
+  --ww-duration-instant:80ms;--ww-duration-fast:140ms;--ww-duration-base:220ms;--ww-duration-slow:320ms;
+  --ww-duration-moderate:480ms;--ww-duration-celebrate:700ms;--ww-duration-fade:140ms;
+  --ww-ease-standard:cubic-bezier(.2,0,0,1);--ww-ease-enter:cubic-bezier(0,0,0,1);--ww-ease-exit:cubic-bezier(.3,0,1,1);
+  --ww-ease-emphasized:cubic-bezier(.05,.7,.1,1);--ww-ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --ww-ease-spring-soft:cubic-bezier(.34,1.3,.64,1);--ww-ease-spring-bouncy:var(--ww-ease-spring);
+  --ww-motion-distance-sm:8px;--ww-motion-distance:16px;--ww-motion-distance-lg:24px;
+  --ww-motion-scale-press:.97;--ww-motion-scale-cell:.94;--ww-motion-scale-enter:.96;--ww-motion-scale-pop:.6;
+  --ww-stagger-cell:12ms;--ww-stagger-item:40ms;--ww-stagger-card:60ms;--ww-stagger-max:400ms;
+}
+@supports (transition-timing-function: linear(0, 1)){
+  :root{
+    --ww-ease-spring-soft:linear(0, .052 5%, .174 10%, .325 15%, .478 20%, .619 25%, .738 30%, .833 35%, .906 40%, .991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1);
+    --ww-ease-spring-bouncy:linear(0, .116 5%, .372 10%, .657 15%, .898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, .987 60%, .974 70%, .986 80%, .999 90%, 1);
+  }
+}
+:root[data-motion="reduce"]{
+  --ww-duration-instant:.01ms;--ww-duration-fast:.01ms;--ww-duration-base:.01ms;--ww-duration-slow:.01ms;
+  --ww-duration-moderate:.01ms;--ww-duration-celebrate:.01ms;--ww-duration-fade:140ms;
+  --ww-ease-spring:linear;--ww-ease-spring-soft:linear;--ww-ease-spring-bouncy:linear;
+  --ww-motion-distance-sm:0px;--ww-motion-distance:0px;--ww-motion-distance-lg:0px;
+  --ww-motion-scale-press:1;--ww-motion-scale-cell:1;--ww-motion-scale-enter:1;--ww-motion-scale-pop:1;
+  --ww-stagger-cell:0ms;--ww-stagger-item:0ms;--ww-stagger-card:0ms;
+}
+
+*{box-sizing:border-box}
+html{color-scheme:light;-webkit-text-size-adjust:100%}
+body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#e6e1d8}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.proto{position:sticky;top:0;z-index:70;background:#1c2526;color:#fff;font-size:13px;line-height:1.3}
+.proto-in{max-width:390px;margin:0 auto;padding:6px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
+.sw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;position:relative}
+.sw input{position:absolute;opacity:0;width:1px;height:1px}
+.sw-track{width:36px;height:20px;border-radius:999px;background:#6b7775;position:relative;flex:none}
+.sw-track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
+.sw input:checked+.sw-track{background:#4ab3a4}
+.sw input:checked+.sw-track::after{transform:translateX(16px)}
+.sw input:focus-visible+.sw-track{outline:3px solid #8fb3ff;outline-offset:2px}
+.pbtn{color:#fff;background:transparent;border:1px solid #858c8a;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
+.ptag{font-size:12px;opacity:.85}
+
+.app{max-width:390px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;overflow-x:clip;padding-bottom:40px}
+.site{display:flex;align-items:center;gap:8px;height:56px;padding:0 12px 0 16px;font-weight:750;font-size:17px}
+.site .grow{flex:1}
+.lang{border:0;background:transparent;min-height:44px;padding:0 8px;border-radius:12px;font-size:14px;font-weight:600;color:var(--primary-text)}
+.pad{padding:4px 16px 0}
+.kicker{margin:0 0 6px;color:var(--muted);font-size:15px}
+.card{background:var(--surface);border:1px solid var(--border-subtle);border-radius:16px;padding:16px;box-shadow:var(--shadow-1)}
+.card h1{font-size:26px;line-height:1.2;margin:8px 0 10px}
+.card ul{list-style:none;padding:0;margin:0 0 8px;display:grid;gap:4px;font-size:15px}
+.card blockquote{margin:8px 0 0;font-style:italic;color:var(--muted)}
+.card svg{display:block;margin:0 auto;overflow:visible}
+.card .plane{transform-box:fill-box;transform-origin:center}
+.compact{background:var(--surface);border:1px solid var(--border-subtle);border-radius:12px;padding:10px 14px;font-size:15px}
+.compact b{display:block;font-size:16px}
+[hidden]{display:none!important}
+.primary{width:100%;min-height:56px;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:600;font-size:17px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 20px;margin-top:16px;
+  transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
+.primary:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
+.primary.md{min-height:48px;font-size:16px}
+.hint{font-size:14px;color:var(--muted);margin:8px 0 0}
+.step h2{font-size:21px;line-height:1.25;margin:20px 0 12px}
+label.lbl{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
+.field{width:100%;min-height:48px;border:1.5px solid var(--border-strong);border-radius:12px;padding:0 14px;font-size:16px;background:var(--surface)}
+.field:focus{outline:none;border:2px solid var(--primary);box-shadow:0 0 0 2px #fff,0 0 0 5px var(--focus)}
+.linkbtn{border:0;background:transparent;color:var(--primary-text);font-weight:600;min-height:44px;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:spin 800ms linear infinite}
+:root[data-motion="reduce"] .spin{animation:none;border:0;width:auto;height:auto}
+:root[data-motion="reduce"] .spin::before{content:"···"}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Code-Feld: EIN Input über sechs rein visuellen Kästchen (design-system §9.2, ux-spec §4.4) */
+.codewrap{display:flex;align-items:center;gap:10px}
+.code{position:relative;display:flex;gap:8px;width:max-content}
+.code .gap{width:8px}
+.box{width:44px;height:52px;border:1.5px solid var(--border-strong);border-radius:12px;background:var(--surface);display:grid;place-items:center;font-size:24px;font-weight:600;font-variant-numeric:tabular-nums;position:relative}
+.box .dg{display:inline-block}
+.code.focus .box.act{border:2px solid var(--primary)}
+.code.focus .box.act::after{content:"";position:absolute;left:50%;top:14px;bottom:14px;width:2px;margin-left:-1px;background:var(--text);animation:blink 1s steps(1) 5}
+:root[data-motion="reduce"] .code.focus .box.act::after{animation:none}
+@keyframes blink{50%{opacity:0}}
+.code.err .box{border:2px solid var(--danger)}
+.code.sel .box{background:var(--primary-tint)}
+.code.check .box{border-color:var(--border-subtle)}
+.code .box.okb{background:var(--primary-tint);border:2px solid var(--primary)}
+.code.locked .box{background:var(--sunken);border:1.5px dashed var(--border-strong)}
+.code.locked .dg{visibility:hidden}
+.code input{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent;color:transparent;caret-color:transparent;font-size:16px;padding:0;letter-spacing:0;outline:none}
+.code input::selection{background:transparent;color:transparent}
+.okic{width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;font-weight:700;flex:none}
+.msg{min-height:24px;margin:8px 0 0;font-size:15px;display:flex;gap:6px;align-items:flex-start}
+.msg.err{color:var(--danger)}
+.msg .x{display:inline-grid;place-items:center;width:20px;height:20px;border-radius:50%;border:2px solid currentColor;font-size:11px;font-weight:700;flex:none;margin-top:2px}
+.status{font-size:14px;color:var(--muted);display:flex;gap:8px;align-items:center;min-height:24px;margin-top:6px}
+
+/* Ziel: Meine Tage mit Willkommen */
+.trip{background:var(--surface);border-bottom:1px solid var(--border-subtle)}
+.trip-top{display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;font-weight:600}
+.tabs{display:flex;gap:4px;padding:0 8px;font-size:14px;font-weight:600}
+.tabs a{padding:12px 8px;color:var(--muted);text-decoration:none;position:relative}
+.tabs a[aria-current]{color:var(--text)}
+.tabs a[aria-current]::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;border-radius:2px;background:var(--primary)}
+.welcome{display:flex;gap:12px;align-items:flex-start;margin:12px 0;padding:12px;border-radius:16px;background:var(--surface);border:1px solid var(--border-subtle)}
+.welcome p{margin:0;font-size:15px}
+.welcome strong{display:block;font-size:17px}
+.seal{flex:none;width:40px;height:40px;border-radius:50%;background:var(--sun);display:grid;place-items:center}
+.avs{display:flex;align-items:center;margin:4px 0 12px}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:700;border:2px solid var(--bg);margin-left:-8px}
+.av:first-child{margin-left:0}
+.av.me{outline:2px solid var(--primary);outline-offset:1px}
+.mcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.mcal span{height:44px;border-radius:8px;background:#c6e9e2;font-size:12px;padding:3px 4px}
+</style>
+</head>
+<body>
+<div class="proto" role="region" aria-label="Prototyp-Steuerung">
+  <div class="proto-in">
+    <span><strong>Prototyp e</strong> · Einladung & Code</span>
+    <label class="sw"><input type="checkbox" id="rm" role="switch"><span class="sw-track" aria-hidden="true"></span>Bewegung reduzieren</label>
+    <button class="pbtn" id="btnReset" type="button">Neu starten</button>
+    <span class="ptag">Richtiger Code: <b>123456</b> · alles andere ist falsch</span>
+  </div>
+</div>
+
+<div class="app" id="app">
+  <div id="flow">
+    <header class="site"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="11" r="6" fill="#f4b942"/><rect x="4" y="13" width="20" height="12" rx="3" fill="#0e6a68"/></svg><span class="grow">Wir wollen weg</span><button class="lang" type="button" lang="en">English</button></header>
+    <div class="pad">
+      <!-- Z1: volle Vorschau -->
+      <div id="full">
+        <p class="kicker">Lena lädt dich ein</p>
+        <div class="card" id="card">
+          <svg width="200" height="120" viewBox="0 0 200 120" aria-hidden="true">
+            <circle cx="100" cy="64" r="54" fill="#ece5d9"/>
+            <rect x="50" y="44" width="100" height="62" rx="10" fill="#fff" stroke="#1c2526" stroke-width="2"/>
+            <path d="M52 48l48 32 48-32" fill="none" stroke="#1c2526" stroke-width="2" stroke-linejoin="round"/>
+            <g class="plane"><path d="M128 18l42 -8-20 34-6-14z" fill="#e8694a"/><path d="M144 30l-8 10" stroke="#b23f22" stroke-width="2" stroke-linecap="round"/></g>
+            <circle cx="64" cy="26" r="9" fill="#f4b942"/>
+          </svg>
+          <h1>Lissabon 2027</h1>
+          <ul>
+            <li>Irgendwann zwischen 1. Mai und 30. Juni 2027</li>
+            <li>4–5 Nächte</li>
+            <li>7 sind schon dabei</li>
+          </ul>
+          <blockquote>„Sonne, Pastéis, Surfen. Wer ist dabei?“</blockquote>
+        </div>
+        <button class="primary" id="join" type="button">Mitmachen</button>
+        <p class="hint">Dauert 2 Minuten. Kostenlos, ohne App und ohne Passwort.</p>
+      </div>
+      <!-- kompakte Kontext-Karte (Z2–Z4) -->
+      <div class="compact" id="compact" hidden><b>Lissabon 2027</b>Lena lädt dich ein · 4–5 Nächte</div>
+
+      <!-- Z2: E-Mail -->
+      <form class="step" id="sEmail" hidden novalidate>
+        <h2>Mit deiner E-Mail bist du in Sekunden dabei.</h2>
+        <label class="lbl" for="email">E-Mail</label>
+        <input class="field" id="email" type="email" autocomplete="email" inputmode="email" value="kemal@beispiel.de">
+        <p class="hint">Wir schicken dir einen Code. Kein Passwort nötig.</p>
+        <button class="primary md" id="send" type="submit">Code senden</button>
+      </form>
+
+      <!-- Z3: Code -->
+      <form class="step" id="sCode" hidden novalidate>
+        <h2>Gib den Code aus der Mail ein.</h2>
+        <label class="lbl" for="code" id="codeLbl">6-stelliger Code</label>
+        <div class="codewrap">
+          <div class="code" id="codeBox">
+            <span class="box" aria-hidden="true"><span class="dg"></span></span><span class="box" aria-hidden="true"><span class="dg"></span></span><span class="box" aria-hidden="true"><span class="dg"></span></span>
+            <span class="gap" aria-hidden="true"></span>
+            <span class="box" aria-hidden="true"><span class="dg"></span></span><span class="box" aria-hidden="true"><span class="dg"></span></span><span class="box" aria-hidden="true"><span class="dg"></span></span>
+            <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="12" autocapitalize="off" spellcheck="false" aria-describedby="codeDesc codeMsg">
+          </div>
+          <span class="okic" id="okic" aria-hidden="true" hidden>✓</span>
+        </div>
+        <p class="hint" id="codeDesc">Gesendet an kemal@… · gültig 15 Minuten</p>
+        <p class="msg" id="codeMsg" aria-live="polite"></p>
+        <div class="status" id="checkSt" aria-live="polite"></div>
+        <button class="primary md" id="codeBtn" type="submit">Weiter</button>
+        <p class="hint"><button class="linkbtn" id="resend" type="button" aria-disabled="true">Neuer Code in 0:30</button><br>Keine Mail? Schau im Spam-Ordner.</p>
+      </form>
+
+      <!-- Z4a: Name -->
+      <form class="step" id="sName" hidden novalidate>
+        <h2>Fast geschafft! Wie sollen dich die anderen nennen?</h2>
+        <label class="lbl" for="name">Dein Name</label>
+        <input class="field" id="name" type="text" autocomplete="nickname" value="Kemal">
+        <button class="primary md" id="joinBtn" type="submit">Beitreten</button>
+        <p class="hint">Du bleibst auf diesem Gerät angemeldet. <button class="linkbtn" type="button">Ändern</button></p>
+      </form>
+    </div>
+  </div>
+
+  <!-- Z5: in der Reise -->
+  <div id="inTrip" hidden>
+    <header class="trip">
+      <div class="trip-top"><span aria-hidden="true">←</span><span style="flex:1">Lissabon 2027</span><span aria-hidden="true">⋯</span></div>
+      <nav class="tabs" aria-label="Reise"><a href="#">Übersicht</a><a href="#" aria-current="page">Meine Tage</a><a href="#">Gruppe</a><a href="#">Abstimmen</a></nav>
+    </header>
+    <div class="pad">
+      <section class="welcome" id="welcome" aria-labelledby="wT">
+        <span class="seal" id="wSeal" aria-hidden="true"><svg width="22" height="22" viewBox="0 0 20 20"><path d="M4.5 10.5l3.5 3.5 7.5-8" fill="none" stroke="#1c2526" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <p><strong id="wT" tabindex="-1">Du bist dabei!</strong>Tippe die Tage an, an denen du <b>nicht</b> kannst. Alles andere zählt als „geht“.</p>
+      </section>
+      <div class="avs" aria-label="8 dabei: Lena, Jonas, Tim, Mia, Paul, Sara, Kemal und du">
+        <span class="av" style="background:var(--avatar-1)">LE</span><span class="av" style="background:var(--avatar-2)">JO</span><span class="av" style="background:var(--avatar-3)">TI</span><span class="av" style="background:var(--avatar-4)">MI</span><span class="av" style="background:var(--avatar-5)">PA</span><span class="av me" id="meAv" style="background:#d5e8c8">KE</span>
+      </div>
+      <div class="mcal" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var root=document.documentElement;
+var rm=document.getElementById('rm');
+var saved=null;try{saved=sessionStorage.getItem('ww-proto-motion');}catch(e){}
+root.dataset.motion=saved||(matchMedia('(prefers-reduced-motion: reduce)').matches?'reduce':'full');
+rm.checked=root.dataset.motion==='reduce';
+rm.addEventListener('change',function(){root.dataset.motion=rm.checked?'reduce':'full';try{sessionStorage.setItem('ww-proto-motion',root.dataset.motion);}catch(e){}});
+function reduced(){return root.dataset.motion==='reduce';}
+var LIN=window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)');
+var E={standard:'cubic-bezier(.2,0,0,1)',enter:'cubic-bezier(0,0,0,1)',exit:'cubic-bezier(.3,0,1,1)',emph:'cubic-bezier(.05,.7,.1,1)',
+  soft:LIN?'linear(0, .052 5%, .174 10%, .325 15%, .478 20%, .619 25%, .738 30%, .833 35%, .906 40%, .991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1)':'cubic-bezier(.34,1.3,.64,1)',
+  bouncy:LIN?'linear(0, .116 5%, .372 10%, .657 15%, .898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, .987 60%, .974 70%, .986 80%, .999 90%, 1)':'cubic-bezier(.34,1.56,.64,1)'};
+var D={instant:80,fast:140,base:220,slow:320,moderate:480,celebrate:700,fade:140};
+function play(el,kf,o){if(reduced()||!el||!el.animate)return null;return el.animate(kf,o);}
+function enter(el,o){o=o||{};var r=reduced();var from={opacity:0},to={opacity:1};
+  if(!r){var t=[];if(o.x)t.push('translateX('+o.x+'px)');if(o.y)t.push('translateY('+o.y+'px)');if(o.s)t.push('scale('+o.s+')');if(t.length){from.transform=t.join(' ');to.transform='none';}}
+  return el.animate([from,to],{duration:r?D.fade:(o.d||D.base),delay:r?0:(o.delay||0),easing:r?'linear':(o.e||E.enter),fill:'backwards'});}
+
+/* ---------- Z1: Vorschau-Karte (W03-01) ---------- */
+enter(document.getElementById('card'),{y:16,d:D.slow,e:E.emph});
+play(document.querySelector('.plane'),[{opacity:0,transform:'translate(-14px,10px) rotate(-8deg)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:200,easing:E.soft,fill:'backwards'});
+
+/* ---------- Schrittwechsel (W02-01): Fokus SOFORT, Bewegung danach ---------- */
+var cur=null;
+function show(step,focusEl){
+  if(cur)cur.hidden=true;
+  step.hidden=false;cur=step;
+  if(focusEl)focusEl.focus({preventScroll:true}); /* synchron im Tipp-Ereignis → iOS öffnet die Tastatur */
+  enter(step,{x:8,d:D.base});
+}
+document.getElementById('join').addEventListener('click',function(){
+  var full=document.getElementById('full'),compact=document.getElementById('compact');
+  full.hidden=true;compact.hidden=false;enter(compact,{y:-8,d:D.base});
+  show(document.getElementById('sEmail'),document.getElementById('email'));
+});
+function busy(btn,txt){btn.dataset.label=btn.textContent;btn.setAttribute('aria-busy','true');btn.innerHTML='<span class="spin" aria-hidden="true"></span>'+txt;}
+function unbusy(btn){btn.removeAttribute('aria-busy');btn.textContent=btn.dataset.label;}
+document.getElementById('sEmail').addEventListener('submit',function(e){
+  e.preventDefault();var b=document.getElementById('send');if(b.getAttribute('aria-busy'))return;busy(b,'Code senden …');
+  setTimeout(function(){unbusy(b);show(document.getElementById('sCode'),input);startResend();},600);
+});
+
+/* ---------- Code-Feld ---------- */
+var input=document.getElementById('code'),codeBox=document.getElementById('codeBox'),boxes=[].slice.call(codeBox.querySelectorAll('.box'));
+var msg=document.getElementById('codeMsg'),checkSt=document.getElementById('checkSt'),okic=document.getElementById('okic'),codeBtn=document.getElementById('codeBtn');
+var attempts=0,MAX=5,state='idle',prevLen=0,blinkT=0;
+function digits(){return input.value.replace(/\D/g,'').slice(0,6);}
+function render(animateNew){
+  var v=digits();if(input.value!==v)input.value=v;
+  boxes.forEach(function(b,i){var dg=b.querySelector('.dg');dg.textContent=v[i]||'';b.classList.toggle('act',i===Math.min(v.length,5)&&v.length<6);});
+  if(animateNew&&v.length>prevLen){
+    var added=v.length-prevLen;
+    for(var i=prevLen;i<v.length;i++){ /* Einfügen: Staffel 20 ms, gesamt ≤ 120 ms */
+      play(boxes[i].querySelector('.dg'),[{transform:'scale(.8)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:D.instant+20,delay:added>1?(i-prevLen)*20:0,easing:E.standard,fill:'backwards'});}
+  }
+  prevLen=v.length;
+}
+function restartBlink(){ /* Caret blinkt max. 5 s (CSS: 5 Iterationen), danach statisch */
+  boxes.forEach(function(b){b.classList.remove('act');});void codeBox.offsetWidth;render(false);}
+input.addEventListener('focus',function(){codeBox.classList.add('focus');restartBlink();});
+input.addEventListener('blur',function(){codeBox.classList.remove('focus');});
+input.addEventListener('input',function(){
+  if(state==='locked'||state==='check')return;
+  codeBox.classList.remove('sel','err');
+  if(state==='error'){state='idle';}
+  render(true);restartBlink();
+  if(digits().length===6)check(); /* bei 6 Ziffern automatisch absenden */
+});
+document.getElementById('sCode').addEventListener('submit',function(e){e.preventDefault();
+  if(state==='locked'){newCode();return;}
+  if(digits().length<6){setMsg('Der Code hat 6 Ziffern.',true);input.focus();return;}check();});
+function setMsg(t,err){msg.className='msg'+(err?' err':'');msg.innerHTML=t?(err?'<span class="x" aria-hidden="true">✕</span>':'')+'<span>'+t+'</span>':'';if(t)enter(msg,{d:D.fast});}
+function check(){
+  if(state==='check'||state==='ok')return;
+  state='check';codeBox.classList.add('check');setMsg('');
+  var spinT=setTimeout(function(){checkSt.innerHTML='<span class="spin" aria-hidden="true"></span>Prüfe Code …';enter(checkSt,{d:D.fast});},400);
+  setTimeout(function(){clearTimeout(spinT);checkSt.textContent='';codeBox.classList.remove('check');
+    if(digits()==='123456')success();else fail();},900);
+}
+function fail(){
+  attempts++;
+  if(attempts>=MAX){lock();return;}
+  state='error';codeBox.classList.add('err');
+  /* einmal wackeln, 4 px, 220 ms – bei reduzierter Bewegung nicht */
+  play(codeBox,[{transform:'translateX(0)'},{transform:'translateX(-4px)'},{transform:'translateX(4px)'},{transform:'translateX(-2px)'},{transform:'translateX(0)'}],{duration:D.base,easing:E.standard});
+  var left=MAX-attempts;
+  setMsg(attempts>=2?'Dieser Code stimmt nicht. Noch '+left+(left===1?' Versuch.':' Versuche.'):'Dieser Code stimmt nicht.',true);
+  input.focus();input.select();codeBox.classList.add('sel'); /* Inhalt markiert lassen */
+}
+function lock(){
+  state='locked';codeBox.classList.add('locked');codeBox.classList.remove('err','sel');input.disabled=true;
+  setMsg('Zu viele Versuche. Wir schicken dir einen neuen Code.',true);
+  codeBtn.textContent='Neuen Code senden';enter(codeBtn,{d:D.fast});document.getElementById('resend').hidden=true;
+  codeBtn.focus();
+}
+function newCode(){
+  busy(codeBtn,'Neuen Code senden …');
+  setTimeout(function(){unbusy(codeBtn);codeBtn.textContent='Weiter';attempts=0;state='idle';input.disabled=false;input.value='';prevLen=0;
+    codeBox.classList.remove('locked');render(false);setMsg('Neuer Code ist unterwegs. Ältere Codes gelten nicht mehr.',false);
+    document.getElementById('resend').hidden=false;startResend();input.focus();},600);
+}
+function success(){
+  state='ok';input.blur();codeBox.classList.remove('focus');
+  /* Erfolgs-Welle links → rechts, dann ✓ – Weiterleitung spätestens 450 ms nach OK */
+  if(reduced()){boxes.forEach(function(b){b.classList.add('okb');});okic.hidden=false;}
+  else{
+    boxes.forEach(function(b,i){setTimeout(function(){b.classList.add('okb');},i*40);
+      b.animate([{transform:'scale(1)'},{transform:'scale(1.06)'},{transform:'scale(1)'}],{duration:D.fast,delay:i*40,easing:E.standard});});
+    okic.hidden=false;okic.animate([{transform:'scale(0)'},{transform:'scale(1)'}],{duration:D.base,delay:240,easing:E.soft,fill:'backwards'});
+  }
+  setMsg('Code bestätigt.',false);
+  setTimeout(function(){show(document.getElementById('sName'),document.getElementById('name'));},450);
+}
+var resendT=0;
+function startResend(){var b=document.getElementById('resend'),s=30;clearInterval(resendT);b.setAttribute('aria-disabled','true');b.textContent='Neuer Code in 0:30';
+  resendT=setInterval(function(){s--;if(s<=0){clearInterval(resendT);b.setAttribute('aria-disabled','false');b.textContent='Code erneut senden';return;}b.textContent='Neuer Code in 0:'+(s<10?'0':'')+s;},1000);} /* Countdown ohne Animation */
+render(false);
+
+/* ---------- Z4 → Z5: Beitritt, kleines Siegel (W03-06) ---------- */
+document.getElementById('sName').addEventListener('submit',function(e){
+  e.preventDefault();var b=document.getElementById('joinBtn');if(b.getAttribute('aria-busy'))return;busy(b,'Beitreten …');
+  setTimeout(function(){
+    document.getElementById('flow').hidden=true;var t=document.getElementById('inTrip');t.hidden=false;window.scrollTo(0,0);
+    document.getElementById('wT').focus({preventScroll:true});
+    enter(t.querySelector('.pad'),{y:8,d:D.base});
+    enter(document.getElementById('welcome'),{y:-8,d:D.base,delay:80});
+    play(document.getElementById('wSeal'),[{transform:'scale(0) rotate(-20deg)'},{transform:'none'}],{duration:D.celebrate,delay:200,easing:E.bouncy,fill:'backwards'});
+    play(document.getElementById('meAv'),[{transform:'translateX(16px) scale(.6)',opacity:0},{transform:'none',opacity:1}],{duration:D.moderate,delay:420,easing:E.soft,fill:'backwards'});
+  },600);
+});
+document.getElementById('btnReset').addEventListener('click',function(){location.reload();});
+})();
+</script>
+</body>
+</html>
