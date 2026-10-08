@@ -1,10 +1,12 @@
-# Features – Wir wollen weg
+# Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 (v0.2, Entscheidungen Q1–Q6 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
+Stand: 2026-10-08 (v0.3, Entscheidungen Q1–Q6 und Q11–Q16 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
 **Änderungen v0.2:** Neu F-040–F-050 (Konto, Sprachen, Apple-Kalender, Premium). F-003, F-004, F-001, F-007, F-013 auf Konto-Modell umgestellt (keine persönlichen Links/Admin-Links mehr). F-006 ICS-Import MVP → v1. F-014 E-Mail-Benachrichtigungen MVP-Should → v1. F-016 Feiertage Should → Must (DE/EN). F-018 durch F-040–F-044 ersetzt. E-Mail-Bezüge in F-010, F-012, F-015, F-017 entfernt.
+
+**Änderungen v0.3 (2026-10-08, Auftraggeber-Entscheidungen Q11–Q13, UX-Abstimmung):** Neu **F-051 Hilfe-/FAQ-Seite** (Must, MVP; Q13 e). F-011: Ergebnis einer Option erst nach eigener Stimme sichtbar, Orga sieht immer alles (Q13 a). F-002/F-004: alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (Q13 b). F-004: UI-Rollenname „Orga“ / „Organizer“ (Q13 c). F-041: „Angemeldet bleiben“ standardmäßig an (Q13 d). F-046: sprachabhängiger Produktname „Wir wollen weg“ / „When do we go?“ (Q11). F-008: Zählregel präzisiert (U-4). F-009: Gruppennamen „Alle dabei“ / „Fast alle dabei“ (U-14). F-040/F-003: Name erst nach dem Code (UX-Abweichung bestätigt). F-015: kein „@“ vor Namen im Erinnerungstext (UX-Abweichung bestätigt).
 
 ## Übersicht
 
@@ -54,15 +56,17 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | **F-048** | **Apple-/iOS-Kalender Stufe 2: iCloud-CalDAV-Anbindung** | C | **v1 (v1.1)** | Free (Auto-Sync: Premium?) |
 | **F-049** | **Apple-/iOS-Kalender Stufe 3: On-Device-Weg (iOS-Kurzbefehl, ggf. native App)** | W | **später** (Spike in v1) | Free |
 | **F-050** | **Premium-Tarif & Bezahlung (Freemium)** | W | später | – |
+| **F-051** | **Hilfe-/FAQ-Seite** | **M** | **MVP** | Free |
 
-**MVP-Umfang (Must):** F-001, F-002, F-003, F-004, F-005, F-007, F-008, F-009, F-010, F-011, F-012, F-013, F-016, F-040, F-041, F-042, F-043, F-044, F-046 · **Should:** F-015, F-017.
+**MVP-Umfang (Must):** F-001, F-002, F-003, F-004, F-005, F-007, F-008, F-009, F-010, F-011, F-012, F-013, F-016, F-040, F-041, F-042, F-043, F-044, F-046, F-051 · **Should:** F-015, F-017.
 
 **Bewusst ausgeschlossen (kein Plan):** In-App-Chat, Buchung, Abwicklung von Zahlungen zwischen Reisenden, Schreibzugriff auf Nutzerkalender, stundengenaue Terminplanung, Ranking-/Präferenzwahl, Werbung, Gast-Teilnahme ohne Konto (Rückfallplan siehe PRD Q10).
 
 ### Begriffe
 - **Konto**: Anzeigename, E-Mail (verifiziert), optional Passwort, Sprache, Region (für Datum/Wochenstart/Feiertage).
 - **Reise**: Planungsobjekt mit Suchzeitraum, Dauer, Mitgliedern (max. 30).
-- **Mitglied**: Konto, das einer Reise beigetreten ist; Rolle Organisator oder Mitglied.
+- **Mitglied**: Konto, das einer Reise beigetreten ist; Rolle Organisator oder Mitglied. **UI-Bezeichnung** der Organisator-Rolle: „Orga“ (DE) / „Organizer“ (EN) (Q13 c); in Dokumenten weiter „Organisator“.
+- **Produktname**: sprachabhängig – DE „Wir wollen weg“, EN „When do we go?“; eine Marke, eine Bildmarke (Q11, F-046).
 - **Tageszustand**: pro Mitglied und Tag `geht` | `ginge zur Not` | `geht nicht`.
 - **Abgegeben**: Mitglied hat seine Verfügbarkeit bestätigt; erst dann zählen nicht markierte Tage als `geht`.
 - **Kandidat**: zusammenhängender Zeitraum (n Nächte = n+1 Tage) im Suchzeitraum.
@@ -77,13 +81,14 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 
 Akzeptanzkriterien:
 - [ ] Registrierung ist sowohl direkt (Startseite → „Reise planen“) als auch **eingebettet im Einladungsflow** (F-003) möglich; im Einladungsflow bleiben Reisename und Organisator sichtbar.
-- [ ] Pflichtangaben: Anzeigename (1–40 Zeichen) und E-Mail-Adresse. Keine weiteren Pflichtfelder. Zustimmung zu Datenschutzhinweis/Nutzungsbedingungen per Hinweistext mit Link (kein vorangekreuztes Häkchen für Marketing; es gibt kein Marketing-Opt-in im MVP).
+- [ ] Pflichtangaben: E-Mail-Adresse und Anzeigename (1–40 Zeichen). Keine weiteren Pflichtfelder.
+- [ ] **Reihenfolge (bestätigte UX-Abweichung, user-flows A):** erster Schritt nur E-Mail → Code → **Name erst nach erfolgreicher Verifizierung und nur bei neuem Konto**; bestehende Konten werden nie nach dem Namen gefragt. Im Einladungsflow ist der Namensschritt zugleich der Beitrittsschritt (kein zusätzlicher Bildschirm). Begründung: ein Feld im ersten Formular, keine Konto-Enumeration, kein versehentliches Überschreiben bestehender Namen. Zustimmung zu Datenschutzhinweis/Nutzungsbedingungen per Hinweistext mit Link (kein vorangekreuztes Häkchen für Marketing; es gibt kein Marketing-Opt-in im MVP).
 - [ ] Standardweg **passwortlos**: Nach Absenden wird eine Transaktionsmail mit **6-stelligem Code und Magic-Link** gesendet. Code-Eingabe im selben Fenster (`autocomplete="one-time-code"`, Einfügen aus Zwischenablage); der Magic-Link funktioniert in jedem Browser und führt über die gespeicherte Rücksprungadresse zurück zur Reise.
 - [ ] Optional kann direkt bei der Registrierung oder später ein Passwort gesetzt werden (F-042); E-Mail-Verifizierung per Code/Link ist trotzdem einmalig nötig.
 - [ ] Code/Link: 15 Min. gültig, einmalig verwendbar, max. 5 Fehlversuche; „Code erneut senden“ nach 30 s; Hinweis „Spam-Ordner prüfen“.
 - [ ] Existiert die E-Mail bereits, wird ohne Hinweis auf die Existenz derselbe Code-Ablauf als Login durchgeführt (keine Konto-Enumeration, kein Fehler „E-Mail schon vergeben“).
 - [ ] Sprache und Region werden aus Browser-Einstellungen vorbelegt (F-046) und im Konto gespeichert.
-- [ ] Mail in der Sprache der Oberfläche; Betreff enthält den Code („123456 ist dein Code für Wir wollen weg“).
+- [ ] Mail in der Sprache der Oberfläche; Betreff enthält den Code und den sprachabhängigen Produktnamen („123456 ist dein Code für Wir wollen weg“ / „123456 is your code for When do we go?“).
 - [ ] Mobil inkl. In-App-Browser (WhatsApp, Instagram) ohne Kontextverlust nutzbar; Median-Dauer Start → verifiziert ≤ 60 s (Messung, PRD §4).
 
 ### F-041 Anmelden & Abmelden
@@ -92,7 +97,7 @@ Akzeptanzkriterien:
 Akzeptanzkriterien:
 - [ ] Login per E-Mail + Code/Magic-Link (Standard) oder E-Mail + Passwort (falls gesetzt).
 - [ ] Nach Login Weiterleitung zur ursprünglich aufgerufenen Seite (z. B. Reise, Einladungslink), sonst „Meine Reisen“ (F-044).
-- [ ] „Angemeldet bleiben“: Session rollierend 90 Tage (httpOnly, Secure, SameSite); ohne Haken endet die Session mit dem Browser.
+- [ ] „Angemeldet bleiben“ ist **standardmäßig aktiviert** (Q13 d) und abwählbar: aktiviert → Session rollierend 90 Tage (httpOnly, Secure, SameSite); abgewählt → Session endet mit dem Browser. Begründung: Wiederkehr ohne erneuten Code ist für die Zielgruppe (eigene Handys) wichtiger; für fremde Geräte bleibt das Abwählen und „Auf allen Geräten abmelden“.
 - [ ] „Abmelden“ jederzeit im Menü; „Auf allen Geräten abmelden“ in den Kontoeinstellungen beendet alle Sessions.
 - [ ] Rate-Limiting für Code-Anforderung und Login (pro E-Mail und pro IP); gleiche Antwortzeiten/Texte unabhängig von der Existenz des Kontos.
 - [ ] Nicht angemeldete Aufrufe von Reiseseiten zeigen nur die Reise-Vorschau (F-003) bzw. die Anmeldung – keine Mitgliederdaten.
@@ -123,7 +128,7 @@ Akzeptanzkriterien:
 **Als** Organisatorin und Mitglied mehrerer Gruppen **möchte ich** alle meine Reisen an einem Ort sehen, **damit** ich weiß, wo ich noch etwas tun muss.
 
 Akzeptanzkriterien:
-- [ ] Startseite nach Login: Liste aller Reisen, in denen ich Mitglied bin, mit Name, Rolle (Organisator/Mitglied), Phase (Verfügbarkeit offen / Abstimmung läuft / festgelegt: Datum) und Fortschritt („5/7 abgegeben“).
+- [ ] Startseite nach Login: Liste aller Reisen, in denen ich Mitglied bin, mit Name, Rolle (Chip „Orga“ / „Organizer“ bei eigener Orga-Rolle, F-004), Phase (Verfügbarkeit offen / Abstimmung läuft / festgelegt: Datum) und Fortschritt („5/7 abgegeben“).
 - [ ] Hervorgehobene To-dos: „Deine Verfügbarkeit fehlt noch“, „Jetzt abstimmen“ bzw. für Organisatoren „Alle haben abgegeben – Abstimmung starten?“.
 - [ ] Sortierung: Reisen mit offenen To-dos zuerst, dann nach nächstem Ereignis/Datum; vergangene Reisen in einem eingeklappten Bereich.
 - [ ] Button „Neue Reise planen“ (F-001).
@@ -133,13 +138,14 @@ Akzeptanzkriterien:
 **Als** Mitglied einer gemischtsprachigen Gruppe **möchte ich** die App auf Deutsch oder Englisch nutzen, **damit** alle in ihrer Sprache mitmachen können.
 
 Akzeptanzkriterien:
-- [ ] Gesamte Oberfläche, Fehlermeldungen, Teilen-Texte, Transaktionsmails, Datenschutzhinweise und Open-Graph-Vorschau in `de` und `en`; keine fest verdrahteten Texte (Build/Test schlägt bei fehlendem Übersetzungsschlüssel fehl).
+- [ ] **Sprachabhängiger Produktname (Q11):** `de` → „Wir wollen weg“, `en` → „When do we go?“. Der Name ist ein normaler Übersetzungsschlüssel (nie fest verdrahtet) und erscheint in der Sprache der jeweiligen Ausgabe: Header/Wortmarke neben der gemeinsamen Bildmarke (Logo A), `<title>`, Web-Manifest/Open-Graph-Vorschau (Sprache der aufgerufenen URL), Transaktionsmails (Kontosprache, inkl. Absendername), Teilen-Texte (gewählte Textsprache). Die Bildmarke ist in beiden Sprachen identisch.
+- [ ] Gesamte Oberfläche, Fehlermeldungen, Teilen-Texte, Transaktionsmails, Datenschutzhinweise, Hilfe-Seite (F-051) und Open-Graph-Vorschau in `de` und `en`; keine fest verdrahteten Texte (Build/Test schlägt bei fehlendem Übersetzungsschlüssel fehl).
 - [ ] Sprache: Vorbelegung aus `Accept-Language` (Fallback Englisch für nicht-deutschsprachige Browser, Deutsch für `de-*`); Umschalter im Header/Footer (auch ohne Login) und in den Kontoeinstellungen; Wahl wird im Konto gespeichert und gilt geräteübergreifend.
 - [ ] Jede Person sieht die Reise in **ihrer** Sprache; nutzergenerierte Inhalte (Reisename, Kommentare) werden nicht übersetzt.
 - [ ] Teilen-Texte (F-002, F-012, F-015) werden in der Sprache des Teilenden erzeugt; vor dem Teilen ist die Sprache des Textes umschaltbar (für Gruppen mit anderer Sprache).
 - [ ] Datums- und Zahlenformate über die Region des Kontos (`de-DE`, `de-AT`, `de-CH`, `en-GB`, `en-US` …), z. B. „Fr., 3. Juli 2027“ vs. „Fri, 3 July 2027“ vs. „Fri, July 3, 2027“.
 - [ ] **Wochenstart** im Kalender nach Region (Montag für DE/AT/CH/UK, Sonntag für US), im Konto überschreibbar; Schnellaktion „Mo–Fr“ (F-005) bleibt unabhängig vom Wochenstart korrekt.
-- [ ] Rechtstexte: Impressum DE; Datenschutzerklärung DE (verbindlich) + EN.
+- [ ] Rechtstexte: Impressum DE; Datenschutzerklärung DE (verbindlich) + EN; beide nennen beide Produktnamen. In der Offline-Demo als gekennzeichnete Platzhalter (Q14/Q16, PRD §6a).
 
 ### F-001 Reise anlegen
 **Als** Organisatorin **möchte ich** in unter zwei Minuten eine Reiseplanung anlegen, **damit** ich die Gruppe sofort einladen kann.
@@ -153,14 +159,16 @@ Akzeptanzkriterien:
 - [ ] Suchzeitraum und Dauer sind nachträglich änderbar; Änderungen lösen eine Neuberechnung aus (F-009).
 
 ### F-002 Einladungslink & Teilen-Texte
-**Als** Organisatorin **möchte ich** einen Link in unseren Gruppenchat teilen, **damit** alle ohne Umwege mitmachen.
+**Als** Organisatorin (oder Mitglied) **möchte ich** einen Link in unseren Gruppenchat teilen, **damit** alle ohne Umwege mitmachen.
 
 Akzeptanzkriterien:
 - [ ] Jede Reise hat einen Einladungslink mit nicht erratbarem Token (≥ 128 Bit).
+- [ ] **Teilen dürfen alle Mitglieder** (nicht nur die Orga), **solange der Beitritt offen ist** (Q13 b): Link kopieren/teilen und Teilen-Text sind für alle Mitglieder sichtbar. Ist der Beitritt gesperrt (F-004), sehen Mitglieder statt der Teilen-Buttons den Hinweis „Beitritt ist geschlossen – frag die Orga“; die Orga sieht den Link weiterhin (mit Hinweis „gesperrt“).
+- [ ] Link neu erzeugen und Beitritt sperren/öffnen bleibt der Orga vorbehalten (F-004).
 - [ ] Buttons: „Link kopieren“ (mit Bestätigung), „Teilen“ (native Web-Share-API, Fallback: WhatsApp-, Signal-, E-Mail-Link).
-- [ ] Vorformulierter Teilen-Text, z. B. „Wir wollen weg! Trag bis <Datum> ein, wann du kannst: <Link>“ / „We want to get away! Add your dates by <date>: <link>“, editierbar und sprachumschaltbar vor dem Teilen (F-046).
+- [ ] Vorformulierter Teilen-Text, z. B. „Wir wollen weg! Trag bis <Datum> ein, wann du kannst: <Link>“ / „When do we go? Add your dates by <date>: <link>“ (Wortlaut final in ux-spec §10), editierbar und sprachumschaltbar vor dem Teilen (F-046).
 - [ ] Teilen-Texte sind der einzige Benachrichtigungsweg für Reise-Ereignisse im MVP (Einladung, Abstimmung gestartet, Erinnerung, Ergebnis).
-- [ ] Link-Vorschau (Open-Graph) zeigt Reisename und App-Namen, **keine** Mitgliedernamen oder Daten.
+- [ ] Link-Vorschau (Open-Graph) zeigt Reisename und App-Namen (sprachabhängig, F-046), **keine** Mitgliedernamen oder Daten.
 - [ ] Reiseseiten sind mit `noindex` gekennzeichnet.
 
 ### F-003 Beitreten mit Konto im Einladungsflow
@@ -170,7 +178,7 @@ Akzeptanzkriterien:
 - [ ] Der Einladungslink zeigt auch ohne Login eine **Reise-Vorschau**: Reisename, Vorname des Organisators, Suchzeitraum, Dauer, Anzahl Mitglieder („7 sind schon dabei“) – **keine** Namensliste, Verfügbarkeiten oder Stimmen.
 - [ ] CTA „Mitmachen“: 
   - angemeldet → Beitritt mit einem Klick (Anzeigename aus Konto, für diese Reise einmalig anpassbar);
-  - nicht angemeldet → Registrierung/Login (F-040/F-041) **auf derselben Seite bzw. im selben Fenster**, danach automatischer Beitritt und Weiterleitung zur Verfügbarkeitseingabe (F-005) – ohne erneutes Öffnen des Links.
+  - nicht angemeldet → Registrierung/Login (F-040/F-041) **auf derselben Seite bzw. im selben Fenster** (E-Mail → Code → bei neuem Konto Name = Beitrittsschritt), danach automatischer Beitritt und Weiterleitung zur Verfügbarkeitseingabe (F-005) – ohne erneutes Öffnen des Links.
 - [ ] Wird die Verifizierung über den Magic-Link in einem anderen Browser abgeschlossen, landet die Person dort ebenfalls direkt in der Reise (Rücksprungadresse im Token).
 - [ ] Doppelte Anzeigenamen in einer Reise werden mit Hinweis und Vorschlag (z. B. „Kemal B.“) abgefangen.
 - [ ] Bereits beigetretene Mitglieder, die den Link erneut öffnen, landen direkt in ihrer Reiseansicht.
@@ -184,8 +192,9 @@ Akzeptanzkriterien:
 
 Akzeptanzkriterien:
 - [ ] Rollen: **Organisator** (genau einer im MVP, Co-Organisatoren ab v1, F-022) und **Mitglied**; Rolle ist an das Konto gebunden.
+- [ ] **Rollenname in der Oberfläche:** „Orga“ (DE) / „Organizer“ (EN) (Q13 c), z. B. als Chip in der Mitgliederliste und in „Meine Reisen“ (F-044); „Mitglied“ / „Member“ wird nicht extra ausgewiesen.
 - [ ] Nur der Organisator kann: Reisedaten ändern (F-001), Mitglieder entfernen, Platzhalter verwalten (F-007), Einladungslink neu erzeugen (alter Link wird ungültig), Beitritt sperren/öffnen, Abstimmung erstellen/schließen (F-010, F-012), Organisatorrolle an ein anderes Mitglied übergeben, Reise löschen (F-013).
-- [ ] Mitglieder können: eigene Verfügbarkeit bearbeiten, abstimmen, eigenen Anzeigenamen in der Reise ändern, Reise verlassen, alles Gemeinsame ansehen.
+- [ ] Mitglieder können: eigene Verfügbarkeit bearbeiten, abstimmen, eigenen Anzeigenamen in der Reise ändern, Reise verlassen, alles Gemeinsame ansehen (Abstimmungsergebnisse gemäß F-011), **den Einladungslink teilen, solange der Beitritt offen ist** (Q13 b, F-002).
 - [ ] Entfernen eines Mitglieds entfernt dessen Verfügbarkeit und Stimmen nach Bestätigungsdialog; Berechnung aktualisiert sich; die Person kann nur über einen (ggf. neuen) Einladungslink erneut beitreten.
 - [ ] Organisator-Aktionen sind serverseitig über Konto + Rolle abgesichert (nicht nur UI ausgeblendet).
 - [ ] Verliert ein Mitglied den Zugang, erfolgt die Wiederherstellung über das Konto (F-042) – der Organisator muss nichts tun.
@@ -217,8 +226,11 @@ Akzeptanzkriterien:
 **Als** Mitglied **möchte ich** auf einen Blick sehen, wann wie viele aus der Gruppe können, **damit** klar ist, wo ein Urlaub realistisch ist.
 
 Akzeptanzkriterien:
-- [ ] Kalenderansicht des Suchzeitraums (Wochenstart/Datumsformat gemäß F-046); jeder Tag zeigt die Anzahl `geht` / Anzahl abgegebener Mitglieder (z. B. „6/7“) und eine Farbintensität entsprechend dem Anteil; `ginge zur Not` zählt halb in der Intensität und wird separat ausgewiesen.
-- [ ] Tage, an denen alle können, sind zusätzlich zur Farbe durch ein Symbol markiert.
+- [ ] Kalenderansicht des Suchzeitraums (Wochenstart/Datumsformat gemäß F-046); jeder Tag zeigt **„x/n“** und eine Farbintensität entsprechend dem Anteil; `ginge zur Not` zählt halb in der Intensität und wird separat ausgewiesen.
+- [ ] **Zählregel (präzisiert, U-4):** **x = Anzahl Mitglieder mit `geht`** an diesem Tag, **n = Anzahl Mitglieder, die abgegeben haben**. `ginge zur Not` zählt **nicht** in x. Nicht abgegebene Mitglieder zählen weder in x noch in n. Mobil: „x/n“ solange n ≤ 9, ab 10 nur „x“ (n steht im Statusband).
+- [ ] **✓ nur, wenn alle `geht` haben (x = n, n ≥ 1).** **◐** markiert Tage, an denen mindestens eine Person `ginge zur Not` hat (ab 600 px mit Anzahl, z. B. „◐2“); ein Tag ohne `geht nicht`, an dem jemand nur `ginge zur Not` hat, zeigt also ◐ statt ✓. ✓ und ◐ schließen sich aus (Details ux-spec §4.9). Symbole ergänzen die Farbe (nicht nur Farbkodierung).
+- [ ] Zugänglicher Name je Tag, z. B. „4 von 5 Geht, 1 Zur Not“ bzw. „5 von 5 Geht – alle“; Legende „4/5 = 4 von 5 haben ‚Geht‘ · ✓ Alle: Geht · ◐ Jemand nur ‚Zur Not‘“.
+- [ ] Hinweis zur Abgrenzung: Ein Tag mit ◐ verhindert **keinen** Kandidaten in „Alle dabei“ (F-009) – dort zählt nur das Fehlen von `geht nicht`.
 - [ ] Antippen eines Tages zeigt, wer kann / zur Not / nicht kann (Namen, keine Gründe außer freiwilligem Kommentar).
 - [ ] Filter: „Person X ausblenden“ (Was-wäre-wenn), wirkt nur lokal auf die Ansicht und die Berechnung (F-009) für den Betrachter.
 - [ ] Hinweisbanner, solange nicht alle abgegeben haben: „Noch offen: Kemal, Sara – Ergebnis kann sich ändern“.
@@ -230,8 +242,9 @@ Akzeptanzkriterien:
 Akzeptanzkriterien:
 - [ ] Eingaben: Suchzeitraum, Mindestdauer *m* Nächte, Wunschdauer *w* (Standard = *m*), Toleranz *k* fehlende Personen (Standard 1, einstellbar 0–3), nur abgegebene Mitglieder.
 - [ ] Ein Fenster aus *d* Nächten belegt *d+1* aufeinanderfolgende Tage. Ein Mitglied **kann** ein Fenster, wenn keiner der Tage `geht nicht` ist.
-- [ ] Liste **„Alle können“**: alle Fenster mit Länge ≥ *m*, in denen alle Mitglieder können. Überlappende Fenster werden zu **maximalen Zeitspannen** zusammengefasst und angezeigt als „<Start>–<Ende>: bis zu X Nächte möglich“.
-- [ ] Liste **„Fast alle können“**: Fenster, in denen 1 bis *k* Personen nicht können; die fehlenden Personen werden namentlich genannt.
+- [ ] Gruppe **„Alle dabei“ / „Everyone's in“** (UI-Name, U-14; fachlich „alle können“): alle Fenster mit Länge ≥ *m*, in denen alle Mitglieder können (kein `geht nicht`; `ginge zur Not` ist erlaubt und wird als Chip „◐ 2× zur Not“ ausgewiesen). Überlappende Fenster werden zu **maximalen Zeitspannen** zusammengefasst und angezeigt als „<Start>–<Ende>: bis zu X Nächte möglich“.
+- [ ] Gruppe **„Fast alle dabei“ / „Almost everyone's in“**: Fenster, in denen 1 bis *k* Personen nicht können; die fehlenden Personen werden namentlich genannt („8 können · ohne Kemal“).
+- [ ] Das Wort „können“ / „can make it“ wird in der UI nur in Options-/Verfügbarkeitszeilen verwendet (Glossar: „kein ‚Geht nicht‘ im Zeitraum“).
 - [ ] Sortierung je Liste: (1) weniger Fehlende, (2) weniger `ginge zur Not`-Personentage, (3) maximale Länge näher an bzw. ≥ Wunschdauer, (4) früheres Startdatum.
 - [ ] Gibt es keine Treffer, zeigt die App einen konkreten Hinweis (z. B. „Mit 5 statt 7 Nächten gäbe es 3 Optionen“ / „Toleranz auf 1 erhöhen“).
 - [ ] Berechnung ist deterministisch, testbar (reine Funktion), unabhängig von Sprache/Region des Betrachters und für 30 Mitglieder × 365 Tage < 500 ms.
@@ -253,7 +266,10 @@ Akzeptanzkriterien:
 
 Akzeptanzkriterien:
 - [ ] Pro Option genau eine Stimme: `Ja`, `Vielleicht`, `Nein`; Vorbelegung aus der Verfügbarkeit (`geht nicht` an einem Tag → `Nein`, `ginge zur Not` → `Vielleicht`, sonst keine Vorbelegung) – Vorbelegung ist sichtbar als Vorschlag und muss bestätigt werden.
-- [ ] Stimmen sind namentlich für alle Mitglieder sichtbar (Transparenz wie bei Doodle).
+- [ ] **Ergebnis-Sichtbarkeit (Q13 a):** Ergebnis und Stimmen einer Option (Zählung und Namen) sieht ein Mitglied **erst, nachdem es selbst zu dieser Option abgestimmt hat** (je Option, nicht erst nach allen Optionen). Vorher steht dort der Platzhalter „Stimm ab, um das Ergebnis zu sehen.“ / „Vote to see the results.“ Ziel: unbeeinflusste Stimmabgabe, kein Mitläufer-Effekt.
+- [ ] **Die Orga sieht immer alles** – alle Ergebnisse und Stimmen, unabhängig von der eigenen Stimme (braucht den Überblick zum Nachfassen und Abschließen, F-012).
+- [ ] Die Sichtbarkeitsregel wird **serverseitig** durchgesetzt (Ergebnisdaten werden vor der eigenen Stimme nicht ausgeliefert, nicht nur ausgeblendet). Der Teilnahmestatus „abgestimmt“ (F-007) ist unabhängig davon für alle sichtbar.
+- [ ] Nach der eigenen Stimme sind Stimmen namentlich sichtbar (Transparenz wie bei Doodle). Nach Festlegung (F-012) sehen alle Mitglieder das vollständige Ergebnis.
 - [ ] Ergebnisanzeige: pro Option Anzahl Ja / Vielleicht / Nein, Rang nach (1) Ja, (2) Vielleicht, (3) wenigsten Nein; Option mit Nein einer Person ist als „ohne <Name>“ gekennzeichnet.
 - [ ] Stimmen sind bis zum Abschluss änderbar.
 - [ ] Status „abgestimmt“ erscheint in der Mitgliederliste (F-007).
@@ -291,13 +307,39 @@ Akzeptanzkriterien:
 - [ ] Region pro Mitglied (aus Konto, F-043), Standard für die Reise vom Organisator; jedes Mitglied sieht seine eigenen Feiertage, optional zusätzlich die der Reise.
 - [ ] Bei Kandidaten (F-009) wird „benötigt ca. X Urlaubstage“ angezeigt (Werktage Mo–Fr minus Feiertage des Betrachters).
 
+### F-051 Hilfe-/FAQ-Seite
+**Als** eingeladene Person, deren Code nicht ankommt oder die nicht weiterweiß, **möchte ich** auf jeder Seite an derselben Stelle eine kurze Hilfe finden, **damit** ich ohne Rückfrage im Gruppenchat weiterkomme und nicht abbreche.
+
+Neu in v0.3 (Q13 e, Auftraggeber bestätigt 2026-10-08). Wireframe: [W15](../ux/wireframes/15-hilfe.md); Routen `/de/hilfe`, `/en/help`.
+
+**Prio Must – Begründung:** (1) Vom Auftraggeber ausdrücklich fürs MVP bestätigt (Q13 e). (2) Sie federt das größte MVP-Risiko ab – die Kontopflicht mit Code per Mail (Spam, In-App-Browser, Link verloren) – und stützt damit die Beitrittsquote ≥ 65 % (PRD §4, A2). (3) Sie ist die konsistente Hilfe für WCAG 2.2 SC 3.2.6 (PRD §8). (4) Aufwand gering: statische, übersetzte Inhalte ohne Backend.
+
+Akzeptanzkriterien:
+- [ ] Öffentliche, statische Seite in DE und EN (`/de/hilfe`, `/en/help`, `hreflang` de/en), ohne Login erreichbar und indexierbar; Produktname sprachabhängig (F-046).
+- [ ] **Konsistente Erreichbarkeit:** Link „Hilfe“ / „Help“ im Footer jeder Seite und im Avatar-Menü (angemeldet), jeweils an gleicher Position und in gleicher Reihenfolge (SC 3.2.6); zusätzlich kontextueller Hinweis „Noch nichts da?“ im Code-Schritt (F-040/F-041), der direkt zur Frage „Mein Code kommt nicht an“ springt.
+- [ ] Mindestens diese Fragen mit kurzen Antworten (Ton gemäß ux-spec §10.1):
+  - Mein Code kommt nicht an (Spam/Werbung prüfen, Adresse prüfen, nach 30 s neu anfordern – nur der neueste Code gilt, Absenderadresse nennen);
+  - Ich habe den Einladungslink verloren (im Gruppenchat fragen; Mitglieder melden sich an → „Meine Reisen“, mit Button „Anmelden“);
+  - Ich habe die Seite in WhatsApp/Instagram geöffnet (funktioniert; Code im selben Fenster eingeben; später im Browser mit E-Mail anmelden);
+  - Wie ändere ich meine Tage? (Tab „Meine Tage“, wirkt sofort, nach Festlegung gesperrt);
+  - Wie stimme ich ab? (Ja/Vielleicht/Nein je Zeitraum, bis zum Abschluss änderbar; Ergebnis nach eigener Stimme sichtbar, F-011);
+  - Wer sieht meine Angaben? (nur Mitglieder der Reise; keine Gründe, nur freiwilliger Kommentar);
+  - Wie lösche ich meine Daten? (Reise verlassen F-013 oder Konto löschen F-043);
+  - Kein Zugriff mehr auf meine E-Mail? (Kontakt schreiben; alternativ neues Konto und erneut beitreten).
+- [ ] Jede Frage als aufklappbares Element (`<details>`/`<summary>`, Zielgröße ≥ 44 px) mit **Sprunganker** (z. B. `/de/hilfe#code`); per Anker aufgerufen ist die Frage aufgeklappt und der Fokus liegt auf ihrer Überschrift.
+- [ ] Abschnitt „Noch Fragen?“ mit Kontaktadresse als `mailto`-Link (Adresse von Operations; in der Offline-Demo Platzhalter).
+- [ ] Mobil ab 360 px ohne horizontales Scrollen, Desktop einspaltig (max. 640 px); Text bis 200 % ohne Funktionsverlust; Dark Mode gemäß System.
+- [ ] Nicht im MVP: Suche, Kontaktformular, Chat-Support.
+- [ ] Inhalte bleiben mit dem tatsächlichen Verhalten konsistent (Reviewer prüft beide Sprachen vor M1/M2).
+
 ## SHOULD – MVP, wenn Zeit bleibt
 
 ### F-015 Nachzügler erinnern (Teilen-Text)
 **Als** Organisatorin **möchte ich** säumige Mitglieder mit einem Klick erinnern, **damit** ich nicht selbst hinterherschreiben muss.
 
 Akzeptanzkriterien:
-- [ ] Button „Erinnern“ erzeugt einen Teilen-Text mit den Namen der Fehlenden („@Kemal @Sara, ihr fehlt noch: <Link>“) zum Posten im Gruppenchat; Sprache umschaltbar (F-046).
+- [ ] Button „Erinnern“ erzeugt einen Teilen-Text mit den Namen der Fehlenden zum Posten im Gruppenchat, z. B. „Kemal und Sara, ihr fehlt noch: <Link>“; Sprache umschaltbar (F-046). Wortlaut/Namensregeln (Aufzählung, ab 5 Namen „und 3 weitere“, ≤ 300 Zeichen inkl. Link) gemäß ux-spec §10.
+- [ ] **Kein „@“ vor Namen** (bestätigte UX-Abweichung): Über Teilen-Links erzeugt „@“ in WhatsApp keine echte Erwähnung und wirkt dadurch falsch; wer erwähnen will, kann den Text vor dem Senden bearbeiten.
 - [ ] Keine E-Mail im MVP; Erinnerungs-E-Mails folgen mit F-014 (v1).
 - [ ] Säumige sehen beim nächsten Besuch das To-do in „Meine Reisen“ (F-044).
 

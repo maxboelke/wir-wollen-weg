@@ -1,6 +1,6 @@
-# Design-System – Wir wollen weg
+# Design-System – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: v0.4 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-18; CEO-Entscheide U-1, U-2, U-4, U-14 und D-16 vom 2026-10-08 eingearbeitet – Abstimmung Design ↔ UX abgeschlossen)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: v0.5 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-18; CEO-Entscheide U-1, U-2, U-4, U-14 und D-16 eingearbeitet – Abstimmung Design ↔ UX abgeschlossen; Auftraggeber-Entscheidungen vom 2026-10-08 zu Marke, Logo, Dark Mode, Figtree eingearbeitet, Design abgenommen)
 Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadmap](../product/roadmap.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md)
 
 > Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar in ux-spec §10.2 („Geht / Zur Not / Geht nicht", „Works / If needed / Can't", „Orga / Organizer").
@@ -57,25 +57,55 @@ Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadma
 
 ## 3. Marke: Name, Logo, Wortmarke
 
-### 3.1 Name auf Englisch – Empfehlung
-**Empfehlung: „Wir wollen weg" bleibt in beiden Sprachen die Marke; Englisch bekommt einen beschreibenden Untertitel.**
-- EN-Untertitel (Deskriptor): **„Find dates for your group trip"** (Alternative: „Group trip dates, sorted.").
-- DE-Untertitel (optional, z. B. Startseite): „Gemeinsam den Urlaubstermin finden".
-- Begründung: (1) eine Marke, ein Logo, eine Domain, ein App-Name – keine doppelten Markenrechte/Domains; (2) die direkte Übersetzung „We want to get away" ist generisch, schwer schützbar und als Name schwach; (3) der deutsche Name ist kurz, eingängig und für eine Gruppen-App mit DACH-Fokus ein Wiedererkennungsmerkmal; (4) englische Texte dürfen den Spruch trotzdem spielerisch aufgreifen (Teilen-Text „We want to get away!", F-002).
-- Risiko: Aussprache für Englischsprachige. Gegenmaßnahme: Untertitel immer neben der Wortmarke in EN-Kontexten (Open-Graph, Startseite, Mails).
-- **Entscheidung durch Auftraggeber nötig** (siehe Bericht/CEO). Alternative wäre eine Doppelmarke „Let's get away" für EN – nicht empfohlen.
-
-### 3.2 Bildmarken (Logo-Ideen)
-| Variante | Datei | Idee | Bewertung |
+### 3.1 Zwei Namen, eine Bildmarke – bestätigt (Auftraggeber 2026-10-08, PRD Q11)
+| Sprache | Produktname | Hervorhebung in der Wortmarke | Untertitel (optional) |
 |---|---|---|---|
-| **A „Sonnenkalender" (empfohlen)** | `assets/logo/logo-mark-a-sonnenkalender.svg` | Kalenderblatt, in dem die Sonne über dem Meer aufgeht – Termin + Urlaub in einem Zeichen | Erklärt das Produkt sofort, funktioniert als Favicon (16 px) und App-Icon, ernst genug für Registrierung |
-| B „Weg-Haken" | `assets/logo/logo-mark-b-weghaken.svg` | Häkchen, dessen langer Strich als Route zur Sonne weiterläuft – „entschieden, los!" | Sehr dynamisch, eher als Sekundärzeichen (z. B. Erfolgsmeldung F-012) |
-| C „Treffpunkt" | `assets/logo/logo-mark-c-treffpunkt.svg` | Drei Wege/Freunde treffen sich an der Sonne am Horizont | Erzählt „Gruppe"; bei 16 px zu kleinteilig – nur groß einsetzbar |
+| Deutsch | **Wir wollen weg** | „weg" in Markenfarbe | „Gemeinsam den Urlaubstermin finden" |
+| Englisch | **When do we go?** | „go?" in Markenfarbe | „Find dates for your group trip" |
 
-Abgeleitete Dateien (Basis A): `favicon.svg` (32er Raster, vereinfacht), `app-icon.svg` (512 px, maskable-tauglich, Inhalt in der sicheren Zone), `logo-wordmark.svg` (DE), `logo-wordmark-en.svg` (mit EN-Untertitel).
+Die Bildmarke A „Sonnenkalender" gilt für beide Sprachen und trägt keinen Text. Die frühere Design-Empfehlung (ein deutscher Name mit EN-Untertitel) ist damit überholt. Der Untertitel ist jetzt in beiden Sprachen nur noch ein optionaler Beschreibungstext, kein Ersatz für einen Namen.
 
-**Regeln:** Schutzraum um die Bildmarke = ½ Markenbreite; Mindestgröße Bildmarke 16 px (nur Favicon), sonst ≥ 24 px; Wortmarke ≥ 120 px breit. Auf dunklem Grund bleibt die Bildmarke unverändert (sie hat eigene Fläche); die Schrift wechselt auf `--ww-color-text`. In der Wortmarke ist „weg" in Markenfarbe abgesetzt – das Wort, um das es geht.
-Die Wortmarke liegt als `<text>` mit Figtree vor; **vor Produktion in Pfade umwandeln**, sobald die Schrift final ist (dann unabhängig von installierten Fonts).
+**Hervorhebung EN: „go?" (inkl. Fragezeichen) in Markenfarbe.** Begründung: (1) „go" ist das Gegenstück zu „weg" – das Wort, um das es geht (los, weg, Urlaub); beide Wortmarken setzen damit dasselbe Prinzip um: das letzte Wort, die Pointe, ist farbig. (2) Das Fragezeichen gehört zur Pointe – die App beantwortet genau diese Frage. Ein Fragezeichen in Textfarbe hinter einem farbigen „go" würde abgehängt wirken. (3) Gleiche Stelle (Ende), gleiche Länge der Hervorhebung (2–3 Zeichen) wie „weg" – die Marken wirken als Paar. Verworfen: Fragezeichen in Sonnen-Amber (`#F4B942` erreicht auf `bg` nur ca. 1,8 : 1, unter 3 : 1 für große Schrift) und „When" hervorheben (betont den Kalender statt der Vorfreude).
+
+**Typografie Fragezeichen:** englische Regel, also kein Leerzeichen vor „?"; normales ASCII-„?" (U+003F), keine Sonderform, gleiche Farbe und Schnitt wie „go". Bei der Umwandlung in Pfade das Kerning-Paar „o?" optisch prüfen (Figtree 750 setzt es eng genug; nicht nachträglich sperren). Schreibweise und Satzbau im Text (Fragezeichen gehört immer zum Namen, nie ein weiteres Satzzeichen dahinter, Name bevorzugt allein oder am Ende) regelt verbindlich [ux-spec §10.6](../ux/ux-spec.md).
+
+### 3.2 Welcher Name wann erscheint
+Verhalten und Copy: [ux-spec §9 und §10.6](../ux/ux-spec.md) (verbindlich). Aus Design-Sicht:
+1. **Die UI-Sprache bestimmt den Namen.** Deutsche Oberfläche → „Wir wollen weg", englische → „When do we go?". Gilt für Wortmarke in Kopfzeile und Footer, `<title>` (Name am Ende, Trenner « · », z. B. «My dates · Lisbon 2027 · When do we go?»), Startseite, Fehler- und Hilfeseiten. Teilen-Texte folgen der gewählten Textsprache des Senders, Mails der Mailsprache.
+2. **Nie beide Namen nebeneinander in der Oberfläche** (kein „Wir wollen weg / When do we go?" im Header, keine Doppel-Wortmarke). Ausnahme: Impressum/Datenschutz nennen einmalig beide Namen (Formulierung ux-spec §9).
+3. **Sprachneutral:** Favicon, App-Icon, Apple-Touch-Icon und Ladeanzeige zeigen nur die Bildmarke, nie Text. Der sichtbare Name kommt aus HTML bzw. Manifest der jeweiligen Sprache. (Der `<title>` in `favicon.svg`/`app-icon.svg` wird von Browsern nicht angezeigt und bleibt unverändert.)
+4. **Web-App-Manifest je Sprache:** `name` = Produktname der Sprache; `short_name` siehe offener Punkt in [abstimmung-ux.md](abstimmung-ux.md) (beide Namen haben 14 Zeichen, Homescreens kürzen teils ab ca. 12).
+5. **Open Graph je Sprache:** `og:site_name` = Name der Sprache, `og:locale` = `de_DE` / `en_GB` bzw. `en_US`, OG-Bild als eigene Variante je Sprache (Wortmarke der Sprache, optional mit Untertitel, 1200 × 630, Wortmarke linksbündig in der linken Hälfte, rechts `hero.svg`). Für Einladungsvorschauen `/i/{token}` gilt die Sprache der Reise-Anlage (ux-spec §9); die Empfänger sehen nach dem Öffnen die Oberfläche – und damit ggf. den anderen Namen – in ihrer eigenen Sprache; die gemeinsame Bildmarke sichert die Wiedererkennung.
+6. **Sprachwechsel:** Beide Wortmarken haben dieselbe Box (320 × 72), dieselbe Bildmarke an derselben Stelle – der Wechsel verursacht keinen Layoutsprung der Kopfzeile.
+7. **Barrierefreiheit:** Wortmarke als Inline-SVG oder `<img>` mit `alt` = Produktname der aktuellen Sprache; da jeder Name zur Seitensprache passt, ist kein zusätzliches `lang`-Attribut nötig. Ist die Wortmarke Link zur Startseite, lautet der zugängliche Name nur der Produktname (ux-spec §10.6 Nr. 7).
+
+### 3.3 Bildmarke – Logo A bestätigt (Auftraggeber 2026-10-08)
+| Variante | Datei | Idee | Status |
+|---|---|---|---|
+| **A „Sonnenkalender"** | `assets/logo/logo-mark-a-sonnenkalender.svg` | Kalenderblatt, in dem die Sonne über dem Meer aufgeht – Termin + Urlaub in einem Zeichen | **bestätigt (Auftraggeber 2026-10-08)** – Logo für beide Sprachen; funktioniert als Favicon (16 px) und App-Icon, ernst genug für Registrierung |
+| B „Weg-Haken" | `assets/logo/logo-mark-b-weghaken.svg` | Häkchen, dessen langer Strich als Route zur Sonne weiterläuft | nicht gewählt; höchstens Sekundärzeichen (z. B. Erfolgsmeldung F-012) |
+| C „Treffpunkt" | `assets/logo/logo-mark-c-treffpunkt.svg` | Drei Wege/Freunde treffen sich an der Sonne am Horizont | nicht gewählt (Archiv) |
+
+Abgeleitete Dateien (Basis A): `favicon.svg` (32er Raster, vereinfacht), `app-icon.svg` (512 px, maskable-tauglich, Inhalt in der sicheren Zone), `logo-wordmark.svg` (DE), `logo-wordmark-en.svg` (EN), `logo-wordmark-en-tagline.svg` (EN mit Untertitel, für Startseite/OG/Mail).
+
+### 3.4 Wortmarken: Maße, Mindestbreiten, Längenvergleich
+**Allgemeine Regeln:** Schutzraum um die Bildmarke = ½ Markenbreite; Mindestgröße Bildmarke 16 px (nur Favicon), sonst ≥ 24 px. Auf dunklem Grund bleibt die Bildmarke unverändert (sie hat eigene Fläche); die Schrift wechselt auf `--ww-color-text`, die Hervorhebung auf `#5FC9BA` (in den SVGs per `prefers-color-scheme`). Wortmarken liegen als `<text>` mit Figtree vor; **vor Produktion in Pfade umwandeln** (dann unabhängig von installierten Fonts).
+
+| Datei | Box | Mindestbreite | Einsatz |
+|---|---|---|---|
+| `logo-wordmark.svg` (DE) | 320 × 72 | **120 px** (Schrift ≈ 11 px) | Kopfzeile, Footer, Mail-Kopf, OG |
+| `logo-wordmark-en.svg` (EN) | 320 × 72 | **128 px** (Schrift ≈ 12 px) – etwas mehr als DE, damit das Fragezeichen und die Punzen von „e/o" bei 750 nicht zulaufen | wie DE |
+| `logo-wordmark-en-tagline.svg` (EN + Untertitel) | 320 × 84 | **300 px** (Untertitel ≥ 12 px) | Startseite W01, OG-Bild EN, Mail-Kopf; nie in der Kopfzeile |
+
+Unter der Mindestbreite nur die Bildmarke zeigen (≥ 24 px) – nie die Wortmarke stauchen, kürzen oder umbrechen.
+
+**Längenvergleich (Figtree 750, 30 px, −0,01 em; Schätzwerte, nach Outline-Umwandlung nachmessen):**
+| | Zeichen | Textbreite | Gesamtbreite inkl. Bildmarke + Abstand |
+|---|---|---|---|
+| „Wir wollen weg" | 14 | ≈ 195 px | ≈ 265 px |
+| „When do we go?" | 14 | ≈ 212 px (+ ca. 8 %, breitere Glyphen W/h/d/o statt i/l/l) | ≈ 282 px |
+
+**Folgen für die Kopfzeile (§9.4):** Die Kopfzeile plant mit der **längeren EN-Marke**. Bei Höhe 36 px (Bildmarke 28 px) belegt die Wortmarke ≈ 141 px (EN) bzw. ≈ 133 px (DE) tatsächlichen Inhalt in einer Box von 160 px. Bei 360 px Viewport (328 px nutzbar) bleiben neben der 160-px-Box ≥ 150 px für Sprach-Umschalter („English"/„Deutsch", ≈ 90 px) oder „⋯" + Avatar (≈ 96 px) – passt in beiden Sprachen. In Reisen ersetzt Zurück-Pfeil + Reisename die Wortmarke (wie bisher). Bei Textvergrößerung skaliert die Wortmarke nicht mit (Grafik); reicht der Platz trotzdem nicht (< 320 px Viewport), nur die Bildmarke.
 
 ## 4. Farbe & Kontraste
 
@@ -420,7 +450,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 ### 9.4 Tabs & Navigation
 - **Reise-Navigation** (UX: Links mit `aria-current`, keine JS-Tabs): „Übersicht · Meine Tage · Gruppe · Abstimmen" / „Overview · My dates · Group · Vote". Text-Tabs 14/600, Höhe 48, Innenabstand horizontal 8 px unter 400 px Breite, sonst 12 px, **kein** Icon (Platz). Aktiv: Text `text` + 3-px-Unterstrich `primary` in Label-Breite, Radius 2; inaktiv `text-muted`; Hover `text`. Leiste mit 1-px-Linie `border-subtle` unten. Rechnung 360 px (328 px nutzbar): „Übersicht | Meine Tage | Gruppe | Abstimmen" ≈ 256 px Text + 4 × 16 px = 320 px → passt (EN kürzer); bei Systemschriften mit breiteren Glyphen oder Textvergrößerung greift der **Fallback:** horizontal scrollbar, Verlaufskante 24 px rechts (`linear-gradient(to right, transparent, var(--ww-color-bg))`), aktiver Tab wird in Sicht gescrollt – nie Kürzen. Optionaler Zähler („2") als Pill 18 px `accent-tint`/`accent-text`.
 - **Segment „Vorschläge | Kalender"** (W09): Segment-Control, Höhe 40, Radius 12, Fläche `surface-sunken`, aktives Segment `surface` + Rahmen 1,5 px `border-strong` (3:1) + `shadow-1` + Text 600 – Zustand über Rahmen und Fettung, nicht nur Fläche.
-- **Kopfzeile:** 56 px, Bildmarke 28 px (in Reisen: Zurück-Pfeil + Reisename 1 Zeile mit „…"), rechts nicht angemeldet der Sprach-Umschalter („English"/„Deutsch", §9.8), angemeldet „⋯" + Konto-Avatar (Sprachwahl im Avatar-Menü).
+- **Kopfzeile:** 56 px, Bildmarke 28 px bzw. Wortmarke der UI-Sprache in 36 px Höhe (Box 160 px, Maße und Längenvergleich DE/EN §3.4) (in Reisen: Zurück-Pfeil + Reisename 1 Zeile mit „…"), rechts nicht angemeldet der Sprach-Umschalter („English"/„Deutsch", §9.8), angemeldet „⋯" + Konto-Avatar (Sprachwahl im Avatar-Menü).
 - **Keine Bottom-Navigation** (UX-Sitemap sieht keine vor; In-App-Browser haben eigene Leisten unten). Unten nur die fixierte Aktions-/Werkzeugleiste.
 
 ### 9.5 Chips
@@ -574,15 +604,16 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 ## 13. Übergabe & offene Punkte
 
-**Dark Mode (abgestimmt mit UX D-12):** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter. `[data-theme]` bleibt in tokens.css für einen späteren Schalter („Darstellung" in Konto → Sprache & Region) und für Tests. Vorbehalt: Auftraggeber bestätigt, dass Dark Mode im MVP enthalten ist (Mehraufwand im Review: beide Modi prüfen).
+**Dark Mode (abgestimmt mit UX D-12):** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter. `[data-theme]` bleibt in tokens.css für einen späteren Schalter („Darstellung" in Konto → Sprache & Region) und für Tests. **Bestätigt (Auftraggeber 2026-10-08):** Dark Mode ist im MVP enthalten, nur System-folgend (Review prüft beide Modi). Ebenso bestätigt: Figtree für Überschriften und Wortmarken (§5), Ergebnis-Sichtbarkeit erst nach eigener Stimme (§9.10, PRD Q13).
 
-**Bereit zur Umsetzung:** `tokens.css` (Light/Dark/Reduced-Motion, Heatmap, Muster, Kalender-Interaktion, Phasen), Icon-Sprite (41 Icons), Favicon/App-Icon (Basis Variante A, vorbehaltlich Auftraggeber-Wahl), 11 Illustrationen, Heatmap- und Zellspezifikation §6, Komponenten-Optik §9 inkl. Werkzeugleiste, i18n-Regeln §10.
+**Bereit zur Umsetzung:** `tokens.css` (Light/Dark/Reduced-Motion, Heatmap, Muster, Kalender-Interaktion, Phasen), Icon-Sprite (41 Icons), Favicon/App-Icon (Logo A, bestätigt (Auftraggeber 2026-10-08)), Wortmarken DE/EN (§3), 11 Illustrationen, Heatmap- und Zellspezifikation §6, Komponenten-Optik §9 inkl. Werkzeugleiste, i18n-Regeln §10.
 
 Zusätzlich bereit (v0.4): Tagesliste bei großer Schrift §6.8, Sprachumschalter §9.8, Code-Feld-Zustände §9.2, Ergebnis-Platzhalter Abstimmung §9.10.
 
-**Offen:** Zwischen Design und UI/UX nichts mehr (alle Punkte D-1–D-18, U-1–U-14 geklärt, siehe [abstimmung-ux.md](abstimmung-ux.md) §3). Vorbehalt Auftraggeber (Empfehlungen Design): Marke bleibt „Wir wollen weg" mit EN-Untertitel, Logo A, Dark Mode nur System-folgend, Figtree für Überschriften.
+**Offen:** Zwischen Design und UI/UX nichts mehr (alle Punkte D-1–D-18, U-1–U-14 geklärt, siehe [abstimmung-ux.md](abstimmung-ux.md) §3). Auftraggeber-Vorbehalte zu Marke, Logo, Dark Mode, Figtree und Ergebnis-Sichtbarkeit: alle **bestätigt (Auftraggeber 2026-10-08)** – mit einer Abweichung von der Design-Empfehlung: EN-Produktname „When do we go?" (§3). Offen nur noch Kleinkram: `short_name` im Manifest (siehe abstimmung-ux.md), Outline-Umwandlung der Wortmarken nach Einbindung von Figtree.
 
 Changelog
+- v0.5 (2026-10-08, Auftraggeber-Entscheidungen): §3 neu gegliedert – zwei Namen, eine Bildmarke (DE „Wir wollen weg", EN „When do we go?"), Hervorhebung „go?", Regeln zur Namenswahl (UI-Sprache, sprachneutrale Icons, OG je Sprache), Mindestbreiten, Längenvergleich DE/EN für die Kopfzeile; Logo A, Dark Mode (nur System), Figtree und Ergebnis-Sichtbarkeit als „bestätigt (Auftraggeber 2026-10-08)". Assets: `logo-wordmark-en.svg` ersetzt (ohne deutschen Namen), neu `logo-wordmark-en-tagline.svg`.
 - v0.4 (2026-10-08, letzte Abstimmungsrunde): D-14 Gruppennamen „Alle dabei" / „Fast alle dabei" („Everyone's in" / „Almost everyone's in") in §6.2 und §9.3; D-15 neue §6.8 Tagesliste bei großer Schrift (U-5), §5.2-Hinweis angepasst; D-16 §9.8 Sprachumschalter nach CEO-Entscheid (Ein-Tipp-Umschalter in der Kopfzeile nicht angemeldet, Avatar-Menü angemeldet, Footer-Segment), §9.4 Kopfzeile und §9.7 angeglichen; D-17 §9.2 Fehlertext aus user-flows A.2, „Neuen Code senden" primär im Zustand gesperrt; D-18 §9.10 Ergebnis-Platzhalter vor der eigenen Stimme; U-10 Mini-Streifen aus §9.3/§6.2 entfernt. SVG-Assets nicht betroffen (keine Gruppennamen in Grafiken).
 - v0.3 (2026-10-08): CEO-Entscheide eingearbeitet – U-4: Zählwert bleibt Anzahl „Geht" / abgegeben, ✓-Badge bedeutet jetzt „alle Abgegebenen haben ‚Geht'" (x = n, fällt mit Stufe „alle" zusammen), Tage mit „Zur Not" ohne „Geht nicht" zeigen ◐ statt ✓ (§6.1, §6.2, §9.3 Gruppenüberschrift mit `ww-icon-check`, §9.7, §11); U-1 (8 px / 4 px) und U-2 (Badge-Positionen) bestätigt. Assets: `heatmap-legend.svg` neu (Badges unten links/rechts, ◐ mit Anzahl, ✓ nur auf „alle"), `heatmap-markers.svg` (✓ auf 9/9-Tagen), Icon-Titel „Alle: Geht"; alle SVGs auf XML-Wohlgeformtheit geprüft (assets/README.md).
 - v0.2 (2026-10-08): Abgleich mit UX-Spec und Wireframes: Zell-Anatomie (D-1), Zählwert-Regel, Fokus mit beidseitigem Hof, Vorschlag-Band über Umbrüche, Interaktionszustände Meine Tage (D-2), Kalender-Seitenrand 8 px (D-3), Code-Feld als ein Input (D-4), Werkzeugleiste (D-5), Abstimmen-Zustände (D-6), Phasen/To-do (D-7), 28 neue Icons (D-8), 8 neue Illustrationen (D-9), Tabs/Budgets (D-10), Sheet/Snackbar (D-11), Dark Mode (D-12), Vorschlagskarte (D-13); Glossar DE/EN übernommen.

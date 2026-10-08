@@ -1,21 +1,117 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: Entwurf v0.1 (Konzeptphase; wird bis M1 konkretisiert, sobald Hosting-/Mail-Zugänge existieren)
+Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v0.2 – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
-Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [PRD §8](../product/PRD.md)
+Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
 > Preise netto, Recherche 2026-10-08 (Quellen am Ende). Hetzner hat 2026 zweimal Preise angepasst und die günstigen CX-/CAX-Tarife waren zeitweise „nicht verfügbar“ – **vor Bestellung live prüfen**.
 
 ---
 
-## 1. Grundsätze
+## 0. Aktueller Betriebsmodus: Offline-Demo (gültig seit 2026-10-08)
+
+**Entscheidung Auftraggeber (PRD §12 Q14–Q16):** Bis auf Weiteres läuft „Wir wollen weg“ / „When do we go?“ **nur lokal** als Demo. **Kein Hosting, keine Domain, keine Konten oder Abos** (Hetzner, Lettermint, Postfach, Generator usw.). Impressum und Datenschutz sind **Platzhalter** (Privatperson). Alles in §2–§7 ist der vorbereitete Plan **ab Go-Live**; der Übergang ist ein Gate: [go-live.md](go-live.md).
+
+### 0.1 Was die Demo umfasst
+
+| Dienst | Image / Herkunft | Port (Host) | Zweck |
+|---|---|---|---|
+| `app` | Produktions-Build aus `docker/Dockerfile` (identisch zum späteren Prod-Image) | `3000` | die App |
+| `db` | `postgres:18` mit benanntem Volume `demo-db` | nicht veröffentlicht (nur internes Netz) | Datenbank |
+| `mailpit` | `axllent/mailpit` | `8025` (Web-UI), SMTP `1025` nur intern | fängt **alle** Mails ab – Codes und Magic-Links werden **nie** echt versendet, sondern in der Mailpit-Web-UI angezeigt |
+
+- Datei: `docker/compose.demo.yml` (legt der Developer mit dem Scaffold P1-0 an, neben `compose.dev.yml`). Kein Caddy, kein TLS, kein Bugsink, kein Backup-Container.
+- Umgebungsdatei: `.env.demo` (in `.gitignore`), erzeugt aus `.env.example`; `APP_ENV=demo` (siehe §4).
+- `APP_ENV=demo` bewirkt: Mail-Transport fest auf Mailpit (kein externer SMTP möglich), `noindex` überall, sichtbares Banner „Demo – keine echten Daten eingeben“ (DE/EN), Rechtstext-Seiten mit Platzhaltern erlaubt (compliance-checklist.md §0a).
+
+### 0.2 Demo starten (Laptop)
+
+Voraussetzungen: Docker (Desktop oder Engine + Compose-Plugin), Git. Kein Node/pnpm nötig für die reine Demo.
+
+```bash
+cp .env.example .env.demo
+# in .env.demo setzen:
+#   APP_ENV=demo
+#   APP_URL=http://localhost:3000          (für Handy-Test: LAN-IP, siehe 0.3)
+#   BETTER_AUTH_URL=<gleicher Wert wie APP_URL>   (.env-Dateien lösen keine Variablen auf)
+#   BETTER_AUTH_SECRET=<Ausgabe von: openssl rand -base64 32>
+#   POSTGRES_PASSWORD=<beliebig, nur lokal>
+docker compose -f docker/compose.demo.yml --env-file .env.demo up -d --build
+docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm app pnpm db:migrate
+docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm app pnpm db:seed:demo   # optional, §0.4
+```
+
+- App: <http://localhost:3000> · Mailpit (Codes/Links): <http://localhost:8025>
+- Anmelden: E-Mail eingeben (beliebig, z. B. `anna@demo.test`) → Mail erscheint in Mailpit → 6-stelligen Code abtippen **oder** Magic-Link in Mailpit anklicken.
+- Stoppen: `docker compose -f docker/compose.demo.yml down` · Komplett zurücksetzen (inkl. Daten): `… down -v`.
+- Empfehlung an den Developer: Kurzbefehle `pnpm demo:up`, `pnpm demo:seed`, `pnpm demo:reset` als Wrapper.
+
+Für die tägliche Entwicklung bleibt `compose.dev.yml` (nur PostgreSQL + Mailpit) + `pnpm dev` (§3, Umgebung **dev**).
+
+### 0.3 Auf dem eigenen Handy im WLAN testen
+
+1. LAN-IP des Laptops ermitteln (macOS: `ipconfig getifaddr en0`, Linux: `hostname -I`, Windows: `ipconfig`), z. B. `192.168.178.20`.
+2. In `.env.demo` `APP_URL=http://192.168.178.20:3000` und `BETTER_AUTH_URL` gleich setzen, dann `up -d` erneut (kein Neubau nötig – keine `NEXT_PUBLIC_*`-Werte, tech-stack.md §1). **Wichtig:** Magic-Links und Einladungslinks werden mit `APP_URL` gebaut; mit `localhost` funktionieren sie auf dem Handy nicht.
+3. Handy im **selben WLAN** → `http://192.168.178.20:3000` öffnen; Codes in Mailpit unter `http://192.168.178.20:8025` (zweiter Tab oder Laptop).
+4. Firewall des Laptops muss eingehend Port 3000 und 8025 erlauben (macOS fragt beim ersten Mal; Windows: Netzwerk als „Privat“ einstufen).
+5. Nur im **eigenen/vertrauenswürdigen WLAN** – im Hotel-/Café-WLAN wären App und Mailpit für alle im Netz sichtbar. Dort stattdessen Ports per `127.0.0.1:` binden (nur Laptop).
+6. Wird statt der Demo `pnpm dev` genutzt: LAN-IP in `allowedDevOrigins` (`next.config.ts`) eintragen und `pnpm dev -H 0.0.0.0`, sonst blockiert Next.js Dev-Ressourcen von fremden Origins.
+
+**Grenzen des WLAN-Tests (bewusst in Kauf genommen):**
+
+| Thema | Folge über `http://<LAN-IP>` | Wann wirklich testbar |
+|---|---|---|
+| Kein HTTPS → kein „Secure Context“ | `navigator.share` (Teilen-Dialog) und `navigator.clipboard` stehen nicht zur Verfügung → Fallback (Link markieren/kopieren) muss funktionieren; Cookies ohne `Secure`/`__Secure-` (tech-stack.md §3.3) | Tunnel (§0.5) oder Staging |
+| In-App-Browser (WhatsApp, Instagram …) | Link `http://192.168.…/i/<token>` lässt sich zwar im Chat an sich selbst schicken und im selben WLAN öffnen (grober Vortest, ungeprüft) – aber keine Link-Vorschau (OG-Bild), kein HTTPS, andere Cookie-Bedingungen → **kein belastbarer T2-Test** | erst mit öffentlich erreichbarer HTTPS-URL |
+| Echte Mail-Zustellung, Mail-App → Browserwechsel beim Magic-Link | nicht testbar, Mails landen in Mailpit | ab Go-Live Stufe 1 (Mail-Konto + Domain) |
+| Testpersonen außerhalb des WLANs | nicht erreichbar | Tunnel (§0.5) oder Staging |
+
+### 0.4 Demo-Seed-Daten
+
+Skript `pnpm db:seed:demo` (Developer, wächst mit den Inkrementen; Vorschlag `scripts/seed-demo.ts`):
+
+- **Nur synthetische Daten:** fiktive Personen mit Adressen unter `@demo.test` (reservierte TLD, kann nie zugestellt werden), z. B. Anna (Orga), Ben, Clara, Deniz, Emil + ein Platzhalter-Mitglied (F-007).
+- **Reisen in allen Zuständen**, damit jede Ansicht ohne Klickarbeit vorführbar ist: (1) Reise in Sammelphase mit Lücken (Heatmap F-008, Kandidaten F-009), (2) Reise in Abstimmung (F-010/F-011), (3) festgelegte Reise mit ICS (F-012); Mischung DE/EN-Konten und Regionen (z. B. `DE-BY`, `AT-9`, `GB-ENG`) für Feiertage (F-016).
+- Datumsangaben **relativ zum heutigen Tag** erzeugen (sonst veraltet die Demo).
+- **Idempotent** (erst leeren, dann einspielen); **verweigert den Lauf**, wenn `APP_ENV` nicht `demo` oder `development` ist (Schutz für später).
+- Anmelden als Demo-Person: E-Mail `anna@demo.test` eingeben → Code in Mailpit.
+
+### 0.5 Optional später: temporärer Tunnel für In-App-Browser-Test (ohne Konto)
+
+Für den Gerätetest T2 (tech-stack.md §11) und ggf. kurze Vorführungen bei Freunden außerhalb des WLANs reicht ein **kurzlebiger HTTPS-Tunnel** vom Laptop – noch ohne Hosting, Domain oder Abo. Bewertung (Stand 2026-10-08, Bedingungen vor Nutzung prüfen):
+
+| Option | Konto nötig? | Kosten | Bewertung |
+|---|---|---|---|
+| **Cloudflare Quick Tunnel** (`cloudflared tunnel --url http://localhost:3000`) | nein | 0 € | zufällige `*.trycloudflare.com`-URL mit HTTPS; für Tests gedacht, ohne Verfügbarkeitszusage; US-Anbieter → **nur synthetische Daten**. **Empfehlung für T2.** |
+| localhost.run (`ssh -R 80:localhost:3000 nokey@localhost.run`) | nein | 0 € | nur SSH nötig; URL wechselt; Durchsatz begrenzt |
+| ngrok, Tailscale Funnel | **ja** (kostenloses Konto) | 0 € (Free) | widerspricht „keine Konten“ – nur, wenn Auftraggeber zustimmt |
+
+Regeln für jeden Tunnel-Einsatz:
+1. **Nur Demo-/Seed-Daten**, Testpersonen nutzen ausgedachte Adressen (`…@demo.test`) – echte Daten würden über einen Drittanbieter laufen und es gibt noch kein echtes Impressum/keine echte Datenschutzerklärung.
+2. Tunnel **nur für die Dauer des Tests** öffnen (Minuten bis wenige Stunden), danach beenden; URL nicht öffentlich posten.
+3. `APP_URL`/`BETTER_AUTH_URL` auf die Tunnel-URL setzen und `app` neu starten. **Mailpit nicht tunneln** – Codes liest der Tester am Laptop bzw. bekommt sie vom Team.
+4. Da die Seite damit kurzzeitig öffentlich erreichbar ist: Demo-Banner sichtbar, `noindex`, Rate-Limits an.
+
+Dauerhafte Staging-URL → erst mit Go-Live-Gate Stufe 1 ([go-live.md](go-live.md)).
+
+### 0.6 Platzhalter-Schutz für später
+
+Damit Platzhalter nie versehentlich live gehen: Die App prüft beim Start, ob `APP_ENV=production` **und** Rechtstexte/Betreiberangaben noch den Marker `[PLATZHALTER` enthalten → Start abbrechen (Developer, P1-0/OPS-5). Zusätzlich Punkt in der [Go-Live-Checkliste](go-live.md).
+
+---
+
+> **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
+
+## 1. Grundsätze (ab Go-Live)
 
 - **Alle personenbezogenen Daten bleiben in der EU** bei EU-Anbietern ohne US-Mutter (App, DB, Backups, Mails, Fehler-Tracking). Damit entfällt die Drittland-Bewertung (Art. 44 ff. DSGVO) für den Kernbetrieb.
 - **Einfach vor elastisch:** eine VM mit Docker Compose reicht für das MVP um Größenordnungen (max. 30 Personen pro Reise, wenige tausend Nutzer). Kein Kubernetes, keine Serverless-Funktionen.
 - **Build once, deploy many:** ein Container-Image pro Commit, identisch für Staging und Produktion; Unterschiede nur über Umgebungsvariablen.
 - **Keine Secrets im Repo.** Im Repo nur `.env.example` mit Namen und Platzhaltern.
 
-## 2. Hosting & Kosten
+## 2. Hosting & Kosten (ab Go-Live)
+
+> Während der Offline-Demo: **0 € laufende Kosten** (§0). Die folgenden Kosten fallen erst nach Freigabe des [Go-Live-Gates](go-live.md) an.
 
 ### 2.1 Optionen (App + Datenbank)
 
@@ -53,10 +149,11 @@ Skalierung: Bei > 70 % CPU/RAM-Auslastung über Tage → größere VM (Hetzner: 
 
 | Umgebung | Zweck | Wo | Daten | Mails | Zugriff |
 |---|---|---|---|---|---|
+| **demo** (aktuell) | Vorführung, Handy-Test im WLAN | Laptop: `docker compose -f docker/compose.demo.yml` (App-Prod-Build + PostgreSQL + Mailpit), §0 | synthetisch (`db:seed:demo`) | Mailpit (`:8025`) | lokal/WLAN; optional kurzzeitig per Tunnel (§0.5) |
 | **dev** | lokale Entwicklung | Laptop/Cloud-Session: `docker compose -f docker/compose.dev.yml up` (PostgreSQL 18 + Mailpit), App per `pnpm dev` | synthetisch (Seed-Skript) | Mailpit (`localhost:8025`) | lokal |
 | **ci** | automatische Prüfung | GitHub Actions, Service-Container | synthetisch, flüchtig | Mailpit | – |
-| **staging** | Abnahme durch Reviewer/CEO/Auftraggeber, Test auf echten Handys (In-App-Browser) | gleiche VM, eigenes Compose-Projekt, `staging.<domain>`, eigene DB | synthetisch, **keine echten Nutzerdaten** | Mailpit-Web-UI hinter Passwort (Tester lesen Codes dort) | HTTP-Basic-Auth vor allem außer `/i/*`-Testlinks; `noindex` |
-| **prod** | Beta (M1) und Launch (M2) | `<domain>` | echte Daten | Lettermint | öffentlich |
+| **staging** *(ab Go-Live-Gate Stufe 1)* | Abnahme durch Reviewer/CEO/Auftraggeber, Test auf echten Handys (In-App-Browser) | gleiche VM, eigenes Compose-Projekt, `staging.<domain>`, eigene DB | synthetisch, **keine echten Nutzerdaten** | Mailpit-Web-UI hinter Passwort (Tester lesen Codes dort) | HTTP-Basic-Auth vor allem außer `/i/*`-Testlinks; `noindex` |
+| **prod** *(ab Go-Live-Gate Stufe 2)* | Beta (M1) und Launch (M2) | `<domain>` | echte Daten | Lettermint | öffentlich |
 
 Keine Preview-Umgebung pro Pull Request im MVP (Kosten, Aufwand, Datenschutz). Bei Bedarf später: kurzlebige Compose-Projekte auf der Staging-VM.
 
@@ -66,8 +163,8 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 
 | Variable | Pflicht | Beschreibung | Beispiel/Platzhalter in `.env.example` |
 |---|---|---|---|
-| `NODE_ENV` | ja | `production` in staging/prod | `development` |
-| `APP_ENV` | ja | `development` \| `ci` \| `staging` \| `production` (steuert Mail-Transport, noindex, Logging) | `development` |
+| `NODE_ENV` | ja | `production` in demo/staging/prod | `development` |
+| `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Platzhalter-Schutz §0.6) | `development` |
 | `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende | `http://localhost:3000` |
 | `DATABASE_URL` | ja | PostgreSQL-Verbindung | `postgres://app:app@localhost:5432/wirwollenweg` |
 | `POSTGRES_PASSWORD` | ja (Compose) | Passwort des DB-Containers | `change-me` |
@@ -98,7 +195,7 @@ GitHub-Secrets für Deployment (Environment `staging`/`production`): `DEPLOY_SSH
 
 Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; `BETTER_AUTH_SECRET`-Rotation meldet alle Nutzer ab (bewusst einplanen).
 
-## 5. Deployment-Ablauf
+## 5. Deployment-Ablauf (ab Go-Live)
 
 ### 5.1 Server-Grundeinrichtung (einmalig, Runbook vor M1)
 1. Hetzner-Projekt anlegen, **AVV in der Console abschließen**, 2FA für alle Konten.
@@ -122,7 +219,9 @@ Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; 
 
 Kurze Downtime (Sekunden) beim Container-Neustart ist im MVP akzeptiert; Zero-Downtime (z. B. zwei App-Container hinter Caddy) bei Bedarf nach Launch.
 
-## 6. Backups, Monitoring, Fehler-Tracking
+## 6. Backups, Monitoring, Fehler-Tracking (ab Go-Live)
+
+> Offline-Demo: keine Backups, kein Monitoring – Demo-Daten sind per `db:seed:demo` jederzeit reproduzierbar; `down -v` löscht alles.
 
 ### 6.1 Backups
 | Was | Wie | Aufbewahrung | Ziel |
@@ -147,10 +246,10 @@ Kurze Downtime (Sekunden) beim Container-Neustart ist im MVP akzeptiert; Zero-Do
 
 Logs: Docker-JSON-Logs mit Rotation; App-Logs ohne E-Mail/Codes/Tokens; IP-Adressen max. 7 Tage.
 
-## 7. Domain, DNS & Mail-Authentifizierung
+## 7. Domain, DNS & Mail-Authentifizierung (ab Go-Live)
 
 ### 7.1 Domain
-Entscheidung durch den Auftraggeber (siehe Entscheidungsbedarf im Bericht). Optionen (Verfügbarkeit vor Kauf prüfen): `wirwollenweg.de`, `wir-wollen-weg.de`, zusätzlich ggf. `.app`/`.com` für Englisch. Registrar in der EU (z. B. INWX, Hetzner), DNSSEC aktivieren; DNS bei Hetzner (kostenlos) oder beim Registrar.
+Zurückgestellt bis Go-Live (Q15). Zwei Produktnamen (Q11): „Wir wollen weg“ (DE) und „When do we go?“ (EN) → Domain- **und** Markenprüfung für beide ([go-live.md](go-live.md), Stufe 1/2a). Optionen (Verfügbarkeit vor Kauf prüfen): `wirwollenweg.de`, `wir-wollen-weg.de`, zusätzlich ggf. `.app`/`.com` für Englisch. Registrar in der EU (z. B. INWX, Hetzner), DNSSEC aktivieren; DNS bei Hetzner (kostenlos) oder beim Registrar.
 
 ### 7.2 DNS-Einträge (Vorlage; konkrete Werte liefert der Mail-Anbieter)
 
@@ -172,18 +271,9 @@ Entscheidung durch den Auftraggeber (siehe Entscheidungsbedarf im Bericht). Opti
 **Absender:** `Wir wollen weg <login@mail.<domain>>`, Reply-To `hallo@<domain>`. Getrennte Subdomain schützt die Reputation der Hauptdomain; für spätere Benachrichtigungen (F-014, v1) eigene Subdomain `notify.<domain>`.
 Optional später: MTA-STS/TLS-RPT für die Empfangsdomain.
 
-## 8. Checkliste „Go-Live“ (M1 Beta / M2 Launch)
+## 8. Go-Live-Checkliste
 
-- [ ] AVVs abgeschlossen (Hetzner, Mail-Anbieter, ggf. Object-Storage-Anbieter) – compliance-checklist.md §3
-- [ ] Impressum + Datenschutzerklärung DE/EN + Nutzungsbedingungen live (M2: Pflicht; M1: mindestens Impressum + Datenschutzerklärung DE)
-- [ ] SPF/DKIM/DMARC grün (z. B. mit Mail-Tester geprüft), DMARC `p=reject` (M2)
-- [ ] Backups laufen, Restore-Test erfolgreich dokumentiert
-- [ ] Uptime- und Fehler-Alarme kommen an
-- [ ] Retention-Job (F-013/F-043) läuft täglich, Testlauf auf Staging
-- [ ] Security-Header geprüft (z. B. securityheaders.com), TLS A/A+, `noindex` auf Reiseseiten
-- [ ] `/.well-known/security.txt` mit Kontakt
-- [ ] Rate-Limits aktiv (`RATE_LIMIT_ENABLED=true`)
-- [ ] Reviewer-Freigabe ✅ für alle Features des Meilensteins (DE und EN)
+Ausgelagert und erweitert als Gate: **[go-live.md](go-live.md)** (Stufe 1 Staging, Stufe 2 Beta M1, Stufe 3 Launch M2). Der CEO legt sie dem Auftraggeber vor Go-Live vor.
 
 ---
 

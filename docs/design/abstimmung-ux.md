@@ -31,7 +31,7 @@ Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (St
 | **D-9 Illustrationen** | Alle 8 geliefert: `invite` (Einladung W03), `code-sent`, `no-matches`, `vote-waiting`, `error` (gemeinsam für W14), `goodbye`, `hero` (W01), `submitted`. Alle dekorativ, mobil max. 160 px hoch. | §11 |
 | **D-10 Text & Typo** | Längenbudgets übernommen; `hyphens: auto` + korrektes `lang`, `overflow-wrap: anywhere` für Nutzerinhalte verankert. Tab-Stil: 14/600, Unterstrich, 8 px Innenabstand unter 400 px → „Übersicht · Meine Tage · Gruppe · Abstimmen" passt in 328 px; Fallback horizontal scrollbar mit Verlaufskante. | §9.4, §10 |
 | **D-11 Sheet & Ebenen** | Zwei Rastpunkte (½ / fast voll, Tokens), Griff + Schließen-Button. Snackbar über der Leiste: `bottom = --ww-sticky-bar-h + 8 px + Safe-Area`; `--ww-z-toast` (50) > `--ww-z-sticky` (10). Desktop unten links. | §9.6, §9.7 |
-| **D-12 Dark Mode** | **Einverstanden:** MVP folgt nur dem System, kein Schalter. `[data-theme]` bleibt für später/Tests. Vorbehalt Auftraggeber (Dark Mode im MVP ja/nein) – liegt beim CEO. | §13 |
+| **D-12 Dark Mode** | **Einverstanden:** MVP folgt nur dem System, kein Schalter. `[data-theme]` bleibt für später/Tests. Bestätigt (Auftraggeber 2026-10-08): Dark Mode im MVP, nur System-folgend. | §13 |
 | **D-13 Vorschlagskarte** | Gruppenüberschriften „Alle dabei" / „Fast alle dabei" mit Icon (Strich-Häkchen `ww-icon-check` / Personen, U-14) und 32 px Abstand; Zeitraum, Nächte, Urlaubstage ⓘ; Zusatz-Chips „◐ 2× zur Not" (Amber), „✕ ohne Jonas" (Stein), „⚑ inkl. Pfingstmontag" (Koralle hell); Text-Button „Im Kalender zeigen"; Orga-Checkbox. | §9.3 |
 
 ### 1a. Antworten auf `docs/ux/abstimmung-design.md` §6 (Runde 2: D-14 bis D-18)
@@ -69,7 +69,7 @@ Außerdem übernommen: Glossar ux-spec §10.2 (Legende `availability-legend.svg`
 
 ## 3. Abstimmungsstand (Design-Sicht)
 
-Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = beidseitig geklärt und in beiden Dokumentsätzen umgesetzt · **entschieden (CEO)** = verbindlich durch CEO · **entschieden (UX)** = Verhaltensentscheid UI/UX, Design hat übernommen · **Vorbehalt Auftraggeber** = Empfehlung steht, Bestätigung durch Auftraggeber fehlt. **Offen zwischen Design und UI/UX: nichts.**
+Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = beidseitig geklärt und in beiden Dokumentsätzen umgesetzt · **entschieden (CEO)** = verbindlich durch CEO · **entschieden (UX)** = Verhaltensentscheid UI/UX, Design hat übernommen · **bestätigt (Auftraggeber 2026-10-08)** = vom Auftraggeber entschieden (PRD §12 Q11–Q13). **Offen zwischen Design und UI/UX: nur der Kleinpunkt U-15 unten.**
 
 | # | Thema | Status | Anmerkung |
 |---|---|---|---|
@@ -82,15 +82,15 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 | D-7 | Phasen & To-do | erledigt | |
 | D-8 | Icons | erledigt | 41 Icons; Titel `ww-icon-all-available` „Alle: Geht" |
 | D-9 | Illustrationen | erledigt | Hero-Platzierung via U-12 |
-| D-10 | Text & Typo | erledigt | Figtree: Vorbehalt Auftraggeber |
+| D-10 | Text & Typo | erledigt | Figtree: bestätigt (Auftraggeber 2026-10-08) |
 | D-11 | Sheet & Ebenen | erledigt | `--ww-sticky-bar-h` via U-7 |
-| D-12 | Dark Mode | entschieden (CEO, 2026-10-08) – Vorbehalt Auftraggeber | nur System-folgend, kein Schalter im MVP |
+| D-12 | Dark Mode | entschieden (CEO), bestätigt (Auftraggeber 2026-10-08) | nur System-folgend, kein Schalter im MVP |
 | D-13 | Vorschlagskarte | erledigt | Überschrift mit `ww-icon-check` (U-14), kein Mini-Streifen (U-10) |
 | D-14 | Gruppennamen „Alle dabei" / „Fast alle dabei" | erledigt | CEO bestätigt beide Namen; design-system §6.2, §9.3 |
 | D-15 | Optik Tageslisten-Zeile (große Schrift) | erledigt | design-system §6.8 |
 | D-16 | Sprachumschalter Kopfzeile | **entschieden (CEO, 2026-10-08)** | zugunsten UX: Ein-Tipp-Umschalter „English"/„Deutsch" (nicht angemeldet), Avatar-Menü (angemeldet), Footer-Segment; design-system §9.8 |
 | D-17 | Code-Feld Copy/Gewichtung | erledigt | design-system §9.2 |
-| D-18 | Ergebnis-Platzhalter vor eigener Stimme | erledigt | design-system §9.10; Ergebnis-Sichtbarkeit selbst: Vorbehalt Auftraggeber |
+| D-18 | Ergebnis-Platzhalter vor eigener Stimme | erledigt | design-system §9.10; Ergebnis-Sichtbarkeit selbst: bestätigt (Auftraggeber 2026-10-08, Q13) |
 | U-1 | Kalender-Seitenrand 8 px, Fuge 4 px | entschieden (CEO, 2026-10-08) | in ux-spec §2, §7.2, W08, W09 umgesetzt |
 | U-2 | ✓ unten rechts, ◐ unten links (≥ 600 px „◐2") | entschieden (CEO, 2026-10-08) | in ux-spec §4.9, W09 umgesetzt |
 | U-3 | Pegel erst ab 600 px | erledigt | von UX bestätigt |
@@ -106,11 +106,18 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 | U-13 | „Noch offen" mit gestricheltem Ring | erledigt | von UX bestätigt |
 | U-14 | Benennung der Vorschlagsgruppen | entschieden (CEO, 2026-10-08) | „Alle dabei" / „Everyone's in"; Folgeentscheid UX „Fast alle dabei" / „Almost everyone's in" (D-14) |
 
-**Vorbehaltlich Auftraggeber (Empfehlungen Design, vom CEO vorzulegen):**
-- **Marke:** „Wir wollen weg" bleibt auch auf Englisch die Marke, mit EN-Untertitel „Find dates for your group trip" (design-system §3.1).
-- **Logo:** Variante A „Sonnenkalender" empfohlen (§3.2); Favicon/App-Icon/Wortmarken basieren darauf.
+**Bestätigt (Auftraggeber 2026-10-08):**
+- **Marke:** zwei Namen, eine Bildmarke – DE „Wir wollen weg", EN **„When do we go?"** (abweichend von der Design-Empfehlung). EN-Wortmarke mit „go?" in Markenfarbe; „Find dates for your group trip" nur noch optionaler Untertitel (design-system §3.1–§3.4, `logo-wordmark-en.svg`, `logo-wordmark-en-tagline.svg`). Schreibregeln: ux-spec §10.6 – design-system verweist darauf.
+- **Logo:** Variante A „Sonnenkalender" (§3.3); Favicon/App-Icon/Wortmarken basieren darauf, Icons sprachneutral.
 - **Dark Mode:** im MVP nur System-folgend (`prefers-color-scheme`), kein Schalter (§13, D-12).
 - **Schrift:** Figtree (selbst gehostet) für Überschriften und Wortmarke, Systemschrift für alles andere (§5).
+- **Ergebnis-Sichtbarkeit** erst nach eigener Stimme, Rolle „Orga"/„Organizer" (PRD Q13): unverändert wie in §9.10 gestaltet.
+
+### Offen für UI/UX
+| # | Thema | Vorschlag Design | Bitte UI/UX |
+|---|---|---|---|
+| U-15 | Kopfzeile und Landing mit EN-Namen | Kopfzeile plant mit der längeren EN-Wortmarke (≈ 8 % breiter als DE, gleiche Box 320 × 72, Darstellung 36 px hoch = 160 px Box); Variante mit Untertitel (`logo-wordmark-en-tagline.svg`, ≥ 300 px) nur auf W01/OG/Mail, nie im Header (design-system §3.4) | W01 und Header-Wireframes kurz gegenprüfen (ux-spec §10.6 Nr. 8 sagt bereits „passt ohne Sonderregel") |
+| U-16 | `short_name` im Web-App-Manifest | Beide Namen haben 14 Zeichen; Homescreens kürzen teils ab ca. 12. Vorschlag: `short_name` = voller Name und auf iOS/Android testen; Fallback DE „Wollen weg", EN „When do we go?" ungekürzt (Fragezeichen darf nicht wegfallen, ux-spec §10.6 Nr. 1) | Entscheiden bzw. an PM/CEO geben |
 
 ## 4. Bereits erledigt / keine Aktion nötig
 - WCAG 2.2 AA als Ziel (ux-spec §7): Design ist darauf ausgelegt (2.4.11 Fokus nicht verdeckt über `scroll-padding`, 2.5.8 Zielgrößen, Fokus-Hof).
@@ -118,6 +125,7 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 - „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
 
 ## Changelog
+- 2026-10-08 (Auftraggeber-Entscheidungen): alle Vorbehalte zu Marke, Logo A, Dark Mode, Figtree, Ergebnis-Sichtbarkeit → „bestätigt (Auftraggeber 2026-10-08)"; EN-Name „When do we go?" eingearbeitet; neue Kleinpunkte U-15, U-16.
 - 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
 - 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.
 - 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.
