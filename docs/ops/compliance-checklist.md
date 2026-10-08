@@ -101,7 +101,7 @@ Seit 14.05.2024 heißt das TTDSG **TDDDG**. § 25 erfasst jedes Speichern/Ausles
 |---|---|---|
 | Session-Cookie (Better Auth) | Anmeldung | unbedingt erforderlich (§ 25 Abs. 2 Nr. 2) |
 | „Angemeldet bleiben“ (90 Tage) | vom Nutzer aktiv gewählt | erforderlich für den gewünschten Dienst |
-| `NEXT_LOCALE` (Sprache) | vom Nutzer gewählte Sprache | erforderlich (Nutzerwunsch) |
+| `lang` (Sprache, 12 Monate, nur bei expliziter Wahl) | vom Nutzer gewählte Sprache | erforderlich (Nutzerwunsch) |
 | Theme-Wahl hell/dunkel (`data-theme`, Designer-Tokens) – Cookie oder localStorage | vom Nutzer gewählte Darstellung | erforderlich (Nutzerwunsch); ohne Wahl folgt die App dem System, nichts wird gespeichert |
 | `pending_invite` (30 Min.) | Einladung über Login hinweg erhalten | erforderlich |
 | `sessionStorage` Formularentwurf (F-001) | Reisedaten vor Login nicht verlieren | erforderlich |

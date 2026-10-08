@@ -1,6 +1,6 @@
 # Tech-Stack & Konventionen – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v1.0 (mit M0 am 2026-10-08 freigegeben) · Betriebsmodus: **Offline-Demo** bis zum [Go-Live-Gate](go-live.md)
+Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v1.1 (v1.0 mit M0 am 2026-10-08 freigegeben; v1.1 = Abweichungen aus Scaffold P1-0 übernommen: Routing §4, ESLint/TS-Versionen, T3, Standalone, Referrer-Policy) · Betriebsmodus: **Offline-Demo** bis zum [Go-Live-Gate](go-live.md)
 
 Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../product/features.md) · [roadmap.md](../product/roadmap.md) · [deployment.md](deployment.md) · [go-live.md](go-live.md) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md)
 
@@ -12,7 +12,7 @@ Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../produ
 
 | Bereich | Empfehlung | Version (2026-10-08) |
 |---|---|---|
-| Sprache | TypeScript (strict) | TS 5.x/6.x, wie von Next.js unterstützt |
+| Sprache | TypeScript (strict) | **6.0.x** (6.0.3) – nicht 7.x, solange `typescript-eslint` es nicht unterstützt |
 | Framework | **Next.js (App Router), React Server Components, Server Actions** | `next` 16.4.0 |
 | Laufzeit | **Node.js 24 LTS** (Wechsel auf Node 26 nach LTS-Start Ende Okt. 2026 und Ökosystem-Check, spätestens Q2 2027) | 24.x |
 | Rendering | SSR (dynamisch) für alle App-Seiten; statisch für Startseite & Rechtstexte; nur Node-Runtime (keine Edge-Runtime) | – |
@@ -21,7 +21,7 @@ Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../produ
 | Validierung | Zod | 4.x |
 | Auth | **Better Auth** (Bibliothek, Daten in eigener DB) mit Plugins `emailOTP`, `magicLink`, E-Mail+Passwort, `haveIBeenPwned`; später `socialProviders` (Google, Apple) | 1.7.7 |
 | Passwort-Hash | Argon2id über `@node-rs/argon2` (als eigene hash/verify-Funktion in Better Auth) | 2.x |
-| i18n | **next-intl** (ICU-Messages, Routing mit Sprachpräfix) | 4.14.x |
+| i18n | **next-intl** (ICU-Messages; App-Routen ohne Sprachpräfix, Präfix nur für öffentliche Seiten – §4) | 4.14.x |
 | Datum | ISO-Kalendertage `YYYY-MM-DD` + `@internationalized/date`; Formatierung über `Intl` / next-intl | – |
 | Feiertage | **date-holidays** (serverseitig) | 3.37.0 |
 | Styling | **CSS Modules + globale CSS-Custom-Properties aus `docs/design/tokens.css`** | – |
@@ -30,7 +30,7 @@ Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../produ
 | Mail-Anbieter | Demo/Dev/CI: **Mailpit** (lokal). **Ab Go-Live:** Lettermint (NL, EU-only); Alternative Scaleway TEM | – |
 | Unit-Tests | **Vitest** (+ Testing Library für Komponenten) | 5.0.x |
 | E2E-Tests | **Playwright** (WebKit-iPhone, Chromium-Android, Desktop) + `@axe-core/playwright` + Mailpit für Codes | 1.64.x |
-| Lint / Format | **ESLint (Flat Config, `eslint-config-next`, `typescript-eslint`, `jsx-a11y`) + Prettier** | ESLint 10.x, Prettier 3.x |
+| Lint / Format | **ESLint (Flat Config, `eslint-config-next`, `typescript-eslint`, `jsx-a11y`) + Prettier** | **ESLint 9.39.x** (nicht 10 – §2.1), Prettier 3.x |
 | Paketmanager | **pnpm** (Version über `packageManager`-Feld in `package.json` fixiert, Corepack) | 12.x |
 | Hosting | Aktuell **keins** – Offline-Demo per Docker Compose auf dem Laptop (App + PostgreSQL + Mailpit, [deployment.md §0](deployment.md)). **Ab Go-Live:** Hetzner Cloud (Deutschland), Docker Compose: App + PostgreSQL + Caddy (TLS) | – |
 | Fehler-Tracking | ab Go-Live: Sentry-SDK → **selbst gehostetes Bugsink** auf derselben VM (Alternative: Sentry SaaS EU-Region) | – |
@@ -47,11 +47,12 @@ Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../produ
 **Next.js 16 (App Router)**, weil:
 - Server Components + Server Actions passen zum Datenmodell (viele kleine, autorisierte Mutationen: Tag setzen, abstimmen, beitreten) – keine separate API-Schicht nötig.
 - Größtes Ökosystem: next-intl, Better Auth, React Email, React Aria, Playwright-Beispiele; für ein Agent-Team mit wechselnden Sessions ist „gut dokumentiert und verbreitet“ ein echter Vorteil.
-- Self-Hosting mit `output: "standalone"` im Docker-Container ist offiziell unterstützt – keine Bindung an Vercel.
+- Self-Hosting mit `output: "standalone"` im Docker-Container ist offiziell unterstützt – keine Bindung an Vercel. Umgesetzt (Scaffold): `standalone` nur bei `NEXT_OUTPUT_STANDALONE=1` (setzt das Dockerfile, Start mit `node server.js`); lokal und in CI liefert `pnpm start` (= `next start`) den normalen Build.
 - Kandidaten-Berechnung (F-009) als reine TypeScript-Funktion läuft auf Server **und** Client (Filter „Person X ausblenden“ in F-008 wirkt nur lokal → im Browser rechnen).
 
 Hinweise für den Developer:
-- In Next.js 16 heißt die Middleware `proxy.ts`; next-intl 4 unterstützt das.
+- In Next.js 16 heißt die Middleware `proxy.ts`. **Wir brauchen keine** (Scaffold): Die Sprache wird pro Request in `src/i18n/request.ts` bestimmt (§4), Security-/`noindex`-Header kommen aus `next.config.ts`.
+- **ESLint 9.39 statt 10 / TypeScript 6.0.x** (Abweichung Developer, Scaffold 2026-10-08): `eslint-config-next` 16.4 bzw. die mitgelieferten Plugins (`eslint-plugin-react`, `jsx-a11y`) und `typescript-eslint` 8.x sind mit ESLint 10 bzw. TypeScript 7 noch nicht kompatibel. Upgrade, sobald die Plugins nachziehen (Dependabot-PRs nicht blind mergen).
 - `next lint` gibt es nicht mehr → ESLint direkt aufrufen.
 - Next.js veröffentlicht 2026 regelmäßig Security-Releases (u. a. 16.2.6 mit 13 Advisories im Mai) → Dependabot ist Pflicht, Patch-Updates zeitnah einspielen.
 - Keine `NEXT_PUBLIC_*`-Variablen für umgebungsspezifische Werte (werden beim Build eingebrannt; wir bauen ein Image für Demo, Staging und Produktion – so lässt sich `APP_URL` für den Handy-Test im WLAN oder einen Tunnel ohne Neubau umstellen).
@@ -158,9 +159,9 @@ Brute-Force-Rechnung: 6 Ziffern = 10⁶ Kombinationen; 5 Versuche/Code × max. 2
 
 ### 3.4 Einladungs-Token über die Registrierung erhalten (F-003)
 
-1. Einladungslink `https://<domain>/i/<token>` (ohne Sprachpräfix, kurz für Chats) → Weiterleitung auf `/<locale>/join/<token>` (Sprache: Konto > Cookie > `Accept-Language`).
+1. Einladungslink `https://<domain>/i/<token>` (ohne Sprachpräfix, kurz für Chats) – **die Seite selbst** ist Vorschau + Beitritt, keine Weiterleitung (Sprache pro Request: Konto > Cookie `lang` > `Accept-Language` > `en`, §4).
 2. Die Join-Seite zeigt die Vorschau und das Registrierungs-/Login-Formular **auf derselben Seite**. Code anfordern und Code prüfen laufen per `fetch` ohne Seitenwechsel → der Token bleibt in der URL und im Seitenzustand; nach Erfolg Server Action `joinTrip(token)` → Weiterleitung zur Verfügbarkeit (F-005).
-3. Magic-Link: `callbackURL = /<locale>/join/<token>?autojoin=1` wird in den Link-Token eingebettet → funktioniert auch im Standardbrowser.
+3. Magic-Link: führt auf `/auth/magic?token=…&next=/i/<token>` (Bestätigungsseite – Token wird erst per Tipp eingelöst, Link-Scanner verbrennen ihn nicht; [spike-auth.md](spike-auth.md)); `next` nur relativ/intern → funktioniert auch im Standardbrowser.
 4. Rückfallebene: beim Öffnen der Vorschau signiertes `HttpOnly`-Cookie `pending_invite` (30 Min.) – wird nach jedem Login im selben Browser ausgewertet.
 5. Gleiches Prinzip für „Reise anlegen ohne Konto“ (F-001): Formulardaten bleiben im Client-Zustand (bzw. `sessionStorage`, technisch notwendig) bis nach dem Login.
 
@@ -170,8 +171,9 @@ Brute-Force-Rechnung: 6 Ziffern = 10⁶ Kombinationen; 5 Versuche/Code × max. 2
 
 **next-intl 4** – ICU MessageFormat (Plurale, `select`), Server- und Client-Komponenten, Formatierung über `Intl`, typsichere Schlüssel.
 
-- **Routing:** `localePrefix: "always"` → `/de/...`, `/en/...`; `hreflang`/`alternate` für öffentliche Seiten (Startseite, Rechtstexte). Kurze, sprachneutrale Pfade für geteilte Links (`/i/<token>`) und Mail-Links (`/auth/verify?...`) leiten per `proxy.ts` in die richtige Sprache um. Reihenfolge der Sprachwahl: Kontoeinstellung > Cookie `NEXT_LOCALE` (technisch notwendig) > `Accept-Language` (`de-*` → `de`, sonst `en`).
-- **Pfadnamen** englisch und in beiden Sprachen gleich (`/de/trips/...`), keine übersetzten Slugs (vereinfacht Routing und Tests).
+- **Routing (nach [sitemap.md §4](../ux/sitemap.md), umgesetzt im Scaffold):** App-Routen **ohne Sprachpräfix** – `/login`, `/i/[token]`, `/trips`, `/auth/magic`, später `/account` (Route-Gruppe `src/app/(app)/`). Nur **öffentliche Inhaltsseiten** tragen ein Präfix – `/de`, `/en`, später Rechtstexte/Hilfe (`src/app/[locale]/`, `setRequestLocale`, `hreflang`/`alternate`). Zwei Root-Layouts (`(app)/layout.tsx`, `[locale]/layout.tsx`), **kein `proxy.ts`**, kein `localePrefix`-Routing von next-intl. Sprachwahl für App-Routen pro Request (`src/i18n/request.ts`, `negotiate.ts`): Kontoeinstellung (ab Inkrement 1) > Cookie **`lang`** (bei expliziter Wahl, 12 Monate, technisch notwendig) > `Accept-Language` (`de-*` → `de`, jede andere Sprache → `en`) > Fallback `en`. `/` leitet weiter: angemeldet → `/trips`, sonst `/de` bzw. `/en`.
+- **Bekannte Einschränkung:** next-intl 4.14 markiert `requestLocale`/`setRequestLocale` als veraltet zugunsten `next/root-params`; mit zwei Root-Layouts erkennt Next 16.4 die Root-Params noch nicht → Migration verfolgt in [spike-auth.md §6](spike-auth.md).
+- **Pfadnamen** englisch, sprachneutral (`/trips/...`), keine übersetzten Slugs (vereinfacht Routing und Tests); Ausnahme: Rechtstext-Slugs je Präfix-Sprache laut sitemap.md.
 - **Sprache ≠ Region:** Konto speichert `locale` (`de`|`en`) und `region` (z. B. `DE-BY`, `AT-9`, `CH-ZH`, `GB-SCT`, `US`). Formatierungs-Locale = `<locale>-<Land>` (z. B. `en-DE`, `de-CH`) → korrekte Datumsformate auch für Englischsprachige in Deutschland. Wochenstart aus eigener Tabelle (Mo für DE/AT/CH/GB, So für US), im Konto überschreibbar – nicht von `Intl.Locale.getWeekInfo` abhängig (Browserunterstützung uneinheitlich).
 - **Plurale:** `"{count, plural, one {# Person kann} other {# Personen können}}"`; keine String-Verkettung.
 - **Datum:** `format.dateTime(date, { dateStyle: "medium" })` bzw. benannte Formate in `src/i18n/formats.ts`; ganztägige Daten ohne Zeitzonenumrechnung (als `CalendarDate`).
@@ -239,18 +241,18 @@ Demo/Dev/Test (und später Staging): **Mailpit** (lokaler SMTP-Fänger mit Web-U
 ├─ drizzle/                 generierte SQL-Migrationen (committet)
 ├─ messages/                de.json, en.json (UI-Texte, ICU)
 ├─ public/                  statische Assets (Icons, OG-Bild)
-├─ scripts/                 i18n-check, tokens-sync, seed-demo (deployment.md §0.4), später Backup-Hilfen
+├─ scripts/                 i18n-check, seed-demo (deployment.md §0.4), claude-session-start.sh, später Backup-Hilfen
 ├─ src/
 │  ├─ app/
-│  │  ├─ [locale]/
-│  │  │  ├─ (marketing)/    Startseite
-│  │  │  ├─ (legal)/        impressum, privacy, terms, licenses
-│  │  │  ├─ (auth)/         login, verify
+│  │  ├─ (app)/             Root-Layout 1: App-Routen ohne Sprachpräfix (Sprache per Request, §4)
+│  │  │  ├─ page.tsx        `/` → /trips bzw. /de|/en
+│  │  │  ├─ login/          Anmeldung (Code + Magic-Link)
+│  │  │  ├─ auth/magic/     Magic-Link-Bestätigung (Token erst per Tipp einlösen)
+│  │  │  ├─ i/[token]/      Einladung: Vorschau + Beitritt (F-002, F-003)
 │  │  │  ├─ trips/          Meine Reisen (F-044), new (F-001), [tripId]/… (F-005–F-012)
-│  │  │  ├─ join/[token]/   Vorschau + Beitritt (F-003)
-│  │  │  └─ account/        Einstellungen, Löschen (F-042, F-043)
-│  │  ├─ i/[token]/         sprachneutraler Kurzlink → Redirect
-│  │  └─ api/auth/[...all]/ Better-Auth-Handler
+│  │  │  └─ account/        Einstellungen, Löschen (F-042, F-043) – ab Inkrement 1
+│  │  ├─ [locale]/          Root-Layout 2: öffentliche Seiten /de, /en (Landing, später Rechtstexte, Hilfe)
+│  │  └─ api/               auth/[...all]/ (Better Auth), health/ (Health-Check inkl. DB-Ping)
 │  ├─ components/           geteilte UI-Bausteine (Button, Dialog, CodeInput …)
 │  ├─ features/             fachliche Module: trips, membership, availability, heatmap, voting, account
 │  │                        (je: components/, actions.ts, queries.ts)
@@ -259,9 +261,9 @@ Demo/Dev/Test (und später Staging): **Mailpit** (lokaler SMTP-Fänger mit Web-U
 │  ├─ server/               db/ (schema.ts, client.ts), auth.ts, mail/ (Transport + Vorlagen-Render),
 │  │                        jobs/ (Retention F-013/F-043), rate-limit.ts
 │  ├─ emails/               React-Email-Vorlagen
-│  ├─ i18n/                 routing.ts, request.ts, formats.ts, regions.ts
+│  ├─ i18n/                 config.ts (Locales, Cookie `lang`), negotiate.ts (+ Test), request.ts; später formats.ts, regions.ts
 │  ├─ config/               holiday-regions.ts, limits.ts (30 Mitglieder etc.)
-│  └─ styles/               globals.css (importiert tokens.css)
+│  └─ styles/               globals.css (`@import "../../docs/design/tokens.css"` – keine Kopie, T3)
 ├─ tests/
 │  ├─ e2e/                  Playwright-Specs + Helfer (Mailpit-Client)
 │  └─ fixtures/
@@ -279,7 +281,7 @@ Demo/Dev/Test (und später Staging): **Mailpit** (lokaler SMTP-Fänger mit Web-U
 - **Fachlogik** (F-009, F-016, F-012) als reine Funktionen in `src/lib/` ohne DB-/Framework-Abhängigkeit.
 - **Fehler:** Nutzerfehler als übersetzbare Fehlercodes (`errors.trip.tooManyMembers`), keine rohen Exceptions an den Client.
 - **Logging:** strukturiert (JSON), **nie** E-Mail-Adressen, Codes, Tokens, Passwörter, Kalenderdaten loggen; IP nur in Rate-Limit-/Security-Kontext.
-- **Sicherheit:** Security-Header (CSP mit Nonces, HSTS, `X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`); Reiseseiten `noindex` (F-002).
+- **Sicherheit:** Security-Header in `next.config.ts` (`X-Content-Type-Options`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy`, `X-Frame-Options: DENY`; CSP mit Nonces und HSTS folgen – HSTS ab Go-Live über Caddy); private Routen (`/trips`, `/i`, `/login`, `/auth`, `/account`) `noindex, nofollow` (F-002), außerhalb `APP_ENV=production` alles `noindex`. **Token-Routen `/i/*` und `/auth/*`: `Referrer-Policy: same-origin`** (nicht `no-referrer` wie in sitemap.md §4: damit senden Browser bei Formular-POSTs `Origin: null`, und die CSRF-/Origin-Prüfung von Server Actions und Better Auth schlägt fehl – [spike-auth.md](spike-auth.md); Tokens gelangen trotzdem nicht an fremde Seiten).
 - **Commits:** Conventional Commits auf Englisch mit Feature-/Finding-ID, z. B. `feat(F-005): add brush selection to availability calendar`, `fix(R-012): prevent duplicate display names`. Branches: `feat/F-005-availability`, `fix/R-012-…`.
 - **Pull Requests:** klein, ein Inkrement/Feature; CI muss grün sein; Reviewer-Freigabe vor Merge (CLAUDE.md).
 
@@ -289,16 +291,18 @@ Die CI ruft diese Skripte auf (fehlende werden übersprungen – `--if-present`)
 
 | Skript | Zweck |
 |---|---|
-| `lint` | `eslint .` |
+| `lint` | `next typegen && eslint .` (Typegen für `PageProps`/Routen-Typen) |
 | `format:check` | `prettier --check .` |
-| `typecheck` | `tsc --noEmit` |
+| `typecheck` | `next typegen && tsc --noEmit` |
 | `i18n:check` | Schlüsselgleichheit `de`/`en` |
 | `test` | `vitest run` (Unit + Komponenten) |
 | `build` | `next build` |
-| `start` | `next start` bzw. `node .next/standalone/server.js` |
-| `db:migrate` | Drizzle-Migrationen anwenden |
+| `start` | `next start` (lokal/CI); im Docker-Image `node server.js` aus dem Standalone-Build (`NEXT_OUTPUT_STANDALONE=1`) |
+| `db:migrate` | Drizzle-Migrationen anwenden (`drizzle-kit migrate`) |
+| `db:generate` | Migration aus `schema.ts` erzeugen – nicht von CI genutzt |
 | `db:seed:demo` | Demo-Daten einspielen (nur `APP_ENV=demo`/`development`, deployment.md §0.4) – nicht von CI genutzt |
 | `test:e2e` | `playwright test` (startet die App über `webServer` in `playwright.config.ts`) |
+| `demo:up` / `demo:migrate` / `demo:seed` / `demo:down` / `demo:reset` | Offline-Demo per Docker Compose (deployment.md §0.2); Migration/Seed laufen im Service `tools` – nicht von CI genutzt |
 
 ## 10. CI-Pipeline (`.github/workflows/ci.yml`)
 
@@ -323,7 +327,7 @@ Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – ni
 |---|---|---|---|
 | T1 | Kombi-Mail Code + Magic-Link mit Better Auth; „Angemeldet bleiben“ für OTP – **lokal mit Mailpit** (Code + Link in Mailpit-UI prüfen, Magic-Link auch auf dem Handy im WLAN, deployment.md §0.3) | Inkrement 1, vor Feature-Code (in Arbeit) | Developer |
 | T2 | Code-Eingabe & Session in WhatsApp-/Instagram-WebView (iOS + Android) auf echten Geräten testen – braucht öffentlich erreichbare HTTPS-URL: **optional per temporärem Tunnel ohne Konto** (deployment.md §0.5, OPS-10), sonst spätestens auf Staging (Go-Live-Gate). Bis dahin Risiko offen; lokaler Ersatz: Playwright `mobile-webkit`/`mobile-chromium` + grober WLAN-Vortest | Ende Inkrement 1 (optional) / spätestens vor Beta | Developer + Reviewer |
-| T3 | Import von `docs/design/tokens.css` außerhalb `src/` im Next-Build (sonst Sync-Skript) | Scaffold | Developer |
+| T3 | ~~Import von `docs/design/tokens.css` außerhalb `src/` im Next-Build~~ – **gelöst** (Scaffold 2026-10-08): `@import` in `src/styles/globals.css` funktioniert mit Turbopack (dev + build), kein Sync-Skript ([spike-auth.md](spike-auth.md)) | Scaffold | Developer |
 | T4 | Wechsel auf Node 26 LTS | nach 28.10.2026, eigenes Ticket | Operations |
 | T6 | Platzhalter-Startschutz (`APP_ENV=production` + `[PLATZHALTER`-Marker → Start abbrechen) und `APP_ENV=demo` (Demo-Banner, Mail nur Mailpit) | Scaffold P1-0 | Developer |
 | T5 | v1: Verschlüsselung gespeicherter Kalender-URLs/CalDAV-Passwörter (F-019, F-048): AES-256-GCM, Schlüssel nur als Env-Variable (`DATA_ENCRYPTION_KEYS`, Key-Rotation), Security-Review | v1.1 | Operations + Reviewer |
@@ -332,7 +336,7 @@ Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – ni
 
 ## Quellen (Abruf 2026-10-08)
 
-- Paketversionen: `npm view <paket> version` (next 16.4.0, better-auth 1.7.7, next-intl 4.14.9, drizzle-orm 0.45.4, drizzle-kit 0.31.11, date-holidays 3.37.0, @playwright/test 1.64.0, vitest 5.0.3, pnpm 12.10.1, eslint 10.12.0, prettier 3.9.9, @node-rs/argon2 2.2.2)
+- Paketversionen: `npm view <paket> version` (next 16.4.0, better-auth 1.7.7, next-intl 4.14.9, drizzle-orm 0.45.4, drizzle-kit 0.31.11, date-holidays 3.37.0, @playwright/test 1.64.0, vitest 5.0.3, pnpm 12.10.1, eslint 10.12.0 – eingesetzt 9.39.x, siehe §2.1; typescript 6.0.3, prettier 3.9.9, @node-rs/argon2 2.2.2)
 - Better-Auth-Optionen: Typdefinitionen `better-auth@1.7.7/dist/plugins/email-otp/types.d.mts`; [Better Auth Email-OTP-Doku](https://better-auth.com/docs/plugins/email-otp); [Release-Notiz 1.7.0-beta.10 (Rate-Limit vor Plugins)](https://releases.sh/release/rel_rLmOW5Eb65NNHpcPFpNqK)
 - date-holidays-Regionen: lokal mit 3.37.0 geprüft; Lizenz laut npm `(ISC AND CC-BY-3.0)`; [README](https://cdn.jsdelivr.net/npm/date-holidays@3.28.0/README.md)
 - Next.js: [nextjs.org/blog](https://nextjs.org/blog?page=1) (16.3 Aug. 2026, Security-Releases)

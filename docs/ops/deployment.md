@@ -37,14 +37,17 @@ cp .env.example .env.demo
 #   BETTER_AUTH_SECRET=<Ausgabe von: openssl rand -base64 32>
 #   POSTGRES_PASSWORD=<beliebig, nur lokal>
 docker compose -f docker/compose.demo.yml --env-file .env.demo up -d --build
-docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm app pnpm db:migrate
-docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm app pnpm db:seed:demo   # optional, §0.4
+docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:migrate
+docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:seed:demo   # optional, §0.4
 ```
+
+Kurzform mit Node/pnpm auf dem Laptop: `pnpm demo:up` (Build + Start + Migration), `pnpm demo:seed`, `pnpm demo:down`, `pnpm demo:reset` (inkl. Daten).
+
+> **Wichtig:** Migration und Seed laufen im Service **`tools`** (Docker-Stage mit Quellcode + Dev-Abhängigkeiten, Compose-Profil `tools`), **nicht** im Service `app`: Das App-Image ist der Next.js-Standalone-Build (`node server.js`) und enthält weder `package.json`-Skripte noch `drizzle-kit`.
 
 - App: <http://localhost:3000> · Mailpit (Codes/Links): <http://localhost:8025>
 - Anmelden: E-Mail eingeben (beliebig, z. B. `anna@demo.test`) → Mail erscheint in Mailpit → 6-stelligen Code abtippen **oder** Magic-Link in Mailpit anklicken.
 - Stoppen: `docker compose -f docker/compose.demo.yml down` · Komplett zurücksetzen (inkl. Daten): `… down -v`.
-- Empfehlung an den Developer: Kurzbefehle `pnpm demo:up`, `pnpm demo:seed`, `pnpm demo:reset` als Wrapper.
 
 Für die tägliche Entwicklung bleibt `compose.dev.yml` (nur PostgreSQL + Mailpit) + `pnpm dev` (§3, Umgebung **dev**).
 
@@ -206,12 +209,12 @@ Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; 
 6. DNS-Einträge (§7), Mail-Domain beim Anbieter verifizieren.
 
 ### 5.2 Compose-Dienste (prod)
-`caddy` (80/443) → `app` (Next.js standalone, Port 3000 nur intern) → `db` (PostgreSQL 18, Volume, nur internes Netz) · `bugsink` (Fehler-Tracking, eigene Subdomain mit Login) · `backup` (Cron-Container: `pg_dump` + `age` + Upload) · `jobs` (Cron: Lösch-/Inaktivitäts-Jobs F-013/F-043, täglich 03:00 UTC, ruft `pnpm job:retention` im App-Image auf).
+`caddy` (80/443) → `app` (Next.js standalone, Port 3000 nur intern) → `db` (PostgreSQL 18, Volume, nur internes Netz) · `bugsink` (Fehler-Tracking, eigene Subdomain mit Login) · `backup` (Cron-Container: `pg_dump` + `age` + Upload) · `jobs` (Cron: Lösch-/Inaktivitäts-Jobs F-013/F-043, täglich 03:00 UTC, ruft `pnpm job:retention` im `tools`-Image auf – das Standalone-App-Image hat keine Skripte; Alternative bei OPS-3: Job als eigenes Node-Bundle ins App-Image).
 
 ### 5.3 Release-Ablauf (Workflow `deploy.yml`, wird erstellt, sobald Zugänge existieren)
 1. Merge auf `main` → CI grün (Lint, Typecheck, Unit, Build, E2E).
 2. Image bauen, taggen mit Git-SHA, nach `ghcr.io/<owner>/wir-wollen-weg` pushen.
-3. **Staging automatisch:** per SSH `docker compose pull && docker compose run --rm app pnpm db:migrate && docker compose up -d`; Smoke-Test (`/api/health` liefert 200 inkl. DB-Ping).
+3. **Staging automatisch:** per SSH `docker compose pull && docker compose run --rm tools pnpm db:migrate && docker compose up -d` (Migration im `tools`-Image, siehe §0.2; OPS-3 baut und pusht beide Images mit demselben Git-SHA); Smoke-Test (`/api/health` liefert 200 inkl. DB-Ping).
 4. Abnahme auf Staging (Reviewer ✅, ggf. Auftraggeber).
 5. **Produktion per manueller Freigabe** (GitHub Environment Protection) mit demselben Image-Tag; vor der Migration automatischer `pg_dump`.
 6. Rollback: vorherigen Image-Tag deployen. Migrationen nur **rückwärtskompatibel** (expand → migrate → contract über zwei Releases), damit Rollback ohne DB-Restore möglich ist.
