@@ -45,4 +45,6 @@ Der CEO liest zu Beginn jeder Sitzung diesen Abschnitt, `docs/product/PRD.md` (i
 - **Arbeitsmodus: Offline-Demo.** Kein Hosting, keine Domain, keine Konten/Abos – alles läuft lokal (Mails über Mailpit).
 - **⚠ Vor Go-Live zwingend mit dem Auftraggeber klären (CEO erinnert daran!):** echte Betreiber-/Impressumsangaben statt Platzhalter (Q14), Rechtstexte-Weg Generator/Anwalt (Q16), Domain + Hosting-/Mail-Konten (Q15). Checkliste: `docs/ops/compliance-checklist.md`, `docs/ops/deployment.md`.
 - **Offen beim Auftraggeber (nicht blockierend):** PRD §12 Q7–Q10.
-- **In Arbeit (2026-10-08):** `developer` P1-0 Scaffold + P1-0a Auth-Spike (lokal); `designer` EN-Wortmarke „When do we go?“; `ui-ux` Copy/Marke je Sprache; `operations-manager` Offline-Demo-Plan + Go-Live-Checkliste; `product-manager` PRD/Features (Hilfe-Seite, WCAG 2.2, EN-Name).
+- **P1-0 Scaffold + P1-0a Auth-Spike (2026-10-08):** umgesetzt, Reviewer ⚠️ freigegeben mit Anmerkungen (R-001–R-006, R-008–R-012 erledigt), CI grün, PR #4 wartet auf Freigabe des Auftraggebers. Offen fürs Inkrement 1: R-007, R-013, R-014; Rate-Limits pro E-Mail (hoch). Hinweis: lokal Node ≥ 24 verwenden (CI läuft auf 24).
+- **Offen beim Auftraggeber:** Ablage `docs/review/findings.md` (Reviewer durfte nicht schreiben – Freigabe erfragt).
+- **Nächster Schritt:** Nach Merge von PR #4 Inkrement 1 (F-046, F-040–F-042, F-051-Hilfelinks) mit `developer`; optional Tunnel-Test T2 (OPS-10, erst nach R-005 – erledigt).
