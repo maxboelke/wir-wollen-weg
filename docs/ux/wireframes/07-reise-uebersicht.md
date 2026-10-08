@@ -63,7 +63,7 @@ Nächster-Schritt-Karte – Varianten:
 | Phase 2, Orga | «4 von 7 haben abgestimmt.» + Frist | `[Erinnern]` `[Termin festlegen]` |
 | Phase 3 | Ergebnis-Karte (s. W11) | `[Zum Kalender hinzufügen]` `[Allen Bescheid geben]` |
 
-## Desktop (≥ 1024 px)
+## Desktop (≥ 960 px)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐

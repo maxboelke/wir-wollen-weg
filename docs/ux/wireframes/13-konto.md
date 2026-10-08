@@ -91,4 +91,4 @@ Setzen/Ändern: «Neues Passwort» (`new-password`, Anzeigen-Schalter, ≥ 10 Ze
 → letzter Dialog «Konto endgültig löschen?» → `/goodbye` (W14).
 
 ## Desktop
-Einspaltig, max. 640 px; Abschnitte als Karten. Optional linke Unternavigation (Profil · Sprache & Region · Anmeldung · Datenschutz) ab 1024 px.
+Einspaltig, max. 640 px; Abschnitte als Karten. Optional linke Unternavigation (Profil · Sprache & Region · Anmeldung · Datenschutz) ab 960 px.

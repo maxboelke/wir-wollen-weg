@@ -44,7 +44,7 @@ Zweck: In 5 Sekunden verstehen, was die App tut, und sofort eine Reise anlegen k
 └────────────────────────────────────┘
 ```
 
-## Desktop (≥ 1024 px)
+## Desktop (≥ 960 px)
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────┐

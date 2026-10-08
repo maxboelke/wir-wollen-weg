@@ -17,15 +17,18 @@ Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, 
 
 ## 2. Breakpoints & Layout
 
+Breakpoints identisch mit dem Design-System (`docs/design/tokens.css`: 360 Basis · 600 md · 960 lg · 1200 xl), Media Queries mobile-first mit `min-width`.
+
 | Name | Breite | Layout-Regeln |
 |---|---|---|
-| `xs` (Basis) | 320–599 px | Entwurfsbreite **360 px**. Einspaltig, Seitenrand 16 px (bei < 360 px: 12 px). Kalender 7 Spalten volle Breite. Fixierte Aktionsleiste unten. Dialoge als Bottom-Sheets. |
-| `sm` | 600–767 px | Einspaltig, max. Inhaltsbreite 560 px zentriert. Kalender-Zellen max. 64 px. |
-| `md` | 768–1023 px | Wie `sm`, aber Meine Reisen zweispaltige Kartenliste; Dialoge zentriert (max. 480 px). |
-| `lg` | 1024–1279 px | Reise: Inhalt + Seitenspalte (Gruppe: Heatmap links, Vorschläge rechts 360 px). Kalender 2 Monate nebeneinander. Werkzeugleiste Meine Tage oben über dem Kalender (sticky). |
-| `xl` | ≥ 1280 px | Max. Inhaltsbreite 1200 px. Kalender 3 Monate nebeneinander (Meine Tage), Heatmap 2 Monate + Seitenspalte. |
+| Basis (`sm`) | 320–599 px | Entwurfsbreite **360 px**. Einspaltig, Seitenrand 16 px (Kalender: 12 px, s. abstimmung-design.md D-3). Kalender 7 Spalten volle Breite, ein Monat untereinander. Fixierte Aktionsleiste unten. Dialoge als Bottom-Sheets. |
+| `md` | 600–959 px | Einspaltig, max. Inhaltsbreite 640 px (`--ww-size-content-narrow`) zentriert; Meine Reisen zweispaltige Kartenliste; Dialoge zentriert (max. 480 px); Kalenderzellen 64 px hoch. Werkzeugleiste Meine Tage bleibt unten fixiert. |
+| `lg` | 960–1199 px | Reise: Inhalt + Seitenspalte (Gruppe: Heatmap links, Vorschläge rechts 340 px). Kalender 2 Monate nebeneinander. Werkzeugleiste Meine Tage oben über dem Kalender (sticky). Tagesdetail als Seitenpanel. |
+| `xl` | ≥ 1200 px | Max. Inhaltsbreite 1040 px (`--ww-size-content-wide`) für Kalender, 1200 px gesamt. Meine Tage: 3 Monate nebeneinander; Gruppe: 2 Monate + Seitenspalte. |
 
-- **Mindestens bedienbar ab 320 px** ohne horizontales Scrollen (WCAG 1.4.10 Reflow). Bei 320 px sinkt die Kalenderzelle auf ≈ 41 px (zulässig, ≥ 24 px Minimum, s. §7.2).
+In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
+
+- **Mindestens bedienbar ab 320 px** ohne horizontales Scrollen (WCAG 1.4.10 Reflow). Bei 320 px sinkt die Kalenderzelle auf ≈ 41 px Breite (zulässig, ≥ 24 px Minimum, s. §7.2).
 - **Höhe:** Fixierte Leisten (Header + Tabs oben, Aktionsleiste unten) zusammen ≤ 40 % der Viewport-Höhe bei 640 px Höhe; bei Querformat mit < 480 px Höhe wird der Reise-Header beim Scrollen nach unten ausgeblendet und bei Scroll nach oben wieder eingeblendet.
 - **Safe Areas:** `env(safe-area-inset-*)` für fixierte Leisten (iPhone, In-App-Browser-Toolbars).
 - **Viewport:** `width=device-width, initial-scale=1`; **kein** `maximum-scale`/`user-scalable=no` (Zoom muss erlaubt sein). Eingabefelder ≥ 16 px Schrift, damit iOS nicht automatisch zoomt.
@@ -47,7 +50,7 @@ Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, 
 - **Deaktiviert:** nur wenn der Grund danebensteht; sonst lieber aktiv lassen und bei Klick validieren.
 
 ### 4.2 Dialoge & Bottom-Sheets
-- Mobil (`xs`/`sm`): Bottom-Sheet mit Griff, schließbar per Wischen nach unten, Tipp auf Hintergrund, `Esc`, Zurück-Taste. Desktop: zentrierter modaler Dialog.
+- Mobil (< 600 px): Bottom-Sheet mit Griff, schließbar per Wischen nach unten, Tipp auf Hintergrund, `Esc`, Zurück-Taste. Desktop: zentrierter modaler Dialog.
 - `role="dialog"`, `aria-modal="true"`, `aria-labelledby` = Überschrift; Fokus beim Öffnen auf die Überschrift (bei Bestätigungsdialogen) bzw. auf das erste Feld; Fokusfalle; beim Schließen Fokus zurück auf den Auslöser.
 - **Destruktive Bestätigung:** Überschrift als Frage, Folgen in einem Satz, Buttons `[Abbrechen]` (sekundär, links/oben) und `[<Verb>]` (destruktiv). Standardfokus auf `[Abbrechen]`.
 - Tagesdetail (Heatmap) ist **nicht modal** auf Desktop (Seitenpanel), damit man parallel im Kalender navigieren kann.
@@ -146,7 +149,7 @@ Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, 
 - **Dark Mode** (falls Designer ihn liefert): alle obigen Kontrastregeln gelten auch dort.
 
 ### 7.2 Zielgrößen & Fokus
-- **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px ≈ 46 × 48 px). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
+- **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px ≈ 46 × 52 px, s. abstimmung-design.md D-3). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
 - Abstand zwischen benachbarten Zielen ≥ 4 px **oder** Zellen grenzen ohne Lücke an, sind aber ≥ 44 px (Kalender).
 - **Fokus sichtbar** auf allen Elementen: Fokusring ≥ 2 px, Kontrast ≥ 3:1 gegen Hintergrund **und** gegen Zellfarbe (Heatmap); `:focus-visible`.
 - **Fokus nicht verdeckt (2.4.11):** `scroll-padding-top/bottom` = Höhe der fixierten Leisten, damit fokussierte Kalendertage nie unter Header/Werkzeugleiste liegen.
@@ -225,7 +228,7 @@ Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, 
 
 - Sprache und Region getrennt (Flow F). Formate über `Intl.DateTimeFormat` mit Konto-Region (`de-DE`, `de-AT`, `de-CH`, `en-GB`, `en-US`).
 - **Wochenstart:** Region (Mo für DE/AT/CH/GB, So für US), überschreibbar im Konto. Wochenende = Sa+So immer (alle unterstützten Regionen).
-- **Text-Expansion:** Layouts für **DE + 30 %** auslegen (DE ist in der Regel die längere Sprache; EN-Strings können in Einzelfällen länger sein, z. B. „If needed“ vs. „Zur Not“). Keine fixen Breiten für Texte; Buttons dürfen in `xs` auf zwei Zeilen umbrechen, außer Kalenderzellen und Tabs (dort Zeichenbudget §10.4).
+- **Text-Expansion:** Layouts für **DE + 30 %** auslegen (DE ist in der Regel die längere Sprache; EN-Strings können in Einzelfällen länger sein, z. B. „If needed“ vs. „Zur Not“). Keine fixen Breiten für Texte; Buttons dürfen unter 600 px auf zwei Zeilen umbrechen, außer Kalenderzellen und Tabs (dort Zeichenbudget §10.4).
 - Pluralformen über ICU MessageFormat («{count, plural, one {# Nacht} other {# Nächte}}»).
 - Namen (nutzergeneriert) nie übersetzen, nie kürzen ohne Tooltip/Volltext im Detail.
 - Teilen-Texte: Sprache des Teilenden, umschaltbar im Sheet; Daten im Teilen-Text im Format der **gewählten Textsprache** (de → `de-DE`-Format bzw. Region des Teilenden, wenn deutschsprachig; en → `en-GB`, außer Teilender hat `en-US`).
@@ -244,7 +247,7 @@ Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, 
 
 | Konzept | DE | EN |
 |---|---|---|
-| App-Name | Wir wollen weg | Wir wollen weg (nicht übersetzen; Claim EN: „Let's get away“) |
+| App-Name | Wir wollen weg | Wir wollen weg (nicht übersetzen; EN-Unterzeile laut Designer-Wortmarke: „Find dates for your group trip“) |
 | Reise | Reise | Trip |
 | Suchzeitraum | Zeitraum (für die Suche) | Date range |
 | Mindestdauer / Wunschdauer | mindestens … Nächte / am liebsten … Nächte | at least … nights / ideally … nights |

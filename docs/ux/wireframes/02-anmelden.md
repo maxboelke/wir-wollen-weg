@@ -141,4 +141,4 @@ Fehler: «E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code 
 Erfolg: Snackbar «Passwort geändert. Auf anderen Geräten wurdest du abgemeldet.» → /trips.
 
 ## Desktop
-Zentrierte Karte, max. 440 px breit, gleicher Inhalt; links daneben (≥ 1024 px) optional dekorative Illustration (Designer). Kein anderes Verhalten.
+Zentrierte Karte, max. 440 px breit, gleicher Inhalt; links daneben (≥ 960 px) optional dekorative Illustration (Designer). Kein anderes Verhalten.

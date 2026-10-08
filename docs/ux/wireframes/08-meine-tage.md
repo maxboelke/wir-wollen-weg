@@ -114,7 +114,7 @@ Snackbar nach Zug
 ### Phase 3 (festgelegt) – schreibgeschützt
 Werkzeugleiste ersetzt durch: «Der Termin steht fest – deine Tage sind gesperrt.» Zellen nicht bedienbar, Zustände bleiben sichtbar.
 
-## Desktop (≥ 1024 px)
+## Desktop (≥ 960 px)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -134,4 +134,4 @@ Werkzeugleiste ersetzt durch: «Der Termin steht fest – deine Tage sind gesper
 │ Kommentar (optional) [                                                   ]  │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
-≥ 1280 px: 3 Monate nebeneinander. Zellen auf Desktop 56–64 px.
+≥ 1200 px: 3 Monate nebeneinander. Zellen auf Desktop 56–64 px.

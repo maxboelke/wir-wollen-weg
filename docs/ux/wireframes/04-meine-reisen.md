@@ -71,7 +71,7 @@ Löschhinweis (F-013, nur Orga, 14 Tage vorher) als Banner **über** „Zu tun�
 ```
 Variante mit offenem Beitritt (Flow A.5): Karte oben «Du wolltest „Lissabon 2027“ beitreten. [Jetzt beitreten]».
 
-## Desktop (≥ 768 px)
+## Desktop (≥ 600 px)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐

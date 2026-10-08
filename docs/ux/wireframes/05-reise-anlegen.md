@@ -57,7 +57,7 @@ Features: F-001, F-016 (Feiertagsregion), F-017 (Frist), F-040/F-041 (Auth am En
 ```
 
 ## Desktop
-Einspaltiges Formular, max. 560 px, zentriert. Von/Bis nebeneinander, Stepper nebeneinander. Rechts (≥ 1024 px) optional Live-Vorschau der Einladungskarte («So sieht deine Einladung aus») – Nice-to-have, nicht MVP-kritisch.
+Einspaltiges Formular, max. 560 px, zentriert. Von/Bis nebeneinander, Stepper nebeneinander. Rechts (≥ 960 px) optional Live-Vorschau der Einladungskarte («So sieht deine Einladung aus») – Nice-to-have, nicht MVP-kritisch.
 
 ## Fehler (Beispiele)
 ```

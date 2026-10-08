@@ -116,7 +116,7 @@ Inhalt:
   3. «Geht» (= Zurücksetzen auf Standard)
   
   Daneben: `[Zeitraum]`-Schalter (Bereichsmodus), `[↶ Rückgängig]`, `[⋯ Schnellaktionen]`. Darunter bzw. daneben der primäre Button `[Fertig – abgeben]` bzw. nach Abgabe der Speicherstatus.
-- **Kalender:** Monate des Suchzeitraums untereinander (mobil, Endlos-Scroll mit fixierter Monatsüberschrift) bzw. 2–3 Monate nebeneinander (Desktop ≥ 1024 px). Oben Sprung-Chips je Monat («Mai · Juni»). Wochenstart nach Region/Konto (Mo oder So); Wochenend-Spalten = Sa/So unabhängig vom Wochenstart.
+- **Kalender:** Monate des Suchzeitraums untereinander (mobil, Endlos-Scroll mit fixierter Monatsüberschrift) bzw. 2–3 Monate nebeneinander (Desktop ≥ 960 px). Oben Sprung-Chips je Monat («Mai · Juni»). Wochenstart nach Region/Konto (Mo oder So); Wochenend-Spalten = Sa/So unabhängig vom Wochenstart.
 - **Tag außerhalb des Suchzeitraums / vergangen:** sichtbar (zur Orientierung), ausgegraut, nicht bedienbar.
 - **Feiertag (F-016):** Markierung in der Zelle + Liste «Feiertage im Mai: 1.5. Tag der Arbeit · 6.5. Christi Himmelfahrt …» unter jedem Monat (Namen in Sprache des Betrachters). Region = Konto-Region; Zusatzoption (Schnellaktion-Menü): «Auch Feiertage der Reise zeigen (Bayern)», falls abweichend.
 - **Legende** über dem Kalender, einklappbar nach erster Abgabe: Zustände + «Nicht markierte Tage zählen als ‚geht‘».
@@ -159,7 +159,7 @@ Inhalt:
 ### C.1 Aufbau Tab „Gruppe“ (W09)
 
 - **Mobil:** Segment-Schalter oben `[Vorschläge] [Kalender]`, Standard **Vorschläge** (der Algorithmus ist der Kernnutzen; die Heatmap ist das Werkzeug zum Nachvollziehen).
-- **Desktop (≥ 1024 px):** zweispaltig – links Heatmap (2 Monate), rechts Vorschlagsliste (sticky). Auswahl eines Vorschlags hebt den Zeitraum in der Heatmap hervor.
+- **Desktop (≥ 960 px):** zweispaltig – links Heatmap (2 Monate), rechts Vorschlagsliste (sticky). Auswahl eines Vorschlags hebt den Zeitraum in der Heatmap hervor.
 - **Statusband oben (beide):** «5 von 7 haben abgegeben. Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» Orga: `[Erinnern]` (→ Flow K). Wenn alle abgegeben: «Alle haben abgegeben.» + Orga: `[Abstimmung starten]`.
 - **Filterzeile** (Chips, wirken nur lokal für den Betrachter, F-008/F-009): `Dauer: 5 Nächte ▾` (Stepper, Standard = Wunschdauer, Untergrenze 1) · `Darf fehlen: 1 ▾` (0–3) · `Personen ausblenden ▾` (Mehrfachauswahl). Aktive Filter sichtbar hervorgehoben + `[Filter zurücksetzen]`. Hinweis, wenn aktiv: «Nur für dich – die Gruppe sieht die Standardansicht.»
 

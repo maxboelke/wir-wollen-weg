@@ -138,7 +138,7 @@ Reise voll / Beitritt gesperrt          Link ungültig (→ auch W14)
 
 Phase 2/3: Hinweiszeile in der Vorschau-Karte («Die Abstimmung läuft schon – du kannst noch mitmachen.» / «Der Termin steht schon: 5.–10. Mai.»), CTA bleibt.
 
-## Desktop (≥ 1024 px)
+## Desktop (≥ 960 px)
 
 ```
 ┌───────────────────────────────────────────────────────────────────────┐
