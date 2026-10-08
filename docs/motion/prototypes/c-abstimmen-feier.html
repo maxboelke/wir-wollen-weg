@@ -3,25 +3,35 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Prototyp c · Abstimmen & „Es geht los!“ (W10/W11, F-011/F-012) · Wir wollen weg</title>
+<title>Prototyp c · Abstimmen & „Es geht los!“ mit Vorfreude-Ring (W10/W11, F-011/F-012) · Wir wollen weg</title>
 <style>
-/* ===== Platzhalter-Optik (aktuelle Tokens, Light) ===== */
+/* ===== Optik B0 „Indigo & Minze“ – Werte aus docs/design/tokens.css v1.0 (Light), inline übernommen,
+   damit der Prototyp eigenständig bleibt. Schriften: Plus Jakarta Sans / Figtree, falls lokal installiert,
+   sonst Systemschrift (keine CDNs). ===== */
 :root{
-  --bg:#fbf8f3;--surface:#fff;--sunken:#f1eee8;--text:#1c2526;--muted:#55605f;
-  --border-subtle:#e4ded4;--border-strong:#858c8a;
-  --primary:#0e6a68;--primary-text:#0a5654;--primary-tint:#ddf1ee;
-  --accent:#e8694a;--accent-strong:#d4552f;--sun:#f4b942;--mint:#5fbfb1;
-  --info-tint:#eff8f6;--info-text:#0a5654;--focus:#2b59c3;
-  --inverse-bg:#1c2526;--inverse-text:#fff;
-  --vote-yes-bg:#ddf1ee;--vote-yes-fg:#0a5654;--vote-yes-bar:#187e73;
-  --vote-maybe-bg:#fdf0cf;--vote-maybe-fg:#7a4e00;--vote-maybe-bar:#b87a00;
-  --vote-no-bg:#ece5d9;--vote-no-fg:#1c2526;--vote-no-bar:#8a847a;
-  --scrim:rgb(17 24 25 / .48);
-  --shadow-1:0 1px 2px rgb(28 37 38 / .06),0 1px 3px rgb(28 37 38 / .10);
-  --shadow-3:0 8px 16px rgb(28 37 38 / .10),0 16px 40px rgb(28 37 38 / .16);
-  --shadow-bar:0 -1px 0 #e4ded4,0 -6px 16px rgb(28 37 38 / .06);
+  --bg:#f4f2fb;--surface:#fff;--sunken:#ece9f7;--text:#1e1a3d;--muted:#57527a;--subtle:#6e6992;
+  --border-subtle:#e3dff0;--border-strong:#8a86a8;
+  --primary:#2b2266;--primary-hover:#3a2f86;--primary-active:#221b52;--primary-text:#5a3fd0;--primary-tint:#ece6ff;
+  --accent:#52e5b8;--accent-text:#00775a;--accent-tint:#d9f8ec;--sun:#ffcf4a;--sun-text:#7a5200;--sun-edge:#7a5200;
+  --info-tint:#ece6ff;--info-text:#5a3fd0;--focus:#2b59c3;
+  --inverse-bg:#1e1a3d;--inverse-text:#fff;--inverse-link:#52e5b8;
+  --vote-yes-bar:#00775a;--vote-maybe-bar:#e3a700;--vote-no-bar:#8a86a8;
+  --vote-selected-bg:#2b2266;--vote-selected-fg:#fff;--vote-ghost:#57527a;
+  --tile-lav-bg:#ece6ff;--tile-lav-fg:#5a3fd0;--tile-mint-bg:#d9f8ec;--tile-mint-fg:#00775a;
+  --progress-track:#ece9f7;--progress-fill:#2b2266;
+  --scrim:rgb(20 17 46 / .5);
+  --shadow-1:0 1px 2px rgb(30 26 61 / .06),0 14px 30px -18px rgb(43 34 102 / .38);
+  --shadow-3:0 8px 16px rgb(30 26 61 / .10),0 24px 40px -20px rgb(43 34 102 / .60);
+  --shadow-button:0 10px 22px -10px rgb(43 34 102 / .60);
+  --shadow-bar:0 -16px 34px -18px rgb(43 34 102 / .45);
+  --cockpit-bg:#2b2266;
+  --cockpit-image:radial-gradient(240px 96px at 100% 0,rgb(82 229 184 / .22),rgb(82 229 184 / 0)),radial-gradient(220px 96px at 0 0,rgb(167 154 242 / .30),rgb(167 154 242 / 0));
+  --cockpit-muted:#cfc9f2;--cockpit-track:rgb(255 255 255 / .10);--cockpit-control:rgb(255 255 255 / .12);
+  --confetti-1:#52e5b8;--confetti-2:#ffcf4a;--confetti-3:#a79af2;--confetti-4:#f0503f;--confetti-5:#ffffff;
+  --font-sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-display:"Plus Jakarta Sans","Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-/* ===== Motion-Tokens (Vorschlag motion-system.md §3) ===== */
+/* ===== Motion-Tokens (tokens.css v1.0 §6 = motion-system.md §3) ===== */
 :root{
   --ww-duration-instant:80ms;--ww-duration-fast:140ms;--ww-duration-base:220ms;--ww-duration-slow:320ms;
   --ww-duration-moderate:480ms;--ww-duration-celebrate:700ms;--ww-duration-confetti:1800ms;--ww-duration-fade:140ms;
@@ -38,6 +48,8 @@
     --ww-ease-spring-bouncy:linear(0, .116 5%, .372 10%, .657 15%, .898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, .987 60%, .974 70%, .986 80%, .999 90%, 1);
   }
 }
+/* Reduziert: im Produkt per @media (prefers-reduced-motion: reduce) + [data-motion="reduce"];
+   im Prototyp steuert nur der Schalter (Vergleich in beide Richtungen). */
 :root[data-motion="reduce"]{
   --ww-duration-instant:.01ms;--ww-duration-fast:.01ms;--ww-duration-base:.01ms;--ww-duration-slow:.01ms;
   --ww-duration-moderate:.01ms;--ww-duration-celebrate:.01ms;--ww-duration-confetti:0ms;--ww-duration-fade:140ms;
@@ -49,189 +61,263 @@
 
 *{box-sizing:border-box}
 html{color-scheme:light;-webkit-text-size-adjust:100%}
-body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#e6e1d8}
-button{font:inherit;color:inherit}
+body{margin:0;font:16px/1.45 var(--font-sans);color:var(--text);background:#d9d5f2}
+button,select{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.proto{position:sticky;top:0;z-index:70;background:#1c2526;color:#fff;font-size:13px;line-height:1.3}
+[hidden]{display:none!important}
+
+/* Prototyp-Leiste */
+.proto{position:sticky;top:0;z-index:90;background:#1e1a3d;color:#fff;font-size:13px;line-height:1.3}
 .proto-in{max-width:390px;margin:0 auto;padding:6px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .sw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;position:relative}
 .sw input{position:absolute;opacity:0;width:1px;height:1px}
-.sw-track{width:36px;height:20px;border-radius:999px;background:#6b7775;position:relative;flex:none}
+.sw-track{width:36px;height:20px;border-radius:999px;background:#57527a;position:relative;flex:none}
 .sw-track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
-.sw input:checked+.sw-track{background:#4ab3a4}
+.sw input:checked+.sw-track{background:#5b48c9}
 .sw input:checked+.sw-track::after{transform:translateX(16px)}
 .sw input:focus-visible+.sw-track{outline:3px solid #8fb3ff;outline-offset:2px}
-.pbtn{color:#fff;background:transparent;border:1px solid #858c8a;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
+.pbtn,.psel{color:#fff;background:transparent;border:1px solid #8a86a8;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
+.psel option{color:#1e1a3d}
+.plab{display:inline-flex;align-items:center;gap:4px}
 
-.app{max-width:390px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;padding-bottom:120px;overflow-x:clip}
-.trip{background:var(--surface);border-bottom:1px solid var(--border-subtle)}
-.trip-top{display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;font-weight:600}
-.trip-top .grow{flex:1}
-.tabs{display:flex;gap:4px;padding:0 8px;font-size:14px;font-weight:600}
-.tabs a{padding:12px 8px;color:var(--muted);text-decoration:none;position:relative}
-.tabs a[aria-current]{color:var(--text)}
-.tabs a[aria-current]::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;border-radius:2px;background:var(--primary)}
+/* App-Rahmen 390 px */
+.app{max-width:390px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;padding-bottom:140px;overflow-x:clip}
+
+/* Cockpit-Kopf (design-system §9.2/§9.4) */
+.trip{background:var(--cockpit-image),var(--cockpit-bg);color:#fff;border-radius:0 0 30px 30px;padding:4px 8px 14px}
+.trip-top{display:flex;align-items:center;gap:8px;min-height:48px}
+.ib{width:44px;height:44px;border-radius:50%;background:var(--cockpit-control);display:grid;place-items:center;flex:none;font-size:18px}
+.tname{flex:1;min-width:0}
+.tname b{display:block;font:800 21px/1.15 var(--font-display);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tname span{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--cockpit-muted)}
+.tname i{width:8px;height:8px;border-radius:50%;background:var(--dot,#a79af2);flex:none}
+.tabs{display:flex;gap:2px;margin:8px 0 0;padding:2px;border-radius:999px;background:var(--cockpit-track);overflow-x:auto;scrollbar-width:none}
+.tabs a{flex:1 0 auto;display:grid;place-items:center;min-height:44px;padding:0 10px;border-radius:999px;font-size:14px;font-weight:700;color:var(--cockpit-muted);text-decoration:none}
+.tabs a[aria-current]{background:#fff;color:var(--primary);box-shadow:0 6px 14px -6px rgb(0 0 0 / .45)}
+.tabs a:focus-visible,.ib:focus-visible{outline:3px solid #fff;outline-offset:2px}
+
 .pad{padding:16px}
-h1{font-size:24px;line-height:1.2;margin:0 0 4px}
-.meta0{margin:0;color:var(--muted);font-size:14px}
-.info{background:var(--info-tint);color:var(--info-text);border-radius:12px;padding:12px 14px;margin:14px 0 4px;font-size:14px}
-.info p{margin:0 0 6px}
-.info[hidden]{display:none}
-.btn2{min-height:44px;padding:0 16px;border-radius:12px;border:1.5px solid var(--primary);background:var(--surface);color:var(--primary-text);font-weight:600;cursor:pointer;
+h1{font:800 26px/1.12 var(--font-display);letter-spacing:-.025em;margin:4px 0 12px}
+
+/* Kennzahl-Kacheln W10 (design-system §9.5) */
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.kpi{background:var(--surface);border:1px solid transparent;border-radius:20px;padding:12px;box-shadow:var(--shadow-1);text-align:left;display:grid;gap:2px}
+.kpi .tile{width:34px;height:34px;border-radius:11px;display:grid;place-items:center;margin-bottom:6px}
+.kpi .tile.lav{background:var(--tile-lav-bg);color:var(--tile-lav-fg)}
+.kpi .tile.mint{background:var(--tile-mint-bg);color:var(--tile-mint-fg)}
+.kpi b{font:800 20px/1.15 var(--font-display);font-variant-numeric:tabular-nums}
+.kpi small{font-size:13px;font-weight:500;color:var(--muted)}
+
+.info{background:var(--info-tint);color:var(--info-text);border-radius:16px;padding:12px 16px;margin:16px 0 4px;font-size:15px;font-weight:600}
+.info p{margin:0 0 8px}
+.btn2{min-height:48px;padding:0 18px;border-radius:16px;border:2px solid var(--primary);background:var(--surface);color:var(--primary);font-weight:700;font-size:16px;cursor:pointer;
   transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
 .btn2:active,.primary:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
-.opts{display:flex;flex-direction:column;gap:12px;margin-top:12px}
-.opt{background:var(--surface);border:1px solid var(--border-subtle);border-radius:16px;padding:14px 14px 12px}
-.opt h3{font-size:17px;margin:0;line-height:1.3}
-.opt .m{margin:0;font-size:14px;color:var(--muted)}
-.ghostlbl{font-size:13px;font-weight:600;color:var(--muted);margin:8px 0 0}
-.ghostlbl[hidden]{display:none}
-.vseg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-top:8px}
-.v{position:relative;min-height:56px;border-radius:12px;border:1.5px solid var(--border-strong);background:var(--surface);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:600;font-size:14px;overflow:hidden;padding:4px 2px;
+
+/* Abstimmungs-Karten (design-system §9.11) */
+.opts{display:flex;flex-direction:column;gap:12px;margin-top:16px}
+.opt{background:var(--surface);border:1px solid transparent;border-radius:24px;padding:16px;box-shadow:var(--shadow-1)}
+.ohead{display:flex;align-items:flex-start;gap:8px}
+.ohead h3{flex:1;font:800 18px/1.25 var(--font-display);letter-spacing:-.015em;margin:0}
+.rank{flex:none;display:inline-flex;align-items:center;gap:4px;font-size:13px;font-weight:800;border-radius:999px;padding:3px 10px;background:var(--sun);color:var(--text)}
+.opt .m{margin:2px 0 0;font-size:14px;color:var(--muted)}
+.opt .av{margin:2px 0 0;font-size:14px;font-weight:700}
+.ghostlbl{font-size:13px;font-weight:700;color:var(--muted);margin:10px 0 0}
+.vseg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+.v{position:relative;min-height:60px;border-radius:16px;border:1.5px solid var(--border-strong);background:var(--surface);color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-weight:700;font-size:14px;line-height:1.15;padding:6px 2px;
   transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
 .v:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
-.v .fb{position:absolute;inset:0;opacity:0;border-radius:10px}
+.v .fb{position:absolute;inset:-1.5px;border-radius:16px;background:var(--vote-selected-bg);box-shadow:var(--shadow-button);opacity:0}
 .v .ic,.v .lb{position:relative}
-.v .ic{font-size:18px;line-height:1;display:inline-block}
-.v[data-v="yes"] .fb{background:var(--vote-yes-bg)}.v[data-v="maybe"] .fb{background:var(--vote-maybe-bg)}.v[data-v="no"] .fb{background:var(--vote-no-bg)}
+.v .ic{font-size:20px;line-height:1;display:inline-block}
+.v[aria-checked="true"]{color:var(--vote-selected-fg);font-weight:800;border-color:transparent}
 .v[aria-checked="true"] .fb{opacity:1}
-.v[aria-checked="true"]{font-weight:700;border-width:2px}
-.v[data-v="yes"][aria-checked="true"]{color:var(--vote-yes-fg);border-color:var(--vote-yes-fg)}
-.v[data-v="maybe"][aria-checked="true"]{color:var(--vote-maybe-fg);border-color:var(--vote-maybe-fg)}
-.v[data-v="no"][aria-checked="true"]{color:var(--vote-no-fg);border-color:var(--vote-no-fg)}
-.v.ghost{border:2px dashed currentColor}
-.v.ghost[data-v="yes"]{color:var(--vote-yes-fg)}.v.ghost[data-v="maybe"]{color:var(--vote-maybe-fg)}.v.ghost[data-v="no"]{color:var(--vote-no-fg)}
-.res{margin-top:10px;min-height:24px}
+.v .tick{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:var(--accent);color:var(--primary);box-shadow:0 0 0 2px var(--surface);display:grid;place-items:center;opacity:0}
+.v[aria-checked="true"] .tick{opacity:1}
+.v.ghost{border:2px dashed var(--vote-ghost);color:var(--text)}
+.res{margin-top:12px;min-height:24px}
 .ph{margin:0;font-size:14px;color:var(--muted)}
-.ph[hidden],.bar[hidden],.nums[hidden],.rank[hidden]{display:none}
-.bar{display:flex;gap:2px;height:8px;border-radius:999px;overflow:hidden;background:var(--sunken)}
-.bar .b{height:100%;transform-origin:left center}
+.bar{display:flex;gap:4px;height:12px}
+.bar .b{height:100%;border-radius:999px;transform-origin:left center}
 .b.yes{background:var(--vote-yes-bar)}.b.maybe{background:var(--vote-maybe-bar)}.b.no{background:var(--vote-no-bar)}
-.resrow{display:flex;align-items:center;gap:10px;margin-top:6px;font-size:14px;font-variant-numeric:tabular-nums}
-.rank{display:inline-block;font-size:13px;font-weight:700;border-radius:999px;padding:1px 10px;background:var(--primary-tint);color:var(--primary-text)}
-.statusline{margin:16px 0 0;font-size:15px}
-.statusline .ok{display:inline-block;color:var(--primary-text);font-weight:700}
+.nums{display:block;margin-top:6px;font-size:14px;font-weight:800;font-variant-numeric:tabular-nums}
+.statusline{margin:16px 0 0;font-size:15px;font-weight:600}
+.statusline .ok{display:inline-block;color:var(--accent-text);font-weight:800}
+
+/* Fixierte Leiste (Orga) */
 .dock{position:fixed;left:0;right:0;bottom:0;z-index:40;display:flex;justify-content:center;pointer-events:none}
-.dock-in{width:100%;max-width:390px;pointer-events:auto;background:var(--surface);box-shadow:var(--shadow-bar);padding:10px 12px calc(10px + env(safe-area-inset-bottom))}
-.dock[hidden]{display:none}
-.primary{width:100%;min-height:48px;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:600;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 20px;
+.dock-in{width:100%;max-width:390px;pointer-events:auto;background:var(--surface);border-radius:28px 28px 0 0;box-shadow:var(--shadow-bar);padding:12px 14px calc(12px + env(safe-area-inset-bottom))}
+.primary{width:100%;min-height:54px;border:0;border-radius:16px;background:var(--primary);color:#fff;font-weight:700;font-size:17px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:8px 22px;box-shadow:var(--shadow-button);
   transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
-.primary[disabled]{background:#ece5d9;color:#858c8a;cursor:default}
-.small{font-size:12px;color:var(--muted);text-align:center;margin:4px 0 0}
-.spin{width:14px;height:14px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:spin 800ms linear infinite}
+.primary[disabled]{background:#ece9f7;color:#6e6992;box-shadow:none;cursor:default}
+.small{font-size:12px;color:var(--muted);text-align:center;margin:6px 0 0}
+.spin{width:16px;height:16px;border-radius:50%;border:2px solid currentColor;border-right-color:transparent;display:inline-block;animation:spin 800ms linear infinite}
 :root[data-motion="reduce"] .spin{animation:none;border:0;width:auto;height:auto}
 :root[data-motion="reduce"] .spin::before{content:"···"}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Sheet Festlegen */
+/* Sheet „Termin festlegen“ (design-system §9.16) */
 .layer{position:fixed;inset:0;z-index:80;display:flex;justify-content:center;align-items:flex-end}
-.layer[hidden]{display:none}
 .scrim{position:absolute;inset:0;background:var(--scrim)}
-.sheet{position:relative;width:100%;max-width:390px;background:var(--surface);border-radius:24px 24px 0 0;padding:8px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:var(--shadow-3)}
-.grip{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:0 auto 10px}
-.sheet h2{font-size:20px;margin:0 0 12px}
-.radio{display:flex;gap:12px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid var(--border-subtle);cursor:pointer}
+.sheet{position:relative;width:100%;max-width:390px;background:var(--surface);border-radius:28px 28px 0 0;padding:8px 20px calc(20px + env(safe-area-inset-bottom));box-shadow:var(--shadow-3)}
+.grip{width:40px;height:5px;border-radius:999px;background:var(--border-subtle);margin:0 auto 12px}
+.sheet h2{font:800 18px/1.25 var(--font-display);margin:0 0 12px}
+.radio{display:flex;gap:12px;align-items:flex-start;padding:10px 4px;border-bottom:1px solid var(--border-subtle);cursor:pointer;min-height:44px}
 .radio input{width:22px;height:22px;margin:2px 0 0;accent-color:var(--primary);flex:none}
+.radio b{font-family:var(--font-display);font-weight:800}
 .radio small{display:block;color:var(--muted);font-size:13px}
 .sheet .note{font-size:14px;color:var(--muted);margin:12px 0}
 .row2{display:grid;grid-template-columns:1fr 1.4fr;gap:8px}
 
-/* Ergebnis */
-#result[hidden],#poll[hidden]{display:none}
-.rcard{background:var(--surface);border:1px solid var(--border-subtle);border-radius:20px;padding:16px 18px 18px;text-align:center;box-shadow:var(--shadow-1)}
-.rcard h1{font-size:32px;margin:4px 0 2px;letter-spacing:-.01em}
-.rdate{font-size:20px;font-weight:700;margin:0;line-height:1.3}
-.rmeta{color:var(--muted);margin:2px 0 16px}
+/* ===== Feier: Vorfreude-Ring im Cockpit (design-system §9.12, countdown-ring.svg) ===== */
+.ck{position:relative;aspect-ratio:390 / 352;background:var(--cockpit-image),var(--cockpit-bg);border-radius:0 0 30px 30px;overflow:hidden;color:#fff}
+.ck .trip{position:relative;z-index:2;background:none;border-radius:0}
+.ring-svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.ring-svg [data-anim="glow"],.ring-svg [data-piece],.ring-svg [data-anim="sparkles"] path,.ring-svg #knobDot{transform-box:fill-box;transform-origin:center}
+.ring-svg [data-anim="knob"]{transform-box:view-box;transform-origin:195px 236px}
+.cd{position:absolute;left:50%;top:67.05%;transform:translate(-50%,-50%);z-index:2;text-align:center;pointer-events:none;line-height:1}
+.cd small{display:block;font-size:13px;font-weight:700;color:var(--cockpit-muted);line-height:1.2}
+.cd b{display:block;font:800 46px/1 var(--font-display);font-variant-numeric:tabular-nums;letter-spacing:-.03em;margin:2px 0}
+.burst{position:absolute;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.burst i{position:absolute;left:0;top:0;display:block}
+
+/* Ergebnis-Karte (design-system §9.6) – ragt 32 px ins Cockpit */
+.rcard{position:relative;z-index:3;margin:-32px 12px 0;background:var(--surface);border:1px solid transparent;border-radius:28px;padding:20px 18px;box-shadow:var(--shadow-3)}
+.eyebrow{display:flex;align-items:center;gap:6px;margin:0;font-size:13px;font-weight:700;color:var(--accent-text)}
+.rcard h1{font:800 clamp(2rem,1.3rem + 3vw,3.5rem)/1.08 var(--font-display);letter-spacing:-.03em;margin:6px 0 6px}
+.rdate{font:800 22px/1.25 var(--font-display);letter-spacing:-.02em;margin:0;text-wrap:balance}
+.rmeta{color:var(--muted);font-size:15px;font-weight:700;margin:4px 0 16px}
 .rcard .primary{margin-bottom:8px}
 .rcard .btn2{width:100%}
-.illu{display:block;margin:0 auto;overflow:visible}
-.illu .r,.illu .seal{transform-box:fill-box;transform-origin:center}
-.illu .bandsvg{transform-box:fill-box;transform-origin:left center}
-.menu{position:relative;margin-top:8px}
-.menu ul{list-style:none;margin:6px 0 0;padding:6px;border-radius:12px;background:var(--surface);border:1px solid var(--border-subtle);box-shadow:var(--shadow-3);text-align:left;transform-origin:top center}
-.menu ul[hidden]{display:none}
-.menu li button{width:100%;text-align:left;border:0;background:transparent;min-height:44px;padding:0 10px;border-radius:8px;cursor:pointer}
+.menu{position:relative}
+.menu ul{list-style:none;margin:6px 0 0;padding:6px;border-radius:16px;background:var(--surface);box-shadow:var(--shadow-3);transform-origin:top center}
+.menu li button{width:100%;text-align:left;border:0;background:transparent;min-height:44px;padding:0 10px;border-radius:11px;cursor:pointer}
 .menu li button:hover{background:var(--sunken)}
-.phase{display:flex;align-items:center;margin:20px 4px 0;font-size:13px;font-weight:600}
-.phase .st{display:flex;align-items:center;gap:6px;flex:none}
-.phase .dot{width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--primary);color:#fff;font-size:13px}
-.phase .dot.todo{background:var(--surface);border:2px solid var(--border-strong);color:var(--muted)}
-.phase .line{flex:1;height:3px;background:var(--border-subtle);margin:0 6px;position:relative;overflow:hidden;border-radius:2px;min-width:12px}
-.phase .line i{position:absolute;inset:0;background:var(--primary);transform-origin:left center}
-.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);width:min(100% - 32px,358px);background:var(--inverse-bg);color:var(--inverse-text);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow-3);font-size:15px}
-.toast[hidden]{display:none}
-/* Konfetti-Ebene: dekorativ, nie im Weg */
-.confetti{position:fixed;inset:0;z-index:75;pointer-events:none;overflow:hidden}
-.confetti i{position:absolute;left:0;top:0;display:block;will-change:transform,opacity}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin-top:18px}
+.steps .s{display:grid;gap:6px;font-size:13px;font-weight:700;color:var(--muted)}
+.steps .s.cur{color:var(--text);font-weight:800}
+.steps .t{height:6px;border-radius:999px;background:var(--progress-track);overflow:hidden;position:relative}
+.steps .t i{position:absolute;inset:0;border-radius:999px;background:var(--progress-fill);transform-origin:left center}
+.steps .cur .t i{background:var(--sun);box-shadow:inset 0 0 0 1.5px var(--sun-edge)}
+.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);width:min(100% - 32px,358px);background:var(--inverse-bg);color:var(--inverse-text);border-radius:16px;padding:12px 16px;box-shadow:var(--shadow-3);font-size:15px;font-weight:600}
 </style>
 </head>
 <body>
-<div class="proto" role="region" aria-label="Prototyp-Steuerung">
+<div class="proto" id="protoBar" role="region" aria-label="Prototyp-Steuerung">
   <div class="proto-in">
     <span><strong>Prototyp c</strong> · Abstimmen & Feier</span>
     <label class="sw"><input type="checkbox" id="rm" role="switch"><span class="sw-track" aria-hidden="true"></span>Bewegung reduzieren</label>
-    <label class="sw"><input type="checkbox" id="cf" role="switch" checked><span class="sw-track" aria-hidden="true"></span>Konfetti</label>
-    <button class="pbtn" id="btnAgain" type="button">Feier wiederholen</button>
+    <label class="plab">Rolle <select class="psel" id="role"><option value="orga">Orga</option><option value="member">Mitglied</option></select></label>
+    <label class="plab">Ring-Anteil <select class="psel" id="pct"><option value="4">4 % (gerade festgelegt)</option><option value="35">35 %</option><option value="96.5">96,5 % (Beispiel-SVG)</option></select></label>
+    <button class="pbtn" id="btnAgain" type="button">Feier zeigen</button>
+    <button class="pbtn" id="btnReopen" type="button">Abstimmen neu öffnen</button>
     <button class="pbtn" id="btnReset" type="button">Neu laden</button>
   </div>
 </div>
 
 <div class="app" id="app">
-  <header class="trip">
-    <div class="trip-top"><span aria-hidden="true">←</span><span class="grow">Lissabon 2027</span><span aria-hidden="true">⋯</span></div>
-    <nav class="tabs" aria-label="Reise"><a href="#">Übersicht</a><a href="#">Meine Tage</a><a href="#">Gruppe</a><a href="#" aria-current="page">Abstimmen</a></nav>
-  </header>
+  <!-- ===== W10 Abstimmen ===== -->
+  <div id="poll">
+    <header class="trip">
+      <div class="trip-top"><span class="ib" aria-hidden="true">←</span><span class="tname"><b>Lissabon 2027</b><span><i></i>Abstimmung läuft · <span id="phaseCount">4/7</span> abgestimmt</span></span><span class="ib" aria-hidden="true">⋯</span></div>
+      <nav class="tabs" aria-label="Reise"><a href="#">Übersicht</a><a href="#">Meine Tage</a><a href="#">Gruppe</a><a href="#" aria-current="page">Abstimmen</a></nav>
+    </header>
+    <section class="pad">
+      <h1 id="pollTitle" tabindex="-1">Wann fahren wir?</h1>
+      <div class="kpis">
+        <div class="kpi"><span class="tile lav" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 6v4.5l3 2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span><b>noch 3 Tage</b><small>bis Fr., 14. Mai</small></div>
+        <div class="kpi"><span class="tile mint" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 20 20"><circle cx="7.5" cy="7" r="3" fill="currentColor"/><circle cx="14" cy="8" r="2.4" fill="currentColor"/><path d="M2 16c.6-3 2.8-4.5 5.5-4.5S12.4 13 13 16zM13.5 12c2 0 3.8 1.2 4.5 4h-3.4" fill="currentColor"/></svg></span><b id="voted">4 von 7</b><small>haben abgestimmt</small></div>
+      </div>
+      <div class="info" id="info">
+        <p>Wir haben deine Stimmen aus deinen Tagen vorbereitet.</p>
+        <button class="btn2" id="takeAll" type="button">Alle Vorschläge übernehmen</button>
+      </div>
+      <div class="opts" id="opts"></div>
+      <p class="statusline" id="statusline" role="status"></p>
+    </section>
+  </div>
 
-  <section class="pad" id="poll">
-    <h1>Abstimmung läuft</h1>
-    <p class="meta0">noch 3 Tage (bis Fr., 14. Mai)</p>
-    <p class="meta0" id="voted">4 von 7 haben abgestimmt</p>
-    <div class="info" id="info">
-      <p>Wir haben deine Stimmen aus deinen Tagen vorbereitet.</p>
-      <button class="btn2" id="takeAll" type="button">Alle Vorschläge übernehmen</button>
-    </div>
-    <div class="opts" id="opts"></div>
-    <p class="statusline" id="statusline" role="status"></p>
-  </section>
-
-  <section class="pad" id="result" hidden>
-    <div class="rcard" id="rcard">
-      <svg class="illu" id="illu" width="220" height="165" viewBox="0 0 240 180" aria-hidden="true">
-        <circle cx="120" cy="96" r="76" fill="#ece5d9"/>
-        <rect x="56" y="62" width="124" height="88" rx="12" fill="#fff" stroke="#1c2526" stroke-width="2"/>
-        <path d="M57 80v-6a11 11 0 0 1 11-11h100a11 11 0 0 1 11 11v6z" fill="#0e6a68"/>
-        <rect x="82" y="54" width="7" height="14" rx="3.5" fill="#fff" stroke="#08403f" stroke-width="2"/>
-        <rect x="147" y="54" width="7" height="14" rx="3.5" fill="#fff" stroke="#08403f" stroke-width="2"/>
-        <g fill="#a6dbd2"><rect x="66" y="90" width="16" height="14" rx="3"/><rect x="87" y="90" width="16" height="14" rx="3"/><rect x="108" y="90" width="16" height="14" rx="3"/><rect x="129" y="90" width="16" height="14" rx="3"/><rect x="150" y="90" width="16" height="14" rx="3"/><rect x="66" y="135" width="16" height="9" rx="3"/><rect x="150" y="110" width="16" height="14" rx="3"/></g>
-        <g fill="#0b4f4a"><rect class="r" x="66" y="110" width="16" height="14" rx="3"/><rect class="r" x="87" y="110" width="16" height="14" rx="3"/><rect class="r" x="108" y="110" width="16" height="14" rx="3"/><rect class="r" x="129" y="110" width="16" height="14" rx="3"/></g>
-        <rect class="bandsvg" x="66" y="128" width="79" height="3" rx="1.5" fill="#d4552f"/>
-        <g class="seal" id="seal"><circle cx="176" cy="62" r="20" fill="#f4b942"/><path d="M167 62.5l6 6 12-13" fill="none" stroke="#1c2526" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></g>
+  <!-- ===== W11 „Es geht los!“ (Übersicht, Phase 3) ===== -->
+  <div id="result" hidden>
+    <div class="ck" id="ck">
+      <!-- Inline aus docs/design/assets/illustrations/countdown-ring.svg (v1.0). Ebene „backdrop“ weggelassen:
+           das Cockpit liefert den Grund. Statischer Endzustand = Datei (Reduced Motion). -->
+      <svg class="ring-svg" id="ringSvg" viewBox="0 0 390 352" aria-hidden="true" focusable="false">
+        <defs>
+          <linearGradient id="wwcr-grad" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#52E5B8" style="stop-color: var(--ww-ring-start, #52E5B8)"/>
+            <stop offset="1" stop-color="#FFCF4A" style="stop-color: var(--ww-ring-end, #FFCF4A)"/>
+          </linearGradient>
+        </defs>
+        <g data-anim="glow" id="glow">
+          <circle cx="195" cy="236" r="150" fill="#FFCF4A" opacity=".08"/>
+          <circle cx="195" cy="236" r="112" fill="#FFCF4A" opacity=".12"/>
+        </g>
+        <g data-anim="confetti">
+          <g data-piece="1"><rect x="34" y="176" width="9" height="15" rx="3" fill="#52E5B8" transform="rotate(-24 38 183)"/></g>
+          <g data-piece="2"><rect x="76" y="232" width="8" height="13" rx="3" fill="#FFCF4A" transform="rotate(18 80 238)"/></g>
+          <g data-piece="3"><circle cx="56" cy="286" r="5" fill="#A79AF2"/></g>
+          <g data-piece="4"><rect x="92" y="170" width="8" height="12" rx="3" fill="#F0503F" transform="rotate(40 96 176)"/></g>
+          <g data-piece="5"><rect x="22" y="236" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(-12 26 242)"/></g>
+          <g data-piece="6"><rect x="300" y="174" width="9" height="15" rx="3" fill="#FFCF4A" transform="rotate(22 304 181)"/></g>
+          <g data-piece="7"><rect x="346" y="226" width="8" height="13" rx="3" fill="#52E5B8" transform="rotate(-30 350 232)"/></g>
+          <g data-piece="8"><circle cx="334" cy="292" r="5" fill="#F0503F"/></g>
+          <g data-piece="9"><rect x="290" y="240" width="8" height="12" rx="3" fill="#A79AF2" transform="rotate(-12 294 246)"/></g>
+          <g data-piece="10"><rect x="358" y="176" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(30 362 182)"/></g>
+          <g data-piece="11"><rect x="128" y="150" width="11" height="2.5" rx="1.25" fill="#FFCF4A" transform="rotate(-35 133 151)"/></g>
+          <g data-piece="12"><rect x="252" y="146" width="11" height="2.5" rx="1.25" fill="#52E5B8" transform="rotate(30 257 147)"/></g>
+        </g>
+        <g data-anim="track">
+          <circle cx="195" cy="236" r="66" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="12"/>
+        </g>
+        <g data-anim="ring">
+          <path id="wwcr-ring" d="M195 170a66 66 0 1 1 0 132a66 66 0 1 1 0-132" pathLength="100" fill="none" stroke="url(#wwcr-grad)" stroke-width="12" stroke-linecap="round" stroke-dasharray="4 100" stroke-dashoffset="0"/>
+        </g>
+        <g data-anim="knob" id="knob">
+          <g id="knobInner" transform="rotate(14.4 195 236)">
+            <circle id="knobDot" cx="195" cy="170" r="9" fill="#FFCF4A" stroke="#2B2266" stroke-width="3"/>
+          </g>
+        </g>
+        <g data-anim="sparkles">
+          <path d="M70 196l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#52E5B8"/>
+          <path d="M322 200l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFFFFF"/>
+          <path d="M104 296l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFCF4A"/>
+        </g>
       </svg>
-      <h1 id="rTitle" tabindex="-1">Es geht los!</h1>
+      <header class="trip">
+        <div class="trip-top"><span class="ib" aria-hidden="true">←</span><span class="tname" style="--dot:#ffcf4a"><b>Lissabon 2027</b><span><i></i>Steht fest</span></span><span class="ib" aria-hidden="true">⋯</span></div>
+        <nav class="tabs" aria-label="Reise"><a href="#" aria-current="page">Übersicht</a><a href="#">Meine Tage</a><a href="#">Gruppe</a><a href="#">Abstimmen</a></nav>
+      </header>
+      <!-- Countdown als HTML in der Ringmitte: steht SOFORT, zählt nie hoch; als Text zusätzlich in der Karte (D-24) -->
+      <div class="cd" aria-hidden="true"><small>noch</small><b id="cdNum">0</b><small id="cdUnit">Tage</small></div>
+    </div>
+    <section class="rcard" id="rcard" aria-labelledby="rTitle">
+      <p class="eyebrow"><svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 8.5l3 3 7-7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>Termin steht fest</p>
+      <h1 id="rTitle" tabindex="-1" aria-describedby="rDate">Es geht los!</h1>
       <p class="rdate" id="rDate"></p>
       <p class="rmeta" id="rMeta"></p>
-      <button class="primary" id="tell" type="button">Allen Bescheid geben</button>
-      <div class="menu">
-        <button class="btn2" id="calBtn" type="button" aria-expanded="false" aria-controls="calMenu">Zum Kalender hinzufügen ▾</button>
-        <ul id="calMenu" hidden>
-          <li><button type="button" id="ics">Kalenderdatei (Apple, Outlook …)</button></li>
-          <li><button type="button" id="gcal">Google Kalender</button></li>
-        </ul>
+      <div id="actOrga">
+        <button class="primary" id="tell" type="button">Allen Bescheid geben</button>
+        <div class="menu"><button class="btn2 calBtn" type="button" aria-expanded="false">Zum Kalender hinzufügen ▾</button><ul class="calMenu" hidden><li><button type="button" class="ics">Kalenderdatei (Apple, Outlook …)</button></li><li><button type="button" class="gcal">Google Kalender</button></li></ul></div>
       </div>
-    </div>
-    <div class="phase" id="phase" aria-label="Phasen: 1 Tage sammeln erledigt, 2 Abstimmen erledigt, 3 Termin steht fest">
-      <span class="st"><span class="dot" aria-hidden="true">✓</span>Tage</span><span class="line"><i></i></span>
-      <span class="st"><span class="dot" aria-hidden="true">✓</span>Abstimmen</span><span class="line"><i id="line3"></i></span>
-      <span class="st"><span class="dot" id="dot3" aria-hidden="true">✓</span>Fix</span>
-    </div>
-  </section>
+      <div id="actMember" hidden>
+        <div class="menu"><button class="primary calBtn" type="button" aria-expanded="false">Zum Kalender hinzufügen ▾</button><ul class="calMenu" hidden><li><button type="button" class="ics">Kalenderdatei (Apple, Outlook …)</button></li><li><button type="button" class="gcal">Google Kalender</button></li></ul></div>
+        <button class="btn2" id="share" type="button" style="margin-top:8px">Teilen</button>
+      </div>
+      <div class="steps" aria-label="Schritte: Tage sammeln erledigt, Abstimmen erledigt, Termin steht fest – aktuell">
+        <span class="s"><span class="t"><i></i></span>Tage</span>
+        <span class="s"><span class="t"><i></i></span>Abstimmen</span>
+        <span class="s cur"><span class="t"><i id="bar3"></i></span>Steht fest</span>
+      </div>
+    </section>
+  </div>
 </div>
 
 <div class="dock" id="dock">
   <div class="dock-in">
     <button class="primary" id="fixBtn" type="button">Abstimmung beenden & festlegen</button>
-    <p class="small">Im Prototyp immer sichtbar – im Produkt nur für die Orga.</p>
+    <p class="small">Nur für die Orga.</p>
   </div>
 </div>
 
@@ -241,7 +327,7 @@ h1{font-size:24px;line-height:1.2;margin:0 0 4px}
     <div class="grip" aria-hidden="true"></div>
     <h2 id="fTitle" tabindex="-1">Termin festlegen</h2>
     <div id="choices" role="radiogroup" aria-labelledby="fTitle"></div>
-    <p class="note" id="fNote">Danach sind Tage und Stimmen gesperrt. Du kannst das später wieder aufheben.</p>
+    <p class="note" id="fNote"></p>
     <div class="row2"><button class="btn2" id="fCancel" type="button">Abbrechen</button><button class="primary" id="fOk" type="button">Termin festlegen</button></div>
   </div>
 </div>
@@ -251,8 +337,9 @@ h1{font-size:24px;line-height:1.2;margin:0 0 4px}
 <script>
 (function(){
 'use strict';
+/* ---------- Motion-Grundlagen (entspricht Vorschlag src/lib/motion.ts) ---------- */
 var root=document.documentElement;
-var rm=document.getElementById('rm'),cf=document.getElementById('cf');
+var rm=document.getElementById('rm');
 var saved=null;try{saved=sessionStorage.getItem('ww-proto-motion');}catch(e){}
 root.dataset.motion=saved||(matchMedia('(prefers-reduced-motion: reduce)').matches?'reduce':'full');
 rm.checked=root.dataset.motion==='reduce';
@@ -260,23 +347,28 @@ rm.addEventListener('change',function(){root.dataset.motion=rm.checked?'reduce':
 function reduced(){return root.dataset.motion==='reduce';}
 var LIN=window.CSS&&CSS.supports&&CSS.supports('transition-timing-function','linear(0, 1)');
 var E={standard:'cubic-bezier(.2,0,0,1)',enter:'cubic-bezier(0,0,0,1)',exit:'cubic-bezier(.3,0,1,1)',emph:'cubic-bezier(.05,.7,.1,1)',
-  soft:LIN?'linear(0, .052 5%, .174 10%, .325 15%, .478 20%, .619 25%, .738 30%, .833 35%, .906 40%, .991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1)':'cubic-bezier(.34,1.3,.64,1)',
-  bouncy:LIN?'linear(0, .116 5%, .372 10%, .657 15%, .898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, .987 60%, .974 70%, .986 80%, .999 90%, 1)':'cubic-bezier(.34,1.56,.64,1)'};
+  soft:LIN?'linear(0, .052 5%, .174 10%, .325 15%, .478 20%, .619 25%, .738 30%, .833 35%, .906 40%, .991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1)':'cubic-bezier(.34,1.3,.64,1)'};
 var D={instant:80,fast:140,base:220,slow:320,moderate:480,celebrate:700,fade:140};
 function play(el,kf,o){if(reduced()||!el||!el.animate)return null;return el.animate(kf,o);}
-function enter(el,o){o=o||{};var r=reduced();var from={opacity:0},to={opacity:1};
+function enter(el,o){o=o||{};if(!el.animate)return null;var r=reduced();var from={opacity:0},to={opacity:1};
   if(!r){var t=[];if(o.x)t.push('translateX('+o.x+'px)');if(o.y)t.push('translateY('+o.y+'px)');if(o.s)t.push('scale('+o.s+')');if(t.length){from.transform=t.join(' ');to.transform='none';}}
   return el.animate([from,to],{duration:r?D.fade:(o.d||D.base),delay:r?0:(o.delay||0),easing:r?'linear':(o.e||E.enter),fill:'backwards'});}
 function leave(el,o,done){o=o||{};var r=reduced();var from={opacity:1},to={opacity:0};if(!r&&(o.y||o.s)){var t=[];if(o.y)t.push('translateY('+o.y+'px)');if(o.s)t.push('scale('+o.s+')');from.transform='none';to.transform=t.join(' ');}
+  if(!el.animate){done&&done();return null;}
   var a=el.animate([from,to],{duration:r?D.fade:(o.d||D.fast),easing:r?'linear':E.exit,fill:'forwards'});a.onfinish=function(){done&&done();a.cancel();};return a;}
+/* Kubische Bézier-Kurve als Funktion (für vorberechnete Keyframes, z. B. Ring + Sonnenpunkt im Gleichlauf) */
+function bez(x1,y1,x2,y2){return function(x){if(x<=0)return 0;if(x>=1)return 1;var lo=0,hi=1,t=x;
+  for(var i=0;i<26;i++){t=(lo+hi)/2;var bx=3*x1*t*(1-t)*(1-t)+3*x2*t*t*(1-t)+t*t*t;if(bx<x)lo=t;else hi=t;}
+  return 3*y1*t*(1-t)*(1-t)+3*y2*t*t*(1-t)+t*t*t;};}
+var easeStandard=bez(.2,0,0,1);
 var live=document.getElementById('live');
 function say(t){live.textContent='';setTimeout(function(){live.textContent=t;},30);}
 
 /* ---------- Daten ---------- */
 var OPTS=[
-  {id:'a',title:'Mi., 5. Mai – Mo., 10. Mai',year:'2027',from:[2027,4,5],nights:5,meta:'5 Nächte · ca. 3 Urlaubstage',cal:'laut Kalender: alle können',sug:'yes',votes:{yes:3,maybe:1,no:0}},
-  {id:'b',title:'Sa., 12. Juni – Do., 17. Juni',year:'2027',from:[2027,5,12],nights:5,meta:'5 Nächte · ca. 4 Urlaubstage',cal:'laut Kalender: alle können',sug:'yes',votes:{yes:4,maybe:0,no:0}},
-  {id:'c',title:'Do., 20. Mai – Mo., 24. Mai',year:'2027',from:[2027,4,20],nights:4,meta:'4 Nächte · ca. 3 Urlaubstage',cal:'laut Kalender: ohne Jonas',sug:'maybe',votes:{yes:2,maybe:1,no:1}}
+  {id:'a',title:'Mi., 5. Mai – Mo., 10. Mai',year:'2027',from:[2027,4,5],nights:5,meta:'5 Nächte · ca. 3 Urlaubstage',cal:'7 können',sug:'yes',votes:{yes:3,maybe:1,no:0}},
+  {id:'b',title:'Sa., 12. Juni – Do., 17. Juni',year:'2027',from:[2027,5,12],nights:5,meta:'5 Nächte · ca. 4 Urlaubstage',cal:'7 können',sug:'yes',votes:{yes:4,maybe:0,no:0}},
+  {id:'c',title:'Do., 20. Mai – Mo., 24. Mai',year:'2027',from:[2027,4,20],nights:4,meta:'4 Nächte · ca. 3 Urlaubstage',cal:'6 können · ohne Jonas',sug:'maybe',votes:{yes:2,maybe:1,no:1}}
 ];
 var LBL={yes:'Ja',maybe:'Vielleicht',no:'Nein'},IC={yes:'✓',maybe:'◐',no:'✕'};
 var mine={},byId={};
@@ -286,46 +378,50 @@ function topScore(){return Math.max.apply(null,OPTS.map(score));}
 
 /* ---------- Karten ---------- */
 var optsEl=document.getElementById('opts');
+var TICK='<svg width="12" height="12" viewBox="0 0 12 12"><path d="M2.5 6.3l2.3 2.3 4.7-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 OPTS.forEach(function(o){
   byId[o.id]=o;
   var c=document.createElement('article');c.className='opt';c.dataset.id=o.id;c.setAttribute('aria-labelledby','h-'+o.id);
-  c.innerHTML='<h3 id="h-'+o.id+'">'+o.title+'</h3><p class="m">'+o.meta+'</p><p class="m">'+o.cal+'</p>'+
-    '<p class="ghostlbl">Vorschlag aus deinen Tagen: '+LBL[o.sug]+' – bitte bestätigen</p>'+
+  c.innerHTML='<div class="ohead"><h3 id="h-'+o.id+'">'+o.title+'</h3><span class="rank" hidden><span aria-hidden="true">★</span>Platz 1</span></div>'+
+    '<p class="m">'+o.meta+'</p><p class="av">'+o.cal+'</p>'+
+    '<p class="ghostlbl">Vorschlag aus deinen Tagen</p>'+
     '<div class="vseg" role="radiogroup" aria-labelledby="h-'+o.id+'">'+
-    ['yes','maybe','no'].map(function(v){return '<button type="button" class="v'+(o.sug===v?' ghost':'')+'" role="radio" aria-checked="false" data-v="'+v+'"'+(o.sug===v?' aria-describedby="g-'+o.id+'"':'')+'><span class="fb"></span><span class="ic" aria-hidden="true">'+IC[v]+'</span><span class="lb">'+LBL[v]+'</span></button>';}).join('')+
-    '</div><span class="sr" id="g-'+o.id+'">Vorschlag: '+LBL[o.sug]+' – aus deinen Tagen</span>'+
-    '<div class="res"><p class="ph">Stimm ab, um das Ergebnis zu sehen.</p><div class="bar" hidden><span class="b yes"></span><span class="b maybe"></span><span class="b no"></span></div>'+
-    '<div class="resrow"><span class="nums" hidden></span><span class="rank" hidden>Platz 1</span></div></div>';
+    ['yes','maybe','no'].map(function(v){var g=o.sug===v;
+      return '<button type="button" class="v'+(g?' ghost':'')+'" role="radio" aria-checked="false" data-v="'+v+'" aria-label="'+LBL[v]+(g?', Vorschlag aus deinen Tagen':'')+'">'+
+        '<span class="fb"></span><span class="tick" aria-hidden="true">'+TICK+'</span><span class="ic" aria-hidden="true">'+IC[v]+'</span><span class="lb" aria-hidden="true">'+LBL[v]+(g?'?':'')+'</span></button>';}).join('')+
+    '</div>'+
+    '<div class="res"><p class="ph">Stimm ab, um das Ergebnis zu sehen.</p><div class="bar" hidden aria-hidden="true"><span class="b yes"></span><span class="b maybe"></span><span class="b no"></span></div>'+
+    '<span class="nums" hidden></span></div>';
   c.querySelector('.vseg').addEventListener('click',function(e){var b=e.target.closest('.v');if(b)vote(c,b.dataset.v);});
   optsEl.appendChild(c);
 });
-/* Karten-Eintritt (W10) */
+/* Karten-Eintritt (einmal pro Sitzung) */
 [].forEach.call(optsEl.children,function(c,i){enter(c,{y:16,d:D.slow,e:E.emph,delay:i*60});});
 
 function setBars(c,o){var n=counts(o),tot=n.yes+n.maybe+n.no;
-  ['yes','maybe','no'].forEach(function(v){var b=c.querySelector('.b.'+v);b.style.flex='0 0 calc('+(n[v]/tot*100)+'% - 2px)';b.style.display=n[v]?'block':'none';});
-  c.querySelector('.nums').textContent='✓ '+n.yes+'  ◐ '+n.maybe+'  ✕ '+n.no;}
+  ['yes','maybe','no'].forEach(function(v){var b=c.querySelector('.b.'+v);b.style.flex='0 0 calc('+(n[v]/tot*100)+'% - 3px)';b.style.display=n[v]?'block':'none';});
+  c.querySelector('.nums').textContent='✓ '+n.yes+' · ◐ '+n.maybe+' · ✕ '+n.no;} /* Zahlen springen, zählen nie hoch */
 function updateRanks(){var top=topScore();
   [].forEach.call(optsEl.children,function(c){var o=byId[c.dataset.id];if(!mine[o.id])return;var r=c.querySelector('.rank');var is=score(o)===top;
-    if(is&&r.hidden){r.hidden=false;play(r,[{transform:'scale(.8)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:D.base,easing:E.soft});}
+    if(is&&r.hidden){r.hidden=false;play(r,[{transform:'scale(.6)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:D.base,easing:E.soft});}
     else if(!is&&!r.hidden){r.hidden=true;}});}
 
-function vote(c,v,stag){
+function vote(c,v){
   var o=byId[c.dataset.id],prev=mine[o.id];
   var wasGhost=!!c.querySelector('.v.ghost');
   if(prev===v&&!wasGhost)return;
   mine[o.id]=v;
-  /* Geister-Vorschlag wird bestätigt bzw. verworfen */
-  if(wasGhost){[].forEach.call(c.querySelectorAll('.v.ghost'),function(g){g.classList.remove('ghost');g.removeAttribute('aria-describedby');});
+  if(wasGhost){[].forEach.call(c.querySelectorAll('.v.ghost'),function(g){g.classList.remove('ghost');g.setAttribute('aria-label',LBL[g.dataset.v]);g.querySelector('.lb').textContent=LBL[g.dataset.v];});
     var gl=c.querySelector('.ghostlbl');leave(gl,{},function(){gl.hidden=true;});}
   [].forEach.call(c.querySelectorAll('.v'),function(b){
     var on=b.dataset.v===v,was=b.getAttribute('aria-checked')==='true';b.setAttribute('aria-checked',String(on));
     if(on){play(b.querySelector('.fb'),[{transform:'scale(.92)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:D.base,easing:E.soft});
-      play(b.querySelector('.ic'),[{transform:'scale(.6)'},{transform:'scale(1)'}],{duration:D.fast,easing:E.soft});}
+      play(b.querySelector('.ic'),[{transform:'scale(.6)'},{transform:'scale(1)'}],{duration:D.fast,easing:E.soft});
+      play(b.querySelector('.tick'),[{transform:'scale(.6)',opacity:0},{transform:'scale(1)',opacity:1}],{duration:D.base,delay:60,easing:E.soft,fill:'backwards'});}
     else if(was){play(b.querySelector('.fb'),[{opacity:1},{opacity:0}],{duration:D.fast,easing:E.exit});}
   });
   if(!prev)reveal(c,o);else flipBars(c,o);
-  updateRanks();updateStatus(c);
+  updateRanks();updateStatus();
   var inf=document.getElementById('info');
   if(!inf.hidden&&!optsEl.querySelector('.v.ghost')&&!inf.dataset.closing){inf.dataset.closing='1';leave(inf,{y:-8},function(){
     var had=inf.contains(document.activeElement);inf.hidden=true;
@@ -333,16 +429,15 @@ function vote(c,v,stag){
   });}
   say(o.title+': '+LBL[v]);
 }
-/* Ergebnis erst nach der eigenen Stimme (D-18): Balken wächst Segment für Segment */
+/* Ergebnis erst nach der eigenen Stimme (D-18): Balken wachsen Segment für Segment */
 function reveal(c,o){
   var ph=c.querySelector('.ph'),bar=c.querySelector('.bar'),nums=c.querySelector('.nums');
   setBars(c,o);
-  var show=function(){ph.hidden=true;bar.hidden=false;nums.hidden=false;
-    var segs=[].slice.call(bar.children).filter(function(b){return b.style.display!=='none';});
+  leave(ph,{},function(){ph.hidden=true;bar.hidden=false;nums.hidden=false;
     if(reduced()){enter(bar,{});enter(nums,{});return;}
-    segs.forEach(function(b,i){b.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.base,delay:i*80,easing:E.standard,fill:'backwards'});});
-    nums.animate([{opacity:0},{opacity:1}],{duration:D.base,delay:80,fill:'backwards'});};
-  leave(ph,{},show);
+    [].slice.call(bar.children).filter(function(b){return b.style.display!=='none';}).forEach(function(b,i){
+      b.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.base,delay:i*40,easing:E.standard,fill:'backwards'});});
+    nums.animate([{opacity:0},{opacity:1}],{duration:D.base,delay:80,fill:'backwards'});});
 }
 /* Spätere Änderungen: Segmente gleiten per FLIP auf die neue Breite */
 function flipBars(c,o){
@@ -352,41 +447,41 @@ function flipBars(c,o){
     var sx=f.width?f.width/l.width:0,dx=f.width?f.left-l.left:0;
     play(b,[{transform:'translateX('+dx+'px) scaleX('+sx+')'},{transform:'none'}],{duration:D.base,easing:E.standard});});
 }
-var statusEl=document.getElementById('statusline'),sortT=0,allDone=false;
-function updateStatus(lastCard){
+/* M-U3 (UX, Variante 2): KEIN Umsortieren, solange man auf der Seite ist – nur Dank in der Statuszeile */
+var statusEl=document.getElementById('statusline'),allDone=false;
+function updateStatus(){
   var open=OPTS.filter(function(o){return !mine[o.id];}).length;
   if(open){statusEl.textContent=open===1?'Noch 1 Option offen.':'Noch '+open+' Optionen offen.';return;}
-  if(!allDone){allDone=true;
-    statusEl.innerHTML='<span class="ok" aria-hidden="true">✓</span> Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.';
-    enter(statusEl,{d:D.base});play(statusEl.querySelector('.ok'),[{transform:'scale(.6)'},{transform:'scale(1)'}],{duration:D.base,easing:E.soft});
-    var vt=document.getElementById('voted');vt.textContent='5 von 7 haben abgestimmt';}
-  clearTimeout(sortT);sortT=setTimeout(function(){sortByRank(lastCard);},600);
+  if(allDone)return;allDone=true;
+  statusEl.innerHTML='<span class="ok" aria-hidden="true">✓</span> Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.';
+  enter(statusEl,{d:D.base});play(statusEl.querySelector('.ok'),[{transform:'scale(.6)'},{transform:'scale(1)'}],{duration:D.base,easing:E.soft});
+  document.getElementById('voted').textContent='5 von 7';document.getElementById('phaseCount').textContent='5/7'; /* springt */
 }
-/* Umsortieren nach Rang: FLIP + Scroll-Anker auf der zuletzt benutzten Karte */
-function sortByRank(anchor){
-  var now=[].slice.call(optsEl.children);
+updateStatus();
+/* Nach Rang sortiert wird erst beim NÄCHSTEN Öffnen des Tabs – ohne Bewegung (Eintritt nur einmal pro Sitzung) */
+function reopenSorted(){
   var idx=function(c){return OPTS.indexOf(byId[c.dataset.id]);};
-  var sorted=now.slice().sort(function(a,b){return score(byId[b.dataset.id])-score(byId[a.dataset.id])||idx(a)-idx(b);});
-  if(sorted.every(function(c,i){return c===now[i];}))return;
-  var first=new Map();now.forEach(function(c){first.set(c,c.getBoundingClientRect());});
-  var active=document.activeElement,aTop=anchor?anchor.getBoundingClientRect().top:0;
-  sorted.forEach(function(c){optsEl.appendChild(c);});
-  if(active&&active!==document.body&&document.activeElement!==active)active.focus({preventScroll:true});
-  if(anchor){window.scrollBy(0,anchor.getBoundingClientRect().top-aTop);}
-  sorted.forEach(function(c,i){var f=first.get(c),l=c.getBoundingClientRect(),dy=f.top-l.top;
-    if(Math.abs(dy)>1)play(c,[{transform:'translateY('+dy+'px)'},{transform:'none'}],{duration:D.slow,delay:i*40,easing:E.standard,fill:'backwards'});});
-  say('Optionen nach Rang sortiert. Platz 1: '+byId[sorted[0].dataset.id].title);
+  var voted=Object.keys(mine).length>0;
+  [].slice.call(optsEl.children).sort(function(a,b){return voted?(score(byId[b.dataset.id])-score(byId[a.dataset.id])||idx(a)-idx(b)):idx(a)-idx(b);})
+    .forEach(function(c){optsEl.appendChild(c);});
+  window.scrollTo(0,0);document.getElementById('pollTitle').focus({preventScroll:true});
 }
-updateStatus(null);
 
 /* „Alle Vorschläge übernehmen“: kartenweise nacheinander bestätigen */
-var info=document.getElementById('info');
 document.getElementById('takeAll').addEventListener('click',function(){
   var list=[].slice.call(optsEl.children).filter(function(c){return c.querySelector('.v.ghost');});
   list.forEach(function(c,i){setTimeout(function(){vote(c,byId[c.dataset.id].sug);},reduced()?0:i*60);});
 });
 
-/* ---------- Festlegen ---------- */
+/* ---------- Rolle (nur Prototyp) ---------- */
+var roleSel=document.getElementById('role'),pctSel=document.getElementById('pct');
+var poll=document.getElementById('poll'),result=document.getElementById('result'),dock=document.getElementById('dock');
+function role(){return roleSel.value;}
+function pct(){return Math.max(4,Math.min(100,parseFloat(pctSel.value)||4));} /* Füllgrad mind. 4 % (design-system §9.12) */
+function applyRole(){dock.hidden=role()!=='orga'||!result.hidden;}
+roleSel.addEventListener('change',applyRole);applyRole();
+
+/* ---------- Festlegen (Orga) ---------- */
 var layer=document.getElementById('layer'),sheet=document.getElementById('sheet'),scrim=document.getElementById('scrim'),choices=document.getElementById('choices'),fOk=document.getElementById('fOk');
 function openSheet(){
   var sorted=OPTS.slice().sort(function(a,b){return score(b)-score(a);});var top=score(sorted[0]);
@@ -401,7 +496,7 @@ function openSheet(){
   if(reduced())enter(sheet,{});else sheet.animate([{transform:'translateY(100%)'},{transform:'none'}],{duration:D.slow,easing:E.emph});
   document.getElementById('fTitle').focus({preventScroll:true});
 }
-choices.addEventListener('change',function(e){fOk.disabled=false;play(e.target,[{transform:'scale(.6)'},{transform:'scale(1)'}],{duration:D.fast,easing:E.soft});});
+choices.addEventListener('change',function(){fOk.disabled=false;});
 var closing=false;
 function closeSheet(cb){
   if(closing||layer.hidden)return;closing=true;
@@ -410,80 +505,128 @@ function closeSheet(cb){
   if(reduced()){leave(sheet,{},done);return;}
   var a=sheet.animate([{transform:'none'},{transform:'translateY(100%)'}],{duration:D.base,easing:E.exit,fill:'forwards'});a.onfinish=function(){done();a.cancel();};
 }
-document.getElementById('fixBtn').addEventListener('click',openSheet);
-document.getElementById('fCancel').addEventListener('click',function(){closeSheet(function(){document.getElementById('fixBtn').focus();});});
-scrim.addEventListener('click',function(){closeSheet(function(){document.getElementById('fixBtn').focus();});});
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!layer.hidden)closeSheet(function(){document.getElementById('fixBtn').focus();});});
+var fixBtn=document.getElementById('fixBtn');
+fixBtn.addEventListener('click',openSheet);
+document.getElementById('fCancel').addEventListener('click',function(){closeSheet(function(){fixBtn.focus();});});
+scrim.addEventListener('click',function(){closeSheet(function(){fixBtn.focus();});});
+document.addEventListener('keydown',function(e){if(e.key==='Escape'&&!layer.hidden)closeSheet(function(){fixBtn.focus();});});
 var chosen=null;
 fOk.addEventListener('click',function(){
   var sel=choices.querySelector('input:checked');if(!sel||fOk.getAttribute('aria-busy'))return;
   chosen=byId[sel.value];fOk.setAttribute('aria-busy','true');fOk.innerHTML='<span class="spin" aria-hidden="true"></span>Wird festgelegt …';
-  /* Feier erst NACH Server-Bestätigung (motion-system §5.7) */
-  setTimeout(function(){fOk.removeAttribute('aria-busy');fOk.textContent='Termin festlegen';closeSheet();celebrate(chosen);},700);
+  /* Feier erst NACH Server-Bestätigung (motion-system §5.7); t = 0 der Zeitleiste */
+  setTimeout(function(){fOk.removeAttribute('aria-busy');fOk.textContent='Termin festlegen';closeSheet();celebrate(chosen,'orga');},700);
 });
 
-/* ---------- „Es geht los!“ ---------- */
-var poll=document.getElementById('poll'),result=document.getElementById('result'),dock=document.getElementById('dock');
-var rcard=document.getElementById('rcard'),illu=document.getElementById('illu'),seal=document.getElementById('seal');
-var running=[];
-function daysUntil(f){var a=Date.UTC(2026,9,8),b=Date.UTC(f[0],f[1],f[2]);return Math.round((b-a)/864e5);}
-function celebrate(o){
-  stopConfetti(true);running.forEach(clearTimeout);running=[];
-  poll.hidden=true;dock.hidden=true;result.hidden=false;window.scrollTo(0,0);
+/* =====================================================================
+   „Es geht los!“ – Vorfreude-Ring (W11-02). Zeitleiste ab t = 0:
+     0      Karte: Fade + 16 px Aufstieg (base 220, enter) – Text/Tasten ab 0 bedienbar, ab 220 voll sichtbar
+            Countdown-Zahl, Text, Spur: stehen sofort (keine Bewegung, kein Hochzählen)
+     60     Schein (glow): einmal aufhellen, Deckkraft 0→1 + scale .7→1 (moderate 480, spring-soft)
+     80     Ring + Sonnenpunkt: Ehrenrunde – eine Runde + Anteil, Ring wird mitgezogen (700, standard)
+     120+   12 Konfetti-Teilchen fallen gestaffelt an ihren Platz (je 1100–1500, stagger-item 40)
+     300    Schritt 3 „Steht fest“: Balken wächst (moderate 480, standard)
+     780    Sonnenpunkt rastet ein (Pop 1→1,35→1, base 220, spring-soft) · Vibration (Android) · Konfetti-Puff
+     ≤1000  KERN fertig
+     800+   3 Funkel ploppen (base 220, spring-soft, stagger 60)
+     ≤2600  AUSKLANG fertig (Puff ausgeblendet); hartes Ende CELEBRATION_MAX_MS
+   Jede Interaktion (Tippen, Taste, Rad, Wischen) und visibilitychange beendet alles → Endzustand.
+   Reduziert: nur Überblenden (140 ms), kein Puff, keine Vibration.
+   ===================================================================== */
+var ck=document.getElementById('ck'),rcard=document.getElementById('rcard'),ringSvg=document.getElementById('ringSvg');
+var ringPath=document.getElementById('wwcr-ring'),knob=document.getElementById('knob'),knobInner=document.getElementById('knobInner'),knobDot=document.getElementById('knobDot');
+var glow=document.getElementById('glow'),bar3=document.getElementById('bar3');
+var pieces=[].slice.call(ringSvg.querySelectorAll('[data-piece]')),sparks=[].slice.call(ringSvg.querySelectorAll('[data-anim="sparkles"] path'));
+var rTitle=document.getElementById('rTitle');
+var T={ring:80,ringDur:700,land:780,pieces:120,bar:300,sparks:800,max:2600};
+var cel={running:false,anims:[],timers:[],burst:null};
+function track(a){if(a)cel.anims.push(a);return a;}
+function later(fn,ms){cel.timers.push(setTimeout(fn,ms));}
+function finishCelebration(){
+  if(!cel.running)return;cel.running=false;
+  cel.timers.forEach(clearTimeout);cel.timers=[];
+  cel.anims.forEach(function(a){try{a.finish();}catch(e){}});cel.anims=[];
+  stopBurst(false);
+}
+function daysUntil(f){var a=Date.UTC(2026,9,8),b=Date.UTC(f[0],f[1],f[2]);return Math.max(0,Math.round((b-a)/864e5));}
+function renderResult(o,mode){
+  var d=daysUntil(o.from);
   document.getElementById('rDate').textContent=o.title+' '+o.year;
-  document.getElementById('rMeta').textContent=o.nights+' Nächte · noch '+daysUntil(o.from)+' Tage';
-  /* Fokus sofort auf die Überschrift – nicht erst nach der Animation */
-  document.getElementById('rTitle').focus({preventScroll:true});
-  say('Es geht los! '+o.title+' '+o.year+' steht fest.');
-  var line3=document.getElementById('line3'),dot3=document.getElementById('dot3');
-  if(reduced()){enter(rcard,{});enter(seal,{});return;} /* kein Konfetti, keine Skalierung */
-  /* 120 ms: Karte */
-  rcard.animate([{opacity:0,transform:'scale(.96)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:120,easing:E.soft,fill:'backwards'});
-  /* 200 ms: Zeitraum-Felder füllen sich, Band zeichnet sich */
-  [].forEach.call(illu.querySelectorAll('.r'),function(r,i){r.animate([{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.base,delay:200+i*40,easing:E.soft,fill:'backwards'});});
-  illu.querySelector('.bandsvg').animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.base,delay:360,easing:E.standard,fill:'backwards'});
-  /* 300 ms: Siegel */
-  seal.animate([{transform:'scale(0) rotate(-20deg)'},{transform:'scale(1) rotate(0deg)'}],{duration:D.celebrate,delay:300,easing:E.bouncy,fill:'backwards'});
-  /* 380 ms: Konfetti (abschaltbar) */
-  if(cf.checked)running.push(setTimeout(function(){confetti(seal,innerWidth<600?60:100);if(navigator.vibrate){try{navigator.vibrate([12,40,12]);}catch(e){}}},380));
-  /* 700 ms: Phase ③ schließt */
-  line3.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.moderate,delay:500,easing:E.standard,fill:'backwards'});
-  dot3.animate([{transform:'scale(0)'},{transform:'scale(1)'}],{duration:D.base,delay:900,easing:E.soft,fill:'backwards'});
+  document.getElementById('rMeta').textContent=o.nights+' Nächte · 7 dabei · '+(d===0?'Heute geht’s los!':d===1?'noch 1 Tag':'noch '+d+' Tage');
+  document.getElementById('cdNum').textContent=String(d);document.getElementById('cdUnit').textContent=d===1?'Tag':'Tage';
+  var p=pct();
+  ringPath.setAttribute('stroke-dasharray',p+' 100');ringPath.setAttribute('stroke-dashoffset','0'); /* statischer Endzustand */
+  knobInner.setAttribute('transform','rotate('+(p*3.6)+' 195 236)');
+  document.getElementById('actOrga').hidden=mode!=='orga';document.getElementById('actMember').hidden=mode==='orga';
+}
+/* Ring + Sonnenpunkt im Gleichlauf: Kopf läuft (100 + p) %, Schwanz eine Runde mit 12 % Verzug.
+   Strichmuster mit Periode 100 = Pfadlänge → läuft über 12 Uhr nahtlos weiter. */
+function ringFrames(p){var ring=[],knobKf=[],N=28,lag=.12,fin=p*3.6;
+  for(var s=0;s<=N;s++){var x=s/N,head=(100+p)*easeStandard(x),tail=100*easeStandard(Math.max(0,(x-lag)/(1-lag)));
+    var L=Math.min(100,Math.max(0,head-tail));
+    ring.push({offset:x,strokeDasharray:L.toFixed(2)+' '+(100-L).toFixed(2),strokeDashoffset:(-tail).toFixed(2)});
+    knobKf.push({offset:x,transform:'rotate('+(head*3.6-fin).toFixed(1)+'deg)'});}
+  return {ring:ring,knob:knobKf};}
+function celebrate(o,mode){
+  finishCelebration();
+  renderResult(o,mode);
+  poll.hidden=true;result.hidden=false;applyRole();window.scrollTo(0,0);
+  /* Fokus-Regel M-U10: Orga → sofort auf die h1 (nicht nach der Animation); Mitglied → kein Fokussprung */
+  if(mode==='orga')rTitle.focus({preventScroll:true});
+  cel.running=true;
+  if(reduced()){enter(ck,{});enter(rcard,{});later(function(){cel.running=false;},D.fade);return;} /* nur Überblenden */
+  var p=pct(),kf=ringFrames(p);
+  track(rcard.animate([{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:D.base,easing:E.enter,fill:'backwards'}));
+  track(glow.animate([{opacity:0,transform:'scale(.7)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:60,easing:E.soft,fill:'backwards'}));
+  track(ringPath.animate(kf.ring,{duration:T.ringDur,delay:T.ring,easing:'linear',fill:'backwards'}));
+  track(knob.animate(kf.knob,{duration:T.ringDur,delay:T.ring,easing:'linear',fill:'backwards'}));
+  track(knobDot.animate([{transform:'scale(1)'},{transform:'scale(1.35)'},{transform:'scale(1)'}],{duration:D.base,delay:T.land,easing:E.soft}));
+  track(bar3.animate([{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.moderate,delay:T.bar,easing:E.standard,fill:'backwards'}));
+  pieces.forEach(function(g,i){var fall=90+(i*37)%70,dx=((i*29)%30)-15,rot=(i%2?1:-1)*(120+(i*53)%120);
+    track(g.animate([
+      {opacity:0,transform:'translate('+dx+'px,'+(-fall)+'px) rotate('+rot+'deg)'},
+      {opacity:1,transform:'translate('+(dx*.4).toFixed(1)+'px,'+(-fall*.55).toFixed(1)+'px) rotate('+(rot*.5).toFixed(0)+'deg)',offset:.25},
+      {opacity:1,transform:'none'}],{duration:1100+((i*71)%400),delay:T.pieces+i*40,easing:E.standard,fill:'backwards'}));});
+  sparks.forEach(function(s,i){track(s.animate([{opacity:0,transform:'scale(0)'},{opacity:1,transform:'none'}],{duration:D.base,delay:T.sparks+i*60,easing:E.soft,fill:'backwards'}));});
+  later(function(){
+    if(navigator.vibrate){try{navigator.vibrate(15);}catch(e){}} /* nur Android, best effort (Q17) */
+    burst(p);
+  },T.land);
+  later(finishCelebration,T.max);
 }
 
-/* ---------- Konfetti (WAAPI, ≈ 60 Zeilen, Farben aus Tokens) ---------- */
-var cLayer=null,cAnims=[];
-function confetti(originEl,count){
-  if(reduced())return;stopConfetti(true);
-  var css=getComputedStyle(root);var colors=['--accent','--sun','--primary','--mint','--accent-strong'].map(function(v){return css.getPropertyValue(v).trim();});
-  cLayer=document.createElement('div');cLayer.className='confetti';cLayer.setAttribute('aria-hidden','true');document.body.appendChild(cLayer);
-  var r=originEl.getBoundingClientRect(),ox=r.left+r.width/2,oy=r.top+r.height/2;
-  var left=0;
-  for(var i=0;i<count;i++){
-    var p=document.createElement('i');var shape=Math.random();
-    var w=shape<.45?8:shape<.75?6:11,h=shape<.45?4:shape<.75?6:2.5;
-    p.style.width=w+'px';p.style.height=h+'px';p.style.borderRadius=shape>=.45&&shape<.75?'50%':'1px';
-    p.style.background=colors[i%colors.length];cLayer.appendChild(p);
-    var ang=(-90+(Math.random()*140-70))*Math.PI/180,sp=380+Math.random()*420,vx=Math.cos(ang)*sp,vy=Math.sin(ang)*sp;
-    var dur=1400+Math.random()*700,delay=Math.random()*80,g=1500,rot0=Math.random()*360,spin=(Math.random()<.5?-1:1)*(360+Math.random()*540),flips=2+Math.random()*3;
-    var kf=[];
-    for(var s=0;s<=10;s++){var f=s/10,t=dur*f/1000;
-      var x=ox+vx*t*(1-.25*f),y=oy+vy*t+.5*g*t*t;
-      kf.push({transform:'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+(rot0+spin*f).toFixed(0)+'deg) scaleX('+Math.cos(f*Math.PI*flips).toFixed(2)+')',opacity:f<.7?1:(1-f)/.3});}
-    var a=p.animate(kf,{duration:dur,delay:delay,easing:'linear',fill:'both'});cAnims.push(a);left++;
-    a.onfinish=function(){if(--left===0)stopConfetti(true);};
+/* ---------- Konfetti-Puff am Sonnenpunkt (Ausklang) – Material M-D5, Farben --ww-confetti-1…5 ---------- */
+function burst(p){
+  if(reduced())return;stopBurst(true);
+  var lay=document.createElement('div');lay.className='burst';lay.setAttribute('aria-hidden','true');ck.appendChild(lay);
+  var sr=ringSvg.getBoundingClientRect(),cr=ck.getBoundingClientRect(),k=sr.width/390,th=p*3.6*Math.PI/180;
+  var ox=sr.left-cr.left+(195+66*Math.sin(th))*k,oy=sr.top-cr.top+(236-66*Math.cos(th))*k;
+  var css=getComputedStyle(root),cols=[1,2,3,4,5].map(function(n){return css.getPropertyValue('--confetti-'+n).trim();});
+  var n=innerWidth<600?24:40,left=n,b={el:lay,anims:[]};cel.burst=b;
+  for(var i=0;i<n;i++){
+    var el=document.createElement('i'),sh=i%4,w,h;
+    if(sh===0){w=9;h=14;el.style.borderRadius='3px';}                       /* abgerundetes Rechteck */
+    else if(sh===1){w=h=10;el.style.borderRadius='50%';}                    /* Kreis Ø 10 */
+    else if(sh===2){w=11;h=2.5;el.style.borderRadius='1.25px';}             /* Sonnenstrahl */
+    else{w=h=12;el.style.clipPath='polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)';} /* Vier-Zack-Funkel */
+    el.style.width=w+'px';el.style.height=h+'px';el.style.marginLeft=(-w/2)+'px';el.style.marginTop=(-h/2)+'px';
+    el.style.background=cols[i%cols.length];lay.appendChild(el);
+    var ang=(-90+(Math.random()*150-75))*Math.PI/180,sp=260+Math.random()*300,vx=Math.cos(ang)*sp,vy=Math.sin(ang)*sp;
+    var dur=1200+Math.random()*500,g=1100,r0=Math.random()*360,spin=(Math.random()<.5?-1:1)*(240+Math.random()*360),kf=[];
+    for(var s=0;s<=10;s++){var f=s/10,t=dur*f/1000,x=ox+vx*t*(1-.25*f),y=oy+vy*t+.5*g*t*t;
+      kf.push({transform:'translate('+x.toFixed(1)+'px,'+y.toFixed(1)+'px) rotate('+(r0+spin*f).toFixed(0)+'deg)',opacity:f<.7?1:((1-f)/.3).toFixed(2)});}
+    var a=el.animate(kf,{duration:dur,delay:Math.random()*60,easing:'linear',fill:'both'});b.anims.push(a);
+    a.onfinish=function(){if(--left===0&&cel.burst===b){cel.burst=null;lay.remove();}};
   }
 }
-function stopConfetti(now){
-  if(!cLayer)return;var l=cLayer,an=cAnims;cLayer=null;cAnims=[];
-  if(now){an.forEach(function(a){a.cancel();});l.remove();return;}
-  var a=l.animate([{opacity:1},{opacity:0}],{duration:D.fast,fill:'forwards'});a.onfinish=function(){an.forEach(function(x){x.cancel();});l.remove();};
+function stopBurst(now){
+  var b=cel.burst;if(!b)return;cel.burst=null;
+  if(now||reduced()){b.anims.forEach(function(a){a.cancel();});b.el.remove();return;}
+  var a=b.el.animate([{opacity:1},{opacity:0}],{duration:D.fast,fill:'forwards'});a.onfinish=function(){b.anims.forEach(function(x){x.cancel();});b.el.remove();};
 }
-/* Jede Interaktion beendet die Feier; unsichtbar = gestoppt */
-['pointerdown','wheel','keydown','touchmove'].forEach(function(ev){window.addEventListener(ev,function(){stopConfetti(false);},{passive:true,capture:true});});
-document.addEventListener('visibilitychange',function(){if(document.hidden)stopConfetti(true);});
-/* Kleiner Puff beim Antippen des Siegels (später, nutzer-ausgelöst) */
-illu.addEventListener('click',function(e){if(e.target.closest('#seal')&&cf.checked){setTimeout(function(){confetti(seal,20);},0);}});
+/* Jede Interaktion beendet die Feier (Endzustand); unsichtbar = beendet */
+['pointerdown','wheel','keydown','touchmove'].forEach(function(ev){window.addEventListener(ev,finishCelebration,{passive:true,capture:true});});
+document.addEventListener('visibilitychange',function(){if(document.hidden)finishCelebration();});
 
 /* ---------- Ergebnis-Aktionen ---------- */
 var toast=document.getElementById('toast'),toastT=0;
@@ -491,16 +634,22 @@ function showToast(t){clearTimeout(toastT);toast.textContent=t;toast.hidden=fals
   if(reduced())enter(toast,{});else toast.animate([{opacity:0,transform:'translate(-50%,16px)'},{opacity:1,transform:'translate(-50%,0)'}],{duration:D.base,easing:E.enter});
   toastT=setTimeout(function(){leave(toast,{},function(){toast.hidden=true;});},4000);}
 document.getElementById('tell').addEventListener('click',function(){showToast('Hier öffnet sich das Teilen-Sheet (nicht im Prototyp).');});
-var calBtn=document.getElementById('calBtn'),calMenu=document.getElementById('calMenu');
-calBtn.addEventListener('click',function(){var open=calMenu.hidden;calMenu.hidden=!open;calBtn.setAttribute('aria-expanded',String(open));if(open)enter(calMenu,{s:.96,d:D.fast});});
-document.getElementById('ics').addEventListener('click',function(){var b=this;calMenu.hidden=true;calBtn.setAttribute('aria-expanded','false');
-  calBtn.textContent='✓ Heruntergeladen';enter(calBtn,{d:D.fast});say('Kalenderdatei heruntergeladen');
-  setTimeout(function(){calBtn.textContent='Zum Kalender hinzufügen ▾';enter(calBtn,{d:D.fast});},2000);});
-document.getElementById('gcal').addEventListener('click',function(){calMenu.hidden=true;calBtn.setAttribute('aria-expanded','false');showToast('Google Kalender öffnet sich in neuem Tab (nicht im Prototyp).');});
+document.getElementById('share').addEventListener('click',function(){showToast('Hier öffnet sich das Teilen-Sheet (nicht im Prototyp).');});
+[].forEach.call(document.querySelectorAll('.menu'),function(m){
+  var btn=m.querySelector('.calBtn'),menu=m.querySelector('.calMenu'),label=btn.textContent;
+  btn.addEventListener('click',function(){var open=menu.hidden;menu.hidden=!open;btn.setAttribute('aria-expanded',String(open));if(open)enter(menu,{s:.96,d:D.fast});});
+  m.querySelector('.ics').addEventListener('click',function(){menu.hidden=true;btn.setAttribute('aria-expanded','false');
+    btn.textContent='✓ Heruntergeladen';enter(btn,{d:D.fast});say('Kalenderdatei heruntergeladen');
+    setTimeout(function(){btn.textContent=label;enter(btn,{d:D.fast});},2000);});
+  m.querySelector('.gcal').addEventListener('click',function(){menu.hidden=true;btn.setAttribute('aria-expanded','false');showToast('Google Kalender öffnet sich in neuem Tab (nicht im Prototyp).');});
+});
 
+/* ---------- Prototyp-Steuerung ---------- */
 document.getElementById('btnAgain').addEventListener('click',function(){
   if(!chosen){OPTS.forEach(function(o){if(!mine[o.id])mine[o.id]=o.sug;});chosen=OPTS.slice().sort(function(a,b){return score(b)-score(a);})[0];}
-  celebrate(chosen);});
+  celebrate(chosen,role()); /* Mitglied: entspricht dem ersten Öffnen der Übersicht nach der Festlegung */
+});
+document.getElementById('btnReopen').addEventListener('click',function(){finishCelebration();result.hidden=true;poll.hidden=false;applyRole();reopenSorted();});
 document.getElementById('btnReset').addEventListener('click',function(){location.reload();});
 })();
 </script>

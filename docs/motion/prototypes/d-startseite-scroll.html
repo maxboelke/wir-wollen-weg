@@ -5,22 +5,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prototyp d · Startseite mit Scroll-Effekten (W01) · Wir wollen weg</title>
 <style>
-/* ===== Platzhalter-Optik (aktuelle Tokens, Light) ===== */
+/* ===== Optik B0 „Indigo & Minze“ – Werte aus docs/design/tokens.css v1.0 (Light), inline übernommen,
+   damit der Prototyp eigenständig bleibt. Schriften: Plus Jakarta Sans / Figtree, falls lokal installiert,
+   sonst Systemschrift (keine CDNs). ===== */
 :root{
-  --bg:#fbf8f3;--surface:#fff;--sunken:#f1eee8;--text:#1c2526;--muted:#55605f;
-  --border-subtle:#e4ded4;--border-strong:#858c8a;
-  --primary:#0e6a68;--primary-text:#0a5654;--primary-tint:#ddf1ee;
-  --accent:#e8694a;--accent-strong:#d4552f;--sun:#f4b942;--focus:#2b59c3;
-  --inverse-bg:#1c2526;--inverse-text:#fff;
-  --hm-few:#a6dbd2;--hm-some:#5fbfb1;--hm-many:#187e73;--hm-all:#0b4f4a;--hm-none:#f1eee8;
-  --shadow-1:0 1px 2px rgb(28 37 38 / .06),0 1px 3px rgb(28 37 38 / .10);
-  --shadow-2:0 2px 4px rgb(28 37 38 / .06),0 6px 16px rgb(28 37 38 / .10);
-  --shadow-3:0 8px 16px rgb(28 37 38 / .10),0 16px 40px rgb(28 37 38 / .16);
+  --bg:#f4f2fb;--surface:#fff;--sunken:#ece9f7;--text:#1e1a3d;--muted:#57527a;
+  --border-subtle:#e3dff0;--border-strong:#8a86a8;
+  --primary:#2b2266;--primary-text:#5a3fd0;--primary-tint:#ece6ff;
+  --accent:#52e5b8;--accent-text:#00775a;--sun:#ffcf4a;--focus:#2b59c3;
+  --inverse-bg:#1e1a3d;--inverse-text:#fff;
+  --tile-lav-bg:#ece6ff;--tile-lav-fg:#5a3fd0;--tile-mint-bg:#d9f8ec;--tile-mint-fg:#00775a;--tile-sun-bg:#fff3cc;--tile-sun-fg:#7a5200;
+  --hm-none:#eeecf5;--hm-none-line:#c9c6d4;--hm-few:#d6cffa;--hm-some:#a79af2;--hm-many:#5b48c9;--hm-all:#2b2266;
+  --yes-bg:#d9f8ec;--no-bg:#ddd9ea;--no-line:#aba7bd;
+  --shadow-1:0 1px 2px rgb(30 26 61 / .06),0 14px 30px -18px rgb(43 34 102 / .38);
+  --shadow-2:0 2px 4px rgb(30 26 61 / .06),0 18px 36px -16px rgb(43 34 102 / .45);
+  --shadow-3:0 8px 16px rgb(30 26 61 / .10),0 24px 40px -20px rgb(43 34 102 / .60);
+  --shadow-button:0 10px 22px -10px rgb(43 34 102 / .60);
+  --shadow-button-accent:0 12px 26px -12px rgb(82 229 184 / .75);
+  --cockpit-bg:#2b2266;
+  --cockpit-image:radial-gradient(240px 96px at 100% 0,rgb(82 229 184 / .22),rgb(82 229 184 / 0)),radial-gradient(220px 96px at 0 0,rgb(167 154 242 / .30),rgb(167 154 242 / 0));
+  --cockpit-muted:#cfc9f2;--cockpit-outline:rgb(255 255 255 / .60);
+  --font-sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-display:"Plus Jakarta Sans","Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
-/* ===== Motion-Tokens (Vorschlag motion-system.md §3) ===== */
+/* ===== Motion-Tokens (tokens.css v1.0 §6 = motion-system.md §3) ===== */
 :root{
   --ww-duration-instant:80ms;--ww-duration-fast:140ms;--ww-duration-base:220ms;--ww-duration-slow:320ms;
-  --ww-duration-moderate:480ms;--ww-duration-celebrate:700ms;--ww-duration-fade:140ms;
+  --ww-duration-moderate:480ms;--ww-duration-celebrate:700ms;--ww-duration-confetti:1800ms;--ww-duration-fade:140ms;
   --ww-ease-standard:cubic-bezier(.2,0,0,1);--ww-ease-enter:cubic-bezier(0,0,0,1);--ww-ease-exit:cubic-bezier(.3,0,1,1);
   --ww-ease-emphasized:cubic-bezier(.05,.7,.1,1);--ww-ease-spring:cubic-bezier(.34,1.56,.64,1);
   --ww-ease-spring-soft:cubic-bezier(.34,1.3,.64,1);--ww-ease-spring-bouncy:var(--ww-ease-spring);
@@ -36,7 +47,7 @@
 }
 :root[data-motion="reduce"]{
   --ww-duration-instant:.01ms;--ww-duration-fast:.01ms;--ww-duration-base:.01ms;--ww-duration-slow:.01ms;
-  --ww-duration-moderate:.01ms;--ww-duration-celebrate:.01ms;--ww-duration-fade:140ms;
+  --ww-duration-moderate:.01ms;--ww-duration-celebrate:.01ms;--ww-duration-confetti:0ms;--ww-duration-fade:140ms;
   --ww-ease-spring:linear;--ww-ease-spring-soft:linear;--ww-ease-spring-bouncy:linear;
   --ww-motion-distance-sm:0px;--ww-motion-distance:0px;--ww-motion-distance-lg:0px;
   --ww-motion-scale-press:1;--ww-motion-scale-cell:1;--ww-motion-scale-enter:1;--ww-motion-scale-pop:1;
@@ -45,83 +56,97 @@
 
 *{box-sizing:border-box}
 html{color-scheme:light;-webkit-text-size-adjust:100%}
-body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#e6e1d8}
+body{margin:0;font:16px/1.45 var(--font-sans);color:var(--text);background:#d9d5f2}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
-.proto{position:sticky;top:0;z-index:70;background:#1c2526;color:#fff;font-size:13px;line-height:1.3}
+.proto{position:sticky;top:0;z-index:70;background:#1e1a3d;color:#fff;font-size:13px;line-height:1.3}
 .proto-in{max-width:390px;margin:0 auto;padding:6px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .sw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;position:relative}
 .sw input{position:absolute;opacity:0;width:1px;height:1px}
-.sw-track{width:36px;height:20px;border-radius:999px;background:#6b7775;position:relative;flex:none}
+.sw-track{width:36px;height:20px;border-radius:999px;background:#57527a;position:relative;flex:none}
 .sw-track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
-.sw input:checked+.sw-track{background:#4ab3a4}
+.sw input:checked+.sw-track{background:#5b48c9}
 .sw input:checked+.sw-track::after{transform:translateX(16px)}
 .sw input:focus-visible+.sw-track{outline:3px solid #8fb3ff;outline-offset:2px}
-.pbtn{color:#fff;background:transparent;border:1px solid #858c8a;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
+.pbtn{color:#fff;background:transparent;border:1px solid #8a86a8;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
 .ptag{font-size:12px;opacity:.8}
 
 .app{max-width:390px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;overflow-x:clip}
-/* Kopfzeile mit Schatten, sobald gescrollt (W01-06) */
-.site{position:sticky;top:var(--proto-h,44px);z-index:20;background:var(--bg);display:flex;align-items:center;gap:8px;height:56px;padding:0 12px 0 16px}
-.site::after{content:"";position:absolute;left:0;right:0;bottom:-12px;height:12px;background:linear-gradient(rgb(28 37 38 / .10),transparent);opacity:0;transition:opacity var(--ww-duration-fast) linear;pointer-events:none}
+/* Kopfzeile im Cockpit, klebt; Schatten sobald gescrollt (W01-06) */
+.site{position:sticky;top:var(--proto-h,44px);z-index:20;background:var(--cockpit-bg);color:#fff;display:flex;align-items:center;gap:4px;height:60px;padding:0 8px 0 16px}
+.site::after{content:"";position:absolute;left:0;right:0;bottom:-14px;height:14px;background:linear-gradient(rgb(43 34 102 / .35),transparent);opacity:0;transition:opacity var(--ww-duration-fast) linear;pointer-events:none}
 .site.stuck::after{opacity:1}
-.brand{display:flex;align-items:center;gap:8px;font-weight:750;font-size:17px;letter-spacing:-.01em;flex:1;white-space:nowrap}
-.lang,.login{border:0;background:transparent;min-height:44px;padding:0 8px;border-radius:12px;font-size:14px;font-weight:600;color:var(--primary-text);cursor:pointer}
+.brand{display:flex;align-items:center;gap:8px;font:800 18px/1 var(--font-display);letter-spacing:-.02em;flex:1;white-space:nowrap}
+.brand em{font-style:normal;color:var(--accent)}
+.lang,.login{border:0;background:transparent;min-height:44px;padding:0 10px;border-radius:16px;font-size:14px;font-weight:700;color:var(--accent);cursor:pointer}
+.login{color:#fff;box-shadow:inset 0 0 0 1.5px var(--cockpit-outline)}
 .sentinel{position:absolute;top:0;height:1px;width:1px}
-.hero{padding:8px 16px 8px;text-align:left}
-.hero svg{display:block;width:100%;max-width:320px;height:auto;margin:0 auto 8px;overflow:visible}
-.hero h1{font-size:30px;line-height:1.15;letter-spacing:-.01em;margin:4px 0 10px}
-.hero p{margin:0 0 16px;font-size:17px;color:var(--muted)}
-.cta{display:flex;width:100%;min-height:56px;border:0;border-radius:12px;background:var(--primary);color:#fff;font-weight:600;font-size:17px;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-2);
+.lang:focus-visible,.login:focus-visible,.cta-mint:focus-visible{outline:3px solid #fff;outline-offset:2px}
+/* Cockpit der Startseite: Text + CTA oben, Hero-Karte ragt in den hellen Bereich (U-12, S-3) */
+.cockpit{background:var(--cockpit-image),var(--cockpit-bg);color:#fff;border-radius:0 0 30px 30px;padding:8px 16px 96px}
+.cockpit h1{font:800 clamp(2rem,1.3rem + 3vw,3.5rem)/1.08 var(--font-display);letter-spacing:-.03em;margin:8px 0 12px;text-wrap:balance}
+.cockpit p{margin:0 0 20px;font-size:17px;color:var(--cockpit-muted)}
+.cta-mint{display:flex;width:100%;min-height:54px;border:0;border-radius:16px;background:var(--accent);color:var(--primary);font-weight:700;font-size:17px;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-button-accent);
   transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
-.cta:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
-.small{font-size:14px;color:var(--muted);text-align:center;margin:8px 0 0}
+.cta-mint:active,.cta:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
+.small{font-size:14px;color:var(--cockpit-muted);text-align:center;margin:10px 0 0}
+.herowrap{margin:-84px 16px 0;position:relative;z-index:1}
+.herowrap svg{display:block;width:100%;height:auto;overflow:visible}
 section.block{padding:28px 16px 4px}
-section.block h2{font-size:22px;line-height:1.2;margin:0 0 14px}
+section.block h2{font:800 19px/1.25 var(--font-display);letter-spacing:-.015em;margin:0 0 14px}
+/* „So geht’s“: drei Kacheln ab 21,5 em Containerbreite, sonst Liste (design-system §9.5) */
+.stepsC{container-type:inline-size}
 .steps{display:grid;gap:12px}
-.step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--border-subtle);border-radius:16px;padding:14px}
-.num{width:36px;height:36px;border-radius:50%;background:var(--primary-tint);color:var(--primary-text);display:grid;place-items:center;font-weight:750}
-.step h3{margin:0;font-size:17px;line-height:1.3}
-.step p{margin:2px 0 0;font-size:14px;color:var(--muted)}
-.mini{grid-column:1 / -1;display:flex;align-items:center;gap:6px;min-height:40px}
-.bubble{background:var(--sunken);border-radius:14px 14px 14px 4px;padding:6px 10px;font-size:14px}
-.bubble b{color:var(--primary-text)}
-.mc{width:34px;height:34px;border-radius:7px;background:#c6e9e2;display:grid;place-items:center;font-size:13px;font-weight:700}
-.mc.no{background:repeating-linear-gradient(45deg,#a8a196 0 1.5px,transparent 1.5px 7px),repeating-linear-gradient(135deg,#a8a196 0 1.5px,transparent 1.5px 7px),#cfc9c0}
-.seal{width:34px;height:34px;border-radius:50%;background:var(--sun);display:grid;place-items:center}
-.demo{background:var(--surface);border:1px solid var(--border-subtle);border-radius:16px;padding:14px}
-.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;position:relative}
-.dc{height:40px;border-radius:7px;position:relative;font-size:12px;font-weight:700;display:grid;place-items:center;color:var(--text)}
-.dc[data-l="none"]{background:repeating-linear-gradient(135deg,#cfc9c0 0 1.5px,transparent 1.5px 6px),var(--hm-none)}
+.step{display:grid;grid-template-columns:auto 1fr;gap:12px;align-items:start;background:var(--surface);border:1px solid transparent;border-radius:24px;padding:14px;box-shadow:var(--shadow-1)}
+@container (min-width:21.5em){
+  .steps{grid-template-columns:repeat(3,1fr);gap:8px}
+  .step{grid-template-columns:1fr;padding:12px 10px}
+}
+.tile{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;font:800 17px/1 var(--font-display)}
+.t1{background:var(--tile-lav-bg);color:var(--tile-lav-fg)}.t2{background:var(--tile-mint-bg);color:var(--tile-mint-fg)}.t3{background:var(--tile-sun-bg);color:var(--tile-sun-fg)}
+.step h3{margin:0;font:800 15px/1.25 var(--font-display);hyphens:auto}
+.step p{margin:2px 0 0;font-size:13px;color:var(--muted)}
+.mini{grid-column:1 / -1;display:flex;align-items:center;gap:4px;min-height:30px;flex-wrap:wrap}
+.bubble{background:var(--sunken);border-radius:12px 12px 12px 4px;padding:4px 8px;font-size:12px;font-weight:600}
+.mc{width:26px;height:26px;border-radius:8px;background:var(--yes-bg);display:grid;place-items:center;font-size:11px;font-weight:700}
+.mc.no{background:repeating-linear-gradient(45deg,var(--no-line) 0 1.5px,transparent 1.5px 7px),repeating-linear-gradient(135deg,var(--no-line) 0 1.5px,transparent 1.5px 7px),var(--no-bg)}
+/* Siegel 20 px (seal.svg): Minze, Indigo-Häkchen */
+.seal{width:22px;height:22px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px var(--surface);display:grid;place-items:center;color:var(--primary);flex:none}
+.mini b{font-size:12px}
+.demo{background:var(--surface);border-radius:24px;padding:12px 8px;box-shadow:var(--shadow-1)}
+.dgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:9px 4px;position:relative}
+.dc{height:40px;border-radius:11px;position:relative;font:800 12px/1 var(--font-display);display:grid;place-items:center;color:var(--text)}
+.dc[data-l="none"]{background:repeating-linear-gradient(45deg,var(--hm-none-line) 0 1.5px,transparent 1.5px 6px),var(--hm-none)}
 .dc[data-l="few"]{background:var(--hm-few)}.dc[data-l="some"]{background:var(--hm-some)}
 .dc[data-l="many"]{background:var(--hm-many);color:#fff}.dc[data-l="all"]{background:var(--hm-all);color:#fff}
-.dc .ok{position:absolute;right:3px;bottom:3px;width:10px;height:10px;border-radius:50%;background:#fff}
-.dband{position:absolute;height:4px;border-radius:2px;background:var(--accent-strong);transform-origin:left center}
-.caption{font-size:14px;color:var(--muted);margin:10px 0 0}
-.invite{background:var(--primary-tint);border-radius:16px;padding:16px}
-.invite h2{margin:0 0 4px!important;font-size:20px!important}
+.dc .ok{position:absolute;right:3px;bottom:3px;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1.4px #fff}
+.dband{position:absolute;height:4px;border-radius:2px;background:var(--primary);transform-origin:left center}
+.caption{font-size:14px;color:var(--muted);margin:12px 6px 0}
+.invite{background:var(--primary-tint);border-radius:24px;padding:16px}
+.invite h2{margin:0 0 4px!important}
 .invite p{margin:0}
+.cta{display:flex;width:100%;min-height:54px;border:0;border-radius:16px;background:var(--primary);color:#fff;font-weight:700;font-size:17px;align-items:center;justify-content:center;cursor:pointer;box-shadow:var(--shadow-button);
+  transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
 footer{padding:28px 16px 40px;font-size:14px;color:var(--muted);display:flex;flex-wrap:wrap;gap:6px 16px}
 footer a{color:var(--primary-text)}
-.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);width:min(100% - 32px,358px);background:var(--inverse-bg);color:var(--inverse-text);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow-3);font-size:15px}
+.toast{position:fixed;left:50%;bottom:24px;z-index:60;transform:translateX(-50%);width:min(100% - 32px,358px);background:var(--inverse-bg);color:var(--inverse-text);border-radius:16px;padding:12px 16px;box-shadow:var(--shadow-3);font-size:15px;font-weight:600}
 .toast[hidden]{display:none}
 
-/* Hero-Ebenen: Transform um die eigene Mitte */
-.hero .h-sun,.hero .h-cal,.hero .hf,.hero .hc{transform-box:fill-box;transform-origin:center}
-.hero .hb{transform-box:fill-box;transform-origin:left center}
+/* Hero-Ebenen (hero.svg v1.0): Transform um die eigene Mitte */
+#hero [data-anim],#hero [data-anim="cells"] rect,#hero [data-anim="friends"] circle{transform-box:fill-box;transform-origin:center}
 
 /* Scroll-Reveal (W01-02): nur Elemente UNTER dem ersten Viewport starten versteckt */
 [data-reveal]{transition:opacity var(--ww-duration-slow) var(--ww-ease-enter),transform var(--ww-duration-slow) var(--ww-ease-enter);transition-delay:var(--rd,0ms)}
 [data-reveal].pre{opacity:0;transform:translateY(var(--ww-motion-distance))}
 
-/* Parallax (W01-03): rein dekorativ, nur mit Scroll-Timeline-Unterstützung */
+/* Parallax (W01-03): rein dekorativ, nur mit Scroll-Timeline-Unterstützung; Wrapper-Gruppen, damit
+   der Eintritt (WAAPI auf data-anim) und die Parallaxe sich nicht überschreiben */
 @supports (animation-timeline: scroll()){
-  /* Reihenfolge wichtig: Kurzschreibweise zuerst, dann animation-timeline */
   :root:not([data-motion="reduce"]) .px-sun{animation:pxSun auto linear both;animation-timeline:scroll(root);animation-range:0px 420px}
-  :root:not([data-motion="reduce"]) .px-sea{animation:pxSea auto linear both;animation-timeline:scroll(root);animation-range:0px 420px}
+  :root:not([data-motion="reduce"]) .px-plate{animation:pxPlate auto linear both;animation-timeline:scroll(root);animation-range:0px 420px}
 }
 @keyframes pxSun{to{transform:translateY(24px)}}
-@keyframes pxSea{to{transform:translateY(-8px)}}
+@keyframes pxPlate{to{transform:translateY(8px)}}
 </style>
 </head>
 <body>
@@ -137,66 +162,90 @@ footer a{color:var(--primary-text)}
 <div class="app">
   <span class="sentinel" id="sentinel" aria-hidden="true"></span>
   <header class="site" id="site">
-    <span class="brand"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="11" r="6" fill="#f4b942"/><rect x="4" y="13" width="20" height="12" rx="3" fill="#0e6a68"/><rect x="7" y="17" width="4" height="4" rx="1" fill="#c6e9e2"/><rect x="12" y="17" width="4" height="4" rx="1" fill="#c6e9e2"/><rect x="17" y="17" width="4" height="4" rx="1" fill="#fff"/></svg>Wir wollen weg</span>
+    <span class="brand"><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="2" y="4" width="24" height="22" rx="7" fill="#5b48c9"/><circle cx="19" cy="11" r="4.5" fill="#ffcf4a"/><path d="M4 19c3-2 6-2 9 0s6 2 9 0" fill="none" stroke="#52e5b8" stroke-width="2.4" stroke-linecap="round"/></svg>Wir wollen <em>weg</em></span>
     <button class="lang" type="button" lang="en">English</button>
     <button class="login" type="button">Anmelden</button>
   </header>
 
   <main>
-    <section class="hero">
-      <svg id="hero" viewBox="0 0 320 200" width="320" height="200" aria-hidden="true">
-        <defs><clipPath id="hp"><rect x="8" y="8" width="304" height="184" rx="24"/></clipPath></defs>
-        <rect class="h-plate" x="8" y="8" width="304" height="184" rx="24" fill="#ece5d9"/>
-        <g clip-path="url(#hp)">
-          <g class="px-sun"><g class="h-sun"><circle cx="236" cy="96" r="46" fill="#f4b942"/></g></g>
-          <g class="px-sea"><g class="h-sea">
-            <path d="M0 140c26-8 52-8 78 0s52 8 78 0 52-8 78 0 52 8 78 0 26-8 40-4v70H0z" fill="#a6dbd2"/>
-            <path d="M0 166c26-6 52-6 78 0s52 6 78 0 52-6 78 0 52 6 78 0 26-6 40-3v40H0z" fill="#08403f" opacity=".5"/>
-          </g></g>
-        </g>
-        <g class="h-cal"><g transform="rotate(-4 115 100)">
-          <rect x="40" y="40" width="150" height="122" rx="14" fill="#fff" stroke="#1c2526" stroke-width="2"/>
-          <path d="M41 62v-7a14 14 0 0 1 14-14h120a14 14 0 0 1 14 14v7z" fill="#0e6a68"/>
-          <g>
-            <rect class="hc" x="52" y="72" width="20" height="16" rx="4" fill="#a6dbd2"/><rect class="hc" x="77" y="72" width="20" height="16" rx="4" fill="#5fbfb1"/><rect class="hc" x="102" y="72" width="20" height="16" rx="4" fill="#a6dbd2"/><rect class="hc" x="127" y="72" width="20" height="16" rx="4" fill="#5fbfb1"/><rect class="hc" x="152" y="72" width="20" height="16" rx="4" fill="#0e6a68"/>
-            <rect class="hc" x="52" y="94" width="20" height="16" rx="4" fill="#5fbfb1"/><rect class="hc" x="77" y="94" width="20" height="16" rx="4" fill="#0e6a68"/><rect class="hc" x="102" y="94" width="20" height="16" rx="4" fill="#5fbfb1"/><rect class="hc" x="127" y="94" width="20" height="16" rx="4" fill="#a6dbd2"/><rect class="hc" x="152" y="94" width="20" height="16" rx="4" fill="#a6dbd2"/>
-            <rect class="hc" x="52" y="116" width="20" height="16" rx="4" fill="#a6dbd2"/><rect class="hc" x="77" y="116" width="20" height="16" rx="4" fill="#0b4f4a"/><rect class="hc" x="102" y="116" width="20" height="16" rx="4" fill="#0b4f4a"/><rect class="hc" x="127" y="116" width="20" height="16" rx="4" fill="#0b4f4a"/><rect class="hc" x="152" y="116" width="20" height="16" rx="4" fill="#5fbfb1"/>
-          </g>
-          <rect class="hb" x="77" y="137" width="70" height="4" rx="2" fill="#d4552f"/>
-          <rect class="hcap" x="77" y="134" width="3" height="10" rx="1.5" fill="#d4552f"/>
-          <rect class="hcap" x="144" y="134" width="3" height="10" rx="1.5" fill="#d4552f"/>
-        </g></g>
-        <g stroke="#fbf8f3" stroke-width="3">
-          <circle class="hf" cx="206" cy="160" r="14" fill="#e8694a"/>
-          <circle class="hf" cx="228" cy="160" r="14" fill="#f4b942"/>
-          <circle class="hf" cx="250" cy="160" r="14" fill="#0e6a68"/>
-        </g>
-      </svg>
+    <section class="cockpit">
       <h1>Vom Gruppenchat zum festen Reisetermin.</h1>
       <p>Alle tragen ein, wann sie können. Wir finden die Zeiträume, in denen alle Zeit haben.</p>
-      <button class="cta" id="cta" type="button">Reise planen</button>
+      <button class="cta-mint" id="cta" type="button">Reise planen</button>
       <p class="small">Kostenlos · ohne App · ohne Passwort</p>
     </section>
+    <!-- Inline aus docs/design/assets/illustrations/hero.svg (v1.0), Ebenen plate, calendar, ring, friends, cells, band, sun, seal.
+         Dunkel-Block der Datei weggelassen (Prototyp nur hell); Parallax-Wrapper px-sun / px-plate ergänzt. -->
+    <div class="herowrap">
+      <svg id="hero" viewBox="0 0 358 210" width="358" height="210" aria-hidden="true" focusable="false">
+        <style>
+          #hero .wi-paper{fill:#FFFFFF}#hero .wi-ink{fill:#1E1A3D}#hero .wi-lav{fill:#A79AF2}#hero .wi-lavl{fill:#D6CFFA}#hero .wi-violet{fill:#5B48C9}
+          #hero .wi-brand{fill:#2B2266}#hero .wi-mint{fill:#52E5B8}#hero .wi-sun{fill:#FFCF4A}#hero .wi-none{fill:#EEECF5}
+          #hero .wi-track{stroke:#ECE9F7}#hero .wi-s-mint{stroke:#52E5B8}#hero .wi-s-paper{stroke:#FFFFFF}#hero .wi-s-seal{stroke:#2B2266}
+        </style>
+        <defs>
+          <filter id="wwhero-shadow" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#2B2266" flood-opacity=".3"/></filter>
+        </defs>
+        <g class="px-plate"><g data-anim="plate">
+          <rect class="wi-lav" x="30" y="24" width="300" height="168" rx="22" transform="rotate(-4 180 108)"/>
+        </g></g>
+        <g data-anim="calendar">
+          <rect class="wi-paper" x="14" y="30" width="330" height="172" rx="24" filter="url(#wwhero-shadow)"/>
+          <rect class="wi-ink" x="92" y="58" width="118" height="10" rx="5"/>
+          <rect class="wi-lavl" x="92" y="76" width="80" height="8" rx="4"/>
+        </g>
+        <g data-anim="ring">
+          <g transform="translate(56 72)">
+            <circle class="wi-track" r="22" fill="none" stroke-width="8"/>
+            <circle class="wi-s-mint" id="wwhero-ring" r="22" fill="none" stroke-width="8" stroke-linecap="round" stroke-dasharray="98.7 138.3" transform="rotate(-90)"/>
+          </g>
+        </g>
+        <g data-anim="friends">
+          <g class="wi-s-paper" stroke-width="2.5">
+            <circle cx="258" cy="70" r="13" fill="#FFD3C7"/><circle cx="279" cy="70" r="13" fill="#C9DBFF"/><circle cx="300" cy="70" r="13" fill="#D4F2B0"/><circle cx="321" cy="70" r="13" fill="#DCD3FF"/>
+          </g>
+        </g>
+        <g data-anim="cells">
+          <rect class="wi-lavl" x="31" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="117" y="108" width="38" height="24" rx="7"/><rect class="wi-violet" x="160" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="203" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="246" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="289" y="108" width="38" height="24" rx="7"/>
+          <rect class="wi-brand" x="31" y="138" width="38" height="24" rx="7"/><rect class="wi-brand" x="74" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="117" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="160" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="203" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="246" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="289" y="138" width="38" height="24" rx="7"/>
+          <rect class="wi-violet" x="31" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="117" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="160" y="168" width="38" height="24" rx="7"/><rect class="wi-none" x="203" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="246" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="289" y="168" width="38" height="24" rx="7"/>
+          <g class="wi-mint"><circle cx="232" cy="124" r="4.5"/><circle cx="275" cy="124" r="4.5"/><circle cx="318" cy="124" r="4.5"/><circle cx="60" cy="154" r="4.5"/><circle cx="103" cy="154" r="4.5"/></g>
+        </g>
+        <g data-anim="band" class="wi-s-mint" fill="none" stroke-width="3">
+          <rect x="199" y="104" width="132" height="32" rx="10"/>
+          <rect x="27" y="134" width="89" height="32" rx="10"/>
+        </g>
+        <g class="px-sun"><g data-anim="sun">
+          <circle class="wi-sun" cx="336" cy="22" r="22" opacity=".3"/>
+          <circle class="wi-sun" cx="336" cy="22" r="15"/>
+          <path class="wi-mint" d="M24 16l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+        </g></g>
+        <g data-anim="seal">
+          <circle class="wi-mint" cx="22" cy="194" r="15"/>
+          <path class="wi-s-seal" d="M15 194.5l4.5 4.5 8-8.5" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </div>
 
     <section class="block" aria-labelledby="howTitle">
       <h2 id="howTitle" data-reveal>So geht’s</h2>
-      <div class="steps">
+      <div class="stepsC"><div class="steps">
         <article class="step" data-reveal data-step="1">
-          <span class="num" aria-hidden="true">1</span>
+          <span class="tile t1" aria-hidden="true">1</span>
           <div><h3>Reise anlegen, Link in den Gruppenchat</h3><p>Dauert keine 2 Minuten.</p></div>
-          <div class="mini" aria-hidden="true"><span class="bubble" id="bub">Wer ist dabei? <b>wirwollenweg…/i/…</b></span></div>
+          <div class="mini" aria-hidden="true"><span class="bubble" id="bub">Wer ist dabei?</span></div>
         </article>
         <article class="step" data-reveal data-step="2">
-          <span class="num" aria-hidden="true">2</span>
-          <div><h3>Alle tippen ihre freien Tage</h3><p>Antippen oder über mehrere Tage wischen.</p></div>
-          <div class="mini" aria-hidden="true" id="mcs"><span class="mc">12</span><span class="mc">13</span><span class="mc">14</span><span class="mc">15</span><span class="mc">16</span><span class="mc">17</span></div>
+          <span class="tile t2" aria-hidden="true">2</span>
+          <div><h3>Alle tippen ihre freien Tage</h3><p>Antippen oder wischen.</p></div>
+          <div class="mini" aria-hidden="true" id="mcs"><span class="mc">12</span><span class="mc">13</span><span class="mc">14</span></div>
         </article>
         <article class="step" data-reveal data-step="3">
-          <span class="num" aria-hidden="true">3</span>
-          <div><h3>Vorschläge ansehen, abstimmen, fertig</h3><p>Die App schlägt vor, die Gruppe entscheidet.</p></div>
-          <div class="mini" aria-hidden="true"><span class="seal" id="miniSeal"><svg width="18" height="18" viewBox="0 0 20 20"><path d="M4.5 10.5l3.5 3.5 7.5-8" fill="none" stroke="#1c2526" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>Es geht los: 5.–10. Mai</b></div>
+          <span class="tile t3" aria-hidden="true">3</span>
+          <div><h3>Abstimmen, fertig</h3><p>Die Gruppe entscheidet.</p></div>
+          <div class="mini" aria-hidden="true"><span class="seal" id="miniSeal"><svg width="14" height="14" viewBox="0 0 20 20"><path d="M4.5 10.5l3.5 3.5 7.5-8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg></span><b>5.–10. Mai</b></div>
         </article>
-      </div>
+      </div></div>
     </section>
 
     <section class="block" aria-labelledby="demoTitle">
@@ -212,6 +261,11 @@ footer a{color:var(--primary-text)}
         <h2>Eingeladen worden?</h2>
         <p>Öffne einfach den Link aus deinem Gruppenchat.</p>
       </div>
+    </section>
+
+    <!-- M-U4: kein Sticky-CTA im MVP – Wiederholung am Seitenende, gleiche Aktion, gleiche Beschriftung -->
+    <section class="block">
+      <button class="cta" id="cta2" type="button" data-reveal>Reise planen</button>
     </section>
   </main>
   <footer><a href="#">Hilfe</a><a href="#">Datenschutz</a><a href="#">Impressum</a><a href="#" lang="en">English</a></footer>
@@ -248,31 +302,33 @@ if('IntersectionObserver' in window){
   new IntersectionObserver(function(es){site.classList.toggle('stuck',!es[0].isIntersecting);},{rootMargin:'-'+(proto.offsetHeight+1)+'px 0px 0px 0px'}).observe(document.getElementById('sentinel'));
 }
 
-/* ---------- Hero-Eintritt (W01-01): Text steht sofort, nur die Illustration baut sich auf ---------- */
+/* ---------- Hero-Eintritt (W01-01): Text + CTA stehen sofort, nur die Illustration baut sich auf (≤ 1,1 s) ---------- */
 function heroIn(){
   var h=document.getElementById('hero');if(reduced())return;
-  play(h.querySelector('.h-plate'),[{opacity:0},{opacity:1}],{duration:D.base,easing:E.standard,fill:'backwards'});
-  play(h.querySelector('.h-sun'),[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:80,easing:E.emph,fill:'backwards'});
-  play(h.querySelector('.h-sea'),[{opacity:0,transform:'translateY(6px)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:120,easing:E.emph,fill:'backwards'});
-  play(h.querySelector('.h-cal'),[{opacity:0,transform:'translateY(16px) rotate(-6deg)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:200,easing:E.soft,fill:'backwards'});
-  [].forEach.call(h.querySelectorAll('.hc'),function(c,i){var row=Math.floor(i/5),col=i%5;
-    play(c,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.base,delay:420+(row+col)*40,easing:E.soft,fill:'backwards'});});
-  play(h.querySelector('.hb'),[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:D.base,delay:760,easing:E.standard,fill:'backwards'});
-  [].forEach.call(h.querySelectorAll('.hcap'),function(c,i){play(c,[{opacity:0},{opacity:1}],{duration:D.fast,delay:760+i*220,fill:'backwards'});});
-  [].forEach.call(h.querySelectorAll('.hf'),function(c,i){play(c,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:600+i*60,easing:E.soft,fill:'backwards'});});
+  var L=function(n){return h.querySelector('[data-anim="'+n+'"]');};
+  play(L('plate'),[{opacity:0,transform:'rotate(-4deg)'},{opacity:1,transform:'none'}],{duration:D.moderate,easing:E.soft,fill:'backwards'});
+  play(L('calendar'),[{opacity:0,transform:'translateY(16px)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:60,easing:E.emph,fill:'backwards'});
+  play(document.getElementById('wwhero-ring'),[{strokeDashoffset:98.7},{strokeDashoffset:0}],{duration:D.moderate,delay:260,easing:E.standard,fill:'backwards'}); /* G-20 */
+  [].forEach.call(L('friends').querySelectorAll('circle'),function(c,i){play(c,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.base,delay:300+i*40,easing:E.soft,fill:'backwards'});});
+  [].forEach.call(L('cells').querySelectorAll('rect'),function(c,i){var row=Math.floor(i/7),col=i%7;
+    play(c,[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.base,delay:Math.min(360+(row+col)*24,760),easing:E.soft,fill:'backwards'});});
+  play(L('cells').querySelector('g'),[{opacity:0},{opacity:1}],{duration:D.fast,delay:780,fill:'backwards'});
+  play(L('band'),[{opacity:0,transform:'scale(1.06)'},{opacity:1,transform:'none'}],{duration:D.base,delay:820,easing:E.standard,fill:'backwards'});
+  play(L('sun'),[{opacity:0,transform:'translateY(12px)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:200,easing:E.emph,fill:'backwards'});
+  play(L('seal'),[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.base+60,delay:840,easing:E.bouncy,fill:'backwards'}); /* fertig ≈ 1,1 s */
 }
 heroIn();
 
 /* ---------- Demo-Heatmap (wird beim Reveal aufgebaut) ---------- */
 var dgrid=document.getElementById('dgrid');
-var L=['few','some','few','many','some','none','few','some','many','all','all','all','all','many','few','some','many','many','some','few','none'];
+var LV=['few','some','few','many','some','none','few','some','many','all','all','all','all','many','few','some','many','many','some','few','none'];
 var NUM={none:'0',few:'2',some:'4',many:'6',all:'7'};
-L.forEach(function(l,i){var c=document.createElement('span');c.className='dc';c.dataset.l=l;c.textContent=NUM[l];if(l==='all'){var o=document.createElement('span');o.className='ok';c.appendChild(o);}dgrid.appendChild(c);});
+LV.forEach(function(l){var c=document.createElement('span');c.className='dc';c.dataset.l=l;c.textContent=NUM[l];if(l==='all'){var o=document.createElement('span');o.className='ok';c.appendChild(o);}dgrid.appendChild(c);});
 function demoBuild(){
   var cells=[].slice.call(dgrid.children);
   var a=cells[9],b=cells[12];
   var band=document.createElement('span');band.className='dband';
-  band.style.left=a.offsetLeft+'px';band.style.width=(b.offsetLeft+b.offsetWidth-a.offsetLeft)+'px';band.style.top=(a.offsetTop+a.offsetHeight)+'px';
+  band.style.left=a.offsetLeft+'px';band.style.width=(b.offsetLeft+b.offsetWidth-a.offsetLeft)+'px';band.style.top=(a.offsetTop+a.offsetHeight+2)+'px';
   dgrid.appendChild(band);
   if(reduced())return;
   cells.forEach(function(c,i){var d=Math.floor(i/7)+i%7;c.animate([{opacity:0,transform:'scale(.92)'},{opacity:1,transform:'none'}],{duration:D.base,delay:d*24,easing:E.enter,fill:'backwards'});});
@@ -283,9 +339,9 @@ function demoBuild(){
 /* ---------- Mini-Demos in „So geht’s“ (einmal, keine Schleife) ---------- */
 function stepDemo(n){
   if(n==='1')play(document.getElementById('bub'),[{opacity:0,transform:'translateX(-12px) scale(.96)'},{opacity:1,transform:'none'}],{duration:D.slow,delay:200,easing:E.soft,fill:'backwards'});
-  if(n==='2'){var mcs=[].slice.call(document.getElementById('mcs').children).slice(1,4);
+  if(n==='2'){var mcs=[].slice.call(document.getElementById('mcs').children);
     mcs.forEach(function(c,i){setTimeout(function(){c.classList.add('no');play(c,[{transform:'scale(.94)'},{transform:'scale(1)'}],{duration:D.base,easing:E.soft});},reduced()?0:300+i*140);});}
-  if(n==='3')play(document.getElementById('miniSeal'),[{transform:'scale(0) rotate(-20deg)'},{transform:'none'}],{duration:D.celebrate,delay:200,easing:E.bouncy,fill:'backwards'});
+  if(n==='3')play(document.getElementById('miniSeal'),[{opacity:0,transform:'scale(.6)'},{opacity:1,transform:'none'}],{duration:D.moderate,delay:200,easing:E.bouncy,fill:'backwards'}); /* Siegel 20 px */
 }
 
 /* ---------- Scroll-Reveal (W01-02) ---------- */
@@ -300,7 +356,7 @@ function setupReveal(){
   if(io){io.disconnect();io=null;}
   var vh=window.innerHeight;
   if(reduced()||!('IntersectionObserver' in window)){ /* alles sofort sichtbar */
-    items.forEach(function(el){if(el.classList.contains('pre')||!el.dataset.done){el.classList.remove('pre');if(!el.dataset.done){el.dataset.done='1';onReveal(el);}}});return;}
+    items.forEach(function(el){el.classList.remove('pre');if(!el.dataset.done){el.dataset.done='1';onReveal(el);}});return;}
   io=new IntersectionObserver(function(es){
     var batch=es.filter(function(e){return e.isIntersecting;}).map(function(e){return e.target;});
     batch.forEach(function(el,i){el.style.setProperty('--rd',Math.min(i*60,400)+'ms');io.unobserve(el);el.dataset.done='1';onReveal(el);});
@@ -317,9 +373,11 @@ rm.addEventListener('change',function(){root.dataset.motion=rm.checked?'reduce':
 
 /* ---------- CTA ---------- */
 var toast=document.getElementById('toast'),tt=0;
-document.getElementById('cta').addEventListener('click',function(){clearTimeout(tt);toast.textContent='→ Neue Reise anlegen (/trips/new) – nicht im Prototyp.';toast.hidden=false;
+function go(){clearTimeout(tt);toast.textContent='→ Neue Reise anlegen (/trips/new) – nicht im Prototyp.';toast.hidden=false;
   if(reduced())toast.animate([{opacity:0},{opacity:1}],{duration:D.fade});else toast.animate([{opacity:0,transform:'translate(-50%,16px)'},{opacity:1,transform:'translate(-50%,0)'}],{duration:D.base,easing:E.enter});
-  tt=setTimeout(function(){var a=toast.animate([{opacity:1},{opacity:0}],{duration:reduced()?D.fade:D.fast,fill:'forwards'});a.onfinish=function(){toast.hidden=true;a.cancel();};},4000);});
+  tt=setTimeout(function(){var a=toast.animate([{opacity:1},{opacity:0}],{duration:reduced()?D.fade:D.fast,fill:'forwards'});a.onfinish=function(){toast.hidden=true;a.cancel();};},4000);}
+document.getElementById('cta').addEventListener('click',go);
+document.getElementById('cta2').addEventListener('click',go);
 document.getElementById('btnReset').addEventListener('click',function(){window.scrollTo(0,0);location.reload();});
 })();
 </script>

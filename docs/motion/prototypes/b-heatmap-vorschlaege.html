@@ -5,19 +5,29 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prototyp b · Heatmap & Vorschläge (W09, F-008/F-009) · Wir wollen weg</title>
 <style>
-/* ===== Platzhalter-Optik (aktuelle Tokens, Light) ===== */
+/* ===== Optik B0 „Indigo & Minze“ – Werte aus docs/design/tokens.css v1.0 (Light), inline übernommen,
+   damit der Prototyp eigenständig bleibt. Heatmap = „Indigo-Rampe“ (design-system §6.2).
+   Schriften: Plus Jakarta Sans / Figtree, falls lokal installiert, sonst Systemschrift (keine CDNs). ===== */
 :root{
-  --bg:#fbf8f3;--surface:#fff;--sunken:#f1eee8;--text:#1c2526;--muted:#55605f;
-  --border-subtle:#e4ded4;--border-strong:#858c8a;
-  --primary:#0e6a68;--primary-text:#0a5654;--primary-tint:#ddf1ee;
-  --accent-strong:#d4552f;--accent-text:#b23f22;--accent-tint:#fce6de;--sun:#f4b942;
-  --warning-text:#7a4e00;--warning-tint:#fdf0cf;--focus:#2b59c3;
-  --vote-maybe-bg:#fdf0cf;--vote-maybe-fg:#7a4e00;--vote-no-bg:#ece5d9;
-  --scrim:rgb(17 24 25 / .48);
-  --shadow-1:0 1px 2px rgb(28 37 38 / .06),0 1px 3px rgb(28 37 38 / .10);
-  --shadow-3:0 8px 16px rgb(28 37 38 / .10),0 16px 40px rgb(28 37 38 / .16);
-  --hm-none-bg:#f1eee8;--hm-none-line:#cfc9c0;--hm-few:#a6dbd2;--hm-some:#5fbfb1;--hm-many:#187e73;--hm-all:#0b4f4a;
-  --suggest:#d4552f;
+  --bg:#f4f2fb;--surface:#fff;--sunken:#ece9f7;--text:#1e1a3d;--muted:#57527a;
+  --border-subtle:#e3dff0;--border-strong:#8a86a8;
+  --primary:#2b2266;--primary-text:#5a3fd0;--primary-tint:#ece6ff;--selected:#2b2266;
+  --accent:#52e5b8;--accent-text:#00775a;--sun:#ffcf4a;
+  --holiday:#f0503f;--holiday-text:#a3321f;--holiday-tint:#ffe4df;
+  --warning-text:#7a5200;--warning-tint:#fff3cc;--focus:#2b59c3;
+  --vote-maybe-bg:#fff3cc;--vote-maybe-fg:#7a5200;--vote-no-bg:#ece9f7;--vote-no-fg:#57527a;
+  --scrim:rgb(20 17 46 / .5);
+  --shadow-1:0 1px 2px rgb(30 26 61 / .06),0 14px 30px -18px rgb(43 34 102 / .38);
+  --shadow-3:0 8px 16px rgb(30 26 61 / .10),0 24px 40px -20px rgb(43 34 102 / .60);
+  --shadow-selected:0 8px 16px -10px rgb(43 34 102 / .60);
+  --hm-none-bg:#eeecf5;--hm-none-line:#c9c6d4;--hm-few:#d6cffa;--hm-some:#a79af2;--hm-many:#5b48c9;--hm-all:#2b2266;
+  --hm-weekend-lane:rgb(167 154 242 / .16);
+  --suggest:#2b2266;
+  --cockpit-bg:#2b2266;
+  --cockpit-image:radial-gradient(240px 96px at 100% 0,rgb(82 229 184 / .22),rgb(82 229 184 / 0)),radial-gradient(220px 96px at 0 0,rgb(167 154 242 / .30),rgb(167 154 242 / 0));
+  --cockpit-muted:#cfc9f2;--cockpit-track:rgb(255 255 255 / .10);--cockpit-control:rgb(255 255 255 / .12);--cockpit-kpi:rgb(255 255 255 / .08);
+  --font-sans:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --font-display:"Plus Jakarta Sans","Figtree",system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
 }
 /* ===== Motion-Tokens (Vorschlag motion-system.md §3) ===== */
 :root{
@@ -47,41 +57,50 @@
 
 *{box-sizing:border-box}
 html{color-scheme:light;-webkit-text-size-adjust:100%}
-body{margin:0;font:16px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;color:var(--text);background:#e6e1d8}
+body{margin:0;font:16px/1.45 var(--font-sans);color:var(--text);background:#d9d5f2}
 button{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--focus);outline-offset:2px}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
-.proto{position:sticky;top:0;z-index:70;background:#1c2526;color:#fff;font-size:13px;line-height:1.3}
+.proto{position:sticky;top:0;z-index:70;background:#1e1a3d;color:#fff;font-size:13px;line-height:1.3}
 .proto-in{max-width:390px;margin:0 auto;padding:6px 12px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center}
 .sw{display:inline-flex;align-items:center;gap:6px;cursor:pointer;min-height:32px;position:relative}
 .sw input{position:absolute;opacity:0;width:1px;height:1px}
-.sw-track{width:36px;height:20px;border-radius:999px;background:#6b7775;position:relative;flex:none}
+.sw-track{width:36px;height:20px;border-radius:999px;background:#57527a;position:relative;flex:none}
 .sw-track::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
-.sw input:checked+.sw-track{background:#4ab3a4}
+.sw input:checked+.sw-track{background:#5b48c9}
 .sw input:checked+.sw-track::after{transform:translateX(16px)}
 .sw input:focus-visible+.sw-track{outline:3px solid #8fb3ff;outline-offset:2px}
-.pbtn{color:#fff;background:transparent;border:1px solid #858c8a;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
+.pbtn{color:#fff;background:transparent;border:1px solid #8a86a8;border-radius:8px;padding:3px 8px;min-height:30px;cursor:pointer;font-size:13px}
 
 .app{max-width:390px;margin:0 auto;background:var(--bg);min-height:100dvh;position:relative;padding-bottom:48px;overflow-x:clip}
-.trip{background:var(--surface);border-bottom:1px solid var(--border-subtle)}
-.trip-top{display:flex;align-items:center;gap:12px;height:52px;padding:0 16px;font-weight:600}
-.trip-top .grow{flex:1}
-.tabs{display:flex;gap:4px;padding:0 8px;font-size:14px;font-weight:600}
-.tabs a{padding:12px 8px;color:var(--muted);text-decoration:none;position:relative}
-.tabs a[aria-current]{color:var(--text)}
-.tabs a[aria-current]::after{content:"";position:absolute;left:8px;right:8px;bottom:0;height:3px;border-radius:2px;background:var(--primary)}
+/* Cockpit-Kopf mit Kennzahl-Box (design-system §9.2/§9.3/§9.4) */
+.trip{background:var(--cockpit-image),var(--cockpit-bg);color:#fff;border-radius:0 0 30px 30px;padding:4px 8px 14px}
+.trip-top{display:flex;align-items:center;gap:8px;min-height:48px}
+.ib{width:44px;height:44px;border-radius:50%;background:var(--cockpit-control);display:grid;place-items:center;flex:none;font-size:18px}
+.tname{flex:1;min-width:0}
+.tname b{display:block;font:800 21px/1.15 var(--font-display);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tname span{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:600;color:var(--cockpit-muted)}
+.tname i{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.tabs{display:flex;gap:2px;margin:8px 0 0;padding:2px;border-radius:999px;background:var(--cockpit-track);overflow-x:auto;scrollbar-width:none}
+.tabs a{flex:1 0 auto;display:grid;place-items:center;min-height:44px;padding:0 10px;border-radius:999px;font-size:14px;font-weight:700;color:var(--cockpit-muted);text-decoration:none}
+.tabs a[aria-current]{background:#fff;color:var(--primary);box-shadow:0 6px 14px -6px rgb(0 0 0 / .45)}
+.tabs a:focus-visible,.ib:focus-visible{outline:3px solid #fff;outline-offset:2px}
+.kbox{display:grid;grid-template-columns:52px 1fr;gap:4px 12px;align-items:center;margin:12px 0 0;padding:10px 12px;border-radius:20px;background:var(--cockpit-kpi)}
+.kbox svg{grid-row:span 2}
+.kbox b{font:800 16px/1.25 var(--font-display)}
+.kbox small{font-size:13px;font-weight:500;color:var(--cockpit-muted)}
+.kring{transform-box:fill-box;transform-origin:center}
 .pad{padding:12px 16px 0}
-.status{background:var(--warning-tint);color:var(--warning-text);border-radius:12px;padding:10px 14px;font-size:14px;margin:0 0 12px}
-.segctl{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:12px;background:var(--sunken);margin-bottom:12px}
-.segctl .ind{position:absolute;left:4px;top:4px;bottom:4px;width:calc((100% - 8px)/2);border-radius:9px;background:var(--surface);border:1.5px solid var(--border-strong);box-shadow:var(--shadow-1);
+.segctl{position:relative;display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:16px;background:var(--sunken);margin-bottom:12px}
+.segctl .ind{position:absolute;left:4px;top:4px;bottom:4px;width:calc((100% - 8px)/2);border-radius:12px;background:var(--surface);border:2px solid var(--selected);box-shadow:var(--shadow-selected);
   transform:translateX(calc(var(--i,0) * 100%));transition:transform var(--ww-duration-base) var(--ww-ease-standard)}
-.segctl button{position:relative;z-index:1;border:0;background:transparent;min-height:40px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer}
-.segctl button[aria-pressed="true"]{color:var(--text);font-weight:700}
+.segctl button{position:relative;z-index:1;border:0;background:transparent;min-height:44px;border-radius:12px;font-weight:700;font-size:14px;color:var(--muted);cursor:pointer}
+.segctl button[aria-pressed="true"]{color:var(--text);font-weight:800}
 .filters{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:8px}
-.chip{display:inline-flex;align-items:center;gap:6px;min-height:36px;padding:0 14px;border-radius:999px;border:1.5px solid var(--border-strong);background:var(--surface);font-size:14px;font-weight:600;cursor:pointer;
+.chip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 14px;border-radius:999px;border:1.5px solid var(--border-strong);background:var(--surface);background-clip:padding-box;font-size:14px;font-weight:700;cursor:pointer;
   transition:transform var(--ww-duration-fast) var(--ww-ease-spring-soft)}
 .chip:active{transform:scale(var(--ww-motion-scale-press));transition-duration:var(--ww-duration-instant)}
-.chip.active{background:var(--primary-tint);color:var(--primary-text);border:2px solid var(--primary)}
+.chip.active{background:var(--primary-tint);color:var(--text);border:2px solid var(--selected)}
 .chip .ck{display:none}
 .chip.active .ck{display:inline-block}
 .note{font-size:13px;color:var(--muted);margin:0 0 12px}
@@ -89,71 +108,73 @@ button{font:inherit;color:inherit}
 
 /* Vorschläge */
 .list{display:flex;flex-direction:column;gap:12px}
-.ghead{display:flex;align-items:center;gap:8px;font-size:18px;margin:12px 0 0}
+.ghead{display:flex;align-items:center;gap:8px;font:800 17px/1.25 var(--font-display);margin:12px 0 0}
 .ghead[hidden],.card[hidden]{display:none}
-.ghead .ic{display:inline-grid;place-items:center;width:24px;height:24px;color:var(--primary)}
-.ghead.second{margin-top:24px}
-.card{background:var(--surface);border:1px solid var(--border-subtle);border-radius:16px;padding:14px 16px;position:relative}
-.card::after{content:"";position:absolute;inset:-1px;border-radius:16px;border:2px solid var(--suggest);opacity:0;transition:opacity var(--ww-duration-base);pointer-events:none}
+.ghead .ic{display:inline-grid;place-items:center;width:24px;height:24px;color:var(--accent-text)}
+.ghead.second{margin-top:32px}
+.card{background:var(--surface);border:1px solid transparent;border-radius:22px;padding:14px 16px;position:relative;box-shadow:var(--shadow-1)}
+.card::after{content:"";position:absolute;inset:-1px;border-radius:22px;border:2px solid var(--selected);opacity:0;transition:opacity var(--ww-duration-base);pointer-events:none}
 .card.hl::after{opacity:1}
-.card h3{font-size:17px;line-height:1.3;margin:0}
+.card h3{font:800 19px/1.25 var(--font-display);letter-spacing:-.015em;margin:0}
 .card .sub{font-size:14px;color:var(--muted);margin:2px 0 8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
-.tag{font-size:13px;font-weight:600;border-radius:999px;padding:2px 10px}
+.tag{font-size:13px;font-weight:700;border-radius:999px;padding:3px 10px}
 .tag.maybe{background:var(--vote-maybe-bg);color:var(--vote-maybe-fg)}
-.tag.no{background:var(--vote-no-bg);color:var(--text)}
-.tag.hol{background:var(--accent-tint);color:var(--accent-text)}
+.tag.no{background:var(--vote-no-bg);color:var(--vote-no-fg)}
+.tag.hol{background:var(--holiday-tint);color:var(--holiday-text)}
 .calc{font-size:13px;color:var(--muted)}
-.show{border:0;background:transparent;color:var(--primary-text);font-weight:600;min-height:44px;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.show{border:0;background:transparent;color:var(--primary-text);font-weight:700;min-height:44px;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
 
-/* Heatmap */
-details.legend{background:var(--surface);border:1px solid var(--border-subtle);border-radius:12px;padding:8px 12px;margin-bottom:12px;font-size:13px}
-details.legend summary{cursor:pointer;font-weight:600;min-height:28px}
+/* Heatmap – Indigo-Rampe (design-system §6) */
+details.legend{background:var(--surface);border-radius:16px;padding:8px 12px;margin-bottom:12px;font-size:12.5px;font-weight:600;color:var(--muted);box-shadow:var(--shadow-1)}
+details.legend summary{cursor:pointer;font-weight:700;font-size:14px;color:var(--text);min-height:44px;display:flex;align-items:center}
 .lgrow{display:flex;gap:6px;margin:6px 0}
-.lgrow .hcell{width:36px;height:36px;pointer-events:none}
-.month{margin:0 0 20px}
-.month h2{font-size:18px;margin:0 0 6px}
+.lgrow .hcell{width:28px;height:28px;pointer-events:none}
+.month{margin:0 -12px 16px;background:var(--surface);border-radius:24px;padding:12px 4px;box-shadow:var(--shadow-1)}
+.month h2{font:800 18px/1.2 var(--font-display);margin:0 8px 8px}
 .dow{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;font-size:12px;font-weight:700;color:var(--muted);text-align:center;margin-bottom:4px}
-.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;position:relative;margin:0 -8px}
-.hcell{position:relative;height:52px;border:0;border-radius:8px;padding:0;cursor:pointer;color:var(--text);-webkit-tap-highlight-color:transparent;
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:9px 4px;position:relative}
+.hcell{position:relative;height:46px;border:0;border-radius:11px;padding:0;cursor:pointer;color:var(--text);-webkit-tap-highlight-color:transparent;
   transition:background-color var(--ww-duration-fast) linear,transform var(--ww-duration-base) var(--ww-ease-spring-soft)}
 .hcell:active{transform:scale(var(--ww-motion-scale-cell));transition-duration:var(--ww-duration-instant)}
-.hcell[data-l="none"]{background:repeating-linear-gradient(135deg,var(--hm-none-line) 0 1.5px,transparent 1.5px 6px),var(--hm-none-bg)}
+.hcell[data-l="none"]{background:repeating-linear-gradient(45deg,var(--hm-none-line) 0 1.5px,transparent 1.5px 6px),var(--hm-none-bg)}
 .hcell[data-l="few"]{background-color:var(--hm-few)}
 .hcell[data-l="some"]{background-color:var(--hm-some)}
 .hcell[data-l="many"]{background-color:var(--hm-many);color:#fff}
 .hcell[data-l="all"]{background-color:var(--hm-all);color:#fff}
 .hcell.sel{box-shadow:inset 0 0 0 2px var(--text),inset 0 0 0 4px #fff}
 .hcell:focus-visible{outline:none;z-index:1;box-shadow:0 0 0 2px #fff,0 0 0 5px var(--focus),0 0 0 7px #fff}
-.dnum{position:absolute;left:4px;top:3px;font-size:12px;font-weight:500;line-height:1}
-.cnt{position:absolute;left:0;right:0;top:45%;text-align:center;font-size:13px;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
-.mb{position:absolute;left:4px;bottom:4px;width:10px;height:10px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
-.ok{position:absolute;right:4px;bottom:4px;width:12px;height:12px;border-radius:50%;background:currentColor}
-.ok::after{content:"";position:absolute;left:3.5px;top:2px;width:3px;height:5.5px;border:solid var(--hm-all);border-width:0 1.6px 1.6px 0;transform:rotate(45deg)}
-.ear{position:absolute;right:0;top:0;width:0;height:0;border-top:12px solid var(--accent-strong);border-left:12px solid transparent;border-top-right-radius:8px}
+.dnum{position:absolute;left:5px;top:5px;font-size:12px;font-weight:600;line-height:1}
+.cnt{position:absolute;left:0;right:0;top:48%;text-align:center;font:800 13px/1 var(--font-display);font-variant-numeric:tabular-nums}
+.mb{position:absolute;left:4px;bottom:4px;width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+/* Siegel „Alle: Geht“ (nur x = n): Minze mit Indigo-Häkchen, 1,4-px-Ring Weiß */
+.ok{position:absolute;right:4px;bottom:4px;width:16px;height:16px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 1.4px #fff}
+.ok::after{content:"";position:absolute;left:5.5px;top:3px;width:3.5px;height:7px;border:solid var(--primary);border-width:0 2px 2px 0;transform:rotate(45deg)}
+.ear{position:absolute;right:0;top:0;width:0;height:0;border-top:13px solid var(--holiday);border-left:13px solid transparent;border-top-right-radius:11px}
 .hcell[data-l="many"] .ear,.hcell[data-l="all"] .ear{filter:drop-shadow(-1px 1px 0 #fff)}
+/* Vorschlag-Band 4 px in der Zeilenfuge (Indigo hell / Minze dunkel) */
 .band,.cap{position:absolute;background:var(--suggest);pointer-events:none;border-radius:2px}
 .cap{width:3px;height:12px;border-radius:1.5px}
-.outline{position:absolute;border:2px solid var(--text);border-radius:10px;pointer-events:none}
-.outline.openL{border-left-color:transparent;border-radius:0 10px 10px 0}
-.outline.openR{border-right-color:transparent;border-radius:10px 0 0 10px}
+.outline{position:absolute;border:2px solid var(--text);border-radius:13px;pointer-events:none}
+.outline.openL{border-left-color:transparent;border-radius:0 13px 13px 0}
+.outline.openR{border-right-color:transparent;border-radius:13px 0 0 13px}
 .outline.openL.openR{border-radius:0}
-.blabel{position:absolute;padding:3px 10px;border-radius:999px;background:var(--suggest);color:#fff;font-size:12px;font-weight:700;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-1)}
-.hols{list-style:none;margin:6px 0 0;padding:0;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 12px}
+.blabel{position:absolute;padding:3px 10px;border-radius:999px;background:var(--suggest);color:#fff;font-size:12px;font-weight:800;white-space:nowrap;pointer-events:none;box-shadow:var(--shadow-1)}
+.hols{list-style:none;margin:8px 8px 0;padding:0;font-size:13px;color:var(--muted);display:flex;flex-wrap:wrap;gap:2px 12px}
 
-/* Tagesdetail-Sheet */
+/* Tagesdetail-Sheet (design-system §9.16) */
 .layer{position:fixed;inset:0;z-index:80;display:flex;justify-content:center;align-items:flex-end;overflow:hidden}
 .layer[hidden]{display:none}
 .scrim{position:absolute;inset:0;background:var(--scrim)}
-.sheet{position:relative;width:100%;max-width:390px;height:92dvh;background:var(--surface);border-radius:24px 24px 0 0;box-shadow:var(--shadow-3);display:flex;flex-direction:column;will-change:auto;overscroll-behavior:contain}
+.sheet{position:relative;width:100%;max-width:390px;height:92dvh;background:var(--surface);border-radius:28px 28px 0 0;box-shadow:var(--shadow-3);display:flex;flex-direction:column;will-change:auto;overscroll-behavior:contain}
 .shead{padding:8px 8px 4px;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
-.grip{width:36px;height:4px;border-radius:2px;background:var(--border-strong);margin:0 auto 6px}
+.grip{width:40px;height:5px;border-radius:999px;background:var(--border-subtle);margin:0 auto 6px}
 .srow{display:flex;align-items:center;gap:4px}
-.srow h2{flex:1;text-align:center;font-size:17px;margin:0;line-height:1.25}
-.ib{width:44px;height:44px;border:0;background:transparent;border-radius:12px;font-size:20px;cursor:pointer;flex:none}
-.ib:active{background:var(--sunken)}
+.srow h2{flex:1;text-align:center;font:800 18px/1.25 var(--font-display);margin:0}
+.sheet .ib{border:0;background:var(--sunken);border-radius:14px;color:var(--text);font-size:20px;cursor:pointer}
+.sheet .ib:active{background:#e3dff0}
 .sbody{padding:4px 20px 24px;overflow:auto;flex:1;overscroll-behavior:contain;touch-action:pan-y}
-.sbody .head{font-size:18px;font-weight:600;margin:4px 0 2px}
+.sbody .head{font:800 18px/1.3 var(--font-display);margin:4px 0 2px}
 .sbody .sum{color:var(--muted);margin:0 0 12px}
 .grp{margin:0 0 10px}
 .grp h3{font-size:14px;margin:0 0 4px;color:var(--muted)}
@@ -172,11 +193,16 @@ details.legend summary{cursor:pointer;font-weight:600;min-height:28px}
 
 <div class="app" id="app">
   <header class="trip">
-    <div class="trip-top"><span aria-hidden="true">←</span><span class="grow">Lissabon 2027</span><span aria-hidden="true">⋯</span></div>
+    <div class="trip-top"><span class="ib" aria-hidden="true">←</span><span class="tname"><b>Lissabon 2027</b><span><i></i>Tage sammeln · 6/7 fertig</span></span><span class="ib" aria-hidden="true">⋯</span></div>
     <nav class="tabs" aria-label="Reise"><a href="#">Übersicht</a><a href="#">Meine Tage</a><a href="#" aria-current="page">Gruppe</a><a href="#">Abstimmen</a></nav>
+    <!-- Kennzahl-Box (W09-09): Ring wächst einmal (G-20), Satz steht sofort (G-16) -->
+    <div class="kbox">
+      <svg width="52" height="52" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="22" fill="none" stroke="rgb(255 255 255 / .18)" stroke-width="6"/><circle class="kring" id="kring" cx="26" cy="26" r="22" fill="none" stroke="#52e5b8" stroke-width="6" stroke-linecap="round" pathLength="100" stroke-dasharray="85.7 100" transform="rotate(-90 26 26)"/></svg>
+      <b>6 von 7 haben abgegeben</b>
+      <small>Noch offen: Kemal – das Ergebnis kann sich noch ändern.</small>
+    </div>
   </header>
   <div class="pad">
-    <p class="status">6 von 7 haben abgegeben. Noch offen: Kemal – das Ergebnis kann sich noch ändern.</p>
     <div class="segctl" id="segctl">
       <span class="ind" id="segInd" aria-hidden="true"></span>
       <button type="button" aria-pressed="true" data-p="sug">Vorschläge</button>
@@ -193,9 +219,9 @@ details.legend summary{cursor:pointer;font-weight:600;min-height:28px}
     </section>
 
     <section id="pCal" aria-label="Kalender" hidden>
-      <details class="legend" open><summary>Legende</summary>
+      <details class="legend" open><summary>Was bedeuten die Farben?</summary>
         <div class="lgrow" aria-hidden="true" id="legendRow"></div>
-        <div>x/n = x von n haben „Geht“ · ✓ alle: Geht · ◐ jemand nur „Zur Not“ · Ecke = Feiertag · Band = Vorschlag</div>
+        <div>x/n = x von n haben „Geht“ · Siegel = Alle: Geht · ◐ Zur Not · Eselsohr = Feiertag · Band = Vorschlag</div>
       </details>
       <div id="months"></div>
     </section>
@@ -353,7 +379,7 @@ function paint(){DAYS.forEach(function(kk){var c=hcells[kk],s=stats(kk);c.datase
 paint();
 /* Legende mit echten Mini-Zellen */
 (function(){var lr=document.getElementById('legendRow');[['–',null],['0','none'],['2','few'],['3','some'],['5','many'],['6','all']].forEach(function(x){
-  var b=document.createElement('span');b.className='hcell';if(x[1])b.dataset.l=x[1];else b.style.border='1.5px dashed #858c8a';
+  var b=document.createElement('span');b.className='hcell';if(x[1])b.dataset.l=x[1];else b.style.border='1.5px dashed #8a86a8';
   b.innerHTML='<span class="cnt" style="top:35%">'+x[0]+'</span>'+(x[1]==='all'?'<span class="ok"></span>':'');lr.appendChild(b);});})();
 
 var waveDone=false;
@@ -415,7 +441,7 @@ function drawBand(s,cs){
   var t0=0;
   segs.forEach(function(sg){
     var band=document.createElement('div');band.className='band';
-    band.style.left=sg.left+'px';band.style.width=sg.w+'px';band.style.top=(sg.a.offsetTop+sg.a.offsetHeight)+'px';band.style.height='4px';band.style.transformOrigin='left center';
+    band.style.left=sg.left+'px';band.style.width=sg.w+'px';band.style.top=(sg.a.offsetTop+sg.a.offsetHeight+2)+'px';band.style.height='4px';band.style.transformOrigin='left center'; /* mittig in der 9-px-Zeilenfuge */
     sg.gr.grid.appendChild(band);h.bands.push(band);
     var dur=D.moderate*sg.w/total;
     play(band,[{transform:'scaleX(0)'},{transform:'scaleX(1)'}],{duration:dur,delay:t0,easing:'linear',fill:'backwards'});
@@ -428,7 +454,7 @@ function drawBand(s,cs){
   /* Endkappen nur an echtem An- und Abreisetag */
   var fa=segs[0],la=segs[segs.length-1];
   [[fa.gr.grid,fa.a.offsetLeft-1,fa.a,0],[la.gr.grid,la.b.offsetLeft+la.b.offsetWidth-2,la.b,D.moderate]].forEach(function(x){
-    var cap=document.createElement('div');cap.className='cap';cap.style.left=x[1]+'px';cap.style.top=(x[2].offsetTop+x[2].offsetHeight-4)+'px';
+    var cap=document.createElement('div');cap.className='cap';cap.style.left=x[1]+'px';cap.style.top=(x[2].offsetTop+x[2].offsetHeight-2)+'px';
     x[0].appendChild(cap);h.bands.push(cap);play(cap,[{transform:'scaleY(0)'},{transform:'scaleY(1)'}],{duration:D.fast,delay:x[3],easing:E.soft,fill:'backwards'});});
   /* Label über dem Anreisetag */
   var lb=document.createElement('div');lb.className='blabel';lb.textContent='Vorschlag '+s.id+' · '+s.short;
@@ -523,6 +549,9 @@ sbody.addEventListener('pointerdown',function(e){sw={x:e.clientX,y:e.clientY};})
 sbody.addEventListener('pointerup',function(e){if(!sw)return;var dx=e.clientX-sw.x,dy=e.clientY-sw.y;sw=null;if(Math.abs(dx)>60&&Math.abs(dy)<Math.abs(dx)*0.6)stepDay(dx<0?1:-1);});
 
 /* ---------- Start & Wiederholen ---------- */
+/* Kennzahl-Ring (G-20): zeichnet sich einmal auf 6/7; die Zahl im Satz steht sofort (G-16) */
+function ringIn(){play(document.getElementById('kring'),[{strokeDashoffset:85.7},{strokeDashoffset:0}],{duration:D.moderate,delay:120,easing:E.standard,fill:'backwards'});}
+ringIn();
 renderList(true);
 document.getElementById('btnReplay').addEventListener('click',function(){
   clearAllBands();waveDone=false;window.scrollTo(0,0);
