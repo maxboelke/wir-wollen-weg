@@ -42,7 +42,19 @@ interface Collected {
   token?: string;
 }
 
-const BLOCKED_PATHS = new Set(["/email-otp/send-verification-otp", "/sign-in/magic-link"]);
+/**
+ * Better Auth endpoints that would send (or try to send) a mail outside the combined flow.
+ * The password-reset/email-change senders stay blocked until Increment 1 gives them their
+ * own mails – otherwise they create verification rows and error logs only for existing
+ * accounts (side channel, log spam).
+ */
+const BLOCKED_PATHS = new Set([
+  "/email-otp/send-verification-otp",
+  "/sign-in/magic-link",
+  "/email-otp/request-password-reset",
+  "/forget-password/email-otp",
+  "/email-otp/request-email-change",
+]);
 
 const requestBody = z.object({
   email: z.email(),

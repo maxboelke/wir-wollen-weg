@@ -38,6 +38,11 @@ const nextConfig: NextConfig = {
       { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
       { key: "X-Frame-Options", value: "DENY" },
+      // Demo/staging/dev must never be indexed – including the public landing pages
+      // (deployment.md §0.1, §0.5). Evaluated at build time (Dockerfile passes APP_ENV).
+      ...(process.env.APP_ENV === "production"
+        ? []
+        : [{ key: "X-Robots-Tag", value: "noindex, nofollow" }]),
     ];
     return Promise.resolve([
       { source: "/:path*", headers: base },

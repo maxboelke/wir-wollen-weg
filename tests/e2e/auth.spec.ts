@@ -103,6 +103,8 @@ test("wrong code shows an error and keeps the user on the code step", async ({ p
   await page.getByRole("button", { name: en.auth.sendCode }).click();
   const mail = await waitForAccessMail(email);
   const wrong = mail.code === "000000" ? "111111" : "000000";
+  // Focus moves to the code field after sending (keyboard/screen-reader users).
+  await expect(page.getByLabel(en.auth.codeLabel)).toBeFocused();
 
   await page.getByLabel(en.auth.codeLabel).fill(wrong);
   await expect(page.getByText(en.auth.errors.wrongCode)).toBeVisible();

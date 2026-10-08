@@ -15,7 +15,10 @@ export function toSafeInternalPath(candidate: string | null | undefined, fallbac
     const base = "http://internal.invalid";
     const url = new URL(candidate, base);
     if (url.origin !== base) return fallback;
-    return `${url.pathname}${url.search}${url.hash}`;
+    const path = `${url.pathname}${url.search}${url.hash}`;
+    // Dot segments can normalise into a protocol-relative path ("/..//evil.example" → "//evil.example").
+    if (path.startsWith("//")) return fallback;
+    return path;
   } catch {
     return fallback;
   }

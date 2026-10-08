@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import ui from "@/components/ui.module.css";
 import { normalizeCode, CODE_LENGTH } from "@/lib/code";
 import type { ActionResult } from "../actions";
@@ -49,6 +49,12 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
   const [error, setError] = useState<ErrorKey | null>(null);
   const [busy, setBusy] = useState(false);
 
+  // Move focus to the code field once the code step is rendered (the email field it
+  // replaces is unmounted, focus would otherwise fall back to <body>).
+  useEffect(() => {
+    if (step === "code") codeRef.current?.focus();
+  }, [step]);
+
   async function post(path: string, body: unknown): Promise<Response> {
     return fetch(`/api/auth${path}`, {
       method: "POST",
@@ -82,7 +88,6 @@ export function EmailAccessForm({ returnTo, variant, onNameSubmit }: EmailAccess
         return;
       }
       setStep("code");
-      requestAnimationFrame(() => codeRef.current?.focus());
     } catch {
       setError("generic");
     } finally {
