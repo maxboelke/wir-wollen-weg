@@ -45,20 +45,20 @@ App <http://localhost:3000> · Mailpit <http://localhost:8025> · Stoppen: `… 
 
 ## Skripte
 
-| Skript                              | Zweck                                                                           |
-| ----------------------------------- | ------------------------------------------------------------------------------- |
-| `pnpm dev`                          | Entwicklungsserver (Turbopack)                                                  |
-| `pnpm build` / `pnpm start`         | Produktions-Build / -Server                                                     |
-| `pnpm lint`                         | ESLint (Next, typescript-eslint strict, jsx-a11y, keine Literal-Texte in JSX)   |
-| `pnpm format` / `pnpm format:check` | Prettier schreiben / prüfen                                                     |
-| `pnpm typecheck`                    | `next typegen` + `tsc --noEmit`                                                 |
-| `pnpm i18n:check`                   | `messages/de.json` und `en.json` haben identische Schlüssel, keine leeren Werte |
-| `pnpm test`                         | Unit-Tests (Vitest)                                                             |
-| `pnpm test:e2e`                     | E2E (Playwright; startet die App selbst, braucht PostgreSQL + Mailpit)          |
-| `pnpm db:generate`                  | Migration aus `src/server/db/schema.ts` erzeugen (`drizzle/`)                   |
-| `pnpm db:migrate`                   | Migrationen anwenden                                                            |
-| `pnpm db:seed:demo`                 | Demo-Daten (nur `APP_ENV` `development`/`demo`)                                 |
-| `pnpm dev:services`                 | `docker/compose.dev.yml` starten                                                |
+| Skript                              | Zweck                                                                                  |
+| ----------------------------------- | -------------------------------------------------------------------------------------- |
+| `pnpm dev`                          | Entwicklungsserver (Turbopack)                                                         |
+| `pnpm build` / `pnpm start`         | Produktions-Build / -Server                                                            |
+| `pnpm lint`                         | `next typegen` + ESLint (Next, typescript-eslint strict, jsx-a11y, keine JSX-Literale) |
+| `pnpm format` / `pnpm format:check` | Prettier schreiben / prüfen                                                            |
+| `pnpm typecheck`                    | `next typegen` + `tsc --noEmit`                                                        |
+| `pnpm i18n:check`                   | `messages/de.json` und `en.json` haben identische Schlüssel, keine leeren Werte        |
+| `pnpm test`                         | Unit-Tests (Vitest)                                                                    |
+| `pnpm test:e2e`                     | E2E (Playwright; startet die App selbst, braucht PostgreSQL + Mailpit)                 |
+| `pnpm db:generate`                  | Migration aus `src/server/db/schema.ts` erzeugen (`drizzle/`)                          |
+| `pnpm db:migrate`                   | Migrationen anwenden                                                                   |
+| `pnpm db:seed:demo`                 | Demo-Daten (nur `APP_ENV` `development`/`demo`)                                        |
+| `pnpm dev:services`                 | `docker/compose.dev.yml` starten                                                       |
 
 E2E-Hinweise: Projekte `desktop-chromium`, `mobile-chromium`, `mobile-webkit`. Auswahl mit `E2E_PROJECTS=desktop-chromium,mobile-chromium`; vorinstalliertes Chromium mit `E2E_CHROMIUM_PATH=/pfad/zu/chrome`. In CI baut der Workflow vorher (`pnpm build`) und Playwright startet `pnpm start`.
 
