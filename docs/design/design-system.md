@@ -1,9 +1,9 @@
 # Design-System – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: Entwurf v0.1 (Phase 0 → M0)
-Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadmap](../product/roadmap.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: Entwurf v0.2 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-13)
+Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadmap](../product/roadmap.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md)
 
-> Hinweis zur Abstimmung: `docs/ux/` war bei Erstellung noch leer. Alle Struktur-Annahmen (Zellgrößen, Navigation, Sheets) sind Vorschläge und in [abstimmung-ux.md](abstimmung-ux.md) als „Offen für UI/UX" markiert.
+> Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar in ux-spec §10.2 („Geht / Zur Not / Geht nicht", „Works / If needed / Can't", „Orga / Organizer").
 
 ---
 
@@ -162,16 +162,35 @@ Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-n
 
 ## 6. Kalender & barrierefreie Heatmap
 
-### 6.1 Anatomie einer Kalenderzelle
+### 6.1 Anatomie einer Kalenderzelle (verbindlich, beantwortet UX D-1)
+Jedes Element hat einen **festen Ort** – so tragen auch alle Kombinationen (Feiertag + heute + Wochenende + ausgewählt + Fokus + alle können + zur Not) ohne Überlappung.
+
 ```
-┌──────────────────────┐  Breite fluid, min 40 px · Höhe 52 px (mobil) / 64 px (≥ 600 px)
-│ 14            ◤ / ✓ │  Datumszahl (12 px, 500) · rechts oben: Feiertagsecke ODER Badge
-│                      │
-│        7/9           │  Zählung (13–15 px, 700, tabular) · Heatmap: „können/abgegeben"
-│ ▬▬ ▬▬ ▬▬ ░░          │  Pegel: 4 Segmente, 4 px hoch (Füllstand der Stufe)
-└──────────────────────┘  Radius 8 · Abstand zwischen Zellen 4 px
+Mobil 45–46 × 52 px                      ≥ 600 px: 56–64 × 64 px
+┌───────────────┐                        ┌──────────────────────┐
+│(14)        ◥ │ ← Datum + Heute-Ring    │(14)               ◥ │  ◥ = Feiertag (Eselsohr, Ecke oben rechts)
+│               │   oben links            │                      │
+│      4        │ ← Zählwert Mitte        │        4/5           │  Zählwert „x/n" (Desktop immer)
+│ ◐          ✓ │ ← unten links / rechts  │ ◐2               ✓  │  ◐ = zur Not (≥ 600 px mit Anzahl)
+└───────────────┘                        │ ▬▬▬ ▬▬▬ ▬▬▬ ░░░    │  ✓ = alle können (Badge)
+                                         └──────────────────────┘  Pegel 4 Segmente nur ≥ 600 px
 ```
-Verfügbarkeitskalender (F-005) nutzt dieselbe Zelle, zeigt aber statt Zählung/Pegel das **Zustandssymbol** (✓ / ◐ / ✕, 20 px) zentriert.
+
+| Element | Position | Maß (mobil / ≥ 600 px) | Hinweis |
+|---|---|---|---|
+| Datumszahl | oben links, 3 px Innenabstand | 12 px / 13 px, Gewicht 500 | Heute: Ring Ø 18 / 20 px, 1,5 px, `currentColor` |
+| Feiertag | Ecke oben rechts | Dreieck 12 / 16 px, 1,5-px-Trennkante | wird von der Zellrundung beschnitten |
+| Zählwert | zentriert, ab 45 % Höhe | 14 px / 15 px, 700, tabular | Regel siehe unten |
+| ◐ zur Not | unten links | Ø 10 px / Ø 12 px + Zahl („◐2") | mobil ohne Zahl |
+| ✓ alle können | unten rechts | Ø 12 px / Ø 14 px | gefüllter Kreis, Häkchen in Zellfarbe ausgespart |
+| Pegel | Unterkante, innen | – / 4 Segmente à 4 px Höhe | **nur ≥ 600 px**; mobil reicht der Platz nicht, Zahl + Badges tragen die Information |
+| Ausgewählt | innen, ganze Zelle | Doppelrahmen 2 + 2 px | liegt unter allen Inhalten |
+| Fokus | außen | Hof 2 px + Ring 3 px + Hof 2 px (`--ww-focus-ring-isolated`) | liegt über Nachbarzellen (`z-index: 1`) |
+| Vorschlag | unter der Zelle, in der 4-px-Fuge | Band 4 px, Kappen 12 px | siehe §6.5 |
+
+**Zählwert-Regel mobil (bestätigt, UX D-1):** „x/n", solange n ≤ 9; ab 10 abgegebenen Mitgliedern nur „x" – n steht im Statusband („von 12") und in der Legende. Ab 600 px immer „x/n". Der zugängliche Name nennt immer „x von n". Die Zahl zeigt gemäß F-008 die Anzahl **„Geht"**.
+
+Verfügbarkeitskalender „Meine Tage" (F-005) nutzt dieselbe Zelle; statt Zählwert/Badges steht dort das **Zustandssymbol** zentriert (✕ / ◐ 18–20 px), siehe §6.6.
 
 ### 6.2 Heatmap-Stufen (F-008)
 Score pro Tag: **s = (geht + ½ · zur Not) / abgegeben** (wie F-008: „zur Not" zählt halb). Nur abgegebene Mitglieder zählen; ausgeblendete Personen (Was-wäre-wenn-Filter) fallen lokal heraus.
@@ -186,8 +205,9 @@ Score pro Tag: **s = (geht + ½ · zur Not) / abgegeben** (wie F-008: „zur Not
 | **alle** | s = 1 (alle „geht") | dunkelste / hellste Stufe | „9/9" | 4 von 4 | ✓-Badge |
 
 Unabhängig von der Stufe:
-- **✓-Badge** (gefüllter Kreis mit Häkchen, rechts oben) = niemand hat „geht nicht" → „alle können" im Sinne von F-009. Kann auch auf „einige/viele" erscheinen, wenn Personen nur „zur Not" können. (Erfüllt F-008 „Tage, an denen alle können, … durch ein Symbol markiert".)
-- **◐-Hinweis** (Halbkreis, 9 px) = mindestens eine Person „ginge zur Not"; Details im Tages-Sheet (F-008 „separat ausgewiesen").
+- **✓-Badge** (gefüllter Kreis mit Häkchen, unten rechts) = niemand hat „geht nicht" → „alle können" im Sinne von F-009. Kann auch auf „einige/viele" erscheinen, wenn Personen nur „zur Not" können. (Erfüllt F-008 „Tage, an denen alle können, … durch ein Symbol markiert".)
+- **◐-Hinweis** (Halbkreis, unten links; ab 600 px mit Anzahl „◐2") = mindestens eine Person „Zur Not"; Details im Tagesdetail (F-008 „separat ausgewiesen").
+- Die Stufen-Rampe gilt auch für den **Mini-Streifen** auf Vorschlagskarten (§9.3).
 - Die Zahl zeigt laut F-008 die Anzahl **„geht"**. Vorschlag an PM/UX: prüfen, ob „können (inkl. zur Not)" verständlicher ist – siehe abstimmung-ux.md.
 - Zugänglicher Name je Zelle, z. B. „Freitag, 3. Juli: 7 von 9 können, 1 zur Not, Feiertag Tag der Deutschen Einheit, Teil von Vorschlag 1".
 
@@ -247,9 +267,10 @@ Ehrliche Einordnung: Fünf Stufen lassen sich nicht alle mit 3:1 voneinander tre
 | **Feiertag** (F-016) | **Eselsohr-Ecke** rechts oben (Dreieck 14–18 px, `--ww-hm-holiday`) mit 1,5-px-Trennkante in Hintergrundfarbe; Name im Tages-Sheet und im zugänglichen Namen | Form (Dreieck) | Ecke vs. Trennkante 4,0 (L) / 7,3 (D); Trennkante vs. dunkle Zellen ≥ 4,9 |
 | **Heute** | **Ring** (1,5 px, `currentColor`) um die Datumszahl | Form | wie Text der Stufe (≥ 4,8) |
 | **Ausgewählt** (Bereichsauswahl F-005, manuelle Option F-010) | **Doppelrahmen innen**: 2 px außen `--ww-hm-selected-outer`, 2 px innen `--ww-hm-selected-inner` (`--ww-selected-ring`) | Rahmenform | mindestens ein Ring ≥ 3:1 gegen jede Stufe |
-| **Fokus** (Tastatur) | **Ring außen** 3 px `--ww-color-focus`, 2 px Abstand in Hintergrundfarbe (`--ww-focus-ring`) | liegt außerhalb der Zelle → nie mit „ausgewählt" verwechselbar | 5,9 (L) / 8,6 (D) |
-| **Vorschlag hervorgehoben** (F-009 ↔ Kalender) | **Band mit Endkappen** (4 px, Koralle) unter den Zellen des Zeitraums, über Zeilenumbrüche fortgesetzt; Kappen = An-/Abreisetag; optional Nummer „1" an der Startkappe | Form + Länge | 3,8 (L) / 7,3 (D) gegen bg |
-| **Außerhalb Suchzeitraum** | keine Fläche, Datumszahl `--ww-hm-outside-fg`, nicht fokussierbar | fehlende Fläche | inaktiv (WCAG-Ausnahme) |
+| **Fokus** (Tastatur) | **Ring außen mit Hof auf beiden Seiten**: 2 px Hintergrundfarbe + 3 px `--ww-color-focus` + 2 px Hintergrundfarbe (`--ww-focus-ring-isolated`); fokussierte Zelle liegt über den Nachbarn | liegt außerhalb der Zelle → nie mit „ausgewählt" verwechselbar | Ring grenzt nur an den Hof: 5,9 (L) / 8,6 (D) – unabhängig von Stufe `all` oder Vorschlag-Band (UX D-1) |
+| **Vorschlag hervorgehoben** (F-009 ↔ Kalender) | **Band mit Endkappen** (4 px, Koralle) unter den Zellen des Zeitraums. Kappen (3 × 12 px) **nur** an echtem An- und Abreisetag. **Umbruch:** am Zeilenende läuft das Band ohne Kappe bis an den Rand des Rasters (gerade, offene Kante) und setzt in der nächsten Zeile/im nächsten Monat ebenso offen am linken Rand fort. Optional Rangnummer „1" (Pill 16 px) an der Startkappe | Form + Länge; offene vs. geschlossene Enden | 3,8 (L) / 7,3 (D) gegen bg |
+| **Außerhalb Suchzeitraum / vergangen** | keine Fläche, kein Rahmen, Datumszahl `--ww-hm-outside-fg`, nicht fokussierbar | fehlende Fläche | 3,2 (L) / 3,8 (D) – erfüllt UX-Wunsch ≥ 3:1 |
+| **keine Daten** | gestrichelter Rahmen, „–" | Rahmenform | siehe §6.3 |
 
 Kombinationen sind erlaubt (z. B. Feiertag + heute + Vorschlag), weil jede Markierung einen eigenen Ort hat: Ecke rechts oben, Ring links oben, Rahmen innen, Ring außen, Band unten.
 
@@ -260,7 +281,18 @@ Kombinationen sind erlaubt (z. B. Feiertag + heute + Vorschlag), weil jede Marki
 | **ginge zur Not** | `#FDF0CF` / `#3A2E12` | **breite Streifen** 135° (= „halb") | ◐ Halbkreis | Light 6,3 (auf Streifen 5,0) · Dark 8,1 (auf Streifen 5,8) |
 | **geht nicht** | `#CFC9C0` / `#262D2C` | **Kreuzschraffur** | ✕ Kreuz | Light 9,5 (auf Linie 6,1) · Dark auf Linie 6,8 |
 
-- Symbole sitzen auf einer kleinen **Plakette** in der Grundfarbe der Zelle (Kreis 22 px), damit Muster die Lesbarkeit nie stören.
+- **„Geht" als Standard (bestätigt, UX D-2.1):** unmarkierte Tage zeigen nur die glatte Lagune-Fläche **ohne Häkchen** – die beiden anderen Zustände tragen Muster + Symbol, „Geht" ist der ruhige Grund. Das Häkchen erscheint in Legende, Pinsel und Tagesdetail sowie im zugänglichen Namen („geht").
+- Symbole (✕, ◐) sitzen auf einer kleinen **Plakette** in der Grundfarbe der Zelle (Kreis 22 px), damit Muster die Lesbarkeit nie stören. Die Datumszahl bleibt oben links (wie Heatmap).
+
+**Interaktionszustände „Meine Tage" (UX D-2):**
+
+| Zustand | Darstellung | Abgrenzung |
+|---|---|---|
+| **Zieh-Vorschau** (vor dem Loslassen) | Zellen im Bereich zeigen bereits Fläche + Muster des aktiven Pinsels (Symbol noch ohne Plakette); um den Bereich ein **gestrichelter 2-px-Umriss** `--ww-cal-preview-border` (je Zeilensegment, an Umbrüchen offen wie das Vorschlag-Band); Tooltip/Ansage „13.–19. Mai · 7 Tage" | Ausgewählt = durchgezogener Doppelrahmen; Vorschlag = Koralle-Band unten; Vorschau = gestrichelt in Textfarbe |
+| **Bereichsmodus-Startmarke** | Doppelrahmen (wie ausgewählt) **plus Ankerpunkt**: Kreis 8 px `--ww-cal-anchor` mit 2-px-Ring `--ww-cal-anchor-ring`, mittig auf der linken Zellkante; Hinweiszeile „Jetzt das Ende antippen." über der Werkzeugleiste | Anker ist eindeutig (Punkt + Rahmen) |
+| **Schreibgeschützt** (Phase 3, F-012) | Zustände bleiben **unverändert farbig** (keine Opazität, kein Kontrastverlust); keine Hover-/Druck-Reaktion, `cursor: default`; Werkzeugleiste ersetzt durch Hinweis mit Schloss-Icon „Der Termin steht fest – deine Tage sind gesperrt." | Erkennbar über fehlende Werkzeugleiste + Schloss-Hinweis, nicht über ausgegraute Zellen |
+| **Setz-Feedback** | 80 ms `scale(0.94 → 1)` + sofortiger Flächenwechsel (≤ 140 ms gesamt); bei reduzierter Bewegung nur der Flächenwechsel | – |
+| **Entwurf vs. abgegeben** | kein Zellunterschied (nur Statuszeile, W08) | – |
 - Helligkeit: „geht nicht" ist in Light deutlich dunkler (L 0,59 vs. 0,76/0,88); „geht" und „zur Not" unterscheiden sich primär durch Muster + Symbol + Farbton (Teal vs. Amber – auch bei Rot-Grün-Schwäche als Blau- vs. Gelbton getrennt).
 - Werkzeugwahl (Pinsel-Prinzip) zeigt dieselben Muster als Farbfeld im Segment, damit Werkzeug und Ergebnis visuell identisch sind.
 - Referenz: `assets/heatmap/availability-legend.svg`, Muster: `assets/heatmap/heatmap-patterns.svg` bzw. `--ww-pattern-*` in tokens.css.
@@ -270,7 +302,7 @@ In `@media (forced-colors: active)` verschwinden Flächenfarben und Gradient-Mus
 
 ## 7. Raster, Abstände, Radien, Schatten
 
-- **Raster:** 4-px-Basis. Seitenrand mobil 16 px, ab 600 px 24 px, ab 960 px Inhalt zentriert (`--ww-size-content-narrow` 640 px für Formulare/Listen, `--ww-size-content-wide` 1040 px für Kalender).
+- **Raster:** 4-px-Basis. Seitenrand mobil 16 px, **Kalender mobil 8 px** (`--ww-size-cal-inset-sm`, Fuge bleibt 4 px → Zelle 45,7 px bei 360 px, 41 px bei 320 px; beantwortet UX D-3), ab 600 px 24 px, ab 960 px Inhalt zentriert (`--ww-size-content-narrow` 640 px für Formulare/Listen, `--ww-size-content-wide` 1040 px für Kalender).
 - **Abstände:** `--ww-space-1` (4) bis `--ww-space-16` (64). Faustregel: innerhalb einer Komponente 8–12, zwischen Komponenten 16–24, zwischen Abschnitten 32–48.
 - **Radien:** Zelle/Chip klein 8 · Button/Input/Toast/Code-Kästchen 12 · Karte 16 · Bottom-Sheet oben 24 · Pill 999. Radien werden nach innen kleiner (innerer Radius = äußerer − Abstand).
 - **Schatten** (`--ww-shadow-1..3`): warm getönt, niedrig. Karten in Listen: Rahmen `border-subtle` statt Schatten (ruhiger, besser in Dark). Schatten 2 für schwebende Elemente (Sticky-CTA, Popover), 3 für Sheet/Toast/Dialog. Dark: Schatten stärker, Ebenen zusätzlich über hellere Fläche.
@@ -302,7 +334,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 ### 9.1 Buttons
 | Variante | Fläche | Text | Rahmen | Einsatz |
 |---|---|---|---|---|
-| Primär | `primary` | `text-on-primary` (6,3 / 8,5) | – | eine Haupt-Aktion pro Ansicht („Mitmachen", „Fertig – Verfügbarkeit abgeben") |
+| Primär | `primary` | `text-on-primary` (6,3 / 8,5) | – | eine Haupt-Aktion pro Ansicht („Mitmachen", „Fertig – abgeben") |
 | Sekundär | `surface` | `primary-text` | 1,5 px `primary` | Neben-Aktionen („Link kopieren") |
 | Ghost / Text | transparent | `primary-text` | – | Tertiär („Im Kalender zeigen") |
 | Destruktiv | `danger` | `text-on-danger` (6,5) | – | nur in Bestätigungsdialogen („Reise löschen") |
@@ -323,25 +355,39 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 - Ziffern 24 px, 600, tabular, zentriert. Leeres Kästchen: Rahmen `border-strong`; aktives Kästchen: 2 px `primary` + blinkender Caret-Strich (reduced motion: statisch); gefüllt: Text `text`, Rahmen `border-strong`.
 - Fehler (falscher Code): alle Kästchen Rahmen `danger`, Meldung darunter „Der Code stimmt nicht. Noch 3 Versuche." – kein Wackeln bei reduzierter Bewegung (sonst 1× horizontal 4 px, 220 ms).
 - Erfolg: Kästchen kurz `primary-tint` + ✓, dann Weiterleitung.
-- Darunter: „Code erneut senden" als Ghost-Button mit Countdown „in 0:24" (tabular, nicht animiert), Hinweis „Spam-Ordner prüfen" in `text-muted`.
-- Empfehlung Technik (UX/Dev): **ein** `<input inputmode="numeric" autocomplete="one-time-code" maxlength="6">` mit visuellen Kästchen darüber – robust für Einfügen und SMS/Mail-Autofill (siehe abstimmung-ux.md).
+- **Gesperrt** (5 Fehlversuche): Kästchen `surface-sunken`, gestrichelter Rahmen, Ziffern ausgeblendet; darunter Schloss-Icon + „Zu viele Versuche. Fordere einen neuen Code an." + Sekundär-Button „Neuen Code senden".
+- **Prüfen** (Ladezustand nach 6. Ziffer/Einfügen): Kästchen-Rahmen `border-subtle`, Ziffern bleiben sichtbar, darunter 16-px-Spinner + „Prüfe Code …" (`aria-live="polite"`); bei reduzierter Bewegung statt Spinner drei statische Punkte.
+- Darunter: „Code erneut senden" als Text-Button mit Countdown „Neuer Code in 0:27" (tabular, nicht animiert), Hinweis „Spam-Ordner prüfen" in `text-muted`.
+- **Technik (bestätigt, UX D-4 / ux-spec §4.4): genau ein `<input>`**; die Kästchen sind rein visuell. Umsetzungsvorschlag: sechs `aria-hidden`-Kästchen rendern den Wert; darüber liegt das echte Input in voller Größe mit `color: transparent; caret-color: transparent; background: transparent` (Tippen, Einfügen, Autofill, Screenreader funktionieren normal). Aktives Kästchen = Index `value.length` bei Fokus. „Inhalt markiert lassen" nach Fehler (ux-spec): ist der gesamte Wert selektiert, erhalten alle Kästchen die Fläche `primary-tint`. Ist ein Overlay nicht gewünscht, Alternative: Monospace-Ziffern mit `letter-spacing` über einem Hintergrund aus sechs Kästchen (`repeating-linear-gradient`) – weniger robust gegenüber Systemschriften.
 
 ### 9.3 Karten
 - Fläche `surface`, Rahmen 1 px `border-subtle`, Radius 16, Innenabstand 16 (mobil) / 20. Klickbare Karte: ganze Karte ist ein Link, Hover `shadow-2`, Fokus-Ring um die Karte.
-- **Reisekarte („Meine Reisen", F-044):** Reisename (lg/600, max. 2 Zeilen, `overflow-wrap: anywhere`), Rolle als Chip mit Krone für Organisator, Phase als Status-Chip („Verfügbarkeit offen" / „Abstimmung läuft" / „Fix: 3.–10. Juli"), Fortschritt „5/7 abgegeben" mit Balken (Track `sand-200`/`slate-850`, Füllung `primary`, 6 px, Radius pill) **plus Text**. To-do-Zeile oben in `accent-tint` mit `accent-text` und Pfeil („Deine Verfügbarkeit fehlt noch").
-- **Vorschlagskarte (F-009):**
-  - Kopf: Badge „Alle können" (✓, `primary-tint`/`primary-text`) **oder** „Ohne Kemal" (✕-Personen-Badge, `vote-no-bg`/`text`); optional Rangnummer.
-  - Titel: Datumsbereich (xl/600) „3.–10. Juli 2027"; Unterzeile `text-muted`: „bis zu 7 Nächte · ca. 4 Urlaubstage" (F-016).
-  - **Mini-Streifen:** die Tage des Fensters als 8 px hohe Heatmap-Leiste (gleiche Stufenfarben, Feiertagsecken als 4-px-Punkte) – Wiedererkennung zum Kalender.
-  - Hinweise: ◐ „2 Personen nur zur Not".
-  - Aktionen: Ghost „Im Kalender zeigen" (löst Vorschlag-Band aus), Sekundär „Zur Abstimmung" (nur Organisator).
-  - Ausgewählt/hervorgehoben: 2 px Rahmen `accent-strong` + Band im Kalender; Auswahl für Abstimmung (F-010): Checkbox-Kreis rechts oben, gefüllt `primary` mit ✓.
+- **Reisekarte („Meine Reisen", F-044):** Reisename (lg/600, max. 2 Zeilen mit „…", `overflow-wrap: anywhere`), Rolle als Chip mit Krone **und Text** „Orga"/„Organizer", Phasen-Chip (siehe unten), Fortschritt „5 von 7" als `<progress>`-Balken (Track `sand-200`/`slate-850`, Füllung `primary`, 6 px, Radius pill) **plus Text**.
+- **To-do-Hervorhebung (UX D-7):** Zeile oben auf der Karte, Fläche `--ww-todo-bg`, Text `--ww-todo-fg` (4,8 / 6,0), 4-px-Kante links `--ww-todo-bar`, Pfeil-Icon rechts: „Deine Tage fehlen noch →". Koralle ist damit „Achtung, du bist dran" – nicht Fehler.
+- **Phasen-Chip / Phasen-Leiste (UX D-7):** immer Text + Icon, Höhe 28 px (Chip) bzw. 4 Schritte als Leiste in W07.
+
+| Phase | Chip-Fläche / Text | Icon | Kontrast L / D |
+|---|---|---|---|
+| Tage sammeln | `--ww-phase-collect-*` | Kalender | 7,8 / 6,1 |
+| Abstimmung läuft | `--ww-phase-vote-*` | Abstimmung | 6,3 / 8,1 |
+| Steht fest: 5.–10. Mai | `--ww-phase-fixed-*` (kräftig) | Check | 8,4 / 8,5 |
+| Vergangen | `--ww-phase-past-*` | Uhr | 5,2 / 6,6 |
+
+  Phasen-Leiste: vier Segmente, erledigte Schritte mit ✓ + `primary`, aktueller Schritt fett + 3-px-Unterstrich, kommende `text-muted` – Zustand nie nur über Farbe.
+- **Vorschlagskarte (F-009, UX D-13):**
+  - **Gruppenüberschriften** (h2): „Alle können (2)" mit vorangestelltem ✓-Badge-Icon in `primary`; „Fast alle können (3)" mit Personen-Icon in `text-muted`. Abstand zwischen Gruppen 32 px, damit die Trennung auch ohne Farbe klar ist.
+  - Titel: Zeitraum (lg/700) „Mi., 5. Mai – Mo., 10. Mai"; Unterzeile `text-muted`: „bis zu 5 Nächte · ca. 3 Urlaubstage ⓘ" (F-016).
+  - **Zusatz-Chips** (nicht interaktiv, 24 px hoch, 13/600): „◐ 2× zur Not" (`vote-maybe-bg/fg`), „✕ ohne Jonas" (`vote-no-bg/fg` – Stein, nicht Rot), „⚑ inkl. Pfingstmontag" (`accent-tint`/`accent-text`). Chips umbrechen in Zeilen.
+  - **Mini-Streifen** (optional): die Tage des Fensters als 6 px hohe Heatmap-Leiste (Stufenfarben) – Wiedererkennung zum Kalender.
+  - Aktionen: Text-Button „Im Kalender zeigen" (löst das Vorschlag-Band aus), Orga: Checkbox „Zur Abstimmung" (24-px-Kästchen, Touch-Fläche 44 px; gewählt = `primary` gefüllt + ✓).
+  - Hervorgehoben (Hover/Klick „Im Kalender zeigen"): 2 px Rahmen `accent-strong` + Band im Kalender. Gewählt für Abstimmung: Rahmen 2 px `primary`.
 - **Ergebniskarte (F-012):** Display-Schrift „Es geht los", Datumsbereich, Illustration `vote-done.svg`, Buttons „Zum Kalender hinzufügen" (Icon calendar-download) und „Teilen".
 
 ### 9.4 Tabs & Navigation
-- **Tabs in der Reise** (Vorschlag: Kalender · Vorschläge · Abstimmung · Gruppe): Text-Tabs 14/600, Höhe 48, aktiver Tab: Text `text` + 3-px-Unterstrich `primary` (Breite = Label), inaktiv `text-muted`. Bei Überlauf horizontal scrollbar mit Fade-Kante – **keine** Kürzung der Labels. Optionaler Zähler-Badge („2") als Pill `accent-tint`.
-- **Kopfzeile:** 56 px, Bildmarke 28 px (in Reisen: Zurück-Pfeil + Reisename), rechts Sprachumschalter + Konto-Avatar.
-- **Bottom-Navigation:** nur falls UX sie vorsieht – 64 px + Safe-Area, Icon 24 + Label 12/600 **immer sichtbar**, aktiver Eintrag: Pill-Hintergrund `primary-tint` hinter dem Icon + Label fett. Achtung In-App-Browser haben eigene Leisten unten (siehe abstimmung-ux.md).
+- **Reise-Navigation** (UX: Links mit `aria-current`, keine JS-Tabs): „Übersicht · Meine Tage · Gruppe · Abstimmen" / „Overview · My dates · Group · Vote". Text-Tabs 14/600, Höhe 48, Innenabstand horizontal 8 px unter 400 px Breite, sonst 12 px, **kein** Icon (Platz). Aktiv: Text `text` + 3-px-Unterstrich `primary` in Label-Breite, Radius 2; inaktiv `text-muted`; Hover `text`. Leiste mit 1-px-Linie `border-subtle` unten. Rechnung 360 px (328 px nutzbar): „Übersicht | Meine Tage | Gruppe | Abstimmen" ≈ 256 px Text + 4 × 16 px = 320 px → passt (EN kürzer); bei Systemschriften mit breiteren Glyphen oder Textvergrößerung greift der **Fallback:** horizontal scrollbar, Verlaufskante 24 px rechts (`linear-gradient(to right, transparent, var(--ww-color-bg))`), aktiver Tab wird in Sicht gescrollt – nie Kürzen. Optionaler Zähler („2") als Pill 18 px `accent-tint`/`accent-text`.
+- **Segment „Vorschläge | Kalender"** (W09): Segment-Control, Höhe 40, Radius 12, Fläche `surface-sunken`, aktives Segment `surface` + Rahmen 1,5 px `border-strong` (3:1) + `shadow-1` + Text 600 – Zustand über Rahmen und Fettung, nicht nur Fläche.
+- **Kopfzeile:** 56 px, Bildmarke 28 px (in Reisen: Zurück-Pfeil + Reisename 1 Zeile mit „…"), rechts Sprachumschalter/„⋯" + Konto-Avatar.
+- **Keine Bottom-Navigation** (UX-Sitemap sieht keine vor; In-App-Browser haben eigene Leisten unten). Unten nur die fixierte Aktions-/Werkzeugleiste.
 
 ### 9.5 Chips
 - Höhe 36 px (Touch-Fläche per Padding ≥ 44 px), Radius pill, 14/600, Icon 16.
@@ -349,18 +395,18 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 - Status-Chip (nicht interaktiv): kein Rahmen, Tönung je Status (info/warning/success), immer mit Icon.
 
 ### 9.6 Toasts
-- Position unten mittig, 16 px über Sticky-Leiste/Bottom-Nav + Safe-Area; Breite `min(100% - 32px, 480px)`.
-- Fläche `inverse-bg`, Text `inverse-text` (15,6), Radius 12, `shadow-3`, Innenabstand 12/16, Icon links (✓, Kopieren, Info). Aktion rechts als Text-Button in `inverse-link` („Rückgängig").
-- Dauer: 4 s, mit Aktion 6 s, pausiert bei Fokus/Hover; `role="status"`. Fehler gehören **nicht** in Toasts, sondern an das Feld/den Bereich.
+- Position mobil: unten mittig, **über** der fixierten Leiste: `bottom: calc(<Höhe der Leiste> + var(--ww-size-toast-gap) + env(safe-area-inset-bottom))` – die Leistenhöhe setzt die App als `--ww-sticky-bar-h` am Layout (UX D-11). Desktop (≥ 960 px): unten links, 24 px Abstand. Breite `min(100% - 32px, 480px)`; `z-index: var(--ww-z-toast)`.
+- Fläche `inverse-bg`, Text `inverse-text` (15,6), Radius 12, `shadow-3`, Innenabstand 12/16, Icon links (✓, Kopieren, Info). Aktion rechts als Text-Button in `inverse-link` („Rückgängig" / „Undo", min. 44 px hoch). Text ≤ 60 Zeichen, darf zweizeilig werden.
+- Dauer: 4 s, mit Aktion 6 s, pausiert bei Fokus/Hover; maximal eine gleichzeitig; `role="status"`. Fehler gehören **nicht** in Toasts, sondern an das Feld/den Bereich.
 - Bewegung: 16 px von unten + Einblenden (220 ms); reduziert: nur Einblenden.
 - Typische Texte: „Link kopiert" / „Link copied", „Gespeichert" / „Saved".
 
 ### 9.7 Bottom-Sheet
 - Für Tagesdetails (F-008 „wer kann/zur Not/nicht"), Sprachwahl, Teilen-Optionen.
 - Fläche `surface-raised`, Radius oben 24, Griff 36 × 4 px (`border-strong`) mittig 8 px unter Oberkante, Titelzeile 18/600 + Schließen-Button (44 px, ✕) – Griff ist **kein** einziges Schließmittel.
-- Scrim `--ww-color-scrim`; max. Höhe 90 dvh, Inhalt scrollt; Safe-Area unten.
+- Zwei Rastpunkte (UX D-11): **halb** (`--ww-size-sheet-half`, Standard fürs Tagesdetail) und **fast voll** (`--ww-size-sheet-full`); Inhalt scrollt innerhalb; Safe-Area unten. Scrim `--ww-color-scrim`. Tagesdetail: Kopf mit ‹ › (Tag blättern, je 44 px) links/rechts vom Datum.
 - Bewegung 320 ms von unten; reduziert: Überblenden. Ab 960 px Breite: zentrierter Dialog (max. 480 px) bzw. Seitenpanel neben dem Kalender.
-- **Tages-Sheet-Inhalt:** Datum + Feiertagsname, drei Gruppen mit Kopf (✓ geht 6 · ◐ zur Not 1 · ✕ geht nicht 2), darin Avatar + Name + optionaler Kommentar in `text-muted`.
+- **Tagesdetail-Inhalt:** Datum + Feiertagsname, „5 von 7 können" (lg/600), vier Gruppen mit Kopf und Icon (✓ Geht 5 · ◐ Zur Not 1 · ✕ Geht nicht 1 · Noch offen 2 in `text-muted` mit gestricheltem Avatar-Ring), darin Avatar + Name + Kommentar-Icon (antippbar) bzw. Kommentar in `text-muted`.
 
 ### 9.8 Sprachumschalter (F-046)
 - In Kopfzeile: Ghost-Button mit Globus-Icon + Sprachcode „DE"/„EN" (14/700), min. 44 × 44. Öffnet Menü/Sheet mit **Sprachnamen in der jeweiligen Sprache**: „Deutsch", „English" – jeweils mit `lang`-Attribut, aktuelle Sprache mit ✓. **Keine Flaggen** (Flaggen sind Länder, nicht Sprachen; DE/AT/CH, UK/US).

@@ -635,12 +635,29 @@
   --ww-hm-suggest-tint: #3b2119;
   --ww-hm-outside-fg: var(--ww-slate-600);
 
+  --ww-cal-preview-border: var(--ww-slate-50);
+  --ww-cal-anchor: var(--ww-slate-50);
+  --ww-cal-anchor-ring: var(--ww-slate-950);
+
+  --ww-phase-collect-bg: var(--ww-deep-900);
+  --ww-phase-collect-fg: var(--ww-mint-400);
+  --ww-phase-vote-bg: var(--ww-amber-d-900);
+  --ww-phase-vote-fg: var(--ww-amber-300);
+  --ww-phase-fixed-bg: var(--ww-mint-400);
+  --ww-phase-fixed-fg: var(--ww-teal-950);
+  --ww-phase-past-bg: var(--ww-slate-850);
+  --ww-phase-past-fg: var(--ww-slate-300);
+  --ww-todo-bg: #3b2119;
+  --ww-todo-fg: var(--ww-coral-300);
+  --ww-todo-bar: var(--ww-coral-300);
+
   --ww-illu-plate: var(--ww-slate-925);
   --ww-illu-paper: var(--ww-slate-875);
   --ww-illu-ink: var(--ww-slate-50);
   --ww-illu-subtle: var(--ww-slate-600);
   --ww-illu-teal: var(--ww-mint-400);
   --ww-illu-teal-dark: var(--ww-mint-400);
+  --ww-illu-sea: var(--ww-deep-700);
   --ww-illu-teal-light: var(--ww-deep-800);
   --ww-illu-deep: var(--ww-mint-100);
   --ww-illu-sun: var(--ww-amber-300);
@@ -693,6 +710,13 @@
   /* Fokus-Ring (für box-shadow, falls outline nicht nutzbar ist) */
   --ww-focus-ring: 0 0 0 var(--ww-focus-offset) var(--ww-color-focus-gap),
     0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus);
+  /* Fokus in dicht gepackten Rastern (Kalender): Ring mit Hof auf BEIDEN Seiten,
+     damit der Ring nie direkt an eine Nachbarzelle grenzt (Kontrast immer gegen
+     den Hof: 5.9 Light / 8.6 Dark). Zelle bei Fokus mit position:relative; z-index:1.
+     Für forced-colors zusätzlich: outline: 2px solid transparent; outline-offset: 2px. */
+  --ww-focus-ring-isolated: 0 0 0 2px var(--ww-color-focus-gap),
+    0 0 0 5px var(--ww-color-focus),
+    0 0 0 7px var(--ww-color-focus-gap);
   /* Auswahl in Kalenderzellen: Doppelrahmen innen */
   --ww-selected-ring: inset 0 0 0 2px var(--ww-hm-selected-outer),
     inset 0 0 0 4px var(--ww-hm-selected-inner);

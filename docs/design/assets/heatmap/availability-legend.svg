@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 340" width="360" height="340" role="img" aria-labelledby="t d">
-  <title id="t">Eigene Verfügbarkeit: geht, ginge zur Not, geht nicht</title>
+  <title id="t">Eigene Verfügbarkeit: Geht, Zur Not, Geht nicht</title>
   <desc id="d">Drei Zustände der eigenen Verfügbarkeit (F-005), dreifach kodiert: Symbol (Häkchen, Halbkreis, Kreuz), Muster (glatt, breite Streifen, Kreuzschraffur) und Farbe (Lagune, Sonne, Stein). Oben Light, unten Dark, mit deutschen und englischen Bezeichnungen.</desc>
   <defs>
     <pattern id="av-maybe-l" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="4" height="9" fill="#F1D58C"/></pattern>
@@ -37,14 +37,14 @@
     <path d="M26 32l12 12M38 32L26 44" fill="none" stroke="#1C2526" stroke-width="3" stroke-linecap="round"/>
   </g>
   <g class="l" fill="#1C2526" text-anchor="middle">
-    <text x="56" y="118">geht</text>
-    <text x="180" y="118">ginge zur Not</text>
-    <text x="304" y="118">geht nicht</text>
+    <text x="56" y="118">Geht</text>
+    <text x="180" y="118">Zur Not</text>
+    <text x="304" y="118">Geht nicht</text>
   </g>
   <g class="s" fill="#55605F" text-anchor="middle">
-    <text x="56" y="134">available</text>
-    <text x="180" y="134">if need be</text>
-    <text x="304" y="134">not available</text>
+    <text x="56" y="134">Works</text>
+    <text x="180" y="134">If needed</text>
+    <text x="304" y="134">Can’t</text>
   </g>
   <text x="24" y="158" class="s" fill="#55605F">Symbol + Muster + Farbe · Datumszahl bleibt immer lesbar</text>
 
@@ -71,14 +71,14 @@
     <path d="M26 32l12 12M38 32L26 44" fill="none" stroke="#ECF1F0" stroke-width="3" stroke-linecap="round"/>
   </g>
   <g class="l" fill="#ECF1F0" text-anchor="middle">
-    <text x="56" y="288">geht</text>
-    <text x="180" y="288">ginge zur Not</text>
-    <text x="304" y="288">geht nicht</text>
+    <text x="56" y="288">Geht</text>
+    <text x="180" y="288">Zur Not</text>
+    <text x="304" y="288">Geht nicht</text>
   </g>
   <g class="s" fill="#A9B4B2" text-anchor="middle">
-    <text x="56" y="304">available</text>
-    <text x="180" y="304">if need be</text>
-    <text x="304" y="304">not available</text>
+    <text x="56" y="304">Works</text>
+    <text x="180" y="304">If needed</text>
+    <text x="304" y="304">Can’t</text>
   </g>
   <text x="24" y="328" class="s" fill="#A9B4B2">Rot kommt nicht vor: Rot heißt Fehler, nicht „Nein“.</text>
 </svg>
