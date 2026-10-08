@@ -46,3 +46,8 @@ Der Motion Designer ändert keine Dateien in `docs/design/` oder `docs/ux/`. Wü
 | **M-X3** | Tests & Budget | Playwright-Kernflows je einmal mit `reducedMotion: 'reduce'` und `'no-preference'`; Performance-Stichprobe (4× CPU-Drosselung, Long Tasks < 50 ms beim Ziehen/Feiern); sobald Tunnel-Test T2 läuft: Sichtprüfung im WhatsApp-/Instagram-In-App-Browser (iOS + Android). |
 | **M-X4** | Feier-Modul | Konfetti/Feier per `import()` erst beim Ereignis laden; `pointer-events: none`, `aria-hidden`, Stopp bei Interaktion und `visibilitychange`. |
 | **M-X5** | Inkrement 1 | Für F-040–F-042 die Code-Feld-Bewegungen W02-01 … W02-08 mitbauen (Prototyp e); Aufwand gering, prägt den ersten Eindruck. |
+
+## Entscheidungen des Auftraggebers (2026-10-08)
+- Schalter „Bewegung reduzieren“ im Konto (W13) zusätzlich zur Systemeinstellung: **ja**.
+- Konfetti-Feier für **alle** Mitglieder beim ersten Öffnen nach Festlegung (F-012): **ja**.
+- Dezente Vibration auf Android (best effort, aus bei reduzierter Bewegung, kein Ton): **ja**.
