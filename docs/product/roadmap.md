@@ -123,6 +123,8 @@ Voraussetzungen: Google-App-Verifizierung frühzeitig beantragen (Vorlauf mehrer
 **Meilenstein M3:** v1-Release (mind. v1.0 + v1.1 inkl. F-047 und F-048).
 
 ## Phase 3 – später „Die ganze Reise“ & Premium
+
+> **Auftraggeber-Idee (2026-10-08): F-031 Unterkünfte per Swipe bewerten** – jede/r steuert Unterkünfte bei (Link + Screenshots, besser automatische Link-Vorschau), alle swipen/liken, die Unterkunft mit den meisten Likes gewinnt. Gewünscht als **nächste Ausbaustufe, sobald „Termin finden“ steht**; genaue Einordnung vor oder nach v1 (Kalender-Import) ist offen (PRD Q19).
 **Ziel:** Von der Terminfindung bis zur Abrechnung in einer App; nachhaltiger Betrieb über Freemium.
 
 | Stufe | Inhalt | Feature-IDs |

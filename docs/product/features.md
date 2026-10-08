@@ -39,7 +39,7 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | F-023 | Pflicht- und optionale Teilnehmer | C | v1 | Premium? |
 | F-024 | Urlaubstage-Optimierung (Brückentage) | C | v1 | Premium? |
 | F-030 | Zielfindung (Vorschläge & Abstimmung) | W | später | Free |
-| F-031 | Unterkünfte sammeln & abstimmen | W | später | Premium? |
+| F-031 | Unterkünfte sammeln & per Swipe bewerten (Auftraggeber-Idee 2026-10-08) | W | **nächste Ausbaustufe nach „Termin finden“** (Einordnung ggü. v1 offen, Q19) | Premium? |
 | F-032 | Aufgaben & Packliste | W | später | Premium? |
 | F-033 | Reise-Infoseite (Adresse, Anreise, Dokumente) | W | später | Free (Dateien: Premium?) |
 | F-034 | Budget-Abfrage (anonym) | W | später | Free |
@@ -481,7 +481,7 @@ Nur grob beschrieben; werden vor Umsetzung detailliert.
 | ID | Feature | Kern-User-Story | Notizen |
 |---|---|---|---|
 | F-030 | Zielfindung | Als Gruppe wollen wir Reiseziele vorschlagen und darüber abstimmen, damit wir uns auf ein Ziel einigen. | Gleiche Abstimmungsmechanik wie F-011 wiederverwenden (Optionen = Ziele mit Link/Bild). |
-| F-031 | Unterkünfte | Als Mitglied will ich Unterkunfts-Links (Airbnb, Booking …) sammeln und bewerten, damit wir gemeinsam auswählen. | Link-Vorschau, Preis pro Person, Abstimmung; keine Buchung. Premium-Kandidat. |
+| F-031 | Unterkünfte (Swipe-Voting) | Als Mitglied will ich Unterkünfte beisteuern und alle Vorschläge wie bei Tinder durchswipen und liken, damit wir am Ende die Unterkunft finden, die den meisten gefällt. | **Auftraggeber-Idee (2026-10-08), Ausbaustufe sobald „Termin finden“ steht.** (1) Beisteuern: jedes Mitglied fügt eine Unterkunft hinzu – **Link Pflicht** (zum Wiederfinden: Airbnb, Booking, Ferienhaus-Portal …) plus **Screenshots** hochladen. Bevorzugt: Bilder, Titel und Preis automatisch aus dem Link laden (Link-Vorschau/Open Graph), Screenshots nur als Rückfall, wenn das Portal keine Vorschau liefert. (2) Swipen: Kartenstapel aller Unterkünfte, nach rechts = Like, nach links = Nope (Buttons als barrierefreie Alternative, Rückgängig für den letzten Swipe), eigene Vorschläge ebenfalls bewertbar. (3) Ergebnis: Likes werden gesammelt, Rangliste „gefällt den meisten“ (bei Gleichstand z. B. nach Preis/Anzahl Superlikes); Ergebnis erst sichtbar, wenn man selbst fertig geswipt hat (analog Q13 a); Orga kann die Gewinner-Unterkunft festlegen und teilen. Offen/zu prüfen: Rechtliches und Technik der Link-Vorschau (Portale blockieren teils Abrufe; Bildrechte/Urheberrecht bei Übernahme fremder Fotos – ggf. nur verlinken/als Vorschau anzeigen, nicht speichern), Speicherung und Löschung hochgeladener Screenshots (DSGVO, F-013), Preis pro Person, Wiederverwendung der Abstimmungs-/Motion-Muster (Swipe-Animation → Motion Designer). Premium-Kandidat. |
 | F-032 | Aufgaben & Packliste | Als Organisator will ich Aufgaben verteilen („Mietwagen buchen“), damit Arbeit fair verteilt ist. | Zuständige, Fälligkeit, Abhaken. Premium-Kandidat. |
 | F-033 | Reise-Infoseite | Als Mitglied will ich alle Infos (Adresse, Anreise, Check-in) an einem Ort, damit ich nicht im Chat suchen muss. | Freitext + Links Free; Dateiupload später (Datenschutz), Premium-Kandidat. |
 | F-034 | Budget-Abfrage | Als Mitglied will ich anonym meine Budgetspanne angeben, damit niemand unter Druck gerät. | Nur aggregiert anzeigen (Min/Median), ab 3 Antworten. |
