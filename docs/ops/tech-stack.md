@@ -1,8 +1,8 @@
 # Tech-Stack & Konventionen – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: Entwurf v0.1 (Konzeptphase, Abnahme mit M0)
+Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v1.0 (mit M0 am 2026-10-08 freigegeben) · Betriebsmodus: **Offline-Demo** bis zum [Go-Live-Gate](go-live.md)
 
-Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../product/features.md) · [roadmap.md](../product/roadmap.md) · [deployment.md](deployment.md) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md)
+Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../product/features.md) · [roadmap.md](../product/roadmap.md) · [deployment.md](deployment.md) · [go-live.md](go-live.md) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md)
 
 > Versionsangaben: per `npm view` am 2026-10-08 geprüft. Preise: Web-Recherche am 2026-10-08, Quellen am Ende; alle Preise netto (zzgl. USt) und **vor Bestellung auf der Anbieterseite zu prüfen** – insbesondere Hetzner hat 2026 zweimal die Preise geändert.
 
@@ -27,16 +27,16 @@ Bezug: [PRD](../product/PRD.md) (§6, §8, §10, §12) · [features.md](../produ
 | Styling | **CSS Modules + globale CSS-Custom-Properties aus `docs/design/tokens.css`** | – |
 | Barrierefreie Primitives | `react-aria-components` (Dialog, Menü, Kalender-Grundlagen, Fokus-Management) – optional, Entscheidung Developer nach UX-Spec | 1.x |
 | Mails | React Email (Vorlagen) + Nodemailer (SMTP, anbieterneutral) | react-email 6.x |
-| Mail-Anbieter | **Lettermint** (NL, EU-only); Alternative Scaleway TEM | – |
+| Mail-Anbieter | Demo/Dev/CI: **Mailpit** (lokal). **Ab Go-Live:** Lettermint (NL, EU-only); Alternative Scaleway TEM | – |
 | Unit-Tests | **Vitest** (+ Testing Library für Komponenten) | 5.0.x |
 | E2E-Tests | **Playwright** (WebKit-iPhone, Chromium-Android, Desktop) + `@axe-core/playwright` + Mailpit für Codes | 1.64.x |
 | Lint / Format | **ESLint (Flat Config, `eslint-config-next`, `typescript-eslint`, `jsx-a11y`) + Prettier** | ESLint 10.x, Prettier 3.x |
 | Paketmanager | **pnpm** (Version über `packageManager`-Feld in `package.json` fixiert, Corepack) | 12.x |
-| Hosting | **Hetzner Cloud (Deutschland)**, Docker Compose: App + PostgreSQL + Caddy (TLS) | – |
-| Fehler-Tracking | Sentry-SDK → **selbst gehostetes Bugsink** auf derselben VM (Alternative: Sentry SaaS EU-Region) | – |
+| Hosting | Aktuell **keins** – Offline-Demo per Docker Compose auf dem Laptop (App + PostgreSQL + Mailpit, [deployment.md §0](deployment.md)). **Ab Go-Live:** Hetzner Cloud (Deutschland), Docker Compose: App + PostgreSQL + Caddy (TLS) | – |
+| Fehler-Tracking | ab Go-Live: Sentry-SDK → **selbst gehostetes Bugsink** auf derselben VM (Alternative: Sentry SaaS EU-Region) | – |
 | CI | GitHub Actions: Lint, Typecheck, Unit, Build, E2E ([ci.yml](../../.github/workflows/ci.yml)) | – |
 
-**Kosten MVP (Beta bis Launch, geringe Last):** ca. **30–40 €/Monat netto** in der Empfehlung, ca. **15 €/Monat** in der Sparvariante – Aufschlüsselung in [deployment.md §2](deployment.md#2-hosting--kosten).
+**Kosten Offline-Demo: 0 €.** **Kosten MVP ab Go-Live (Beta bis Launch, geringe Last):** ca. **30–40 €/Monat netto** in der Empfehlung, ca. **15 €/Monat** in der Sparvariante – Aufschlüsselung in [deployment.md §2](deployment.md#2-hosting--kosten).
 
 ---
 
@@ -54,7 +54,7 @@ Hinweise für den Developer:
 - In Next.js 16 heißt die Middleware `proxy.ts`; next-intl 4 unterstützt das.
 - `next lint` gibt es nicht mehr → ESLint direkt aufrufen.
 - Next.js veröffentlicht 2026 regelmäßig Security-Releases (u. a. 16.2.6 mit 13 Advisories im Mai) → Dependabot ist Pflicht, Patch-Updates zeitnah einspielen.
-- Keine `NEXT_PUBLIC_*`-Variablen für umgebungsspezifische Werte (werden beim Build eingebrannt; wir bauen ein Image für Staging und Produktion).
+- Keine `NEXT_PUBLIC_*`-Variablen für umgebungsspezifische Werte (werden beim Build eingebrannt; wir bauen ein Image für Demo, Staging und Produktion – so lässt sich `APP_URL` für den Handy-Test im WLAN oder einen Tunnel ohne Neubau umstellen).
 
 | Alternative | Pro | Contra | Bewertung |
 |---|---|---|---|
@@ -152,7 +152,7 @@ Brute-Force-Rechnung: 6 Ziffern = 10⁶ Kombinationen; 5 Versuche/Code × max. 2
 ### 3.3 Sessions im In-App-Browser (WhatsApp, Instagram, Facebook)
 
 - In-App-Browser haben je nach App einen **eigenen Cookie-Speicher** (eingebettete WebViews bei Instagram/Facebook; Custom Tabs auf Android teilen Cookies mit Chrome; iOS-Safari-Ansichten teilen seit iOS 11 keine Cookies mit Safari). Ein Magic-Link aus der Mail-App öffnet deshalb meist einen **anderen** Browser → Code-Eingabe im selben Fenster ist der Primärweg (PRD-Entscheidung).
-- Cookies: nur First-Party, `HttpOnly`, `Secure`, Präfix `__Secure-`, **`SameSite=Lax`**. **Nicht `Strict`**: Der Aufruf aus WhatsApp oder einer Mail ist eine Cross-Site-Navigation; mit `Strict` würde das Session-Cookie beim ersten Seitenaufruf nicht mitgesendet → Nutzer erscheint abgemeldet.
+- Cookies: nur First-Party, `HttpOnly`, `Secure`, Präfix `__Secure-`, **`SameSite=Lax`**. **`Secure`/`__Secure-` aus dem Protokoll von `BETTER_AUTH_URL` ableiten (Better-Auth-Standard), nicht fest erzwingen:** In der Offline-Demo läuft die App auf dem Handy über `http://<LAN-IP>` – Browser verwerfen dort `Secure`-Cookies, Login wäre unmöglich. Mit HTTPS (Tunnel, Staging, Prod) sind sie automatisch aktiv. **Nicht `Strict`**: Der Aufruf aus WhatsApp oder einer Mail ist eine Cross-Site-Navigation; mit `Strict` würde das Session-Cookie beim ersten Seitenaufruf nicht mitgesendet → Nutzer erscheint abgemeldet.
 - Keine iframes, keine Third-Party-Cookies, keine Weiterleitung auf fremde Login-Domains (würde in WebViews oft blockiert).
 - WebViews löschen Cookies teils beim Schließen → erneuter Login per Code ist der akzeptierte Normalfall; optionaler Hinweis „Im Browser öffnen“ (UX entscheidet).
 
@@ -224,7 +224,7 @@ Vorgaben:
 **Empfehlung: Lettermint** (EU-only, AVV, auf Transaktionsmails fokussiert; im Beta-Betrieb reicht ggf. noch der Free-Plan, zum Launch Starter 10 €/Monat). **Scaleway TEM** als vorbereitete Ausweichlösung: Versand läuft über **SMTP mit Nodemailer** und Umgebungsvariablen → Anbieterwechsel ohne Code-Änderung.
 Mengenschätzung MVP: 1–3 Mails pro Login/Registrierung, < 3 000 Mails/Monat in der Beta.
 Zustellbarkeit: eigene Absender-Subdomain, SPF/DKIM/DMARC, Custom Return-Path (siehe [deployment.md §7](deployment.md#7-domain-dns--mail-authentifizierung)), reine Textlinks auf die eigene Domain, kein Link-Tracking, Bounce-Webhook → Monitoring.
-Dev/Test/Staging: **Mailpit** (lokaler SMTP-Fänger mit Web-UI und API) – E2E-Tests lesen den Code darüber aus.
+Demo/Dev/Test (und später Staging): **Mailpit** (lokaler SMTP-Fänger mit Web-UI und API) – E2E-Tests lesen den Code darüber aus; in der Offline-Demo lesen Testpersonen Codes und Magic-Links in der Mailpit-Web-UI. **Bis Go-Live wird keine echte Mail versendet**; Lettermint, Absender-Domain und SPF/DKIM/DMARC folgen mit dem [Go-Live-Gate](go-live.md).
 
 ---
 
@@ -234,11 +234,12 @@ Dev/Test/Staging: **Mailpit** (lokaler SMTP-Fänger mit Web-UI und API) – E2E-
 /
 ├─ .github/                 CI (ci.yml), Dependabot
 ├─ docs/                    Produkt, Design, UX, Ops, Review (Deutsch)
-├─ docker/                  Dockerfile, compose.yml (prod/staging), compose.dev.yml, Caddyfile
+├─ docker/                  Dockerfile, compose.dev.yml (DB + Mailpit), compose.demo.yml (Offline-Demo),
+│                           ab Go-Live: compose.yml (prod/staging), Caddyfile
 ├─ drizzle/                 generierte SQL-Migrationen (committet)
 ├─ messages/                de.json, en.json (UI-Texte, ICU)
 ├─ public/                  statische Assets (Icons, OG-Bild)
-├─ scripts/                 i18n-check, tokens-sync, Backup-Hilfen
+├─ scripts/                 i18n-check, tokens-sync, seed-demo (deployment.md §0.4), später Backup-Hilfen
 ├─ src/
 │  ├─ app/
 │  │  ├─ [locale]/
@@ -296,6 +297,7 @@ Die CI ruft diese Skripte auf (fehlende werden übersprungen – `--if-present`)
 | `build` | `next build` |
 | `start` | `next start` bzw. `node .next/standalone/server.js` |
 | `db:migrate` | Drizzle-Migrationen anwenden |
+| `db:seed:demo` | Demo-Daten einspielen (nur `APP_ENV=demo`/`development`, deployment.md §0.4) – nicht von CI genutzt |
 | `test:e2e` | `playwright test` (startet die App über `webServer` in `playwright.config.ts`) |
 
 ## 10. CI-Pipeline (`.github/workflows/ci.yml`)
@@ -307,7 +309,7 @@ Trigger: Push auf `main`, alle Pull Requests, manuell. Läuft mit minimalen Rech
 3. **build** – `next build` mit Dummy-Umgebungswerten (keine echten Secrets).
 4. **e2e** – PostgreSQL 18 und Mailpit als Service-Container, `db:migrate`, Playwright-Browser (Chromium, WebKit) installieren, `test:e2e`; Report als Artefakt (7 Tage). Läuft nur, wenn eine `playwright.config.*` existiert.
 
-Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – nichts davon ist ein echtes Geheimnis. Deployment ist **nicht** Teil dieser Pipeline (eigener Workflow `deploy.yml`, sobald Hosting-Zugänge existieren, siehe deployment.md §5).
+Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – nichts davon ist ein echtes Geheimnis. Deployment ist **nicht** Teil dieser Pipeline (eigener Workflow `deploy.yml` erst ab Go-Live, siehe deployment.md §5 und [go-live.md](go-live.md)). In der Offline-Demo-Phase ist CI die einzige Online-Komponente – sie verarbeitet nur synthetische Testdaten.
 
 **Dependabot** (`.github/dependabot.yml`): wöchentlich npm (gruppiert: Minor/Patch zusammen, Next.js/React separat) und GitHub Actions; Security-Updates sofort. Solange keine `package.json` existiert, meldet Dependabot für npm lediglich „keine Manifestdatei“ – ohne Einfluss auf PRs.
 
@@ -319,10 +321,11 @@ Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – ni
 
 | # | Thema | Wann | Wer |
 |---|---|---|---|
-| T1 | Kombi-Mail Code + Magic-Link mit Better Auth; „Angemeldet bleiben“ für OTP | Inkrement 1, vor Feature-Code | Developer |
-| T2 | Code-Eingabe & Session in WhatsApp-/Instagram-WebView (iOS + Android) auf echten Geräten testen | Ende Inkrement 1 | Developer + Reviewer |
+| T1 | Kombi-Mail Code + Magic-Link mit Better Auth; „Angemeldet bleiben“ für OTP – **lokal mit Mailpit** (Code + Link in Mailpit-UI prüfen, Magic-Link auch auf dem Handy im WLAN, deployment.md §0.3) | Inkrement 1, vor Feature-Code (in Arbeit) | Developer |
+| T2 | Code-Eingabe & Session in WhatsApp-/Instagram-WebView (iOS + Android) auf echten Geräten testen – braucht öffentlich erreichbare HTTPS-URL: **optional per temporärem Tunnel ohne Konto** (deployment.md §0.5, OPS-10), sonst spätestens auf Staging (Go-Live-Gate). Bis dahin Risiko offen; lokaler Ersatz: Playwright `mobile-webkit`/`mobile-chromium` + grober WLAN-Vortest | Ende Inkrement 1 (optional) / spätestens vor Beta | Developer + Reviewer |
 | T3 | Import von `docs/design/tokens.css` außerhalb `src/` im Next-Build (sonst Sync-Skript) | Scaffold | Developer |
 | T4 | Wechsel auf Node 26 LTS | nach 28.10.2026, eigenes Ticket | Operations |
+| T6 | Platzhalter-Startschutz (`APP_ENV=production` + `[PLATZHALTER`-Marker → Start abbrechen) und `APP_ENV=demo` (Demo-Banner, Mail nur Mailpit) | Scaffold P1-0 | Developer |
 | T5 | v1: Verschlüsselung gespeicherter Kalender-URLs/CalDAV-Passwörter (F-019, F-048): AES-256-GCM, Schlüssel nur als Env-Variable (`DATA_ENCRYPTION_KEYS`, Key-Rotation), Security-Review | v1.1 | Operations + Reviewer |
 
 ---

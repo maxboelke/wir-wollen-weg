@@ -1,6 +1,6 @@
 # Abstimmung Design ↔ UI/UX
 
-Stand: 2026-10-08 (letzte Runde, abgeschlossen) · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
+Stand: 2026-10-08 (Nachtrag Auftraggeber-Entscheidungen, D-19) · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
 
 Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (Stand 2026-10-08). Vielen Dank für die sehr präzisen Punkte – fast alles ist übernommen. Abweichungen sind mit **⚠ Abweichung** markiert und begründet.
 
@@ -44,11 +44,28 @@ Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (St
 | **D-17** Code-Feld | Fehlertext aus user-flows A.2 („Dieser Code stimmt nicht. Noch 3 Versuche.", Restversuche ab 2. Fehlversuch); gesperrt: „Neuen Code senden" als Primärbutton. | design-system §9.2 |
 | **D-18** Ergebnis-Platzhalter | Vor der eigenen Stimme zu einer Option statt Balken/Zahlen/Rang/Avataren die Zeile „Stimm ab, um das Ergebnis zu sehen." / „Vote to see the results." (`text-muted`); Orga sieht immer das Ergebnis. | design-system §9.10 |
 
+### 1b. Antwort auf D-19 (EN-Wortmarke „When do we go?", Auftraggeber 2026-10-08)
+
+| Teilpunkt aus D-19 | Antwort Design | Wo festgelegt |
+|---|---|---|
+| Fragezeichen fester Teil der Wortmarke | **Bestätigt.** „?" steht in derselben Zeile, demselben `<tspan>`, derselben Schrift (Figtree 750, 30 px) direkt am „o", ohne Leerzeichen, ASCII U+003F. Es fehlt in keiner Variante (auch nicht in der mit Untertitel). | `logo-wordmark-en.svg`, `logo-wordmark-en-tagline.svg`, design-system §3.1 |
+| Fragezeichen nicht hervorheben | **Bestätigt, mit Präzisierung:** Das „?" bekommt **keine eigene** Hervorhebung (keine andere Farbe, Größe, Sonnen-Amber o. Ä.). Es übernimmt die Farbe des Wortes, an dem es hängt: Die Markenfarbe liegt auf **„go?"** als Einheit – analog zu „weg" in der DE-Marke (letztes Wort = Pointe). Ein „?" in Textfarbe hinter einem farbigen „go" würde als abgetrenntes Zeichen wirken und damit gerade doch auffallen. Falls UI/UX „?" ausdrücklich in Textfarbe möchte: Änderung ist eine Zeile im SVG – bitte dann über CEO. | design-system §3.1 |
+| `<title>` = «When do we go?» | **Umgesetzt** (Titel exakt «When do we go?», zusätzlich englische `<desc>`). Variante mit Untertitel: Titel «When do we go? Find dates for your group trip» – entspricht dem Landing-Titel aus ux-spec §3. | beide EN-SVGs |
+| DE/EN gleich hoch | **Umgesetzt:** gleiche Box 320 × 72, gleiche Schriftgröße und Grundlinie (y = 46), Bildmarke an identischer Stelle → kein Layoutsprung beim Sprachwechsel. EN-Schriftzug ist bei gleichen 14 Zeichen ca. 8 % breiter (≈ 212 statt ≈ 195 px bei 30 px), liegt aber innerhalb derselben Box. | design-system §3.4 |
+| Nur das W groß | **Umgesetzt:** „When do we go?". | `logo-wordmark-en.svg` |
+| Namensregel je Sprache / Verweis | **Umgesetzt:** design-system §3.2 nennt die Design-Regeln (UI-Sprache bestimmt Namen, Icons sprachneutral, OG je Sprache) und verweist für Schreibweise/Satzbau verbindlich auf ux-spec §10.6 und §9. | design-system §3.2 |
+| EN-Untertitel als Landing-Zusatz | **Einverstanden:** eigene Variante `logo-wordmark-en-tagline.svg` (≥ 300 px) für W01, OG-Bild EN, Mail-Kopf; nie in der Kopfzeile. | design-system §3.4 |
+
 Außerdem übernommen: Glossar ux-spec §10.2 (Legende `availability-legend.svg` jetzt „Geht / Zur Not / Geht nicht" · „Works / If needed / Can't"), keine Emojis in UI-Texten, keine Bottom-Navigation, Reise-Tabs als Links, Segment „Vorschläge | Kalender" (mit 1,5-px-Rahmen am aktiven Segment, damit der Zustand ≥ 3:1 erkennbar ist).
 
 ## 2. Offen für UI/UX
 
-**Stand: nichts mehr offen.** Alle Punkte U-1 bis U-14 sind von UI/UX beantwortet (`docs/ux/abstimmung-design.md` §4) bzw. vom CEO entschieden; finaler Status in §3. Die Tabelle unten bleibt als Verlauf der ursprünglichen Fragen stehen.
+**Stand 2026-10-08 (nach Auftraggeber-Entscheidungen): zwei Kleinpunkte offen – U-15, U-16.** U-1 bis U-14 sind von UI/UX beantwortet (`docs/ux/abstimmung-design.md` §4) bzw. vom CEO entschieden; finaler Status in §3. Die Tabelle U-1–U-14 bleibt als Verlauf stehen.
+
+| # | Punkt | Vorschlag Design | Betrifft |
+|---|---|---|---|
+| **U-15** (neu) | **Kopfzeile/Landing mit EN-Namen:** Kopfzeile plant mit der etwas längeren EN-Wortmarke (gleiche Box 320 × 72, dargestellt 36 px hoch = 160 px Box, Inhalt ≈ 141 px EN / ≈ 133 px DE); Variante mit Untertitel nur auf W01/OG/Mail, nie im Header (design-system §3.4) | W01 und Header kurz gegenprüfen (ux-spec §10.6 Nr. 8 sagt bereits „passt ohne Sonderregel") | W01, ux-spec §10.6 |
+| **U-16** (neu) | **`short_name` im Web-App-Manifest:** beide Namen 14 Zeichen, Homescreens kürzen teils ab ca. 12. Vorschlag: voller Name, auf iOS/Android testen; Fallback DE „Wollen weg"; EN nicht kürzen (Fragezeichen muss bleiben, ux-spec §10.6 Nr. 1) | entscheiden bzw. an PM/CEO geben | Manifest, ux-spec §10.6 |
 
 | # | Punkt | Vorschlag Design | Betrifft |
 |---|---|---|---|
@@ -91,6 +108,7 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 | D-16 | Sprachumschalter Kopfzeile | **entschieden (CEO, 2026-10-08)** | zugunsten UX: Ein-Tipp-Umschalter „English"/„Deutsch" (nicht angemeldet), Avatar-Menü (angemeldet), Footer-Segment; design-system §9.8 |
 | D-17 | Code-Feld Copy/Gewichtung | erledigt | design-system §9.2 |
 | D-18 | Ergebnis-Platzhalter vor eigener Stimme | erledigt | design-system §9.10; Ergebnis-Sichtbarkeit selbst: bestätigt (Auftraggeber 2026-10-08, Q13) |
+| D-19 | EN-Wortmarke „When do we go?" | erledigt (Design), Bestätigung UX zur Farbe von „?" erbeten | §1b; „?" Teil der Marke, keine eigene Hervorhebung, Markenfarbe auf „go?" als Einheit |
 | U-1 | Kalender-Seitenrand 8 px, Fuge 4 px | entschieden (CEO, 2026-10-08) | in ux-spec §2, §7.2, W08, W09 umgesetzt |
 | U-2 | ✓ unten rechts, ◐ unten links (≥ 600 px „◐2") | entschieden (CEO, 2026-10-08) | in ux-spec §4.9, W09 umgesetzt |
 | U-3 | Pegel erst ab 600 px | erledigt | von UX bestätigt |
@@ -112,12 +130,7 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 - **Dark Mode:** im MVP nur System-folgend (`prefers-color-scheme`), kein Schalter (§13, D-12).
 - **Schrift:** Figtree (selbst gehostet) für Überschriften und Wortmarke, Systemschrift für alles andere (§5).
 - **Ergebnis-Sichtbarkeit** erst nach eigener Stimme, Rolle „Orga"/„Organizer" (PRD Q13): unverändert wie in §9.10 gestaltet.
-
-### Offen für UI/UX
-| # | Thema | Vorschlag Design | Bitte UI/UX |
-|---|---|---|---|
-| U-15 | Kopfzeile und Landing mit EN-Namen | Kopfzeile plant mit der längeren EN-Wortmarke (≈ 8 % breiter als DE, gleiche Box 320 × 72, Darstellung 36 px hoch = 160 px Box); Variante mit Untertitel (`logo-wordmark-en-tagline.svg`, ≥ 300 px) nur auf W01/OG/Mail, nie im Header (design-system §3.4) | W01 und Header-Wireframes kurz gegenprüfen (ux-spec §10.6 Nr. 8 sagt bereits „passt ohne Sonderregel") |
-| U-16 | `short_name` im Web-App-Manifest | Beide Namen haben 14 Zeichen; Homescreens kürzen teils ab ca. 12. Vorschlag: `short_name` = voller Name und auf iOS/Android testen; Fallback DE „Wollen weg", EN „When do we go?" ungekürzt (Fragezeichen darf nicht wegfallen, ux-spec §10.6 Nr. 1) | Entscheiden bzw. an PM/CEO geben |
+- Offene Kleinpunkte U-15, U-16: siehe §2.
 
 ## 4. Bereits erledigt / keine Aktion nötig
 - WCAG 2.2 AA als Ziel (ux-spec §7): Design ist darauf ausgelegt (2.4.11 Fokus nicht verdeckt über `scroll-padding`, 2.5.8 Zielgrößen, Fokus-Hof).
@@ -125,7 +138,7 @@ Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = b
 - „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
 
 ## Changelog
-- 2026-10-08 (Auftraggeber-Entscheidungen): alle Vorbehalte zu Marke, Logo A, Dark Mode, Figtree, Ergebnis-Sichtbarkeit → „bestätigt (Auftraggeber 2026-10-08)"; EN-Name „When do we go?" eingearbeitet; neue Kleinpunkte U-15, U-16.
+- 2026-10-08 (Auftraggeber-Entscheidungen): alle Vorbehalte zu Marke, Logo A, Dark Mode, Figtree, Ergebnis-Sichtbarkeit → „bestätigt (Auftraggeber 2026-10-08)"; EN-Name „When do we go?" eingearbeitet; §1b Antwort auf D-19; neue Kleinpunkte U-15, U-16 (§2).
 - 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
 - 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.
 - 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.

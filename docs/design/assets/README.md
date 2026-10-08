@@ -1,4 +1,4 @@
-# Assets – Wir wollen weg
+# Assets – Wir wollen weg / When do we go?
 
 Stand: 2026-10-08 · Verantwortlich: Designer · Spezifikation: [../design-system.md](../design-system.md) · Tokens: [../tokens.css](../tokens.css)
 
@@ -17,13 +17,16 @@ Alle Grafiken sind handgeschriebenes SVG (valide, `xmlns`, `viewBox`, `<title>`;
 
 | Datei | Zweck | Hinweise |
 |---|---|---|
-| `logo-mark-a-sonnenkalender.svg` | **Empfohlene Bildmarke** – Kalenderblatt mit Sonne über dem Meer | Grundlage für Favicon, App-Icon, Wortmarke |
-| `logo-mark-b-weghaken.svg` | Alternative B – Häkchen wird zur Route | eignet sich als Sekundärzeichen (Erfolg) |
-| `logo-mark-c-treffpunkt.svg` | Alternative C – drei Wege treffen sich an der Sonne | erst ab ~48 px lesbar |
-| `logo-wordmark.svg` | Wortmarke DE („Wir wollen **weg**") | `<text>` mit Figtree → vor Produktion in Pfade umwandeln |
-| `logo-wordmark-en.svg` | Wortmarke + EN-Untertitel „Find dates for your group trip" | Marke bleibt deutsch (Empfehlung, Auftraggeber entscheidet) |
-| `favicon.svg` | Favicon (32er Raster, vereinfachte Marke A) | `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`; zusätzlich PNG 32/180 (apple-touch-icon) daraus exportieren |
+| `logo-mark-a-sonnenkalender.svg` | **Bildmarke A – bestätigt (Auftraggeber 2026-10-08)** – Kalenderblatt mit Sonne über dem Meer, sprachneutral für DE und EN | Grundlage für Favicon, App-Icon, beide Wortmarken |
+| `logo-mark-b-weghaken.svg` | Alternative B – nicht gewählt | höchstens Sekundärzeichen (Erfolg) |
+| `logo-mark-c-treffpunkt.svg` | Alternative C – nicht gewählt | Archiv |
+| `logo-wordmark.svg` | Wortmarke DE („Wir wollen **weg**"), 320 × 72, ≥ 120 px | `<text>` mit Figtree → vor Produktion in Pfade umwandeln |
+| `logo-wordmark-en.svg` | Wortmarke EN („When do we **go?**"), 320 × 72 wie DE, ≥ 128 px | eigener EN-Name, bestätigt (Auftraggeber 2026-10-08); „?" gehört zum Namen; vor Produktion in Pfade umwandeln |
+| `logo-wordmark-en-tagline.svg` | EN-Wortmarke + Untertitel „Find dates for your group trip", 320 × 84, ≥ 300 px | nur Startseite W01, OG-Bild EN, Mail-Kopf – nie in der Kopfzeile |
+| `favicon.svg` | Favicon (32er Raster, vereinfachte Marke A, sprachneutral) | `<link rel="icon" href="/favicon.svg" type="image/svg+xml">`; zusätzlich PNG 32/180 (apple-touch-icon) daraus exportieren |
 | `app-icon.svg` | App-/PWA-Icon 512 px, vollflächig, maskable-tauglich | Inhalt in der sicheren Zone (Radius 40 %); PNG 192/512 exportieren; `theme_color` = `#0E6A68`, `background_color` = `#FBF8F3` |
+
+Welche Wortmarke: immer die der UI-Sprache (design-system §3.2, ux-spec §10.6); Favicon und App-Icon tragen keinen Text, der Name kommt aus HTML/Manifest der Sprache. Dark Mode folgt nur dem System – bestätigt (Auftraggeber 2026-10-08).
 
 Wortmarken enthalten `prefers-color-scheme`-Styles für helle/dunkle Umgebung. Wird das Theme per `[data-theme]` erzwungen, die Wortmarke **inline** einbinden (dann greifen die Seitenfarben) oder die passende Variante per `<picture>` wählen.
 
