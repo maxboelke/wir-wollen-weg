@@ -20,7 +20,7 @@ Stand: 2026-10-08 (Runde 2) · Verantwortlich: UI/UX · Gegenstück: `docs/desig
 | `prefers-reduced-motion`-Tokens | ux-spec §6/§7.1 verweisen darauf |
 | Touch-Mindestziel 44 px, Steuerelemente 48 px, Haupt-CTA 56 px | übernommen; „Mitmachen“ (W03) = 56 px |
 | Rot nur für Fehler/Destruktiv („Rot heißt Fehler, nicht Nein“) | sehr gut – „Geht nicht“/„Nein“ ist in UX nie Fehlerfarbe; Warnhinweise („Jonas kann nicht“) bitte Amber, nicht Rot |
-| EN-Wortmarke mit Unterzeile „Find dates for your group trip“ | App-Name wird nicht übersetzt (ux-spec §10.2) |
+| EN-Wortmarke mit Unterzeile „Find dates for your group trip“ | **Aktualisiert 2026-10-08:** EN-Wortmarke lautet „When do we go?“ (eigener Produktname, Auftraggeber), Unterzeile optional; Bildmarke sprachneutral (ux-spec §10.2, §10.6) |
 
 ## 2. Offen für Designer (Runde 1 – Status siehe §3 und §7)
 
@@ -119,7 +119,7 @@ Grundlage: `docs/design/abstimmung-ux.md` §1 und design-system v0.3.
 | **D-9** Illustrationen | Alle geliefert; Wireframes nennen jetzt die Dateinamen (`hero`, `invite`, `code-sent`, `empty-trips`, `empty-nobody`, `no-matches`, `submitted`, `vote-waiting`, `vote-done`, `error`, `goodbye`). | geklärt |
 | **D-10** Text & Typo | Budgets, `hyphens`, `overflow-wrap`, Tab-Stil inkl. Scroll-Fallback übernommen. | geklärt |
 | **D-11** Sheet & Ebenen | Zwei Rastpunkte (`--ww-size-sheet-half/full`), Schließen-Button, Snackbar über der Leiste via `--ww-sticky-bar-h` (U-7). | geklärt |
-| **D-12** Dark Mode | Nur System, kein Schalter – CEO-Entscheidung, vorbehaltlich Auftraggeber. | geklärt (Vorbehalt Auftraggeber) |
+| **D-12** Dark Mode | Nur System, kein Schalter – bestätigt (Auftraggeber 2026-10-08). | geklärt |
 | **D-13** Vorschlagskarte | Übernommen. Gruppenüberschrift „Alle dabei“ mit Strich-Icon `ww-icon-check` statt Badge (U-14, design-system v0.3 §9.3). Mini-Streifen entfällt im MVP (U-10). | geklärt |
 
 **Ein Restkonflikt außerhalb von D-1–D-13** (beim Lesen von design-system §9.8 gefunden): Sprachumschalter in der Kopfzeile → **D-16** (§6).
@@ -145,16 +145,16 @@ Grundlage: `docs/design/abstimmung-ux.md` §1 und design-system v0.3.
 
 ## 5. Übernommene CEO-Entscheidungen (2026-10-08)
 
-| Thema | Entscheidung | Vorbehalt | Wo verankert |
+| Thema | Entscheidung | Status | Wo verankert |
 |---|---|---|---|
 | U-1, U-2, U-4, U-14 | siehe §4 | verbindlich | ux-spec, W08, W09 |
-| Dark Mode | MVP folgt nur dem System, kein Schalter | vorbehaltlich Auftraggeber | ux-spec §7.1, sitemap, W13 |
-| Marke EN | „Wir wollen weg“ bleibt, EN-Untertitel „Find dates for your group trip“ | vorbehaltlich Auftraggeber | ux-spec §10.2, W01 |
-| Rolle | „Orga“ / „Organizer“ | vorbehaltlich Auftraggeber | ux-spec §10.2, sitemap |
-| Angemeldet bleiben | Standard an | vorbehaltlich Auftraggeber | ux-spec §4.4, user-flows H.1, W02 |
-| Hilfe/FAQ | kleine MVP-Seite | vorbehaltlich Auftraggeber | sitemap, ux-spec §7.3, W14, **W15 neu** |
-| Abstimmungsergebnisse | erst nach der eigenen Stimme sichtbar; Orga sieht immer alles. UX-Präzisierung: je Option nach der eigenen Stimme zu **dieser** Option, vorher Platzhalter «Stimm ab, um das Ergebnis zu sehen.» | vorbehaltlich Auftraggeber | user-flows D.2, ux-spec §8, W10 |
-| Einladungslink teilen | alle Mitglieder, solange der Beitritt offen ist | vorbehaltlich Auftraggeber | sitemap §5, user-flows K |
+| Dark Mode | MVP folgt nur dem System, kein Schalter | bestätigt (Auftraggeber 2026-10-08) | ux-spec §7.1, sitemap, W13 |
+| Marke EN | **geändert durch Auftraggeber:** EN-Produktname „When do we go?“, DE bleibt „Wir wollen weg“; Bildmarke sprachneutral; EN-Untertitel „Find dates for your group trip“ optional | bestätigt (Auftraggeber 2026-10-08) | ux-spec §3, §9, §10.2, §10.3, §10.5, §10.6; sitemap §4; W01, W03, W06 |
+| Rolle | „Orga“ / „Organizer“ | bestätigt (Auftraggeber 2026-10-08) | ux-spec §10.2, sitemap |
+| Angemeldet bleiben | Standard an | bestätigt (Auftraggeber 2026-10-08) | ux-spec §4.4, user-flows H.1, W02 |
+| Hilfe/FAQ | kleine MVP-Seite | bestätigt (Auftraggeber 2026-10-08) | sitemap, ux-spec §7.3, W14, **W15 neu** |
+| Abstimmungsergebnisse | erst nach der eigenen Stimme sichtbar; Orga sieht immer alles. UX-Präzisierung: je Option nach der eigenen Stimme zu **dieser** Option, vorher Platzhalter «Stimm ab, um das Ergebnis zu sehen.» | bestätigt (Auftraggeber 2026-10-08) | user-flows D.2, ux-spec §8, W10 |
+| Einladungslink teilen | alle Mitglieder, solange der Beitritt offen ist | bestätigt (Auftraggeber 2026-10-08) | sitemap §5, user-flows K |
 
 ## 6. Neue Punkte an den Designer (Runde 2)
 
@@ -165,6 +165,7 @@ Grundlage: `docs/design/abstimmung-ux.md` §1 und design-system v0.3.
 | **D-16** | **Sprachumschalter Kopfzeile** (design-system §9.8 „Ghost-Button … Sprachcode DE/EN, öffnet Menü“) widerspricht user-flows F.2: Nicht angemeldet ist es ein **direkter Umschalter in der Zielsprache** (Globus-Icon + „English“ bzw. „Deutsch“, ein Tipp, kein Menü, kein Code „DE/EN“ – Codes sind für viele unverständlich und kosten einen Tipp mehr). Angemeldet: im Avatar-Menü (kein Header-Element). Footer: Segment „Deutsch \| English“ wie von dir vorgeschlagen – übernommen. | §9.8 anpassen; **falls Einwand: CEO entscheidet** (UX-Vorschlag: direkter Umschalter) |
 | **D-17** | **Code-Feld (§9.2) Copy & Gewichtung:** Fehlertext bitte aus user-flows A.2 übernehmen («Dieser Code stimmt nicht. Noch 3 Versuche.», Restversuche ab dem 2. Fehlversuch); im Zustand „gesperrt“ ist `[Neuen Code senden]` **primär** (einzige sinnvolle Aktion), nicht sekundär. | Kleinkorrektur §9.2 |
 | **D-18** | **Abstimmen-Karte vor eigener Stimme:** Platzhalterzeile anstelle des Ergebnisbalkens «Stimm ab, um das Ergebnis zu sehen.» (`text-muted`, kein Balken, keine Zahlen); Orga sieht immer den Balken. | Zustand in §9.10 ergänzen |
+| **D-19** | **EN-Wortmarke „When do we go?“** (Auftraggeber 2026-10-08): Fragezeichen ist fester Teil der Wortmarke (nicht weglassen, nicht hervorheben); `<title>` im SVG = «When do we go?»; DE-/EN-Wortmarke gleich hoch, damit Header-Layouts identisch bleiben (beide 14 Zeichen). In design-system bitte Namensregel je Sprache aufnehmen bzw. auf ux-spec §10.6 verweisen. | Asset/Doku prüfen |
 
 ## 7. Abstimmungsstand
 
@@ -181,13 +182,14 @@ Grundlage: `docs/design/abstimmung-ux.md` §1 und design-system v0.3.
 | D-9 | Illustrationen | geklärt | – |
 | D-10 | Text & Typo | geklärt | – |
 | D-11 | Sheet & Ebenen | geklärt | – |
-| D-12 | Dark Mode | geklärt (Vorbehalt Auftraggeber) | Auftraggeber |
+| D-12 | Dark Mode | geklärt – bestätigt (Auftraggeber 2026-10-08) | – |
 | D-13 | Vorschlagskarte | geklärt | – |
 | D-14 | Gruppennamen „Alle dabei / Fast alle dabei“ in design-system | neu | Designer |
 | D-15 | Optik Tageslisten-Zeile (U-5) | neu | Designer |
 | D-16 | Sprachumschalter Kopfzeile | **Restkonflikt** | Designer, ggf. CEO |
 | D-17 | Code-Feld Copy/Gewichtung | neu (klein) | Designer |
 | D-18 | Ergebnis-Platzhalter vor eigener Stimme | neu (klein) | Designer |
+| D-19 | EN-Wortmarke „When do we go?“ | neu | Designer |
 | U-1 | Kalender-Seitenrand 8 px | übernommen (CEO) | – |
 | U-2 | Badge-Positionen | übernommen (CEO) | – |
 | U-3 | Pegel ab 600 px | geklärt | – |

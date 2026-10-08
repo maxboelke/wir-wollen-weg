@@ -1,4 +1,4 @@
-# User Flows – Wir wollen weg (MVP)
+# User Flows – Wir wollen weg / When do we go? (MVP)
 
 Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
 
@@ -217,7 +217,7 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 2. Je Option eine Karte: Zeitraum, Nächte, Urlaubstage, «laut Kalender: 7 können · ohne Jonas» („können“ = kein „Geht nicht“ im Zeitraum, Glossar). Darunter **Segment-Schalter** `[Ja] [Vielleicht] [Nein]` (Radiogruppe, ≥ 48 px hoch; unter 400 px Breite Icon über Label, 56 px hoch – U-8).
 3. **Vorbelegung (F-011):** aus Verfügbarkeit abgeleiteter Vorschlag wird **gestrichelt/hell** angezeigt + Label «Vorschlag aus deinen Tagen». Er zählt erst, wenn bestätigt: Tipp auf den Vorschlag oder `[Alle Vorschläge übernehmen]` (oben, nur sichtbar, wenn es unbestätigte Vorschläge gibt).
 4. Jede Stimme speichert sofort (optimistisch). Statuszeile: «Noch 1 Option offen» → wenn alle beantwortet: «Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Status „abgestimmt“ (F-007/F-011) erst, wenn **alle** Optionen eine bestätigte Stimme haben.
-5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber.* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
+5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *bestätigt (Auftraggeber 2026-10-08).* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
 6. Sortierung der Karten: in Erstellungsreihenfolge, solange man noch nicht vollständig abgestimmt hat (keine springenden Karten beim Abstimmen); danach nach Rang.
 
 **Leer-/Sonderzustände Tab Abstimmen:**
@@ -296,6 +296,7 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 - **Beim Login:** Die zuletzt **ausdrücklich** getroffene Wahl gewinnt. Hat jemand vor dem Login in diesem Browser umgeschaltet, wird die Kontosprache darauf aktualisiert; sonst gilt die Kontosprache. Neue Konten übernehmen die aktuell angezeigte Sprache.
 - Transaktionsmails: in der Sprache, in der die Oberfläche beim Auslösen angezeigt wurde (beim ersten Code), danach Kontosprache.
 - Bestätigung nach Umschalten: keine Meldung nötig (Wechsel ist selbsterklärend); Fokus bleibt auf dem Umschalter.
+- **Produktname wechselt mit:** DE „Wir wollen weg“ ↔ EN „When do we go?“ in Header-Wortmarke, Seitentitel, Footer und allen Texten (Bildmarke bleibt gleich). Teilen-Texte tragen den Namen in der Sprache des Senders bzw. der im Sheet gewählten Textsprache; Mails in der Mailsprache (ux-spec §9, §10.6).
 
 ---
 
@@ -322,7 +323,7 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 
 - **Ein Formular für beides.** Überschrift «Anmelden oder registrieren»; Text «Gib deine E-Mail ein. Wir schicken dir einen Code – ein Passwort brauchst du nicht.»
 - Schritte wie A.1 (E-Mail → Code → [nur neu: Name]) ohne Reise-Karte. Danach → `next` bzw. Meine Reisen.
-- Checkbox «Angemeldet bleiben» (Standard an – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
+- Checkbox «Angemeldet bleiben» (Standard an – *bestätigt (Auftraggeber 2026-10-08)*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
 - `[Mit Passwort anmelden]` blendet Passwortfeld ein; dort `[Passwort vergessen?]`.
 - Hinweis unter dem Passwortfeld (F-042): «Kein Passwort gesetzt? Melde dich einfach mit einem Code an.»
 - Bereits angemeldet und `/login` aufgerufen → Weiterleitung `next`/Meine Reisen.
@@ -397,9 +398,10 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 3. Auswahl der Personen: Liste mit Checkboxen (alle Fehlenden vorausgewählt), Text aktualisiert sich.
 4. `[Teilen …]` / `[Text kopieren]`. Nach dem Teilen: Hinweis «Zuletzt erinnert: heute, 14:20» an der Fortschrittsanzeige (nur Orga sichtbar) – verhindert Mehrfach-Spam.
 5. ∅ Niemand fehlt → Button entfällt; stattdessen «Alle haben abgegeben → [Abstimmung starten]».
-6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*bestätigt (Auftraggeber 2026-10-08)*).
 
 ---
 
 ## Änderungen
 - 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.
+- 2026-10-08 (Auftraggeber-Entscheidungen): F.3 Produktname je Sprache („When do we go?“ für EN); CEO-Vermerke in H.1, K, D.2 auf „bestätigt (Auftraggeber 2026-10-08)“ umgestellt.

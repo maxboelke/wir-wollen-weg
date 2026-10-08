@@ -71,8 +71,8 @@ Sheet „Eigener Zeitraum“: Mini-Kalender mit Heatmap-Färbung, Bereichsmodus 
 │ │ │  Ja  ● │Vielleicht│  Nein  │ │ │  gewählt = Fläche + 2-px-Rahmen + Icon gefüllt
 │ │ └────────┴──────────┴────────┘ │ │
 │ │ ████████▌██  ✓ 4  ◐ 1  ✕ 0     │ │  Ergebnis erst nach eigener Stimme zu dieser
-│ │ (Platz 1)                      │ │  Option; Orga sieht immer alles (CEO 2026-10-08,
-│ │                                │ │  vorbehaltlich Auftraggeber). Abzeichen „Platz 1“/„Top choice“
+│ │ (Platz 1)                      │ │  Option; Orga sieht immer alles (bestätigt,
+│ │                                │ │  Auftraggeber 2026-10-08). Abzeichen „Platz 1“/„Top choice“
 │ │ ▸ Wer hat wie gestimmt?        │ │
 │ └────────────────────────────────┘ │
 │ ┌────────────────────────────────┐ │

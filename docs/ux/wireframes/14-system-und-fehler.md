@@ -29,7 +29,7 @@ Gemeinsames Muster (mobil, zentriert, Desktop max. 480 px):
 | Wartungs-/Rate-Limit global | Gerade ist viel los | Bitte versuch es in ein paar Minuten nochmal. | Neu laden |
 
 ## Hilfe (`/de/hilfe`, `/en/help`)
-→ eigenes Wireframe **[W15](15-hilfe.md)** (MVP-Seite, CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber). Fragenliste (Kurzfassung):
+→ eigenes Wireframe **[W15](15-hilfe.md)** (MVP-Seite, bestätigt (Auftraggeber 2026-10-08)). Fragenliste (Kurzfassung):
 1. Mein Code kommt nicht an. (Spam, Adresse prüfen, neu senden nach 30 s, Absender-Adresse nennen)
 2. Ich habe den Einladungslink verloren. (Im Gruppenchat fragen; wer schon Mitglied ist: einfach anmelden → Meine Reisen)
 3. Ich habe die Seite in WhatsApp/Instagram geöffnet – geht das? (Ja; Code im selben Fenster eingeben; später im Browser mit E-Mail anmelden)

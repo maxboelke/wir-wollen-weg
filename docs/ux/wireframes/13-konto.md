@@ -93,4 +93,4 @@ Setzen/Ändern: «Neues Passwort» (`new-password`, Anzeigen-Schalter, ≥ 10 Ze
 ## Desktop
 Einspaltig, max. 640 px; Abschnitte als Karten. Optional linke Unternavigation (Profil · Sprache & Region · Anmeldung · Datenschutz) ab 960 px.
 
-**Darstellung / Dark Mode:** kein Schalter im MVP – die App folgt der Systemeinstellung (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*). Kommt später ein Schalter, gehört er als „Darstellung: System · Hell · Dunkel“ in die Karte „Sprache & Region“.
+**Darstellung / Dark Mode:** kein Schalter im MVP – die App folgt der Systemeinstellung (*bestätigt (Auftraggeber 2026-10-08)*). Kommt später ein Schalter, gehört er als „Darstellung: System · Hell · Dunkel“ in die Karte „Sprache & Region“.

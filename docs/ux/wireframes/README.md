@@ -6,6 +6,7 @@ Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Mobile first 
 - Wireframes zeigen Struktur, Inhalte, Reihenfolge und Zustände – **keine Optik**. Farben, Typo, Icons und Illustrationen kommen aus `docs/design/` (Tokens, Assets).
 - Symbole in ASCII-Skizzen sind Platzhalter für Icons aus `docs/design/assets/icons/icons.svg` (`ww-icon-…`): `✕` cross · `◐` maybe · `✓` check (Strich) bzw. Abzeichen all-available (in Zellen) · `◥` Feiertag-Eselsohr · `⚇` users · `ⓘ` info · `⚠` warning · `⋯` more · `↶` undo · `⇤⇥` range · `[Kal]` calendar. Illustrationen sind mit Dateinamen aus `assets/illustrations/` benannt.
 - Texte sind deutsche Arbeitsfassungen nach den Copy-Richtlinien ([ux-spec §10](../ux-spec.md)); EN-Fassungen entstehen im i18n-Schritt, Glossar ist verbindlich.
+- **Produktname:** Wo „Wir wollen weg“ in einer Skizze steht (Wortmarke W01, W03, W04, W15), steht auf EN **„When do we go?“** (bestätigt (Auftraggeber 2026-10-08); Regeln [ux-spec §10.6](../ux-spec.md)). Gleiche Länge, kein Layout-Sonderfall.
 - Verhalten, Fehlerfälle und Leerzustände stehen ausführlich in [user-flows.md](../user-flows.md); die Wireframes verweisen darauf.
 - Beispieldaten durchgehend: Reise „Lissabon 2027“, Suchzeitraum 1. Mai – 30. Juni 2027, 4–5 Nächte, Region Bayern, Orga Lena.
 
@@ -25,7 +26,7 @@ Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Mobile first 
 | W12 | [12-reise-einstellungen.md](12-reise-einstellungen.md) | Reise bearbeiten `/settings` + Verwaltungsdialoge | F-001, F-004, F-013 | J | fertig |
 | W13 | [13-konto.md](13-konto.md) | Konto, E-Mail ändern, Passwort, Konto löschen `/account…` | F-041, F-042, F-043, F-046 | I, F | fertig |
 | W14 | [14-system-und-fehler.md](14-system-und-fehler.md) | System-/Fehlerzustände | F-003, F-041, F-043 | – | fertig |
-| W15 | [15-hilfe.md](15-hilfe.md) | Hilfe/FAQ `/de/hilfe`, `/en/help` (MVP, CEO 2026-10-08, vorbehaltlich Auftraggeber) | – (WCAG 3.2.6) | A.2, H.4 | fertig |
+| W15 | [15-hilfe.md](15-hilfe.md) | Hilfe/FAQ `/de/hilfe`, `/en/help` (MVP – bestätigt (Auftraggeber 2026-10-08)) | – (WCAG 3.2.6) | A.2, H.4 | fertig |
 
 ## HTML-Skizzen
 - **[08-meine-tage.html](08-meine-tage.html)** (v2) – im Browser öffnen; mobil + Desktop nebeneinander. Interaktiv: Pinsel wählen, Tag antippen (Umschalten), über mehrere Tage ziehen (gestrichelte Vorschau je Zeilensegment), Bereichsmodus (zwei Tipps, Ankerpunkt + Hinweiszeile), Rückgängig (deaktiviert, wenn leer), Snackbar über der Leiste via `--ww-sticky-bar-h`, Tastatur (Pfeile, Leertaste, 1/2/3, Strg+Z, Esc). Die mobile Touch-Gestenlogik (horizontal starten bzw. 300 ms halten) ist nicht nachgebaut.

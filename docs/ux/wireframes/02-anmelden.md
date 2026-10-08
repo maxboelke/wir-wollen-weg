@@ -20,7 +20,7 @@ Die Code-Komponente (Schritt 2) ist **identisch** im Einladungsflow (W03), bei R
 │  ┌──────────────────────────────┐  │  type=email, autocomplete=email
 │  │ kemal@beispiel.de            │  │
 │  └──────────────────────────────┘  │
-│  ☑ Angemeldet bleiben              │  Standard an (CEO 2026-10-08, vorbehaltlich Auftraggeber)
+│  ☑ Angemeldet bleiben              │  Standard an – bestätigt (Auftraggeber 2026-10-08)
 │                                    │
 │  ┌──────────────────────────────┐  │
 │  │        Code senden           │  │  primär
