@@ -1,6 +1,6 @@
 # User Flows – Wir wollen weg / When do we go? (MVP)
 
-Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
+Stand: 2026-10-08 (Runde 3: Richtung B „Reise-Cockpit“, Q17 Motion/Haptik) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
 
 Notation: `[Button]` = Aktion, `«Text»` = sichtbarer Text (DE; EN-Fassung in [ux-spec.md](ux-spec.md) §10), `◆` = Entscheidung, `⚠` = Fehlerfall, `∅` = Leerzustand, `→` = nächster Schritt. Wireframe-Nummern in Klammern, z. B. (W03).
 
@@ -37,7 +37,7 @@ Inhalt:
 |---|---|---|---|
 | 1 | Reise-Vorschau | öffnet `/i/{token}` aus WhatsApp | ◆ Token gültig? Reise voll? Beitritt gesperrt? Angemeldet? Schon Mitglied? (s. A.3). Zeigt: Reisename, «Lena lädt dich ein», Suchzeitraum, Dauer («4–5 Nächte»), «7 sind schon dabei», Beschreibung (falls vorhanden). Keine Namen, Daten, Stimmen. Sprache: Cookie → Browser. |
 | 2 | Vorschau | tippt `[Mitmachen]` | Formular klappt **unter der Reise-Karte** auf (kein Seitenwechsel), Fokus ins E-Mail-Feld, Tastatur öffnet sich. Text: «Mit deiner E-Mail bist du in Sekunden dabei. Kein Passwort nötig.» |
-| 3 | Schritt E-Mail | gibt E-Mail ein, `[Code senden]` | Client-Validierung (Format). Server: Rate-Limit, Code + Magic-Link erzeugen, **Rücksprung = `/i/{token}` + Aktion „beitreten“ wird in der Code-Anforderung gespeichert**. Lokal: `sessionStorage` + `localStorage` speichern `{inviteToken, email, step:"code", requestedAt}` (s. A.4). → Schritt Code. History-Eintrag `?step=code`. |
+| 3 | Schritt E-Mail | gibt E-Mail ein, `[Code senden]` | Client-Validierung (Format). Server: Rate-Limit, Code + Magic-Link erzeugen, **Rücksprung = `/i/{token}` + Aktion „beitreten“ wird in der Code-Anforderung gespeichert**. Lokal: `sessionStorage` + `localStorage` speichern `{inviteToken, email, step:"code", requestedAt}` (s. A.4). → Schritt Code. History-Eintrag `?step=code`. **Optimistischer Wechsel (M-U5):** Ist das E-Mail-Format gültig, wechselt die Ansicht **sofort im Tipp-Ereignis** zum Schritt Code und setzt den Fokus synchron ins Code-Feld (sonst öffnet iOS die Tastatur nicht). Statuszeile (`role="status"`) «Code wird gesendet …» → nach Server-OK «Code an kemal@… gesendet»; der Countdown „Neuen Code senden“ startet erst nach Server-OK. ⚠ Rate-Limit/Netz/Server: zurück zum Schritt E-Mail per `history.replaceState` (kein toter Zurück-Eintrag), E-Mail bleibt stehen, Meldung am Feld, Fokus ins E-Mail-Feld. |
 | 4 | Schritt Code | wechselt in die Mail-App, liest Code (oft schon aus der Mitteilungsvorschau – der Code steht im **Betreff**), kehrt zurück | Anzeige: «Code an kemal@… gesendet» + `[Andere E-Mail]`. Ein Eingabefeld, `inputmode="numeric"`, `autocomplete="one-time-code"`. Hinweis «Keine Mail? Schau im Spam-Ordner.» `[Code erneut senden]` nach 30 s aktiv (Countdown sichtbar). |
 | 5 | Schritt Code | tippt/fügt 6 Ziffern ein (iOS/Android schlagen den Code ggf. über der Tastatur vor) | Bei 6 Ziffern **automatisch absenden** (kein Button nötig, Button bleibt als Fallback). Leerzeichen/Bindestriche beim Einfügen werden entfernt. ◆ Code korrekt? (Fehler s. A.2) |
 | 6 | Schritt Name (nur neues Konto) | sieht «Fast geschafft! Wie sollen dich die anderen nennen?»; Feld Anzeigename (bei Platzhalter-Link vorbelegt, F-007); Hinweistext Datenschutz/Nutzungsbedingungen mit Links | Konto ist ab Code-Bestätigung angelegt (E-Mail verifiziert); Sprache + Region aus Browser gespeichert (F-046). |
@@ -116,6 +116,7 @@ Inhalt:
   3. «Geht» (= Zurücksetzen auf Standard)
   
   Daneben: `[Zeitraum]`-Schalter (Bereichsmodus), `[↶ Rückgängig]`, `[⋯ Schnellaktionen]`. Darunter bzw. daneben der primäre Button `[Fertig – abgeben]` bzw. nach Abgabe der Speicherstatus.
+  **Richtung B (ux-spec §4.12):** mobil drei Kachel-Tasten als Icons (Name als `aria-label` + Tooltip) in einer Zeile mit `[Fertig – abgeben]`, Statuszeile oben, kein sichtbares Pinsel-Label, kein Griff; Leiste ≤ 150 px. Die Legende „So funktioniert's“ erklärt das Zeitraum-Icon in Textform.
 - **Kalender:** Monate des Suchzeitraums untereinander (mobil, Endlos-Scroll mit fixierter Monatsüberschrift) bzw. 2–3 Monate nebeneinander (Desktop ≥ 960 px). Oben Sprung-Chips je Monat («Mai · Juni»). Wochenstart nach Region/Konto (Mo oder So); Wochenend-Spalten = Sa/So unabhängig vom Wochenstart.
 - **Tag außerhalb des Suchzeitraums / vergangen:** sichtbar (zur Orientierung), ausgegraut, nicht bedienbar.
 - **Feiertag (F-016):** Eselsohr oben rechts in der Zelle + Liste «1.5. Tag der Arbeit · 6.5. Christi Himmelfahrt …» unter jedem Monat mit Feiertagen (je Eintrag kleines Eselsohr vorn, ux-spec §4.9) (Namen in Sprache des Betrachters). Region = Konto-Region; Zusatzoption (Schnellaktion-Menü): «Auch Feiertage der Reise zeigen (Bayern)», falls abweichend.
@@ -127,7 +128,7 @@ Inhalt:
 |---|---|
 | **Tippen** auf Tag | Tag bekommt den Zustand des aktiven Pinsels. **Hat er ihn schon → zurück auf „geht“** (Umschalten). |
 | **Ziehen/Wischen** (Maus gedrückt halten bzw. Finger) | Bereich vom Starttag bis zum aktuellen Tag **in Datumsreihenfolge** (wie Textauswahl, auch über Zeilen- und Monatsgrenzen) wird als Vorschau angezeigt (Zellen zeigen schon Fläche/Muster des Pinsels, gestrichelter Umriss je Zeilensegment, Ansage «13.–19. Mai · 7 Tage»); beim Loslassen wird angewendet. Regel „erster Tag entscheidet“: War der Starttag bereits im Pinsel-Zustand, setzt der Zug den Bereich auf „geht“ zurück – sonst auf den Pinsel. |
-| **Touch-Gestenkonflikt** (Scrollen vs. Ziehen) | Vertikales Wischen = Seite scrollen. Ziehen startet, wenn die Bewegung **zuerst horizontal** ist (> 10 px, Winkel < 30°) **oder** nach **Gedrückthalten 300 ms** (dann haptisches Feedback, falls verfügbar); danach folgt die Auswahl dem Finger in jede Richtung, Scrollen ist für diese Geste gesperrt. Am oberen/unteren Rand scrollt die Ansicht beim Ziehen automatisch. |
+| **Touch-Gestenkonflikt** (Scrollen vs. Ziehen) | Vertikales Wischen = Seite scrollen. Ziehen startet, wenn die Bewegung **zuerst horizontal** ist (> 10 px, Winkel < 30°) **oder** nach **Gedrückthalten 300 ms** (dann Vibration 10 ms – nur Android/Vibrations-API, best effort, aus bei reduzierter Bewegung; ux-spec §7.5); danach folgt die Auswahl dem Finger in jede Richtung, Scrollen ist für diese Geste gesperrt. Am oberen/unteren Rand scrollt die Ansicht beim Ziehen automatisch. |
 | **Bereichsmodus** `[Zeitraum]` (barrierefreie Alternative, WCAG 2.5.7) | Erster Tipp = Start (Doppelrahmen + Ankerpunkt, Hinweiszeile über der Leiste «Jetzt das Ende antippen. [Abbrechen]»), Scrollen erlaubt, zweiter Tipp = Ende → Pinsel wird auf alle Tage dazwischen angewendet. Modus bleibt aktiv, bis er ausgeschaltet wird. `Esc` / erneuter Tipp auf Start bricht ab. |
 | **Shift + Klick** (Desktop) | Bereich vom zuletzt geänderten Tag bis zum geklickten Tag. |
 | **Tastatur** | Siehe ux-spec §7.3 (Pfeile, Leertaste, Shift+Pfeile, 1/2/3 für Pinsel, Strg/Cmd+Z). |
@@ -150,7 +151,7 @@ Inhalt:
 - ⚠ Offline: Änderungen bleiben lokal, Banner «Offline – wir speichern, sobald du wieder verbunden bist.» `[Fertig – abgeben]` deaktiviert mit Erklärung.
 - ⚠ Speichern dauerhaft fehlgeschlagen (3 Versuche): Zustand bleibt sichtbar, Snackbar mit `[Erneut versuchen]`; beim Verlassen der Seite Warnung «Nicht gespeicherte Änderungen».
 - ⚠ Suchzeitraum wurde vom Orga geändert, während man markiert: beim nächsten Speichern Hinweis «Lena hat den Zeitraum geändert. Tage außerhalb wurden ausgeblendet.» (Daten außerhalb bleiben gespeichert, zählen aber nicht.)
-- ∅ Erster Besuch: Willkommens-Hinweis (A.1 Schritt 8) + kurze Geste-Animation (einmalig, ≤ 3 s, respektiert `prefers-reduced-motion`): «Tippen oder über mehrere Tage wischen».
+- ∅ Erster Besuch: Willkommens-Hinweis (A.1 Schritt 8) + kurze Geste-Animation «Tippen oder über mehrere Tage wischen» (M-U9): startet 600 ms nach dem Hinweis, Finger wischt 2 × über vier Tage einer Woche, ≤ 2,8 s, jede Berührung/Scroll/Taste stoppt sie, die Tage werden **nicht** verändert; nur beim ersten Besuch. Reduzierte Bewegung: statische Skizze im Willkommens-Hinweis, **ohne Zeitlimit**, bis der Hinweis geschlossen wird.
 
 ---
 
@@ -160,7 +161,7 @@ Inhalt:
 
 - **Mobil:** Segment-Schalter oben `[Vorschläge] [Kalender]`, Standard **Vorschläge** (der Algorithmus ist der Kernnutzen; die Heatmap ist das Werkzeug zum Nachvollziehen).
 - **Desktop (≥ 960 px):** zweispaltig – links Heatmap (2 Monate), rechts Vorschlagsliste (sticky). Auswahl eines Vorschlags hebt den Zeitraum in der Heatmap hervor.
-- **Statusband oben (beide):** «5 von 7 haben abgegeben. Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» Orga: `[Erinnern]` (→ Flow K). Wenn alle abgegeben: «Alle haben abgegeben.» + Orga: `[Abstimmung starten]`.
+- **Kennzahl-Box im Cockpit-Kopf (Richtung B, ersetzt das Statusband; ux-spec §4.10):** Ring + «5 von 7 haben abgegeben» + «Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» Orga: `[Erinnern]` (→ Flow K). Wenn alle abgegeben: «Alle haben abgegeben.» + Orga: `[Abstimmung starten]`. Die Box scrollt mit dem Inhalt weg (kein Einklappen); sticky bleibt nur der kompakte Kopf mit der Phasenzeile «Tage sammeln · 5/7 fertig». Desktop: Box im Kopf über beiden Spalten.
 - **Filterzeile** (Chips, wirken nur lokal für den Betrachter, F-008/F-009): `Dauer: 5 Nächte ▾` (Stepper, Standard = Wunschdauer, Untergrenze 1) · `Darf fehlen: 1 ▾` (0–3) · `Personen ausblenden ▾` (Mehrfachauswahl). Aktive Filter sichtbar hervorgehoben + `[Filter zurücksetzen]`. Hinweis, wenn aktiv: «Nur für dich – die Gruppe sieht die Standardansicht.»
 
 ### C.2 Vorschlagsliste (F-009)
@@ -190,7 +191,9 @@ Inhalt:
   - Gruppen: **Geht (5)** Namen · **Zur Not (1)** Namen · **Geht nicht (1)** Namen · **Noch offen (2)** Namen (`text-muted`, Avatar mit gestricheltem Ring wie Teilnahmestatus F-007, U-13). Kommentar-Symbol bei Personen mit Kommentar; Antippen zeigt den Kommentar.
   - Navigation `[‹ Vortag] [Folgetag ›]` im Sheet (wischen links/rechts auch möglich) – man kann Tag für Tag durchgehen, ohne das Sheet zu schließen.
   - Orga in Phase 1/2: `[Ab hier als Option vorschlagen]` → Abstimmung-Erstellung mit vorgewähltem Starttag (D.1).
-- **Vorschlag im Kalender zeigen:** springt in Ansicht Kalender, scrollt zum Monat, umrandet den Zeitraum (Umriss + Beschriftung, nicht nur Farbe) für 4 s bzw. bis zur nächsten Interaktion; Screenreader-Ansage «Zeitraum 5. bis 10. Mai hervorgehoben».
+- **Vorschlag im Kalender zeigen:** springt in Ansicht Kalender, scrollt zum Monat, umrandet den Zeitraum (Umriss + Beschriftung, nicht nur Farbe) für 4 s bzw. bis zur nächsten Interaktion; Screenreader-Ansage «Zeitraum 5. bis 10. Mai hervorgehoben». Danach verschwinden Umriss und Beschriftung, **das Band bleibt**, solange dieser Vorschlag in der Vorschlag-Leiste gewählt ist (M-U7).
+- **Vorschlag-Leiste (Richtung B, < 960 px, ux-spec §4.11):** fixiert unten in der Kalender-Ansicht, `[‹]` Vorschlag `[›]`. Beim direkten Öffnen der Ansicht ist Vorschlag 1 gewählt und sein Band sichtbar (ohne Umriss/Beschriftung, ohne Scroll-Sprung). Blättern setzt das Band neu und scrollt zum Anreisetag; Ansage «Vorschlag 2 von 5: …». Tipp auf die Mitte → Ansicht Vorschläge, Fokus auf diese Karte. Keine Orga-Auswahl in der Leiste. ∅ Keine Treffer: «Gerade kein passender Zeitraum. [Tipps ansehen]».
+- **Aufbau-Animation der Heatmap** (Motion W09-05) nur beim ersten direkten Öffnen der Kalender-Ansicht in der Sitzung – nicht über „Im Kalender zeigen“ und nicht beim Blättern in der Leiste (M-U8).
 - **Personen-Status:** unter der Heatmap aufklappbar «Wer hat abgegeben?» (Liste wie Übersicht).
 
 ---
@@ -213,12 +216,12 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 
 ### D.2 Abstimmen (alle Mitglieder, `/trips/{id}/poll`, W10)
 
-1. Kopf: «Abstimmung läuft · noch 3 Tage (bis Fr., 14. Mai)» (falls Frist) · «4 von 7 haben abgestimmt».
+1. Kopf: h1 «Abstimmung läuft», darunter **Kennzahl-Kacheln** (Richtung B, ux-spec §4.10): «noch 3 Tage / bis Fr., 14. Mai» (nur mit Frist) und «4 von 7 / haben abgestimmt». Tipp auf die Beteiligungs-Kachel → Sheet «Wer hat abgestimmt?» (Abgestimmt / Noch offen, nur Status; Orga zusätzlich `[Erinnern]`).
 2. Je Option eine Karte: Zeitraum, Nächte, Urlaubstage, «laut Kalender: 7 können · ohne Jonas» („können“ = kein „Geht nicht“ im Zeitraum, Glossar). Darunter **Segment-Schalter** `[Ja] [Vielleicht] [Nein]` (Radiogruppe, ≥ 48 px hoch; unter 400 px Breite Icon über Label, 56 px hoch – U-8).
 3. **Vorbelegung (F-011):** aus Verfügbarkeit abgeleiteter Vorschlag wird **gestrichelt/hell** angezeigt + Label «Vorschlag aus deinen Tagen». Er zählt erst, wenn bestätigt: Tipp auf den Vorschlag oder `[Alle Vorschläge übernehmen]` (oben, nur sichtbar, wenn es unbestätigte Vorschläge gibt).
 4. Jede Stimme speichert sofort (optimistisch). Statuszeile: «Noch 1 Option offen» → wenn alle beantwortet: «Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Status „abgestimmt“ (F-007/F-011) erst, wenn **alle** Optionen eine bestätigte Stimme haben.
 5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *bestätigt (Auftraggeber 2026-10-08).* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
-6. Sortierung der Karten: in Erstellungsreihenfolge, solange man noch nicht vollständig abgestimmt hat (keine springenden Karten beim Abstimmen); danach nach Rang.
+6. Sortierung der Karten: in Erstellungsreihenfolge, solange man noch nicht vollständig abgestimmt hat (keine springenden Karten beim Abstimmen); danach nach Rang – **erst beim nächsten Öffnen des Tabs**, nie während man auf der Seite ist (M-U3: kein FLIP-Umsortieren; Fokus- und Lesereihenfolge bleiben stabil, Korrekturen an der eben benutzten Karte bleiben einfach).
 
 **Leer-/Sonderzustände Tab Abstimmen:**
 - ∅ Phase 1, Mitglied: «Noch keine Abstimmung. Lena startet sie, sobald genug Tage eingetragen sind. Bis dahin: [Vorschläge ansehen]».
@@ -230,10 +233,10 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 1. `[Abstimmung beenden & Termin festlegen]` (Tab Abstimmen, unten) → Dialog/Bottom-Sheet.
 2. ◆ Haben alle abgestimmt? Nein → Hinweisbox im Dialog «Noch nicht abgestimmt: Kemal, Sara.» (kein Blocker, F-012).
 3. Optionsliste als Radiogruppe mit Ergebnis-Kurzinfo. **Vorauswahl = Platz 1.** ◆ Gleichstand auf Platz 1 → **keine Vorauswahl**, Hinweis «Gleichstand – du entscheidest.», Button erst aktiv nach Auswahl.
-4. `[Termin festlegen]` → Phase 3. Erfolgsansicht (Übersicht, groß): «Es geht los! Mi., 5. Mai – Mo., 10. Mai 2027» + Aktionen:
+4. `[Termin festlegen]` → Phase 3. Sheet schließt, **Fokus sofort auf h1 «Es geht los!»** (`aria-describedby` → Datum; M-U10). Erfolgsansicht (Übersicht, groß) mit **Feier** (Vorfreude-Ring, Konfetti; Kern ≤ 1 s, Ausklang ≤ 2,6 s, Text/Tasten ab ≤ 300 ms bedienbar; Vibration Android best effort; reduziert ohne Bewegung – ux-spec §7.5): «Es geht los! Mi., 5. Mai – Mo., 10. Mai 2027 · 5 Nächte · 7 dabei · noch 23 Tage» + Aktionen:
    - `[Allen Bescheid geben]` → Teilen-Sheet Text „Ergebnis“ (F-012).
    - `[Zum Kalender hinzufügen ▾]` → «Kalenderdatei (Apple, Outlook …)» (ICS-Download, ganztägig An- bis Abreisetag) · «Google Kalender» (öffnet Link in neuem Tab).
-5. Alle Mitglieder sehen beim nächsten Öffnen dieselbe Ergebnis-Karte mit „Zum Kalender hinzufügen“; Meine Tage + Abstimmen schreibgeschützt.
+5. Alle Mitglieder sehen beim nächsten Öffnen dieselbe Ergebnis-Karte mit „Zum Kalender hinzufügen“; Meine Tage + Abstimmen schreibgeschützt. **Feier für alle (Q17 b):** Jedes Mitglied erlebt die Feier **einmal** beim ersten Öffnen der Übersicht nach der Festlegung (serverseitig je Mitgliedschaft und Festlegung gemerkt, geräteübergreifend; gesetzt, sobald sie sichtbar startet). ◆ Direkt einen anderen Tab geöffnet → Banner «Der Termin steht fest! [Ansehen]» → Übersicht → Feier. Kein Fokus-Sprung bei Mitgliedern. Spätere Besuche statisch. ◆ Festlegung aufgehoben und **anderer** Zeitraum festgelegt → Feier erneut; gleicher Zeitraum → nicht. Beitritt in Phase 3 → Feier einmal.
 6. **Festlegung aufheben** (Reisemenü, Orga): Bestätigungsdialog «Termin wieder offen machen? Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.» `[Termin aufheben]` → Phase 2.
 
 **ICS-Hinweis iOS:** In iOS-In-App-Browsern ist Datei-Download oft eingeschränkt. Fallback: Bei erkanntem In-App-Browser zusätzlich Hinweis «Klappt der Download nicht? Öffne die Seite in Safari/Chrome (⋯ → Im Browser öffnen).» Der ICS-Link ist eine normale URL (`/trips/{id}/event.ics`, nur für angemeldete Mitglieder) und funktioniert dort nach Login.
@@ -322,7 +325,7 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 ### H.1 Anmelden / Registrieren (`/login`, W02)
 
 - **Ein Formular für beides.** Überschrift «Anmelden oder registrieren»; Text «Gib deine E-Mail ein. Wir schicken dir einen Code – ein Passwort brauchst du nicht.»
-- Schritte wie A.1 (E-Mail → Code → [nur neu: Name]) ohne Reise-Karte. Danach → `next` bzw. Meine Reisen.
+- Schritte wie A.1 (E-Mail → Code → [nur neu: Name]) ohne Reise-Karte, inkl. optimistischem Wechsel zum Code-Schritt (A.1 Schritt 3, M-U5). Danach → `next` bzw. Meine Reisen.
 - Checkbox «Angemeldet bleiben» (Standard an – *bestätigt (Auftraggeber 2026-10-08)*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
 - `[Mit Passwort anmelden]` blendet Passwortfeld ein; dort `[Passwort vergessen?]`.
 - Hinweis unter dem Passwortfeld (F-042): «Kein Passwort gesetzt? Melde dich einfach mit einem Code an.»
@@ -369,9 +372,10 @@ Nicht im Self-Service. Hilfe-Seite: «Kein Zugriff mehr auf deine E-Mail? Schrei
 Abschnitte (jeweils eigene Karte, Änderungen pro Abschnitt speichern):
 1. **Profil:** Anzeigename (wirkt in allen Reisen, Hinweis dazu; reisespezifische Namen bleiben bestehen) → `[Speichern]`.
 2. **Sprache & Region:** Sprache (Deutsch/English) · Region (Land + bei DE/AT/CH/UK Bundesland/Kanton/Landesteil für Feiertage) · Wochenbeginn (Automatisch nach Region / Montag / Sonntag) · Vorschau «So sehen Daten aus: Fr., 3. Juli 2027». Sofort speichern bei Änderung (Snackbar «Gespeichert»).
-3. **Anmeldung:** E-Mail (mit `[Ändern]` → `/account/email`) · Passwort: «Nicht gesetzt – du meldest dich mit Code an» `[Passwort festlegen]` bzw. «Gesetzt» `[Ändern]` `[Entfernen]`.
-4. **Sitzungen:** `[Auf allen Geräten abmelden]`.
-5. **Daten & Datenschutz:** Link Datenschutzerklärung · «Deine Daten anfordern: schreib an <Kontakt>» · `[Konto löschen]` (Textbutton in Warnfarbe, ganz unten).
+3. **Darstellung** (neu, Q17 a): Schalter «Bewegung reduzieren» (Standard aus = folgt dem Gerät), speichert sofort (Snackbar «Gespeichert»), wirkt ohne Neuladen; meldet das Gerät schon „reduzieren“, ist er an und nicht bedienbar mit Grund (Texte ux-spec §7.5). Kein Theme-Schalter (Dark Mode folgt dem System).
+4. **Anmeldung:** E-Mail (mit `[Ändern]` → `/account/email`) · Passwort: «Nicht gesetzt – du meldest dich mit Code an» `[Passwort festlegen]` bzw. «Gesetzt» `[Ändern]` `[Entfernen]`.
+5. **Sitzungen:** `[Auf allen Geräten abmelden]`.
+6. **Daten & Datenschutz:** Link Datenschutzerklärung · «Deine Daten anfordern: schreib an <Kontakt>» · `[Konto löschen]` (Textbutton in Warnfarbe, ganz unten).
 
 ### I.2 E-Mail ändern (`/account/email`)
 
@@ -418,6 +422,7 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 ---
 
 ## Änderungen
+- 2026-10-08 (Runde 3, Richtung B + Q17): A.1/H.1 optimistischer Code-Schritt (M-U5); B.1 Werkzeugleiste B, B.2 Vibration, B.4 Geste-Hinweis (M-U9); C.1 Kennzahl-Box statt Statusband; C.3 Vorschlag-Leiste, Band bleibt (M-U7), Heatmap-Aufbau (M-U8); D.2 Kennzahl-Kacheln, Umsortieren erst beim nächsten Öffnen (M-U3); D.3 Fokus (M-U10) und Feier für alle (Q17 b); I.1 Abschnitt Darstellung (Q17 a).
 - 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.
 - 2026-10-08 (Auftraggeber-Entscheidungen): F.3 Produktname je Sprache („When do we go?“ für EN); CEO-Vermerke in H.1, K, D.2 auf „bestätigt (Auftraggeber 2026-10-08)“ umgestellt.
 - 2026-10-08 (Review-Nacharbeit R-006/R-008): A.4 Regel 4/6 und neuer Abschnitt H.5 – Magic-Link-Landeseite mit Button, Einlösen per POST, Fehlerfall → Code-Weg.

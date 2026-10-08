@@ -1,21 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t d">
-  <title id="t">Wir wollen weg – Bildmarke A „Sonnenkalender“</title>
-  <desc id="d">Ein Kalenderblatt, in dem eine Sonne über einem Wellen-Horizont aufgeht: Termin trifft Urlaub. Empfohlene Hauptmarke und Grundlage für Favicon und App-Icon.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="wwlma-t">
+  <title id="wwlma-t">Wir wollen weg</title>
+  <!-- VERALTETER DATEINAME (v0.5). Inhalt seit v1.0 identisch mit logo-mark.svg (Palette B0).
+       Bitte logo-mark.svg bzw. logo-mark-on-brand.svg verwenden; diese Datei kann entfernt werden. -->
   <defs>
-    <clipPath id="ww-a-body">
-      <rect x="6" y="10" width="52" height="48" rx="12"/>
-    </clipPath>
+    <clipPath id="wwlma-sheet"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
   </defs>
-  <!-- Kalenderblatt -->
-  <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
-  <g clip-path="url(#ww-a-body)">
-    <!-- Sonne -->
-    <circle cx="32" cy="42" r="13" fill="#F4B942"/>
-    <!-- Horizont / Meer -->
-    <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
-    <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>
+  <rect x="6" y="11" width="52" height="47" rx="14" fill="#2B2266"/>
+  <g clip-path="url(#wwlma-sheet)">
+    <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".25"/>
+    <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+    <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+    <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
   </g>
-  <!-- Kalender-Ringe -->
-  <rect x="18" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
-  <rect x="40" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+  <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
+  <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
 </svg>

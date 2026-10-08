@@ -4,6 +4,50 @@ Features: F-046 (Sprache), Einstieg F-001/F-041 · Flow: [G](../user-flows.md#g-
 
 Zweck: In 5 Sekunden verstehen, was die App tut, und sofort eine Reise anlegen können. Kein Login nötig, um anzufangen.
 
+## Richtung B „Reise-Cockpit“ (Q18) – maßgeblich ab Look & Feel 2.0
+
+Entscheidungen: [abstimmung-design §8.1](../abstimmung-design.md) (B-7, B-7a, Landing-Kopf, M-U4). Die Skizzen „Mobil“/„Desktop“ weiter unten gelten für Inhalte und Reihenfolge, die Anordnung folgt diesem Abschnitt.
+
+```
+Mobil 360 px                                   Mobil ≥ ca. 376 px (z. B. 390)
+┌────────────────────────────────────┐         … Kopf/Cockpit gleich …
+│▓[Logo] Wir wollen weg ⊕English [→]▓│  Kopf im Indigo-Cockpit; < 375 px
+│▓                                  ▓│  „Anmelden“ = Icon-Taste 44 px
+│▓ Vom Gruppenchat zum festen       ▓│  h1 Display
+│▓ Reisetermin.                     ▓│
+│▓ Alle tragen ein, wann sie können.▓│  Lead
+│▓ Wir finden die Zeiträume, in     ▓│
+│▓ denen alle Zeit haben.           ▓│
+│▓ ┌──────────────────────────────┐ ▓│
+│▓ │      Reise planen  →         │ ▓│  primär (Minze auf Indigo)
+│▓ └──────────────────────────────┘ ▓│
+│▓ Kostenlos · ohne App · ohne Pass-▓│
+│▓ wort                             ▓│  ← CTA bei 360 × 640 ohne Scrollen sichtbar
+│▓ ┌──────────────────────────────┐ ▓│
+│  │ [hero-cockpit-karte, ragt    │  │  Hero UNTER dem CTA (ersetzt U-12),
+│  │  ≈ 100 px in den hellen Teil]│  │  dekorativ, alt=""
+│  └──────────────────────────────┘  │
+│ So geht's                          │  h2
+│ ┌──┐ 1 · Reise anlegen             │  < 21,5 em Container: LISTE         ┌────────┬────────┬────────┐
+│ └──┘                               │  (Kachel-Icon links, Text rechts)   │[▣]     │[▣]     │[▣]     │
+│ ┌──┐ 2 · Alle tippen ihre freien   │                                     │1 · Rei-│2 · Alle│3 · Ter-│
+│ └──┘     Tage                      │                                     │se anle-│tippen …│min wäh-│
+│ ┌──┐ 3 · Termin wählen             │                                     │gen     │        │len     │
+│ └──┘                               │                                     └────────┴────────┴────────┘
+│ Eingeladen worden? Öffne einfach   │                                     ≥ 21,5 em: drei Kacheln
+│ den Link aus deinem Gruppenchat.   │
+│ [ Reise planen ]                   │  Wiederholung am Ende (M-U4), statt Sticky-CTA
+├────────────────────────────────────┤
+│ Hilfe · Datenschutz · Impressum    │
+│ Deutsch | English                  │
+└────────────────────────────────────┘
+```
+
+- **„So geht's“-Umbruch (B-7):** Container-Query in `em`, **eine Regel für DE und EN**: `@container (min-width: 21.5em)` → 3 Spalten, sonst Liste. 360 px → Liste; 390 px → Kacheln; bei größerer Systemschrift früher Liste. Titel max. 3 Zeilen, `hyphens: auto`. Texte EN: «1 · Create a trip» · «2 · Everyone adds their dates» · «3 · Pick the dates».
+- **Kopf < 375 px:** Bildmarke + Wortmarke + Sprachlink als Text; „Anmelden“/„Sign in“ als Icon-Taste (44 × 44, `aria-label`, Tooltip). ≥ 375 px: „Anmelden“ als Text.
+- **Kein Sticky-CTA (M-U4):** Wiederholung `[Reise planen]` am Seitenende (gleiche Beschriftung, gleiches Ziel). Sekundär gestaltet, damit „eine Hauptaktion pro Bildschirm“ gilt.
+- Hero-Bewegung (Motion W01-01) läuft nur in der Illustration; Headline und CTA stehen sofort.
+
 ## Mobil (360 px)
 
 ```
@@ -59,7 +103,7 @@ Zweck: In 5 Sekunden verstehen, was die App tut, und sofort eine Reise anlegen k
 └──────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Hero-Platzierung (U-12):** mobil zentriert **über** der Headline, max. 160 px hoch – Rechnung 360 × 640 (sichtbar ≈ 560 px nach Browserleisten): Header 56 + Hero 160 + h1 2 Zeilen ≈ 72 + Unterzeile ≈ 72 + CTA 56 + Abstände ≈ 80 = ≈ 496 px → „Reise planen“ ohne Scrollen sichtbar. Bei großer Schrift darf gescrollt werden; die Illustration schrumpft nicht unter 120 px, sondern rückt unter den CTA, sobald die Root-Schrift ≥ 20 px ist (Hauptaktion zuerst). Ab 600 px zweispaltig (Text links, Illustration rechts).
+**Hero-Platzierung (U-12; in Richtung B ersetzt durch B-7a – Hero unter dem CTA, s. oben):** mobil zentriert **über** der Headline, max. 160 px hoch – Rechnung 360 × 640 (sichtbar ≈ 560 px nach Browserleisten): Header 56 + Hero 160 + h1 2 Zeilen ≈ 72 + Unterzeile ≈ 72 + CTA 56 + Abstände ≈ 80 = ≈ 496 px → „Reise planen“ ohne Scrollen sichtbar. Bei großer Schrift darf gescrollt werden; die Illustration schrumpft nicht unter 120 px, sondern rückt unter den CTA, sobald die Root-Schrift ≥ 20 px ist (Hauptaktion zuerst). Ab 600 px zweispaltig (Text links, Illustration rechts).
 
 Produktname je Sprache (*bestätigt (Auftraggeber 2026-10-08)*): DE-Landing `/de` zeigt „Wir wollen weg“, EN-Landing `/en` zeigt **„When do we go?“** – in Header-Wortmarke, `<title>` und Footer; Bildmarke (Logo A) identisch. Untertitel: DE optional „Gemeinsam den Urlaubstermin finden“, EN „Find dates for your group trip“. Schreibregeln: [ux-spec §10.6](../ux-spec.md).
 

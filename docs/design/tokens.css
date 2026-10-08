@@ -1,160 +1,182 @@
 /* ==========================================================================
-   Wir wollen weg – Design Tokens
-   Version 0.3 · 2026-10-08 · Verantwortlich: Designer
-   Dokumentation: docs/design/design-system.md
+   Wir wollen weg / When do we go? – Design Tokens
+   Version 1.0 · 2026-10-08 · Verantwortlich: Designer
+   Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“ (Auftraggeber, PRD §12 Q18)
+   Dokumentation: docs/design/design-system.md (v1.0)
 
    Aufbau
-   1. Primitive Tokens (Rohwerte, nicht direkt in Komponenten verwenden)
-   2. Semantische Tokens Light (Standard)
-   3. Semantische Tokens Dark – via prefers-color-scheme UND [data-theme="dark"]
-   4. Muster (Patterns) – werden auf :root und jedem [data-theme] neu berechnet
-   5. Motion inkl. prefers-reduced-motion
+   1. Primitive (Rohwerte – nicht direkt in Komponenten verwenden)
+   2. Nicht-farbige Tokens (Typo, Abstände, Radien, Größen, Ebenen)
+   3. Semantik HELL (Standard)
+   4. Semantik DUNKEL „Mitternacht“ – prefers-color-scheme UND [data-theme="dark"]
+   5. Muster, Verläufe, Fokus-Ringe (werden je Theme neu aufgelöst)
+   6. Motion inkl. reduzierter Bewegung (System UND [data-motion="reduce"])
+   7. Forced Colors (Hilfs-Token für Rahmen)
 
    Theme-Steuerung
-   - Ohne Attribut folgt die App dem System (prefers-color-scheme).
-   - <html data-theme="light"> bzw. "dark" erzwingt ein Theme (Nutzerwahl).
-   - Präfix aller Tokens: --ww-
-   Alle Kontrastwerte: siehe design-system.md §4 und §6.
+   - Ohne Attribut folgt die App dem System (prefers-color-scheme). MVP: nur System.
+   - <html data-theme="light|dark"> erzwingt ein Theme (Tests, späterer Schalter).
+   Bewegung
+   - prefers-reduced-motion: reduce ODER <html data-motion="reduce"> (Konto-Schalter
+     „Bewegung reduzieren“, PRD Q17). Der Schalter kann nur reduzieren.
+   Kontraste: WCAG 2.x, gerechnet und abgerundet – Tabellen in design-system.md §4/§6.
+   Präfix aller Tokens: --ww-
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
    1. PRIMITIVE
    -------------------------------------------------------------------------- */
 :root {
-  /* Lagune (Teal) – Markenfarbe, Heatmap-Rampe Light */
-  --ww-teal-50: #eff8f6;
-  --ww-teal-100: #ddf1ee;
-  --ww-teal-200: #c6e9e2;
-  --ww-teal-300: #a6dbd2;
-  --ww-teal-400: #5fbfb1;
-  --ww-teal-500: #187e73;
-  --ww-teal-600: #0e6a68;
-  --ww-teal-700: #0a5654;
-  --ww-teal-800: #0b4f4a;
-  --ww-teal-900: #08403f;
-  --ww-teal-950: #0b1f1e;
+  /* Indigo – Marke, Cockpit, Haupt-Taste, Heatmap „alle“, Vorschlag-Band */
+  --ww-indigo-500: #5b48c9; /* Violett: Heatmap „viele“, Logo-Blatt auf Indigo */
+  --ww-indigo-600: #3f2f99; /* Verlauf Reisekarte */
+  --ww-indigo-700: #3a2f86; /* Hover */
+  --ww-indigo-800: #2b2266; /* Indigo – Markenfarbe */
+  --ww-indigo-900: #221b52; /* Gedrückt; Cockpit dunkel */
 
-  /* Mint – helle Teal-Töne für Dark Mode */
-  --ww-mint-100: #b5f0e4;
-  --ww-mint-200: #7fd6c9;
-  --ww-mint-300: #6ccfc0;
-  --ww-mint-400: #5fc9ba;
-  --ww-mint-500: #4ab3a4;
+  /* Lavendel – Abstimmung, Links, Heatmap-Rampe, Kacheln */
+  --ww-lavender-100: #ece6ff;
+  --ww-lavender-200: #d6cffa;
+  --ww-lavender-250: #cfc9f2; /* Kopf-Text 2 auf Indigo */
+  --ww-lavender-300: #a79af2;
+  --ww-lavender-400: #c3b8ff; /* Lavendel-Text dunkel */
+  --ww-lavender-600: #5a3fd0; /* Lavendel-Text hell, Links */
 
-  /* Tiefsee – dunkle Teal-Töne für Dark Mode */
-  --ww-deep-700: #287268;
-  --ww-deep-800: #1d4b46;
-  --ww-deep-900: #163b38;
+  /* Minze – Akzent, „passt / alle können“, Haupt-Taste auf Indigo und dunkel */
+  --ww-mint-100: #d9f8ec;
+  --ww-mint-300: #7dedcb; /* Hover dunkel */
+  --ww-mint-400: #52e5b8; /* Minze – NIE Text auf Hell (1,5 : 1) */
+  --ww-mint-450: #3fd0a5; /* Gedrückt dunkel */
+  --ww-mint-500: #1fbf94; /* Minze tief – nur dekorativ */
+  --ww-mint-700: #00775a; /* Minze-Text hell */
+  --ww-mint-900: #133c3b; /* Ja-Fläche dunkel */
 
-  /* Sand (warmes Neutral) */
-  --ww-sand-0: #ffffff;
-  --ww-sand-50: #fbf8f3;
-  --ww-sand-100: #f1eee8;
-  --ww-sand-150: #ece5d9;
-  --ww-sand-200: #e4ded4;
-  --ww-sand-300: #cfc9c0;
-  --ww-sand-400: #a8a196;
-  --ww-sand-500: #8a847a;
+  /* Sonne – Freude, „Zur Not / Vielleicht“, Platz 1, Krone */
+  --ww-sun-100: #fff3cc;
+  --ww-sun-200: #ffdb73;
+  --ww-sun-400: #ffcf4a;
+  --ww-sun-500: #e3a700; /* Stimmen-Balken Vielleicht */
+  --ww-sun-700: #7a5200; /* Sonne-Text hell */
+  --ww-sun-800: #5a4a17; /* Streifen dunkel */
+  --ww-sun-900: #3a3113; /* Zur-Not-Fläche dunkel */
 
-  /* Schiefer (kühles Neutral, Text & Dark Mode) */
-  --ww-slate-50: #ecf1f0;
-  --ww-slate-300: #a9b4b2;
-  --ww-slate-400: #8f9a97;
-  --ww-slate-500: #858c8a;
-  --ww-slate-600: #6b7775;
-  --ww-slate-650: #667070;
-  --ww-slate-700: #55605f;
-  --ww-slate-750: #46504e;
-  --ww-slate-800: #3a4544;
-  --ww-slate-850: #262d2c;
-  --ww-slate-875: #232e2f;
-  --ww-slate-900: #1c2526;
-  --ww-slate-925: #1a2324;
-  --ww-slate-950: #111819;
+  /* Koralle – Feiertag, To-do */
+  --ww-coral-100: #ffe4df;
+  --ww-coral-300: #ffb4a8; /* Text dunkel */
+  --ww-coral-400: #ff8a7a; /* Eselsohr dunkel */
+  --ww-coral-500: #f0503f; /* Eselsohr hell – nur Nicht-Text */
+  --ww-coral-700: #a3321f; /* Text hell */
+  --ww-coral-900: #4a1f1a;
 
-  /* Abendsonne (Koralle) – Akzent */
-  --ww-coral-100: #fce6de;
-  --ww-coral-300: #f28a6e;
-  --ww-coral-500: #e8694a;
-  --ww-coral-600: #d4552f;
-  --ww-coral-700: #b23f22;
+  /* Tinte – Text und Linien (hell → dunkel) */
+  --ww-ink-50: #f3f1ff;  /* Text dunkel */
+  --ww-ink-100: #d9d5f2;
+  --ww-ink-200: #b9b4dc;
+  --ww-ink-300: #9c97c4;
+  --ww-ink-500: #8a86a8; /* Rahmen hell */
+  --ww-ink-600: #6e6992;
+  --ww-ink-700: #57527a;
+  --ww-ink-900: #1e1a3d; /* Tinte */
 
-  /* Sonne (Amber) – „Vielleicht / ginge zur Not", Warnung */
-  --ww-amber-100: #fdf0cf;
-  --ww-amber-200: #f1d58c;
-  --ww-amber-300: #f2c46b;
-  --ww-amber-400: #f4b942;
-  --ww-amber-600: #b87a00;
-  --ww-amber-800: #7a4e00;
-  --ww-amber-d-800: #54431a;
-  --ww-amber-d-900: #3a2e12;
+  /* Nebel – helle Flächen */
+  --ww-mist-0: #ffffff;
+  --ww-mist-50: #f4f2fb;  /* Grund hell */
+  --ww-mist-100: #eeecf5; /* Heatmap „niemand“ */
+  --ww-mist-150: #ece9f7; /* vertieft */
+  --ww-mist-200: #e3dff0; /* Linie */
+  --ww-mist-300: #ddd9ea; /* „Geht nicht“ */
+  --ww-mist-400: #c9c6d4; /* Schraffur „niemand“ (deckend) */
+  --ww-mist-500: #aba7bd; /* Kreuzschraffur „Geht nicht“ (deckend) */
 
-  /* Rot – ausschließlich Fehler & destruktive Aktionen („Rot heißt Fehler, nicht Nein") */
-  --ww-red-100: #fbe4e1;
-  --ww-red-300: #ff8a80;
-  --ww-red-600: #b3261e;
-  --ww-red-700: #8f1e17;
-  --ww-red-d-900: #3d1f1d;
+  /* Mitternacht – dunkle Flächen */
+  --ww-night-500: #7d77ad; /* Rahmen dunkel */
+  --ww-night-600: #4a4290; /* Kreuzschraffur dunkel */
+  --ww-night-650: #3a3370; /* Schraffur dunkel */
+  --ww-night-700: #362c7a; /* Heatmap „wenige“ dunkel */
+  --ww-night-750: #2e2860; /* Nein-Fläche dunkel */
+  --ww-night-760: #2e2566; /* Lavendel-Fläche dunkel */
+  --ww-night-775: #2f2963; /* Linie dunkel */
+  --ww-night-800: #2a2458; /* erhöht */
+  --ww-night-820: #221c4a; /* Heatmap „niemand“ dunkel */
+  --ww-night-850: #1f1a45; /* Fläche */
+  --ww-night-900: #191538; /* vertieft */
+  --ww-night-950: #14112e; /* Grund */
+
+  /* Kirsche – ausschließlich Fehler & destruktiv („Rot heißt Fehler, nicht Nein“) */
+  --ww-cherry-100: #fde7e4;
+  --ww-cherry-300: #ff8a80;
+  --ww-cherry-350: #ffa8a0;
+  --ww-cherry-600: #b42318;
+  --ww-cherry-700: #8f1c13;
+  --ww-cherry-900: #431b2a;
 
   /* Blau – nur Fokus */
   --ww-blue-300: #8fb3ff;
   --ww-blue-600: #2b59c3;
 
-  /* Avatar-Palette (Initialen in Textfarbe; Identität nie nur über Farbe) */
-  --ww-avatar-light-1: #bfe6df; /* teal  */
-  --ww-avatar-light-2: #fbe2a6; /* sonne */
-  --ww-avatar-light-3: #f9cdbe; /* koralle */
-  --ww-avatar-light-4: #cfe2f7; /* himmel */
-  --ww-avatar-light-5: #e1d6f5; /* flieder */
-  --ww-avatar-light-6: #d5e8c8; /* salbei */
-  --ww-avatar-light-7: #eadfcd; /* sand */
-  --ww-avatar-light-8: #f5d0dc; /* rosé */
-  --ww-avatar-dark-1: #1d4b46;
-  --ww-avatar-dark-2: #4a3a12;
-  --ww-avatar-dark-3: #4d2a20;
-  --ww-avatar-dark-4: #1e3a5c;
-  --ww-avatar-dark-5: #35295a;
-  --ww-avatar-dark-6: #2d4426;
-  --ww-avatar-dark-7: #3f3628;
-  --ww-avatar-dark-8: #4a2333;
+  /* Avatare – 8 Pastelltöne, bedeutungslos (Hash der Mitglieds-ID), beide Modi */
+  --ww-avatar-1: #ffd3c7;
+  --ww-avatar-2: #c9dbff;
+  --ww-avatar-3: #d4f2b0;
+  --ww-avatar-4: #dcd3ff;
+  --ww-avatar-5: #ffe7a3;
+  --ww-avatar-6: #bdefe0;
+  --ww-avatar-7: #ffcfe6;
+  --ww-avatar-8: #eadfcf;
+  --ww-avatar-ink: #1e1a3d; /* Initialen ≥ 10 : 1 auf allen 8 Tönen */
+}
 
-  /* ---------------- Typografie ---------------- */
-  /* Fließtext: Systemschrift (0 KB, schnell in In-App-Browsern) */
-  --ww-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+/* --------------------------------------------------------------------------
+   2. NICHT-FARBIGE TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* ---------------- Typografie ----------------
+     Beide Schriften SIL OFL 1.1, SELBST GEHOSTET (kein CDN, DSGVO).
+     @font-face-Vorgabe: design-system.md §5.1. Fallback ist die Systemschrift. */
+  --ww-font-system: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
     Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
     "Segoe UI Emoji";
-  /* Überschriften & Logo: Figtree (SIL OFL 1.1), selbst gehostet, kein CDN */
-  --ww-font-display: "Figtree", var(--ww-font-sans);
-  /* Ziffern im Kalender & Code-Feld: Systemschrift + tabular-nums */
-  --ww-font-numeric: var(--ww-font-sans);
+  /* UI & Fließtext: Figtree */
+  --ww-font-sans: "Figtree", var(--ww-font-system);
+  /* Titel, Kennzahlen, Wortmarke: Plus Jakarta Sans */
+  --ww-font-display: "Plus Jakarta Sans", "Figtree", var(--ww-font-system);
+  /* Zahlen (Kalender, Kennzahl, Code, Countdown): Plus Jakarta Sans + tabular-nums */
+  --ww-font-numeric: var(--ww-font-display);
 
   --ww-font-weight-regular: 400;
   --ww-font-weight-medium: 500;
   --ww-font-weight-semibold: 600;
   --ww-font-weight-bold: 700;
-  --ww-font-weight-display: 750; /* Figtree variabel */
+  --ww-font-weight-extrabold: 800;
+  --ww-font-weight-display: 800; /* Plus Jakarta Sans */
 
   /* Größen (rem, Basis 16 px). Nie unter 12 px. */
-  --ww-text-xs: 0.75rem;     /* 12 – Zellenzahlen, Badges (immer ≥ 600) */
-  --ww-text-sm: 0.875rem;    /* 14 – Hilfstexte, Labels */
-  --ww-text-md: 1rem;        /* 16 – Fließtext, Inputs (verhindert iOS-Zoom) */
-  --ww-text-lg: 1.125rem;    /* 18 – Lead, Kartentitel */
-  --ww-text-xl: 1.25rem;     /* 20 – Abschnittstitel */
-  --ww-text-2xl: clamp(1.375rem, 1.2rem + 0.8vw, 1.5rem);  /* 22–24 */
-  --ww-text-3xl: clamp(1.625rem, 1.3rem + 1.4vw, 2rem);    /* 26–32 */
-  --ww-text-display: clamp(2rem, 1.5rem + 2.4vw, 3rem);    /* 32–48 */
-  --ww-text-code: 1.5rem;    /* 24 – Ziffern im 6-stelligen Code-Feld */
+  --ww-text-xs: 0.75rem;      /* 12 – Kalenderdatum, Legende (≥ 600) */
+  --ww-text-meta: 0.8125rem;  /* 13 – Tags, Meta, Phase im Kopf */
+  --ww-text-sm: 0.875rem;     /* 14 – Labels, Tabs, Hilfetext */
+  --ww-text-md: 1rem;         /* 16 – Fließtext, ALLE Inputs (kein iOS-Zoom) */
+  --ww-text-lg: 1.0625rem;    /* 17 – Tasten, Lead */
+  --ww-text-xl: 1.1875rem;    /* 19 – H2, Datumsbereich */
+  --ww-text-2xl: clamp(1.3125rem, 1.2rem + 0.5vw, 1.5rem);  /* 21–24 – Reisename im Kopf, Ergebnis-Datum */
+  --ww-text-3xl: clamp(1.625rem, 1.35rem + 1.2vw, 2rem);    /* 26–32 – H1 */
+  --ww-text-display: clamp(2rem, 1.3rem + 3vw, 3.5rem);     /* 32–56 – Startseite, „Es geht los!“ */
+  --ww-text-kpi: 1rem;        /* 16 – Kennzahl-Satz im Cockpit */
+  --ww-text-kpi-lg: 1.25rem;  /* 20 – Kennzahl-Kacheln */
+  --ww-text-countdown: 2.875rem; /* 46 – Countdown im Vorfreude-Ring */
+  --ww-text-code: 1.625rem;   /* 26 – Ziffern im Code-Feld */
 
-  --ww-leading-tight: 1.15;
-  --ww-leading-snug: 1.3;
-  --ww-leading-normal: 1.5;
-  --ww-tracking-tight: -0.01em;
+  --ww-leading-tight: 1.12;
+  --ww-leading-snug: 1.25;
+  --ww-leading-normal: 1.45;
+  --ww-tracking-display: -0.03em;
+  --ww-tracking-tight: -0.02em;
   --ww-tracking-wide: 0.04em;
 
   /* ---------------- Abstände (4-px-Raster) ---------------- */
   --ww-space-0: 0;
   --ww-space-0-5: 0.125rem; /* 2 */
   --ww-space-1: 0.25rem;    /* 4 */
+  --ww-space-1-5: 0.375rem; /* 6 */
   --ww-space-2: 0.5rem;     /* 8 */
   --ww-space-3: 0.75rem;    /* 12 */
   --ww-space-4: 1rem;       /* 16 */
@@ -166,41 +188,63 @@
   --ww-space-16: 4rem;      /* 64 */
 
   /* ---------------- Radien ---------------- */
-  --ww-radius-xs: 4px;
-  --ww-radius-sm: 8px;    /* Kalenderzellen, Chips klein */
-  --ww-radius-md: 12px;   /* Buttons, Inputs, Code-Kästchen, Toasts */
-  --ww-radius-lg: 16px;   /* Karten */
-  --ww-radius-xl: 24px;   /* Bottom-Sheet oben, Illustration-Teller */
-  --ww-radius-pill: 999px;
+  --ww-radius-xs: 6px;
+  --ww-radius-sm: 11px;     /* Kalenderzelle, kleine Tasten */
+  --ww-radius-md: 16px;     /* Tasten, Eingabefelder, Segment-Spur */
+  --ww-radius-lg: 24px;     /* Karten */
+  --ww-radius-xl: 28px;     /* Ergebnis-Karte, Bottom-Sheet, Werkzeugleiste oben */
+  --ww-radius-2xl: 30px;    /* Cockpit-Unterkante */
+  --ww-radius-pill: 999px;  /* Chips, Tabs, Balken */
+  /* Komponenten-Radien (Alias, damit die Optik an einer Stelle steuerbar bleibt) */
+  --ww-radius-cell: 11px;
+  --ww-radius-tile: 13px;
+  --ww-radius-tile-sm: 11px;
+  --ww-radius-code: 14px;
+  --ww-radius-button: 16px;
+  --ww-radius-button-sm: 12px;
+  --ww-radius-segment: 12px;
+  --ww-radius-card: 24px;
+  --ww-radius-trip-card: 26px;
+  --ww-radius-result: 28px;
+  --ww-radius-sheet: 28px;
+  --ww-radius-cockpit: 30px;
 
   /* ---------------- Größen ---------------- */
-  --ww-size-touch-min: 44px;      /* Mindest-Touch-Ziel */
+  --ww-size-touch-min: 44px;
   --ww-size-control-sm: 40px;
-  --ww-size-control-md: 48px;     /* Standard-Button/Input mobil */
-  --ww-size-control-lg: 56px;     /* Haupt-CTA („Mitmachen") */
+  --ww-size-control-md: 48px;     /* Eingabefeld, Sekundär-Taste */
+  --ww-size-control-lg: 54px;     /* Haupt-Taste */
   --ww-size-icon-sm: 16px;
   --ww-size-icon-md: 20px;
   --ww-size-icon-lg: 24px;
   --ww-size-avatar-sm: 24px;
   --ww-size-avatar-md: 32px;
   --ww-size-avatar-lg: 40px;
+  --ww-size-tile: 40px;           /* Icon-Kachel */
+  --ww-size-tile-sm: 34px;        /* Kachel in Kennzahl-Kacheln */
+  --ww-size-cockpit-button: 44px; /* runde Icon-Taste im Kopf */
+  --ww-size-kpi-ring: 52px;       /* Fortschrittsring in der Kennzahl-Box */
+  --ww-size-countdown-ring: 156px;/* Vorfreude-Ring */
+  --ww-size-seal-sm: 20px;        /* Siegel klein (Beitritt, Abgabe) */
+  --ww-size-seal-md: 40px;
+  --ww-size-seal-lg: 64px;        /* Siegel groß (Termin steht fest) */
   --ww-size-cal-cell-min-w: 40px;
-  --ww-size-cal-cell-h: 52px;     /* mobil; ab 600 px: 64px */
-  --ww-size-cal-cell-h-lg: 64px;
-  --ww-size-cal-gap: 4px;         /* bleibt 4px: Platz für Wochenend-Spur und Fokus-Hof */
-  --ww-size-cal-inset-sm: 8px;    /* Seitenrand des Kalenders < 600 px → Zelle 45,7 px bei 360 px */
-  --ww-size-cal-inset: 16px;      /* ab 600 px */
-  --ww-size-sheet-half: 50dvh;    /* Bottom-Sheet halbe Höhe (Tagesdetail) */
-  --ww-size-sheet-full: 92dvh;    /* Bottom-Sheet fast voll */
-  --ww-size-toolbar-max: 150px;   /* fixierte Werkzeugleiste „Meine Tage" inkl. CTA */
-  --ww-size-toast-gap: 8px;       /* Abstand Snackbar über fixierter Leiste */
-  --ww-size-code-box-w: 48px;     /* bei < 380 px: 44px */
-  --ww-size-code-box-h: 56px;
-  --ww-size-content-narrow: 40rem;  /* Formulare, Karten-Listen (640) */
-  --ww-size-content-wide: 65rem;    /* Kalender Desktop (1040) */
+  --ww-size-cal-cell-h: 46px;     /* mobil */
+  --ww-size-cal-cell-h-lg: 64px;  /* ab 600 px */
+  --ww-size-cal-gap: 4px;         /* Spaltenfuge – trägt die Wochenend-Spur */
+  --ww-size-cal-row-gap: 9px;     /* Zeilenfuge – trägt das Vorschlag-Band (4 px) */
+  --ww-size-cal-inset-sm: 8px;    /* Kalender-Innenrand < 600 px (Karte 12 + 8) */
+  --ww-size-cal-inset: 16px;
+  --ww-size-sheet-half: 50dvh;
+  --ww-size-sheet-full: 92dvh;
+  --ww-size-toolbar-max: 160px;   /* Werkzeugleiste „Meine Tage“ ohne Safe-Area */
+  --ww-size-toast-gap: 8px;
+  --ww-size-code-box-w: 48px;     /* < 380 px: 44px */
+  --ww-size-code-box-h: 58px;     /* < 380 px: 54px */
+  --ww-size-content-narrow: 40rem;
+  --ww-size-content-wide: 65rem;
 
-  /* Breakpoints (Dokumentation – in Media Queries als Literal verwenden):
-     360 Basis · 600 md · 960 lg · 1200 xl */
+  /* Breakpoints (nur Doku – in Media Queries als Literal): 360 · 600 · 960 · 1200 */
 
   /* ---------------- Rahmenstärken ---------------- */
   --ww-border-thin: 1px;
@@ -213,488 +257,735 @@
   --ww-z-sticky: 10;
   --ww-z-header: 20;
   --ww-z-sheet: 40;
+  --ww-z-celebration: 45; /* Konfetti-Ebene, pointer-events: none */
   --ww-z-toast: 50;
-
-  /* ---------------- Motion (Rohwerte) ---------------- */
-  --ww-duration-instant: 80ms;
-  --ww-duration-fast: 140ms;
-  --ww-duration-base: 220ms;
-  --ww-duration-slow: 320ms;
-  --ww-duration-celebrate: 700ms;
-  --ww-ease-standard: cubic-bezier(0.2, 0, 0, 1);
-  --ww-ease-enter: cubic-bezier(0, 0, 0, 1);
-  --ww-ease-exit: cubic-bezier(0.3, 0, 1, 1);
-  --ww-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* --------------------------------------------------------------------------
-   2. SEMANTISCH – LIGHT (Standard)
-   Kontraste gegen --ww-color-bg (#FBF8F3) bzw. Surface (#FFFFFF), WCAG 2.x.
+   3. SEMANTIK – HELL (Standard)
+   Grund #F4F2FB (Nebel), Fläche #FFFFFF. Kontraste: „Fläche / Grund“.
    -------------------------------------------------------------------------- */
 :root,
 [data-theme="light"] {
   color-scheme: light;
 
   /* Flächen */
-  --ww-color-bg: var(--ww-sand-50);
-  --ww-color-surface: var(--ww-sand-0);
-  --ww-color-surface-raised: var(--ww-sand-0);
-  --ww-color-surface-sunken: var(--ww-sand-100);
-  --ww-color-scrim: rgb(17 24 25 / 0.48);
+  --ww-color-bg: var(--ww-mist-50);
+  --ww-color-surface: var(--ww-mist-0);
+  --ww-color-surface-raised: var(--ww-mist-0);
+  --ww-color-surface-sunken: var(--ww-mist-150);
+  --ww-color-scrim: rgb(20 17 46 / 0.5);
 
   /* Text */
-  --ww-color-text: var(--ww-slate-900);          /* 15.6 / 14.7 */
-  --ww-color-text-muted: var(--ww-slate-700);    /*  6.5 /  6.1 */
-  --ww-color-text-subtle: var(--ww-slate-650);   /*  5.1 /  4.8 – Platzhalter */
-  --ww-color-text-inverse: var(--ww-sand-0);
-  --ww-color-text-on-primary: var(--ww-sand-0);  /*  6.3 auf primary */
-  --ww-color-text-on-danger: var(--ww-sand-0);   /*  6.5 */
-  --ww-color-link: var(--ww-teal-700);           /*  8.0 auf bg */
+  --ww-color-text: var(--ww-ink-900);          /* 16,5 / 14,9 */
+  --ww-color-text-muted: var(--ww-ink-700);    /*  7,2 /  6,5 · auf vertieft 6,0 */
+  --ww-color-text-subtle: var(--ww-ink-600);   /*  5,1 /  4,6 · NICHT auf vertieft */
+  --ww-color-text-inverse: var(--ww-mist-0);
+  --ww-color-text-on-primary: var(--ww-mist-0);/* 13,7 auf Indigo */
+  --ww-color-text-on-danger: var(--ww-mist-0); /*  6,5 */
+  --ww-color-link: var(--ww-lavender-600);     /*  6,8 / 6,1 – immer unterstrichen */
 
   /* Linien */
-  --ww-color-border-subtle: var(--ww-sand-200);  /* dekorativ, Karten */
-  --ww-color-border-strong: var(--ww-slate-500); /* 3.4 / 3.2 – Inputs, Chips (1.4.11) */
+  --ww-color-border-subtle: var(--ww-mist-200);/* nur Trennlinien IN Karten, keine Kartenkontur */
+  --ww-color-border-strong: var(--ww-ink-500); /*  3,4 / 3,1 – Inputs, Optionen (1.4.11) */
 
-  /* Marke */
-  --ww-color-primary: var(--ww-teal-600);
-  --ww-color-primary-hover: var(--ww-teal-700);
-  --ww-color-primary-active: var(--ww-teal-900);
-  --ww-color-primary-text: var(--ww-teal-700);   /* Text in Primärfarbe */
-  --ww-color-primary-tint: var(--ww-teal-100);   /* ausgewählte Chips, Info */
-  --ww-color-primary-tint-strong: var(--ww-teal-200);
-  --ww-color-accent: var(--ww-coral-500);        /* dekorativ */
-  --ww-color-accent-strong: var(--ww-coral-600); /* Vorschlag-Markierung (non-text 3.8) */
-  --ww-color-accent-text: var(--ww-coral-700);   /* 5.4 auf bg */
-  --ww-color-accent-tint: var(--ww-coral-100);
-  --ww-color-sun: var(--ww-amber-400);           /* Logo, Krone, Illustration */
+  /* Marke & Aktion */
+  --ww-color-primary: var(--ww-indigo-800);        /* Haupt-Taste; gegen Grund 12,4 */
+  --ww-color-primary-hover: var(--ww-indigo-700);
+  --ww-color-primary-active: var(--ww-indigo-900);
+  --ww-color-primary-text: var(--ww-lavender-600); /* Text-Tasten, Links (6,8 / 6,1) */
+  --ww-color-primary-tint: var(--ww-lavender-100); /* gewählte Chips, Info – Text darauf 5,6 */
+  --ww-color-primary-tint-strong: var(--ww-lavender-200);
+  --ww-color-accent: var(--ww-mint-400);           /* NUR Fläche (mit Indigo-Inhalt) oder auf Indigo */
+  --ww-color-accent-strong: var(--ww-mint-700);    /* Minze als Linie/Icon auf Hell: 5,5 / 5,0 */
+  --ww-color-accent-text: var(--ww-mint-700);      /* „Geht/Ja/Gespeichert“ als Text: 5,5 / 5,0 */
+  --ww-color-accent-tint: var(--ww-mint-100);      /* Text darauf 4,9 */
+  --ww-color-on-accent: var(--ww-indigo-800);      /* Inhalt auf Minze: 8,7 */
+  --ww-color-sun: var(--ww-sun-400);               /* Logo-Sonne, Platz 1, Krone – Tinte darauf 11,2 */
+  --ww-color-selected: var(--ww-indigo-800);       /* Gewählt-Rahmen (Pinsel, Segment, Karte, Checkbox) */
 
   /* Status */
-  --ww-color-danger: var(--ww-red-600);
-  --ww-color-danger-hover: var(--ww-red-700);
-  --ww-color-danger-tint: var(--ww-red-100);
-  --ww-color-warning-text: var(--ww-amber-800);
-  --ww-color-warning-tint: var(--ww-amber-100);
-  --ww-color-success-text: var(--ww-teal-700);
-  --ww-color-success-tint: var(--ww-teal-100);
-  --ww-color-info-text: var(--ww-teal-700);
-  --ww-color-info-tint: var(--ww-teal-50);
+  --ww-color-danger: var(--ww-cherry-600);         /* 6,5 / 5,9 */
+  --ww-color-danger-hover: var(--ww-cherry-700);
+  --ww-color-danger-tint: var(--ww-cherry-100);    /* Fehlertext darauf 5,5 */
+  --ww-color-warning-text: var(--ww-sun-700);      /* auf warning-tint 6,2 */
+  --ww-color-warning-tint: var(--ww-sun-100);
+  --ww-color-success-text: var(--ww-mint-700);     /* auf success-tint 4,9 */
+  --ww-color-success-tint: var(--ww-mint-100);
+  --ww-color-info-text: var(--ww-lavender-600);    /* auf info-tint 5,6 */
+  --ww-color-info-tint: var(--ww-lavender-100);
+  --ww-color-holiday-text: var(--ww-coral-700);    /* Feiertags-Chip 5,7 */
+  --ww-color-holiday-tint: var(--ww-coral-100);
+  --ww-color-holiday-mark: var(--ww-coral-500);    /* Eselsohr, nur Nicht-Text: 3,5 gegen Weiß */
 
-  /* Deaktiviert (keine Kontrastpflicht, trotzdem lesbar halten) */
-  --ww-color-disabled-bg: var(--ww-sand-150);
-  --ww-color-disabled-text: var(--ww-slate-500);
+  /* Deaktiviert (keine Kontrastpflicht, trotzdem lesbar) */
+  --ww-color-disabled-bg: var(--ww-mist-150);
+  --ww-color-disabled-text: var(--ww-ink-600);     /* 4,2 */
 
   /* Fokus */
-  --ww-color-focus: var(--ww-blue-600);          /* 6.3 / 5.9 */
-  --ww-color-focus-gap: var(--ww-sand-0);
+  --ww-color-focus: var(--ww-blue-600);            /* 6,3 / 5,7 */
+  --ww-color-focus-gap: var(--ww-mist-0);
+  --ww-color-focus-on-brand: var(--ww-mist-0);     /* auf Indigo-Flächen: 13,7 (Blau hätte 2,1) */
 
   /* Toast / Inverse */
-  --ww-color-inverse-bg: var(--ww-slate-900);
-  --ww-color-inverse-text: var(--ww-sand-0);     /* 15.6 */
-  --ww-color-inverse-link: var(--ww-mint-300);
+  --ww-color-inverse-bg: var(--ww-ink-900);
+  --ww-color-inverse-text: var(--ww-mist-0);       /* 16,5 */
+  --ww-color-inverse-link: var(--ww-mint-400);     /* 10,4 */
 
-  /* Schatten */
-  --ww-shadow-1: 0 1px 2px rgb(28 37 38 / 0.06), 0 1px 3px rgb(28 37 38 / 0.10);
-  --ww-shadow-2: 0 2px 4px rgb(28 37 38 / 0.06), 0 6px 16px rgb(28 37 38 / 0.10);
-  --ww-shadow-3: 0 8px 16px rgb(28 37 38 / 0.10), 0 16px 40px rgb(28 37 38 / 0.16);
-  --ww-shadow-sticky-bottom: 0 -1px 0 var(--ww-sand-200), 0 -6px 16px rgb(28 37 38 / 0.06);
+  /* Schatten (keine Konturen – Karten trennen sich über Schatten) */
+  --ww-shadow-1: 0 1px 2px rgb(30 26 61 / 0.06), 0 14px 30px -18px rgb(43 34 102 / 0.38); /* Karte */
+  --ww-shadow-2: 0 2px 4px rgb(30 26 61 / 0.06), 0 18px 36px -16px rgb(43 34 102 / 0.45); /* Hover, schwebend */
+  --ww-shadow-3: 0 8px 16px rgb(30 26 61 / 0.10), 0 24px 40px -20px rgb(43 34 102 / 0.60); /* Sheet, Toast, Ergebnis-Karte */
+  --ww-shadow-button: 0 10px 22px -10px rgb(43 34 102 / 0.60);
+  --ww-shadow-button-accent: 0 12px 26px -12px rgb(82 229 184 / 0.75);
+  --ww-shadow-selected: 0 8px 16px -10px rgb(43 34 102 / 0.60); /* gewählter Pinsel / Segment */
+  --ww-shadow-sticky-bottom: 0 -16px 34px -18px rgb(43 34 102 / 0.45);
 
-  /* ---------------- Eigene Verfügbarkeit (F-005) ---------------- */
-  --ww-avail-yes-bg: var(--ww-teal-200);          /* L 0.758 */
-  --ww-avail-yes-fg: var(--ww-teal-700);          /* Icon 6.5, Text-Ink 12.0 */
-  --ww-avail-maybe-bg: var(--ww-amber-100);       /* L 0.877 */
-  --ww-avail-maybe-stripe: var(--ww-amber-200);   /* L 0.682 */
-  --ww-avail-maybe-fg: var(--ww-amber-800);       /* 6.3 auf bg, 5.0 auf Streifen */
-  --ww-avail-no-bg: var(--ww-sand-300);           /* L 0.589 */
-  --ww-avail-no-line: var(--ww-sand-400);         /* Kreuzschraffur */
-  --ww-avail-no-fg: var(--ww-slate-900);          /* 9.5 auf bg, 6.1 auf Linie */
-  --ww-avail-day-text: var(--ww-slate-900);
+  /* ---------------- Tasten ---------------- */
+  --ww-btn-primary-bg: var(--ww-color-primary);
+  --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+  --ww-btn-secondary-bg: var(--ww-color-surface);
+  --ww-btn-secondary-fg: var(--ww-indigo-800);     /* 13,7 */
+  --ww-btn-secondary-border: var(--ww-indigo-800);
+  --ww-btn-tool-bg: var(--ww-color-surface-sunken);/* Werkzeug-/Blätter-Kacheln */
+  --ww-btn-tool-fg: var(--ww-color-text);
+
+  /* ---------------- Cockpit-Kopf ---------------- */
+  --ww-cockpit-bg: var(--ww-indigo-800);
+  --ww-cockpit-glow-mint: rgb(82 229 184 / 0.22);   /* oben rechts, ≤ 22 % */
+  --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+  --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.30); /* oben links, ≤ 30 % */
+  --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+  --ww-cockpit-text: var(--ww-mist-0);              /* ≥ 8,4 am hellsten Punkt, 13,7 auf Indigo */
+  --ww-cockpit-text-muted: var(--ww-lavender-250);  /* ≥ 5,0 am hellsten Punkt, 8,7 auf Indigo */
+  --ww-cockpit-accent: var(--ww-mint-400);          /* Haupt-Taste im Kopf, Ring, Hervorhebung: 8,7 */
+  --ww-cockpit-on-accent: var(--ww-indigo-800);
+  --ww-cockpit-control-bg: rgb(255 255 255 / 0.12); /* runde Icon-Tasten */
+  --ww-cockpit-track: rgb(255 255 255 / 0.10);      /* Tab-Spur – Kopf-Text 2 darauf 6,5 */
+  --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);     /* Kennzahl-Box */
+  --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+  --ww-cockpit-outline: rgb(255 255 255 / 0.60);    /* Sekundär-Taste im Kopf */
+  --ww-cockpit-tab-active-bg: var(--ww-mist-0);
+  --ww-cockpit-tab-active-fg: var(--ww-indigo-800); /* 13,7 */
+
+  /* ---------------- Kacheln (Icon in getönter Fläche) ---------------- */
+  --ww-tile-lavender-bg: var(--ww-lavender-100);  /* Zeit, Planung, Abstimmung */
+  --ww-tile-lavender-fg: var(--ww-lavender-600);  /* 5,6 */
+  --ww-tile-mint-bg: var(--ww-mint-100);          /* Gruppe, passt */
+  --ww-tile-mint-fg: var(--ww-mint-700);          /* 4,9 */
+  --ww-tile-sun-bg: var(--ww-sun-100);            /* Dauer, Freude */
+  --ww-tile-sun-fg: var(--ww-sun-700);            /* 6,2 */
+  --ww-tile-coral-bg: var(--ww-coral-100);        /* Feiertag, Hervorhebung */
+  --ww-tile-coral-fg: var(--ww-coral-700);        /* 5,7 */
+  --ww-tile-brand-bg: var(--ww-indigo-800);       /* Marke */
+  --ww-tile-brand-fg: var(--ww-mint-400);         /* 8,7 */
+
+  /* ---------------- Fortschritt & Diagramme ---------------- */
+  --ww-progress-track: var(--ww-mist-150);
+  --ww-progress-fill: var(--ww-indigo-800);       /* Balken auf Weiß (Reisekarte, Schritte) */
+  --ww-progress-current: var(--ww-sun-400);       /* aktueller Schritt (+ 1,5-px-Kante sun-700) */
+  --ww-progress-current-edge: var(--ww-sun-700);
+  --ww-ring-start: var(--ww-mint-400);            /* Vorfreude-Ring: Minze → Sonne */
+  --ww-ring-end: var(--ww-sun-400);
+  --ww-ring-track: rgb(255 255 255 / 0.14);
+  --ww-ring-knob: var(--ww-sun-400);
+  --ww-ring-knob-edge: var(--ww-cockpit-bg);
+  --ww-daybar-high: var(--ww-mint-400);           /* Tages-Balken (Ausblick, dekorativ) */
+  --ww-daybar-low: var(--ww-lavender-300);
+
+  /* ---------------- Siegel (Belohnung, M-D4) ---------------- */
+  --ww-seal-bg: var(--ww-mint-400);
+  --ww-seal-fg: var(--ww-indigo-800);             /* 8,7 */
+  --ww-seal-ring: var(--ww-mist-0);
+
+  /* ---------------- Konfetti (M-D5) – dekorativ, keine Kontrastpflicht ---------------- */
+  --ww-confetti-1: var(--ww-mint-400);
+  --ww-confetti-2: var(--ww-sun-400);
+  --ww-confetti-3: var(--ww-lavender-300);
+  --ww-confetti-4: var(--ww-coral-500);
+  --ww-confetti-5: var(--ww-mist-0);
+
+  /* ---------------- Avatare ---------------- */
+  --ww-avatar-fg: var(--ww-avatar-ink);
+  --ww-avatar-ring: var(--ww-color-surface);      /* 2-px-Ring in der Flächenfarbe */
+  --ww-avatar-open-border: var(--ww-color-border-strong); /* gestrichelt = offen */
+
+  /* ---------------- Eigene Verfügbarkeit „Meine Tage“ (F-005) ---------------- */
+  --ww-avail-yes-bg: var(--ww-mint-100);          /* Tinte darauf 14,6 */
+  --ww-avail-yes-fg: var(--ww-mint-700);          /* Symbol in Legende/Pinsel 4,9 */
+  --ww-avail-maybe-bg: var(--ww-sun-100);         /* Tinte 14,9 */
+  --ww-avail-maybe-stripe: var(--ww-sun-200);     /* Tinte 12,3 */
+  --ww-avail-maybe-fg: var(--ww-ink-900);
+  --ww-avail-no-bg: var(--ww-mist-300);           /* Tinte 11,9 */
+  --ww-avail-no-line: var(--ww-mist-500);         /* Tinte auf Linie 7,0 */
+  --ww-avail-no-fg: var(--ww-ink-900);
+  --ww-avail-day-text: var(--ww-ink-900);
+  --ww-avail-plaque-ring: rgb(30 26 61 / 0.40);   /* 1,5-px-Ring um die Symbol-Plakette */
 
   /* ---------------- Abstimmung (F-011) ---------------- */
-  --ww-vote-yes-bg: var(--ww-teal-100);
-  --ww-vote-yes-fg: var(--ww-teal-700);           /* 7.2 */
-  --ww-vote-yes-bar: var(--ww-teal-500);          /* 4.6 non-text */
-  --ww-vote-maybe-bg: var(--ww-amber-100);
-  --ww-vote-maybe-fg: var(--ww-amber-800);        /* 6.3 */
-  --ww-vote-maybe-bar: var(--ww-amber-600);       /* 3.4 non-text */
-  --ww-vote-no-bg: var(--ww-sand-150);
-  --ww-vote-no-fg: var(--ww-slate-900);           /* 12.4 */
-  --ww-vote-no-bar: var(--ww-sand-500);           /* 3.4 non-text */
+  --ww-vote-yes-bg: var(--ww-mint-100);
+  --ww-vote-yes-fg: var(--ww-mint-700);           /* 4,9 */
+  --ww-vote-yes-bar: var(--ww-mint-700);          /* 5,5 */
+  --ww-vote-maybe-bg: var(--ww-sun-100);
+  --ww-vote-maybe-fg: var(--ww-sun-700);          /* 6,2 */
+  --ww-vote-maybe-bar: var(--ww-sun-500);         /* dekorativ, Zahl steht als Text daneben */
+  --ww-vote-no-bg: var(--ww-mist-150);
+  --ww-vote-no-fg: var(--ww-ink-700);             /* 6,0 – neutral, nicht rot */
+  --ww-vote-no-bar: var(--ww-ink-500);            /* 3,4 */
+  --ww-vote-selected-bg: var(--ww-indigo-800);    /* gewählte Option */
+  --ww-vote-selected-fg: var(--ww-mist-0);        /* 13,7 */
+  --ww-vote-tick-bg: var(--ww-mint-400);          /* Häkchen-Ecke */
+  --ww-vote-tick-fg: var(--ww-indigo-800);
+  --ww-vote-ghost-border: var(--ww-ink-700);      /* unbestätigter Vorschlag, gestrichelt */
+  --ww-rank-bg: var(--ww-sun-400);                /* „Platz 1“ – Tinte 11,2 */
+  --ww-rank-fg: var(--ww-ink-900);
 
-  /* ---------------- Heatmap (F-008) ----------------
-     Stufen nach Score s = (geht + 0,5 · zur Not) / abgegeben
-     nodata: noch niemand hat abgegeben (Tage außerhalb: --ww-hm-outside-fg)
-     none:  s = 0           few: 0 < s < 0,5
-     some:  0,5 ≤ s < 0,75   many: 0,75 ≤ s < 1
-     all:   s = 1 (alle „geht")
-     Zahl in der Zelle: Anzahl „Geht" / abgegebene Mitglieder (x/n, F-008).
-     Häkchen-Badge (CEO-Entscheid U-4, 2026-10-08): NUR wenn x = n, d. h.
-     alle, die abgegeben haben, haben „Geht" – fällt damit genau mit der
-     Stufe all zusammen (s = 1 genau dann, wenn x = n).
-     Halbkreis: sobald mindestens eine Person „zur Not" hat – auch an Tagen
-     ohne „geht nicht"; diese Tage bekommen KEIN Häkchen.
-     Kontrast Zahl/Text: siehe Kommentar je Stufe. */
+  /* ---------------- Heatmap (F-008) – „Indigo-Rampe“ ----------------
+     s = (geht + 0,5 · zur Not) / abgegeben
+     none: s = 0 · few: 0 < s < 0,5 · some: 0,5 ≤ s < 0,75 · many: 0,75 ≤ s < 1 · all: s = 1
+     Zahl in der Zelle = Anzahl „Geht“ / abgegeben (U-4). Siegel NUR bei x = n (= Stufe all). */
   --ww-hm-nodata-bg: transparent;
-  --ww-hm-nodata-fg: var(--ww-slate-650);         /* 4.8 auf bg */
-  --ww-hm-nodata-border: var(--ww-slate-500);     /* gestrichelt, 3.2 */
-  --ww-hm-none-bg: var(--ww-sand-100);            /* L 0.857 */
-  --ww-hm-none-line: var(--ww-sand-300);          /* Schraffur */
-  --ww-hm-none-fg: var(--ww-slate-900);           /* 13.4 (9.3 auf Linie) */
-  --ww-hm-few-bg: var(--ww-teal-300);             /* L 0.634 */
-  --ww-hm-few-fg: var(--ww-slate-900);            /* 10.1 */
-  --ww-hm-some-bg: var(--ww-teal-400);            /* L 0.429 */
-  --ww-hm-some-fg: var(--ww-slate-900);           /*  7.1 */
-  --ww-hm-many-bg: var(--ww-teal-500);            /* L 0.164 */
-  --ww-hm-many-fg: var(--ww-sand-0);              /*  4.9 */
-  --ww-hm-all-bg: var(--ww-teal-800);             /* L 0.062 */
-  --ww-hm-all-fg: var(--ww-sand-0);               /*  9.4 */
+  --ww-hm-nodata-fg: var(--ww-ink-700);           /* 7,2 / 6,5 */
+  --ww-hm-nodata-border: var(--ww-ink-500);       /* gestrichelt 3,4 */
+  --ww-hm-none-bg: var(--ww-mist-100);            /* L 0,85 */
+  --ww-hm-none-line: var(--ww-mist-400);          /* Schraffur 45° */
+  --ww-hm-none-fg: var(--ww-ink-900);             /* 14,1 (auf Linie 9,8) */
+  --ww-hm-few-bg: var(--ww-lavender-200);         /* L 0,66 */
+  --ww-hm-few-fg: var(--ww-ink-900);              /* 11,1 */
+  --ww-hm-some-bg: var(--ww-lavender-300);        /* L 0,38 */
+  --ww-hm-some-fg: var(--ww-ink-900);             /*  6,7 */
+  --ww-hm-many-bg: var(--ww-indigo-500);          /* L 0,11 */
+  --ww-hm-many-fg: var(--ww-mist-0);              /*  6,5 */
+  --ww-hm-all-bg: var(--ww-indigo-800);           /* L 0,026 */
+  --ww-hm-all-fg: var(--ww-mist-0);               /* 13,7 */
+  --ww-hm-seal-bg: var(--ww-mint-400);            /* gegen Zelle 8,7 */
+  --ww-hm-seal-fg: var(--ww-indigo-800);
+  --ww-hm-seal-ring: var(--ww-mist-0);            /* 1,4 px */
 
-  --ww-hm-weekend-lane: var(--ww-sand-150);       /* Spur hinter Sa/So-Spalten */
-  --ww-hm-weekday-weekend-fg: var(--ww-slate-900);
-  --ww-hm-holiday: var(--ww-coral-600);           /* Eselsohr-Dreieck */
-  --ww-hm-holiday-edge: var(--ww-sand-0);         /* 1.5px Trennkante */
-  --ww-hm-today-ring: currentColor;               /* Ring um Datumszahl */
-  --ww-hm-selected-outer: var(--ww-slate-900);    /* Doppelrahmen außen */
-  --ww-hm-selected-inner: var(--ww-sand-0);       /* Doppelrahmen innen */
-  --ww-hm-suggest: var(--ww-coral-600);           /* Vorschlags-Band 3.8 auf bg */
-  --ww-hm-suggest-tint: var(--ww-coral-100);
-  --ww-hm-outside-fg: var(--ww-slate-500);        /* Tage außerhalb/vergangen: 3.2 auf bg */
+  --ww-hm-weekend-lane: rgb(167 154 242 / 0.16);  /* Spur hinter Sa/So */
+  --ww-hm-weekday-weekend-fg: var(--ww-ink-900);
+  --ww-hm-holiday: var(--ww-coral-500);           /* Eselsohr 3,5 gegen Weiß */
+  --ww-hm-holiday-edge: var(--ww-color-surface);  /* Kerbe in Kartenfarbe */
+  --ww-hm-today-ring: currentColor;
+  --ww-hm-selected-outer: var(--ww-ink-900);
+  --ww-hm-selected-inner: var(--ww-mist-0);
+  --ww-hm-suggest: var(--ww-indigo-800);          /* Band 4 px, 13,7 gegen Weiß */
+  --ww-hm-suggest-tint: var(--ww-lavender-100);
+  --ww-hm-outside-fg: var(--ww-ink-500);          /* 3,4 / 3,1 */
 
-  /* ---------------- Kalender-Interaktion (Meine Tage, F-005) ---------------- */
-  --ww-cal-preview-border: var(--ww-slate-900);   /* Zieh-Vorschau: 2px gestrichelt um den Bereich */
-  --ww-cal-anchor: var(--ww-slate-900);           /* Startmarke Bereichsmodus (Punkt) */
-  --ww-cal-anchor-ring: var(--ww-sand-0);
+  /* ---------------- Kalender-Interaktion ---------------- */
+  --ww-cal-preview-border: var(--ww-ink-900);
+  --ww-cal-anchor: var(--ww-ink-900);
+  --ww-cal-anchor-ring: var(--ww-mist-0);
 
-  /* ---------------- Phasen & To-dos (W04, W07) ---------------- */
-  --ww-phase-collect-bg: var(--ww-teal-50);       /* „Tage sammeln"   – Text 7.8 */
-  --ww-phase-collect-fg: var(--ww-teal-700);
-  --ww-phase-vote-bg: var(--ww-amber-100);        /* „Abstimmung läuft" – Text 6.3 */
-  --ww-phase-vote-fg: var(--ww-amber-800);
-  --ww-phase-fixed-bg: var(--ww-teal-700);        /* „Steht fest: …"  – Text 8.4 */
-  --ww-phase-fixed-fg: var(--ww-sand-0);
-  --ww-phase-past-bg: var(--ww-sand-150);         /* „Vergangen"      – Text 5.2 */
-  --ww-phase-past-fg: var(--ww-slate-700);
-  --ww-todo-bg: var(--ww-coral-100);              /* To-do-Zeile auf Karten – Text 4.8 */
+  /* ---------------- Phasen (Text + Punkt im Kopf, Chip auf Karten) ---------------- */
+  --ww-phase-collect-dot: var(--ww-mint-400);
+  --ww-phase-collect-bg: var(--ww-mint-100);      /* Text 4,9 */
+  --ww-phase-collect-fg: var(--ww-mint-700);
+  --ww-phase-vote-dot: var(--ww-lavender-300);
+  --ww-phase-vote-bg: var(--ww-lavender-100);     /* Text 5,6 */
+  --ww-phase-vote-fg: var(--ww-lavender-600);
+  --ww-phase-fixed-dot: var(--ww-sun-400);
+  --ww-phase-fixed-bg: var(--ww-sun-400);         /* Text 11,2 */
+  --ww-phase-fixed-fg: var(--ww-ink-900);
+  --ww-phase-past-dot: var(--ww-ink-500);
+  --ww-phase-past-bg: var(--ww-mist-150);         /* Text 6,0 */
+  --ww-phase-past-fg: var(--ww-ink-700);
+  --ww-todo-bg: var(--ww-coral-100);              /* „Deine Tage fehlen noch“ 5,7 */
   --ww-todo-fg: var(--ww-coral-700);
-  --ww-todo-bar: var(--ww-coral-600);             /* 4px Kante links */
+  --ww-todo-bar: var(--ww-coral-500);
 
-  /* ---------------- Illustrationen (inline-SVG, assets/illustrations) ---------------- */
-  --ww-illu-plate: var(--ww-sand-150);
-  --ww-illu-paper: var(--ww-sand-0);
-  --ww-illu-ink: var(--ww-slate-900);
-  --ww-illu-subtle: var(--ww-slate-500);
-  --ww-illu-teal: var(--ww-teal-600);
-  --ww-illu-teal-dark: var(--ww-teal-900);
-  --ww-illu-sea: var(--ww-teal-900);
-  --ww-illu-teal-light: var(--ww-teal-300);
-  --ww-illu-deep: var(--ww-teal-800);
-  --ww-illu-sun: var(--ww-amber-400);
+  /* ---------------- Illustrationen (inline-SVG) ---------------- */
+  --ww-illu-plate: var(--ww-lavender-100);
+  --ww-illu-paper: var(--ww-mist-0);
+  --ww-illu-ink: var(--ww-ink-900);
+  --ww-illu-subtle: var(--ww-lavender-200);
+  --ww-illu-brand: var(--ww-indigo-800);
+  --ww-illu-violet: var(--ww-indigo-500);
+  --ww-illu-lavender: var(--ww-lavender-300);
+  --ww-illu-lavender-light: var(--ww-lavender-200);
+  --ww-illu-mint: var(--ww-mint-400);
+  --ww-illu-mint-deep: var(--ww-mint-500);
+  --ww-illu-sun: var(--ww-sun-400);
   --ww-illu-coral: var(--ww-coral-500);
-  --ww-illu-coral-strong: var(--ww-coral-600);
-  --ww-illu-coral-dark: var(--ww-coral-700);
+  --ww-illu-on-brand: var(--ww-mist-0);
 }
 
 /* --------------------------------------------------------------------------
-   3. SEMANTISCH – DARK
-   Block A: System-Dark, sofern nicht ausdrücklich Light gewählt.
-   Block B: erzwungenes Dark per [data-theme="dark"].
-   Beide Blöcke sind absichtlich identisch – bei Änderungen beide pflegen.
-   Kontraste gegen bg #111819 / surface #1A2324 / raised #232E2F.
+   4. SEMANTIK – DUNKEL „Mitternacht“
+   Block A: System-Dunkel, sofern nicht ausdrücklich Hell gewählt.
+   Block B: erzwungenes Dunkel per [data-theme="dark"].
+   Beide Blöcke sind absichtlich IDENTISCH – bei Änderungen beide pflegen.
+   Grund #14112E · Fläche #1F1A45 · erhöht #2A2458
    -------------------------------------------------------------------------- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
 
-    --ww-color-bg: var(--ww-slate-950);
-    --ww-color-surface: var(--ww-slate-925);
-    --ww-color-surface-raised: var(--ww-slate-875);
-    --ww-color-surface-sunken: #0c1213;
+    --ww-color-bg: var(--ww-night-950);
+    --ww-color-surface: var(--ww-night-850);
+    --ww-color-surface-raised: var(--ww-night-800);
+    --ww-color-surface-sunken: var(--ww-night-900);
     --ww-color-scrim: rgb(0 0 0 / 0.6);
 
-    --ww-color-text: var(--ww-slate-50);           /* 15.7 / 14.0 / 12.2 */
-    --ww-color-text-muted: var(--ww-slate-300);    /*  8.4 /  7.5 /  6.5 */
-    --ww-color-text-subtle: var(--ww-slate-400);   /*  6.1 /  5.5 /  4.8 */
-    --ww-color-text-inverse: var(--ww-slate-900);
-    --ww-color-text-on-primary: var(--ww-teal-950);/*  8.5 */
-    --ww-color-text-on-danger: var(--ww-slate-950);
-    --ww-color-link: var(--ww-mint-300);
+    --ww-color-text: var(--ww-ink-50);            /* 16,3 / 14,5 / 12,6 */
+    --ww-color-text-muted: var(--ww-ink-200);     /*  9,2 /  8,2 /  7,1 */
+    --ww-color-text-subtle: var(--ww-ink-300);    /*  6,6 /  5,9 /  5,1 */
+    --ww-color-text-inverse: var(--ww-ink-900);
+    --ww-color-text-on-primary: var(--ww-night-950); /* 11,5 auf Minze */
+    --ww-color-text-on-danger: var(--ww-night-950);
+    --ww-color-link: var(--ww-mint-400);          /* 11,5 / 10,2 */
 
-    --ww-color-border-subtle: #2c3637;
-    --ww-color-border-strong: var(--ww-slate-600); /* 3.8 / 3.4 / 3.0 */
+    --ww-color-border-subtle: var(--ww-night-775);
+    --ww-color-border-strong: var(--ww-night-500);/* 4,4 / 3,9 / 3,4 */
 
     --ww-color-primary: var(--ww-mint-400);
-    --ww-color-primary-hover: var(--ww-mint-200);
-    --ww-color-primary-active: var(--ww-mint-500);
-    --ww-color-primary-text: var(--ww-mint-400);   /* 9.0 auf bg */
-    --ww-color-primary-tint: var(--ww-deep-900);   /* Text darauf 10.7, Primär 6.1 */
-    --ww-color-primary-tint-strong: var(--ww-deep-800);
-    --ww-color-accent: var(--ww-coral-300);
-    --ww-color-accent-strong: var(--ww-coral-300);
-    --ww-color-accent-text: var(--ww-coral-300);   /* 7.3 */
-    --ww-color-accent-tint: #3b2119;
-    --ww-color-sun: var(--ww-amber-300);
+    --ww-color-primary-hover: var(--ww-mint-300);
+    --ww-color-primary-active: var(--ww-mint-450);
+    --ww-color-primary-text: var(--ww-mint-400);
+    --ww-color-primary-tint: var(--ww-night-760); /* Lavendel-Text darauf 7,3 */
+    --ww-color-primary-tint-strong: var(--ww-night-700);
+    --ww-color-accent: var(--ww-mint-400);
+    --ww-color-accent-strong: var(--ww-mint-400);
+    --ww-color-accent-text: var(--ww-mint-400);   /* 10,2 */
+    --ww-color-accent-tint: var(--ww-mint-900);   /* Minze darauf 7,6 */
+    --ww-color-on-accent: var(--ww-night-950);    /* 11,5 */
+    --ww-color-sun: var(--ww-sun-400);
+    --ww-color-selected: var(--ww-mint-400);
 
-    --ww-color-danger: var(--ww-red-300);          /* 7.8 */
-    --ww-color-danger-hover: #ffa8a0;
-    --ww-color-danger-tint: var(--ww-red-d-900);   /* Text darauf 6.5 */
-    --ww-color-warning-text: var(--ww-amber-300);  /* 11.0 */
-    --ww-color-warning-tint: var(--ww-amber-d-900);/* Text darauf 8.1 */
-    --ww-color-success-text: var(--ww-mint-400);
-    --ww-color-success-tint: var(--ww-deep-900);
-    --ww-color-info-text: var(--ww-mint-400);
-    --ww-color-info-tint: var(--ww-deep-900);
+    --ww-color-danger: var(--ww-cherry-300);      /* 7,1 auf Fläche */
+    --ww-color-danger-hover: var(--ww-cherry-350);
+    --ww-color-danger-tint: var(--ww-cherry-900); /* 6,4 */
+    --ww-color-warning-text: var(--ww-sun-200);   /* auf warning-tint 9,6 */
+    --ww-color-warning-tint: var(--ww-sun-900);
+    --ww-color-success-text: var(--ww-mint-400);  /* 7,6 */
+    --ww-color-success-tint: var(--ww-mint-900);
+    --ww-color-info-text: var(--ww-lavender-400); /* 7,3 */
+    --ww-color-info-tint: var(--ww-night-760);
+    --ww-color-holiday-text: var(--ww-coral-300); /* 8,2 */
+    --ww-color-holiday-tint: var(--ww-coral-900);
+    --ww-color-holiday-mark: var(--ww-coral-400); /* 7,0 gegen Fläche */
 
-    --ww-color-disabled-bg: var(--ww-slate-850);
-    --ww-color-disabled-text: var(--ww-slate-600);
+    --ww-color-disabled-bg: var(--ww-night-800);
+    --ww-color-disabled-text: var(--ww-ink-300);
 
-    --ww-color-focus: var(--ww-blue-300);          /* 8.6 */
-    --ww-color-focus-gap: var(--ww-slate-950);
+    --ww-color-focus: var(--ww-blue-300);         /* 8,7 / 7,7 */
+    --ww-color-focus-gap: var(--ww-night-950);
+    --ww-color-focus-on-brand: var(--ww-mist-0);
 
-    --ww-color-inverse-bg: var(--ww-slate-50);
-    --ww-color-inverse-text: var(--ww-slate-900);
-    --ww-color-inverse-link: var(--ww-teal-700);
+    --ww-color-inverse-bg: var(--ww-ink-50);
+    --ww-color-inverse-text: var(--ww-ink-900);
+    --ww-color-inverse-link: var(--ww-lavender-600); /* 6,1 */
 
-    --ww-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-    --ww-shadow-2: 0 4px 12px rgb(0 0 0 / 0.45);
-    --ww-shadow-3: 0 12px 32px rgb(0 0 0 / 0.55);
-    --ww-shadow-sticky-bottom: 0 -1px 0 #2c3637, 0 -6px 16px rgb(0 0 0 / 0.4);
+    --ww-shadow-1: 0 14px 30px -16px rgb(0 0 0 / 0.70);
+    --ww-shadow-2: 0 18px 36px -14px rgb(0 0 0 / 0.75);
+    --ww-shadow-3: 0 24px 48px -16px rgb(0 0 0 / 0.80);
+    --ww-shadow-button: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+    --ww-shadow-button-accent: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+    --ww-shadow-selected: 0 8px 16px -10px rgb(0 0 0 / 0.70);
+    --ww-shadow-sticky-bottom: 0 -16px 34px -12px rgb(0 0 0 / 0.70);
 
-    --ww-avail-yes-bg: var(--ww-deep-800);         /* L 0.057 */
-    --ww-avail-yes-fg: var(--ww-mint-400);         /* 4.9 */
-    --ww-avail-maybe-bg: var(--ww-amber-d-900);    /* L 0.029 */
-    --ww-avail-maybe-stripe: var(--ww-amber-d-800);
-    --ww-avail-maybe-fg: var(--ww-amber-300);      /* 8.1 / 5.8 auf Streifen */
-    --ww-avail-no-bg: var(--ww-slate-850);         /* L 0.025 */
-    --ww-avail-no-line: var(--ww-slate-750);
-    --ww-avail-no-fg: var(--ww-slate-50);          /* 6.8 auf Linie */
-    --ww-avail-day-text: var(--ww-slate-50);
+    --ww-btn-primary-bg: var(--ww-color-primary);
+    --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+    --ww-btn-secondary-bg: transparent;
+    --ww-btn-secondary-fg: var(--ww-ink-50);
+    --ww-btn-secondary-border: var(--ww-ink-50);
+    --ww-btn-tool-bg: var(--ww-night-800);
+    --ww-btn-tool-fg: var(--ww-ink-50);
 
-    --ww-vote-yes-bg: var(--ww-deep-900);
-    --ww-vote-yes-fg: var(--ww-mint-400);          /* 6.1 */
-    --ww-vote-yes-bar: var(--ww-mint-300);
-    --ww-vote-maybe-bg: var(--ww-amber-d-900);
-    --ww-vote-maybe-fg: var(--ww-amber-300);       /* 8.1 */
-    --ww-vote-maybe-bar: var(--ww-amber-300);
-    --ww-vote-no-bg: var(--ww-slate-850);
-    --ww-vote-no-fg: var(--ww-slate-50);
-    --ww-vote-no-bar: var(--ww-slate-400);
+    --ww-cockpit-bg: var(--ww-indigo-900);        /* hebt sich nur 1,1 : 1 ab – Trennung über Rundung */
+    --ww-cockpit-glow-mint: rgb(82 229 184 / 0.18);
+    --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+    --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.22);
+    --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+    --ww-cockpit-text: var(--ww-mist-0);
+    --ww-cockpit-text-muted: var(--ww-lavender-250); /* 9,8 */
+    --ww-cockpit-accent: var(--ww-mint-400);
+    --ww-cockpit-on-accent: var(--ww-night-950);
+    --ww-cockpit-control-bg: rgb(255 255 255 / 0.12);
+    --ww-cockpit-track: rgb(255 255 255 / 0.10);
+    --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);
+    --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+    --ww-cockpit-outline: rgb(255 255 255 / 0.60);
+    --ww-cockpit-tab-active-bg: var(--ww-ink-50);
+    --ww-cockpit-tab-active-fg: var(--ww-night-950);
+
+    --ww-tile-lavender-bg: var(--ww-night-760);
+    --ww-tile-lavender-fg: var(--ww-lavender-400);
+    --ww-tile-mint-bg: var(--ww-mint-900);
+    --ww-tile-mint-fg: var(--ww-mint-400);
+    --ww-tile-sun-bg: var(--ww-sun-900);
+    --ww-tile-sun-fg: var(--ww-sun-200);
+    --ww-tile-coral-bg: var(--ww-coral-900);
+    --ww-tile-coral-fg: var(--ww-coral-300);
+    --ww-tile-brand-bg: var(--ww-indigo-500);
+    --ww-tile-brand-fg: var(--ww-mist-0);         /* 6,5 */
+
+    --ww-progress-track: var(--ww-night-800);
+    --ww-progress-fill: var(--ww-mint-400);
+    --ww-progress-current: var(--ww-sun-400);
+    --ww-progress-current-edge: var(--ww-sun-200);
+    --ww-ring-start: var(--ww-mint-400);
+    --ww-ring-end: var(--ww-sun-400);
+    --ww-ring-track: rgb(255 255 255 / 0.14);
+    --ww-ring-knob: var(--ww-sun-400);
+    --ww-ring-knob-edge: var(--ww-cockpit-bg);
+    --ww-daybar-high: var(--ww-mint-400);
+    --ww-daybar-low: var(--ww-lavender-300);
+
+    --ww-seal-bg: var(--ww-mint-400);
+    --ww-seal-fg: var(--ww-night-950);
+    --ww-seal-ring: var(--ww-night-850);
+
+    --ww-confetti-1: var(--ww-mint-400);
+    --ww-confetti-2: var(--ww-sun-400);
+    --ww-confetti-3: var(--ww-lavender-300);
+    --ww-confetti-4: var(--ww-coral-400);
+    --ww-confetti-5: var(--ww-mist-0);
+
+    --ww-avatar-fg: var(--ww-avatar-ink);
+    --ww-avatar-ring: var(--ww-color-surface);
+    --ww-avatar-open-border: var(--ww-color-border-strong);
+
+    --ww-avail-yes-bg: var(--ww-mint-900);        /* Text 10,8 */
+    --ww-avail-yes-fg: var(--ww-mint-400);        /*  7,6 */
+    --ww-avail-maybe-bg: var(--ww-sun-900);       /* Symbol 9,6 */
+    --ww-avail-maybe-stripe: var(--ww-sun-800);   /* Symbol 6,4 */
+    --ww-avail-maybe-fg: var(--ww-sun-200);
+    --ww-avail-no-bg: var(--ww-night-750);        /* Text 11,8 */
+    --ww-avail-no-line: var(--ww-night-600);      /* Text auf Linie 7,6 */
+    --ww-avail-no-fg: var(--ww-ink-50);
+    --ww-avail-day-text: var(--ww-ink-50);
+    --ww-avail-plaque-ring: rgb(243 241 255 / 0.45);
+
+    --ww-vote-yes-bg: var(--ww-mint-900);
+    --ww-vote-yes-fg: var(--ww-mint-400);         /* 7,6 */
+    --ww-vote-yes-bar: var(--ww-mint-400);
+    --ww-vote-maybe-bg: var(--ww-sun-900);
+    --ww-vote-maybe-fg: var(--ww-sun-200);        /* 9,6 */
+    --ww-vote-maybe-bar: var(--ww-sun-200);
+    --ww-vote-no-bg: var(--ww-night-750);
+    --ww-vote-no-fg: var(--ww-ink-100);           /* 9,2 */
+    --ww-vote-no-bar: var(--ww-night-500);
+    --ww-vote-selected-bg: var(--ww-mint-400);
+    --ww-vote-selected-fg: var(--ww-night-950);   /* 11,5 */
+    --ww-vote-tick-bg: var(--ww-ink-50);
+    --ww-vote-tick-fg: var(--ww-indigo-800);
+    --ww-vote-ghost-border: var(--ww-ink-200);
+    --ww-rank-bg: var(--ww-sun-400);
+    --ww-rank-fg: var(--ww-night-950);            /* 12,4 */
 
     --ww-hm-nodata-bg: transparent;
-    --ww-hm-nodata-fg: var(--ww-slate-400);        /* 6.1 */
-    --ww-hm-nodata-border: var(--ww-slate-600);    /* 3.8 */
-    --ww-hm-none-bg: var(--ww-slate-900);          /* L 0.017 */
-    --ww-hm-none-line: var(--ww-slate-800);
-    --ww-hm-none-fg: var(--ww-slate-50);           /* 13.6 (8.6 auf Linie) */
-    --ww-hm-few-bg: var(--ww-deep-800);            /* L 0.057 */
-    --ww-hm-few-fg: var(--ww-slate-50);            /*  8.5 */
-    --ww-hm-some-bg: var(--ww-deep-700);           /* L 0.135 */
-    --ww-hm-some-fg: var(--ww-slate-50);           /*  4.9 */
-    --ww-hm-many-bg: var(--ww-mint-300);           /* L 0.516 */
-    --ww-hm-many-fg: var(--ww-teal-950);           /*  9.2 */
-    --ww-hm-all-bg: var(--ww-mint-100);            /* L 0.777 */
-    --ww-hm-all-fg: var(--ww-teal-950);            /* 13.4 */
+    --ww-hm-nodata-fg: var(--ww-ink-200);         /* 8,2 */
+    --ww-hm-nodata-border: var(--ww-night-500);   /* 3,9 */
+    --ww-hm-none-bg: var(--ww-night-820);
+    --ww-hm-none-line: var(--ww-night-650);
+    --ww-hm-none-fg: var(--ww-ink-50);            /* 14,1 (auf Linie 9,9) */
+    --ww-hm-few-bg: var(--ww-night-700);
+    --ww-hm-few-fg: var(--ww-ink-50);             /* 10,4 */
+    --ww-hm-some-bg: var(--ww-indigo-500);
+    --ww-hm-some-fg: var(--ww-mist-0);            /*  6,5 */
+    --ww-hm-many-bg: var(--ww-lavender-300);
+    --ww-hm-many-fg: var(--ww-night-950);         /*  7,4 */
+    --ww-hm-all-bg: var(--ww-mint-400);
+    --ww-hm-all-fg: var(--ww-night-950);          /* 11,5 */
+    --ww-hm-seal-bg: var(--ww-night-950);         /* dunkles Siegel auf Minze-Zelle */
+    --ww-hm-seal-fg: var(--ww-mint-400);
+    --ww-hm-seal-ring: transparent;
 
-    --ww-hm-weekend-lane: #1b2526;
-    --ww-hm-weekday-weekend-fg: var(--ww-slate-50);
-    --ww-hm-holiday: var(--ww-coral-300);
-    --ww-hm-holiday-edge: var(--ww-slate-950);
+    --ww-hm-weekend-lane: rgb(167 154 242 / 0.08);
+    --ww-hm-weekday-weekend-fg: var(--ww-ink-50);
+    --ww-hm-holiday: var(--ww-coral-400);
+    --ww-hm-holiday-edge: var(--ww-color-surface);
     --ww-hm-today-ring: currentColor;
-    --ww-hm-selected-outer: var(--ww-slate-50);
-    --ww-hm-selected-inner: var(--ww-slate-950);
-    --ww-hm-suggest: var(--ww-coral-300);          /* 7.3 */
-    --ww-hm-suggest-tint: #3b2119;
-    --ww-hm-outside-fg: var(--ww-slate-600);       /* 3.8 */
+    --ww-hm-selected-outer: var(--ww-ink-50);
+    --ww-hm-selected-inner: var(--ww-night-950);
+    --ww-hm-suggest: var(--ww-mint-400);          /* 10,2 gegen Fläche */
+    --ww-hm-suggest-tint: var(--ww-night-760);
+    --ww-hm-outside-fg: var(--ww-night-500);      /* 3,9 */
 
-    --ww-cal-preview-border: var(--ww-slate-50);
-    --ww-cal-anchor: var(--ww-slate-50);
-    --ww-cal-anchor-ring: var(--ww-slate-950);
+    --ww-cal-preview-border: var(--ww-ink-50);
+    --ww-cal-anchor: var(--ww-ink-50);
+    --ww-cal-anchor-ring: var(--ww-night-950);
 
-    --ww-phase-collect-bg: var(--ww-deep-900);     /* Text 6.1 */
+    --ww-phase-collect-dot: var(--ww-mint-400);
+    --ww-phase-collect-bg: var(--ww-mint-900);    /* 7,6 */
     --ww-phase-collect-fg: var(--ww-mint-400);
-    --ww-phase-vote-bg: var(--ww-amber-d-900);     /* Text 8.1 */
-    --ww-phase-vote-fg: var(--ww-amber-300);
-    --ww-phase-fixed-bg: var(--ww-mint-400);       /* Text 8.5 */
-    --ww-phase-fixed-fg: var(--ww-teal-950);
-    --ww-phase-past-bg: var(--ww-slate-850);       /* Text 6.6 */
-    --ww-phase-past-fg: var(--ww-slate-300);
-    --ww-todo-bg: #3b2119;                         /* Text 6.0 */
+    --ww-phase-vote-dot: var(--ww-lavender-300);
+    --ww-phase-vote-bg: var(--ww-night-760);      /* 7,3 */
+    --ww-phase-vote-fg: var(--ww-lavender-400);
+    --ww-phase-fixed-dot: var(--ww-sun-400);
+    --ww-phase-fixed-bg: var(--ww-sun-400);       /* 12,4 */
+    --ww-phase-fixed-fg: var(--ww-night-950);
+    --ww-phase-past-dot: var(--ww-ink-300);
+    --ww-phase-past-bg: var(--ww-night-750);      /* 9,2 */
+    --ww-phase-past-fg: var(--ww-ink-100);
+    --ww-todo-bg: var(--ww-coral-900);            /* 8,2 */
     --ww-todo-fg: var(--ww-coral-300);
-    --ww-todo-bar: var(--ww-coral-300);
+    --ww-todo-bar: var(--ww-coral-400);
 
-    --ww-illu-plate: var(--ww-slate-925);
-    --ww-illu-paper: var(--ww-slate-875);
-    --ww-illu-ink: var(--ww-slate-50);
-    --ww-illu-subtle: var(--ww-slate-600);
-    --ww-illu-teal: var(--ww-mint-400);
-    --ww-illu-teal-dark: var(--ww-mint-400);
-    --ww-illu-sea: var(--ww-deep-700);
-    --ww-illu-teal-light: var(--ww-deep-800);
-    --ww-illu-deep: var(--ww-mint-100);
-    --ww-illu-sun: var(--ww-amber-300);
-    --ww-illu-coral: var(--ww-coral-300);
-    --ww-illu-coral-strong: var(--ww-coral-300);
-    --ww-illu-coral-dark: var(--ww-coral-700);
+    --ww-illu-plate: var(--ww-night-820);
+    --ww-illu-paper: var(--ww-night-750);
+    --ww-illu-ink: var(--ww-ink-50);
+    --ww-illu-subtle: var(--ww-night-700);
+    --ww-illu-brand: var(--ww-indigo-500);
+    --ww-illu-violet: var(--ww-lavender-300);
+    --ww-illu-lavender: var(--ww-lavender-300);
+    --ww-illu-lavender-light: var(--ww-night-700);
+    --ww-illu-mint: var(--ww-mint-400);
+    --ww-illu-mint-deep: var(--ww-mint-500);
+    --ww-illu-sun: var(--ww-sun-400);
+    --ww-illu-coral: var(--ww-coral-400);
+    --ww-illu-on-brand: var(--ww-mist-0);
   }
 }
 
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --ww-color-bg: var(--ww-slate-950);
-  --ww-color-surface: var(--ww-slate-925);
-  --ww-color-surface-raised: var(--ww-slate-875);
-  --ww-color-surface-sunken: #0c1213;
+  --ww-color-bg: var(--ww-night-950);
+  --ww-color-surface: var(--ww-night-850);
+  --ww-color-surface-raised: var(--ww-night-800);
+  --ww-color-surface-sunken: var(--ww-night-900);
   --ww-color-scrim: rgb(0 0 0 / 0.6);
 
-  --ww-color-text: var(--ww-slate-50);
-  --ww-color-text-muted: var(--ww-slate-300);
-  --ww-color-text-subtle: var(--ww-slate-400);
-  --ww-color-text-inverse: var(--ww-slate-900);
-  --ww-color-text-on-primary: var(--ww-teal-950);
-  --ww-color-text-on-danger: var(--ww-slate-950);
-  --ww-color-link: var(--ww-mint-300);
+  --ww-color-text: var(--ww-ink-50);
+  --ww-color-text-muted: var(--ww-ink-200);
+  --ww-color-text-subtle: var(--ww-ink-300);
+  --ww-color-text-inverse: var(--ww-ink-900);
+  --ww-color-text-on-primary: var(--ww-night-950);
+  --ww-color-text-on-danger: var(--ww-night-950);
+  --ww-color-link: var(--ww-mint-400);
 
-  --ww-color-border-subtle: #2c3637;
-  --ww-color-border-strong: var(--ww-slate-600);
+  --ww-color-border-subtle: var(--ww-night-775);
+  --ww-color-border-strong: var(--ww-night-500);
 
   --ww-color-primary: var(--ww-mint-400);
-  --ww-color-primary-hover: var(--ww-mint-200);
-  --ww-color-primary-active: var(--ww-mint-500);
+  --ww-color-primary-hover: var(--ww-mint-300);
+  --ww-color-primary-active: var(--ww-mint-450);
   --ww-color-primary-text: var(--ww-mint-400);
-  --ww-color-primary-tint: var(--ww-deep-900);
-  --ww-color-primary-tint-strong: var(--ww-deep-800);
-  --ww-color-accent: var(--ww-coral-300);
-  --ww-color-accent-strong: var(--ww-coral-300);
-  --ww-color-accent-text: var(--ww-coral-300);
-  --ww-color-accent-tint: #3b2119;
-  --ww-color-sun: var(--ww-amber-300);
+  --ww-color-primary-tint: var(--ww-night-760);
+  --ww-color-primary-tint-strong: var(--ww-night-700);
+  --ww-color-accent: var(--ww-mint-400);
+  --ww-color-accent-strong: var(--ww-mint-400);
+  --ww-color-accent-text: var(--ww-mint-400);
+  --ww-color-accent-tint: var(--ww-mint-900);
+  --ww-color-on-accent: var(--ww-night-950);
+  --ww-color-sun: var(--ww-sun-400);
+  --ww-color-selected: var(--ww-mint-400);
 
-  --ww-color-danger: var(--ww-red-300);
-  --ww-color-danger-hover: #ffa8a0;
-  --ww-color-danger-tint: var(--ww-red-d-900);
-  --ww-color-warning-text: var(--ww-amber-300);
-  --ww-color-warning-tint: var(--ww-amber-d-900);
+  --ww-color-danger: var(--ww-cherry-300);
+  --ww-color-danger-hover: var(--ww-cherry-350);
+  --ww-color-danger-tint: var(--ww-cherry-900);
+  --ww-color-warning-text: var(--ww-sun-200);
+  --ww-color-warning-tint: var(--ww-sun-900);
   --ww-color-success-text: var(--ww-mint-400);
-  --ww-color-success-tint: var(--ww-deep-900);
-  --ww-color-info-text: var(--ww-mint-400);
-  --ww-color-info-tint: var(--ww-deep-900);
+  --ww-color-success-tint: var(--ww-mint-900);
+  --ww-color-info-text: var(--ww-lavender-400);
+  --ww-color-info-tint: var(--ww-night-760);
+  --ww-color-holiday-text: var(--ww-coral-300);
+  --ww-color-holiday-tint: var(--ww-coral-900);
+  --ww-color-holiday-mark: var(--ww-coral-400);
 
-  --ww-color-disabled-bg: var(--ww-slate-850);
-  --ww-color-disabled-text: var(--ww-slate-600);
+  --ww-color-disabled-bg: var(--ww-night-800);
+  --ww-color-disabled-text: var(--ww-ink-300);
 
   --ww-color-focus: var(--ww-blue-300);
-  --ww-color-focus-gap: var(--ww-slate-950);
+  --ww-color-focus-gap: var(--ww-night-950);
+  --ww-color-focus-on-brand: var(--ww-mist-0);
 
-  --ww-color-inverse-bg: var(--ww-slate-50);
-  --ww-color-inverse-text: var(--ww-slate-900);
-  --ww-color-inverse-link: var(--ww-teal-700);
+  --ww-color-inverse-bg: var(--ww-ink-50);
+  --ww-color-inverse-text: var(--ww-ink-900);
+  --ww-color-inverse-link: var(--ww-lavender-600);
 
-  --ww-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-  --ww-shadow-2: 0 4px 12px rgb(0 0 0 / 0.45);
-  --ww-shadow-3: 0 12px 32px rgb(0 0 0 / 0.55);
-  --ww-shadow-sticky-bottom: 0 -1px 0 #2c3637, 0 -6px 16px rgb(0 0 0 / 0.4);
+  --ww-shadow-1: 0 14px 30px -16px rgb(0 0 0 / 0.70);
+  --ww-shadow-2: 0 18px 36px -14px rgb(0 0 0 / 0.75);
+  --ww-shadow-3: 0 24px 48px -16px rgb(0 0 0 / 0.80);
+  --ww-shadow-button: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+  --ww-shadow-button-accent: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+  --ww-shadow-selected: 0 8px 16px -10px rgb(0 0 0 / 0.70);
+  --ww-shadow-sticky-bottom: 0 -16px 34px -12px rgb(0 0 0 / 0.70);
 
-  --ww-avail-yes-bg: var(--ww-deep-800);
+  --ww-btn-primary-bg: var(--ww-color-primary);
+  --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+  --ww-btn-secondary-bg: transparent;
+  --ww-btn-secondary-fg: var(--ww-ink-50);
+  --ww-btn-secondary-border: var(--ww-ink-50);
+  --ww-btn-tool-bg: var(--ww-night-800);
+  --ww-btn-tool-fg: var(--ww-ink-50);
+
+  --ww-cockpit-bg: var(--ww-indigo-900);
+  --ww-cockpit-glow-mint: rgb(82 229 184 / 0.18);
+  --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+  --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.22);
+  --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+  --ww-cockpit-text: var(--ww-mist-0);
+  --ww-cockpit-text-muted: var(--ww-lavender-250);
+  --ww-cockpit-accent: var(--ww-mint-400);
+  --ww-cockpit-on-accent: var(--ww-night-950);
+  --ww-cockpit-control-bg: rgb(255 255 255 / 0.12);
+  --ww-cockpit-track: rgb(255 255 255 / 0.10);
+  --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);
+  --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+  --ww-cockpit-outline: rgb(255 255 255 / 0.60);
+  --ww-cockpit-tab-active-bg: var(--ww-ink-50);
+  --ww-cockpit-tab-active-fg: var(--ww-night-950);
+
+  --ww-tile-lavender-bg: var(--ww-night-760);
+  --ww-tile-lavender-fg: var(--ww-lavender-400);
+  --ww-tile-mint-bg: var(--ww-mint-900);
+  --ww-tile-mint-fg: var(--ww-mint-400);
+  --ww-tile-sun-bg: var(--ww-sun-900);
+  --ww-tile-sun-fg: var(--ww-sun-200);
+  --ww-tile-coral-bg: var(--ww-coral-900);
+  --ww-tile-coral-fg: var(--ww-coral-300);
+  --ww-tile-brand-bg: var(--ww-indigo-500);
+  --ww-tile-brand-fg: var(--ww-mist-0);
+
+  --ww-progress-track: var(--ww-night-800);
+  --ww-progress-fill: var(--ww-mint-400);
+  --ww-progress-current: var(--ww-sun-400);
+  --ww-progress-current-edge: var(--ww-sun-200);
+  --ww-ring-start: var(--ww-mint-400);
+  --ww-ring-end: var(--ww-sun-400);
+  --ww-ring-track: rgb(255 255 255 / 0.14);
+  --ww-ring-knob: var(--ww-sun-400);
+  --ww-ring-knob-edge: var(--ww-cockpit-bg);
+  --ww-daybar-high: var(--ww-mint-400);
+  --ww-daybar-low: var(--ww-lavender-300);
+
+  --ww-seal-bg: var(--ww-mint-400);
+  --ww-seal-fg: var(--ww-night-950);
+  --ww-seal-ring: var(--ww-night-850);
+
+  --ww-confetti-1: var(--ww-mint-400);
+  --ww-confetti-2: var(--ww-sun-400);
+  --ww-confetti-3: var(--ww-lavender-300);
+  --ww-confetti-4: var(--ww-coral-400);
+  --ww-confetti-5: var(--ww-mist-0);
+
+  --ww-avatar-fg: var(--ww-avatar-ink);
+  --ww-avatar-ring: var(--ww-color-surface);
+  --ww-avatar-open-border: var(--ww-color-border-strong);
+
+  --ww-avail-yes-bg: var(--ww-mint-900);
   --ww-avail-yes-fg: var(--ww-mint-400);
-  --ww-avail-maybe-bg: var(--ww-amber-d-900);
-  --ww-avail-maybe-stripe: var(--ww-amber-d-800);
-  --ww-avail-maybe-fg: var(--ww-amber-300);
-  --ww-avail-no-bg: var(--ww-slate-850);
-  --ww-avail-no-line: var(--ww-slate-750);
-  --ww-avail-no-fg: var(--ww-slate-50);
-  --ww-avail-day-text: var(--ww-slate-50);
+  --ww-avail-maybe-bg: var(--ww-sun-900);
+  --ww-avail-maybe-stripe: var(--ww-sun-800);
+  --ww-avail-maybe-fg: var(--ww-sun-200);
+  --ww-avail-no-bg: var(--ww-night-750);
+  --ww-avail-no-line: var(--ww-night-600);
+  --ww-avail-no-fg: var(--ww-ink-50);
+  --ww-avail-day-text: var(--ww-ink-50);
+  --ww-avail-plaque-ring: rgb(243 241 255 / 0.45);
 
-  --ww-vote-yes-bg: var(--ww-deep-900);
+  --ww-vote-yes-bg: var(--ww-mint-900);
   --ww-vote-yes-fg: var(--ww-mint-400);
-  --ww-vote-yes-bar: var(--ww-mint-300);
-  --ww-vote-maybe-bg: var(--ww-amber-d-900);
-  --ww-vote-maybe-fg: var(--ww-amber-300);
-  --ww-vote-maybe-bar: var(--ww-amber-300);
-  --ww-vote-no-bg: var(--ww-slate-850);
-  --ww-vote-no-fg: var(--ww-slate-50);
-  --ww-vote-no-bar: var(--ww-slate-400);
+  --ww-vote-yes-bar: var(--ww-mint-400);
+  --ww-vote-maybe-bg: var(--ww-sun-900);
+  --ww-vote-maybe-fg: var(--ww-sun-200);
+  --ww-vote-maybe-bar: var(--ww-sun-200);
+  --ww-vote-no-bg: var(--ww-night-750);
+  --ww-vote-no-fg: var(--ww-ink-100);
+  --ww-vote-no-bar: var(--ww-night-500);
+  --ww-vote-selected-bg: var(--ww-mint-400);
+  --ww-vote-selected-fg: var(--ww-night-950);
+  --ww-vote-tick-bg: var(--ww-ink-50);
+  --ww-vote-tick-fg: var(--ww-indigo-800);
+  --ww-vote-ghost-border: var(--ww-ink-200);
+  --ww-rank-bg: var(--ww-sun-400);
+  --ww-rank-fg: var(--ww-night-950);
 
   --ww-hm-nodata-bg: transparent;
-  --ww-hm-nodata-fg: var(--ww-slate-400);
-  --ww-hm-nodata-border: var(--ww-slate-600);
-  --ww-hm-none-bg: var(--ww-slate-900);
-  --ww-hm-none-line: var(--ww-slate-800);
-  --ww-hm-none-fg: var(--ww-slate-50);
-  --ww-hm-few-bg: var(--ww-deep-800);
-  --ww-hm-few-fg: var(--ww-slate-50);
-  --ww-hm-some-bg: var(--ww-deep-700);
-  --ww-hm-some-fg: var(--ww-slate-50);
-  --ww-hm-many-bg: var(--ww-mint-300);
-  --ww-hm-many-fg: var(--ww-teal-950);
-  --ww-hm-all-bg: var(--ww-mint-100);
-  --ww-hm-all-fg: var(--ww-teal-950);
+  --ww-hm-nodata-fg: var(--ww-ink-200);
+  --ww-hm-nodata-border: var(--ww-night-500);
+  --ww-hm-none-bg: var(--ww-night-820);
+  --ww-hm-none-line: var(--ww-night-650);
+  --ww-hm-none-fg: var(--ww-ink-50);
+  --ww-hm-few-bg: var(--ww-night-700);
+  --ww-hm-few-fg: var(--ww-ink-50);
+  --ww-hm-some-bg: var(--ww-indigo-500);
+  --ww-hm-some-fg: var(--ww-mist-0);
+  --ww-hm-many-bg: var(--ww-lavender-300);
+  --ww-hm-many-fg: var(--ww-night-950);
+  --ww-hm-all-bg: var(--ww-mint-400);
+  --ww-hm-all-fg: var(--ww-night-950);
+  --ww-hm-seal-bg: var(--ww-night-950);
+  --ww-hm-seal-fg: var(--ww-mint-400);
+  --ww-hm-seal-ring: transparent;
 
-  --ww-hm-weekend-lane: #1b2526;
-  --ww-hm-weekday-weekend-fg: var(--ww-slate-50);
-  --ww-hm-holiday: var(--ww-coral-300);
-  --ww-hm-holiday-edge: var(--ww-slate-950);
+  --ww-hm-weekend-lane: rgb(167 154 242 / 0.08);
+  --ww-hm-weekday-weekend-fg: var(--ww-ink-50);
+  --ww-hm-holiday: var(--ww-coral-400);
+  --ww-hm-holiday-edge: var(--ww-color-surface);
   --ww-hm-today-ring: currentColor;
-  --ww-hm-selected-outer: var(--ww-slate-50);
-  --ww-hm-selected-inner: var(--ww-slate-950);
-  --ww-hm-suggest: var(--ww-coral-300);
-  --ww-hm-suggest-tint: #3b2119;
-  --ww-hm-outside-fg: var(--ww-slate-600);
+  --ww-hm-selected-outer: var(--ww-ink-50);
+  --ww-hm-selected-inner: var(--ww-night-950);
+  --ww-hm-suggest: var(--ww-mint-400);
+  --ww-hm-suggest-tint: var(--ww-night-760);
+  --ww-hm-outside-fg: var(--ww-night-500);
 
-  --ww-cal-preview-border: var(--ww-slate-50);
-  --ww-cal-anchor: var(--ww-slate-50);
-  --ww-cal-anchor-ring: var(--ww-slate-950);
+  --ww-cal-preview-border: var(--ww-ink-50);
+  --ww-cal-anchor: var(--ww-ink-50);
+  --ww-cal-anchor-ring: var(--ww-night-950);
 
-  --ww-phase-collect-bg: var(--ww-deep-900);
+  --ww-phase-collect-dot: var(--ww-mint-400);
+  --ww-phase-collect-bg: var(--ww-mint-900);
   --ww-phase-collect-fg: var(--ww-mint-400);
-  --ww-phase-vote-bg: var(--ww-amber-d-900);
-  --ww-phase-vote-fg: var(--ww-amber-300);
-  --ww-phase-fixed-bg: var(--ww-mint-400);
-  --ww-phase-fixed-fg: var(--ww-teal-950);
-  --ww-phase-past-bg: var(--ww-slate-850);
-  --ww-phase-past-fg: var(--ww-slate-300);
-  --ww-todo-bg: #3b2119;
+  --ww-phase-vote-dot: var(--ww-lavender-300);
+  --ww-phase-vote-bg: var(--ww-night-760);
+  --ww-phase-vote-fg: var(--ww-lavender-400);
+  --ww-phase-fixed-dot: var(--ww-sun-400);
+  --ww-phase-fixed-bg: var(--ww-sun-400);
+  --ww-phase-fixed-fg: var(--ww-night-950);
+  --ww-phase-past-dot: var(--ww-ink-300);
+  --ww-phase-past-bg: var(--ww-night-750);
+  --ww-phase-past-fg: var(--ww-ink-100);
+  --ww-todo-bg: var(--ww-coral-900);
   --ww-todo-fg: var(--ww-coral-300);
-  --ww-todo-bar: var(--ww-coral-300);
+  --ww-todo-bar: var(--ww-coral-400);
 
-  --ww-illu-plate: var(--ww-slate-925);
-  --ww-illu-paper: var(--ww-slate-875);
-  --ww-illu-ink: var(--ww-slate-50);
-  --ww-illu-subtle: var(--ww-slate-600);
-  --ww-illu-teal: var(--ww-mint-400);
-  --ww-illu-teal-dark: var(--ww-mint-400);
-  --ww-illu-sea: var(--ww-deep-700);
-  --ww-illu-teal-light: var(--ww-deep-800);
-  --ww-illu-deep: var(--ww-mint-100);
-  --ww-illu-sun: var(--ww-amber-300);
-  --ww-illu-coral: var(--ww-coral-300);
-  --ww-illu-coral-strong: var(--ww-coral-300);
-  --ww-illu-coral-dark: var(--ww-coral-700);
+  --ww-illu-plate: var(--ww-night-820);
+  --ww-illu-paper: var(--ww-night-750);
+  --ww-illu-ink: var(--ww-ink-50);
+  --ww-illu-subtle: var(--ww-night-700);
+  --ww-illu-brand: var(--ww-indigo-500);
+  --ww-illu-violet: var(--ww-lavender-300);
+  --ww-illu-lavender: var(--ww-lavender-300);
+  --ww-illu-lavender-light: var(--ww-night-700);
+  --ww-illu-mint: var(--ww-mint-400);
+  --ww-illu-mint-deep: var(--ww-mint-500);
+  --ww-illu-sun: var(--ww-sun-400);
+  --ww-illu-coral: var(--ww-coral-400);
+  --ww-illu-on-brand: var(--ww-mist-0);
 }
 
 /* --------------------------------------------------------------------------
-   4. MUSTER (Patterns)
-   Absichtlich auf :root UND [data-theme] deklariert, damit var()-Bezüge
-   im jeweiligen Theme neu aufgelöst werden.
-   Verwendung (Hintergrundfarbe immer als letzte Ebene):
+   5. MUSTER, VERLÄUFE, FOKUS-RINGE
+   Absichtlich auf :root UND [data-theme] deklariert, damit var()-Bezüge im
+   jeweiligen Theme neu aufgelöst werden.
+   Verwendung (Grundfarbe immer als letzte Ebene):
      background: var(--ww-pattern-hm-none), var(--ww-hm-none-bg);
      background: var(--ww-pattern-avail-maybe), var(--ww-avail-maybe-bg);
      background: var(--ww-pattern-avail-no), var(--ww-avail-no-bg);
+     background: var(--ww-cockpit-image), var(--ww-cockpit-bg);
    SVG-Äquivalente: docs/design/assets/heatmap/heatmap-patterns.svg
    -------------------------------------------------------------------------- */
 :root,
 [data-theme] {
-  /* „niemand kann" – feine Diagonalschraffur 135°, 1.5px / 6px */
+  /* „niemand“ – feine Diagonalschraffur 45°, 1,5 px / 6 px */
   --ww-pattern-hm-none: repeating-linear-gradient(
-    135deg,
+    45deg,
     var(--ww-hm-none-line) 0 1.5px,
     transparent 1.5px 6px
   );
-  /* „ginge zur Not" – breite Streifen 135°, 4px / 9px (= „halb") */
+  /* „Zur Not“ – Sonnenstreifen 135°, 6 px / 12 px (= „halb“) */
   --ww-pattern-avail-maybe: repeating-linear-gradient(
     135deg,
-    var(--ww-avail-maybe-stripe) 0 4px,
-    transparent 4px 9px
+    var(--ww-avail-maybe-stripe) 0 6px,
+    transparent 6px 12px
   );
-  /* „geht nicht" – Kreuzschraffur 45° + 135°, 1.5px / 7px */
+  /* „Geht nicht“ – Kreuzschraffur 45° + 135°, 1,5 px / 7 px */
   --ww-pattern-avail-no: repeating-linear-gradient(
       45deg,
       var(--ww-avail-no-line) 0 1.5px,
@@ -705,19 +996,41 @@
       var(--ww-avail-no-line) 0 1.5px,
       transparent 1.5px 7px
     );
-  /* Wochenend-Spur (optional als Hintergrund einer Spalten-Ebene) */
+  /* Wochenend-Spur */
   --ww-pattern-weekend-lane: linear-gradient(
     var(--ww-hm-weekend-lane),
     var(--ww-hm-weekend-lane)
   );
 
-  /* Fokus-Ring (für box-shadow, falls outline nicht nutzbar ist) */
+  /* Cockpit-Lichtflecken: Minze oben rechts, Lavendel oben links */
+  --ww-cockpit-image: radial-gradient(
+      70% 60% at 100% 0,
+      var(--ww-cockpit-glow-mint) 0,
+      var(--ww-cockpit-glow-mint-0) 100%
+    ),
+    radial-gradient(
+      70% 70% at 0 0,
+      var(--ww-cockpit-glow-lavender) 0,
+      var(--ww-cockpit-glow-lavender-0) 100%
+    );
+  /* Reisekarte (Einladung W03) – Text nur oben links, weiß ≥ 8,6 */
+  --ww-gradient-trip-card: linear-gradient(
+    135deg,
+    var(--ww-indigo-800) 0%,
+    var(--ww-indigo-600) 60%,
+    var(--ww-indigo-500) 100%
+  );
+  /* Vorfreude-Ring (als SVG-Verlauf nachbauen: stop-color = Tokens) */
+  --ww-gradient-ring: linear-gradient(135deg, var(--ww-ring-start), var(--ww-ring-end));
+
+  /* Fokus-Ring (box-shadow-Variante; Standard ist outline, siehe globals.css) */
   --ww-focus-ring: 0 0 0 var(--ww-focus-offset) var(--ww-color-focus-gap),
     0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus);
-  /* Fokus in dicht gepackten Rastern (Kalender): Ring mit Hof auf BEIDEN Seiten,
-     damit der Ring nie direkt an eine Nachbarzelle grenzt (Kontrast immer gegen
-     den Hof: 5.9 Light / 8.6 Dark). Zelle bei Fokus mit position:relative; z-index:1.
-     Für forced-colors zusätzlich: outline: 2px solid transparent; outline-offset: 2px. */
+  /* Fokus auf Indigo-Flächen (Cockpit, Reisekarte, gewählte Stimme): weißer Ring */
+  --ww-focus-ring-on-brand: 0 0 0 var(--ww-focus-offset) var(--ww-cockpit-bg),
+    0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus-on-brand);
+  /* Fokus in dichten Rastern (Kalender, Segmente): Hof auf beiden Seiten.
+     Zelle bei Fokus position: relative; z-index: 1. */
   --ww-focus-ring-isolated: 0 0 0 2px var(--ww-color-focus-gap),
     0 0 0 5px var(--ww-color-focus),
     0 0 0 7px var(--ww-color-focus-gap);
@@ -727,27 +1040,125 @@
 }
 
 /* --------------------------------------------------------------------------
-   5. MOTION – reduzierte Bewegung
-   Dauer-Tokens fallen auf ~0; Komponenten sollen zusätzlich auf
-   transform-Animationen verzichten und nur Deckkraft wechseln.
+   6. MOTION
+   Werte: docs/motion/motion-system.md §3 (Motion Designer), übernommen in v1.0
+   (Antworten M-D1–M-D9: design-system.md §8 und abstimmung-ux.md §6).
+   Regler Richtung B: Tempo 1,0 · Federn soft ζ 0,75 / bouncy ζ 0,5 (unverändert).
    -------------------------------------------------------------------------- */
+:root {
+  /* Dauern */
+  --ww-duration-instant: 80ms;    /* Eindrücken, Ziffer im Code-Feld */
+  --ww-duration-fast: 140ms;      /* Hover, Chips, kleiner Pop, Segmentwechsel */
+  --ww-duration-base: 220ms;      /* Toast, Inhalte, Indikatoren, Balken */
+  --ww-duration-slow: 320ms;      /* Sheet, Seitenwechsel, FLIP */
+  --ww-duration-moderate: 480ms;  /* Aufbau: Band zeichnen, Ring-Schritt, Siegel klein */
+  --ww-duration-celebrate: 700ms; /* Siegel groß, Ergebnis-Karte */
+  --ww-duration-confetti: 1800ms; /* je Teilchen ± 400 ms, Gesamtende ≤ 2600 ms */
+  --ww-duration-fade: 140ms;      /* reines Überblenden – BLEIBT bei reduzierter Bewegung */
+
+  /* Easing */
+  --ww-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ww-ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ww-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --ww-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ww-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Fallback für spring-bouncy */
+  --ww-ease-spring-soft: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --ww-ease-spring-bouncy: var(--ww-ease-spring);
+
+  /* Distanzen & Skalierungen */
+  --ww-motion-distance-sm: 8px;
+  --ww-motion-distance: 16px;
+  --ww-motion-distance-lg: 24px;
+  --ww-motion-scale-press: 0.97;  /* Tasten: 0,98 laut Richtung B ist im Rahmen – 0,97 gilt */
+  --ww-motion-scale-cell: 0.94;
+  --ww-motion-scale-enter: 0.96;
+  --ww-motion-scale-pop: 0.6;
+
+  /* Staffelung */
+  --ww-stagger-cell: 12ms;
+  --ww-stagger-item: 40ms;
+  --ww-stagger-card: 60ms;
+  --ww-stagger-max: 400ms;
+}
+
+/* Federn als linear() – nur, wo unterstützt (ungültige Werte fielen sonst nicht zurück) */
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    /* ζ = 0,75 – max. +2,8 % bei 70 % der Dauer; 220–480 ms */
+    --ww-ease-spring-soft: linear(0, 0.052 5%, 0.174 10%, 0.325 15%, 0.478 20%,
+      0.619 25%, 0.738 30%, 0.833 35%, 0.906 40%, 0.991 50%, 1.024 60%,
+      1.028 70%, 1.021 80%, 1.013 90%, 1);
+    /* ζ = 0,5 – max. +16 % bei 35 % der Dauer; 480–700 ms; NUR Siegel */
+    --ww-ease-spring-bouncy: linear(0, 0.116 5%, 0.372 10%, 0.657 15%, 0.898 20%,
+      1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%,
+      0.987 60%, 0.974 70%, 0.986 80%, 0.999 90%, 1);
+  }
+}
+
+/* Reduzierte Bewegung (System). Überblenden (duration-fade) bleibt erhalten (M-D2). */
 @media (prefers-reduced-motion: reduce) {
   :root {
     --ww-duration-instant: 0.01ms;
     --ww-duration-fast: 0.01ms;
     --ww-duration-base: 0.01ms;
     --ww-duration-slow: 0.01ms;
+    --ww-duration-moderate: 0.01ms;
     --ww-duration-celebrate: 0.01ms;
+    --ww-duration-confetti: 0ms;   /* Konfetti wird gar nicht erzeugt (JS prüft) */
+    --ww-duration-fade: 140ms;
     --ww-ease-spring: linear;
+    --ww-ease-spring-soft: linear;
+    --ww-ease-spring-bouncy: linear;
+    --ww-motion-distance-sm: 0px;
+    --ww-motion-distance: 0px;
+    --ww-motion-distance-lg: 0px;
+    --ww-motion-scale-press: 1;
+    --ww-motion-scale-cell: 1;
+    --ww-motion-scale-enter: 1;
+    --ww-motion-scale-pop: 1;
+    --ww-stagger-cell: 0ms;
+    --ww-stagger-item: 0ms;
+    --ww-stagger-card: 0ms;
   }
 }
-:root {
-  --ww-motion-scale-press: 0.97;     /* Button-Eindrücken */
-  --ww-motion-distance: 16px;        /* Einschiebe-Weg für Toasts/Sheets */
+
+/* Reduzierte Bewegung (Konto-Schalter „Bewegung reduzieren“, PRD Q17) – identisch */
+:root[data-motion="reduce"] {
+  --ww-duration-instant: 0.01ms;
+  --ww-duration-fast: 0.01ms;
+  --ww-duration-base: 0.01ms;
+  --ww-duration-slow: 0.01ms;
+  --ww-duration-moderate: 0.01ms;
+  --ww-duration-celebrate: 0.01ms;
+  --ww-duration-confetti: 0ms;
+  --ww-duration-fade: 140ms;
+  --ww-ease-spring: linear;
+  --ww-ease-spring-soft: linear;
+  --ww-ease-spring-bouncy: linear;
+  --ww-motion-distance-sm: 0px;
+  --ww-motion-distance: 0px;
+  --ww-motion-distance-lg: 0px;
+  --ww-motion-scale-press: 1;
+  --ww-motion-scale-cell: 1;
+  --ww-motion-scale-enter: 1;
+  --ww-motion-scale-pop: 1;
+  --ww-stagger-cell: 0ms;
+  --ww-stagger-item: 0ms;
+  --ww-stagger-card: 0ms;
 }
-@media (prefers-reduced-motion: reduce) {
+
+/* --------------------------------------------------------------------------
+   7. FORCED COLORS
+   Karten, Kacheln, Tasten und Kennzahl-Kacheln haben keine Kontur. Sie tragen
+   deshalb IMMER border: var(--ww-border-forced). Normal unsichtbar (transparent),
+   im Kontrastmodus färbt der Browser transparente Rahmen in CanvasText bzw.
+   ButtonText um – so bleiben Flächen erkennbar.
+   -------------------------------------------------------------------------- */
+:root {
+  --ww-border-forced: 1px solid transparent;
+}
+@media (forced-colors: active) {
   :root {
-    --ww-motion-scale-press: 1;      /* kein Eindrücken */
-    --ww-motion-distance: 0px;       /* kein Einschieben, nur Überblenden */
+    --ww-border-forced: 1px solid CanvasText;
   }
 }

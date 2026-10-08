@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="wwlm-t">
+  <title id="wwlm-t">Wir wollen weg</title>
+  <!-- Bildmarke „Sonnenkalender“ B0 für helle Flächen: Indigo-Blatt, Sonne mit Schein, Minze-Wellen, Lavendel-Ringe, ohne Kontur.
+       Sprachneutral (DE und EN). Den title beim Einbinden an die UI-Sprache anpassen oder aria-hidden setzen, wenn Text daneben steht.
+       Ladezustand: Ebene data-anim sun steigt von translateY(14px) auf 0, Ebene waves schwingt einmal seitlich (900 ms, einmal). -->
+  <defs>
+    <clipPath id="wwlm-sheet"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
+  </defs>
+  <rect x="6" y="11" width="52" height="47" rx="14" fill="#2B2266"/>
+  <g clip-path="url(#wwlm-sheet)">
+    <g data-anim="sun" id="wwlm-sun">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".25"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+    </g>
+    <g data-anim="waves" id="wwlm-waves">
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
+    </g>
+  </g>
+  <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
+  <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
+</svg>

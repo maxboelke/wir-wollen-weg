@@ -1,6 +1,6 @@
 # Sitemap & Informationsarchitektur – Wir wollen weg / When do we go? (MVP)
 
-Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-08 (Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ---
 
@@ -107,9 +107,11 @@ Systemseiten
 | Rechts | „Anmelden“ | Avatar (Initialen) → Menü: Meine Reisen · Konto · Sprache · Hilfe · Abmelden |
 | Footer | Hilfe · Datenschutz · Impressum · Sprach-Segment „Deutsch \| English“ | identisch (Footer auf Reiseseiten auf Mobil nur am Seitenende, nicht fixiert) |
 
-**In der Reise** (unter dem globalen Header, sticky):
-- Zeile 1: „← Meine Reisen“ (Icon-Button mit Text auf Desktop) · Reisename (1 Zeile, gekürzt) · „⋯“ (Reisemenü)
-- Zeile 2: Tabs `Übersicht | Meine Tage | Gruppe | Abstimmen` (auf Mobil horizontal scrollbar, falls Texte nicht passen; aktiver Tab immer sichtbar).
+**In der Reise – Cockpit-Kopf (Richtung B, Q18):** Reise-Ansichten haben **keinen globalen Header**; der Indigo-Kopf ersetzt ihn (ux-spec §3, §4.10). Sticky ist nur der kompakte Teil:
+- Zeile 1: „← Meine Reisen“ (runde Icon-Taste; Desktop mit Text) · Reisename (1 Zeile, gekürzt) + Phasenzeile («Tage sammeln · 5/7 fertig») · „⋯“ (Reisemenü)
+- Zeile 2: Tabs `Übersicht | Meine Tage | Gruppe | Abstimmen` als Pillen (auf Mobil < 375 px horizontal scrollbar mit Verlaufskante; aktiver Tab immer sichtbar).
+- Darunter, nicht sticky: höchstens eine Kennzahl je Tab (Übersicht: Phase-Kennzahl · Gruppe: Kennzahl-Box · Meine Tage, Abstimmen: keine).
+- Konto, Sprache, Abmelden erreicht man über „Meine Reisen“ (Avatar-Menü); „Hilfe“ steht zusätzlich im Reisemenü und im Footer.
 
 **Warum Tabs oben statt Bottom-Navigation:** Auf „Meine Tage“ und „Abstimmen“ braucht es eine fixierte Aktionsleiste unten (Werkzeuge, „Fertig“). Zwei fixierte Leisten unten auf 360 px kosten zu viel Höhe und kollidieren mit der unteren Werkzeugleiste der In-App-Browser (WhatsApp/Instagram auf iOS).
 
@@ -124,6 +126,7 @@ Systemseiten
 | Festlegung aufheben (Phase 3) | ✔ | – |
 | Reise verlassen | ✔ (erst nach Rollenübergabe) | ✔ |
 | Reise löschen | ✔ | – |
+| Hilfe (→ /de/hilfe · /en/help, letzter Eintrag) | ✔ | ✔ |
 
 ## 6. Zuordnung Features → Seiten
 
@@ -149,10 +152,11 @@ Systemseiten
 | F-043 Konto & Löschen | /account, /account/delete | [13](wireframes/13-konto.md) |
 | F-044 Meine Reisen | /trips | [04](wireframes/04-meine-reisen.md) |
 | F-046 Sprachen | Header, Footer, Konto, Teilen-Sheet | [13](wireframes/13-konto.md), [ux-spec §9](ux-spec.md) |
+| F-052 Bewegung & Haptik | /account (Darstellung), Feier in Übersicht Phase 3, Meine Tage (Ziehen) | [13](wireframes/13-konto.md), [11](wireframes/11-ergebnis.md), [ux-spec §7.5](ux-spec.md) |
 | Hilfe/FAQ (F-051) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
 
 **Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt; **im MVP enthalten** (*bestätigt (Auftraggeber 2026-10-08)*; PM bitte als kleines Feature nachtragen). Inhalt: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
 
 **Rollenbezeichnung:** In der Oberfläche heißt die Rolle „Orga“ / „Organizer“ (Kronen-Icon immer mit Text) – *bestätigt (Auftraggeber 2026-10-08)*. „Organisator“ bleibt nur interner/Dokumentbegriff.
 
-**Darstellung (Dark Mode):** kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*bestätigt (Auftraggeber 2026-10-08)*).
+**Darstellung:** Dark Mode – kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*bestätigt (Auftraggeber 2026-10-08)*). **Bewegung** – Schalter „Bewegung reduzieren“ in /account, Karte „Darstellung“ (Q17 a, F-052, W13); keine eigene Route.

@@ -1,21 +1,32 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="t d">
-  <title id="t">Wir wollen weg – App-Icon</title>
-  <desc id="d">App-Icon auf Sandgrund mit Bildmarke A. Vollflächig (maskable): alle wichtigen Inhalte liegen in der sicheren Zone (Kreis, Radius 40 % = 205 px).</desc>
-  <rect width="512" height="512" fill="#FBF8F3"/>
-  <!-- Bildmarke A (64er Raster) auf 280 px skaliert, zentriert -->
-  <g transform="translate(116 116) scale(4.375)">
-    <defs>
-      <clipPath id="ww-appicon-body">
-        <rect x="6" y="10" width="52" height="48" rx="12"/>
-      </clipPath>
-    </defs>
-    <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
-    <g clip-path="url(#ww-appicon-body)">
-      <circle cx="32" cy="42" r="13" fill="#F4B942"/>
-      <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
-      <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-labelledby="wwapp-t wwapp-d">
+  <title id="wwapp-t">Wir wollen weg</title>
+  <desc id="wwapp-d">App-Icon (B0): Indigo-Fläche mit Lichtflecken wie im Cockpit, darauf die Bildmarke für Indigo-Flächen. Vollflächig und maskable: alle Inhalte liegen in der sicheren Zone (Kreis, Radius 205 px um die Mitte).</desc>
+  <!-- Export: PNG 192 und 512 (purpose "any maskable"), apple-touch-icon 180.
+       Manifest: theme_color #2B2266, background_color #F4F2FB. -->
+  <defs>
+    <radialGradient id="wwapp-glow-mint" cx="1" cy="0" r=".75">
+      <stop offset="0" stop-color="#52E5B8" stop-opacity=".24"/>
+      <stop offset="1" stop-color="#52E5B8" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="wwapp-glow-lav" cx="0" cy="0" r=".8">
+      <stop offset="0" stop-color="#A79AF2" stop-opacity=".32"/>
+      <stop offset="1" stop-color="#A79AF2" stop-opacity="0"/>
+    </radialGradient>
+    <clipPath id="wwapp-sheet"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
+  </defs>
+  <rect width="512" height="512" fill="#2B2266"/>
+  <rect width="512" height="512" fill="url(#wwapp-glow-lav)"/>
+  <rect width="512" height="512" fill="url(#wwapp-glow-mint)"/>
+  <!-- Bildmarke auf Indigo (64er Raster) auf 260 px skaliert, Ecken 185 px von der Mitte -->
+  <g transform="translate(96 98.5) scale(5)">
+    <rect x="6" y="11" width="52" height="47" rx="14" fill="#5B48C9"/>
+    <g clip-path="url(#wwapp-sheet)">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".3"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
     </g>
-    <rect x="18" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
-    <rect x="40" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+    <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
+    <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
   </g>
 </svg>
