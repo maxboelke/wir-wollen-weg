@@ -39,6 +39,8 @@ Features: F-002, F-003, F-007, F-040, F-041, F-046 · Flow: [A](../user-flows.md
 ```
 (Icons in der Skizze sind Platzhalter; Designer liefert Icon-Set.)
 
+**Richtung B (Q18):** Die Vorschau wird zur „Reisekarte“ (Querformat, Indigo, Abendsonne). Datenschutz (F-003, ux-spec §11): Die Personen-Reihe auf der Karte zeigt **neutrale Avatar-Punkte ohne Initialen** + „+1“ für dich und den Text «6 sind schon dabei»; nur die Orga erscheint mit Vorname («Lena lädt dich ein»). Zeitraum/Dauer als Kachel-Zeilen unter der Karte, `[Mitmachen]` darunter (abstimmung-design D-25).
+
 ## Z2 – E-Mail (Formular klappt unter der Karte auf, Karte kompakt)
 
 ```
@@ -70,7 +72,7 @@ Features: F-002, F-003, F-007, F-040, F-041, F-046 · Flow: [A](../user-flows.md
 ```
 
 ## Z3 – Code
-Komponente aus [W02 Schritt 2](02-anmelden.md#schritt-2--code-mobil) unter der kompakten Kontext-Karte. Zusätzlich:
+Komponente aus [W02 Schritt 2](02-anmelden.md#schritt-2--code-mobil) unter der kompakten Kontext-Karte, inkl. optimistischem Wechsel (M-U5). Zusätzlich:
 - Wiederhergestellt aus `pendingAuth`: Infozeile «Willkommen zurück – gib einfach den Code aus der Mail ein.»
 - «Du hast auf den Link in der Mail getippt? Dann geht es im anderen Browser weiter. Hier kannst du stattdessen den Code eingeben.»
 

@@ -6,6 +6,51 @@ Beispiel: 5 von 7 haben abgegeben (Lena, Jonas, Tim, Anna, Paul; offen: Kemal, S
 
 **Begriffe (verbindlich, ux-spec §10.2):** Zahl in der Zelle = Anzahl „Geht“ / abgegeben · ✓ = „Alle: Geht“ (x = n) · ◐ = mind. eine Person „Zur Not“ · Vorschlagsgruppe „Alle dabei“ = niemand hat „Geht nicht“ (F-009), „Fast alle dabei“ = 1 bis k fehlen (CEO-Entscheidungen U-4, U-14).
 
+## Richtung B „Reise-Cockpit“ (Q18) – maßgeblich ab Look & Feel 2.0
+
+Entscheidungen: [abstimmung-design §8.1](../abstimmung-design.md) (B-3 Kennzahl-Box, B-6 Vorschlag-Leiste), Regeln [ux-spec §4.10, §4.11](../ux-spec.md). Die Skizzen weiter unten gelten für Inhalte (Karten, Zelle, Tagesdetail, Leerzustände); **Statusband entfällt** (→ Kennzahl-Box). Die HTML-Skizze bleibt Referenz für Zelle/Grid/ARIA.
+
+### Kopf mit Kennzahl-Box (beide Ansichten)
+```
+┌────────────────────────────────────┐
+│▓(←)  Lissabon 2027             (⋯)▓│  sticky (kompakter Kopf ≈ 104 px)
+│▓     ● Tage sammeln · 5/7 fertig  ▓│
+│▓(Übersicht)(Meine Tage)(Gruppe)(Ab│  sticky
+│▓ ┌──────────────────────────────┐ ▓│  ── scrollt mit, kein Einklappen ──
+│▓ │ (◔) 5 von 7 haben abgegeben  │ ▓│  Ring aria-hidden, Text trägt die Zahl
+│▓ │     Noch offen: Kemal, Sara –│ ▓│
+│▓ │     das Ergebnis kann sich   │ ▓│
+│▓ │     noch ändern. [Erinnern]  │ ▓│  Orga, Minze-Taste ≥ 44 px
+│▓ └──────────────────────────────┘ ▓│  alle abgegeben: „Alle haben abgegeben.“ + Orga [Abstimmung starten]
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ [ Vorschläge |▐Kalender▌ ]         │  Segment ≥ 44 px
+│ (Dauer: 5 Nächte ▾)(Darf fehlen: 1▾)│  Filterzeile bleibt (fehlt im B-Entwurf, D-26)
+│ (Personen ausblenden ▾)            │
+```
+
+### Ansicht Kalender mit Vorschlag-Leiste (< 960 px)
+```
+│ ▸ Legende                          │  <details>, Zustand nach U-6
+│ Mai 2027                           │
+│ … Heatmap (Zell-Anatomie unten) …  │
+│ 4/5  5/5  5/5  5/5  5/5  4/5       │
+│ ▐▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▌      │  Band = gewählter Vorschlag (bleibt, solange gewählt)
+│ …                                  │
+├────────────────────────────────────┤  fixiert · kein Griff · ≤ 120 px + Safe Area
+│ [‹] 1 · ✓ Alle dabei · 1 von 5 [›] │  ‹ › 44 px, an den Enden aria-disabled (kein Umlauf)
+│     Mi., 5. Mai – Mo., 10. Mai     │  Mitte = Button → Liste, Fokus auf diese Karte
+│     bis zu 5 Nächte · ca. 3 Url.-T.│
+│     (◐ 2× zur Not)(Christi Hi… +1) │  max. 1 Chip-Zeile, Überlauf „+1“
+└────────────────────────────────────┘
+```
+- **Start:** Kalender direkt geöffnet → Vorschlag 1 gewählt, Band sichtbar, kein Umriss/Label, kein Scroll-Sprung. Über „Im Kalender zeigen“ → dieser Vorschlag, Scroll + Umriss/Label 4 s (dann weg, Band bleibt – M-U7).
+- **Blättern:** Band wechselt, Scroll zum Anreisetag (oberes Drittel), Ansage «Vorschlag 2 von 5: Sa., 12. Juni – Sa., 19. Juni, Alle dabei». Keine Aufbau-Welle der Heatmap (M-U8).
+- **Orga:** keine Auswahl in der Leiste; „Zur Abstimmung“ nur in der Listenansicht (dort die Auswahlleiste „2 ausgewählt · Abstimmung erstellen“).
+- **Leer:** keine Treffer → «Gerade kein passender Zeitraum. [Tipps ansehen]»; niemand abgegeben → keine Leiste.
+- **Tagesdetail** öffnet als Sheet über der Leiste. Snackbar liegt über der Leiste (`--ww-sticky-bar-h`).
+- **≥ 960 px:** keine Leiste – Vorschlagsspalte rechts (wie Desktop unten), Kennzahl-Box im Kopf über beiden Spalten.
+- **Zelle (B):** Kalender-Karte unter 400 px mit ≤ 8 px Gesamtrand je Seite → Zelle ≥ 45 px breit bei 360 px (D-21); Höhe 46 px + Fuge 9 px zulässig, wenn die Anatomie unten ohne Überlappung passt.
+
 ## Mobil – Ansicht „Vorschläge“ (Standard)
 
 ```

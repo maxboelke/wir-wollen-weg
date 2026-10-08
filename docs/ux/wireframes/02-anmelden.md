@@ -52,6 +52,8 @@ Fehler: «E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code 
 
 ## Schritt 2 – Code (mobil)
 
+**Optimistischer Wechsel (M-U5, user-flows A.1 Schritt 3):** Nach `[Code senden]` mit gültigem E-Mail-Format erscheint dieser Schritt **sofort**, Fokus synchron ins Code-Feld (Tastatur öffnet sich auf iOS). Bis zur Server-Bestätigung steht unter der Überschrift «Wir schicken dir gerade einen Code an kemal@…» mit Statuszeile «Code wird gesendet …» (`role="status"`), danach «Wir haben dir einen 6-stelligen Code an kemal@… geschickt.»; der Countdown „Neuen Code senden“ startet erst dann. Fehler (Rate-Limit, Netz, Server) → zurück zu Schritt 1 (`replaceState`), E-Mail bleibt, Meldung am Feld, Fokus ins Feld.
+
 ```
 ┌────────────────────────────────────┐
 │ ← Zurück                ⊕ English  │  Zurück = Schritt 1, E-Mail bleibt

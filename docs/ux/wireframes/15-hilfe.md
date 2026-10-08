@@ -26,6 +26,7 @@ Status: MVP-Seite (*bestätigt (Auftraggeber 2026-10-08)*; Feature F-051) · Zwe
 │  ▸ Wie stimme ich ab?              │
 │  ▸ Wer sieht meine Angaben?        │
 │  ▸ Wie lösche ich meine Daten?     │
+│  ▸ Mir ist das zu viel Bewegung.   │  #bewegung (F-052)
 │  ▸ Kein Zugriff mehr auf meine     │
 │    E-Mail?                         │
 │                                    │
@@ -48,6 +49,7 @@ Status: MVP-Seite (*bestätigt (Auftraggeber 2026-10-08)*; Feature F-051) · Zwe
 | Wer sieht meine Angaben? | Nur Mitglieder der Reise; keine Gründe, nur freiwilliger Kommentar | F-008 |
 | Daten löschen | Reise verlassen (löscht Tage/Stimmen dieser Reise) oder Konto löschen | Flows I.3, J |
 | Kein Zugriff auf E-Mail | Kontakt schreiben; alternativ neues Konto + erneut beitreten | Flow H.4 |
+| Zu viel Bewegung (`#bewegung`) | «Unter Konto → Darstellung kannst du „Bewegung reduzieren“ einschalten: weniger Animationen, kein Konfetti, keine Vibration. Ist auf deinem Gerät „Bewegung reduzieren“ an, gilt das automatisch.» EN Frage «There's too much motion.» | ux-spec §7.5, F-052 |
 
 ## Verhalten
 - Sprunganker je Frage (`/de/hilfe#code`), damit Hinweise aus der App direkt die passende Frage öffnen (Ziel-`<details>` per Anker aufgeklappt, Fokus auf `<summary>`).

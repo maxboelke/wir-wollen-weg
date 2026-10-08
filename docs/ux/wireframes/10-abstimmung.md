@@ -47,6 +47,29 @@ Sheet „Eigener Zeitraum“: Mini-Kalender mit Heatmap-Färbung, Bereichsmodus 
 
 ## B) Abstimmen (alle; mobil)
 
+### Richtung B (Q18) – Kopf mit Kennzahl-Kacheln (maßgeblich ab Look & Feel 2.0)
+Entscheidung [abstimmung-design §8.1 B-4](../abstimmung-design.md), Regeln [ux-spec §4.10](../ux-spec.md). Ersetzt die drei Kopfzeilen der Skizze unten; die Karten bleiben inhaltlich gleich.
+```
+│▓(←)  Lissabon 2027             (⋯)▓│  kompakter Kopf, Phasenzeile
+│▓     ● Abstimmung läuft · 4/7 fertig│  „4/7 fertig“ (sr: „4 von 7 fertig“)
+│▓(Übersicht)(Meine Tage)(Gruppe)(Ab│  keine Kennzahl im Kopf dieses Tabs
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ Abstimmung läuft                   │  h1
+│ ┌───────────────┐ ┌──────────────┐ │  Kennzahl-Kacheln (je ½ Breite, 2 Zeilen erlaubt;
+│ │[⏱] noch 3 Tage│ │[▥] 4 von 7  ›│ │  große Schrift: untereinander)
+│ │ bis Fr., 14.  │ │ haben abge-  │ │  rechte Kachel = Button → Sheet „Wer hat abgestimmt?“
+│ │ Mai           │ │ stimmt       │ │  ohne Frist: nur rechte Kachel, volle Breite
+│ └───────────────┘ └──────────────┘ │  Frist vorbei: „Frist abgelaufen“ + Warn-Icon (Amber)
+```
+Sheet «Wer hat abgestimmt?»: «Abgestimmt (4)» Lena, Jonas, Tim, Anna · «Noch offen (3)» Kemal, Sara, Paul (gestrichelter Avatar-Ring) · nur Status, **keine** Stimmen · Orga: `[Erinnern]` (→ Flow K). Die Avatar-Reihe im Kopf entfällt.
+
+- Karten: „Platz 1“-Chip in der Kopfzeile der Karte (bricht das Datum um, nicht sich selbst); Segmente 60 px mit Icon über Label (≥ U-8).
+- Geister-Stimme: sichtbar „Nein?“, zugänglicher Name „Nein“ + Beschreibung „Vorschlag aus deinen Tagen“ (D-34).
+- **Sortierung (M-U3):** Nach der letzten offenen Stimme sortieren sich die Karten **nicht** sofort um; Rang-Reihenfolge erst beim nächsten Öffnen des Tabs.
+- Zahlen in Kacheln und Ergebniszeilen wechseln sofort (kein Hochzählen); Balken dürfen wachsen.
+
+### Struktur (Arbeitsstand Runde 2)
+
 ```
 ┌────────────────────────────────────┐
 │ ←  Lissabon 2027               ⋯   │
@@ -97,7 +120,7 @@ Sheet „Eigener Zeitraum“: Mini-Kalender mit Heatmap-Färbung, Bereichsmodus 
 └────────────────────────────────────┘
 ```
 
-Zustand „alle Optionen beantwortet“: Statuszeile «✓ Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Karten sortieren sich ab jetzt nach Rang (vorher Erstellungsreihenfolge).
+Zustand „alle Optionen beantwortet“: Statuszeile «✓ Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Karten bleiben in der aktuellen Reihenfolge; **beim nächsten Öffnen** des Tabs nach Rang (vorher Erstellungsreihenfolge) – M-U3.
 
 **Leerzustände Tab Abstimmen (Phase 1):**
 ```
