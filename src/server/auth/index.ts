@@ -109,21 +109,44 @@ let ipConfig: Parameters<typeof resolveClientIp>[1] | undefined;
  * outside development/CI instead of sharing one rate-limit bucket (R-005).
  */
 export async function handleAuthRequest(request: Request): Promise<Response> {
+  const headers = withTrustedClientIp(request.headers);
+  if (!headers.has(CLIENT_IP_HEADER)) {
+    console.warn(`auth: no client IP in header "${ipConfig?.header}" – check the proxy setup`);
+    return Response.json({ message: "Client address could not be determined." }, { status: 400 });
+  }
+  // Rebuild from parts: `new Request(request, …)` throws on Node 24 ("Cannot read private
+  // member #state"), because Next's incoming request is not an instance of the global class.
+  const init: RequestInit & { duplex?: "half" } = {
+    method: request.method,
+    headers,
+    signal: request.signal,
+  };
+  if (request.body) {
+    init.body = request.body;
+    init.duplex = "half"; // required by undici for stream bodies
+  }
+  return auth().handler(new Request(request.url, init));
+}
+
+/**
+ * Copy of `source` in which the internal client-IP header holds only the IP resolved from
+ * the trusted proxy header – a client-sent value is always dropped. Without a resolvable IP
+ * the header is absent. Use it for every `auth().api.*` call that creates sessions from a
+ * request (e.g. Server Actions), so Better Auth never stores a client-chosen address (R-010).
+ */
+export function withTrustedClientIp(source: Headers): Headers {
   const env = serverEnv();
   ipConfig ??= {
     header: env.AUTH_IP_HEADER,
     trustedProxies: parseTrustedProxies(env.AUTH_TRUSTED_PROXIES),
   };
   const ip =
-    resolveClientIp(request.headers, ipConfig) ??
+    resolveClientIp(source, ipConfig) ??
     (env.APP_ENV === "development" || env.APP_ENV === "ci" ? LOOPBACK : undefined);
-  if (!ip) {
-    console.warn(`auth: no client IP in header "${ipConfig.header}" – check the proxy setup`);
-    return Response.json({ message: "Client address could not be determined." }, { status: 400 });
-  }
-  const headers = new Headers(request.headers);
-  headers.set(CLIENT_IP_HEADER, ip);
-  return auth().handler(new Request(request, { headers }));
+  const headers = new Headers(source);
+  headers.delete(CLIENT_IP_HEADER);
+  if (ip) headers.set(CLIENT_IP_HEADER, ip);
+  return headers;
 }
 
 /** Lazily created Better Auth instance (env is read at request time, not at build time). */

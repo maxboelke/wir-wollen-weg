@@ -5,7 +5,7 @@ import { isAPIError } from "better-auth/api";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { inviteTokenFromPath, toSafeInternalPath } from "@/lib/safe-path";
-import { auth } from "@/server/auth";
+import { auth, withTrustedClientIp } from "@/server/auth";
 import { getSession } from "@/server/session";
 import { addMember, findTripByInviteToken } from "@/server/trips";
 
@@ -87,7 +87,8 @@ export async function redeemMagicLink(
   const next = toSafeInternalPath(typeof rawNext === "string" ? rawNext : undefined, "/trips");
   if (!token.success) return { error: "invalid" };
 
-  const requestHeaders = await headers();
+  // Session IP only from the trusted proxy header, never a client-sent one (R-010).
+  const requestHeaders = withTrustedClientIp(await headers());
   let user: { name: string };
   try {
     const previous = await auth().api.getSession({ headers: requestHeaders });
