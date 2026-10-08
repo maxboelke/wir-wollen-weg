@@ -1,16 +1,18 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: Entwurf v0.1
+Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: Entwurf v0.2 (Offline-Demo-Modus, Platzhalter-Regel §0a)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
-Bezug: [PRD §6, §8, §10](../product/PRD.md) · [features.md](../product/features.md) (F-013, F-040–F-046) · [deployment.md](deployment.md) · [tech-stack.md](tech-stack.md)
+Bezug: [PRD §6, §8, §10, §12](../product/PRD.md) · [features.md](../product/features.md) (F-013, F-040–F-046) · [deployment.md](deployment.md) · [tech-stack.md](tech-stack.md) · [**go-live.md – Go-Live-Gate**](go-live.md)
+
+> **Aktueller Stand (Auftraggeber 2026-10-08, Q14–Q16):** Betrieb nur als **Offline-Demo** ([deployment.md §0](deployment.md#0-aktueller-betriebsmodus-offline-demo-gültig-seit-2026-10-08)). Betreiber-/Impressumsangaben und Rechtstexte sind **Platzhalter (Privatperson)** – es gilt die Platzhalter-Regel §0a. Alle mit **M1/M2/P** markierten Punkte bleiben gültig und werden über das [Go-Live-Gate](go-live.md) abgearbeitet; der CEO erinnert den Auftraggeber vor Go-Live daran.
 
 Legende: ☐ offen · ◐ in Arbeit · ☑ erledigt · **M1** = vor Beta · **M2** = vor öffentlichem Launch · **P** = vor Bezahlfunktionen
 
 ---
 
-## 0. Grundentscheidung: Wer ist Betreiber? (blockiert §1, §2, §3)
+## 0. Grundentscheidung: Wer ist Betreiber? (zurückgestellt bis Go-Live – Auftraggeber 2026-10-08, Q14; Pflichtpunkt in [go-live.md](go-live.md))
 
 | ☐ | Punkt | Fällig |
 |---|---|---|
@@ -19,6 +21,22 @@ Legende: ☐ offen · ◐ in Arbeit · ☑ erledigt · **M1** = vor Beta · **M2
 | ☐ | Kontakt-E-Mail-Postfach + zweiter schneller Kontaktweg (Telefon oder Kontaktformular). | M1 |
 | ☐ | Datenschutzbeauftragter: in DE i. d. R. erst ab 20 Personen, die ständig mit Datenverarbeitung beschäftigt sind (§ 38 BDSG) → im MVP voraussichtlich **nicht** nötig; Entscheidung dokumentieren. | M1 |
 | ☐ | Gewerbeanmeldung/steuerliche Erfassung spätestens mit Gewinnerzielungsabsicht (Freemium) klären (Steuerberatung). | P |
+
+## 0a. Platzhalter-Regel für die Offline-Demo (gilt bis zum Go-Live-Gate)
+
+Begründung: Solange die App nur lokal (eigener Laptop, eigenes WLAN, ggf. kurzzeitiger Test-Tunnel mit Demo-Daten) läuft, gibt es kein öffentliches Angebot und keine Verarbeitung echter Nutzerdaten. Die Seiten werden trotzdem **gebaut**, damit Struktur, Links und Barrierefreiheit von Anfang an geprüft werden.
+
+| ☐ | Regel | Wer |
+|---|---|---|
+| ☐ | Seiten **Impressum**, **Datenschutz** (und ab M2 Nutzungsbedingungen, Lizenzen) existieren in DE und EN, sind von jeder Seite inkl. Einladungs- und Login-Flow erreichbar (Footer) – wie im Echtbetrieb | Developer |
+| ☐ | Inhalte sind **klar markierte Platzhalter**: jeder fehlende Wert steht als `[PLATZHALTER: …]` im Text (z. B. `[PLATZHALTER: Name Betreiber (Privatperson)]`, `[PLATZHALTER: ladungsfähige Anschrift]`, `[PLATZHALTER: Kontakt-E-Mail]`, `[PLATZHALTER: Hosting-Anbieter]`); oben auf jeder Rechtsseite ein Hinweis „Demo-Version – Platzhaltertext, keine gültigen Rechtsangaben“ | Developer |
+| ☐ | **Keine echten personenbezogenen Daten** des Auftraggebers (Name, Privatadresse, Telefon) in Platzhaltern, im Repo, in Seeds oder Screenshots | alle, Reviewer prüft |
+| ☐ | Gliederung der Datenschutz-Platzhalterseite folgt §2 (Abschnittsüberschriften schon vorhanden), damit später nur Inhalte ersetzt werden | Developer |
+| ☐ | Mail-Footer (Mailpit) verlinkt auf die Platzhalter-Impressumsseite | Developer |
+| ☐ | **Demo nicht öffentlich zugänglich machen:** kein dauerhaftes Hosting, keine öffentliche Domain, kein dauerhafter Tunnel/Port-Forwarding am Router; Tunnel nur kurzzeitig für Gerätetests mit Demo-Daten (deployment.md §0.5); Demo-Banner + `noindex` | Operations, alle |
+| ☐ | Testpersonen nutzen nur ausgedachte Daten (`…@demo.test`); echte Freundesgruppen erst nach Go-Live | alle |
+| ☐ | **Startschutz:** mit `APP_ENV=production` startet die App nicht, solange ein `[PLATZHALTER`-Marker in Rechtstexten/Konfiguration steht (deployment.md §0.6) | Developer, Reviewer |
+| ☐ | Vor Go-Live: alle Platzhalter ersetzt, Weg für Rechtstexte (Generator/Anwalt) entschieden → [go-live.md](go-live.md) Stufe 2a | Auftraggeber, CEO erinnert |
 
 ## 1. Impressum (§ 5 DDG)
 
@@ -60,7 +78,7 @@ Seit 14.05.2024 gilt das **Digitale-Dienste-Gesetz (DDG)** statt TMG – im Impr
 | ☐ | Kurzfassung („Datenschutz auf einen Blick“) auf Registrierungs- und Beitrittsseite verlinkt (F-013) | M1 |
 | ☐ | **v1-Ergänzungen vor Release:** Kalender-Import (nur frei/belegt, Rohdaten nur im Arbeitsspeicher, F-006/F-047), verschlüsselte Speicherung von Kalender-URLs/CalDAV-Passwörtern (F-019/F-048), Google/Microsoft/Apple als Login- bzw. Kalenderanbieter (F-045, F-020, F-021 – Drittland!), E-Mail-Benachrichtigungen mit Einwilligung (F-014) | v1 |
 
-Erstellung: Generator mit Aktualisierungsservice (z. B. Anbieter mit Abmahnschutz/Haftungsübernahme, ca. 10–30 €/Monat, Schätzung) **oder** einmalige anwaltliche Erstellung/Prüfung (Schätzung ca. 500–1 500 €). Entscheidung Auftraggeber.
+Erstellung (Entscheidung zurückgestellt bis Go-Live, Q16): Generator mit Aktualisierungsservice (z. B. Anbieter mit Abmahnschutz/Haftungsübernahme, ca. 10–30 €/Monat, Schätzung) **oder** einmalige anwaltliche Erstellung/Prüfung (Schätzung ca. 500–1 500 €). Entscheidung Auftraggeber.
 
 ## 3. Auftragsverarbeitung (Art. 28 DSGVO)
 
@@ -83,7 +101,7 @@ Seit 14.05.2024 heißt das TTDSG **TDDDG**. § 25 erfasst jedes Speichern/Ausles
 |---|---|---|
 | Session-Cookie (Better Auth) | Anmeldung | unbedingt erforderlich (§ 25 Abs. 2 Nr. 2) |
 | „Angemeldet bleiben“ (90 Tage) | vom Nutzer aktiv gewählt | erforderlich für den gewünschten Dienst |
-| `NEXT_LOCALE` (Sprache) | vom Nutzer gewählte Sprache | erforderlich (Nutzerwunsch) |
+| `lang` (Sprache, 12 Monate, nur bei expliziter Wahl) | vom Nutzer gewählte Sprache | erforderlich (Nutzerwunsch) |
 | Theme-Wahl hell/dunkel (`data-theme`, Designer-Tokens) – Cookie oder localStorage | vom Nutzer gewählte Darstellung | erforderlich (Nutzerwunsch); ohne Wahl folgt die App dem System, nichts wird gespeichert |
 | `pending_invite` (30 Min.) | Einladung über Login hinweg erhalten | erforderlich |
 | `sessionStorage` Formularentwurf (F-001) | Reisedaten vor Login nicht verlieren | erforderlich |

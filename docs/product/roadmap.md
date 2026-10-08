@@ -1,8 +1,10 @@
-# Roadmap – Wir wollen weg
+# Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 (v0.2, Entscheidungen Q1–Q6 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-08 (v0.3, Entscheidungen Q1–Q6 und Q11–Q16 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
 
-Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilenstein, der vom Reviewer freigegeben und von echten Gruppen getestet wird.
+Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilenstein, der vom Reviewer freigegeben wird; ab M1 testen echte Gruppen.
+
+**Änderungen v0.3:** **M0 erledigt** (2026-10-08). **Offline-Demo** als Arbeitsmodus bis zur Beta (Q15) mit neuem Meilenstein **M0.5 „Demo“**. **Go-Live-Gate G1** vor M1-Beta (Betreiber, Rechtstexte, Domain/Konten – Q14–Q16), Rechtstext-Endprüfung spätestens vor M2. F-051 Hilfe-Seite in Inkrement 6.
 
 **Änderungen v0.2:** Konto + DE/EN ins MVP (F-040–F-044, F-046), Feiertage Must (F-016); ICS-Import (F-006) und E-Mail-Benachrichtigungen (F-014) nach v1; **neuer Strang Apple-/iOS-Kalender** (F-047, F-048, F-049); Freemium-Vorbereitung in v1, Premium (F-050) später.
 
@@ -10,8 +12,8 @@ Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilens
 
 | Phase | Ergebnis | Kern-Features | Tarif |
 |---|---|---|---|
-| 0 – Konzept & Setup | Wireframes, Stack, Mailversand, i18n-Gerüst | – | – |
-| 1 – MVP | Gruppe kommt mit Konto vom Link zum festen Zeitraum, DE/EN, manuelle Verfügbarkeit | F-040–F-044, F-046, F-001–F-005, F-007–F-013, F-016 (+ F-015, F-017) | komplett kostenlos |
+| 0 – Konzept & Setup ✅ | Wireframes, Stack, Design, Ops-Konzept (M0 abgenommen 2026-10-08) | – | – |
+| 1 – MVP | Gruppe kommt mit Konto vom Link zum festen Zeitraum, DE/EN, manuelle Verfügbarkeit; **zuerst als lokale Offline-Demo (M0.5), nach Go-Live-Gate G1 als Beta (M1)** | F-040–F-044, F-046, F-001–F-005, F-007–F-013, F-016, F-051 (+ F-015, F-017) | komplett kostenlos |
 | 2 – v1 | Kalender-Import inkl. **Apple-/iOS-Kalender**, E-Mail-Benachrichtigungen, Social Login, Monetarisierung vorbereitet | F-006, **F-047, F-048**, F-019–F-021, F-014, F-045, F-022–F-024, Spike F-049 | kostenlos; Premium-Kandidaten markiert |
 | 3 – später | Die ganze Reise, Premium-Tarif | F-030–F-038, **F-049**, F-050 | Freemium aktiv |
 
@@ -32,18 +34,25 @@ Steuerung: Im MVP wird per Feedback-Frage (F-005) und aggregierter Gerätestatis
 
 ---
 
-## Phase 0 – Konzept & Setup
-**Ziel:** Entscheidungsgrundlage und Projektgerüst.
+## Phase 0 – Konzept & Setup ✅ erledigt
+**Ziel:** Entscheidungsgrundlage und Projektgerüst. **Status:** abgeschlossen am 2026-10-08 (Konzept-PR abgenommen, Q11–Q16 entschieden).
 - ~~Offene Fragen Q1–Q6 klären~~ – erledigt am 2026-10-08 (PRD §12). Neue offene Fragen Q7–Q10.
 - UI/UX: Flows „Einladungslink → Reise-Vorschau → Registrierung im selben Fenster (Code) → Beitritt → Verfügbarkeit → Heatmap/Vorschläge → Abstimmung → Ergebnis“ sowie „Meine Reisen“, Kontoeinstellungen, Konto löschen; Wireframes mobil zuerst, inkl. In-App-Browser-Fall; Sprachumschalter; Wochenstart Mo/So.
 - Designer: Design-System inkl. barrierefreier Heatmap-Farbskala (3 Zustände + Intensität), Feiertags-/Wochenend-Darstellung, Layouts robust für längere englische/deutsche Texte.
 - Operations: Tech-Stack inkl. Auth-Lösung (passwortlos + Passwort, später Social Login), i18n-Framework, **Transaktionsmail-Anbieter (EU, SPF/DKIM/DMARC)**, EU-Hosting, Feiertagsbibliothek, Datenschutzerklärung DE + EN, Impressum.
 - Optional: 5 Kurzinterviews mit Organisatoren zur Validierung von A1, A2 (Kontopflicht), A3, A7.
 
-**Meilenstein M0:** Wireframes, Auth-Konzept und Stack abgenommen.
+**Meilenstein M0 ✅ (2026-10-08):** Wireframes, Auth-Konzept und Stack abgenommen; Design und Logo A bestätigt; EN-Produktname „When do we go?“ festgelegt.
 
 ## Phase 1 – MVP „Termin finden & festlegen“
 **Ziel:** Eine Gruppe kommt mit schlankem Konto vom Link zum festen Reisezeitraum – auf Deutsch oder Englisch, komplett kostenlos.
+
+### Arbeitsmodus bis zur Beta: Offline-Demo (Q15)
+- Entwickelt und vorgeführt wird **lokal** – kein Hosting, keine Domain, keine Anbieter-Konten/Abos.
+- Transaktionsmails werden lokal abgefangen (Dev-Mailbox/Log); der Code-Flow ist damit vollständig vorführbar.
+- Betreiberangaben, Impressum, Datenschutzerklärung sind gekennzeichnete **Platzhalter** (Q14, Q16); nur Test-/Fantasiedaten, keine Personen außerhalb des Teams.
+- CI (Tests, Lint, Build) läuft weiter; Staging entfällt bis G1.
+- Was die Demo **nicht** beweisen kann: Beitrittsquote mit Kontopflicht (A2), echte In-App-Browser-Fälle auf fremden Geräten, Mail-Zustellbarkeit/Spam. Diese Punkte sind der Grund, die Demo-Phase kurz zu halten und G1 parallel vorzubereiten.
 
 | Reihenfolge | Inkrement | Feature-IDs |
 |---|---|---|
@@ -52,13 +61,26 @@ Steuerung: Im MVP wird per Feedback-Frage (F-005) und aggregierter Gerätestatis
 | 3 | Verfügbarkeit manuell + Status + Feiertage/Wochenenden | F-005, F-007, F-016 |
 | 4 | Heatmap + Kandidaten-Berechnung | F-008, F-009 |
 | 5 | Abstimmung & Festlegung | F-010, F-011, F-012 |
-| 6 | Datenschutz-Funktionen & Konto löschen | F-013, F-043 |
+| 6 | Datenschutz-Funktionen & Konto löschen, Hilfe-/FAQ-Seite | F-013, F-043, F-051 |
 | 7 | Should-Features nach Kapazität (Reihenfolge) | F-015, F-017 |
+
+Vorgelagert (Phase-1-Start): P1-0 Projekt-Scaffold und P1-0a Auth-Spike im In-App-Browser (→ Developer/Operations). Hinweis F-051: Die statische Seite ist klein; Footer-/Menü-Link und Anker „Code kommt nicht an“ sollten bereits mit Inkrement 1 (Code-Schritt) angelegt werden, Inhalte wachsen mit den Inkrementen.
 
 Begründung der Reihenfolge: i18n und Konto stehen am Anfang, weil Nachrüsten teuer ist (alle Texte, Mails, Rechte-Prüfungen hängen daran). Inkremente 1–5 ergeben einen durchgängig nutzbaren Fluss, der früh mit Testgruppen erprobt wird – insbesondere die **Beitrittsquote mit Kontopflicht** (Ziel ≥ 65 %, Rückfallplan Q10 bei < 50 %). F-013/F-043 müssen vor öffentlichem Launch fertig sein. Kein Kalender-Import im MVP (Q1); die manuelle Eingabe muss deshalb besonders schnell sein.
 
-**Meilenstein M1 (Beta):** Inkremente 1–5 mit 3–5 befreundeten Testgruppen (mind. eine gemischt DE/EN, mind. eine mit überwiegend iPhone-Nutzern); Auswertung Registrierungs-Funnel und Feedback-Frage zum Kalender-Import.
-**Meilenstein M2 (öffentlicher MVP-Launch):** alle Must-Features + F-015 freigegeben (DE und EN vom Reviewer geprüft); Datenschutzerklärung DE/EN und Impressum live; Transaktionsmail-Zustellung überwacht.
+**Meilenstein M0.5 (Demo, neu):** Inkremente 1–5 lokal durchgängig vorführbar (DE und EN, mobil 360 px, Dark Mode System), vom Reviewer freigegeben; Demo beim Auftraggeber mit Testdaten. Zweck: Abnahme des Kernflusses und Entscheidung „Go-Live vorbereiten“ ohne laufende Kosten. *Sinnvoll, weil* der Auftraggeber Hosting/Konten bewusst zurückstellt (Q15) – so gibt es trotzdem einen klaren Prüfpunkt vor dem Geldausgeben.
+
+**Go-Live-Gate G1 (vor M1, Pflicht – Ops-Checkliste):** Sobald echte Personen außerhalb des Teams echte Daten eingeben, gelten DSGVO und Impressumspflicht. Daher **vor der Beta mit echten Testgruppen**:
+- echte Betreiber-/Impressumsangaben (Q14),
+- Datenschutzerklärung DE/EN und Impressum (Weg gemäß Q16, für die Beta mind. Generator-Stand),
+- Domain, EU-Hosting (Staging/Beta), Transaktionsmail-Anbieter mit SPF/DKIM/DMARC, Kontaktadresse für F-051 (Q15),
+- Platzhalter-Kennzeichnungen entfernt, Reviewer-Freigabe des Deployments.
+Entscheidungen dazu holt der CEO beim Auftraggeber ein, sobald M0.5 erreicht ist (Vorlauf Domain/Mail-Setup ca. 1–2 Wochen).
+
+**Meilenstein M1 (Beta):** G1 bestanden; Inkremente 1–5 mit 3–5 befreundeten Testgruppen (mind. eine gemischt DE/EN, mind. eine mit überwiegend iPhone-Nutzern); Auswertung Registrierungs-Funnel und Feedback-Frage zum Kalender-Import.
+**Meilenstein M2 (öffentlicher MVP-Launch):** alle Must-Features inkl. F-051 + F-015 freigegeben (DE und EN vom Reviewer geprüft, WCAG 2.2 AA geprüft); **Rechtstexte abschließend geprüft (spätestens hier, Weg gemäß Q16)**; Datenschutzerklärung DE/EN und Impressum live; Transaktionsmail-Zustellung überwacht.
+
+*Falls* der Auftraggeber die Beta ausschließlich im eigenen engen Umfeld ohne öffentliche Erreichbarkeit fahren will, kann G1 nicht entfallen, nur schlanker ausfallen (Impressum/Datenschutz sind bei jeder Verarbeitung personenbezogener Daten Dritter nötig) – Bewertung durch Operations.
 
 ## Phase 2 – v1 „Kalender rein, Aufwand raus“
 **Ziel:** Kalender-Import für alle großen Anbieter – **Apple zuerst gleichberechtigt** –, E-Mail-Benachrichtigungen, leichtere Anmeldung; Monetarisierung vorbereitet.

@@ -1,8 +1,10 @@
-# PRD – Wir wollen weg
+# PRD – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Product Manager · Status: Entwurf v0.2 (Entscheidungen Q1–Q6 des Auftraggebers eingearbeitet, siehe §12)
+Stand: 2026-10-08 · Verantwortlich: Product Manager · Status: Entwurf v0.3 (Entscheidungen Q1–Q6 sowie Q11–Q16 des Auftraggebers eingearbeitet, siehe §12)
 
 Verwandte Dokumente: [features.md](features.md) · [roadmap.md](roadmap.md)
+
+**Änderungen v0.3 (2026-10-08):** M0 abgenommen · Produktname sprachabhängig: DE „Wir wollen weg“, EN „When do we go?“ – eine Marke, eine Bildmarke (Logo A „Sonnenkalender“) (Q11, §1, F-046) · Barrierefreiheit auf **WCAG 2.2 AA** angehoben (§8) · Dark Mode folgt der Systemeinstellung als NFR (Q12, §8) · Produktregeln Q13 (a)–(e) in features.md übernommen, neues Feature **F-051 Hilfe-/FAQ-Seite** (§6) · **Offline-Demo-Phase** vor der Beta; Betreiber, Rechtstexte, Domain/Konten als Go-Live-Gate (Q14–Q16, §6a, roadmap.md).
 
 **Änderungen v0.2 (2026-10-08):** Konto-Pflicht im MVP (Q2) · MVP nur manuelle Verfügbarkeit, ICS-Import nach v1, Apple-/iOS-Kalender als eigener Roadmap-Strang (Q1) · keine E-Mail-Benachrichtigungen im MVP, nur Transaktionsmails fürs Konto (Q3) · Freemium (Q4) · Deutsch + Englisch ab MVP (Q5) · max. 30 Mitglieder bestätigt (Q6).
 
@@ -12,7 +14,13 @@ Verwandte Dokumente: [features.md](features.md) · [roadmap.md](roadmap.md)
 
 **„Von ‚Wir müssten mal wieder zusammen weg‘ zum festen Reisedatum – in einer Woche statt in drei Monaten Gruppenchat.“**
 
-„Wir wollen weg“ ist eine Web-App, in der eine Freundesgruppe mit einem schlanken Konto (Registrierung in unter einer Minute, direkt aus dem Einladungslink) ihre Verfügbarkeit zusammenlegt, sofort sieht, wann ein gemeinsamer Urlaub möglich ist, und per Abstimmung verbindlich einen Zeitraum festlegt. Langfristig begleitet die App die ganze Gruppenreise: Ziel, Unterkunft, Aufgaben und Kostenausgleich – auf Deutsch und Englisch.
+„Wir wollen weg“ – auf Englisch **„When do we go?“** – ist eine Web-App, in der eine Freundesgruppe mit einem schlanken Konto (Registrierung in unter einer Minute, direkt aus dem Einladungslink) ihre Verfügbarkeit zusammenlegt, sofort sieht, wann ein gemeinsamer Urlaub möglich ist, und per Abstimmung verbindlich einen Zeitraum festlegt. Langfristig begleitet die App die ganze Gruppenreise: Ziel, Unterkunft, Aufgaben und Kostenausgleich – auf Deutsch und Englisch.
+
+### Name & Marke (Q11)
+- **Zwei Namen, eine Marke:** Deutsch „Wir wollen weg“, Englisch „When do we go?“. Beide teilen dieselbe Bildmarke (Logo A „Sonnenkalender“), Farben und Tonalität; nur die Wortmarke wechselt mit der Sprache.
+- Angezeigt wird der Name in der **Oberflächensprache** der Person (Header, Seitentitel, Transaktionsmails, Open-Graph-Vorschau, Teilen-Texte in der gewählten Textsprache) – Details F-046. In gemischtsprachigen Gruppen sieht also jede Person „ihren“ Namen derselben App.
+- Rechtstexte/Impressum nennen beide Namen. URLs, Domain und Code-Bezeichner bleiben sprachneutral bzw. werden mit Go-Live festgelegt (Q15).
+- Der frühere EN-Untertitel „Find dates for your group trip“ ist als Claim weiter nutzbar, aber nicht mehr Ersatz für einen EN-Namen.
 
 ## 2. Problem
 
@@ -45,7 +53,7 @@ Primär: Freundesgruppen (3–15 Personen, Kernalter 22–45), die 1–3 gemeins
 - Klickt den Link erst nach Tagen, auf dem Handy, im In-App-Browser von WhatsApp, zwischen zwei Dingen. Hat wenig Lust auf Registrierung.
 - **Ziel:** in < 4 Minuten dabei sein, ohne App-Download, ohne sich ein Passwort ausdenken zu müssen.
 - **Frust:** lange Formulare, „Passwort vergessen“, Bestätigungsmail, die im falschen Browser aufgeht und ihn aus dem Kontext reißt.
-- **Braucht:** Reise-Vorschau vor der Registrierung → Name + E-Mail → 6-stelliger Code aus der Mail eintippen (oder Link) → direkt zurück in der Reise → Tage antippen → fertig. Später auf jedem Gerät per Login zurückkommen.
+- **Braucht:** Reise-Vorschau vor der Registrierung → E-Mail → 6-stelliger Code aus der Mail eintippen (oder Link) → Name (nur bei neuem Konto, zugleich Beitritt) → direkt in der Reise → Tage antippen → fertig. Später auf jedem Gerät per Login zurückkommen.
 
 ## 4. Ziele & Erfolgskriterien
 
@@ -64,7 +72,7 @@ Messung über datensparsame, cookie-freie Ereignis-Statistik (aggregiert, kein T
 
 ## 5. Produktprinzipien
 
-1. **Konto ja – Hürde minimal.** Wer mitmacht, hat ein Konto (Identität, Wiederkehr auf allen Geräten, keine verlorenen Links). Registrierung direkt im Einladungsflow ohne Kontextverlust, standardmäßig passwortlos (E-Mail-Code/Magic-Link), nur Name + E-Mail.
+1. **Konto ja – Hürde minimal.** Wer mitmacht, hat ein Konto (Identität, Wiederkehr auf allen Geräten, keine verlorenen Links). Registrierung direkt im Einladungsflow ohne Kontextverlust, standardmäßig passwortlos (E-Mail-Code/Magic-Link), nur E-Mail + Name (Name erst nach dem Code, nur bei neuen Konten).
 2. **Mitmachen ist immer kostenlos.** Freemium: Alles, was eine Gruppe zum Finden und Festlegen eines Termins braucht, bleibt gratis. Bezahlt wird später nur Komfort für Organisatoren – nie mit Daten, nie mit Werbung.
 3. **Privatsphäre by Design.** Aus Kalendern (ab v1) wird nur „frei/belegt pro Tag“ übernommen; Titel, Orte, Teilnehmer werden nie gespeichert. Konto speichert nur, was nötig ist.
 4. **Mobile first.** Die meisten öffnen den Link aus WhatsApp/Signal auf dem Handy – oft im In-App-Browser.
@@ -78,13 +86,22 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 
 1. **Konto** (F-040–F-044): Registrierung (passwortlos per E-Mail-Code/Magic-Link, optional Passwort), Login/Logout, Passwort & Zugangswiederherstellung, Konto löschen (DSGVO), Übersicht „Meine Reisen“.
 2. **Reise anlegen** (F-001): Name, Suchzeitraum, Mindest- und Wunschdauer – nur mit Konto.
-3. **Einladen per Link** (F-002) und **Beitreten mit Konto direkt im Einladungsflow** (F-003), Rollen Organisator/Mitglied (F-004).
+3. **Einladen per Link** (F-002; teilen dürfen alle Mitglieder, solange der Beitritt offen ist) und **Beitreten mit Konto direkt im Einladungsflow** (F-003), Rollen Orga/Mitglied (F-004; UI-Bezeichnung „Orga“ / „Organizer“, in den Dokumenten weiter „Organisator“).
 4. **Verfügbarkeit angeben – nur manuell**: pro Tag mit drei Zuständen *geht / ginge zur Not / geht nicht* (F-005), mit Wochenenden und Feiertagen (F-016). Teilnahmestatus sichtbar (F-007).
 5. **Gemeinsamer Kalender als Heatmap** (F-008) und **automatisch berechnete Kandidaten-Zeiträume** „alle können“ / „fast alle können“ (F-009).
-6. **Abstimmung** über ausgewählte Zeiträume mit Ja/Vielleicht/Nein (F-010, F-011), **Festlegung des Ergebnisses** inkl. Kalendereintrag zum Herunterladen (F-012).
+6. **Abstimmung** über ausgewählte Zeiträume mit Ja/Vielleicht/Nein (F-010, F-011; Ergebnis einer Option erst nach eigener Stimme sichtbar, Orga sieht immer alles), **Festlegung des Ergebnisses** inkl. Kalendereintrag zum Herunterladen (F-012).
 7. **Datenschutz-Grundfunktionen**: Reise verlassen, Reise löschen, automatische Löschung (F-013), Konto löschen (F-043).
 8. **Deutsch & Englisch** (F-046): vollständige Oberfläche, Teilen-Texte und Transaktionsmails in beiden Sprachen, Sprachumschaltung, lokalisierte Datums-/Wochenstart-Formate.
 9. **Kommunikation über Teilen-Texte** für den Gruppenchat (F-002, F-015). **Keine** E-Mail-Benachrichtigungen im MVP (F-014 → v1). Transaktionsmails fürs Konto (Code/Magic-Link, Passwort-Reset, E-Mail-Änderung, Konto-/Löschhinweise) sind davon ausgenommen und Teil des MVP.
+10. **Hilfe-/FAQ-Seite** (F-051): kleine statische Seite mit den häufigsten Fragen (Code kommt nicht an, Link verloren, In-App-Browser, Daten löschen …) und Kontaktadresse, auf jeder Seite an gleicher Stelle erreichbar (Q13 e).
+
+### 6a. Offline-Demo-Phase (Q15, Q14, Q16)
+- Bis zur Beta wird **ohne Hosting, Domain und externe Konten** gearbeitet: Die App läuft als **lokale Offline-Demo** (Entwicklerrechner bzw. lokal gestartete Instanz mit lokaler Datenbank).
+- **Transaktionsmails** werden in der Demo nicht real versendet, sondern lokal abgefangen (Dev-Mailbox bzw. Konsolen-/Log-Ausgabe des Codes) – der Code-Flow (F-040/F-041) bleibt damit vollständig vorführbar. Umsetzung → Operations/Developer.
+- **Betreiberangaben, Impressum, Datenschutzerklärung** sind Platzhalter, deutlich als solche gekennzeichnet („Demo – keine echten Daten eingeben“).
+- In der Demo werden nur Test-/Fantasiedaten verwendet; keine echten Nutzer außerhalb des Teams.
+- **Go-Live-Gate** (vor der ersten Nutzung durch echte Testgruppen, d. h. vor M1-Beta): echte Betreiber-/Impressumsangaben (Q14), Rechtstexte DE/EN (Q16), Domain, EU-Hosting und Mailversand inkl. SPF/DKIM/DMARC (Q15). Spätestens vor dem öffentlichen Launch (M2) zusätzlich die abschließende Rechtstext-Prüfung (Weg gemäß Q16). Details und Einordnung in [roadmap.md](roadmap.md).
+- Begründung: Sobald echte Personen außerhalb des Teams echte E-Mail-Adressen und Verfügbarkeiten eingeben, gelten DSGVO und Impressumspflicht – Platzhalter sind dann nicht mehr zulässig.
 
 **Bewusste MVP-Entscheidung Kalender (Q1):** Kein Kalender-Import im MVP. Die manuelle Eingabe wird dafür so schnell wie möglich gestaltet (Ziehen/Wischen, Bereichsauswahl, Schnellaktionen „Mo–Fr = ginge zur Not“, Feiertage sichtbar). Begründung: Der Kernnutzen (Zeiträume finden + entscheiden) lässt sich ohne Import validieren; ICS-Import ist technisch der riskanteste Teil (RRULE, Zeitzonen, SSRF). In v1 folgt der ICS-Import (F-006) **zusammen mit einem eigenen Weg für Apple-/iOS-Kalender** (F-047), danach iCloud-CalDAV (F-048), Abo-Sync (F-019) und Google/Microsoft-OAuth (F-020, F-021). Apple ist explizit priorisiert, weil iCloud kein OAuth bietet und ein großer Teil der Zielgruppe ein iPhone nutzt – ohne eigenen Weg wären diese Nutzer dauerhaft auf Handeingabe angewiesen. Siehe [roadmap.md](roadmap.md), Abschnitt „Strang Apple-/iOS-Kalender“.
 
@@ -135,12 +152,13 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
   - Einmal-Codes (6 Ziffern) und Magic-Links: einmalig verwendbar, 15 Min. gültig, max. 5 Fehlversuche pro Code, danach neuer Code; Links enthalten Tokens ≥ 128 Bit.
   - Passwörter (optional): min. 10 Zeichen, Hashing mit Argon2id (o. ä. aktueller Standard), Prüfung gegen bekannte geleakte Passwörter wünschenswert.
   - Keine Konto-Enumeration (gleiche Antwort, ob E-Mail existiert oder nicht); Rate-Limiting für Code-Anforderung, Login, Beitritt.
-  - Sessions: httpOnly-, Secure-, SameSite-Cookies; „angemeldet bleiben“ rollierend 90 Tage; „überall abmelden“ möglich; Re-Authentifizierung für Konto löschen und E-Mail ändern.
+  - Sessions: httpOnly-, Secure-, SameSite-Cookies; „angemeldet bleiben“ rollierend 90 Tage, **standardmäßig an** (Q13 d), abwählbar; „überall abmelden“ möglich; Re-Authentifizierung für Konto löschen und E-Mail ändern.
   - Einladungslinks mit nicht erratbaren Tokens (≥ 128 Bit), neu erzeugbar; Organisator-Rechte ausschließlich serverseitig über Konto + Rolle geprüft; keine Indexierung von Reiseseiten (noindex).
 - **Transaktionsmails:** zuverlässige Zustellung (EU-Anbieter, SPF/DKIM/DMARC), Zustellung < 1 Min. im Median; Absender und Inhalt in der Sprache des Kontos.
 - **Internationalisierung:** alle Texte externalisiert; Locale `de` und `en`; Datums-, Zahlen- und Wochenstart-Formate per Region (z. B. `de-DE`/`en-GB`: Montag, `en-US`: Sonntag), vom Nutzer überschreibbar; Feiertage für DE (inkl. Bundesländer), AT, CH, UK und US über eine gepflegte Open-Source-Feiertagsbibliothek.
 - **Mobile & Performance:** voll bedienbar ab 360 px Breite und in In-App-Browsern (WhatsApp, Instagram, Facebook); erste Ansicht < 2 s auf 4G.
-- **Barrierefreiheit:** WCAG 2.1 AA; Heatmap nicht nur über Farbe kodiert (Zahl/Muster), Kalender per Tastatur bedienbar; Code-Eingabe mit `autocomplete="one-time-code"`.
+- **Barrierefreiheit:** **WCAG 2.2 AA** (angehoben in v0.3; Grundlage auch für BFSG/EN 301 549); Heatmap nicht nur über Farbe kodiert (Zahl/Symbol/Muster), Kalender per Tastatur bedienbar (inkl. Alternative zum Ziehen, SC 2.5.7), Zielgrößen ≥ 24 × 24 px (SC 2.5.8, Projektstandard ≥ 44 px), Fokus nie von fixierten Leisten verdeckt (SC 2.4.11), konsistente Hilfe an gleicher Stelle (SC 3.2.6, F-051), keine redundante Eingabe (SC 3.3.7), barrierefreie Anmeldung ohne kognitiven Test – Code einfügbar, `autocomplete="one-time-code"` (SC 3.3.8); Text bis 200 % ohne Funktionsverlust.
+- **Darstellung / Dark Mode:** Die Oberfläche folgt der System-Einstellung (`prefers-color-scheme`) hell/dunkel; **kein eigener Schalter** im MVP (Q12). Beide Modi erfüllen die Kontrastanforderungen (WCAG 2.2 AA), inkl. Heatmap-Stufen, Symbole und Fokusring; Grundlage sind die Design-Tokens (`tokens.css`).
 - **Skalierung:** **max. 30 Mitglieder pro Reise (bestätigt, Q6)**, Suchzeitraum bis 12 Monate; Berechnung < 500 ms.
 - **Zeitzonen:** Tage werden in der Zeitzone der Reise (Standard: Zeitzone des Organisators) ausgewertet.
 
@@ -173,6 +191,9 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 | Missbrauch geteilter Einladungslinks (Fremde treten bei) | Datenmüll, Privatsphäre | Beitritt nur mit verifiziertem Konto; Organisator sieht/entfernt Mitglieder, erneuert Link, sperrt Beitritt (F-004). |
 | Zweisprachigkeit verdoppelt Text-/Testaufwand, Übersetzungen veralten | Inkonsistente UI, Rechtstexte falsch | i18n-Gerüst ab Inkrement 1; Build schlägt bei fehlenden Schlüsseln fehl; Reviewer prüft beide Sprachen; Rechtstexte DE verbindlich, EN als Übersetzung (→ Operations). |
 | Freemium: Premium-Abgrenzung verärgert Nutzer oder konvertiert nicht | Kein Umsatz oder Vertrauensverlust | Kern bleibt dauerhaft frei (Prinzip 2); Premium nur Komfort; Validierung vor Bau (A8); Kosten im Betrieb minimal halten. |
+| Offline-Demo verzögert echte Validierung (A2 Beitrittsquote, In-App-Browser, Mailzustellung lassen sich lokal nicht messen) | Späte Überraschungen bei Kontopflicht und Spam-Zustellung | Demo-Phase zeitlich begrenzen; Go-Live-Gate rechtzeitig vorbereiten (Ops-Checkliste); M1-Beta mit echten Gruppen bleibt Pflicht vor M2. |
+| Platzhalter-Rechtstexte/-Betreiberangaben gelangen versehentlich live | Abmahnrisiko, DSGVO-Verstoß | Platzhalter klar markiert; Go-Live-Gate als Pflicht-Checkliste (Operations), Reviewer prüft vor Deployment. |
+| Zwei Produktnamen schwächen Wiedererkennung | Uneinheitlicher Auftritt, Verwechslung | Eine Bildmarke, gleiche Farben/Tonalität; Name strikt an Oberflächensprache gekoppelt; Rechtstexte nennen beide Namen. |
 | Starke Wettbewerber ergänzen Funktion (z. B. Doodle) | Differenzierung schwindet | Fokus auf Urlaubs-Spezifika (Mehrtägigkeit, Heatmap, später Reise + Kosten in einem Fluss). |
 
 ## 11. Wettbewerb & Abgrenzung (Kurzrecherche)
@@ -185,7 +206,7 @@ Kernfluss (Details & Akzeptanzkriterien in [features.md](features.md)):
 | Tricount / Splitwise | Ausgaben teilen, Ausgleich mit minimalen Überweisungen; Freemium-Modell (Splitwise Pro) | Keine Planung vor der Reise | Spätere Ausbaustufe: Ausgaben pro Reise, Ausgleichsvorschlag; Freemium-Abgrenzung als Referenz |
 | Geteilter Google-/Outlook-/iCloud-Kalender | Echtzeit | Zeigt Details, keine Gruppenauswertung, Plattform-Silos | Nur Frei/Belegt-Prinzip (wie Free/Busy) |
 
-**Positionierung:** Das einzige Tool, das für **mehrtägige Gruppenreisen** die möglichen Zeiträume *selbst findet* – privatsphärefreundlich, zweisprachig, mit einem Konto, das in einer Minute erstellt ist – und später die Reise bis zur Abrechnung begleitet. Mitmachen ist immer kostenlos.
+**Positionierung:** „Wir wollen weg“ / „When do we go?“ ist das einzige Tool, das für **mehrtägige Gruppenreisen** die möglichen Zeiträume *selbst findet* – privatsphärefreundlich, zweisprachig, mit einem Konto, das in einer Minute erstellt ist – und später die Reise bis zur Abrechnung begleitet. Mitmachen ist immer kostenlos.
 
 ## 12. Offene Fragen & Entscheidungen
 
@@ -203,9 +224,9 @@ Entscheidungen des Auftraggebers vom 2026-10-08 sind eingetragen. Neue bzw. verb
 | Q8 | Premium-Abrechnungseinheit und Preis: Reise-Pass (einmalig pro Reise) oder Organisator-Abo? Welche Kandidaten sind Premium? | Reise-Pass, optional Jahresabo; Entscheidung nach v1-Kennzahlen und Zahlungsbereitschafts-Umfrage | offen (Entscheidung vor Bau von F-050) |
 | Q9 | Englischsprachiger Fokusmarkt: UK/Irland (EU-nah, Montag als Wochenstart) oder auch USA? | Sprache EN für alle; Feiertage UK + US anbieten; aktives Marketing zunächst nur DACH + UK/IE | offen (betrifft Marketing, Rechtstexte, ggf. Hosting-/Rechtsfragen → Operations) |
 | Q10 | Rückfallplan Gast-Beitritt: Bei Beitrittsquote < 50 % in der Beta Gast-Beitritt ohne Konto zulassen? | Ja, als vorbereitete Option, Entscheidung nach Beta-Daten | offen |
-| Q11 | Marke & Logo: Bleibt „Wir wollen weg“ auch auf Englisch (mit EN-Untertitel „Find dates for your group trip“)? Welche Logo-Variante (A Sonnenkalender / B Weg-Haken / C Treffpunkt)? | CEO/Designer: Name bleibt Marke in beiden Sprachen; Logo A | **Logo A „Sonnenkalender“ bestätigt; Design insgesamt abgenommen** (2026-10-08). Name auf Englisch noch offen. |
-| Q12 | Dark Mode im MVP (nur System-Einstellung folgen, kein Schalter) und Überschriften-Schrift Figtree (selbst gehostet, ~35 KB)? | CEO: ja, beides | offen (Konzeptphase, 2026-10-08) |
-| Q13 | Produktregeln aus der UX-Konzeption: (a) Abstimmungsergebnis einer Option erst nach eigener Stimme sichtbar (Orga sieht immer alles); (b) alle Mitglieder dürfen den Einladungslink teilen, solange Beitritt offen; (c) Rollenname „Orga“/„Organizer“; (d) „Angemeldet bleiben“ standardmäßig an; (e) kleine Hilfe-/FAQ-Seite im MVP | CEO: ja zu (a)–(e); in den Docs als „CEO-Entscheidung, vorbehaltlich Auftraggeber“ markiert | offen (Konzeptphase, 2026-10-08) |
-| Q14 | Betreiber & Impressum: Privatperson oder UG/GmbH, ladungsfähige Anschrift (privat oder Geschäftsadresse) – Blocker B1 | Ops/CEO: für Beta als Privatperson mit Geschäfts-/Serviceadresse; Gesellschaft spätestens vor Bezahlfunktionen (F-050) prüfen | offen – **blockiert Staging, Mailversand, Rechtstexte** |
-| Q15 | Domain und Accounts: Domain (z. B. wirwollenweg.de), Hosting Hetzner (DE), Mail Lettermint (NL), Postfach – Blocker B2/B3 | Ops/CEO: Hetzner + Lettermint, ca. 30–40 €/Monat netto im MVP | offen – **blockiert Staging, Mailversand** |
-| Q16 | Rechtstexte: Generator-Abo mit Abmahnschutz oder Anwalt? – Blocker B4 | Ops/CEO: Generator zur Beta, anwaltliche Prüfung vor öffentlichem Launch (M2) | offen |
+| Q11 | Marke & Logo: Bleibt „Wir wollen weg“ auch auf Englisch (mit EN-Untertitel „Find dates for your group trip“)? Welche Logo-Variante (A Sonnenkalender / B Weg-Haken / C Treffpunkt)? | CEO/Designer: Name bleibt Marke in beiden Sprachen; Logo A | **Logo A „Sonnenkalender“ bestätigt; Design abgenommen. Abweichend: Englisch bekommt einen eigenen Namen „When do we go?“** (DE bleibt „Wir wollen weg“). (2026-10-08) |
+| Q12 | Dark Mode im MVP (nur System-Einstellung folgen, kein Schalter) und Überschriften-Schrift Figtree (selbst gehostet, ~35 KB)? | CEO: ja, beides | **Wie empfohlen:** Dark Mode folgt nur dem System (kein Schalter); Figtree für Überschriften. (2026-10-08) |
+| Q13 | Produktregeln aus der UX-Konzeption: (a) Abstimmungsergebnis einer Option erst nach eigener Stimme sichtbar (Orga sieht immer alles); (b) alle Mitglieder dürfen den Einladungslink teilen, solange Beitritt offen; (c) Rollenname „Orga“/„Organizer“; (d) „Angemeldet bleiben“ standardmäßig an; (e) kleine Hilfe-/FAQ-Seite im MVP | CEO: ja zu (a)–(e); in den Docs als „CEO-Entscheidung, vorbehaltlich Auftraggeber“ markiert | **Wie empfohlen, (a)–(e) bestätigt.** (2026-10-08) |
+| Q14 | Betreiber & Impressum: Privatperson oder UG/GmbH, ladungsfähige Anschrift (privat oder Geschäftsadresse) – Blocker B1 | Ops/CEO: für Beta als Privatperson mit Geschäfts-/Serviceadresse; Gesellschaft spätestens vor Bezahlfunktionen (F-050) prüfen | **Vorerst Platzhalter (Privatperson).** Echte Betreiber-/Impressumsangaben erst vor Go-Live – **Pflichtpunkt der Go-Live-Checkliste**. (2026-10-08) |
+| Q15 | Domain und Accounts: Domain (z. B. wirwollenweg.de), Hosting Hetzner (DE), Mail Lettermint (NL), Postfach – Blocker B2/B3 | Ops/CEO: Hetzner + Lettermint, ca. 30–40 €/Monat netto im MVP | **Vorerst Offline-Demo (lokal, kein Hosting, keine Konten/Abos, keine Domain).** Konten/Abos erst, wenn Go-Live ansteht. (2026-10-08) |
+| Q16 | Rechtstexte: Generator-Abo mit Abmahnschutz oder Anwalt? – Blocker B4 | Ops/CEO: Generator zur Beta, anwaltliche Prüfung vor öffentlichem Launch (M2) | **Wie Q14: vorerst Platzhalter-Rechtstexte;** Weg (Generator/Anwalt) erst vor Go-Live entscheiden – **Pflichtpunkt der Go-Live-Checkliste**. (2026-10-08) |

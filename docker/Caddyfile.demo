@@ -1,0 +1,12 @@
+# Offline demo (deployment.md §0.1): minimal reverse proxy in front of the app, like Caddy
+# in production (§5.2). Its only job: the app is never reached directly, and Caddy
+# replaces any client-sent X-Forwarded-For with the real peer address (it trusts no
+# upstream proxies), so the auth rate limit cannot be bypassed with forged headers (R-005).
+{
+	admin off
+	auto_https off
+}
+
+:3000 {
+	reverse_proxy app:3000
+}

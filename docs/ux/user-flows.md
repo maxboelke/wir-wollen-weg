@@ -1,4 +1,4 @@
-# User Flows – Wir wollen weg (MVP)
+# User Flows – Wir wollen weg / When do we go? (MVP)
 
 Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md), [features.md](../product/features.md)
 
@@ -89,9 +89,9 @@ Inhalt:
    - Client: `sessionStorage` **und** `localStorage` (`www.pendingAuth`, max. 30 Min., enthält Einladungs-Token, E-Mail, Schritt, Zeitpunkt – **niemals den Code**).
 2. **Wiederherstellung beim Laden von `/i/{token}`:** Gibt es ein passendes `pendingAuth` (< 30 Min.), springt die Seite direkt in **Schritt Code** mit der E-Mail-Anzeige und Hinweis «Willkommen zurück – gib einfach den Code aus der Mail ein.» Kein erneutes Senden nötig.
 3. **Wiederherstellung auf anderen Seiten:** Lädt der In-App-Browser stattdessen die Startseite o. Ä., zeigt jede Seite bei vorhandenem `pendingAuth` ein Banner «Du warst gerade dabei, „Lissabon 2027“ beizutreten. [Weiter]».
-4. **Magic-Link in anderem Browser:** `/auth/magic?token=…` → Session in *diesem* Browser → Ausführung von `intent` (Beitritt-Schritt mit Name bzw. Bestätigung) → Reise. Kein automatisches Einloggen des ursprünglichen In-App-Fensters (Sicherheitsgrund: sonst könnte ein Angreifer, der die Anforderung ausgelöst hat, durch den Klick des Opfers eingeloggt werden).
+4. **Magic-Link in anderem Browser:** `/auth/magic?token=…` → **Landeseite mit Button „Jetzt anmelden“** (W02 „Magic-Link-Landeseite“; Einlösen per **POST**, s. H.5) → Session in *diesem* Browser → Ausführung von `intent` (Beitritt-Schritt mit Name bzw. Bestätigung) → Reise. Kein automatisches Einloggen des ursprünglichen In-App-Fensters (Sicherheitsgrund: sonst könnte ein Angreifer, der die Anforderung ausgelöst hat, durch den Klick des Opfers eingeloggt werden).
 5. **Hinweis im ursprünglichen Fenster:** Auf Schritt Code steht klein: «Du hast auf den Link in der Mail getippt? Dann geht es im anderen Browser weiter. Hier kannst du stattdessen den Code eingeben.»
-6. **Magic-Link schon benutzt / abgelaufen:** «Dieser Anmeldelink ist abgelaufen oder wurde schon verwendet. [Neuen Code anfordern]» – E-Mail vorbelegt, `returnTo` bleibt erhalten (aus dem Link-Token serverseitig lesbar, solange nicht abgelaufen; sonst Einladung muss neu geöffnet werden).
+6. **Magic-Link schon benutzt / abgelaufen:** (Prüfung erst beim POST, nicht beim Seitenaufruf) «Dieser Anmeldelink funktioniert nicht mehr» + «Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.» `[Neuen Code anfordern]` (Texte s. W02) – E-Mail vorbelegt, `returnTo` bleibt erhalten (aus dem Link-Token serverseitig lesbar, solange nicht abgelaufen; sonst Einladung muss neu geöffnet werden).
 7. **In-App-Browser-Erkennung (User-Agent, best effort):** Kein Blocken und **kein** Zwang, „im Browser zu öffnen“. Nur auf Schritt Code ein zusätzlicher Satz: «Tipp: Lass dieses Fenster offen, hol den Code aus deiner Mail-App und komm hierher zurück.»
 8. **Session im In-App-Browser:** In-App-Browser teilen Cookies nicht mit Safari/Chrome. Nach dem Beitritt einmalig (schließbar) in Meine Reisen/Reise: «Später in deinem Browser weitermachen? Melde dich dort einfach mit deiner E-Mail an.» – kein Zwang.
 
@@ -217,7 +217,7 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 2. Je Option eine Karte: Zeitraum, Nächte, Urlaubstage, «laut Kalender: 7 können · ohne Jonas» („können“ = kein „Geht nicht“ im Zeitraum, Glossar). Darunter **Segment-Schalter** `[Ja] [Vielleicht] [Nein]` (Radiogruppe, ≥ 48 px hoch; unter 400 px Breite Icon über Label, 56 px hoch – U-8).
 3. **Vorbelegung (F-011):** aus Verfügbarkeit abgeleiteter Vorschlag wird **gestrichelt/hell** angezeigt + Label «Vorschlag aus deinen Tagen». Er zählt erst, wenn bestätigt: Tipp auf den Vorschlag oder `[Alle Vorschläge übernehmen]` (oben, nur sichtbar, wenn es unbestätigte Vorschläge gibt).
 4. Jede Stimme speichert sofort (optimistisch). Statuszeile: «Noch 1 Option offen» → wenn alle beantwortet: «Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.» Status „abgestimmt“ (F-007/F-011) erst, wenn **alle** Optionen eine bestätigte Stimme haben.
-5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber.* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
+5. **Ergebnisse** einer Option werden erst angezeigt, nachdem man **zu dieser Option selbst** abgestimmt hat (vermeidet Mitläufer-Effekt, Transparenz bleibt: danach namentlich sichtbar). Die **Orga sieht immer alles** (braucht den Überblick zum Festlegen). Vor der eigenen Stimme steht an der Stelle des Balkens «Stimm ab, um das Ergebnis zu sehen.» *bestätigt (Auftraggeber 2026-10-08).* Darstellung je Option: Balken Ja/Vielleicht/Nein mit Zahlen, Rang-Abzeichen «Platz 1» / «Top choice» (nur Platz 1; bei Gleichstand alle Erstplatzierten), «ohne Jonas» bei Nein-Stimmen, `[Wer hat wie gestimmt?]` klappt Namensliste auf.
 6. Sortierung der Karten: in Erstellungsreihenfolge, solange man noch nicht vollständig abgestimmt hat (keine springenden Karten beim Abstimmen); danach nach Rang.
 
 **Leer-/Sonderzustände Tab Abstimmen:**
@@ -296,6 +296,7 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 - **Beim Login:** Die zuletzt **ausdrücklich** getroffene Wahl gewinnt. Hat jemand vor dem Login in diesem Browser umgeschaltet, wird die Kontosprache darauf aktualisiert; sonst gilt die Kontosprache. Neue Konten übernehmen die aktuell angezeigte Sprache.
 - Transaktionsmails: in der Sprache, in der die Oberfläche beim Auslösen angezeigt wurde (beim ersten Code), danach Kontosprache.
 - Bestätigung nach Umschalten: keine Meldung nötig (Wechsel ist selbsterklärend); Fokus bleibt auf dem Umschalter.
+- **Produktname wechselt mit:** DE „Wir wollen weg“ ↔ EN „When do we go?“ in Header-Wortmarke, Seitentitel, Footer und allen Texten (Bildmarke bleibt gleich). Teilen-Texte tragen den Namen in der Sprache des Senders bzw. der im Sheet gewählten Textsprache; Mails in der Mailsprache (ux-spec §9, §10.6).
 
 ---
 
@@ -322,11 +323,26 @@ Bei nur zwei Sprachen ist ein direkter Umschalt-Link schneller als ein Dropdown 
 
 - **Ein Formular für beides.** Überschrift «Anmelden oder registrieren»; Text «Gib deine E-Mail ein. Wir schicken dir einen Code – ein Passwort brauchst du nicht.»
 - Schritte wie A.1 (E-Mail → Code → [nur neu: Name]) ohne Reise-Karte. Danach → `next` bzw. Meine Reisen.
-- Checkbox «Angemeldet bleiben» (Standard an – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
+- Checkbox «Angemeldet bleiben» (Standard an – *bestätigt (Auftraggeber 2026-10-08)*) unter dem E-Mail-Feld. Hilfetext bei Fokus/Info: «Auf fremden Geräten abwählen.»
 - `[Mit Passwort anmelden]` blendet Passwortfeld ein; dort `[Passwort vergessen?]`.
 - Hinweis unter dem Passwortfeld (F-042): «Kein Passwort gesetzt? Melde dich einfach mit einem Code an.»
 - Bereits angemeldet und `/login` aufgerufen → Weiterleitung `next`/Meine Reisen.
 - Session abgelaufen auf geschützter Seite → `/login?next=…` mit Hinweis «Bitte melde dich erneut an – danach geht es dort weiter, wo du warst.»
+
+### H.5 Magic-Link einlösen (`/auth/magic?token=…&next=…`, W02) – *Entscheidung UI/UX 2026-10-08 (spike-auth §2, R-006)*
+
+**Entscheidung:** Der Link aus der Mail loggt **nicht** direkt ein, sondern öffnet eine Landeseite mit einem Button. Der Token wird erst beim Tippen verbraucht, und zwar per **POST** (Formular/Server Action), nie per GET. **Keine** automatische Weiterleitung per JS: Manche Scanner führen JS aus, und ein Auto-Submit nimmt dem Tipp seinen Sinn.
+*Begründung:* Mail-Scanner (Outlook Safe Links, Firmen-Gateways) rufen Links vorab per GET auf. Ein direkter Link wäre danach verbraucht, die Person sähe „abgelaufen“ – schlimmer als ein Tipp mehr. Der Link ist ohnehin der Zweitweg (A.0), der Code bleibt der Primärweg.
+
+| # | Schritt | Verhalten |
+|---|---|---|
+| 1 | GET `/auth/magic?token=…&next=…` | Seite wird angezeigt, Token wird **nicht** geprüft und nicht verbraucht (keine Aussage über gültig/ungültig vor dem Tippen). Im Einladungskontext (`next=/i/{token}`) steht zusätzlich der Reisename aus der Einladung. Kein Logo-Link zu externen Seiten, `noindex`. |
+| 2 | Tipp auf „Jetzt anmelden“ | POST mit dem Token (verstecktes Feld). Button → Ladezustand «Einen Moment …» (`aria-busy`), doppelt absenden gesperrt. |
+| 3a | Erfolg | Session in *diesem* Browser („Angemeldet bleiben“ = an, wie Standard H.1) → Weiterleitung auf `next` (nur interne Pfade) bzw. Meine Reisen. Neues Konto → erst Schritt Profil (Name), dann `next`. Im Einladungskontext → Beitritt wie A.1. |
+| 3b | Token abgelaufen / schon benutzt / ungültig | Gleiche Seite, Fehlerzustand (W02/W14): Überschrift «Dieser Anmeldelink funktioniert nicht mehr», Text «Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.» Primär `[Neuen Code anfordern]` → `/login?next=…` (bzw. `/i/{token}` im Einladungskontext) mit vorbelegter E-Mail, falls serverseitig bekannt, und direktem Sprung in Schritt Code nach dem Senden. Fokus auf die Überschrift. |
+| 3c | Bereits mit **demselben** Konto angemeldet | Nach dem POST einfach weiter zu `next` (kein Fehler). |
+| 3d | Mit einem **anderen** Konto angemeldet | Vor dem Button Hinweis «Du bist gerade als {Name} angemeldet. Mit diesem Link meldest du dich als jemand anderes an.» Button bleibt; nach Erfolg ersetzt die neue Session die alte. |
+| 3e | Netzwerk-/Serverfehler | Inline-Fehler über dem Button «Das hat nicht geklappt. Bitte versuch es nochmal.», Button wieder aktiv (Token noch nicht verbraucht). |
 
 ### H.2 Abmelden
 
@@ -397,9 +413,11 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 3. Auswahl der Personen: Liste mit Checkboxen (alle Fehlenden vorausgewählt), Text aktualisiert sich.
 4. `[Teilen …]` / `[Text kopieren]`. Nach dem Teilen: Hinweis «Zuletzt erinnert: heute, 14:20» an der Fortschrittsanzeige (nur Orga sichtbar) – verhindert Mehrfach-Spam.
 5. ∅ Niemand fehlt → Button entfällt; stattdessen «Alle haben abgegeben → [Abstimmung starten]».
-6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*bestätigt (Auftraggeber 2026-10-08)*).
 
 ---
 
 ## Änderungen
 - 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.
+- 2026-10-08 (Auftraggeber-Entscheidungen): F.3 Produktname je Sprache („When do we go?“ für EN); CEO-Vermerke in H.1, K, D.2 auf „bestätigt (Auftraggeber 2026-10-08)“ umgestellt.
+- 2026-10-08 (Review-Nacharbeit R-006/R-008): A.4 Regel 4/6 und neuer Abschnitt H.5 – Magic-Link-Landeseite mit Button, Einlösen per POST, Fehlerfall → Code-Weg.

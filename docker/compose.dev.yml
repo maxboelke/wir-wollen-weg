@@ -1,0 +1,32 @@
+# Local development services (docs/ops/deployment.md §3 "dev").
+#   docker compose -f docker/compose.dev.yml up -d
+# PostgreSQL 18 on :5432, Mailpit SMTP on :1025 and web UI/API on http://localhost:8025
+name: wir-wollen-weg-dev
+
+services:
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app # local dev only – not a secret
+      POSTGRES_DB: wirwollenweg
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d wirwollenweg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "127.0.0.1:1025:1025"
+      - "127.0.0.1:8025:8025"
+    environment:
+      MP_MAX_MESSAGES: 500
+
+volumes:
+  db-data:

@@ -39,7 +39,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - Struktur siehe [sitemap.md](sitemap.md) §5. Tabs der Reise sind **Links** (eigene URLs, Zurück-Taste funktioniert), keine reinen JS-Tabs; `aria-current="page"` auf dem aktiven Tab (Muster: Navigationsleiste, nicht `role="tablist"`, da Seitenwechsel).
 - **Zurück-Taste:** Jeder Flow-Schritt (E-Mail → Code → Name), jedes geöffnete Bottom-Sheet mit Inhalt (Tagesdetail, Teilen) und die Ansicht Vorschläge/Kalender erzeugen History-Einträge. Zurück schließt zuerst das Sheet, dann den Schritt.
 - **Scrollposition** wird beim Zurückkehren wiederhergestellt; beim Tab-Wechsel beginnt der neue Tab oben – außer Meine Tage, der zum ersten Monat mit ungeklärten Tagen bzw. zum heutigen Monat springt.
-- **Seitentitel** (`<title>`): «Meine Tage · Lissabon 2027 · Wir wollen weg» – Ansicht zuerst (Screenreader, Tab-Leiste).
+- **Seitentitel** (`<title>`): «Meine Tage · Lissabon 2027 · Wir wollen weg» / «My dates · Lisbon 2027 · When do we go?» – Ansicht zuerst (Screenreader, Tab-Leiste), Produktname immer **am Ende** (dadurch steht das Fragezeichen des EN-Namens nie mitten im Titel, s. §10.6). Landing: «Wir wollen weg – Gemeinsam den Urlaubstermin finden» / «When do we go? Find dates for your group trip».
 - **Ungespeicherte Änderungen** (nur Formulare mit explizitem Speichern: Reise bearbeiten, Konto-Profil): Bestätigungsdialog beim Verlassen.
 
 ## 4. Komponenten-Verhalten
@@ -68,10 +68,10 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - Label sichtbar: «6-stelliger Code»; Beschreibung (aria-describedby): «Gesendet an kemal@… · gültig 15 Minuten».
 - Fehler: Feld markieren, Text darunter, Inhalt **markiert lassen** (schnelles Überschreiben), Fokus bleibt.
 - «Code erneut senden»: Textbutton mit Countdown «Neuer Code in 0:27» (Countdown wird für Screenreader nicht sekündlich angesagt; nur „Jetzt verfügbar“ einmal).
-- «Angemeldet bleiben»: Standard **an** (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) (Zielgruppe nutzt eigene Handys; In-App-Browser verlieren Sitzungen sonst oft). Im Login-Formular sichtbar, im Einladungsflow nur als Textzeile «Du bleibst auf diesem Gerät angemeldet. [Ändern]», um das Formular schlank zu halten.
+- «Angemeldet bleiben»: Standard **an** (*bestätigt (Auftraggeber 2026-10-08)*) (Zielgruppe nutzt eigene Handys; In-App-Browser verlieren Sitzungen sonst oft). Im Login-Formular sichtbar, im Einladungsflow nur als Textzeile «Du bleibst auf diesem Gerät angemeldet. [Ändern]», um das Formular schlank zu halten.
 
 ### 4.5 Teilen-Sheet (F-002, F-010, F-012, F-015, F-046)
-- Inhalt: Vorschau-Textfeld (editierbar, mehrzeilig, Auto-Höhe), Sprachumschalter `DE | EN` (Radiogruppe; Wechsel ersetzt den Text – wenn bearbeitet, vorher Rückfrage «Deine Änderungen am Text gehen verloren»), Link als eigene Zeile mit `[Kopieren]`.
+- Inhalt: Vorschau-Textfeld (editierbar, mehrzeilig, Auto-Höhe), Sprachumschalter `DE | EN` (Radiogruppe; Wechsel ersetzt den Text – wenn bearbeitet, vorher Rückfrage «Deine Änderungen am Text gehen verloren»), Link als eigene Zeile mit `[Kopieren]`. Der Produktname im Text folgt der **Textsprache** (DE-Text „Wir wollen weg“, EN-Text „When do we go?“; §9, §10.6).
 - Aktionen: primär `[Teilen …]` (Web Share API, `navigator.share({text})` – Link ist im Text enthalten, nicht doppelt als `url`); wenn nicht verfügbar (häufig in In-App-Browsern, Desktop): primär `[Text kopieren]` + Zeile Direkt-Links «WhatsApp · Signal · Telegram · E-Mail» (`wa.me/?text=`, `sgnl://` nicht zuverlässig → Signal nur auf Mobil zeigen, `t.me/share/url`, `mailto:`).
 - Kopieren-Bestätigung: Button-Text wechselt 2 s zu «Kopiert ✓» + `role="status"`-Ansage.
 
@@ -157,7 +157,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 - **Nie nur Farbe** (1.4.1): Zustände Tag (Symbol/Muster), Heatmap (Zahl + Symbol „alle“), Stimmen (Text), Fehler (Symbol + Text).
 - **Bewegung:** `prefers-reduced-motion` → keine Animationen außer Opazität; nichts blinkt.
 - **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Labels umbrechen. **Kalender bei großer Schrift (U-5):** Umschaltung per Container-Query in `em` (nicht `px`), damit sie auf die Schriftgröße reagiert: Ist die Zelle schmaler als **3,25 em** (bei 360 px ab ca. 175 % Textgröße), wird die **Heatmap** zur **Tagesliste** (je Tag eine Zeile: Datum mit Wochentag · „4 von 5: Geht“ · Abzeichen ◐ n Zur Not / ✓ alle / Feiertag / Vorschlag n; gleiche Reihenfolge, Monatsüberschriften bleiben, Antippen/Enter öffnet das Tagesdetail, Wochenenden über „Sa./So.“ im Datum). **Meine Tage** bleibt ein Raster (Malen braucht die Fläche): Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl, Datumszahl wird nie gekürzt. Kein manueller Umschalter im MVP.
-- **Dark Mode:** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter in Konto/Menü (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*). Alle obigen Kontrastregeln gelten auch dort.
+- **Dark Mode:** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter in Konto/Menü (*bestätigt (Auftraggeber 2026-10-08)*). Alle obigen Kontrastregeln gelten auch dort.
 
 ### 7.2 Zielgrößen & Fokus
 - **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px 45,7 × 52 px, bei 320 px 41 × 52 px – U-1). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
@@ -210,7 +210,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 
 **Ziehen (2.5.7):** Jede Zieh-Funktion hat eine Ein-Zeiger-Alternative ohne Ziehen: Tippen einzeln, Bereichsmodus (zwei Tipps). Bottom-Sheets haben neben Wischen immer einen Schließen-Button.
 
-**Hilfe (3.2.6):** «Hilfe» im Footer und im Avatar-Menü an gleicher Stelle auf allen Seiten; Ziel ist die Hilfe-/FAQ-Seite `/de/hilfe` · `/en/help` (MVP-Seite, W15 – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+**Hilfe (3.2.6):** «Hilfe» im Footer und im Avatar-Menü an gleicher Stelle auf allen Seiten; Ziel ist die Hilfe-/FAQ-Seite `/de/hilfe` · `/en/help` (MVP-Seite, W15 – *bestätigt (Auftraggeber 2026-10-08)*).
 
 ### 7.4 Weitere ARIA-Muster
 - Tabs der Reise: `<nav aria-label="Reise">` mit Links, `aria-current="page"`.
@@ -228,7 +228,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 | Einladung | Ein URL-Zustandsautomat, Kontext-Karte immer sichtbar, `pendingAuth` | A |
 | Meine Tage | Pinsel, Tippen = Umschalten, Ziehen = Datumsbereich, Bereichsmodus, Undo, Autosave, Abgabe | B |
 | Gruppe | Vorschläge zuerst (mobil), lokale Filter, Tagesdetail mit Tag-für-Tag-Navigation | C |
-| Abstimmen | Vorbelegung bestätigen, Sofortspeichern, Ergebnisse erst nach eigener Stimme (Orga sieht immer alles; *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) | D |
+| Abstimmen | Vorbelegung bestätigen, Sofortspeichern, Ergebnisse erst nach eigener Stimme (Orga sieht immer alles; *bestätigt (Auftraggeber 2026-10-08)*) | D |
 | Meine Reisen | To-dos zuerst, Karten mit Phase + Fortschritt | E |
 
 **Zeit & Datum:** Alle Tage sind Kalendertage in der Zeitzone der Reise (PRD §8); die UI zeigt nie Uhrzeiten, außer «zuletzt geändert 14:32» (lokale Zeit des Betrachters).
@@ -242,6 +242,10 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 - **Text-Expansion:** Layouts für **DE + 30 %** auslegen (DE ist in der Regel die längere Sprache; EN-Strings können in Einzelfällen länger sein, z. B. „If needed“ vs. „Zur Not“). Keine fixen Breiten für Texte; Buttons dürfen unter 600 px auf zwei Zeilen umbrechen, außer Kalenderzellen und Tabs (dort Zeichenbudget §10.4).
 - Pluralformen über ICU MessageFormat («{count, plural, one {# Nacht} other {# Nächte}}»).
 - Namen (nutzergeneriert) nie übersetzen, nie kürzen ohne Tooltip/Volltext im Detail.
+- **Produktname je Sprache** (Auftraggeber 2026-10-08): DE „Wir wollen weg“, EN „When do we go?“; die Bildmarke (Logo A) ist sprachneutral. Schreibregeln §10.6.
+  - **Sprachwechsel:** Schaltet jemand die Oberflächensprache um, wechselt der angezeigte Produktname überall mit – Wortmarke im Header, `<title>`, Footer, Hilfe-/Rechtstexte, Leer- und Systemzustände. Kein Mischbetrieb: eine DE-Oberfläche zeigt nie „When do we go?“ und umgekehrt (einzige Ausnahme: Impressum/Datenschutz nennen einmalig beide Namen, damit klar ist, dass es derselbe Dienst ist – «Wir wollen weg (englisch: „When do we go?“)» / «When do we go? (German: “Wir wollen weg”)»).
+  - **Teilen-Texte:** Name in der Sprache des **Senders** bzw. der im Sheet gewählten Textsprache – nie in der (unbekannten) Sprache der Empfänger. Die Empfänger sehen nach dem Öffnen des Links die Oberfläche in ihrer eigenen Sprache, ggf. also den anderen Namen; die gleiche Bildmarke stellt den Wiedererkennungswert sicher.
+  - **Mails:** Name (inkl. Absendername) in der Mailsprache (Flow F.3). **Open-Graph-Vorschau** `/i/{token}`: `og:site_name` und Name im `og:title` in der Sprache der Reise-Anlage (sitemap §4).
 - Teilen-Texte: Sprache des Teilenden, umschaltbar im Sheet; Daten im Teilen-Text im Format der **gewählten Textsprache** (de → `de-DE`-Format bzw. Region des Teilenden, wenn deutschsprachig; en → `en-GB`, außer Teilender hat `en-US`).
 
 ## 10. Copy-Richtlinien DE/EN
@@ -258,7 +262,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 
 | Konzept | DE | EN |
 |---|---|---|
-| App-Name | Wir wollen weg | Wir wollen weg (nicht übersetzen); EN-Untertitel „Find dates for your group trip“ – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber* |
+| Produktname | Wir wollen weg · Untertitel (optional) „Gemeinsam den Urlaubstermin finden“ | **When do we go?** (eigener Name, keine Übersetzung von „Wir wollen weg“) · Untertitel (optional) „Find dates for your group trip“ – *bestätigt (Auftraggeber 2026-10-08)*; Schreibregeln §10.6 |
 | Reise | Reise | Trip |
 | Suchzeitraum | Zeitraum (für die Suche) | Date range |
 | Mindestdauer / Wunschdauer | mindestens … Nächte / am liebsten … Nächte | at least … nights / ideally … nights |
@@ -279,7 +283,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 | Abstimmung | Abstimmung / abstimmen | Vote / voting |
 | Ja / Vielleicht / Nein | Ja / Vielleicht / Nein | Yes / Maybe / No |
 | festlegen | Termin festlegen | Lock in dates |
-| Organisator (Rolle) | Orga | Organizer – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber* |
+| Organisator (Rolle) | Orga | Organizer – *bestätigt (Auftraggeber 2026-10-08)* |
 | Rang-Abzeichen Abstimmung | Platz 1 | Top choice |
 | Mitglied | Mitglied | Member |
 | Platzhalter | Platzhalter („fehlt noch“) | Placeholder („not joined yet“) |
@@ -295,8 +299,9 @@ Platzhalter: `{trip}` Reisename, `{orga}` Vorname Orga, `{link}`, `{deadline}` F
 **Einladung (F-002)**
 - DE: «Wir wollen weg: {trip}! Trag bis {deadline} ein, wann du kannst – dauert 2 Minuten: {link}»
   - ohne Frist: «Wir wollen weg: {trip}! Trag ein, wann du kannst – dauert 2 Minuten: {link}»
-- EN: «We want to get away: {trip}! Add your dates by {deadline} – takes 2 minutes: {link}»
-  - ohne Frist: «We want to get away: {trip}! Add the dates that work for you – takes 2 minutes: {link}»
+- EN: «When do we go? {trip} – add your dates by {deadline}, takes 2 minutes: {link}»
+  - ohne Frist: «When do we go? {trip} – add the dates that work for you, takes 2 minutes: {link}»
+  - Begründung: Der Produktname ist selbst die Frage, um die es geht, und steht wie im DE-Text („Wir wollen weg: …“) als Einstieg – gleiche Wiedererkennung wie Bildmarke/Link-Vorschau. Das Fragezeichen schließt den ersten Satz ab; danach folgt kein weiteres Satzzeichen (§10.6). „We want to get away“ entfällt (wirkte wie eine Übersetzung des DE-Namens und hätte einen dritten Namen eingeführt).
 
 **Abstimmung gestartet (F-010)**
 - DE: «Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm bis {deadline} ab: {link}»
@@ -331,9 +336,28 @@ Regeln: `{names}` als «Kemal, Sara und Jonas» / «Kemal, Sara and Jonas»; ab 
 | Anzeigename (Nutzer) | bis 40; Listen 1 Zeile mit „…“ und Volltext in Detail | – |
 
 ### 10.5 Transaktionsmails (Kurzfassung für Operations/Developer)
-- Betreff DE: «{code} ist dein Code für Wir wollen weg» · EN: «{code} is your Wir wollen weg code» (Code im Betreff → sichtbar in Mitteilungs-Vorschau, kein App-Wechsel nötig).
+- Betreff DE: «{code} ist dein Code für Wir wollen weg» · EN: «{code} – your code for When do we go?» (Code im Betreff zuerst → sichtbar in Mitteilungs-Vorschau, kein App-Wechsel nötig; EN-Name am Ende, damit sein Fragezeichen den Betreff abschließt und kein „?“ mitten im Satz steht).
+- Absendername: «Wir wollen weg» bzw. «When do we go?» je Mailsprache (im Header als quoted-string kodieren). Grußzeile am Mailende: «– Wir wollen weg» / «– When do we go?».
 - Body: Code groß und als erstes; darunter «Oder tippe hier, um dich anzumelden: [Anmelden]»; Hinweis «Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail.» Im Einladungskontext erste Zeile: «Du trittst „{trip}“ bei.» Keine Tracking-Links (F-042).
 - Plain-Text-Teil enthält Code in eigener Zeile (für OS-Code-Erkennung).
+
+### 10.6 Produktname – Schreibregeln (DE „Wir wollen weg“ · EN „When do we go?“)
+
+Bestätigt vom Auftraggeber 2026-10-08. Gilt für UI, Titel, Mails, Teilen-Texte, OG-Daten, Hilfe- und Rechtstexte.
+
+1. **Schreibweise exakt:** „Wir wollen weg“ (ohne Satzzeichen) · „When do we go?“ (nur W groß, **Fragezeichen gehört immer zum Namen** – auch in Wortmarke, Titel, Absender, OG). Nicht: „When Do We Go?“, „When do we go“, „WhenDoWeGo“. Ohne „?“ nur in technischen Kennungen (Domain, Dateinamen, IDs, Slugs) – nie in sichtbaren Texten.
+2. **Bevorzugte Position des EN-Namens: allein oder am Ende** – Wortmarke, Titelende («My dates · Lisbon 2027 · When do we go?»), Betreffende, Grußzeile, Satzanfang als eigener Fragesatz (Teilen-Texte). Trenner in Titeln ist « · » bzw. « – », nie ein Satzzeichen.
+3. **Kein doppeltes Satzzeichen:** Nach „When do we go?“ folgt nie „.“, „!“, „,“, „:“ oder ein weiteres „?“. Würde ein Satz nach dem Namen weitergehen, umformulieren:
+   - ✗ «Welcome to When do we go?!» → ✓ «Welcome to When do we go?»
+   - ✗ «When do we go? is free to use.» → ✓ «It's free to use.» / «The app is free.»
+   - ✗ «Thanks for using When do we go?.» → ✓ «Thanks for planning with us.»
+   - ✗ «When do we go?'s privacy policy» → ✓ «Privacy policy · When do we go?» bzw. «our privacy policy»
+4. **Im Fließtext sparsam:** In UI-Sätzen statt des Namens „the app“ / „we“ / „us“ verwenden (die Wortmarke ist ohnehin sichtbar). Wo der Name mitten im Satz unvermeidbar ist (Rechtstexte), in typografische Anführungszeichen setzen: «This service (“When do we go?”) is operated by …» – so ist klar, dass das Fragezeichen zum Namen gehört.
+5. **Grammatik EN:** Singular, Pronomen „it“; kein Artikel („When do we go?“, nicht „the When do we go?“); kein Genitiv-’s.
+6. **DE:** „Wir wollen weg“ im Fließtext ohne Anführungszeichen, wenn eindeutig (Titel, Betreff, Absender); in Sätzen, in denen er als Satzteil missverstanden werden könnte, mit „…“ («Mit „Wir wollen weg“ findet ihr …») oder umformulieren. Der DE-Teilen-Einstieg «Wir wollen weg: {trip}!» ist gewollt doppeldeutig (Name und Aussage) und bleibt.
+7. **Barrierefreiheit:** Zugänglicher Name des Logo-Links = nur Produktname der aktuellen Sprache («Wir wollen weg» / «When do we go?»; Ziel ergibt sich aus dem Link). Bildmarke selbst `alt=""` neben Text-Wortmarke. Screenreader lesen das „?“ als Frageintonation – gewollt.
+8. **Längen:** Beide Namen 14 Zeichen – Header-Layouts (Wortmarke + Sprachlink + „Anmelden“/„Sign in“ bei 360 px) passen in beiden Sprachen ohne Sonderregel.
+9. **Kein Mischbetrieb** und Sprachwechsel: s. §9.
 
 ## 11. Datenschutz in der Oberfläche
 - Einladungs-Vorschau zeigt nie Namen außer Orga-Vorname (F-003).
@@ -342,4 +366,5 @@ Regeln: `{names}` als «Kemal, Sara und Jonas» / «Kemal, Sara and Jonas»; ab 
 - Keine Tracker, kein Cookie-Banner (F-013); Sprache-Cookie ist technisch notwendig.
 
 ## Änderungen
+- 2026-10-08 (Auftraggeber-Entscheidungen): EN-Produktname „When do we go?“ (§3 Seitentitel, §4.5, §9, §10.2, EN-Teilen-Text Einladung §10.3, Mail-Betreff/Absender §10.5, neue Schreibregeln §10.6); Vermerke „vorbehaltlich Auftraggeber“ → „bestätigt (Auftraggeber 2026-10-08)“.
 - 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.

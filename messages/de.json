@@ -1,0 +1,83 @@
+{
+  "app": {
+    "name": "Wir wollen weg",
+    "tagline": "Findet den Termin für euren gemeinsamen Urlaub."
+  },
+  "common": {
+    "switchLanguage": "English",
+    "skipToContent": "Zum Inhalt springen",
+    "demoBanner": "Demo – bitte keine echten Daten eingeben."
+  },
+  "landing": {
+    "title": "Wann geht’s los?",
+    "lead": "Alle tragen ein, wann sie können. Ihr seht sofort, welche Tage für die ganze Gruppe passen.",
+    "login": "Anmelden"
+  },
+  "auth": {
+    "loginTitle": "Anmelden oder registrieren",
+    "loginLead": "Gib deine E-Mail ein. Wir schicken dir einen Code – ein Passwort brauchst du nicht.",
+    "emailLabel": "E-Mail",
+    "sendCode": "Code senden",
+    "rememberMe": "Angemeldet bleiben",
+    "rememberMeHint": "Auf fremden Geräten abwählen.",
+    "rememberMeInline": "Du bleibst auf diesem Gerät angemeldet.",
+    "codeLabel": "6-stelliger Code",
+    "codeHint": "Gesendet an {email} · gültig 15 Minuten",
+    "codeSentLead": "Wir haben dir einen 6-stelligen Code geschickt.",
+    "verify": "Bestätigen",
+    "otherEmail": "Andere E-Mail",
+    "magicHint": "Du hast auf den Link in der Mail getippt? Dann geht es im anderen Browser weiter. Hier kannst du stattdessen den Code eingeben.",
+    "nameTitle": "Fast geschafft! Wie sollen dich die anderen nennen?",
+    "nameLabel": "Dein Name",
+    "saveName": "Weiter",
+    "errors": {
+      "invalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein, z. B. name@beispiel.de.",
+      "wrongCode": "Dieser Code stimmt nicht.",
+      "tooManyAttempts": "Zu viele Versuche. Wir schicken dir einen neuen Code.",
+      "expired": "Dieser Code ist abgelaufen. Fordere einfach einen neuen an.",
+      "rateLimited": "Bitte warte kurz, bevor du einen neuen Code anforderst.",
+      "nameRequired": "Bitte gib einen Namen ein.",
+      "generic": "Keine Verbindung. Deine Eingaben sind noch da – versuch es nochmal."
+    }
+  },
+  "magic": {
+    "title": "Anmelden",
+    "heading": "Fast geschafft!",
+    "lead": "Tippe auf den Button, um dich in diesem Browser anzumelden.",
+    "joining": "Du trittst „{trip}“ bei.",
+    "otherAccount": "Du bist gerade als {name} angemeldet. Mit diesem Link meldest du dich als jemand anderes an.",
+    "continue": "Jetzt anmelden",
+    "pending": "Einen Moment …",
+    "useCodeLead": "Lieber mit Code?",
+    "useCode": "Anmelden",
+    "invalidHeading": "Dieser Anmeldelink funktioniert nicht mehr",
+    "invalid": "Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.",
+    "requestNew": "Neuen Code anfordern",
+    "failed": "Das hat nicht geklappt. Bitte versuch es nochmal.",
+    "retry": "Nochmal versuchen"
+  },
+  "invite": {
+    "title": "Einladung",
+    "invitedBy": "Du bist zu „{trip}“ eingeladen.",
+    "memberCount": "{count, plural, one {# ist schon dabei} other {# sind schon dabei}}",
+    "join": "Mitmachen",
+    "joinAs": "Du trittst als {name} bei.",
+    "confirmJoin": "Beitreten",
+    "invalid": "Dieser Einladungslink funktioniert nicht mehr. Vielleicht wurde er erneuert. Bitte frag im Gruppenchat nach dem aktuellen Link."
+  },
+  "trips": {
+    "title": "Meine Reisen",
+    "signedInAs": "Angemeldet als {name}",
+    "empty": "Du bist noch bei keiner Reise dabei.",
+    "signOut": "Abmelden"
+  },
+  "mail": {
+    "fromName": "Wir wollen weg",
+    "subject": "{code} ist dein Code für Wir wollen weg",
+    "tripLine": "Du trittst „{trip}“ bei.",
+    "codeIntro": "Dein Code:",
+    "linkIntro": "Oder tippe hier, um dich anzumelden:",
+    "linkText": "Anmelden",
+    "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail."
+  }
+}

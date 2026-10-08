@@ -1,0 +1,60 @@
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.card {
+  padding: var(--ww-space-4);
+  border: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ww-size-control-md);
+  min-width: var(--ww-size-touch-min);
+  padding-inline: var(--ww-space-5);
+  border: 0;
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-primary);
+  color: var(--ww-color-text-on-primary);
+  font: inherit;
+  font-weight: var(--ww-font-weight-semibold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.button:hover {
+  background: var(--ww-color-primary-hover);
+}
+
+.button:disabled {
+  background: var(--ww-color-disabled-bg);
+  color: var(--ww-color-disabled-text);
+  cursor: not-allowed;
+}
+
+.textButton {
+  padding: var(--ww-space-2) 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-primary-text);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.error {
+  color: var(--ww-color-danger);
+  font-size: var(--ww-text-sm);
+}

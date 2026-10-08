@@ -1,0 +1,60 @@
+/*
+ * Global styles. Design tokens are imported straight from the designer's source of
+ * truth (docs/design/tokens.css) – no copy that could drift (tech-stack.md §2.3, T3).
+ * Components use CSS Modules and only `var(--ww-…)` values.
+ */
+@import "../../docs/design/tokens.css";
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100dvh;
+  background: var(--ww-color-bg);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+  line-height: var(--ww-leading-normal);
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--ww-font-display);
+  line-height: var(--ww-leading-tight);
+  text-wrap: balance;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+a {
+  color: var(--ww-color-primary-text);
+}
+
+:focus-visible {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: var(--ww-focus-offset);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

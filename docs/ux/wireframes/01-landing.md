@@ -61,7 +61,14 @@ Zweck: In 5 Sekunden verstehen, was die App tut, und sofort eine Reise anlegen k
 
 **Hero-Platzierung (U-12):** mobil zentriert **über** der Headline, max. 160 px hoch – Rechnung 360 × 640 (sichtbar ≈ 560 px nach Browserleisten): Header 56 + Hero 160 + h1 2 Zeilen ≈ 72 + Unterzeile ≈ 72 + CTA 56 + Abstände ≈ 80 = ≈ 496 px → „Reise planen“ ohne Scrollen sichtbar. Bei großer Schrift darf gescrollt werden; die Illustration schrumpft nicht unter 120 px, sondern rückt unter den CTA, sobald die Root-Schrift ≥ 20 px ist (Hauptaktion zuerst). Ab 600 px zweispaltig (Text links, Illustration rechts).
 
-Untertitel: DE optional „Gemeinsam den Urlaubstermin finden“, EN „Find dates for your group trip“ (Marke bleibt „Wir wollen weg“ – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+Produktname je Sprache (*bestätigt (Auftraggeber 2026-10-08)*): DE-Landing `/de` zeigt „Wir wollen weg“, EN-Landing `/en` zeigt **„When do we go?“** – in Header-Wortmarke, `<title>` und Footer; Bildmarke (Logo A) identisch. Untertitel: DE optional „Gemeinsam den Urlaubstermin finden“, EN „Find dates for your group trip“. Schreibregeln: [ux-spec §10.6](../ux-spec.md).
+
+EN-Header mobil (gleiche Länge, 14 Zeichen):
+```
+│ [Logo] When do we go?  ⊕Deutsch  Sign in │
+```
+- `<title>`: «Wir wollen weg – Gemeinsam den Urlaubstermin finden» / «When do we go? Find dates for your group trip» (die Frage im Namen, der Untertitel als Antwort – kein zusätzliches Satzzeichen).
+- EN-h1 darf den Namen nicht wiederholen (Wortmarke steht darüber); Headline bleibt nutzenorientiert. Falls der Name doch in einen Satz soll: ans Satzende, nichts danach (ux-spec §10.6).
 
 ## Verhalten
 - Angemeldete Nutzer, die `/` aufrufen, landen auf `/trips` (W04); `/de` bzw. `/en` direkt bleibt erreichbar (Header zeigt dann Avatar).

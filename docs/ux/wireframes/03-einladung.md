@@ -4,6 +4,8 @@ Features: F-002, F-003, F-007, F-040, F-041, F-046 · Flow: [A](../user-flows.md
 
 **Wichtigste Seite des Produkts** (Beitrittsquote ≥ 65 %). Alle Schritte sind Zustände derselben URL; die Reise-Karte bleibt oben immer sichtbar.
 
+**Produktname:** Skizzen zeigen DE. Auf EN steht in der Wortmarke „When do we go?“ (Umschalter dann „⊕ Deutsch“). Der Name folgt der **Oberflächensprache des Gastes**, nicht der Sprache des Teilen-Textes: Ein EN-Gast, der „Wir wollen weg: Lissabon 2027! …“ bekommen hat, sieht nach dem Umschalten „When do we go?“ – die gleiche Bildmarke und die Reise-Karte (Reisename, „Lena lädt dich ein“) halten den Zusammenhang. `<title>`: «Lissabon 2027 · Wir wollen weg» / «Lisbon 2027 · When do we go?».
+
 ## Z1 – Vorschau, nicht angemeldet (mobil 360 px)
 
 ```

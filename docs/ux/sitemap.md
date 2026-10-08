@@ -1,4 +1,4 @@
-# Sitemap & Informationsarchitektur – Wir wollen weg (MVP)
+# Sitemap & Informationsarchitektur – Wir wollen weg / When do we go? (MVP)
 
 Stand: 2026-10-08 (Abstimmungsrunde 2) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
@@ -44,7 +44,7 @@ Direkte URLs auf einen Tab werden immer respektiert (kein Umleiten).
 │   └── Schritt Profil (nur neue Konten: Name)  (?step=profile)
 ├── Magic-Link-Ziel                  /auth/magic?token=…  F-040, F-041
 ├── Passwort vergessen               /login/reset         F-042
-├── Hilfe (Kurz-FAQ)                 /de/hilfe · /en/help    MVP (CEO 2026-10-08, vorbehaltlich Auftraggeber), W15
+├── Hilfe (Kurz-FAQ)                 /de/hilfe · /en/help    MVP – bestätigt (Auftraggeber 2026-10-08), W15
 ├── Datenschutz                      /de/datenschutz · /en/privacy   F-013, F-046
 └── Impressum                        /de/impressum · /en/imprint     F-046
 
@@ -94,8 +94,9 @@ Systemseiten
 - `{id}` der Reise ist eine kurze, nicht sprechende ID (z. B. 10 Zeichen). Sie ist **kein** Geheimnis – Zugriff nur für angemeldete Mitglieder. Nichtmitglieder erhalten dieselbe Seite wie bei nicht existierenden Reisen („Reise nicht gefunden oder kein Zugriff“), damit keine Existenz verraten wird.
 - `{inviteToken}` ≥ 128 Bit (z. B. 22 Zeichen base64url), für Reise-Einladung und Platzhalter-Einladung (F-007) dieselbe Route – der Server erkennt den Typ.
 - Rücksprungadresse: `?next=` nur für relative, interne Pfade (Open-Redirect-Schutz). Im Einladungsflow wird die Rücksprungadresse zusätzlich serverseitig in der Code-/Magic-Link-Anforderung gespeichert (s. Flow A).
-- Alle Seiten unter `/trips`, `/i`, `/account`, `/auth`, `/login`: `noindex, nofollow`; `Referrer-Policy: no-referrer` für `/i/…` und `/auth/…`, damit Tokens nicht abfließen.
-- Open-Graph-Vorschau von `/i/{token}` (F-002) in der **Sprache der Reise-Anlage** (Sprache des Organisators zum Zeitpunkt der Anlage), da Link-Crawler (WhatsApp etc.) keine Sprachpräferenz senden. Inhalt: Reisename + App-Name, keine Namen/Daten.
+- Alle Seiten unter `/trips`, `/i`, `/account`, `/auth`, `/login`: `noindex, nofollow`; `Referrer-Policy: same-origin` für `/i/…` und `/auth/…`, damit Tokens nicht an fremde Seiten abfließen. *(Geändert 2026-10-08, R-008: `no-referrer` führt bei Formular-POSTs zu `Origin: null` und bricht die CSRF-Prüfung von Server Actions/Better Auth; `same-origin` erfüllt das Ziel ebenso – Tokens verlassen die eigene Origin nicht. Externe Links auf diesen Seiten zusätzlich `rel="noreferrer"`.)*
+- Open-Graph-Vorschau von `/i/{token}` (F-002) in der **Sprache der Reise-Anlage** (Sprache des Organisators zum Zeitpunkt der Anlage), da Link-Crawler (WhatsApp etc.) keine Sprachpräferenz senden. Inhalt: Reisename + Produktname in der Sprache der Reise-Anlage – `og:site_name` «Wir wollen weg» bzw. «When do we go?», `og:title` «Lissabon 2027 · Wir wollen weg» / «Lisbon 2027 · When do we go?» (Name am Ende, ux-spec §10.6); keine Namen/Daten.
+- **Produktname je Sprache** (bestätigt (Auftraggeber 2026-10-08)): DE „Wir wollen weg“, EN „When do we go?“. Seitentitel aller Seiten nach Muster «{Ansicht} · {Reise} · {Produktname}», Produktname wechselt mit der Oberflächensprache (ux-spec §3, §9, §10.6). Öffentliche Seiten (`/de`, `/en`, Hilfe, Rechtstexte) tragen den Namen ihrer Präfix-Sprache; `hreflang` verknüpft beide.
 
 ## 5. Globale Navigation
 
@@ -116,7 +117,7 @@ Systemseiten
 
 | Eintrag | Orga | Mitglied |
 |---|---|---|
-| Freunde einladen (→ /invite) | ✔ | ✔ (solange Beitritt offen; *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*) |
+| Freunde einladen (→ /invite) | ✔ | ✔ (solange Beitritt offen; *bestätigt (Auftraggeber 2026-10-08)*) |
 | Mein Name in dieser Reise | ✔ | ✔ |
 | Reise bearbeiten (→ /settings) | ✔ | – |
 | Gruppe erinnern (F-015) | ✔ | – |
@@ -148,10 +149,10 @@ Systemseiten
 | F-043 Konto & Löschen | /account, /account/delete | [13](wireframes/13-konto.md) |
 | F-044 Meine Reisen | /trips | [04](wireframes/04-meine-reisen.md) |
 | F-046 Sprachen | Header, Footer, Konto, Teilen-Sheet | [13](wireframes/13-konto.md), [ux-spec §9](ux-spec.md) |
-| Hilfe/FAQ (MVP-Seite, kein F-Feature) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
+| Hilfe/FAQ (F-051) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
 
-**Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt; **im MVP enthalten** (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*; PM bitte als kleines Feature nachtragen). Inhalt: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
+**Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt; **im MVP enthalten** (*bestätigt (Auftraggeber 2026-10-08)*; PM bitte als kleines Feature nachtragen). Inhalt: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
 
-**Rollenbezeichnung:** In der Oberfläche heißt die Rolle „Orga“ / „Organizer“ (Kronen-Icon immer mit Text) – *CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*. „Organisator“ bleibt nur interner/Dokumentbegriff.
+**Rollenbezeichnung:** In der Oberfläche heißt die Rolle „Orga“ / „Organizer“ (Kronen-Icon immer mit Text) – *bestätigt (Auftraggeber 2026-10-08)*. „Organisator“ bleibt nur interner/Dokumentbegriff.
 
-**Darstellung (Dark Mode):** kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*CEO-Entscheidung 2026-10-08, vorbehaltlich Auftraggeber*).
+**Darstellung (Dark Mode):** kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*bestätigt (Auftraggeber 2026-10-08)*).

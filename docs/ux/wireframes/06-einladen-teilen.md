@@ -74,6 +74,7 @@ Seite „Einladen“: zweispaltig – links Text + Aktionen, rechts Platzhalter-
 
 ## Regeln
 - Textänderung + Sprachwechsel: Rückfrage «Deine Änderungen am Text gehen verloren.»
+- Sprachwechsel des Textes tauscht auch den Produktnamen: DE «Wir wollen weg: Lissabon 2027! Trag ein, wann du kannst – dauert 2 Minuten: {link}» ↔ EN «When do we go? Lisbon 2027 – add the dates that work for you, takes 2 minutes: {link}» (Name in der Sprache des Senders/Textes, ux-spec §10.3, §10.6). Vorbelegung = Oberflächensprache des Senders.
 - „Link erneuern“ (Dialog): «Neuen Link erzeugen? Der bisherige Link funktioniert dann nicht mehr – auch für Platzhalter.» `[Abbrechen]` `[Neuen Link erzeugen]`.
 - Beitritt gesperrt → Teilen-Bereich ersetzt durch Hinweis «Der Beitritt ist geschlossen. Öffne ihn, um neue Leute einzuladen.»
 - Mitglieder (nicht Orga) sehen nur Text/Teilen/Link, keine Platzhalter-Verwaltung und keine Orga-Schalter.
