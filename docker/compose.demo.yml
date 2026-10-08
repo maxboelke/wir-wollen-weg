@@ -1,0 +1,78 @@
+# Offline demo (deployment.md §0): app + PostgreSQL + Mailpit on the laptop.
+#   cp .env.example .env.demo   # then set APP_ENV=demo, BETTER_AUTH_SECRET, POSTGRES_PASSWORD
+#   docker compose -f docker/compose.demo.yml --env-file .env.demo up -d --build
+#   docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:migrate
+#   docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:seed:demo
+# App: http://localhost:3000 · Mailpit (codes + magic links): http://localhost:8025
+name: wir-wollen-weg-demo
+
+x-app-env: &app-env
+  APP_ENV: demo
+  APP_URL: ${APP_URL:-http://localhost:3000}
+  BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+  AUTH_TRUSTED_ORIGINS: ${AUTH_TRUSTED_ORIGINS:-}
+  DATABASE_URL: postgres://app:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.demo}@db:5432/wirwollenweg
+  MAIL_TRANSPORT: smtp
+  SMTP_HOST: mailpit
+  SMTP_PORT: "1025"
+  SMTP_SECURE: "false"
+  MAIL_FROM: login@demo.test
+  MAIL_FROM_NAME_DE: Wir wollen weg
+  MAIL_FROM_NAME_EN: "When do we go?"
+  RATE_LIMIT_ENABLED: "true"
+
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: runner
+      args:
+        APP_ENV: demo
+    environment:
+      <<: *app-env
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?set BETTER_AUTH_SECRET in .env.demo}
+    ports:
+      - "3000:3000" # reachable in the (trusted!) LAN for phone tests, deployment.md §0.3
+    depends_on:
+      db:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    restart: unless-stopped
+
+  # One-shot helper (migrations, seed): `run --rm tools pnpm db:migrate`
+  tools:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: tools
+    environment: *app-env
+    profiles: ["tools"]
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: postgres:18
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env.demo}
+      POSTGRES_DB: wirwollenweg
+    volumes:
+      - demo-db:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U app -d wirwollenweg"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+  mailpit:
+    image: axllent/mailpit:latest
+    ports:
+      - "8025:8025" # web UI + API; SMTP stays internal
+    restart: unless-stopped
+
+volumes:
+  demo-db:

@@ -1,0 +1,74 @@
+{
+  "app": {
+    "name": "When do we go?",
+    "tagline": "Find the dates for your group trip."
+  },
+  "common": {
+    "switchLanguage": "Deutsch",
+    "skipToContent": "Skip to content",
+    "demoBanner": "Demo – please don’t enter real data."
+  },
+  "landing": {
+    "title": "When are we off?",
+    "lead": "Everyone adds when they can. You instantly see which days work for the whole group.",
+    "login": "Sign in"
+  },
+  "auth": {
+    "loginTitle": "Sign in or sign up",
+    "loginLead": "Enter your email. We’ll send you a code – no password needed.",
+    "emailLabel": "Email",
+    "sendCode": "Send code",
+    "rememberMe": "Keep me signed in",
+    "rememberMeHint": "Untick on shared devices.",
+    "rememberMeInline": "You’ll stay signed in on this device.",
+    "codeLabel": "6-digit code",
+    "codeHint": "Sent to {email} · valid for 15 minutes",
+    "codeSentLead": "We’ve sent you a 6-digit code.",
+    "verify": "Confirm",
+    "otherEmail": "Use a different email",
+    "magicHint": "Tapped the link in the email? Then you’ll continue in the other browser. You can enter the code here instead.",
+    "nameTitle": "Almost there! What should the others call you?",
+    "nameLabel": "Your name",
+    "saveName": "Continue",
+    "errors": {
+      "invalidEmail": "Please enter a valid email address, e.g. name@example.com.",
+      "wrongCode": "That code isn’t right.",
+      "tooManyAttempts": "Too many attempts. We’ll send you a new code.",
+      "expired": "This code has expired. Just request a new one.",
+      "rateLimited": "Please wait a moment before requesting a new code.",
+      "nameRequired": "Please enter a name.",
+      "generic": "No connection. Your input is still here – please try again."
+    }
+  },
+  "magic": {
+    "title": "Finish signing in",
+    "lead": "Tap the button to sign in on this browser.",
+    "continue": "Sign in now",
+    "invalid": "This sign-in link has expired or has already been used.",
+    "requestNew": "Request a new code"
+  },
+  "invite": {
+    "title": "Invitation",
+    "invitedBy": "You’re invited to “{trip}”.",
+    "memberCount": "{count, plural, one {# person is already in} other {# people are already in}}",
+    "join": "Join in",
+    "joinAs": "You’re joining as {name}.",
+    "confirmJoin": "Join",
+    "invalid": "This invite link doesn’t work any more. It may have been renewed. Please ask in your group chat for the current link."
+  },
+  "trips": {
+    "title": "My trips",
+    "signedInAs": "Signed in as {name}",
+    "empty": "You haven’t joined any trips yet.",
+    "signOut": "Sign out"
+  },
+  "mail": {
+    "fromName": "When do we go?",
+    "subject": "{code} is your code for When do we go?",
+    "tripLine": "You’re joining “{trip}”.",
+    "codeIntro": "Your code:",
+    "linkIntro": "Or tap here to sign in:",
+    "linkText": "Sign in",
+    "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email."
+  }
+}

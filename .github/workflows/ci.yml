@@ -123,7 +123,7 @@ jobs:
       SMTP_SECURE: "false"
       MAIL_FROM: login@mail.example.org
       MAIL_FROM_NAME_DE: Wir wollen weg
-      MAIL_FROM_NAME_EN: Wir wollen weg
+      MAIL_FROM_NAME_EN: "When do we go?" # EN product name (PRD Q11, 2026-10-08)
       MAIL_REPLY_TO: hallo@example.org
       MAILPIT_API_URL: http://localhost:8025
     steps:

@@ -1,0 +1,10 @@
+allowBuilds:
+  "@parcel/watcher": false
+  "@swc/core": false
+  esbuild: true
+  unrs-resolver: true
+minimumReleaseAgeExclude:
+  - drizzle-orm@0.45.4
+  - "@playwright/test@1.64.0"
+  - playwright-core@1.64.0
+  - playwright@1.64.0

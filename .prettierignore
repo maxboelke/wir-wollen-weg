@@ -1,0 +1,12 @@
+# Generated / vendored
+pnpm-lock.yaml
+drizzle/meta/
+.next/
+playwright-report/
+test-results/
+coverage/
+
+# Documents and design assets are owned by other roles and formatted by hand
+docs/
+CLAUDE.md
+.claude/agents/
