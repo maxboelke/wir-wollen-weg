@@ -149,7 +149,7 @@ Systemseiten
 | F-043 Konto & Löschen | /account, /account/delete | [13](wireframes/13-konto.md) |
 | F-044 Meine Reisen | /trips | [04](wireframes/04-meine-reisen.md) |
 | F-046 Sprachen | Header, Footer, Konto, Teilen-Sheet | [13](wireframes/13-konto.md), [ux-spec §9](ux-spec.md) |
-| Hilfe/FAQ (MVP-Seite, kein F-Feature) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
+| Hilfe/FAQ (F-051) | /de/hilfe, /en/help | [15](wireframes/15-hilfe.md) |
 
 **Hinweis Hilfe-Seite:** Nicht als Feature in features.md geführt; **im MVP enthalten** (*bestätigt (Auftraggeber 2026-10-08)*; PM bitte als kleines Feature nachtragen). Inhalt: kleine statische FAQ („Code kommt nicht an“, „Ich habe die Einladung verloren“, „Wie lösche ich meine Daten?“) mit Kontaktadresse – erfüllt WCAG 2.2 SC 3.2.6 „Consistent Help“ und fängt die häufigste Supportfrage (Mail im Spam) ab. Aufwand gering. → Bestätigung durch CEO/PM.
 

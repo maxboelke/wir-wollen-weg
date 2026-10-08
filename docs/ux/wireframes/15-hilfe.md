@@ -1,6 +1,6 @@
 # W15 – Hilfe / FAQ (`/de/hilfe`, `/en/help`)
 
-Status: MVP-Seite (*bestätigt (Auftraggeber 2026-10-08)*; kein eigenes F-Feature – PM bitte nachtragen) · Zweck: WCAG 2.2 SC 3.2.6 „Konsistente Hilfe“, häufigste Supportfrage (Code im Spam) abfangen · Erreichbar: Footer und Avatar-Menü auf jeder Seite, Hinweis „Noch nichts da?“ im Code-Schritt (Flow A.2) · Öffentlich, indexierbar, `hreflang` de/en, statischer Inhalt.
+Status: MVP-Seite (*bestätigt (Auftraggeber 2026-10-08)*; Feature F-051) · Zweck: WCAG 2.2 SC 3.2.6 „Konsistente Hilfe“, häufigste Supportfrage (Code im Spam) abfangen · Erreichbar: Footer und Avatar-Menü auf jeder Seite, Hinweis „Noch nichts da?“ im Code-Schritt (Flow A.2) · Öffentlich, indexierbar, `hreflang` de/en, statischer Inhalt.
 
 ## Mobil (360 px)
 
