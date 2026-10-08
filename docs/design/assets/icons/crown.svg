@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="t">
-  <title id="t">Organisator</title>
-  <path d="M3 8l4.5 4L12 5l4.5 7L21 8l-2 10H5z"/>
-  <path d="M5 21h14"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-labelledby="t" color="#1E1A3D">
+  <title id="t">Orga</title>
+  <!-- Im Avatar-Badge: Kreis in Sonne, Krone in Tinte; immer mit Text „Orga“ / „Organizer“ -->
+  <path d="M4 18l-1.2-10 5.2 4.2L12 5l4 7.2 5.2-4.2L20 18z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
 </svg>
