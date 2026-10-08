@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 200" width="360" height="200" role="img" aria-labelledby="t d">
+  <title id="t">Heatmap- und Verfügbarkeitsmuster</title>
+  <desc id="d">SVG-Pattern-Definitionen für „niemand kann“ (feine Schraffur), „ginge zur Not“ (breite Streifen) und „geht nicht“ (Kreuzschraffur), jeweils Light und Dark. Entsprechen den CSS-Gradients in tokens.css.</desc>
+  <defs>
+    <!-- Light -->
+    <pattern id="ww-pat-hm-none-light" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" fill="#CFC9C0"/>
+    </pattern>
+    <pattern id="ww-pat-avail-maybe-light" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="4" height="9" fill="#F1D58C"/>
+    </pattern>
+    <pattern id="ww-pat-avail-no-light" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="7" fill="#A8A196"/>
+      <rect width="7" height="1.5" fill="#A8A196"/>
+    </pattern>
+    <!-- Dark -->
+    <pattern id="ww-pat-hm-none-dark" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" fill="#3A4544"/>
+    </pattern>
+    <pattern id="ww-pat-avail-maybe-dark" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="4" height="9" fill="#54431A"/>
+    </pattern>
+    <pattern id="ww-pat-avail-no-dark" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="7" fill="#46504E"/>
+      <rect width="7" height="1.5" fill="#46504E"/>
+    </pattern>
+  </defs>
+  <style>
+    .lbl { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; }
+  </style>
+
+  <!-- Vorschau Light -->
+  <rect width="360" height="100" fill="#FBF8F3"/>
+  <rect x="24" y="12" width="64" height="56" rx="8" fill="#F1EEE8"/>
+  <rect x="24" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-hm-none-light)"/>
+  <rect x="148" y="12" width="64" height="56" rx="8" fill="#FDF0CF"/>
+  <rect x="148" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-avail-maybe-light)"/>
+  <rect x="272" y="12" width="64" height="56" rx="8" fill="#CFC9C0"/>
+  <rect x="272" y="12" width="64" height="56" rx="8" fill="url(#ww-pat-avail-no-light)"/>
+  <g class="lbl" fill="#1C2526" text-anchor="middle">
+    <text x="56" y="88">niemand kann</text>
+    <text x="180" y="88">ginge zur Not</text>
+    <text x="304" y="88">geht nicht</text>
+  </g>
+
+  <!-- Vorschau Dark -->
+  <rect y="100" width="360" height="100" fill="#111819"/>
+  <rect x="24" y="112" width="64" height="56" rx="8" fill="#1C2526"/>
+  <rect x="24" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-hm-none-dark)"/>
+  <rect x="148" y="112" width="64" height="56" rx="8" fill="#3A2E12"/>
+  <rect x="148" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-avail-maybe-dark)"/>
+  <rect x="272" y="112" width="64" height="56" rx="8" fill="#262D2C"/>
+  <rect x="272" y="112" width="64" height="56" rx="8" fill="url(#ww-pat-avail-no-dark)"/>
+  <g class="lbl" fill="#ECF1F0" text-anchor="middle">
+    <text x="56" y="188">niemand kann</text>
+    <text x="180" y="188">ginge zur Not</text>
+    <text x="304" y="188">geht nicht</text>
+  </g>
+</svg>

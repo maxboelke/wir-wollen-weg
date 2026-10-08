@@ -1,0 +1,193 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 360" width="480" height="360" role="img" aria-labelledby="hml-t hml-d">
+  <title id="hml-t">Heatmap-Skala: sechs Stufen in Light und Dark</title>
+  <desc id="hml-d">Beispiel für eine Gruppe mit 9 abgegebenen Mitgliedern, Desktop-Zelle 64 px. Jede Stufe ist dreifach kodiert: Helligkeit der Fläche, Zahl „Anzahl Geht / abgegeben“ und Pegel aus vier Segmenten am unteren Rand. Zusätzlich: „keine Daten“ gestrichelter Rahmen und Strich, „niemand“ Schraffur. Halbkreis unten links mit Anzahl: so viele Personen haben „Zur Not“. Häkchen-Badge unten rechts: alle, die abgegeben haben, haben „Geht“ – es erscheint deshalb nur auf der Stufe „alle“. Tage ohne „Geht nicht“, aber mit „Zur Not“, zeigen den Halbkreis und kein Häkchen (Beispiel „viele“: 7/9, 2× Zur Not).</desc>
+  <defs>
+    <pattern id="hml-hatch-l" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" fill="#CFC9C0"/>
+    </pattern>
+    <pattern id="hml-hatch-d" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="1.5" height="6" fill="#3A4544"/>
+    </pattern>
+  </defs>
+  <style>
+    .t  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 13px; font-weight: 700; }
+    .d  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 500; }
+    .c  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .n  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+    .l  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 12px; font-weight: 600; }
+    .s  { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-size: 11px; font-weight: 400; }
+  </style>
+
+  <!-- ===================== LIGHT ===================== -->
+  <!-- Zellaufbau (64 x 64): Datum oben links, Zahl Mitte (Grundlinie 36), Badge-Zeile Mitte y 46 (Halbkreis links, Haken rechts), Pegel y 55 bis 59 -->
+  <rect width="480" height="180" fill="#FBF8F3"/>
+  <text x="18" y="22" class="t" fill="#1C2526">Light · 9 Personen haben abgegeben</text>
+
+  <!-- keine Daten -->
+  <g transform="translate(18 34)">
+    <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="8" fill="none" stroke="#858C8A" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <g fill="#667070">
+      <text x="6" y="15" class="d">12</text>
+      <text x="32" y="36" class="n" text-anchor="middle">–</text>
+    </g>
+  </g>
+  <!-- niemand -->
+  <g transform="translate(94 34)">
+    <rect width="64" height="64" rx="8" fill="#F1EEE8"/>
+    <rect width="64" height="64" rx="8" fill="url(#hml-hatch-l)"/>
+    <g fill="#1C2526">
+      <text x="6" y="15" class="d">13</text>
+      <text x="32" y="36" class="n" text-anchor="middle">0/9</text>
+      <g opacity="0.28"><rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <!-- wenige -->
+  <g transform="translate(170 34)">
+    <rect width="64" height="64" rx="8" fill="#A6DBD2"/>
+    <g fill="#1C2526">
+      <text x="6" y="15" class="d">14</text>
+      <text x="32" y="36" class="n" text-anchor="middle">3/9</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.28"><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <!-- einige: 5 Geht, 1 Zur Not -->
+  <g transform="translate(246 34)">
+    <rect width="64" height="64" rx="8" fill="#5FBFB1"/>
+    <g fill="#1C2526">
+      <text x="6" y="15" class="d">15</text>
+      <text x="32" y="36" class="n" text-anchor="middle">5/9</text>
+      <circle cx="10" cy="46" r="5.25" fill="none" stroke="#1C2526" stroke-width="1.5"/>
+      <path d="M10 40.75a5.25 5.25 0 0 1 0 10.5z"/>
+      <text x="18" y="50" class="c">1</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.28"><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <!-- viele: 7 Geht, 2 Zur Not, niemand Geht nicht: Halbkreis, KEIN Haken -->
+  <g transform="translate(322 34)">
+    <rect width="64" height="64" rx="8" fill="#187E73"/>
+    <g fill="#FFFFFF">
+      <text x="6" y="15" class="d">16</text>
+      <text x="32" y="36" class="n" text-anchor="middle">7/9</text>
+      <circle cx="10" cy="46" r="5.25" fill="none" stroke="#FFFFFF" stroke-width="1.5"/>
+      <path d="M10 40.75a5.25 5.25 0 0 1 0 10.5z"/>
+      <text x="18" y="50" class="c">2</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.35"><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <!-- alle: 9 Geht, Haken-Badge unten rechts -->
+  <g transform="translate(398 34)">
+    <rect width="64" height="64" rx="8" fill="#0B4F4A"/>
+    <g fill="#FFFFFF">
+      <text x="6" y="15" class="d">17</text>
+      <text x="32" y="36" class="n" text-anchor="middle">9/9</text>
+      <circle cx="55" cy="46" r="7"/>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/>
+    </g>
+    <path d="M51.5 46.2l2.4 2.4 4-4.4" fill="none" stroke="#0B4F4A" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g fill="#1C2526" text-anchor="middle" class="l">
+    <text x="50" y="116">keine Daten</text>
+    <text x="126" y="116">niemand</text>
+    <text x="202" y="116">wenige</text>
+    <text x="278" y="116">einige</text>
+    <text x="354" y="116">viele</text>
+    <text x="430" y="116">alle</text>
+  </g>
+  <g fill="#55605F" text-anchor="middle" class="s">
+    <text x="50" y="132">nicht abgegeben</text>
+    <text x="126" y="132">s = 0</text>
+    <text x="202" y="132">s &lt; 50 %</text>
+    <text x="278" y="132">50–74 %</text>
+    <text x="354" y="132">75–99 %</text>
+    <text x="430" y="132">100 % (x = n)</text>
+  </g>
+  <text x="18" y="154" class="s" fill="#55605F">Zahl = Anzahl „Geht“ / abgegeben · Stufe: s = (Geht + ½ · Zur Not) / abgegeben</text>
+  <text x="18" y="169" class="s" fill="#55605F">◐2 = zwei Personen „Zur Not“ · ✓ = alle Abgegebenen haben „Geht“ (nur Stufe „alle“)</text>
+
+  <!-- ===================== DARK ===================== -->
+  <rect y="180" width="480" height="180" fill="#111819"/>
+  <text x="18" y="202" class="t" fill="#ECF1F0">Dark · 9 Personen haben abgegeben</text>
+
+  <g transform="translate(18 214)">
+    <rect x="0.75" y="0.75" width="62.5" height="62.5" rx="8" fill="none" stroke="#6B7775" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <g fill="#8F9A97">
+      <text x="6" y="15" class="d">12</text>
+      <text x="32" y="36" class="n" text-anchor="middle">–</text>
+    </g>
+  </g>
+  <g transform="translate(94 214)">
+    <rect width="64" height="64" rx="8" fill="#1C2526"/>
+    <rect width="64" height="64" rx="8" fill="url(#hml-hatch-d)"/>
+    <g fill="#ECF1F0">
+      <text x="6" y="15" class="d">13</text>
+      <text x="32" y="36" class="n" text-anchor="middle">0/9</text>
+      <g opacity="0.28"><rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <g transform="translate(170 214)">
+    <rect width="64" height="64" rx="8" fill="#1D4B46"/>
+    <g fill="#ECF1F0">
+      <text x="6" y="15" class="d">14</text>
+      <text x="32" y="36" class="n" text-anchor="middle">3/9</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.28"><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <g transform="translate(246 214)">
+    <rect width="64" height="64" rx="8" fill="#287268"/>
+    <g fill="#ECF1F0">
+      <text x="6" y="15" class="d">15</text>
+      <text x="32" y="36" class="n" text-anchor="middle">5/9</text>
+      <circle cx="10" cy="46" r="5.25" fill="none" stroke="#ECF1F0" stroke-width="1.5"/>
+      <path d="M10 40.75a5.25 5.25 0 0 1 0 10.5z"/>
+      <text x="18" y="50" class="c">1</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.28"><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <g transform="translate(322 214)">
+    <rect width="64" height="64" rx="8" fill="#6CCFC0"/>
+    <g fill="#0B1F1E">
+      <text x="6" y="15" class="d">16</text>
+      <text x="32" y="36" class="n" text-anchor="middle">7/9</text>
+      <circle cx="10" cy="46" r="5.25" fill="none" stroke="#0B1F1E" stroke-width="1.5"/>
+      <path d="M10 40.75a5.25 5.25 0 0 1 0 10.5z"/>
+      <text x="18" y="50" class="c">2</text>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/>
+      <g opacity="0.28"><rect x="46" y="55" width="11" height="4" rx="1"/></g>
+    </g>
+  </g>
+  <g transform="translate(398 214)">
+    <rect width="64" height="64" rx="8" fill="#B5F0E4"/>
+    <g fill="#0B1F1E">
+      <text x="6" y="15" class="d">17</text>
+      <text x="32" y="36" class="n" text-anchor="middle">9/9</text>
+      <circle cx="55" cy="46" r="7"/>
+      <rect x="7" y="55" width="11" height="4" rx="1"/><rect x="20" y="55" width="11" height="4" rx="1"/><rect x="33" y="55" width="11" height="4" rx="1"/><rect x="46" y="55" width="11" height="4" rx="1"/>
+    </g>
+    <path d="M51.5 46.2l2.4 2.4 4-4.4" fill="none" stroke="#B5F0E4" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+
+  <g fill="#ECF1F0" text-anchor="middle" class="l">
+    <text x="50" y="296">keine Daten</text>
+    <text x="126" y="296">niemand</text>
+    <text x="202" y="296">wenige</text>
+    <text x="278" y="296">einige</text>
+    <text x="354" y="296">viele</text>
+    <text x="430" y="296">alle</text>
+  </g>
+  <g fill="#A9B4B2" text-anchor="middle" class="s">
+    <text x="50" y="312">nicht abgegeben</text>
+    <text x="126" y="312">s = 0</text>
+    <text x="202" y="312">s &lt; 50 %</text>
+    <text x="278" y="312">50–74 %</text>
+    <text x="354" y="312">75–99 %</text>
+    <text x="430" y="312">100 % (x = n)</text>
+  </g>
+  <text x="18" y="334" class="s" fill="#A9B4B2">Helligkeit steigt in Dark mit der Zahl der Personen („mehr = mehr Kontrast zum Grund“).</text>
+  <text x="18" y="349" class="s" fill="#A9B4B2">Mobil (52 px hoch): ohne Pegel, ◐ ohne Anzahl; Zahl „x/n“ bis n ≤ 9, sonst nur „x“.</text>
+</svg>

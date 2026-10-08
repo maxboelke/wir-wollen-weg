@@ -1,0 +1,31 @@
+# Dependency updates – see docs/ops/tech-stack.md §10.
+# Until package.json exists, the npm entry only logs "no manifest found" (no effect on PRs).
+version: 2
+updates:
+  - package-ecosystem: npm # also covers pnpm-lock.yaml
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Berlin
+    open-pull-requests-limit: 10
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      next-react:
+        patterns: ["next", "react", "react-dom", "eslint-config-next", "@types/react*"]
+      minor-and-patch:
+        update-types: ["minor", "patch"]
+        exclude-patterns: ["next", "react", "react-dom"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      timezone: Europe/Berlin
+    commit-message:
+      prefix: "chore(ci)"
+    groups:
+      actions:
+        patterns: ["*"]

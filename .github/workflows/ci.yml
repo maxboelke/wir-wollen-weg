@@ -1,0 +1,153 @@
+# CI for "Wir wollen weg" – see docs/ops/tech-stack.md §10.
+# All app jobs are skipped until a package.json exists, so docs-only changes stay green.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: "24"
+  # Next.js telemetry off in CI
+  NEXT_TELEMETRY_DISABLED: "1"
+
+jobs:
+  detect:
+    name: Detect app
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      has_app: ${{ steps.check.outputs.has_app }}
+      has_e2e: ${{ steps.check.outputs.has_e2e }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: check
+        name: Check for package.json and Playwright config
+        run: |
+          if [ -f package.json ]; then echo "has_app=true" >> "$GITHUB_OUTPUT"; else echo "has_app=false" >> "$GITHUB_OUTPUT"; fi
+          if ls playwright.config.* >/dev/null 2>&1; then echo "has_e2e=true" >> "$GITHUB_OUTPUT"; else echo "has_e2e=false" >> "$GITHUB_OUTPUT"; fi
+      - name: Summary
+        run: |
+          echo "has_app=${{ steps.check.outputs.has_app }} has_e2e=${{ steps.check.outputs.has_e2e }}"
+          if [ "${{ steps.check.outputs.has_app }}" != "true" ]; then
+            echo "::notice::No package.json yet – lint/test/build/e2e jobs are skipped."
+          fi
+
+  quality:
+    name: Lint, typecheck, unit tests
+    needs: detect
+    if: needs.detect.outputs.has_app == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4 # reads version from "packageManager" in package.json
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run --if-present format:check
+      - run: pnpm run --if-present lint
+      - run: pnpm run --if-present typecheck
+      - run: pnpm run --if-present i18n:check
+      - run: pnpm run --if-present test
+
+  build:
+    name: Build
+    needs: detect
+    if: needs.detect.outputs.has_app == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      # Dummy values only – no real secrets in CI builds.
+      APP_ENV: ci
+      APP_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
+      DATABASE_URL: postgres://app:app@localhost:5432/wirwollenweg
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generate throwaway auth secret
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+      - run: pnpm run --if-present build
+
+  e2e:
+    name: E2E (Playwright)
+    needs: [detect, quality]
+    if: needs.detect.outputs.has_app == 'true' && needs.detect.outputs.has_e2e == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_USER: app
+          POSTGRES_PASSWORD: app
+          POSTGRES_DB: wirwollenweg
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app -d wirwollenweg"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+      mailpit:
+        image: axllent/mailpit:latest
+        ports:
+          - 1025:1025
+          - 8025:8025
+    env:
+      APP_ENV: ci
+      APP_URL: http://localhost:3000
+      BETTER_AUTH_URL: http://localhost:3000
+      DATABASE_URL: postgres://app:app@localhost:5432/wirwollenweg
+      MAIL_TRANSPORT: smtp
+      SMTP_HOST: localhost
+      SMTP_PORT: "1025"
+      SMTP_SECURE: "false"
+      MAIL_FROM: login@mail.example.org
+      MAIL_FROM_NAME_DE: Wir wollen weg
+      MAIL_FROM_NAME_EN: Wir wollen weg
+      MAIL_REPLY_TO: hallo@example.org
+      MAILPIT_API_URL: http://localhost:8025
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Generate throwaway auth secret
+        run: echo "BETTER_AUTH_SECRET=$(openssl rand -base64 32)" >> "$GITHUB_ENV"
+      - run: pnpm run --if-present db:migrate
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm run --if-present build
+      - run: pnpm run --if-present test:e2e
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 7
+          if-no-files-found: ignore

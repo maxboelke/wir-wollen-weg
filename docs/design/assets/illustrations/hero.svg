@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" width="320" height="200" role="img" aria-labelledby="t d">
+  <title id="t">Gemeinsamen Urlaubstermin finden</title>
+  <desc id="d">Reiseplakat-Motiv: Sonne über dem Meer, davor ein Gruppenkalender mit Heatmap-Feldern und einem markierten Zeitraum, daneben drei Freunde. Hero für die Startseite (W01).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .paperS{ stroke: var(--ww-illu-paper, #FFFFFF); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
+    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .mid   { fill: #5FBFB1; }
+    .deep  { fill: var(--ww-illu-deep, #0B4F4A); }
+    .sea   { fill: var(--ww-illu-sea, #08403F); }
+    .sun   { fill: var(--ww-illu-sun, #F4B942); }
+    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    .band  { fill: var(--ww-illu-coral-strong, #D4552F); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .paperS{ stroke: var(--ww-illu-paper, #232E2F); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .mid   { fill: #287268; }
+      .deep  { fill: var(--ww-illu-deep, #B5F0E4); }
+      .sea   { fill: var(--ww-illu-sea, #287268); }
+      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
+      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+      .band  { fill: var(--ww-illu-coral-strong, #F28A6E); }
+    }
+  </style>
+  <defs>
+    <clipPath id="hero-poster"><rect x="8" y="8" width="304" height="184" rx="24"/></clipPath>
+  </defs>
+  <rect class="plate" x="8" y="8" width="304" height="184" rx="24"/>
+  <g clip-path="url(#hero-poster)">
+    <circle class="sun" cx="236" cy="96" r="46"/>
+    <path class="tealL" d="M0 140c26-8 52-8 78 0s52 8 78 0 52-8 78 0 52 8 78 0 26-8 40-4v70H0z"/>
+    <path class="sea" d="M0 166c26-6 52-6 78 0s52 6 78 0 52-6 78 0 52 6 78 0 26-6 40-3v40H0z" opacity="0.5"/>
+  </g>
+  <!-- Gruppenkalender -->
+  <g transform="rotate(-4 115 100)">
+    <rect class="paper inkS" x="40" y="40" width="150" height="122" rx="14" stroke-width="2"/>
+    <path class="teal" d="M41 62v-7a14 14 0 0 1 14-14h120a14 14 0 0 1 14 14v7z"/>
+    <g>
+      <rect class="tealL" x="52" y="72" width="20" height="16" rx="4"/><rect class="mid" x="77" y="72" width="20" height="16" rx="4"/><rect class="tealL" x="102" y="72" width="20" height="16" rx="4"/><rect class="mid" x="127" y="72" width="20" height="16" rx="4"/><rect class="teal" x="152" y="72" width="20" height="16" rx="4"/>
+      <rect class="mid" x="52" y="94" width="20" height="16" rx="4"/><rect class="teal" x="77" y="94" width="20" height="16" rx="4"/><rect class="mid" x="102" y="94" width="20" height="16" rx="4"/><rect class="tealL" x="127" y="94" width="20" height="16" rx="4"/><rect class="tealL" x="152" y="94" width="20" height="16" rx="4"/>
+      <rect class="tealL" x="52" y="116" width="20" height="16" rx="4"/><rect class="deep" x="77" y="116" width="20" height="16" rx="4"/><rect class="deep" x="102" y="116" width="20" height="16" rx="4"/><rect class="deep" x="127" y="116" width="20" height="16" rx="4"/><rect class="mid" x="152" y="116" width="20" height="16" rx="4"/>
+    </g>
+    <rect class="band" x="77" y="137" width="70" height="4" rx="2"/>
+    <rect class="band" x="77" y="134" width="3" height="10" rx="1.5"/>
+    <rect class="band" x="144" y="134" width="3" height="10" rx="1.5"/>
+  </g>
+  <!-- Freunde -->
+  <g class="paperS" stroke-width="3">
+    <circle class="coral" cx="206" cy="160" r="14"/>
+    <circle class="sun" cx="228" cy="160" r="14"/>
+    <circle class="teal" cx="250" cy="160" r="14"/>
+  </g>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Hier geht es nicht weiter</title>
+  <desc id="d">Ein Wegweiser mit zwei leeren Schildern, die in verschiedene Richtungen zeigen, und eine gepunktete Route, die endet. Gemeinsames Motiv für ungültigen Link, Reise nicht gefunden, 404 und Serverfehler (W14).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .ink   { fill: var(--ww-illu-ink, #1C2526); }
+    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .route { stroke: var(--ww-illu-teal, #0E6A68); }
+    .shadow{ fill: var(--ww-illu-ink, #1C2526); opacity: 0.12; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
+      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .route { stroke: var(--ww-illu-teal, #5FC9BA); }
+      .shadow{ fill: #000000; opacity: 0.35; }
+    }
+  </style>
+  <circle class="plate" cx="80" cy="62" r="52"/>
+  <path class="route" d="M18 104c14-6 30-8 46-6" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="0 8"/>
+  <ellipse class="shadow" cx="80" cy="103" rx="22" ry="3"/>
+  <rect class="ink" x="77" y="34" width="6" height="70" rx="2"/>
+  <path class="coral" d="M80 38H50l-10 9 10 9h30z"/>
+  <path class="tealL" d="M80 62h32l10 9-10 9H80z"/>
+  <circle class="ink" cx="80" cy="34" r="4"/>
+</svg>
