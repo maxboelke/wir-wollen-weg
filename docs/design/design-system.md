@@ -1,6 +1,6 @@
 # Design-System – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: Entwurf v0.3 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-13; CEO-Entscheide U-1, U-2, U-4 vom 2026-10-08 eingearbeitet)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: v0.4 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-18; CEO-Entscheide U-1, U-2, U-4, U-14 und D-16 vom 2026-10-08 eingearbeitet – Abstimmung Design ↔ UX abgeschlossen)
 Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadmap](../product/roadmap.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md)
 
 > Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar in ux-spec §10.2 („Geht / Zur Not / Geht nicht", „Works / If needed / Can't", „Orga / Organizer").
@@ -158,7 +158,7 @@ Fallback: Ist das Ladebudget knapp, funktioniert das System komplett mit `--ww-f
 | `--ww-text-xs` | 12 px | 1,3 | System **600–700** | nur Kalenderzahlen, Badges, Zähler – nie Fließtext |
 | `--ww-text-code` | 24 px | 1 | System 600, tabular | 6-stelliger Code |
 
-Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-numeric: tabular-nums`. Maximale Zeilenlänge 65ch. Überschriften `text-wrap: balance`, Fließtext `text-wrap: pretty`. Keine Versalien-Texte außer Wochentags-Kürzeln in sehr kleinen Labels (dann `--ww-tracking-wide`). Textvergrößerung bis 200 % darf kein Layout brechen (Vorschlag: Kalender wechselt dann auf eine Tagesliste – offen als U-5 in abstimmung-ux.md).
+Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-numeric: tabular-nums`. Maximale Zeilenlänge 65ch. Überschriften `text-wrap: balance`, Fließtext `text-wrap: pretty`. Keine Versalien-Texte außer Wochentags-Kürzeln in sehr kleinen Labels (dann `--ww-tracking-wide`). Textvergrößerung bis 200 % darf kein Layout brechen: Die Heatmap wechselt bei großer Schrift auf eine **Tagesliste** (Optik §6.8, Verhalten ux-spec §7.1, UX-Entscheid U-5); Meine Tage bleibt ein Raster mit höheren Zellen.
 
 ## 6. Kalender & barrierefreie Heatmap
 
@@ -209,12 +209,12 @@ Score pro Tag: **s = (geht + ½ · zur Not) / abgegeben** (wie F-008: „zur Not
 - **✓-Badge** (gefüllter Kreis mit Häkchen, unten rechts) = **alle, die abgegeben haben, haben „Geht"** (x = n). Erfüllt F-008 „Tage, an denen alle können, … durch ein Symbol markiert" in der strengen Lesart. **Nicht mehr:** „niemand hat ‚Geht nicht'".
 - **◐-Hinweis** (Halbkreis, unten links; ab 600 px mit Anzahl „◐2") = mindestens eine Person „Zur Not"; Details im Tagesdetail (F-008 „separat ausgewiesen"). Ein Tag **ohne „Geht nicht", aber mit „Zur Not"** zeigt deshalb ◐ und **kein** ✓ – z. B. „7/9 ◐2" auf Stufe „viele".
 - ✓ und ◐ schließen sich damit gegenseitig aus (x = n lässt keinen Platz für „Zur Not"). Das beseitigt die in U-4 befürchtete Irritation „6/9 ✓ ◐".
-- Die Stufen-Rampe gilt auch für den **Mini-Streifen** auf Vorschlagskarten (§9.3).
+- Die Stufen-Rampe gilt auch für den Stufenbalken der **Tagesliste** bei großer Schrift (§6.8).
 - Zugänglicher Name je Zelle, z. B. „Freitag, 3. Juli: 7 von 9 Geht, 2 Zur Not, Feiertag Tag der Deutschen Einheit, Teil von Vorschlag 1" bzw. bei x = n „Samstag, 4. Juli: 9 von 9 Geht – alle". Endgültiger Wortlaut (DE/EN) über ux-spec §10.2.
 
 **Konsistenz von Rampe und Badge (geprüft):** Weil „Zur Not" mit ½ in s eingeht, gilt s = 1 genau dann, wenn alle Abgegebenen „Geht" haben – die Stufe **„alle" und das ✓-Badge fallen exakt zusammen**. Das Badge ist damit die Form-Kodierung der dunkelsten/hellsten Stufe (wie die Schraffur für „niemand") und macht sie ohne Farbe erkennbar. Tage ohne „Geht nicht" mit k Zur-Not-Personen liegen bei s = 1 − k/(2n), also je nach Gruppengröße auf „viele" (k/n ≤ 50 %) oder „einige" (k/n > 50 %) – nie auf „alle". Die Schwellen 0,5 / 0,75 / 1 bleiben unverändert; eine Anpassung der Rampe ist nicht nötig.
 
-**Abgrenzung zu F-009:** Die Vorschlagsliste „Alle können" (PRD/F-009: kein Mitglied hat „Geht nicht" im Fenster) ist **weiter gefasst** als das ✓-Badge – ein „Alle können"-Fenster kann Tage mit ◐ und ohne ✓ enthalten. Deshalb trägt die Gruppenüberschrift der Vorschläge **nicht** das ✓-Badge, sondern das Strich-Icon `ww-icon-check` (§9.3); der Zur-Not-Anteil steht als Chip „◐ 2× zur Not" auf der Karte. Benennung der Liste: offen an UX/PM (U-14 in abstimmung-ux.md).
+**Abgrenzung zu F-009:** Die Vorschlagsgruppe **„Alle dabei" / „Everyone's in"** (PRD/F-009: kein Mitglied hat „Geht nicht" im Fenster) ist **weiter gefasst** als das ✓-Badge – ein „Alle dabei"-Fenster kann Tage mit ◐ und ohne ✓ enthalten. Deshalb trägt die Gruppenüberschrift der Vorschläge **nicht** das ✓-Badge, sondern das Strich-Icon `ww-icon-check` (§9.3); der Zur-Not-Anteil steht als Chip „◐ 2× zur Not" auf der Karte. Die zweite Gruppe heißt **„Fast alle dabei" / „Almost everyone's in"**. Benennung: CEO-Entscheid U-14 + UX-Folgeentscheid (2026-10-08, D-14); „können" bleibt nur in Options-/Verfügbarkeitszeilen („8 können · ohne Kemal", Glossar ux-spec §10.2).
 
 Visuelle Referenz: `assets/heatmap/heatmap-legend.svg` (Light + Dark), `assets/heatmap/heatmap-markers.svg`.
 
@@ -305,6 +305,35 @@ Kombinationen sind erlaubt (z. B. Feiertag + heute + Vorschlag), weil jede Marki
 ### 6.7 Forced Colors / Hochkontrastmodus
 In `@media (forced-colors: active)` verschwinden Flächenfarben und Gradient-Muster. Deshalb müssen Zahl, Symbole, Pegel und Badges als **Text bzw. SVG mit `currentColor`** gerendert werden (nicht als Hintergrundbild). Zusätzlich: „ausgewählt" als `outline: 2px solid Highlight`, Vorschlag-Band als Rahmen unten (`border-bottom: 4px solid CanvasText`).
 
+### 6.8 Tagesliste bei großer Schrift (Heatmap-Ausweichansicht, UX U-5 / D-15)
+Verhalten (Auslöser Container-Query: Zelle < 3,25 em, kein manueller Umschalter) regelt ux-spec §7.1. Die Liste ersetzt **nur die Heatmap**; Meine Tage bleibt Raster. Alle Maße in `rem`/`em`, damit die Zeile mit der Schrift wächst. Keine neuen Tokens – es werden die Heatmap-Tokens aus §6.2/§6.5 wiederverwendet.
+
+```
+┌─┬──────────────────────────────────────────────┐
+│▌│ Fr., 1. Mai                            ◥    │  Zeile 1: Datum (Wochentag), rechts Feiertags-Eselsohr
+│▌│ 4 von 5: Geht                               │  Zeile 2: Zählzeile
+│▌│ [◐ 1 Zur Not] [◥ Tag der Arbeit] [▬ Vorschlag 1] │  Zeile 3: Abzeichen-Chips (umbrechend)
+└─┴──────────────────────────────────────────────┘
+ └ Stufenbalken 6 px (Fläche der Stufe)
+```
+
+| Element | Optik |
+|---|---|
+| **Zeile (Container)** | Fläche `surface`, Rahmen unten 1 px `border-subtle` (Liste) bzw. Radius 12 + Rahmen 1 px `border-subtle` bei einzelnen Gruppen; Innenabstand 0,75 em / 1 em; Mindesthöhe 44 px (wächst frei); ganze Zeile ist **ein** Button/Link zum Tagesdetail, keine verschachtelten Ziele. Kein Chevron nötig, optional `ww-icon-chevron-right` 1 em in `text-muted` rechts. |
+| **Stufenbalken** | links, volle Zeilenhöhe, **6 px** breit (in `px`, wächst nicht mit), Radius 3 px, Fläche `--ww-hm-<stufe>-bg`. „niemand": `--ww-hm-none-bg` + Schraffur `--ww-pattern-*` wie in der Zelle + 1 px Rahmen `border-strong`; „keine Daten": transparent mit 1,5 px gestricheltem Rahmen `--ww-hm-nodata-border`. Der Balken ist **zusätzliche** Kodierung (`aria-hidden`); die Information steht immer als Text in Zeile 2. |
+| **Datum** (Zeile 1) | `--ww-text-md`, 600, tabular-nums; Format „Fr., 1. Mai" / „Fri 1 May" (`Intl`, §10.3). **Wochenende:** Wochentag in 700 + Fläche der Zeile `--ww-hm-weekend-lane` (entspricht der Spalten-Spur im Raster). **Heute:** Zusatz „· heute" / „· today" in 600 + Ring 1,5 px `currentColor` um die Tageszahl (wie in der Zelle). |
+| **Zählzeile** (Zeile 2) | `--ww-text-md`, 400, `text`; Wortlaut nach Glossar ux-spec §10.2: „4 von 5: Geht" / „4 of 5: works"; keine Daten: „Noch keine Angaben" in `text-muted`. Bei x = n: „5 von 5: Geht" + Chip ✓ (unten). |
+| **Abzeichen-Chips** (Zeile 3) | nicht interaktiv, Höhe 1,5 em, Radius pill, `--ww-text-sm` 600, Icon 1 em vorn; Abstand 0,5 em, **umbrechend**; Reihenfolge fest: **✓ alle** (`primary-tint`/`primary-text`, Icon `ww-icon-all-available`) · **◐ n Zur Not** (`vote-maybe-bg/fg`) · **Feiertag** mit Namen (`accent-tint`/`accent-text`, Eselsohr-Dreieck vorn) · **Vorschlag n** (`--ww-hm-suggest-tint` + 2 px Unterstrich `--ww-hm-suggest`, Band-Symbol vorn). ✓ und ◐ schließen sich aus (§6.2). Ohne Abzeichen entfällt Zeile 3. |
+| **Feiertags-Eselsohr** | zusätzlich zum Chip oben rechts in der Zeile, 12 px Dreieck `--ww-hm-holiday` – Wiedererkennung zur Zelle, `aria-hidden`. |
+| **Hover** (Zeigegerät) | Fläche `surface-sunken`. |
+| **Gedrückt** | `scale(var(--ww-motion-scale-press))` 80 ms; reduziert: keine. |
+| **Fokus** | `--ww-focus-ring` um die ganze Zeile (außen, 2 px Abstand); Zeile `z-index: 1`, damit der Ring nicht von Nachbarzeilen verdeckt wird. |
+| **Ausgewählt** (Tagesdetail offen, ≥ 960 px Seitenpanel) | Doppelrahmen innen wie in der Zelle (`--ww-selected-ring`, 2 + 2 px) **plus** Datum 700 – Rahmenform, nicht nur Farbe. |
+| **Außerhalb Suchzeitraum / vergangen** | werden in der Liste **nicht** aufgeführt (UX: gleiche Reihenfolge, nur Tage im Suchzeitraum). |
+| **Monatsüberschrift** | wie im Raster (`--ww-text-lg` 600), darunter die Feiertagsliste entfällt (Feiertage stehen als Chip in der Zeile). |
+
+Dark Mode: identische Struktur, Tokens schalten automatisch. Forced Colors: Stufenbalken verschwindet (zulässig, da redundant); Chips erhalten `border: 1px solid CanvasText`, Ausgewählt `outline: 2px solid Highlight`.
+
 ## 7. Raster, Abstände, Radien, Schatten
 
 - **Raster:** 4-px-Basis. Seitenrand mobil 16 px, **Kalender mobil 8 px** (`--ww-size-cal-inset-sm`, Fuge bleibt 4 px → Zelle 45,7 px bei 360 px, 41 px bei 320 px; beantwortet UX D-3), ab 600 px 24 px, ab 960 px Inhalt zentriert (`--ww-size-content-narrow` 640 px für Formulare/Listen, `--ww-size-content-wide` 1040 px für Kalender).
@@ -380,10 +409,10 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 
   Phasen-Leiste: vier Segmente, erledigte Schritte mit ✓ + `primary`, aktueller Schritt fett + 3-px-Unterstrich, kommende `text-muted` – Zustand nie nur über Farbe.
 - **Vorschlagskarte (F-009, UX D-13):**
-  - **Gruppenüberschriften** (h2): „Alle können (2)" mit vorangestelltem Strich-Häkchen `ww-icon-check` in `primary` (**nicht** das gefüllte ✓-Badge – das bedeutet in der Heatmap „alle ‚Geht'", siehe §6.2 Abgrenzung F-009); „Fast alle können (3)" mit Personen-Icon `ww-icon-users` in `text-muted`. Abstand zwischen Gruppen 32 px, damit die Trennung auch ohne Farbe klar ist.
+  - **Gruppenüberschriften** (h2): „Alle dabei (2)" / „Everyone's in (2)" mit vorangestelltem Strich-Häkchen `ww-icon-check` in `primary` (**nicht** das gefüllte ✓-Badge – das bedeutet in der Heatmap „alle ‚Geht'", siehe §6.2 Abgrenzung F-009); „Fast alle dabei (3)" / „Almost everyone's in (3)" mit Personen-Icon `ww-icon-users` in `text-muted`. Abstand zwischen Gruppen 32 px, damit die Trennung auch ohne Farbe klar ist.
   - Titel: Zeitraum (lg/700) „Mi., 5. Mai – Mo., 10. Mai"; Unterzeile `text-muted`: „bis zu 5 Nächte · ca. 3 Urlaubstage ⓘ" (F-016).
   - **Zusatz-Chips** (nicht interaktiv, 24 px hoch, 13/600): „◐ 2× zur Not" (`vote-maybe-bg/fg`), „✕ ohne Jonas" (`vote-no-bg/fg` – Stein, nicht Rot), „⚑ inkl. Pfingstmontag" (`accent-tint`/`accent-text`). Chips umbrechen in Zeilen.
-  - **Mini-Streifen** (optional): die Tage des Fensters als 6 px hohe Heatmap-Leiste (Stufenfarben) – Wiedererkennung zum Kalender.
+  - ~~Mini-Streifen~~ – **nicht im MVP** (UX-Entscheid U-10); Kandidat nach Beta-Feedback.
   - Aktionen: Text-Button „Im Kalender zeigen" (löst das Vorschlag-Band aus), Orga: Checkbox „Zur Abstimmung" (24-px-Kästchen, Touch-Fläche 44 px; gewählt = `primary` gefüllt + ✓).
   - Hervorgehoben (Hover/Klick „Im Kalender zeigen"): 2 px Rahmen `accent-strong` + Band im Kalender. Gewählt für Abstimmung: Rahmen 2 px `primary`.
 - **Ergebniskarte (F-012):** Display-Schrift „Es geht los", Datumsbereich, Illustration `vote-done.svg`, Buttons „Zum Kalender hinzufügen" (Icon calendar-download) und „Teilen".
