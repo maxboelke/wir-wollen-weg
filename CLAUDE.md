@@ -37,5 +37,9 @@ Der CEO:
 Der CEO liest zu Beginn jeder Sitzung diesen Abschnitt, `docs/product/PRD.md` (insb. §12 „Offene Fragen / Entscheidungen“) und – falls vorhanden – `docs/ops/status.md`.
 
 - **Produkt:** Web-App, mit der Freundesgruppen einen gemeinsamen Urlaubszeitraum finden – Verfügbarkeiten eintragen, gemeinsamer Kalender (Heatmap) mit automatischen Vorschlägen, Abstimmung, Festlegung. Einladung per Link.
-- **Erledigt:** Phase 0 – Produktkonzept (PRD, Featureliste, Roadmap) inkl. Entscheidungen des Auftraggebers vom 2026-10-08.
-- **Nächster Schritt:** Phase „Konzept“ – `ui-ux`, `designer` und `operations-manager` parallel beauftragen (siehe Standard-Ablauf, Schritt 2), danach Abstimmung Designer ↔ UI/UX, dann Umsetzung durch `developer`.
+- **Erledigt:**
+  - Phase 0 – Produktkonzept (PRD, Featureliste, Roadmap) inkl. Entscheidungen des Auftraggebers vom 2026-10-08 (Q1–Q6).
+  - Konzeptphase (2026-10-08): UX (`docs/ux/` – Sitemap, Flows A–K, UX-Spec, Wireframes W01–W15), Design (`docs/design/` – Design-System v0.3, `tokens.css`, Logo/Icons/Illustrationen/Heatmap-SVGs), Operations (`docs/ops/` – Tech-Stack, Deployment, Compliance-Checkliste, Status-Board; `.github/workflows/ci.yml`, Dependabot). Abstimmung Designer ↔ UI/UX abgeschlossen (D-1–D-18, U-1–U-14; CEO-Entscheidungen zu U-1, U-2, U-4, U-14, D-16).
+- **Stack (Empfehlung, Freigabe mit M0):** Next.js + TypeScript, pnpm, PostgreSQL + Drizzle, Better Auth (Code/Magic-Link), next-intl, date-holidays, CSS Modules + `tokens.css`, Vitest/Playwright; Hetzner (DE) + Lettermint (EU-Mail).
+- **Wartet auf Auftraggeber:** Freigabe/Merge des Konzept-PRs (= M0) und Entscheidungen PRD §12 Q7–Q16; Q14–Q16 (Betreiber, Domain/Accounts, Rechtstexte) blockieren Staging und Mailversand.
+- **Nächster Schritt:** Nach M0 `developer` mit P1-0 (Projekt-Scaffold) und P1-0a (Auth-Spike im In-App-Browser) beauftragen, dann Inkrement 1 (F-046, F-040–F-042); parallel `operations-manager` mit OPS-1/OPS-2, sobald Q14/Q15 entschieden sind. `product-manager`: Hilfe-Seite als Feature nachtragen, PRD §8 auf WCAG 2.2 AA anheben.

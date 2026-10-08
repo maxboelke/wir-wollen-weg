@@ -13,12 +13,12 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | ID | Aufgabe | Agent | Feature-IDs | Status | Abhängig von | Ergebnis / Ablage |
 |---|---|---|---|---|---|---|
 | P0-1 | Produktkonzept (PRD, Features, Roadmap) inkl. Entscheidungen Q1–Q6 | product-manager | alle | **fertig** (2026-10-08) | – | `docs/product/` |
-| P0-2 | Sitemap, Flows, Wireframes (mobil zuerst, In-App-Browser-Fall, Code-Eingabe, Sprachumschalter, Wochenstart) | ui-ux | F-001–F-017, F-040–F-046 | **in Arbeit** | P0-1 | `docs/ux/` |
-| P0-3 | Design-System, Tokens (`tokens.css`), barrierefreie Heatmap-Skala, Feiertags-/Wochenend-Darstellung | designer | F-008, F-005, F-016, F-046 | **in Arbeit** | P0-1 | `docs/design/` |
-| P0-4 | Tech-Stack, Auth-Konzept, i18n, Feiertage, Mail-Anbieter, Hosting, CI, Compliance-Checkliste, Status-Board | operations-manager | F-040–F-043, F-046, F-016, F-013 | **in Arbeit** (Entwurf v0.1 geliefert, CEO-Abnahme ausstehend) | P0-1 | `docs/ops/`, `.github/` |
-| P0-5 | Abstimmung Designer ↔ UI/UX | designer, ui-ux | – | **geplant** | P0-2, P0-3 | `docs/design/abstimmung-ux.md`, `docs/ux/abstimmung-design.md` |
+| P0-2 | Sitemap, Flows, Wireframes (mobil zuerst, In-App-Browser-Fall, Code-Eingabe, Sprachumschalter, Wochenstart) | ui-ux | F-001–F-017, F-040–F-046 | **fertig** (2026-10-08, CEO-Abnahme Konzept; W01–W15, Flows A–K) | P0-1 | `docs/ux/` |
+| P0-3 | Design-System, Tokens (`tokens.css`), barrierefreie Heatmap-Skala, Feiertags-/Wochenend-Darstellung | designer | F-008, F-005, F-016, F-046 | **fertig** (2026-10-08, CEO-Abnahme Konzept; design-system v0.3) | P0-1 | `docs/design/` |
+| P0-4 | Tech-Stack, Auth-Konzept, i18n, Feiertage, Mail-Anbieter, Hosting, CI, Compliance-Checkliste, Status-Board | operations-manager | F-040–F-043, F-046, F-016, F-013 | **fertig** (2026-10-08, CEO-Empfehlung an Auftraggeber; Stack-Freigabe Teil von M0) | P0-1 | `docs/ops/`, `.github/` |
+| P0-5 | Abstimmung Designer ↔ UI/UX | designer, ui-ux | – | **fertig** (2026-10-08; D-1–D-18, U-1–U-14 geklärt, D-16 durch CEO entschieden) | P0-2, P0-3 | `docs/design/abstimmung-ux.md`, `docs/ux/abstimmung-design.md` |
 | P0-6 | Entscheidungen Auftraggeber: Betreiber/Impressum, Domain, Hosting-/Mail-Accounts, Rechtstexte-Weg | CEO → Auftraggeber | – | **blockiert** (wartet auf Auftraggeber) | P0-4 | PRD §12 / Bericht CEO |
-| P0-7 | Abnahme M0 | CEO | – | **geplant** | P0-2 … P0-6 | – |
+| P0-7 | Abnahme M0 | CEO | – | **wartet auf Auftraggeber** (Freigabe PR + Entscheidungen) | P0-2 … P0-6 | – |
 
 ### Phase 1 – MVP (Inkremente laut Roadmap)
 
@@ -68,7 +68,7 @@ P0-6 ─> OPS-1/OPS-2 (Staging + Mail) ─> nötig für Gerätetests in P1-1 und
 | B3 | Accounts Hosting (Hetzner) + Mail (Lettermint) + Postfach fehlen | OPS-1, OPS-2 | Auftraggeber (Inhaber der Verträge/Zahlung) | 2026-10-08 |
 | B4 | Weg für Rechtstexte (Generator-Abo vs. Anwalt) offen | OPS-5 | Auftraggeber | 2026-10-08 |
 
-Offene Produktfragen (PRD §12): Q7, Q8, Q9 (betrifft Rechtsthemen UK/US), Q10 – nicht blockierend für Phase 1.
+Offene Produktfragen (PRD §12): Q7–Q10 sowie neue Konzeptfragen Q11–Q16 (CEO-Bericht 2026-10-08) – nicht blockierend für Phase 1, Q11–Q16 aber vor Inkrement 2/4/5 zu bestätigen.
 
 ## Releases
 
@@ -79,3 +79,4 @@ Offene Produktfragen (PRD §12): Q7, Q8, Q9 (betrifft Rechtsthemen UK/US), Q10 �
 ## Änderungsprotokoll
 
 - 2026-10-08 – Board angelegt (Operations). P0-1 fertig; P0-2, P0-3 in Arbeit; P0-4 Entwurf geliefert (in Arbeit bis CEO-Abnahme); MVP-Inkremente 1–7 geplant; Blocker B1–B4 erfasst.
+- 2026-10-08 (CEO): Konzeptphase abgeschlossen – P0-2, P0-3, P0-4, P0-5 fertig; M0 wartet auf Freigabe durch den Auftraggeber.
