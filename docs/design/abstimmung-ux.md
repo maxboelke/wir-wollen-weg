@@ -1,0 +1,65 @@
+# Abstimmung Design ↔ UI/UX
+
+Stand: 2026-10-08 · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
+
+Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (Stand 2026-10-08). Vielen Dank für die sehr präzisen Punkte – fast alles ist übernommen. Abweichungen sind mit **⚠ Abweichung** markiert und begründet.
+
+---
+
+## 1. Antworten auf `docs/ux/abstimmung-design.md` §2
+
+| Punkt | Antwort Design | Wo festgelegt |
+|---|---|---|
+| **D-1 Heatmap-Zelle** | Feste Orte je Element: **Datum + Heute-Ring oben links · Feiertag (Eselsohr) Ecke oben rechts · Zählwert Mitte · ◐ zur Not unten links · ✓ alle können unten rechts** · Pegel (4 Segmente) nur ≥ 600 px · Auswahl innen · Fokus außen · Vorschlag-Band in der Fuge darunter. Prüffall „Feiertag + heute + Wochenende + ausgewählt + Fokus + alle können + zur Not" passt in 45,7 × 52 px ohne Überlappung. **⚠ Abweichung:** ✓-Badge sitzt **unten rechts**, nicht oben rechts wie im Wireframe (★), weil oben rechts das Eselsohr liegt. | design-system §6.1 |
+| D-1 Zählwert-Regel | **Bestätigt:** mobil „x/n" bis n ≤ 9, ab 10 nur „x" (n im Statusband/Legende); ≥ 600 px immer „x/n". Stufe `many` (Light, Weiß auf `#187E73`): Zahl 4,9:1; auf `many` liegt kein Muster, Badge und ◐ nutzen dieselbe Vordergrundfarbe → ebenfalls 4,9:1. | §6.1, §6.3 |
+| D-1 Fokus auf `all` und neben Band | Neuer Token `--ww-focus-ring-isolated`: Hof 2 px + Ring 3 px + Hof 2 px in Hintergrundfarbe. Der Ring grenzt dadurch **nie** an eine Zelle oder das Band → 5,9:1 (L) / 8,6:1 (D) in jeder Lage. Fokussierte Zelle `z-index: 1`. | §6.5, tokens.css |
+| D-1 Vorschlag über Umbrüche | Kappen nur an echtem An-/Abreisetag; am Zeilen-/Monatsende läuft das Band **ohne Kappe** bis an den Rasterrand (offene Kante) und beginnt in der nächsten Zeile ebenso offen. | §6.5 |
+| D-1 nodata / außerhalb / vergangen | nodata: gestrichelter Rahmen + „–" (4,8 / 6,1). Außerhalb/vergangen: ohne Fläche, Datumszahl `--ww-hm-outside-fg` **3,2:1 (L) / 3,8:1 (D)** – erfüllt ≥ 3:1. | §6.3, §6.5 |
+| D-1 Person ausgeblendet | Kein Zellzustand (einverstanden). Chip-Stil „aktiver Filter": `primary-tint` + 2-px-Rahmen `primary` + ✓-Icon + Text („✓ 1 ausgeblendet ▾"). | §9.5 |
+| **D-2.1 „Geht" ohne Häkchen** | **Bestätigt.** Glatte Lagune-Fläche, Häkchen nur in Legende, Pinsel, Tagesdetail und im zugänglichen Namen. | §6.6 |
+| D-2.2 Zieh-Vorschau | Zellen zeigen schon Fläche + Muster des Pinsels; um den Bereich **gestrichelter 2-px-Umriss in Textfarbe** (`--ww-cal-preview-border`), an Umbrüchen offen. Unterscheidet sich von „ausgewählt" (durchgezogener Doppelrahmen) und vom Vorschlag (Koralle-Band unten). | §6.6 |
+| D-2.3 Startmarke | Doppelrahmen + **Ankerpunkt** 8 px (`--ww-cal-anchor`) mit Ring, mittig auf der linken Zellkante; dazu die Hinweiszeile aus W08. | §6.6 |
+| D-2.4 Schreibgeschützt | Zustände bleiben voll farbig (keine Opazität); keine Hover/Druck-Reaktion; Erkennbarkeit über ersetzte Werkzeugleiste mit Schloss-Hinweis. | §6.6 |
+| D-2.5 Entwurf vs. abgegeben | Einverstanden: kein Zellunterschied. | §6.6 |
+| D-2.6 Setz-Feedback | 80 ms `scale(0.94 → 1)` + sofortiger Flächenwechsel; reduced motion: nur Flächenwechsel. | §6.6, §8 |
+| **D-3 Zellbreite 360 px** | **⚠ Abweichung:** Fuge bleibt **4 px**, Seitenrand des Kalenders **8 px** (`--ww-size-cal-inset-sm`) → (360 − 16 − 24) / 7 = **45,7 px** (320 px: 41 px). Grund: Die 4-px-Fuge trägt die Wochenend-Spur und das Vorschlag-Band; bei 2 px wären beide kaum sichtbar. Ergebnis liegt zwischen deinen beiden Varianten (≥ 44 px erfüllt). Bitte ux-spec §2 („Kalender: 12 px") entsprechend anpassen. | §7, tokens.css |
+| **D-4 Code-Feld** | **Bestätigt: ein `<input>`**, Kästchen rein visuell (Overlay-Variante beschrieben, Alternative mit `letter-spacing`). Alle geforderten Zustände gestaltet: leer, Fokus, gefüllt, Fehler, gesperrt (5 Fehlversuche), Prüfen, Erfolg, „Inhalt markiert". | §9.2 |
+| **D-5 Werkzeugleiste** | Pinsel-Segmente mit Mini-Feld (Fläche + Muster) + Symbol + Label; aktiv = Zustandsfläche + 2-px-Rahmen + Punkt-Marke + Fettung. Bereichsmodus-Toggle, Rückgängig (deaktiviert), Schnellaktionen, Speicherstatus (3 Zustände + „Abgegeben · 14:32"), Primärbutton, kompakte Variante. Höhe ≤ 150 px (`--ww-size-toolbar-max`). | §9.13 |
+| **D-6 Abstimmen-Schalter** | Zustände leer, gewählt (je Wert), **unbestätigter Vorschlag** (gestrichelter Rahmen, Umriss-Icon, Label „Vorschlag aus deinen Tagen"), gesperrt, Fokus. Ergebnisbalken mit Zahlen, Rang-Abzeichen „Platz 1", „ohne Jonas" als Stein-Chip, Warnhinweise in Amber. Unter 400 px Icon über Label. | §9.10 |
+| **D-7 Phasen & To-do** | Phasen-Chips mit Text + Icon: Tage sammeln (Lagune hell) · Abstimmung läuft (Amber) · Steht fest (Lagune kräftig) · Vergangen (Sand). To-do-Zeile in **Koralle** (`--ww-todo-*`, 4-px-Kante links). Phasen-Leiste mit ✓ / Unterstrich / gedämpft. | §9.3, tokens.css |
+| **D-8 Icons** | Alle 28 fehlenden Icons im Sprite ergänzt (`assets/icons/icons.svg`, IDs `ww-icon-…`, Liste in assets/README.md). Krone immer mit Label „Orga"/„Organizer" – übernommen. | §11 |
+| **D-9 Illustrationen** | Alle 8 geliefert: `invite` (Einladung W03), `code-sent`, `no-matches`, `vote-waiting`, `error` (gemeinsam für W14), `goodbye`, `hero` (W01), `submitted`. Alle dekorativ, mobil max. 160 px hoch. | §11 |
+| **D-10 Text & Typo** | Längenbudgets übernommen; `hyphens: auto` + korrektes `lang`, `overflow-wrap: anywhere` für Nutzerinhalte verankert. Tab-Stil: 14/600, Unterstrich, 8 px Innenabstand unter 400 px → „Übersicht · Meine Tage · Gruppe · Abstimmen" passt in 328 px; Fallback horizontal scrollbar mit Verlaufskante. | §9.4, §10 |
+| **D-11 Sheet & Ebenen** | Zwei Rastpunkte (½ / fast voll, Tokens), Griff + Schließen-Button. Snackbar über der Leiste: `bottom = --ww-sticky-bar-h + 8 px + Safe-Area`; `--ww-z-toast` (50) > `--ww-z-sticky` (10). Desktop unten links. | §9.6, §9.7 |
+| **D-12 Dark Mode** | **Einverstanden:** MVP folgt nur dem System, kein Schalter. `[data-theme]` bleibt für später/Tests. Vorbehalt Auftraggeber (Dark Mode im MVP ja/nein) – liegt beim CEO. | §13 |
+| **D-13 Vorschlagskarte** | Gruppenüberschriften mit Icon (✓-Badge / Personen) und 32 px Abstand; Zeitraum, Nächte, Urlaubstage ⓘ; Zusatz-Chips „◐ 2× zur Not" (Amber), „✕ ohne Jonas" (Stein), „⚑ inkl. Pfingstmontag" (Koralle hell); Text-Button „Im Kalender zeigen"; Orga-Checkbox. | §9.3 |
+
+Außerdem übernommen: Glossar ux-spec §10.2 (Legende `availability-legend.svg` jetzt „Geht / Zur Not / Geht nicht" · „Works / If needed / Can't"), keine Emojis in UI-Texten, keine Bottom-Navigation, Reise-Tabs als Links, Segment „Vorschläge | Kalender" (mit 1,5-px-Rahmen am aktiven Segment, damit der Zustand ≥ 3:1 erkennbar ist).
+
+## 2. Offen für UI/UX
+
+Bitte bestätigen oder anpassen (Antwort gern in `docs/ux/abstimmung-design.md` §3):
+
+| # | Punkt | Vorschlag Design | Betrifft |
+|---|---|---|---|
+| **U-1** | **Seitenrand Kalender 8 px statt 12 px** (D-3) | 8 px / Fuge 4 px → 45,7 px Zellbreite; ux-spec §2 und W08/W09-HTML-Skizzen anpassen | ux-spec §2, W08, W09 |
+| **U-2** | **✓-Badge unten rechts** statt oben rechts (★ im Wireframe); ◐ unten links ohne Zahl (mobil), „◐2" ab 600 px | Wireframe-Legende und HTML-Skizze W09 angleichen | W09 |
+| **U-3** | **Pegel (4 Segmente) erst ab 600 px** – mobil fehlt der Platz; Information steckt in Zahl + Badges | bestätigen | W09 |
+| **U-4** | **Zählwert = Anzahl „Geht"** (F-008). Auf einem „alle können"-Tag mit Zur-Not-Personen steht dann z. B. „6/9 ✓ ◐" – könnte irritieren. Alternative: Zahl = „können (Geht + Zur Not)", ◐ zeigt den Zur-Not-Anteil. | UX-Test in der Beta oder PM-Entscheid; Design funktioniert mit beiden Varianten | F-008, PM |
+| **U-5** | **Textvergrößerung 200 %**: Die Zahl passt bei 200 % nicht mehr in 46 px Breite. Vorschlag: ab Root-Schriftgröße ≥ 24 px (bzw. Container-Query < 52 px Zellbreite) wechselt die Heatmap in eine **Tagesliste** (eine Zeile pro Tag: Datum · „6 von 9" · Badges), Meine Tage in eine Liste mit Zustands-Segmenten. Alternative: Zellen nur in der Höhe wachsen lassen und Zahl auf „x" kürzen. | Entscheidung UX (Verhalten); Optik liefere ich nach | ux-spec §7.1, W08, W09 |
+| **U-6** | **Legende** der Heatmap (W09 zeigt „□ ░ ▒ ▓ █ ★ ~ °"): als Komponente mit echten Mini-Zellen (20 × 20 px mit Zahl-Beispiel, Muster, Badge, Eselsohr) in einer umbrechenden Zeile, einklappbar. Beim ersten Besuch aufgeklappt? | Zustand (offen/zu, Merken) entscheidet UX | W09 |
+| **U-7** | **Snackbar-Position** braucht die Leistenhöhe als CSS-Variable `--ww-sticky-bar-h` (setzt das Layout, z. B. per ResizeObserver) | bestätigen, an Developer weitergeben | ux-spec §4.3 |
+| **U-8** | **Abstimmen unter 400 px:** Icon über Label in den drei Segmenten (sonst passt „Vielleicht" nicht) – Segmente werden dadurch 56 px hoch | in W10 übernehmen | W10 |
+| **U-9** | **Rang-Abzeichen-Text** „Platz 1" / „Top choice" (EN nicht „1st place", wirkt nach Wettbewerb) | Copy bestätigen | W10, ux-spec §10.2 |
+| **U-10** | **Mini-Streifen** (6-px-Heatmap-Leiste des Zeitraums) auf der Vorschlagskarte – optional; hilft beim Wiedererkennen im Kalender, kostet eine Zeile | aufnehmen ja/nein | W09 |
+| **U-11** | **Feiertagsliste unter dem Monat** (W08/W09): Darstellung 13 px `text-muted`, jeder Eintrag mit kleinem Eselsohr-Dreieck vorn (gleiche Form wie in der Zelle) – passt das zur Struktur? | bestätigen | W08, W09 |
+| **U-12** | **Hero/Landing W01:** `hero.svg` ist 320 × 200 – mobil auf 160 px Höhe skaliert über oder neben der Headline? | Platzierung entscheidet UX | W01 |
+| **U-13** | **Tagesdetail „Noch offen"**: gestrichelter Avatar-Ring (wie Teilnahmestatus F-007) statt nur Grau – bitte in W09 übernehmen | bestätigen | W09 |
+
+## 3. Bereits erledigt / keine Aktion nötig
+- WCAG 2.2 AA als Ziel (ux-spec §7): Design ist darauf ausgelegt (2.4.11 Fokus nicht verdeckt über `scroll-padding`, 2.5.8 Zielgrößen, Fokus-Hof).
+- Teilen-Texte ohne Emojis: einverstanden.
+- „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
+
+## Changelog
+- 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.

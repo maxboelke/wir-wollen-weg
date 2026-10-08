@@ -158,7 +158,7 @@ Fallback: Ist das Ladebudget knapp, funktioniert das System komplett mit `--ww-f
 | `--ww-text-xs` | 12 px | 1,3 | System **600–700** | nur Kalenderzahlen, Badges, Zähler – nie Fließtext |
 | `--ww-text-code` | 24 px | 1 | System 600, tabular | 6-stelliger Code |
 
-Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-numeric: tabular-nums`. Maximale Zeilenlänge 65ch. Überschriften `text-wrap: balance`, Fließtext `text-wrap: pretty`. Keine Versalien-Texte außer Wochentags-Kürzeln in sehr kleinen Labels (dann `--ww-tracking-wide`). Textvergrößerung bis 200 % darf kein Layout brechen (Kalender wechselt dann auf Listenansicht – siehe abstimmung-ux.md).
+Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-numeric: tabular-nums`. Maximale Zeilenlänge 65ch. Überschriften `text-wrap: balance`, Fließtext `text-wrap: pretty`. Keine Versalien-Texte außer Wochentags-Kürzeln in sehr kleinen Labels (dann `--ww-tracking-wide`). Textvergrößerung bis 200 % darf kein Layout brechen (Vorschlag: Kalender wechselt dann auf eine Tagesliste – offen als U-5 in abstimmung-ux.md).
 
 ## 6. Kalender & barrierefreie Heatmap
 
@@ -329,7 +329,7 @@ Regeln:
 
 ## 9. Komponenten
 
-Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) · Gedrückt · Fokus (`:focus-visible`, Ring außen) · Deaktiviert · Laden · Fehler** – sofern zutreffend. Fokus-Ring ist überall identisch (`--ww-focus-ring`, 3 px + 2 px Abstand).
+Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) · Gedrückt · Fokus (`:focus-visible`, Ring außen) · Deaktiviert · Laden · Fehler** – sofern zutreffend. Fokus-Ring ist überall identisch (`--ww-focus-ring`, 3 px + 2 px Abstand); in dicht gepackten Rastern (Kalender, Segmente) `--ww-focus-ring-isolated` mit Hof auf beiden Seiten.
 
 ### 9.1 Buttons
 | Variante | Fläche | Text | Rahmen | Einsatz |
@@ -391,7 +391,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 
 ### 9.5 Chips
 - Höhe 36 px (Touch-Fläche per Padding ≥ 44 px), Radius pill, 14/600, Icon 16.
-- Filter-Chip (z. B. „Kemal ausblenden", F-008): Standard `surface` + Rahmen `border-strong`; aktiv `primary-tint` + `primary-text` + ✓-Icon vorn (Zustand nicht nur über Farbe). Ausgeblendete Person: durchgestrichener Name im Chip + Auge-zu-Symbol (Icon-Erweiterung nach Bedarf).
+- Filter-Chip mit Auswahl (W09: „Dauer: 5 Nächte ▾", „Darf fehlen: 1 ▾", „Personen ausblenden ▾"): Standard `surface` + Rahmen 1,5 px `border-strong` + Chevron. **Aktiver Filter** (Wert weicht vom Standard ab, UX D-1): Fläche `primary-tint`, Text `primary-text`, Rahmen 2 px `primary`, vorn ✓-Icon – z. B. „✓ 1 ausgeblendet ▾". Zustand damit über Rahmenstärke + Icon + Text, nicht nur Farbe. In der Personenliste des Filters: ausgeblendete Person mit `eye-off`-Icon und durchgestrichenem Namen.
 - Status-Chip (nicht interaktiv): kein Rahmen, Tönung je Status (info/warning/success), immer mit Icon.
 
 ### 9.6 Toasts
@@ -424,20 +424,36 @@ Siehe §6. Zusätzlich Interaktion:
 - Pro Option eine Karte: Datumsbereich (lg/600), Verfügbarkeitszeile („8 können · ohne Kemal"), darunter **Segment-Control** aus drei gleich breiten Buttons (min. 48 px hoch, Radius 12 außen, 1,5 px Rahmen `border-strong`).
 - Segment-Inhalt: Icon (✓ / ◐ / ✕, 20 px) + Label („Ja / Vielleicht / Nein" – „Yes / Maybe / No"). **Unter 400 px Breite: Icon über Label** (gestapelt), damit „Vielleicht" ohne Kürzung passt.
 - Ausgewählt: Fläche `vote-*-bg`, Text/Icon `vote-*-fg`, Rahmen 2 px in `vote-*-fg`, Icon gefüllt – Auswahl also über Fläche, Rahmenstärke **und** Häkchen-Eckmarke. Nicht gewählt: `surface`, `text-muted`.
-- **Vorbelegung aus Verfügbarkeit (muss bestätigt werden):** gestrichelter Rahmen in `vote-*-fg` + kleines Label „Vorschlag" über der Option; erst nach Antippen durchgezogen.
-- Ergebnis: gestapelter Balken (8 px, Radius pill, Segmente durch 2-px-Lücken in `surface` getrennt) Ja `vote-yes-bar` (4,6:1) · Vielleicht `vote-maybe-bar` (3,4:1) · Nein `vote-no-bar` (3,4:1) – **plus** Zahlen mit Icons „✓ 6 ◐ 2 ✕ 1". Rang 1 mit Badge „Vorne" (Krone **nicht** verwenden – reserviert für Organisator).
+- **Unbestätigter Vorschlag aus der Verfügbarkeit (UX D-6):** „Geister"-Optik – das vorgeschlagene Segment hat einen **gestrichelten** 2-px-Rahmen in `vote-*-fg`, Fläche bleibt `surface`, Icon als Umriss; darüber Label 13/600 `text-muted` „Vorschlag aus deinen Tagen" / „Suggested from your dates". Erst nach Antippen durchgezogen und gefüllt. (Radio ist technisch nicht gewählt – ux-spec §7.4.)
+- **Gesperrt** (Phase 3, Abstimmung beendet): gewählte Antwort bleibt sichtbar (Fläche + Icon), die anderen Segmente `text-muted` ohne Rahmen; Schloss-Icon + „Abstimmung beendet" in der Kartenzeile; keine Hover-Reaktion.
+- Fokus: `--ww-focus-ring` um das einzelne Segment.
+- Ergebnis: gestapelter Balken (8 px, Radius pill, Segmente durch 2-px-Lücken in `surface` getrennt) Ja `vote-yes-bar` (4,6:1) · Vielleicht `vote-maybe-bar` (3,4:1) · Nein `vote-no-bar` (3,4:1) – **plus** Zahlen mit Icons „✓ 6 ◐ 2 ✕ 1". Rang-Abzeichen **„Platz 1" / „Top choice"** (Pill `primary-tint`/`primary-text`, 13/700) – Krone **nicht** verwenden (reserviert für Orga). Kennzeichnung „ohne Jonas" als Chip in `vote-no-*` (Stein); Warnhinweise wie „Jonas kann an diesen Tagen nicht" in **Amber** (`warning-*`), nie Rot.
 - Namentliche Stimmen (Transparenz): Avatarreihen je Antwort.
 
 ### 9.11 Avatare / Initialen
 - Kreis 24/32/40 px, Initialen 1–2 Zeichen (10/13/16 px, 600), Farbe deterministisch aus 8 Tönen (`--ww-avatar-light-*` / `--ww-avatar-dark-*`) per Hash der Mitglieds-ID.
-- **Organisator:** Kronen-Badge 14 px (Kreis `sun`, Icon `text`) rechts oben, 2 px Ring in `surface`.
+- **Orga:** Kronen-Badge 14 px (Kreis `sun`, Icon `text`) rechts oben, 2 px Ring in `surface`. In Listen und auf Karten steht die Krone **immer mit Text** „Orga" / „Organizer" (UX-Regel D-8).
 - **Status Teilnahme (F-007):** abgegeben = ✓-Badge unten rechts (`primary`, Icon `text-on-primary`); noch offen = **gestrichelter Ring** um den Avatar (`border-strong`) – Form statt nur Farbe; Platzhalter (noch nicht beigetreten) = gestrichelter Kreis ohne Fläche, Initialen `text-muted`.
 - Stapel: −8 px Überlappung, 2 px Ring in `surface`, max. 5 + Zähler „+4" (Pill `surface-sunken`).
 - Bildschirmleser: Name im zugänglichen Namen, Farbe irrelevant.
 
 ### 9.12 Banner & Hinweise
-- Info/Warnung/Erfolg/Fehler: Fläche `*-tint`, Text `*-text`, Icon links, Radius 12, Innenabstand 12/16. Beispiel F-008: Warn-Banner „Noch offen: Kemal, Sara – Ergebnis kann sich ändern" + Aktion „Erinnern" (F-015).
+- Info/Warnung/Erfolg/Fehler: Fläche `*-tint`, Text `*-text`, Icon links (`info` / `warning` / `success` / Fehler-Icon), Radius 12, Innenabstand 12/16. Beispiel F-008: **Statusband** „5 von 7 haben abgegeben. Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern." in Warn-Optik (Amber) + Sekundär-Button „Erinnern" (Icon `remind`, F-015).
 - Frist (F-017): Chip „noch 3 Tage" mit Uhr-Icon; ≤ 1 Tag Warnfarbe.
+- Offline-Banner (ux-spec §6): Info-Optik unter dem Header, nicht schließbar, solange offline.
+
+### 9.13 Werkzeugleiste „Meine Tage" (F-005, UX D-5)
+Fixiert unten (< 960 px), ab 960 px sticky oben über dem Kalender. Fläche `surface`, `--ww-shadow-sticky-bottom`, Innenabstand 12/16 + Safe-Area, Höhe ≤ `--ww-size-toolbar-max` (150 px).
+
+| Element | Optik |
+|---|---|
+| **Pinsel** (Radiogruppe, 3 Segmente „Geht nicht · Zur Not · Geht") | Segment-Control Höhe 48, gleich breit; jedes Segment zeigt links ein **Mini-Feld 16 × 16 px mit Fläche + Muster des Zustands** (Kreuzschraffur / Streifen / glatt) und das Symbol, daneben das Label. Aktiv: Fläche des Zustands (`avail-*-bg`), Rahmen 2 px `text`, Label 700, Punkt-Marke ● rechts (wie Wireframe) – also Fläche + Rahmen + Marke. Inaktiv: `surface`, Rahmen 1,5 px `border-strong`, Label 600 `text-muted`. Unter 400 px: Mini-Feld über Label, Labels ≤ 10 Zeichen (ux-spec §10.4). |
+| **Bereichsmodus** (`aria-pressed`) | Icon-Button `range` + Label „Zeitraum" (44 px hoch). Gedrückt: Fläche `primary-tint`, Rahmen 2 px `primary`, Icon/Label `primary-text`. |
+| **Rückgängig** | Icon-Button `undo` 44 × 44; deaktiviert (`aria-disabled`, Stapel leer): Icon `disabled-text`, kein Rahmen. |
+| **Schnellaktionen** | Icon-Button `quick-actions` (oder `more`) 44 × 44 → Bottom-Sheet. |
+| **Speicherstatus** (`role="status"`) | 14 px rechts in der Werkzeugzeile: „Speichert …" (Spinner 12 px, `text-muted`) · „Gespeichert" (✓ `success-text`) · „✓ Abgegeben · 14:32" · **„Nicht gespeichert"** (Warn-Icon, `warning-text`) + Text-Button „Erneut versuchen". |
+| **Primärbutton** | „Fertig – abgeben" / „Done – submit", volle Breite, 48 px. Nach Abgabe entfällt er → kompakte Leiste (≈ 100 px). |
+| **Hinweiszeile** (Bereichsmodus) | über der Leiste, Fläche `info-tint`, Text `info-text`: „Jetzt das Ende antippen." + Text-Button „Abbrechen". |
 
 ## 10. i18n-robuste Layouts (DE/EN)
 
@@ -454,11 +470,14 @@ Typische Grenzfälle, die jede Komponente aushalten muss:
 
 | Kontext | DE | EN |
 |---|---|---|
-| Haupt-CTA Verfügbarkeit | „Fertig – Verfügbarkeit abgeben" (30) | „Done – submit availability" (26) |
-| Kompositum | „Verfügbarkeitsabgabefrist", „Datenschutzerklärung", „Urlaubstage-Optimierung" | „privacy policy" |
-| Tab | „Abstimmung" (10) | „Vote" (4) |
+| Haupt-CTA Verfügbarkeit | „Fertig – abgeben" (16) | „Done – submit" (13) |
+| Kompositum (Nutzer-/Rechtstexte) | „Datenschutzerklärung", „Junggesellenabschiedsreise" (Reisename!) | „privacy policy" |
+| Tab | „Meine Tage" (10), „Abstimmen" (9) | „My dates" (8), „Vote" (4) |
+| Pinsel | „Geht nicht" (10) | „If needed" (9) – hier ist EN länger als DE „Zur Not" |
 | Option | „Vielleicht" (10) | „Maybe" (5) |
-| Hinweis | „Noch offen: Kemal, Sara – Ergebnis kann sich ändern" | „Still missing: Kemal, Sara – result may change" |
+| Hinweis | „Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern." | „Still missing: Kemal, Sara – the result may still change." |
+
+Längenbudgets je Element (Tabs ≤ 11, Pinsel ≤ 10, Primärbutton mobil ≤ 22, Snackbar ≤ 60 Zeichen) legt die UX-Spec §10.4 fest; das Design hält bei diesen Budgets **ohne** Umbruch, darüber mit Umbruch/Scrollen – nie mit Abschneiden.
 
 ### 10.2 Wochentags-Kürzel
 Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und „S/S" der Ein-Buchstaben-Variante sind im Englischen mehrdeutig):
@@ -487,20 +506,28 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 ## 11. Ikonografie & Illustration
 
-**Icons** (`assets/icons/`): 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden/Ecken, `currentColor`, keine Füllungen außer Bedeutungsträgern (◐, Badge). Größen 16/20/24. Dekorativ → `aria-hidden="true"`; alleinstehend (Icon-Button) → zugänglicher Name am Button, nicht im SVG. Kernset: Kalender, Teilen, Abstimmung, Krone, Check, Vielleicht, Kreuz, Sprache, ICS-Download, Kopieren, Feiertag, Link, „Alle können"-Badge. Weitere Icons (Zurück, Menü, Schließen, Info, Uhr, Auge, Person) im selben Stil ergänzen bzw. aus **Lucide** (ISC-Lizenz, gleicher Strich-Stil) übernehmen.
+**Icons** (`assets/icons/`): 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden/Ecken, `currentColor`, keine Füllungen außer Bedeutungsträgern (◐, Badge). Größen 16/20/24. Dekorativ → `aria-hidden="true"`; alleinstehend (Icon-Button) → zugänglicher Name am Button, nicht im SVG. Kernset: Kalender, Teilen, Abstimmung, Krone, Check, Vielleicht, Kreuz, Sprache, ICS-Download, Kopieren, Feiertag, Link, „Alle können"-Badge. **Ergänzt v0.2 (UX D-8):** Zurück, Chevron links/rechts, Mehr, Schließen, Plus, Minus, Rückgängig, Zeitraum (Bereichsmodus), Schnellaktionen, Info, Warnung, Erledigt, Kommentar, Filter, Anzeigen/Ausblenden (Auge), Erinnern (Megafon), E-Mail, Schloss, Uhr/Frist, Nächte (Mond), Gruppe, Person (Avatar-Fallback), Bearbeiten, Löschen, Abmelden, Hilfe – alle im Sprite `icons.svg`. Weitere Icons bei Bedarf im selben Stil zeichnen oder aus **Lucide** (ISC-Lizenz, gleiches 24er-Raster und 2-px-Strich) übernehmen.
 
-**Illustrationen** (`assets/illustrations/`): flache Formen auf einem Teller (Kreis), Motive Sonne/Horizont/Koffer/Kalender, max. 5 Farben aus der Palette, keine Figuren mit Gesichtern (neutral, kulturunabhängig). Farben über `--ww-illu-*`-Tokens (inline) mit eingebauten Fallbacks und eigener Dark-Variante (`prefers-color-scheme`). Größe 160–240 px breit, `alt=""` wenn der Leerzustands-Text daneben alles sagt.
+**Illustrationen** (`assets/illustrations/`): flache Formen auf einem Teller (Kreis), Motive Sonne/Horizont/Koffer/Kalender, max. 5 Farben aus der Palette, keine Figuren mit Gesichtern (neutral, kulturunabhängig). Farben über `--ww-illu-*`-Tokens (inline) mit eingebauten Fallbacks und eigener Dark-Variante (`prefers-color-scheme`). Mobil **max. 160 px hoch** (UX D-9: Primäraktion bei 360 × 640 ohne Scrollen sichtbar), sonst 160–240 px breit; alle dekorativ `alt=""` bzw. inline `aria-hidden="true"`, weil der Text daneben alles sagt.
 
 | Datei | Einsatz |
 |---|---|
-| `empty-trips.svg` | „Meine Reisen" leer (F-044) – mit CTA „Neue Reise planen" |
-| `empty-nobody.svg` | Heatmap/Gruppe, solange niemand abgegeben hat (F-007, F-008) – mit „Link teilen" |
-| `vote-done.svg` | Ergebnis festgelegt (F-012) |
+| `hero.svg` (320 × 200) | Startseite W01 – mobil auf 160 px Höhe skalieren |
+| `invite.svg` (240 × 160) | **Einladungs-Vorschau W03 (F-003)** – Ticket mit freiem Platz „für dich" |
+| `code-sent.svg` | „Code ist unterwegs" W02/W03 (F-040/F-041), klein (≤ 96 px) |
+| `empty-trips.svg` | „Meine Reisen" leer W04 (F-044) – mit CTA „Neue Reise planen" |
+| `empty-nobody.svg` | Gruppe/Übersicht, solange niemand abgegeben hat W07/W09 (F-007, F-008) |
+| `no-matches.svg` | „Keine Treffer" in Vorschlägen W09 (F-009) |
+| `submitted.svg` | Erfolg nach Abgabe W08 (F-005), klein |
+| `vote-waiting.svg` | Abstimmung noch nicht gestartet W10 |
+| `vote-done.svg` | Termin festgelegt W11 (F-012) |
+| `error.svg` | Link ungültig / Reise nicht gefunden / 404 / Serverfehler W14 |
+| `goodbye.svg` | Konto gelöscht / Abschied W14 (F-043) |
 
 ## 12. Prüfprotokoll Barrierefreiheit (für Reviewer)
 
 1. Kontraste der Tabellen §4 und §6.3 mit einem Tool (z. B. WebAIM Contrast Checker, axe) stichprobenartig gegenprüfen – alle Werte sind rechnerisch ermittelt und abgerundet.
-2. Heatmap-Testreise mit 9 Personen und allen Stufen + Feiertag + heute + Auswahl + Vorschlag: in DevTools-Simulation Protanopie, Deuteranopie, Tritanopie, Achromatopsie – jede Stufe muss per Zahl und Pegel benennbar, Markierungen per Form erkennbar sein.
+2. Heatmap-Testreise mit 9 Personen und allen Stufen + Feiertag + heute + Auswahl + Vorschlag (inkl. Zeilenumbruch) + Fokus in einer Zelle: in DevTools-Simulation Protanopie, Deuteranopie, Tritanopie, Achromatopsie – jede Stufe muss per Zahl (mobil) bzw. Zahl + Pegel (≥ 600 px) benennbar, Markierungen per Form erkennbar sein.
 3. Forced-Colors (Windows Kontrastdesign): Zahlen, Symbole, Auswahl und Vorschlag sichtbar.
 4. Tastatur: Fokus-Ring auf jeder Zelle sichtbar und nie mit „ausgewählt" verwechselbar.
 5. Zoom 200 % und Textgröße 200 % (iOS „Größerer Text"): keine abgeschnittenen Labels, Kalender schaltet ggf. auf Liste.
@@ -509,9 +536,12 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 ## 13. Übergabe & offene Punkte
 
-**Bereit zur Umsetzung:** `tokens.css` (vollständig, Light/Dark/Reduced-Motion, Heatmap, Muster), Icon-Sprite, Favicon/App-Icon (Basis Variante A, vorbehaltlich Auftraggeber-Wahl), Illustrationen, Heatmap-Spezifikation §6, Komponenten-Optik §9, i18n-Regeln §10.
+**Dark Mode (abgestimmt mit UX D-12):** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter. `[data-theme]` bleibt in tokens.css für einen späteren Schalter („Darstellung" in Konto → Sprache & Region) und für Tests. Vorbehalt: Auftraggeber bestätigt, dass Dark Mode im MVP enthalten ist (Mehraufwand im Review: beide Modi prüfen).
+
+**Bereit zur Umsetzung:** `tokens.css` (Light/Dark/Reduced-Motion, Heatmap, Muster, Kalender-Interaktion, Phasen), Icon-Sprite (41 Icons), Favicon/App-Icon (Basis Variante A, vorbehaltlich Auftraggeber-Wahl), 11 Illustrationen, Heatmap- und Zellspezifikation §6, Komponenten-Optik §9 inkl. Werkzeugleiste, i18n-Regeln §10.
 
 **Offen:** siehe [abstimmung-ux.md](abstimmung-ux.md) (UI/UX) und Bericht an den CEO (Auftraggeber: Name EN, Logo-Variante, Dark Mode im MVP, Figtree).
 
 Changelog
+- v0.2 (2026-10-08): Abgleich mit UX-Spec und Wireframes: Zell-Anatomie (D-1), Zählwert-Regel, Fokus mit beidseitigem Hof, Vorschlag-Band über Umbrüche, Interaktionszustände Meine Tage (D-2), Kalender-Seitenrand 8 px (D-3), Code-Feld als ein Input (D-4), Werkzeugleiste (D-5), Abstimmen-Zustände (D-6), Phasen/To-do (D-7), 28 neue Icons (D-8), 8 neue Illustrationen (D-9), Tabs/Budgets (D-10), Sheet/Snackbar (D-11), Dark Mode (D-12), Vorschlagskarte (D-13); Glossar DE/EN übernommen.
 - v0.1 (2026-10-08): Erstentwurf Phase 0.
