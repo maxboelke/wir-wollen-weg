@@ -32,3 +32,10 @@ Der CEO:
 - Feature-IDs `F-xxx`, Review-Findings `R-xxx` – überall gleich referenzieren.
 - Agents lesen bestehende Dokumente zuerst und aktualisieren sie statt sie zu überschreiben.
 - Keine Secrets im Repository.
+
+## Projektstand (für neue Sitzungen)
+Der CEO liest zu Beginn jeder Sitzung diesen Abschnitt, `docs/product/PRD.md` (insb. §12 „Offene Fragen / Entscheidungen“) und – falls vorhanden – `docs/ops/status.md`.
+
+- **Produkt:** Web-App, mit der Freundesgruppen einen gemeinsamen Urlaubszeitraum finden – Verfügbarkeiten eintragen, gemeinsamer Kalender (Heatmap) mit automatischen Vorschlägen, Abstimmung, Festlegung. Einladung per Link.
+- **Erledigt:** Phase 0 – Produktkonzept (PRD, Featureliste, Roadmap) inkl. Entscheidungen des Auftraggebers vom 2026-10-08.
+- **Nächster Schritt:** Phase „Konzept“ – `ui-ux`, `designer` und `operations-manager` parallel beauftragen (siehe Standard-Ablauf, Schritt 2), danach Abstimmung Designer ↔ UI/UX, dann Umsetzung durch `developer`.
