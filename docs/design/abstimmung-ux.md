@@ -1,6 +1,6 @@
 # Abstimmung Design ↔ UI/UX
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
+Stand: 2026-10-08 (letzte Runde, abgeschlossen) · Verantwortlich: Designer · Gegenstück: [`docs/ux/abstimmung-design.md`](../ux/abstimmung-design.md) (UI/UX) · Bezug: [design-system.md](design-system.md), [tokens.css](tokens.css), [assets/README.md](assets/README.md)
 
 Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (Stand 2026-10-08). Vielen Dank für die sehr präzisen Punkte – fast alles ist übernommen. Abweichungen sind mit **⚠ Abweichung** markiert und begründet.
 
@@ -10,7 +10,7 @@ Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (St
 
 | Punkt | Antwort Design | Wo festgelegt |
 |---|---|---|
-| **D-1 Heatmap-Zelle** | Feste Orte je Element: **Datum + Heute-Ring oben links · Feiertag (Eselsohr) Ecke oben rechts · Zählwert Mitte · ◐ zur Not unten links · ✓ alle können unten rechts** · Pegel (4 Segmente) nur ≥ 600 px · Auswahl innen · Fokus außen · Vorschlag-Band in der Fuge darunter. Prüffall „Feiertag + heute + Wochenende + ausgewählt + Fokus + alle können + zur Not" passt in 45,7 × 52 px ohne Überlappung. **⚠ Abweichung:** ✓-Badge sitzt **unten rechts**, nicht oben rechts wie im Wireframe (★), weil oben rechts das Eselsohr liegt. | design-system §6.1 |
+| **D-1 Heatmap-Zelle** | Feste Orte je Element: **Datum + Heute-Ring oben links · Feiertag (Eselsohr) Ecke oben rechts · Zählwert Mitte · ◐ zur Not unten links · ✓ Alle: Geht unten rechts** · Pegel (4 Segmente) nur ≥ 600 px · Auswahl innen · Fokus außen · Vorschlag-Band in der Fuge darunter. Prüffall „Feiertag + heute + Wochenende + ausgewählt + Fokus + ✓ + zur Not" passt in 45,7 × 52 px ohne Überlappung. **⚠ Abweichung:** ✓-Badge sitzt **unten rechts**, nicht oben rechts wie im Wireframe (★), weil oben rechts das Eselsohr liegt. | design-system §6.1 |
 | D-1 Zählwert-Regel | **Bestätigt:** mobil „x/n" bis n ≤ 9, ab 10 nur „x" (n im Statusband/Legende); ≥ 600 px immer „x/n". Stufe `many` (Light, Weiß auf `#187E73`): Zahl 4,9:1; auf `many` liegt kein Muster, Badge und ◐ nutzen dieselbe Vordergrundfarbe → ebenfalls 4,9:1. | §6.1, §6.3 |
 | D-1 Fokus auf `all` und neben Band | Neuer Token `--ww-focus-ring-isolated`: Hof 2 px + Ring 3 px + Hof 2 px in Hintergrundfarbe. Der Ring grenzt dadurch **nie** an eine Zelle oder das Band → 5,9:1 (L) / 8,6:1 (D) in jeder Lage. Fokussierte Zelle `z-index: 1`. | §6.5, tokens.css |
 | D-1 Vorschlag über Umbrüche | Kappen nur an echtem An-/Abreisetag; am Zeilen-/Monatsende läuft das Band **ohne Kappe** bis an den Rasterrand (offene Kante) und beginnt in der nächsten Zeile ebenso offen. | §6.5 |
@@ -32,13 +32,23 @@ Grundlage: UX-Spec, Sitemap, Wireframes W01–W14 und `abstimmung-design.md` (St
 | **D-10 Text & Typo** | Längenbudgets übernommen; `hyphens: auto` + korrektes `lang`, `overflow-wrap: anywhere` für Nutzerinhalte verankert. Tab-Stil: 14/600, Unterstrich, 8 px Innenabstand unter 400 px → „Übersicht · Meine Tage · Gruppe · Abstimmen" passt in 328 px; Fallback horizontal scrollbar mit Verlaufskante. | §9.4, §10 |
 | **D-11 Sheet & Ebenen** | Zwei Rastpunkte (½ / fast voll, Tokens), Griff + Schließen-Button. Snackbar über der Leiste: `bottom = --ww-sticky-bar-h + 8 px + Safe-Area`; `--ww-z-toast` (50) > `--ww-z-sticky` (10). Desktop unten links. | §9.6, §9.7 |
 | **D-12 Dark Mode** | **Einverstanden:** MVP folgt nur dem System, kein Schalter. `[data-theme]` bleibt für später/Tests. Vorbehalt Auftraggeber (Dark Mode im MVP ja/nein) – liegt beim CEO. | §13 |
-| **D-13 Vorschlagskarte** | Gruppenüberschriften mit Icon (✓-Badge / Personen) und 32 px Abstand; Zeitraum, Nächte, Urlaubstage ⓘ; Zusatz-Chips „◐ 2× zur Not" (Amber), „✕ ohne Jonas" (Stein), „⚑ inkl. Pfingstmontag" (Koralle hell); Text-Button „Im Kalender zeigen"; Orga-Checkbox. | §9.3 |
+| **D-13 Vorschlagskarte** | Gruppenüberschriften „Alle dabei" / „Fast alle dabei" mit Icon (Strich-Häkchen `ww-icon-check` / Personen, U-14) und 32 px Abstand; Zeitraum, Nächte, Urlaubstage ⓘ; Zusatz-Chips „◐ 2× zur Not" (Amber), „✕ ohne Jonas" (Stein), „⚑ inkl. Pfingstmontag" (Koralle hell); Text-Button „Im Kalender zeigen"; Orga-Checkbox. | §9.3 |
+
+### 1a. Antworten auf `docs/ux/abstimmung-design.md` §6 (Runde 2: D-14 bis D-18)
+
+| Punkt | Antwort Design | Wo festgelegt |
+|---|---|---|
+| **D-14** Gruppennamen | Umgestellt auf **„Alle dabei" / „Fast alle dabei"** („Everyone's in" / „Almost everyone's in"), CEO bestätigt. „können" bleibt nur in Optionszeilen („8 können · ohne Kemal"). SVG-Assets enthalten keine Gruppennamen – keine Änderung nötig. | design-system §6.2, §9.3 |
+| **D-15** Tageslisten-Zeile | Optik geliefert: Stufenbalken 6 px links (zusätzliche Kodierung, `aria-hidden`), Datum mit Wochentag (Wochenende fett + Spur-Fläche, heute mit Ring), Zählzeile „4 von 5: Geht", Abzeichen-Chips in fester Reihenfolge ✓ alle · ◐ n Zur Not · Feiertag · Vorschlag n, Hover/Gedrückt/Fokus/Ausgewählt; Maße in `em`, keine neuen Tokens. | design-system §6.8 |
+| **D-16** Sprachumschalter | **Entschieden (CEO, 2026-10-08)** zugunsten UX: nicht angemeldet Ein-Tipp-Umschalter mit `ww-icon-language` + „English"/„Deutsch" (mit `lang`), angemeldet im Avatar-Menü, Footer-Segment „Deutsch \| English" bleibt. | design-system §9.8, §9.4 |
+| **D-17** Code-Feld | Fehlertext aus user-flows A.2 („Dieser Code stimmt nicht. Noch 3 Versuche.", Restversuche ab 2. Fehlversuch); gesperrt: „Neuen Code senden" als Primärbutton. | design-system §9.2 |
+| **D-18** Ergebnis-Platzhalter | Vor der eigenen Stimme zu einer Option statt Balken/Zahlen/Rang/Avataren die Zeile „Stimm ab, um das Ergebnis zu sehen." / „Vote to see the results." (`text-muted`); Orga sieht immer das Ergebnis. | design-system §9.10 |
 
 Außerdem übernommen: Glossar ux-spec §10.2 (Legende `availability-legend.svg` jetzt „Geht / Zur Not / Geht nicht" · „Works / If needed / Can't"), keine Emojis in UI-Texten, keine Bottom-Navigation, Reise-Tabs als Links, Segment „Vorschläge | Kalender" (mit 1,5-px-Rahmen am aktiven Segment, damit der Zustand ≥ 3:1 erkennbar ist).
 
 ## 2. Offen für UI/UX
 
-Bitte bestätigen oder anpassen (Antwort gern in `docs/ux/abstimmung-design.md` §3):
+**Stand: nichts mehr offen.** Alle Punkte U-1 bis U-14 sind von UI/UX beantwortet (`docs/ux/abstimmung-design.md` §4) bzw. vom CEO entschieden; finaler Status in §3. Die Tabelle unten bleibt als Verlauf der ursprünglichen Fragen stehen.
 
 | # | Punkt | Vorschlag Design | Betrifft |
 |---|---|---|---|
@@ -59,37 +69,42 @@ Bitte bestätigen oder anpassen (Antwort gern in `docs/ux/abstimmung-design.md` 
 
 ## 3. Abstimmungsstand (Design-Sicht)
 
-Stand 2026-10-08, nach CEO-Entscheiden. Legende: **erledigt** = beidseitig geklärt · **entschieden (CEO)** = verbindlich, UX setzt in docs/ux/ um · **offen (UX)** = Antwort von UI/UX ausstehend · **Vorbehalt Auftraggeber** = Empfehlung steht, Bestätigung durch Auftraggeber fehlt.
+Stand 2026-10-08, **final** (letzte Abstimmungsrunde). Legende: **erledigt** = beidseitig geklärt und in beiden Dokumentsätzen umgesetzt · **entschieden (CEO)** = verbindlich durch CEO · **entschieden (UX)** = Verhaltensentscheid UI/UX, Design hat übernommen · **Vorbehalt Auftraggeber** = Empfehlung steht, Bestätigung durch Auftraggeber fehlt. **Offen zwischen Design und UI/UX: nichts.**
 
 | # | Thema | Status | Anmerkung |
 |---|---|---|---|
-| D-1 | Heatmap-Zelle (Anatomie, Zählwert, Fokus, Band, nodata) | erledigt | Abweichung Badge-Position durch U-2 entschieden; ✓-Bedeutung durch U-4 präzisiert |
+| D-1 | Heatmap-Zelle (Anatomie, Zählwert, Fokus, Band, nodata) | erledigt | Badge-Position via U-2, ✓-Bedeutung via U-4 |
 | D-2 | Meine Tage (Geht ohne Häkchen, Vorschau, Startmarke, schreibgeschützt, Feedback) | erledigt | |
 | D-3 | Zellbreite 360 px | entschieden (CEO, 2026-10-08) | über U-1: 8 px Rand, 4 px Fuge |
-| D-4 | Code-Feld als ein `<input>` | erledigt | |
+| D-4 | Code-Feld als ein `<input>` | erledigt | Kleinkorrektur über D-17 |
 | D-5 | Werkzeugleiste | erledigt | |
-| D-6 | Abstimmen-Schalter | erledigt | Detail U-8 offen |
+| D-6 | Abstimmen-Schalter | erledigt | < 400 px via U-8; Platzhalter via D-18 |
 | D-7 | Phasen & To-do | erledigt | |
-| D-8 | Icons | erledigt | Titel `ww-icon-all-available` jetzt „Alle: Geht" |
-| D-9 | Illustrationen | erledigt | Platzierung Hero: U-12 |
-| D-10 | Text & Typo | erledigt | Figtree: Vorbehalt Auftraggeber (s. u.) |
-| D-11 | Sheet & Ebenen | erledigt | Leistenhöhe als Variable: U-7 |
-| D-12 | Dark Mode | Vorbehalt Auftraggeber | Empfehlung: nur System-folgend, kein Schalter im MVP |
-| D-13 | Vorschlagskarte | erledigt | Gruppenüberschrift-Icon angepasst (U-14) |
-| U-1 | Kalender-Seitenrand 8 px, Fuge 4 px | **entschieden (CEO, 2026-10-08)** | UX passt ux-spec §2, W08, W09 an |
-| U-2 | ✓ unten rechts, ◐ unten links (≥ 600 px „◐2") | **entschieden (CEO, 2026-10-08)** | UX passt W09 an; Legende-SVG bereits angepasst |
-| U-3 | Pegel erst ab 600 px | offen (UX) | |
-| U-4 | Zählwert / Bedeutung ✓ | **entschieden (CEO, 2026-10-08)** | Zahl = „Geht"/abgegeben; ✓ nur bei x = n; sonst ◐ |
-| U-5 | Textvergrößerung 200 % → Tagesliste | offen (UX) | Optik liefert Design nach Entscheid |
-| U-6 | Legende als Komponente, Startzustand | offen (UX) | |
-| U-7 | `--ww-sticky-bar-h` | offen (UX) | |
-| U-8 | Abstimmen < 400 px: Icon über Label | offen (UX) | |
-| U-9 | „Platz 1" / „Top choice" | offen (UX) | |
-| U-10 | Mini-Streifen auf Vorschlagskarte | offen (UX) | |
-| U-11 | Feiertagsliste unter dem Monat | offen (UX) | |
-| U-12 | Hero-Platzierung W01 | offen (UX) | |
-| U-13 | „Noch offen" mit gestricheltem Ring | offen (UX) | |
-| U-14 | Benennung „Alle können" (F-009) vs. ✓ „alle Geht" | offen (UX/PM) | neu, Folge von U-4 |
+| D-8 | Icons | erledigt | 41 Icons; Titel `ww-icon-all-available` „Alle: Geht" |
+| D-9 | Illustrationen | erledigt | Hero-Platzierung via U-12 |
+| D-10 | Text & Typo | erledigt | Figtree: Vorbehalt Auftraggeber |
+| D-11 | Sheet & Ebenen | erledigt | `--ww-sticky-bar-h` via U-7 |
+| D-12 | Dark Mode | entschieden (CEO, 2026-10-08) – Vorbehalt Auftraggeber | nur System-folgend, kein Schalter im MVP |
+| D-13 | Vorschlagskarte | erledigt | Überschrift mit `ww-icon-check` (U-14), kein Mini-Streifen (U-10) |
+| D-14 | Gruppennamen „Alle dabei" / „Fast alle dabei" | erledigt | CEO bestätigt beide Namen; design-system §6.2, §9.3 |
+| D-15 | Optik Tageslisten-Zeile (große Schrift) | erledigt | design-system §6.8 |
+| D-16 | Sprachumschalter Kopfzeile | **entschieden (CEO, 2026-10-08)** | zugunsten UX: Ein-Tipp-Umschalter „English"/„Deutsch" (nicht angemeldet), Avatar-Menü (angemeldet), Footer-Segment; design-system §9.8 |
+| D-17 | Code-Feld Copy/Gewichtung | erledigt | design-system §9.2 |
+| D-18 | Ergebnis-Platzhalter vor eigener Stimme | erledigt | design-system §9.10; Ergebnis-Sichtbarkeit selbst: Vorbehalt Auftraggeber |
+| U-1 | Kalender-Seitenrand 8 px, Fuge 4 px | entschieden (CEO, 2026-10-08) | in ux-spec §2, §7.2, W08, W09 umgesetzt |
+| U-2 | ✓ unten rechts, ◐ unten links (≥ 600 px „◐2") | entschieden (CEO, 2026-10-08) | in ux-spec §4.9, W09 umgesetzt |
+| U-3 | Pegel erst ab 600 px | erledigt | von UX bestätigt |
+| U-4 | Zählwert / Bedeutung ✓ | entschieden (CEO, 2026-10-08) | Zahl = „Geht"/abgegeben; ✓ nur bei x = n; sonst ◐ |
+| U-5 | Textvergrößerung 200 % → Tagesliste | entschieden (UX) | Heatmap → Tagesliste, Meine Tage bleibt Raster; Optik D-15 |
+| U-6 | Legende als Komponente, Startzustand | entschieden (UX) | mobil beim ersten Besuch offen, Zustand gemerkt; ≥ 960 px immer sichtbar |
+| U-7 | `--ww-sticky-bar-h` | erledigt | Umsetzung Developer (ResizeObserver) |
+| U-8 | Abstimmen < 400 px: Icon über Label | erledigt | von UX übernommen |
+| U-9 | „Platz 1" / „Top choice" | erledigt | im Glossar |
+| U-10 | Mini-Streifen auf Vorschlagskarte | entschieden (UX): nicht im MVP | aus design-system §9.3 entfernt |
+| U-11 | Feiertagsliste unter dem Monat | erledigt | von UX bestätigt |
+| U-12 | Hero-Platzierung W01 | entschieden (UX) | mobil über der Headline, max. 160 px; ab 600 px rechts |
+| U-13 | „Noch offen" mit gestricheltem Ring | erledigt | von UX bestätigt |
+| U-14 | Benennung der Vorschlagsgruppen | entschieden (CEO, 2026-10-08) | „Alle dabei" / „Everyone's in"; Folgeentscheid UX „Fast alle dabei" / „Almost everyone's in" (D-14) |
 
 **Vorbehaltlich Auftraggeber (Empfehlungen Design, vom CEO vorzulegen):**
 - **Marke:** „Wir wollen weg" bleibt auch auf Englisch die Marke, mit EN-Untertitel „Find dates for your group trip" (design-system §3.1).
@@ -103,5 +118,6 @@ Stand 2026-10-08, nach CEO-Entscheiden. Legende: **erledigt** = beidseitig gekl�
 - „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
 
 ## Changelog
+- 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
 - 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.
 - 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.

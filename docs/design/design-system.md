@@ -320,8 +320,8 @@ Verhalten (Auslöser Container-Query: Zelle < 3,25 em, kein manueller Umschalter
 | Element | Optik |
 |---|---|
 | **Zeile (Container)** | Fläche `surface`, Rahmen unten 1 px `border-subtle` (Liste) bzw. Radius 12 + Rahmen 1 px `border-subtle` bei einzelnen Gruppen; Innenabstand 0,75 em / 1 em; Mindesthöhe 44 px (wächst frei); ganze Zeile ist **ein** Button/Link zum Tagesdetail, keine verschachtelten Ziele. Kein Chevron nötig, optional `ww-icon-chevron-right` 1 em in `text-muted` rechts. |
-| **Stufenbalken** | links, volle Zeilenhöhe, **6 px** breit (in `px`, wächst nicht mit), Radius 3 px, Fläche `--ww-hm-<stufe>-bg`. „niemand": `--ww-hm-none-bg` + Schraffur `--ww-pattern-*` wie in der Zelle + 1 px Rahmen `border-strong`; „keine Daten": transparent mit 1,5 px gestricheltem Rahmen `--ww-hm-nodata-border`. Der Balken ist **zusätzliche** Kodierung (`aria-hidden`); die Information steht immer als Text in Zeile 2. |
-| **Datum** (Zeile 1) | `--ww-text-md`, 600, tabular-nums; Format „Fr., 1. Mai" / „Fri 1 May" (`Intl`, §10.3). **Wochenende:** Wochentag in 700 + Fläche der Zeile `--ww-hm-weekend-lane` (entspricht der Spalten-Spur im Raster). **Heute:** Zusatz „· heute" / „· today" in 600 + Ring 1,5 px `currentColor` um die Tageszahl (wie in der Zelle). |
+| **Stufenbalken** | links, volle Zeilenhöhe, **6 px** breit (in `px`, wächst nicht mit), Radius 3 px, Fläche `--ww-hm-<stufe>-bg`. „niemand": `--ww-hm-none-bg` + Schraffur `--ww-pattern-hm-none` wie in der Zelle + 1 px Rahmen `border-strong`; „keine Daten": transparent mit 1,5 px gestricheltem Rahmen `--ww-hm-nodata-border`. Der Balken ist **zusätzliche** Kodierung (`aria-hidden`); die Information steht immer als Text in Zeile 2. |
+| **Datum** (Zeile 1) | `--ww-text-md`, 600, tabular-nums; Format „Fr., 1. Mai" / „Fri 1 May" (`Intl`, §10.3). **Wochenende:** Wochentag („Sa." / „So.") in 700 + Fläche der Zeile `--ww-hm-weekend-lane` (entspricht der Spalten-Spur im Raster). **Heute:** Zusatz „· heute" / „· today" in 600 + Ring 1,5 px `currentColor` um die Tageszahl (wie in der Zelle). |
 | **Zählzeile** (Zeile 2) | `--ww-text-md`, 400, `text`; Wortlaut nach Glossar ux-spec §10.2: „4 von 5: Geht" / „4 of 5: works"; keine Daten: „Noch keine Angaben" in `text-muted`. Bei x = n: „5 von 5: Geht" + Chip ✓ (unten). |
 | **Abzeichen-Chips** (Zeile 3) | nicht interaktiv, Höhe 1,5 em, Radius pill, `--ww-text-sm` 600, Icon 1 em vorn; Abstand 0,5 em, **umbrechend**; Reihenfolge fest: **✓ alle** (`primary-tint`/`primary-text`, Icon `ww-icon-all-available`) · **◐ n Zur Not** (`vote-maybe-bg/fg`) · **Feiertag** mit Namen (`accent-tint`/`accent-text`, Eselsohr-Dreieck vorn) · **Vorschlag n** (`--ww-hm-suggest-tint` + 2 px Unterstrich `--ww-hm-suggest`, Band-Symbol vorn). ✓ und ◐ schließen sich aus (§6.2). Ohne Abzeichen entfällt Zeile 3. |
 | **Feiertags-Eselsohr** | zusätzlich zum Chip oben rechts in der Zeile, 12 px Dreieck `--ww-hm-holiday` – Wiedererkennung zur Zelle, `aria-hidden`. |
@@ -330,7 +330,7 @@ Verhalten (Auslöser Container-Query: Zelle < 3,25 em, kein manueller Umschalter
 | **Fokus** | `--ww-focus-ring` um die ganze Zeile (außen, 2 px Abstand); Zeile `z-index: 1`, damit der Ring nicht von Nachbarzeilen verdeckt wird. |
 | **Ausgewählt** (Tagesdetail offen, ≥ 960 px Seitenpanel) | Doppelrahmen innen wie in der Zelle (`--ww-selected-ring`, 2 + 2 px) **plus** Datum 700 – Rahmenform, nicht nur Farbe. |
 | **Außerhalb Suchzeitraum / vergangen** | werden in der Liste **nicht** aufgeführt (UX: gleiche Reihenfolge, nur Tage im Suchzeitraum). |
-| **Monatsüberschrift** | wie im Raster (`--ww-text-lg` 600), darunter die Feiertagsliste entfällt (Feiertage stehen als Chip in der Zeile). |
+| **Monatsüberschrift** | wie im Raster (`--ww-text-lg` 600); die Feiertagsliste unter dem Monat bleibt wie in ux-spec §4.9 (U-11). |
 
 Dark Mode: identische Struktur, Tokens schalten automatisch. Forced Colors: Stufenbalken verschwindet (zulässig, da redundant); Chips erhalten `border: 1px solid CanvasText`, Ausgewählt `outline: 2px solid Highlight`.
 
@@ -387,9 +387,9 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 **6-stelliges Code-Feld (F-040/F-041):**
 - Optik: 6 Kästchen 48 × 56 px (bei < 380 px Viewport 44 × 52), Abstand 8 px, nach der 3. Ziffer 16 px Lücke („123 456" – leichter abzulesen/abzutippen). 6 × 44 + 4 × 8 + 16 = 312 px → passt auf 360 px.
 - Ziffern 24 px, 600, tabular, zentriert. Leeres Kästchen: Rahmen `border-strong`; aktives Kästchen: 2 px `primary` + blinkender Caret-Strich (reduced motion: statisch); gefüllt: Text `text`, Rahmen `border-strong`.
-- Fehler (falscher Code): alle Kästchen Rahmen `danger`, Meldung darunter „Der Code stimmt nicht. Noch 3 Versuche." – kein Wackeln bei reduzierter Bewegung (sonst 1× horizontal 4 px, 220 ms).
+- Fehler (falscher Code, Versuch 1–4): alle Kästchen Rahmen `danger`, Meldung darunter mit Fehler-Icon (Wortlaut aus user-flows A.2): **„Dieser Code stimmt nicht."**, ab dem 2. Fehlversuch ergänzt um die Restversuche, z. B. **„Dieser Code stimmt nicht. Noch 3 Versuche."** (`aria-live`); Wert bleibt markiert (alle Kästchen `primary-tint`, s. u.), Fokus bleibt im Feld – kein Wackeln bei reduzierter Bewegung (sonst 1× horizontal 4 px, 220 ms).
 - Erfolg: Kästchen kurz `primary-tint` + ✓, dann Weiterleitung.
-- **Gesperrt** (5 Fehlversuche): Kästchen `surface-sunken`, gestrichelter Rahmen, Ziffern ausgeblendet; darunter Schloss-Icon + „Zu viele Versuche. Fordere einen neuen Code an." + Sekundär-Button „Neuen Code senden".
+- **Gesperrt** (5. Fehlversuch): Kästchen `surface-sunken`, gestrichelter Rahmen, Ziffern ausgeblendet, Feld deaktiviert; darunter Schloss-Icon + „Zu viele Versuche. Wir schicken dir einen neuen Code." (user-flows A.2). **„Neuen Code senden" / „Send new code" ist jetzt der Primärbutton** (volle Breite, 48 px, ersetzt den bisherigen Primärbutton – einzige sinnvolle Aktion, UX D-17); der Text-Button „Code erneut senden" mit Countdown entfällt in diesem Zustand. Bei Rate-Limit: Primärbutton `aria-disabled` mit Wartezeit „Bitte warte kurz (2 Min.) …".
 - **Prüfen** (Ladezustand nach 6. Ziffer/Einfügen): Kästchen-Rahmen `border-subtle`, Ziffern bleiben sichtbar, darunter 16-px-Spinner + „Prüfe Code …" (`aria-live="polite"`); bei reduzierter Bewegung statt Spinner drei statische Punkte.
 - Darunter: „Code erneut senden" als Text-Button mit Countdown „Neuer Code in 0:27" (tabular, nicht animiert), Hinweis „Spam-Ordner prüfen" in `text-muted`.
 - **Technik (bestätigt, UX D-4 / ux-spec §4.4): genau ein `<input>`**; die Kästchen sind rein visuell. Umsetzungsvorschlag: sechs `aria-hidden`-Kästchen rendern den Wert; darüber liegt das echte Input in voller Größe mit `color: transparent; caret-color: transparent; background: transparent` (Tippen, Einfügen, Autofill, Screenreader funktionieren normal). Aktives Kästchen = Index `value.length` bei Fokus. „Inhalt markiert lassen" nach Fehler (ux-spec): ist der gesamte Wert selektiert, erhalten alle Kästchen die Fläche `primary-tint`. Ist ein Overlay nicht gewünscht, Alternative: Monospace-Ziffern mit `letter-spacing` über einem Hintergrund aus sechs Kästchen (`repeating-linear-gradient`) – weniger robust gegenüber Systemschriften.
@@ -420,7 +420,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 ### 9.4 Tabs & Navigation
 - **Reise-Navigation** (UX: Links mit `aria-current`, keine JS-Tabs): „Übersicht · Meine Tage · Gruppe · Abstimmen" / „Overview · My dates · Group · Vote". Text-Tabs 14/600, Höhe 48, Innenabstand horizontal 8 px unter 400 px Breite, sonst 12 px, **kein** Icon (Platz). Aktiv: Text `text` + 3-px-Unterstrich `primary` in Label-Breite, Radius 2; inaktiv `text-muted`; Hover `text`. Leiste mit 1-px-Linie `border-subtle` unten. Rechnung 360 px (328 px nutzbar): „Übersicht | Meine Tage | Gruppe | Abstimmen" ≈ 256 px Text + 4 × 16 px = 320 px → passt (EN kürzer); bei Systemschriften mit breiteren Glyphen oder Textvergrößerung greift der **Fallback:** horizontal scrollbar, Verlaufskante 24 px rechts (`linear-gradient(to right, transparent, var(--ww-color-bg))`), aktiver Tab wird in Sicht gescrollt – nie Kürzen. Optionaler Zähler („2") als Pill 18 px `accent-tint`/`accent-text`.
 - **Segment „Vorschläge | Kalender"** (W09): Segment-Control, Höhe 40, Radius 12, Fläche `surface-sunken`, aktives Segment `surface` + Rahmen 1,5 px `border-strong` (3:1) + `shadow-1` + Text 600 – Zustand über Rahmen und Fettung, nicht nur Fläche.
-- **Kopfzeile:** 56 px, Bildmarke 28 px (in Reisen: Zurück-Pfeil + Reisename 1 Zeile mit „…"), rechts Sprachumschalter/„⋯" + Konto-Avatar.
+- **Kopfzeile:** 56 px, Bildmarke 28 px (in Reisen: Zurück-Pfeil + Reisename 1 Zeile mit „…"), rechts nicht angemeldet der Sprach-Umschalter („English"/„Deutsch", §9.8), angemeldet „⋯" + Konto-Avatar (Sprachwahl im Avatar-Menü).
 - **Keine Bottom-Navigation** (UX-Sitemap sieht keine vor; In-App-Browser haben eigene Leisten unten). Unten nur die fixierte Aktions-/Werkzeugleiste.
 
 ### 9.5 Chips
@@ -436,15 +436,18 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 - Typische Texte: „Link kopiert" / „Link copied", „Gespeichert" / „Saved".
 
 ### 9.7 Bottom-Sheet
-- Für Tagesdetails (F-008 „wer kann/zur Not/nicht"), Sprachwahl, Teilen-Optionen.
+- Für Tagesdetails (F-008 „wer kann/zur Not/nicht"), Teilen-Optionen.
 - Fläche `surface-raised`, Radius oben 24, Griff 36 × 4 px (`border-strong`) mittig 8 px unter Oberkante, Titelzeile 18/600 + Schließen-Button (44 px, ✕) – Griff ist **kein** einziges Schließmittel.
 - Zwei Rastpunkte (UX D-11): **halb** (`--ww-size-sheet-half`, Standard fürs Tagesdetail) und **fast voll** (`--ww-size-sheet-full`); Inhalt scrollt innerhalb; Safe-Area unten. Scrim `--ww-color-scrim`. Tagesdetail: Kopf mit ‹ › (Tag blättern, je 44 px) links/rechts vom Datum.
 - Bewegung 320 ms von unten; reduziert: Überblenden. Ab 960 px Breite: zentrierter Dialog (max. 480 px) bzw. Seitenpanel neben dem Kalender.
 - **Tagesdetail-Inhalt:** Datum + Feiertagsname, Kopfzahl wie in der Zelle „5 von 7: Geht" (lg/600; Wortlaut über ux-spec §10.2, U-4), vier Gruppen mit Kopf und Icon (✓ Geht 5 · ◐ Zur Not 1 · ✕ Geht nicht 1 · Noch offen 2 in `text-muted` mit gestricheltem Avatar-Ring), darin Avatar + Name + Kommentar-Icon (antippbar) bzw. Kommentar in `text-muted`.
 
 ### 9.8 Sprachumschalter (F-046)
-- In Kopfzeile: Ghost-Button mit Globus-Icon + Sprachcode „DE"/„EN" (14/700), min. 44 × 44. Öffnet Menü/Sheet mit **Sprachnamen in der jeweiligen Sprache**: „Deutsch", „English" – jeweils mit `lang`-Attribut, aktuelle Sprache mit ✓. **Keine Flaggen** (Flaggen sind Länder, nicht Sprachen; DE/AT/CH, UK/US).
-- Im Footer/auf Login ohne Konto: Segment-Umschalter „Deutsch | English".
+Entschieden durch CEO (2026-10-08, D-16) zugunsten des UX-Vorschlags (user-flows F.2):
+- **Kopfzeile, nicht angemeldet:** **Ein-Tipp-Umschalter**, kein Menü, kein Sprachcode. Ghost-Button mit Globus-Icon `ww-icon-language` (20 px) + **Name der jeweils anderen Sprache in dieser Sprache**: auf Deutsch „English", auf Englisch „Deutsch" (14/600, `primary-text`), Element mit `lang="en"` bzw. `lang="de"` (ux-spec §7.1). Min. 44 × 44, Innenabstand 8/12, Radius 12; Hover `surface-sunken`, Fokus `--ww-focus-ring`. Zugänglicher Name = sichtbarer Text (kein abweichendes `aria-label`). Unter 360 px darf der Text nicht entfallen – lieber rückt die Bildmarke auf 24 px.
+- **Kopfzeile, angemeldet:** kein Sprach-Element im Header; Sprachwahl im **Avatar-Menü** als Eintrag mit Globus-Icon „Sprache: Deutsch ▸" / „Language: English ▸" (Chevron `ww-icon-chevron-right`) → Auswahl „Deutsch" / „English" mit `lang`-Attribut, aktuelle Sprache mit ✓ (Radio-Optik wie Menüeinträge).
+- **Footer** (alle Seiten, auch angemeldet): Segment-Umschalter „Deutsch | English" (Höhe 40, Stil wie Segment §9.4, aktive Sprache mit Rahmen + 600), je Segment mit `lang`.
+- **Keine Flaggen** (Flaggen sind Länder, nicht Sprachen; DE/AT/CH, UK/US).
 - Teilen-Text-Sprache (F-002, F-046): kleiner Segment-Umschalter direkt über dem Textfeld („Text auf: Deutsch | English").
 
 ### 9.9 Kalenderzelle – Zustände
@@ -462,7 +465,8 @@ Siehe §6. Zusätzlich Interaktion:
 - **Gesperrt** (Phase 3, Abstimmung beendet): gewählte Antwort bleibt sichtbar (Fläche + Icon), die anderen Segmente `text-muted` ohne Rahmen; Schloss-Icon + „Abstimmung beendet" in der Kartenzeile; keine Hover-Reaktion.
 - Fokus: `--ww-focus-ring` um das einzelne Segment.
 - Ergebnis: gestapelter Balken (8 px, Radius pill, Segmente durch 2-px-Lücken in `surface` getrennt) Ja `vote-yes-bar` (4,6:1) · Vielleicht `vote-maybe-bar` (3,4:1) · Nein `vote-no-bar` (3,4:1) – **plus** Zahlen mit Icons „✓ 6 ◐ 2 ✕ 1". Rang-Abzeichen **„Platz 1" / „Top choice"** (Pill `primary-tint`/`primary-text`, 13/700) – Krone **nicht** verwenden (reserviert für Orga). Kennzeichnung „ohne Jonas" als Chip in `vote-no-*` (Stein); Warnhinweise wie „Jonas kann an diesen Tagen nicht" in **Amber** (`warning-*`), nie Rot.
-- Namentliche Stimmen (Transparenz): Avatarreihen je Antwort.
+- **Ergebnis vor der eigenen Stimme (UX D-18, CEO-Entscheid Ergebnis-Sichtbarkeit):** Solange das Mitglied zu **dieser** Option noch nicht abgestimmt hat, stehen an Stelle von Balken, Zahlen, Rang-Abzeichen und Avatarreihen nur die Zeile **„Stimm ab, um das Ergebnis zu sehen." / „Vote to see the results."** – `--ww-text-sm`, 400, `text-muted`, ohne Icon, ohne Platzhalter-Balken, gleiche Zeilenposition wie der Balken (Karte springt nach der Stimme nur um die Balkenhöhe). Nach der Stimme erscheint das Ergebnis per Überblenden (`--ww-duration-base`; reduziert: sofort). Ein unbestätigter Vorschlag (Geister-Optik) zählt **nicht** als Stimme. **Orga sieht immer** Balken, Zahlen und Namen – keine Platzhalterzeile.
+- Namentliche Stimmen (Transparenz): Avatarreihen je Antwort (erst nach der eigenen Stimme zur Option bzw. für Orga immer).
 
 ### 9.11 Avatare / Initialen
 - Kreis 24/32/40 px, Initialen 1–2 Zeichen (10/13/16 px, 600), Farbe deterministisch aus 8 Tönen (`--ww-avatar-light-*` / `--ww-avatar-dark-*`) per Hash der Mitglieds-ID.
@@ -574,9 +578,12 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 **Bereit zur Umsetzung:** `tokens.css` (Light/Dark/Reduced-Motion, Heatmap, Muster, Kalender-Interaktion, Phasen), Icon-Sprite (41 Icons), Favicon/App-Icon (Basis Variante A, vorbehaltlich Auftraggeber-Wahl), 11 Illustrationen, Heatmap- und Zellspezifikation §6, Komponenten-Optik §9 inkl. Werkzeugleiste, i18n-Regeln §10.
 
-**Offen:** siehe [abstimmung-ux.md](abstimmung-ux.md) §2/§3 (UI/UX: U-3, U-5–U-14). Vorbehalt Auftraggeber (Empfehlungen Design): Marke bleibt „Wir wollen weg" mit EN-Untertitel, Logo A, Dark Mode nur System-folgend, Figtree für Überschriften.
+Zusätzlich bereit (v0.4): Tagesliste bei großer Schrift §6.8, Sprachumschalter §9.8, Code-Feld-Zustände §9.2, Ergebnis-Platzhalter Abstimmung §9.10.
+
+**Offen:** Zwischen Design und UI/UX nichts mehr (alle Punkte D-1–D-18, U-1–U-14 geklärt, siehe [abstimmung-ux.md](abstimmung-ux.md) §3). Vorbehalt Auftraggeber (Empfehlungen Design): Marke bleibt „Wir wollen weg" mit EN-Untertitel, Logo A, Dark Mode nur System-folgend, Figtree für Überschriften.
 
 Changelog
+- v0.4 (2026-10-08, letzte Abstimmungsrunde): D-14 Gruppennamen „Alle dabei" / „Fast alle dabei" („Everyone's in" / „Almost everyone's in") in §6.2 und §9.3; D-15 neue §6.8 Tagesliste bei großer Schrift (U-5), §5.2-Hinweis angepasst; D-16 §9.8 Sprachumschalter nach CEO-Entscheid (Ein-Tipp-Umschalter in der Kopfzeile nicht angemeldet, Avatar-Menü angemeldet, Footer-Segment), §9.4 Kopfzeile und §9.7 angeglichen; D-17 §9.2 Fehlertext aus user-flows A.2, „Neuen Code senden" primär im Zustand gesperrt; D-18 §9.10 Ergebnis-Platzhalter vor der eigenen Stimme; U-10 Mini-Streifen aus §9.3/§6.2 entfernt. SVG-Assets nicht betroffen (keine Gruppennamen in Grafiken).
 - v0.3 (2026-10-08): CEO-Entscheide eingearbeitet – U-4: Zählwert bleibt Anzahl „Geht" / abgegeben, ✓-Badge bedeutet jetzt „alle Abgegebenen haben ‚Geht'" (x = n, fällt mit Stufe „alle" zusammen), Tage mit „Zur Not" ohne „Geht nicht" zeigen ◐ statt ✓ (§6.1, §6.2, §9.3 Gruppenüberschrift mit `ww-icon-check`, §9.7, §11); U-1 (8 px / 4 px) und U-2 (Badge-Positionen) bestätigt. Assets: `heatmap-legend.svg` neu (Badges unten links/rechts, ◐ mit Anzahl, ✓ nur auf „alle"), `heatmap-markers.svg` (✓ auf 9/9-Tagen), Icon-Titel „Alle: Geht"; alle SVGs auf XML-Wohlgeformtheit geprüft (assets/README.md).
 - v0.2 (2026-10-08): Abgleich mit UX-Spec und Wireframes: Zell-Anatomie (D-1), Zählwert-Regel, Fokus mit beidseitigem Hof, Vorschlag-Band über Umbrüche, Interaktionszustände Meine Tage (D-2), Kalender-Seitenrand 8 px (D-3), Code-Feld als ein Input (D-4), Werkzeugleiste (D-5), Abstimmen-Zustände (D-6), Phasen/To-do (D-7), 28 neue Icons (D-8), 8 neue Illustrationen (D-9), Tabs/Budgets (D-10), Sheet/Snackbar (D-11), Dark Mode (D-12), Vorschlagskarte (D-13); Glossar DE/EN übernommen.
 - v0.1 (2026-10-08): Erstentwurf Phase 0.

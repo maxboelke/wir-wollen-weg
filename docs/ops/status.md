@@ -14,7 +14,7 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 |---|---|---|---|---|---|---|
 | P0-1 | Produktkonzept (PRD, Features, Roadmap) inkl. Entscheidungen Q1–Q6 | product-manager | alle | **fertig** (2026-10-08) | – | `docs/product/` |
 | P0-2 | Sitemap, Flows, Wireframes (mobil zuerst, In-App-Browser-Fall, Code-Eingabe, Sprachumschalter, Wochenstart) | ui-ux | F-001–F-017, F-040–F-046 | **fertig** (2026-10-08, CEO-Abnahme Konzept; W01–W15, Flows A–K) | P0-1 | `docs/ux/` |
-| P0-3 | Design-System, Tokens (`tokens.css`), barrierefreie Heatmap-Skala, Feiertags-/Wochenend-Darstellung | designer | F-008, F-005, F-016, F-046 | **fertig** (2026-10-08, CEO-Abnahme Konzept; design-system v0.3) | P0-1 | `docs/design/` |
+| P0-3 | Design-System, Tokens (`tokens.css`), barrierefreie Heatmap-Skala, Feiertags-/Wochenend-Darstellung | designer | F-008, F-005, F-016, F-046 | **fertig** (2026-10-08, CEO-Abnahme Konzept; design-system v0.4) | P0-1 | `docs/design/` |
 | P0-4 | Tech-Stack, Auth-Konzept, i18n, Feiertage, Mail-Anbieter, Hosting, CI, Compliance-Checkliste, Status-Board | operations-manager | F-040–F-043, F-046, F-016, F-013 | **fertig** (2026-10-08, CEO-Empfehlung an Auftraggeber; Stack-Freigabe Teil von M0) | P0-1 | `docs/ops/`, `.github/` |
 | P0-5 | Abstimmung Designer ↔ UI/UX | designer, ui-ux | – | **fertig** (2026-10-08; D-1–D-18, U-1–U-14 geklärt, D-16 durch CEO entschieden) | P0-2, P0-3 | `docs/design/abstimmung-ux.md`, `docs/ux/abstimmung-design.md` |
 | P0-6 | Entscheidungen Auftraggeber: Betreiber/Impressum, Domain, Hosting-/Mail-Accounts, Rechtstexte-Weg | CEO → Auftraggeber | – | **blockiert** (wartet auf Auftraggeber) | P0-4 | PRD §12 / Bericht CEO |
