@@ -187,7 +187,13 @@
   --ww-size-cal-cell-min-w: 40px;
   --ww-size-cal-cell-h: 52px;     /* mobil; ab 600 px: 64px */
   --ww-size-cal-cell-h-lg: 64px;
-  --ww-size-cal-gap: 4px;
+  --ww-size-cal-gap: 4px;         /* bleibt 4px: Platz für Wochenend-Spur und Fokus-Hof */
+  --ww-size-cal-inset-sm: 8px;    /* Seitenrand des Kalenders < 600 px → Zelle 45,7 px bei 360 px */
+  --ww-size-cal-inset: 16px;      /* ab 600 px */
+  --ww-size-sheet-half: 50dvh;    /* Bottom-Sheet halbe Höhe (Tagesdetail) */
+  --ww-size-sheet-full: 92dvh;    /* Bottom-Sheet fast voll */
+  --ww-size-toolbar-max: 150px;   /* fixierte Werkzeugleiste „Meine Tage" inkl. CTA */
+  --ww-size-toast-gap: 8px;       /* Abstand Snackbar über fixierter Leiste */
   --ww-size-code-box-w: 48px;     /* bei < 380 px: 44px */
   --ww-size-code-box-h: 56px;
   --ww-size-content-narrow: 40rem;  /* Formulare, Karten-Listen (640) */
@@ -241,7 +247,7 @@
   --ww-color-text-muted: var(--ww-slate-700);    /*  6.5 /  6.1 */
   --ww-color-text-subtle: var(--ww-slate-650);   /*  5.1 /  4.8 – Platzhalter */
   --ww-color-text-inverse: var(--ww-sand-0);
-  --ww-color-text-on-primary: var(--ww-sand-0);  /*  6.4 auf primary */
+  --ww-color-text-on-primary: var(--ww-sand-0);  /*  6.3 auf primary */
   --ww-color-text-on-danger: var(--ww-sand-0);   /*  6.5 */
   --ww-color-link: var(--ww-teal-700);           /*  8.0 auf bg */
 
@@ -311,12 +317,12 @@
   --ww-vote-maybe-fg: var(--ww-amber-800);        /* 6.3 */
   --ww-vote-maybe-bar: var(--ww-amber-600);       /* 3.4 non-text */
   --ww-vote-no-bg: var(--ww-sand-150);
-  --ww-vote-no-fg: var(--ww-slate-900);           /* 12.0 */
-  --ww-vote-no-bar: var(--ww-sand-500);           /* 3.5 non-text */
+  --ww-vote-no-fg: var(--ww-slate-900);           /* 12.4 */
+  --ww-vote-no-bar: var(--ww-sand-500);           /* 3.4 non-text */
 
   /* ---------------- Heatmap (F-008) ----------------
      Stufen nach Score s = (geht + 0,5 · zur Not) / abgegeben
-     nodata: niemand hat abgegeben bzw. Tag außerhalb Suchzeitraum
+     nodata: noch niemand hat abgegeben (Tage außerhalb: --ww-hm-outside-fg)
      none:  s = 0           few: 0 < s < 0,5
      some:  0,5 ≤ s < 0,75   many: 0,75 ≤ s < 1
      all:   s = 1 (alle „geht")
@@ -328,9 +334,9 @@
   --ww-hm-nodata-border: var(--ww-slate-500);     /* gestrichelt, 3.2 */
   --ww-hm-none-bg: var(--ww-sand-100);            /* L 0.857 */
   --ww-hm-none-line: var(--ww-sand-300);          /* Schraffur */
-  --ww-hm-none-fg: var(--ww-slate-900);           /* 13.5 (9.3 auf Linie) */
+  --ww-hm-none-fg: var(--ww-slate-900);           /* 13.4 (9.3 auf Linie) */
   --ww-hm-few-bg: var(--ww-teal-300);             /* L 0.634 */
-  --ww-hm-few-fg: var(--ww-slate-900);            /* 10.2 */
+  --ww-hm-few-fg: var(--ww-slate-900);            /* 10.1 */
   --ww-hm-some-bg: var(--ww-teal-400);            /* L 0.429 */
   --ww-hm-some-fg: var(--ww-slate-900);           /*  7.1 */
   --ww-hm-many-bg: var(--ww-teal-500);            /* L 0.164 */
@@ -347,7 +353,25 @@
   --ww-hm-selected-inner: var(--ww-sand-0);       /* Doppelrahmen innen */
   --ww-hm-suggest: var(--ww-coral-600);           /* Vorschlags-Band 3.8 auf bg */
   --ww-hm-suggest-tint: var(--ww-coral-100);
-  --ww-hm-outside-fg: var(--ww-slate-500);        /* Tage außerhalb des Suchzeitraums */
+  --ww-hm-outside-fg: var(--ww-slate-500);        /* Tage außerhalb/vergangen: 3.2 auf bg */
+
+  /* ---------------- Kalender-Interaktion (Meine Tage, F-005) ---------------- */
+  --ww-cal-preview-border: var(--ww-slate-900);   /* Zieh-Vorschau: 2px gestrichelt um den Bereich */
+  --ww-cal-anchor: var(--ww-slate-900);           /* Startmarke Bereichsmodus (Punkt) */
+  --ww-cal-anchor-ring: var(--ww-sand-0);
+
+  /* ---------------- Phasen & To-dos (W04, W07) ---------------- */
+  --ww-phase-collect-bg: var(--ww-teal-50);       /* „Tage sammeln"   – Text 7.8 */
+  --ww-phase-collect-fg: var(--ww-teal-700);
+  --ww-phase-vote-bg: var(--ww-amber-100);        /* „Abstimmung läuft" – Text 6.3 */
+  --ww-phase-vote-fg: var(--ww-amber-800);
+  --ww-phase-fixed-bg: var(--ww-teal-700);        /* „Steht fest: …"  – Text 8.4 */
+  --ww-phase-fixed-fg: var(--ww-sand-0);
+  --ww-phase-past-bg: var(--ww-sand-150);         /* „Vergangen"      – Text 5.2 */
+  --ww-phase-past-fg: var(--ww-slate-700);
+  --ww-todo-bg: var(--ww-coral-100);              /* To-do-Zeile auf Karten – Text 4.8 */
+  --ww-todo-fg: var(--ww-coral-700);
+  --ww-todo-bar: var(--ww-coral-600);             /* 4px Kante links */
 
   /* ---------------- Illustrationen (inline-SVG, assets/illustrations) ---------------- */
   --ww-illu-plate: var(--ww-sand-150);
@@ -356,6 +380,7 @@
   --ww-illu-subtle: var(--ww-slate-500);
   --ww-illu-teal: var(--ww-teal-600);
   --ww-illu-teal-dark: var(--ww-teal-900);
+  --ww-illu-sea: var(--ww-teal-900);
   --ww-illu-teal-light: var(--ww-teal-300);
   --ww-illu-deep: var(--ww-teal-800);
   --ww-illu-sun: var(--ww-amber-400);
@@ -381,16 +406,16 @@
     --ww-color-surface-sunken: #0c1213;
     --ww-color-scrim: rgb(0 0 0 / 0.6);
 
-    --ww-color-text: var(--ww-slate-50);           /* 15.8 / 14.1 / 12.2 */
-    --ww-color-text-muted: var(--ww-slate-300);    /*  8.4 /  7.5 /  6.6 */
-    --ww-color-text-subtle: var(--ww-slate-400);   /*  6.2 /  5.5 /  4.8 */
+    --ww-color-text: var(--ww-slate-50);           /* 15.7 / 14.0 / 12.2 */
+    --ww-color-text-muted: var(--ww-slate-300);    /*  8.4 /  7.5 /  6.5 */
+    --ww-color-text-subtle: var(--ww-slate-400);   /*  6.1 /  5.5 /  4.8 */
     --ww-color-text-inverse: var(--ww-slate-900);
-    --ww-color-text-on-primary: var(--ww-teal-950);/*  8.6 */
+    --ww-color-text-on-primary: var(--ww-teal-950);/*  8.5 */
     --ww-color-text-on-danger: var(--ww-slate-950);
     --ww-color-link: var(--ww-mint-300);
 
     --ww-color-border-subtle: #2c3637;
-    --ww-color-border-strong: var(--ww-slate-600); /* 3.9 / 3.5 / 3.0 */
+    --ww-color-border-strong: var(--ww-slate-600); /* 3.8 / 3.4 / 3.0 */
 
     --ww-color-primary: var(--ww-mint-400);
     --ww-color-primary-hover: var(--ww-mint-200);
@@ -400,15 +425,15 @@
     --ww-color-primary-tint-strong: var(--ww-deep-800);
     --ww-color-accent: var(--ww-coral-300);
     --ww-color-accent-strong: var(--ww-coral-300);
-    --ww-color-accent-text: var(--ww-coral-300);   /* 7.4 */
+    --ww-color-accent-text: var(--ww-coral-300);   /* 7.3 */
     --ww-color-accent-tint: #3b2119;
     --ww-color-sun: var(--ww-amber-300);
 
-    --ww-color-danger: var(--ww-red-300);          /* 7.9 */
+    --ww-color-danger: var(--ww-red-300);          /* 7.8 */
     --ww-color-danger-hover: #ffa8a0;
     --ww-color-danger-tint: var(--ww-red-d-900);   /* Text darauf 6.5 */
     --ww-color-warning-text: var(--ww-amber-300);  /* 11.0 */
-    --ww-color-warning-tint: var(--ww-amber-d-900);/* Text darauf 8.2 */
+    --ww-color-warning-tint: var(--ww-amber-d-900);/* Text darauf 8.1 */
     --ww-color-success-text: var(--ww-mint-400);
     --ww-color-success-tint: var(--ww-deep-900);
     --ww-color-info-text: var(--ww-mint-400);
@@ -433,32 +458,32 @@
     --ww-avail-yes-fg: var(--ww-mint-400);         /* 4.9 */
     --ww-avail-maybe-bg: var(--ww-amber-d-900);    /* L 0.029 */
     --ww-avail-maybe-stripe: var(--ww-amber-d-800);
-    --ww-avail-maybe-fg: var(--ww-amber-300);      /* 8.2 / 5.9 auf Streifen */
+    --ww-avail-maybe-fg: var(--ww-amber-300);      /* 8.1 / 5.8 auf Streifen */
     --ww-avail-no-bg: var(--ww-slate-850);         /* L 0.025 */
     --ww-avail-no-line: var(--ww-slate-750);
-    --ww-avail-no-fg: var(--ww-slate-50);          /* 6.9 auf Linie */
+    --ww-avail-no-fg: var(--ww-slate-50);          /* 6.8 auf Linie */
     --ww-avail-day-text: var(--ww-slate-50);
 
     --ww-vote-yes-bg: var(--ww-deep-900);
     --ww-vote-yes-fg: var(--ww-mint-400);          /* 6.1 */
     --ww-vote-yes-bar: var(--ww-mint-300);
     --ww-vote-maybe-bg: var(--ww-amber-d-900);
-    --ww-vote-maybe-fg: var(--ww-amber-300);       /* 8.2 */
+    --ww-vote-maybe-fg: var(--ww-amber-300);       /* 8.1 */
     --ww-vote-maybe-bar: var(--ww-amber-300);
     --ww-vote-no-bg: var(--ww-slate-850);
     --ww-vote-no-fg: var(--ww-slate-50);
     --ww-vote-no-bar: var(--ww-slate-400);
 
     --ww-hm-nodata-bg: transparent;
-    --ww-hm-nodata-fg: var(--ww-slate-400);        /* 6.2 */
-    --ww-hm-nodata-border: var(--ww-slate-600);    /* 3.9 */
+    --ww-hm-nodata-fg: var(--ww-slate-400);        /* 6.1 */
+    --ww-hm-nodata-border: var(--ww-slate-600);    /* 3.8 */
     --ww-hm-none-bg: var(--ww-slate-900);          /* L 0.017 */
     --ww-hm-none-line: var(--ww-slate-800);
-    --ww-hm-none-fg: var(--ww-slate-50);           /* 13.7 (8.7 auf Linie) */
+    --ww-hm-none-fg: var(--ww-slate-50);           /* 13.6 (8.6 auf Linie) */
     --ww-hm-few-bg: var(--ww-deep-800);            /* L 0.057 */
-    --ww-hm-few-fg: var(--ww-slate-50);            /*  8.6 */
+    --ww-hm-few-fg: var(--ww-slate-50);            /*  8.5 */
     --ww-hm-some-bg: var(--ww-deep-700);           /* L 0.135 */
-    --ww-hm-some-fg: var(--ww-slate-50);           /*  5.0 */
+    --ww-hm-some-fg: var(--ww-slate-50);           /*  4.9 */
     --ww-hm-many-bg: var(--ww-mint-300);           /* L 0.516 */
     --ww-hm-many-fg: var(--ww-teal-950);           /*  9.2 */
     --ww-hm-all-bg: var(--ww-mint-100);            /* L 0.777 */
@@ -471,9 +496,25 @@
     --ww-hm-today-ring: currentColor;
     --ww-hm-selected-outer: var(--ww-slate-50);
     --ww-hm-selected-inner: var(--ww-slate-950);
-    --ww-hm-suggest: var(--ww-coral-300);          /* 7.4 */
+    --ww-hm-suggest: var(--ww-coral-300);          /* 7.3 */
     --ww-hm-suggest-tint: #3b2119;
-    --ww-hm-outside-fg: var(--ww-slate-600);
+    --ww-hm-outside-fg: var(--ww-slate-600);       /* 3.8 */
+
+    --ww-cal-preview-border: var(--ww-slate-50);
+    --ww-cal-anchor: var(--ww-slate-50);
+    --ww-cal-anchor-ring: var(--ww-slate-950);
+
+    --ww-phase-collect-bg: var(--ww-deep-900);     /* Text 6.1 */
+    --ww-phase-collect-fg: var(--ww-mint-400);
+    --ww-phase-vote-bg: var(--ww-amber-d-900);     /* Text 8.1 */
+    --ww-phase-vote-fg: var(--ww-amber-300);
+    --ww-phase-fixed-bg: var(--ww-mint-400);       /* Text 8.5 */
+    --ww-phase-fixed-fg: var(--ww-teal-950);
+    --ww-phase-past-bg: var(--ww-slate-850);       /* Text 6.6 */
+    --ww-phase-past-fg: var(--ww-slate-300);
+    --ww-todo-bg: #3b2119;                         /* Text 6.0 */
+    --ww-todo-fg: var(--ww-coral-300);
+    --ww-todo-bar: var(--ww-coral-300);
 
     --ww-illu-plate: var(--ww-slate-925);
     --ww-illu-paper: var(--ww-slate-875);
@@ -481,6 +522,7 @@
     --ww-illu-subtle: var(--ww-slate-600);
     --ww-illu-teal: var(--ww-mint-400);
     --ww-illu-teal-dark: var(--ww-mint-400);
+    --ww-illu-sea: var(--ww-deep-700);
     --ww-illu-teal-light: var(--ww-deep-800);
     --ww-illu-deep: var(--ww-mint-100);
     --ww-illu-sun: var(--ww-amber-300);

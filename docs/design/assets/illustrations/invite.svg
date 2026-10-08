@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 160" width="240" height="160" role="img" aria-labelledby="t d">
+  <title id="t">Du bist eingeladen</title>
+  <desc id="d">Ein Reiseticket: links ein Abschnitt mit Sonne über dem Meer, rechts drei Mitreisende und ein freier, gestrichelter Platz für dich. Motiv für die Einladungs-Vorschau (W03, F-003).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .ink   { fill: var(--ww-illu-ink, #1C2526); }
+    .sub   { fill: var(--ww-illu-subtle, #858C8A); }
+    .subS  { stroke: var(--ww-illu-subtle, #858C8A); }
+    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
+    .deep  { fill: var(--ww-illu-sea, #08403F); }
+    .sun   { fill: var(--ww-illu-sun, #F4B942); }
+    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
+      .sub   { fill: var(--ww-illu-subtle, #6B7775); }
+      .subS  { stroke: var(--ww-illu-subtle, #6B7775); }
+      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .deep  { fill: var(--ww-illu-sea, #287268); }
+      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
+      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+    }
+  </style>
+  <defs>
+    <clipPath id="inv-stub"><rect x="40" y="46" width="160" height="76" rx="10"/></clipPath>
+  </defs>
+  <circle class="plate" cx="120" cy="84" r="72"/>
+  <g transform="rotate(-6 120 84)">
+    <rect class="paper inkS" x="40" y="46" width="160" height="76" rx="10" stroke-width="2"/>
+    <g clip-path="url(#inv-stub)">
+      <rect class="teal" x="40" y="46" width="52" height="76"/>
+      <circle class="sun" cx="66" cy="88" r="13"/>
+      <path class="deep" d="M40 92c6-3 12-3 18 0s12 3 18 0 12-3 16 0v32H40z"/>
+    </g>
+    <rect x="40" y="46" width="160" height="76" rx="10" fill="none" class="inkS" stroke-width="2"/>
+    <path class="subS" d="M92 50v68" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+    <rect class="ink" x="104" y="62" width="58" height="7" rx="3.5"/>
+    <rect class="sub" x="104" y="76" width="80" height="5" rx="2.5"/>
+    <circle class="coral" cx="112" cy="102" r="7"/>
+    <circle class="sun" cx="128" cy="102" r="7"/>
+    <circle class="tealL" cx="144" cy="102" r="7"/>
+    <circle class="paper subS" cx="162" cy="102" r="7" stroke-width="2" stroke-dasharray="3 2.5"/>
+  </g>
+</svg>

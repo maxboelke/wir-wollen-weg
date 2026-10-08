@@ -99,13 +99,13 @@ Methode: relative Luminanz L und Kontrast nach WCAG 2.x, `(L1 + 0,05) / (L2 + 0,
 | `--ww-color-text` | `#1C2526` | 15,6 | 14,7 | Fließtext (AA 4,5 ✔, AAA ✔) |
 | `--ww-color-text-muted` | `#55605F` | 6,5 | 6,1 | Sekundärtext ✔ |
 | `--ww-color-text-subtle` | `#667070` | 5,1 | 4,8 | Platzhalter, Metadaten ✔ |
-| `--ww-color-link` / `primary-text` | `#0A5654` | 8,5 | 8,0 | Links (immer unterstrichen) ✔ |
-| `--ww-color-primary` (als Fläche) | `#0E6A68` | – | – | Weißer Text darauf **6,4** ✔; als Text auf bg 6,0 |
+| `--ww-color-link` / `primary-text` | `#0A5654` | 8,4 | 8,0 | Links (immer unterstrichen) ✔ |
+| `--ww-color-primary` (als Fläche) | `#0E6A68` | – | – | Weißer Text darauf **6,3** ✔; als Text auf bg 6,0 |
 | `--ww-color-primary-text` auf `primary-tint` `#DDF1EE` | | | | **7,2** ✔ (gewählte Chips) |
-| `--ww-color-accent-text` | `#B23F22` | 5,8 | 5,4 | Akzent-Text ✔; auf `accent-tint` 4,8 ✔ |
-| `--ww-color-accent-strong` | `#D4552F` | 4,1 | 3,8 | **nur Nicht-Text** (Vorschlag-Band, Feiertagsecke) – 3:1 ✔ |
+| `--ww-color-accent-text` | `#B23F22` | 5,7 | 5,4 | Akzent-Text ✔; auf `accent-tint` 4,8 ✔ |
+| `--ww-color-accent-strong` | `#D4552F` | 4,0 | 3,8 | **nur Nicht-Text** (Vorschlag-Band, Feiertagsecke) – 3:1 ✔ |
 | `--ww-color-danger` | `#B3261E` | 6,5 | 6,1 | Fehlertext ✔; weißer Text auf danger 6,5 ✔; auf `danger-tint` 5,3 ✔ |
-| `--ww-color-warning-text` | `#7A4E00` | 7,2 | 6,8 | auf `warning-tint` `#FDF0CF` 6,3 ✔ |
+| `--ww-color-warning-text` | `#7A4E00` | 7,1 | 6,7 | auf `warning-tint` `#FDF0CF` 6,3 ✔ |
 | `--ww-color-border-strong` | `#858C8A` | 3,4 | 3,2 | Input-/Chip-Rahmen, 1.4.11 (3:1) ✔ |
 | `--ww-color-border-subtle` | `#E4DED4` | – | – | nur dekorativ (Kartentrenner) |
 | `--ww-color-focus` | `#2B59C3` | 6,3 | 5,9 | Fokus-Ring (3:1) ✔ |
@@ -116,9 +116,9 @@ Methode: relative Luminanz L und Kontrast nach WCAG 2.x, `(L1 + 0,05) / (L2 + 0,
 
 | Token | Wert | auf bg | auf surface | auf raised | Anmerkung |
 |---|---|---|---|---|---|
-| `--ww-color-text` | `#ECF1F0` | 15,8 | 14,0 | 12,2 | ✔ |
+| `--ww-color-text` | `#ECF1F0` | 15,7 | 14,0 | 12,2 | ✔ |
 | `--ww-color-text-muted` | `#A9B4B2` | 8,4 | 7,5 | 6,5 | ✔ |
-| `--ww-color-text-subtle` | `#8F9A97` | 6,2 | 5,5 | 4,8 | ✔ |
+| `--ww-color-text-subtle` | `#8F9A97` | 6,1 | 5,5 | 4,8 | ✔ |
 | `--ww-color-primary` (Fläche & Text) | `#5FC9BA` | 9,0 | 8,0 | 7,0 | Text darauf `#0B1F1E`: **8,5** ✔ |
 | `primary-text` auf `primary-tint` `#163B38` | | | | | 6,1 ✔ |
 | `--ww-color-accent-text` | `#F28A6E` | 7,3 | 6,5 | – | ✔ |
@@ -200,7 +200,7 @@ Visuelle Referenz: `assets/heatmap/heatmap-legend.svg` (Light + Dark), `assets/h
 | Stufe | Fläche | L | Vordergrund | Kontrast | Zusatz |
 |---|---|---|---|---|---|
 | keine Daten | transparent auf bg `#FBF8F3` | 0,941 | `#667070` | **4,8** ✔ | Rahmen `#858C8A` 3,2 ✔ |
-| niemand | `#F1EEE8` + Linien `#CFC9C0` | 0,857 | `#1C2526` | **13,5** (auf Linie 9,3) ✔ | |
+| niemand | `#F1EEE8` + Linien `#CFC9C0` | 0,857 | `#1C2526` | **13,4** (auf Linie 9,3) ✔ | |
 | wenige | `#A6DBD2` | 0,634 | `#1C2526` | **10,1** ✔ | |
 | einige | `#5FBFB1` | 0,429 | `#1C2526` | **7,1** ✔ | |
 | viele | `#187E73` | 0,164 | `#FFFFFF` | **4,9** ✔ | |
@@ -210,7 +210,7 @@ Visuelle Referenz: `assets/heatmap/heatmap-legend.svg` (Light + Dark), `assets/h
 
 | Stufe | Fläche | L | Vordergrund | Kontrast | Zusatz |
 |---|---|---|---|---|---|
-| keine Daten | transparent auf bg `#111819` | 0,008 | `#8F9A97` | **6,2** ✔ | Rahmen `#6B7775` 3,8 ✔ |
+| keine Daten | transparent auf bg `#111819` | 0,008 | `#8F9A97` | **6,1** ✔ | Rahmen `#6B7775` 3,8 ✔ |
 | niemand | `#1C2526` + Linien `#3A4544` | 0,017 | `#ECF1F0` | **13,6** (auf Linie 8,6) ✔ | |
 | wenige | `#1D4B46` | 0,057 | `#ECF1F0` | **8,5** ✔ | |
 | einige | `#287268` | 0,135 | `#ECF1F0` | **4,9** ✔ | |
@@ -244,7 +244,7 @@ Ehrliche Einordnung: Fünf Stufen lassen sich nicht alle mit 3:1 voneinander tre
 | Zustand | Darstellung | Nicht-Farb-Kodierung | Kontrast |
 |---|---|---|---|
 | **Wochenende** (F-016) | Farbige **Spur** hinter den Sa/So-Spalten (sichtbar in den 4-px-Fugen und im Spaltenkopf), Spaltenkopf fett | Position + Kopf-Label „Sa/So" | Spur rein dekorativ; Information über Label |
-| **Feiertag** (F-016) | **Eselsohr-Ecke** rechts oben (Dreieck 14–18 px, `--ww-hm-holiday`) mit 1,5-px-Trennkante in Hintergrundfarbe; Name im Tages-Sheet und im zugänglichen Namen | Form (Dreieck) | Ecke vs. Trennkante 4,1 (L) / 7,3 (D); Trennkante vs. dunkle Zellen ≥ 4,9 |
+| **Feiertag** (F-016) | **Eselsohr-Ecke** rechts oben (Dreieck 14–18 px, `--ww-hm-holiday`) mit 1,5-px-Trennkante in Hintergrundfarbe; Name im Tages-Sheet und im zugänglichen Namen | Form (Dreieck) | Ecke vs. Trennkante 4,0 (L) / 7,3 (D); Trennkante vs. dunkle Zellen ≥ 4,9 |
 | **Heute** | **Ring** (1,5 px, `currentColor`) um die Datumszahl | Form | wie Text der Stufe (≥ 4,8) |
 | **Ausgewählt** (Bereichsauswahl F-005, manuelle Option F-010) | **Doppelrahmen innen**: 2 px außen `--ww-hm-selected-outer`, 2 px innen `--ww-hm-selected-inner` (`--ww-selected-ring`) | Rahmenform | mindestens ein Ring ≥ 3:1 gegen jede Stufe |
 | **Fokus** (Tastatur) | **Ring außen** 3 px `--ww-color-focus`, 2 px Abstand in Hintergrundfarbe (`--ww-focus-ring`) | liegt außerhalb der Zelle → nie mit „ausgewählt" verwechselbar | 5,9 (L) / 8,6 (D) |
@@ -302,7 +302,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 ### 9.1 Buttons
 | Variante | Fläche | Text | Rahmen | Einsatz |
 |---|---|---|---|---|
-| Primär | `primary` | `text-on-primary` (6,4 / 8,5) | – | eine Haupt-Aktion pro Ansicht („Mitmachen", „Fertig – Verfügbarkeit abgeben") |
+| Primär | `primary` | `text-on-primary` (6,3 / 8,5) | – | eine Haupt-Aktion pro Ansicht („Mitmachen", „Fertig – Verfügbarkeit abgeben") |
 | Sekundär | `surface` | `primary-text` | 1,5 px `primary` | Neben-Aktionen („Link kopieren") |
 | Ghost / Text | transparent | `primary-text` | – | Tertiär („Im Kalender zeigen") |
 | Destruktiv | `danger` | `text-on-danger` (6,5) | – | nur in Bestätigungsdialogen („Reise löschen") |
@@ -379,7 +379,7 @@ Siehe §6. Zusätzlich Interaktion:
 - Segment-Inhalt: Icon (✓ / ◐ / ✕, 20 px) + Label („Ja / Vielleicht / Nein" – „Yes / Maybe / No"). **Unter 400 px Breite: Icon über Label** (gestapelt), damit „Vielleicht" ohne Kürzung passt.
 - Ausgewählt: Fläche `vote-*-bg`, Text/Icon `vote-*-fg`, Rahmen 2 px in `vote-*-fg`, Icon gefüllt – Auswahl also über Fläche, Rahmenstärke **und** Häkchen-Eckmarke. Nicht gewählt: `surface`, `text-muted`.
 - **Vorbelegung aus Verfügbarkeit (muss bestätigt werden):** gestrichelter Rahmen in `vote-*-fg` + kleines Label „Vorschlag" über der Option; erst nach Antippen durchgezogen.
-- Ergebnis: gestapelter Balken (8 px, Radius pill, Segmente durch 2-px-Lücken in `surface` getrennt) Ja `vote-yes-bar` (4,6:1) · Vielleicht `vote-maybe-bar` (3,4:1) · Nein `vote-no-bar` (3,5:1) – **plus** Zahlen mit Icons „✓ 6 ◐ 2 ✕ 1". Rang 1 mit Badge „Vorne" (Krone **nicht** verwenden – reserviert für Organisator).
+- Ergebnis: gestapelter Balken (8 px, Radius pill, Segmente durch 2-px-Lücken in `surface` getrennt) Ja `vote-yes-bar` (4,6:1) · Vielleicht `vote-maybe-bar` (3,4:1) · Nein `vote-no-bar` (3,4:1) – **plus** Zahlen mit Icons „✓ 6 ◐ 2 ✕ 1". Rang 1 mit Badge „Vorne" (Krone **nicht** verwenden – reserviert für Organisator).
 - Namentliche Stimmen (Transparenz): Avatarreihen je Antwort.
 
 ### 9.11 Avatare / Initialen

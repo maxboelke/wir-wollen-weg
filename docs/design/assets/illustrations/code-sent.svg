@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Code ist unterwegs</title>
+  <desc id="d">Ein Briefumschlag, aus dem eine Karte mit sechs Feldern ragt – der 6-stellige Code. Für „Code gesendet“ (W02/W03, F-040/F-041).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
+    .sun   { fill: var(--ww-illu-sun, #F4B942); }
+    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
+      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+    }
+  </style>
+  <circle class="plate" cx="80" cy="64" r="52"/>
+  <circle class="sun" cx="124" cy="30" r="9"/>
+  <!-- Karte mit Code -->
+  <rect class="paper inkS" x="46" y="28" width="68" height="46" rx="6" stroke-width="2"/>
+  <g class="teal">
+    <rect x="52" y="42" width="8" height="12" rx="2"/><rect x="62" y="42" width="8" height="12" rx="2"/><rect x="72" y="42" width="8" height="12" rx="2"/>
+    <rect x="86" y="42" width="8" height="12" rx="2"/><rect x="96" y="42" width="8" height="12" rx="2"/><rect x="106" y="42" width="8" height="12" rx="2" class="coral"/>
+  </g>
+  <!-- Umschlag -->
+  <path class="paper inkS" d="M34 60h92v40a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6z" stroke-width="2" stroke-linejoin="round"/>
+  <path class="inkS" d="M35 62l45 26 45-26" fill="none" stroke-width="2" stroke-linejoin="round"/>
+</svg>

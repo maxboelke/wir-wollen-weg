@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Deine Tage sind drin</title>
+  <desc id="d">Ein ausgefüllter Kalender mit Siegel-Häkchen. Kleine Erfolgsgrafik nach der Abgabe der Verfügbarkeit (W08, F-005).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .paperS{ stroke: var(--ww-illu-paper, #FFFFFF); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
+    .yes   { fill: #C6E9E2; }
+    .maybe { fill: #FDF0CF; }
+    .no    { fill: #CFC9C0; }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .paperS{ stroke: var(--ww-illu-paper, #232E2F); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .yes   { fill: #1D4B46; }
+      .maybe { fill: #3A2E12; }
+      .no    { fill: #262D2C; }
+    }
+  </style>
+  <circle class="plate" cx="80" cy="62" r="52"/>
+  <rect class="paper inkS" x="34" y="36" width="80" height="62" rx="8" stroke-width="2"/>
+  <path class="teal" d="M35 50v-5a8 8 0 0 1 8-8h62a8 8 0 0 1 8 8v5z"/>
+  <g>
+    <rect class="yes" x="42" y="58" width="14" height="12" rx="2.5"/><rect class="yes" x="60" y="58" width="14" height="12" rx="2.5"/><rect class="no" x="78" y="58" width="14" height="12" rx="2.5"/><rect class="no" x="96" y="58" width="12" height="12" rx="2.5"/>
+    <rect class="maybe" x="42" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="60" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="78" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="96" y="76" width="12" height="12" rx="2.5"/>
+  </g>
+  <!-- Siegel -->
+  <circle class="teal" cx="114" cy="40" r="16"/>
+  <path class="paperS" d="M106.5 40.5l5 5 9.5-10" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

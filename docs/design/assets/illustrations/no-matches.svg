@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Keine Treffer</title>
+  <desc id="d">Eine Lupe über einem Kalender mit schraffierten, blockierten Tagen – kein passender Zeitraum gefunden. Für „Keine Treffer“ in den Vorschlägen (W09, F-009).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
+    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .none  { fill: #F1EEE8; }
+    .line  { fill: #CFC9C0; }
+    .subS  { stroke: var(--ww-illu-subtle, #858C8A); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
+      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .none  { fill: #1C2526; }
+      .line  { fill: #3A4544; }
+      .subS  { stroke: var(--ww-illu-subtle, #6B7775); }
+    }
+  </style>
+  <defs>
+    <pattern id="nm-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect class="line" width="1.5" height="5"/>
+    </pattern>
+  </defs>
+  <circle class="plate" cx="80" cy="62" r="52"/>
+  <rect class="paper inkS" x="26" y="30" width="86" height="66" rx="8" stroke-width="2"/>
+  <path class="teal" d="M27 44v-5a8 8 0 0 1 8-8h68a8 8 0 0 1 8 8v5z"/>
+  <g>
+    <rect class="none" x="34" y="52" width="14" height="12" rx="2.5"/><rect x="34" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+    <rect class="tealL" x="52" y="52" width="14" height="12" rx="2.5"/>
+    <rect class="none" x="70" y="52" width="14" height="12" rx="2.5"/><rect x="70" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+    <rect class="none" x="88" y="52" width="14" height="12" rx="2.5"/><rect x="88" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+    <rect class="tealL" x="34" y="70" width="14" height="12" rx="2.5"/>
+    <rect class="none" x="52" y="70" width="14" height="12" rx="2.5"/><rect x="52" y="70" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+    <rect class="none" x="70" y="70" width="14" height="12" rx="2.5"/><rect x="70" y="70" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+  </g>
+  <!-- Lupe -->
+  <path class="inkS" d="M122 86l14 14" stroke-width="6" stroke-linecap="round"/>
+  <circle class="paper inkS" cx="110" cy="74" r="17" stroke-width="4"/>
+  <path class="subS" d="M101 74h18" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0 6"/>
+</svg>

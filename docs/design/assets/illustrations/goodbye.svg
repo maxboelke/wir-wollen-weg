@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
+  <title id="t">Auf Wiedersehen</title>
+  <desc id="d">Ein kleines Segelboot fährt in den Sonnenuntergang. Für „Konto gelöscht“ und Abschiedsmomente (W14, F-043).</desc>
+  <style>
+    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
+    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .ink   { fill: var(--ww-illu-ink, #1C2526); }
+    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
+    .sun   { fill: var(--ww-illu-sun, #F4B942); }
+    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
+    .sea   { fill: var(--ww-illu-teal, #0E6A68); }
+    @media (prefers-color-scheme: dark) {
+      .plate { fill: var(--ww-illu-plate, #1A2324); }
+      .paper { fill: var(--ww-illu-paper, #232E2F); }
+      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
+      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
+      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
+      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
+      .sea   { fill: var(--ww-illu-teal, #5FC9BA); }
+    }
+  </style>
+  <defs>
+    <clipPath id="gb-plate"><circle cx="80" cy="62" r="52"/></clipPath>
+  </defs>
+  <circle class="plate" cx="80" cy="62" r="52"/>
+  <g clip-path="url(#gb-plate)">
+    <circle class="coral" cx="70" cy="78" r="26"/>
+    <circle class="sun" cx="70" cy="78" r="18"/>
+    <path class="tealL" d="M20 78c10-3 20-3 30 0s20 3 30 0 20-3 30 0 20 3 30 0v50H20z"/>
+    <path class="sea" d="M20 94c10-2 20-2 30 0s20 2 30 0 20-2 30 0 20 2 30 0v30H20z" opacity="0.35"/>
+  </g>
+  <!-- Boot -->
+  <path class="inkS" d="M106 52v26" stroke-width="2" stroke-linecap="round"/>
+  <path class="paper inkS" d="M108 54l14 22h-14z" stroke-width="2" stroke-linejoin="round"/>
+  <path class="ink" d="M94 80h30l-5 6h-20z"/>
+</svg>
