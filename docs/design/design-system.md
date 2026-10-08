@@ -1,6 +1,6 @@
 # Design-System – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Designer · Status: Entwurf v0.2 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-13)
+Stand: 2026-10-08 · Verantwortlich: Designer · Status: Entwurf v0.3 (Phase 0 → M0, abgeglichen mit UX-Spec und `docs/ux/abstimmung-design.md` D-1 bis D-13; CEO-Entscheide U-1, U-2, U-4 vom 2026-10-08 eingearbeitet)
 Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · [Roadmap](../product/roadmap.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md)
 
 > Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar in ux-spec §10.2 („Geht / Zur Not / Geht nicht", „Works / If needed / Can't", „Orga / Organizer").
@@ -163,7 +163,7 @@ Regeln: Zahlen in Kalender, Zählern, Code und Fortschritt immer `font-variant-n
 ## 6. Kalender & barrierefreie Heatmap
 
 ### 6.1 Anatomie einer Kalenderzelle (verbindlich, beantwortet UX D-1)
-Jedes Element hat einen **festen Ort** – so tragen auch alle Kombinationen (Feiertag + heute + Wochenende + ausgewählt + Fokus + alle können + zur Not) ohne Überlappung.
+Jedes Element hat einen **festen Ort** – so tragen auch alle Kombinationen (Feiertag + heute + Wochenende + ausgewählt + Fokus + ✓-Badge + ◐ zur Not) ohne Überlappung. Badge-Positionen (✓ unten rechts, ◐ unten links) und Kalender-Seitenrand 8 px / Fuge 4 px sind **CEO-bestätigt (U-1, U-2, 2026-10-08)**.
 
 ```
 Mobil 45–46 × 52 px                      ≥ 600 px: 56–64 × 64 px
@@ -172,7 +172,7 @@ Mobil 45–46 × 52 px                      ≥ 600 px: 56–64 × 64 px
 │               │   oben links            │                      │
 │      4        │ ← Zählwert Mitte        │        4/5           │  Zählwert „x/n" (Desktop immer)
 │ ◐          ✓ │ ← unten links / rechts  │ ◐2               ✓  │  ◐ = zur Not (≥ 600 px mit Anzahl)
-└───────────────┘                        │ ▬▬▬ ▬▬▬ ▬▬▬ ░░░    │  ✓ = alle können (Badge)
+└───────────────┘                        │ ▬▬▬ ▬▬▬ ▬▬▬ ░░░    │  ✓ = alle „Geht“ (Badge, nur bei x = n)
                                          └──────────────────────┘  Pegel 4 Segmente nur ≥ 600 px
 ```
 
@@ -182,13 +182,13 @@ Mobil 45–46 × 52 px                      ≥ 600 px: 56–64 × 64 px
 | Feiertag | Ecke oben rechts | Dreieck 12 / 16 px, 1,5-px-Trennkante | wird von der Zellrundung beschnitten |
 | Zählwert | zentriert, ab 45 % Höhe | 14 px / 15 px, 700, tabular | Regel siehe unten |
 | ◐ zur Not | unten links | Ø 10 px / Ø 12 px + Zahl („◐2") | mobil ohne Zahl |
-| ✓ alle können | unten rechts | Ø 12 px / Ø 14 px | gefüllter Kreis, Häkchen in Zellfarbe ausgespart |
+| ✓ alle „Geht“ | unten rechts | Ø 12 px / Ø 14 px | gefüllter Kreis, Häkchen in Zellfarbe ausgespart; nur wenn x = n (§6.2) |
 | Pegel | Unterkante, innen | – / 4 Segmente à 4 px Höhe | **nur ≥ 600 px**; mobil reicht der Platz nicht, Zahl + Badges tragen die Information |
 | Ausgewählt | innen, ganze Zelle | Doppelrahmen 2 + 2 px | liegt unter allen Inhalten |
 | Fokus | außen | Hof 2 px + Ring 3 px + Hof 2 px (`--ww-focus-ring-isolated`) | liegt über Nachbarzellen (`z-index: 1`) |
 | Vorschlag | unter der Zelle, in der 4-px-Fuge | Band 4 px, Kappen 12 px | siehe §6.5 |
 
-**Zählwert-Regel mobil (bestätigt, UX D-1):** „x/n", solange n ≤ 9; ab 10 abgegebenen Mitgliedern nur „x" – n steht im Statusband („von 12") und in der Legende. Ab 600 px immer „x/n". Der zugängliche Name nennt immer „x von n". Die Zahl zeigt gemäß F-008 die Anzahl **„Geht"**.
+**Zählwert-Regel mobil (bestätigt, UX D-1):** „x/n", solange n ≤ 9; ab 10 abgegebenen Mitgliedern nur „x" – n steht im Statusband („von 12") und in der Legende. Ab 600 px immer „x/n". Der zugängliche Name nennt immer „x von n". Die Zahl zeigt gemäß F-008 die Anzahl **„Geht"** – **CEO-Entscheid U-4 (2026-10-08, verbindlich):** Zählwert bleibt „Anzahl ‚Geht' / abgegebene Mitglieder"; „Zur Not" wird nicht mitgezählt, sondern über ◐ ausgewiesen.
 
 Verfügbarkeitskalender „Meine Tage" (F-005) nutzt dieselbe Zelle; statt Zählwert/Badges steht dort das **Zustandssymbol** zentriert (✕ / ◐ 18–20 px), siehe §6.6.
 
@@ -202,14 +202,19 @@ Score pro Tag: **s = (geht + ½ · zur Not) / abgegeben** (wie F-008: „zur Not
 | **wenige** | 0 < s < 0,5 | hell | „3/9" | 1 von 4 | |
 | **einige** | 0,5 ≤ s < 0,75 | mittel | „5/9" | 2 von 4 | |
 | **viele** | 0,75 ≤ s < 1 | dunkel (Light) / hell (Dark) | „7/9" | 3 von 4 | |
-| **alle** | s = 1 (alle „geht") | dunkelste / hellste Stufe | „9/9" | 4 von 4 | ✓-Badge |
+| **alle** | s = 1 (alle „geht", x = n) | dunkelste / hellste Stufe | „9/9" | 4 von 4 | ✓-Badge (immer – und nur hier) |
 
-Unabhängig von der Stufe:
-- **✓-Badge** (gefüllter Kreis mit Häkchen, unten rechts) = niemand hat „geht nicht" → „alle können" im Sinne von F-009. Kann auch auf „einige/viele" erscheinen, wenn Personen nur „zur Not" können. (Erfüllt F-008 „Tage, an denen alle können, … durch ein Symbol markiert".)
-- **◐-Hinweis** (Halbkreis, unten links; ab 600 px mit Anzahl „◐2") = mindestens eine Person „Zur Not"; Details im Tagesdetail (F-008 „separat ausgewiesen").
+**Zahl und Symbole (CEO-Entscheid U-4, 2026-10-08, verbindlich):**
+- **Zählwert** „x/n" = Anzahl **„Geht"** / abgegebene Mitglieder (F-008). „Zur Not" zählt in der Zahl nicht mit.
+- **✓-Badge** (gefüllter Kreis mit Häkchen, unten rechts) = **alle, die abgegeben haben, haben „Geht"** (x = n). Erfüllt F-008 „Tage, an denen alle können, … durch ein Symbol markiert" in der strengen Lesart. **Nicht mehr:** „niemand hat ‚Geht nicht'".
+- **◐-Hinweis** (Halbkreis, unten links; ab 600 px mit Anzahl „◐2") = mindestens eine Person „Zur Not"; Details im Tagesdetail (F-008 „separat ausgewiesen"). Ein Tag **ohne „Geht nicht", aber mit „Zur Not"** zeigt deshalb ◐ und **kein** ✓ – z. B. „7/9 ◐2" auf Stufe „viele".
+- ✓ und ◐ schließen sich damit gegenseitig aus (x = n lässt keinen Platz für „Zur Not"). Das beseitigt die in U-4 befürchtete Irritation „6/9 ✓ ◐".
 - Die Stufen-Rampe gilt auch für den **Mini-Streifen** auf Vorschlagskarten (§9.3).
-- Die Zahl zeigt laut F-008 die Anzahl **„geht"**. Vorschlag an PM/UX: prüfen, ob „können (inkl. zur Not)" verständlicher ist – siehe abstimmung-ux.md.
-- Zugänglicher Name je Zelle, z. B. „Freitag, 3. Juli: 7 von 9 können, 1 zur Not, Feiertag Tag der Deutschen Einheit, Teil von Vorschlag 1".
+- Zugänglicher Name je Zelle, z. B. „Freitag, 3. Juli: 7 von 9 Geht, 2 Zur Not, Feiertag Tag der Deutschen Einheit, Teil von Vorschlag 1" bzw. bei x = n „Samstag, 4. Juli: 9 von 9 Geht – alle". Endgültiger Wortlaut (DE/EN) über ux-spec §10.2.
+
+**Konsistenz von Rampe und Badge (geprüft):** Weil „Zur Not" mit ½ in s eingeht, gilt s = 1 genau dann, wenn alle Abgegebenen „Geht" haben – die Stufe **„alle" und das ✓-Badge fallen exakt zusammen**. Das Badge ist damit die Form-Kodierung der dunkelsten/hellsten Stufe (wie die Schraffur für „niemand") und macht sie ohne Farbe erkennbar. Tage ohne „Geht nicht" mit k Zur-Not-Personen liegen bei s = 1 − k/(2n), also je nach Gruppengröße auf „viele" (k/n ≤ 50 %) oder „einige" (k/n > 50 %) – nie auf „alle". Die Schwellen 0,5 / 0,75 / 1 bleiben unverändert; eine Anpassung der Rampe ist nicht nötig.
+
+**Abgrenzung zu F-009:** Die Vorschlagsliste „Alle können" (PRD/F-009: kein Mitglied hat „Geht nicht" im Fenster) ist **weiter gefasst** als das ✓-Badge – ein „Alle können"-Fenster kann Tage mit ◐ und ohne ✓ enthalten. Deshalb trägt die Gruppenüberschrift der Vorschläge **nicht** das ✓-Badge, sondern das Strich-Icon `ww-icon-check` (§9.3); der Zur-Not-Anteil steht als Chip „◐ 2× zur Not" auf der Karte. Benennung der Liste: offen an UX/PM (U-14 in abstimmung-ux.md).
 
 Visuelle Referenz: `assets/heatmap/heatmap-legend.svg` (Light + Dark), `assets/heatmap/heatmap-markers.svg`.
 
@@ -375,7 +380,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 
   Phasen-Leiste: vier Segmente, erledigte Schritte mit ✓ + `primary`, aktueller Schritt fett + 3-px-Unterstrich, kommende `text-muted` – Zustand nie nur über Farbe.
 - **Vorschlagskarte (F-009, UX D-13):**
-  - **Gruppenüberschriften** (h2): „Alle können (2)" mit vorangestelltem ✓-Badge-Icon in `primary`; „Fast alle können (3)" mit Personen-Icon in `text-muted`. Abstand zwischen Gruppen 32 px, damit die Trennung auch ohne Farbe klar ist.
+  - **Gruppenüberschriften** (h2): „Alle können (2)" mit vorangestelltem Strich-Häkchen `ww-icon-check` in `primary` (**nicht** das gefüllte ✓-Badge – das bedeutet in der Heatmap „alle ‚Geht'", siehe §6.2 Abgrenzung F-009); „Fast alle können (3)" mit Personen-Icon `ww-icon-users` in `text-muted`. Abstand zwischen Gruppen 32 px, damit die Trennung auch ohne Farbe klar ist.
   - Titel: Zeitraum (lg/700) „Mi., 5. Mai – Mo., 10. Mai"; Unterzeile `text-muted`: „bis zu 5 Nächte · ca. 3 Urlaubstage ⓘ" (F-016).
   - **Zusatz-Chips** (nicht interaktiv, 24 px hoch, 13/600): „◐ 2× zur Not" (`vote-maybe-bg/fg`), „✕ ohne Jonas" (`vote-no-bg/fg` – Stein, nicht Rot), „⚑ inkl. Pfingstmontag" (`accent-tint`/`accent-text`). Chips umbrechen in Zeilen.
   - **Mini-Streifen** (optional): die Tage des Fensters als 6 px hohe Heatmap-Leiste (Stufenfarben) – Wiedererkennung zum Kalender.
@@ -406,7 +411,7 @@ Alle Zustände: **Standard · Hover (nur Zeigegeräte, `@media (hover: hover)`) 
 - Fläche `surface-raised`, Radius oben 24, Griff 36 × 4 px (`border-strong`) mittig 8 px unter Oberkante, Titelzeile 18/600 + Schließen-Button (44 px, ✕) – Griff ist **kein** einziges Schließmittel.
 - Zwei Rastpunkte (UX D-11): **halb** (`--ww-size-sheet-half`, Standard fürs Tagesdetail) und **fast voll** (`--ww-size-sheet-full`); Inhalt scrollt innerhalb; Safe-Area unten. Scrim `--ww-color-scrim`. Tagesdetail: Kopf mit ‹ › (Tag blättern, je 44 px) links/rechts vom Datum.
 - Bewegung 320 ms von unten; reduziert: Überblenden. Ab 960 px Breite: zentrierter Dialog (max. 480 px) bzw. Seitenpanel neben dem Kalender.
-- **Tagesdetail-Inhalt:** Datum + Feiertagsname, „5 von 7 können" (lg/600), vier Gruppen mit Kopf und Icon (✓ Geht 5 · ◐ Zur Not 1 · ✕ Geht nicht 1 · Noch offen 2 in `text-muted` mit gestricheltem Avatar-Ring), darin Avatar + Name + Kommentar-Icon (antippbar) bzw. Kommentar in `text-muted`.
+- **Tagesdetail-Inhalt:** Datum + Feiertagsname, Kopfzahl wie in der Zelle „5 von 7: Geht" (lg/600; Wortlaut über ux-spec §10.2, U-4), vier Gruppen mit Kopf und Icon (✓ Geht 5 · ◐ Zur Not 1 · ✕ Geht nicht 1 · Noch offen 2 in `text-muted` mit gestricheltem Avatar-Ring), darin Avatar + Name + Kommentar-Icon (antippbar) bzw. Kommentar in `text-muted`.
 
 ### 9.8 Sprachumschalter (F-046)
 - In Kopfzeile: Ghost-Button mit Globus-Icon + Sprachcode „DE"/„EN" (14/700), min. 44 × 44. Öffnet Menü/Sheet mit **Sprachnamen in der jeweiligen Sprache**: „Deutsch", „English" – jeweils mit `lang`-Attribut, aktuelle Sprache mit ✓. **Keine Flaggen** (Flaggen sind Länder, nicht Sprachen; DE/AT/CH, UK/US).
@@ -506,7 +511,7 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 ## 11. Ikonografie & Illustration
 
-**Icons** (`assets/icons/`): 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden/Ecken, `currentColor`, keine Füllungen außer Bedeutungsträgern (◐, Badge). Größen 16/20/24. Dekorativ → `aria-hidden="true"`; alleinstehend (Icon-Button) → zugänglicher Name am Button, nicht im SVG. Kernset: Kalender, Teilen, Abstimmung, Krone, Check, Vielleicht, Kreuz, Sprache, ICS-Download, Kopieren, Feiertag, Link, „Alle können"-Badge. **Ergänzt v0.2 (UX D-8):** Zurück, Chevron links/rechts, Mehr, Schließen, Plus, Minus, Rückgängig, Zeitraum (Bereichsmodus), Schnellaktionen, Info, Warnung, Erledigt, Kommentar, Filter, Anzeigen/Ausblenden (Auge), Erinnern (Megafon), E-Mail, Schloss, Uhr/Frist, Nächte (Mond), Gruppe, Person (Avatar-Fallback), Bearbeiten, Löschen, Abmelden, Hilfe – alle im Sprite `icons.svg`. Weitere Icons bei Bedarf im selben Stil zeichnen oder aus **Lucide** (ISC-Lizenz, gleiches 24er-Raster und 2-px-Strich) übernehmen.
+**Icons** (`assets/icons/`): 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden/Ecken, `currentColor`, keine Füllungen außer Bedeutungsträgern (◐, Badge). Größen 16/20/24. Dekorativ → `aria-hidden="true"`; alleinstehend (Icon-Button) → zugänglicher Name am Button, nicht im SVG. Kernset: Kalender, Teilen, Abstimmung, Krone, Check, Vielleicht, Kreuz, Sprache, ICS-Download, Kopieren, Feiertag, Link, Badge „Alle: Geht" (`ww-icon-all-available`, nur bei x = n, §6.2). **Ergänzt v0.2 (UX D-8):** Zurück, Chevron links/rechts, Mehr, Schließen, Plus, Minus, Rückgängig, Zeitraum (Bereichsmodus), Schnellaktionen, Info, Warnung, Erledigt, Kommentar, Filter, Anzeigen/Ausblenden (Auge), Erinnern (Megafon), E-Mail, Schloss, Uhr/Frist, Nächte (Mond), Gruppe, Person (Avatar-Fallback), Bearbeiten, Löschen, Abmelden, Hilfe – alle im Sprite `icons.svg`. Weitere Icons bei Bedarf im selben Stil zeichnen oder aus **Lucide** (ISC-Lizenz, gleiches 24er-Raster und 2-px-Strich) übernehmen.
 
 **Illustrationen** (`assets/illustrations/`): flache Formen auf einem Teller (Kreis), Motive Sonne/Horizont/Koffer/Kalender, max. 5 Farben aus der Palette, keine Figuren mit Gesichtern (neutral, kulturunabhängig). Farben über `--ww-illu-*`-Tokens (inline) mit eingebauten Fallbacks und eigener Dark-Variante (`prefers-color-scheme`). Mobil **max. 160 px hoch** (UX D-9: Primäraktion bei 360 × 640 ohne Scrollen sichtbar), sonst 160–240 px breit; alle dekorativ `alt=""` bzw. inline `aria-hidden="true"`, weil der Text daneben alles sagt.
 
@@ -540,8 +545,9 @@ Einheitlich **zwei Zeichen** (passt in 40-px-Spalten, eindeutig – „T/T" und 
 
 **Bereit zur Umsetzung:** `tokens.css` (Light/Dark/Reduced-Motion, Heatmap, Muster, Kalender-Interaktion, Phasen), Icon-Sprite (41 Icons), Favicon/App-Icon (Basis Variante A, vorbehaltlich Auftraggeber-Wahl), 11 Illustrationen, Heatmap- und Zellspezifikation §6, Komponenten-Optik §9 inkl. Werkzeugleiste, i18n-Regeln §10.
 
-**Offen:** siehe [abstimmung-ux.md](abstimmung-ux.md) (UI/UX) und Bericht an den CEO (Auftraggeber: Name EN, Logo-Variante, Dark Mode im MVP, Figtree).
+**Offen:** siehe [abstimmung-ux.md](abstimmung-ux.md) §2/§3 (UI/UX: U-3, U-5–U-14). Vorbehalt Auftraggeber (Empfehlungen Design): Marke bleibt „Wir wollen weg" mit EN-Untertitel, Logo A, Dark Mode nur System-folgend, Figtree für Überschriften.
 
 Changelog
+- v0.3 (2026-10-08): CEO-Entscheide eingearbeitet – U-4: Zählwert bleibt Anzahl „Geht" / abgegeben, ✓-Badge bedeutet jetzt „alle Abgegebenen haben ‚Geht'" (x = n, fällt mit Stufe „alle" zusammen), Tage mit „Zur Not" ohne „Geht nicht" zeigen ◐ statt ✓ (§6.1, §6.2, §9.3 Gruppenüberschrift mit `ww-icon-check`, §9.7, §11); U-1 (8 px / 4 px) und U-2 (Badge-Positionen) bestätigt. Assets: `heatmap-legend.svg` neu (Badges unten links/rechts, ◐ mit Anzahl, ✓ nur auf „alle"), `heatmap-markers.svg` (✓ auf 9/9-Tagen), Icon-Titel „Alle: Geht"; alle SVGs auf XML-Wohlgeformtheit geprüft (assets/README.md).
 - v0.2 (2026-10-08): Abgleich mit UX-Spec und Wireframes: Zell-Anatomie (D-1), Zählwert-Regel, Fokus mit beidseitigem Hof, Vorschlag-Band über Umbrüche, Interaktionszustände Meine Tage (D-2), Kalender-Seitenrand 8 px (D-3), Code-Feld als ein Input (D-4), Werkzeugleiste (D-5), Abstimmen-Zustände (D-6), Phasen/To-do (D-7), 28 neue Icons (D-8), 8 neue Illustrationen (D-9), Tabs/Budgets (D-10), Sheet/Snackbar (D-11), Dark Mode (D-12), Vorschlagskarte (D-13); Glossar DE/EN übernommen.
 - v0.1 (2026-10-08): Erstentwurf Phase 0.

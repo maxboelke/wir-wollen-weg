@@ -32,7 +32,7 @@ Wortmarken enthalten `prefers-color-scheme`-Styles für helle/dunkle Umgebung. W
 - **Sprite:** `icons.svg` mit `<symbol id="ww-icon-…">`. Einbindung: `<svg width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>`.
 - Stil: 24er Raster, 2 px Strich (Check/Kreuz 2,5 px), runde Enden, `currentColor`. Größen 16/20/24 px.
 - Barrierefreiheit: Icons neben Text → `aria-hidden="true"`. Icon-Buttons → zugänglicher Name am `<button>` (`aria-label`), nicht im SVG.
-- `ww-icon-all-available`: Häkchen-Aussparung über `--ww-icon-knockout` (auf die Zellfarbe setzen, z. B. `--ww-icon-knockout: var(--ww-hm-all-bg)`). Die Einzeldatei `all-available.svg` nutzt dafür eine Maske.
+- `ww-icon-all-available` = Badge „Alle: Geht“: erscheint nur, wenn **alle, die abgegeben haben, „Geht“** haben (Zählwert x = n, CEO-Entscheid U-4 vom 2026-10-08) – also genau auf der Heatmap-Stufe „alle“. Tage ohne „Geht nicht“, aber mit „Zur Not“, zeigen ◐ und **kein** Badge. Häkchen-Aussparung über `--ww-icon-knockout` (auf die Zellfarbe setzen, z. B. `--ww-icon-knockout: var(--ww-hm-all-bg)`). Die Einzeldatei `all-available.svg` nutzt dafür eine Maske.
 
 | ID (`ww-icon-…`) | Bedeutung | ID | Bedeutung |
 |---|---|---|---|
@@ -48,7 +48,7 @@ Wortmarken enthalten `prefers-color-scheme`-Styles für helle/dunkle Umgebung. W
 | `copy` | Kopieren | `lock` | Gesperrt / schreibgeschützt |
 | `holiday` | Feiertag | `clock` | Frist |
 | `link` | Einladungslink | `nights` | Nächte |
-| `all-available` | Alle können (Badge) | `users` | Gruppe |
+| `all-available` | Badge „Alle: Geht“ (x = n) | `users` | Gruppe |
 | `arrow-left` | Zurück | `user` | Person / Avatar-Fallback |
 | `chevron-left` / `chevron-right` | Blättern | `edit` | Bearbeiten |
 | `more` | Mehr (⋯) | `trash` | Löschen |
@@ -63,8 +63,8 @@ Einzeldateien (Kernset, mit `<title>` zur Ansicht): `calendar.svg`, `share.svg`,
 
 | Datei | Inhalt |
 |---|---|
-| `heatmap-legend.svg` | Sechs Heatmap-Stufen (keine Daten · niemand · wenige · einige · viele · alle) in Light und Dark, mit Zahl, Pegel, ◐ und ✓ – Referenz für Entwicklung und Barrierefreiheits-Review |
-| `heatmap-markers.svg` | Wochenende (Spur), Feiertag (Eselsohr), Heute (Ring), Ausgewählt (Doppelrahmen), Fokus (Ring mit Abstand), Vorschlag (Band mit Endkappen) – Light und Dark |
+| `heatmap-legend.svg` | Sechs Heatmap-Stufen (keine Daten · niemand · wenige · einige · viele · alle) in Light und Dark, mit Zahl (Anzahl „Geht“ / abgegeben), Pegel, ◐ mit Anzahl unten links und ✓ unten rechts (nur Stufe „alle“) – Referenz für Entwicklung und Barrierefreiheits-Review |
+| `heatmap-markers.svg` | Wochenende (Spur), Feiertag (Eselsohr), Heute (Ring), Ausgewählt (Doppelrahmen), Fokus (Ring mit Abstand), Vorschlag (Band mit Endkappen, 9/9-Tage mit ✓) – Light und Dark |
 | `availability-legend.svg` | Eigene Verfügbarkeit: Geht / Zur Not / Geht nicht (Works / If needed / Can't) – Symbol + Muster + Farbe |
 | `heatmap-patterns.svg` | `<pattern>`-Definitionen: Schraffur „niemand", Streifen „Zur Not", Kreuzschraffur „Geht nicht" (Light/Dark). In der App bevorzugt die CSS-Gradients `--ww-pattern-*` aus tokens.css verwenden. |
 
@@ -89,6 +89,7 @@ Farben über CSS-Klassen mit `var(--ww-illu-*, Fallback)` und eigener Dark-Varia
 | `goodbye.svg` | Konto gelöscht (W14, F-043) |
 
 ## Hinweise für die Einbindung
+- **XML-Wohlgeformtheit (Prüfstand 2026-10-08):** Alle SVGs wurden auf wohlgeformtes XML geprüft. Regeln für Änderungen: in Kommentaren kein doppelter Bindestrich (also nie Token-Namen mit Präfix-Strichen in `<!-- … -->` schreiben, sondern z. B. „ww-icon-knockout“); `&` immer als `&amp;`, `<` in Text als `&lt;`; jede ID pro Datei nur einmal; `url(#…)`- und `aria-labelledby`-Bezüge zeigen auf vorhandene IDs. In `<style>` und Attributen (`var(--ww-…)`) sind doppelte Bindestriche erlaubt.
 - Beim **Inline**-Einbinden mehrerer SVGs auf einer Seite die IDs (`t`, `d`, `clipPath`-/`pattern`-IDs) eindeutig machen, z. B. per SVGO-Plugin `prefixIds`; `<title>` bei dekorativen Grafiken entfernen oder `aria-hidden="true"` setzen.
 - SVGO-Optimierung ist erlaubt, aber `viewBox` behalten (`removeViewBox: false`) und Klassen/Styles der Illustrationen nicht zusammenführen (Dark-Mode-Regeln).
 

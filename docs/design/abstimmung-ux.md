@@ -42,10 +42,10 @@ Bitte bestätigen oder anpassen (Antwort gern in `docs/ux/abstimmung-design.md` 
 
 | # | Punkt | Vorschlag Design | Betrifft |
 |---|---|---|---|
-| **U-1** | **Seitenrand Kalender 8 px statt 12 px** (D-3) | 8 px / Fuge 4 px → 45,7 px Zellbreite; ux-spec §2 und W08/W09-HTML-Skizzen anpassen | ux-spec §2, W08, W09 |
-| **U-2** | **✓-Badge unten rechts** statt oben rechts (★ im Wireframe); ◐ unten links ohne Zahl (mobil), „◐2" ab 600 px | Wireframe-Legende und HTML-Skizze W09 angleichen | W09 |
+| **U-1** | **Seitenrand Kalender 8 px statt 12 px** (D-3) | 8 px / Fuge 4 px → 45,7 px Zellbreite; ux-spec §2 und W08/W09-HTML-Skizzen anpassen – **entschieden (CEO, 2026-10-08)** | ux-spec §2, W08, W09 |
+| **U-2** | **✓-Badge unten rechts** statt oben rechts (★ im Wireframe); ◐ unten links ohne Zahl (mobil), „◐2" ab 600 px | Wireframe-Legende und HTML-Skizze W09 angleichen – **entschieden (CEO, 2026-10-08)** | W09 |
 | **U-3** | **Pegel (4 Segmente) erst ab 600 px** – mobil fehlt der Platz; Information steckt in Zahl + Badges | bestätigen | W09 |
-| **U-4** | **Zählwert = Anzahl „Geht"** (F-008). Auf einem „alle können"-Tag mit Zur-Not-Personen steht dann z. B. „6/9 ✓ ◐" – könnte irritieren. Alternative: Zahl = „können (Geht + Zur Not)", ◐ zeigt den Zur-Not-Anteil. | UX-Test in der Beta oder PM-Entscheid; Design funktioniert mit beiden Varianten | F-008, PM |
+| **U-4** | ~~Zählwert = Anzahl „Geht" … Alternative „können (Geht + Zur Not)"~~ → **entschieden durch CEO (2026-10-08):** Zahl bleibt „Anzahl ‚Geht' / abgegeben"; ✓ = alle Abgegebenen haben „Geht" (x = n); Tage ohne „Geht nicht", aber mit „Zur Not" zeigen ◐, kein ✓. „6/9 ✓ ◐" kann nicht mehr vorkommen. | Bitte W09-Legende, Tagesdetail-Kopf und zugängliche Namen (ux-spec §10.2) auf „x von n Geht" / „alle Geht" angleichen | F-008, W09, ux-spec §10.2 |
 | **U-5** | **Textvergrößerung 200 %**: Die Zahl passt bei 200 % nicht mehr in 46 px Breite. Vorschlag: ab Root-Schriftgröße ≥ 24 px (bzw. Container-Query < 52 px Zellbreite) wechselt die Heatmap in eine **Tagesliste** (eine Zeile pro Tag: Datum · „6 von 9" · Badges), Meine Tage in eine Liste mit Zustands-Segmenten. Alternative: Zellen nur in der Höhe wachsen lassen und Zahl auf „x" kürzen. | Entscheidung UX (Verhalten); Optik liefere ich nach | ux-spec §7.1, W08, W09 |
 | **U-6** | **Legende** der Heatmap (W09 zeigt „□ ░ ▒ ▓ █ ★ ~ °"): als Komponente mit echten Mini-Zellen (20 × 20 px mit Zahl-Beispiel, Muster, Badge, Eselsohr) in einer umbrechenden Zeile, einklappbar. Beim ersten Besuch aufgeklappt? | Zustand (offen/zu, Merken) entscheidet UX | W09 |
 | **U-7** | **Snackbar-Position** braucht die Leistenhöhe als CSS-Variable `--ww-sticky-bar-h` (setzt das Layout, z. B. per ResizeObserver) | bestätigen, an Developer weitergeben | ux-spec §4.3 |
@@ -55,11 +55,53 @@ Bitte bestätigen oder anpassen (Antwort gern in `docs/ux/abstimmung-design.md` 
 | **U-11** | **Feiertagsliste unter dem Monat** (W08/W09): Darstellung 13 px `text-muted`, jeder Eintrag mit kleinem Eselsohr-Dreieck vorn (gleiche Form wie in der Zelle) – passt das zur Struktur? | bestätigen | W08, W09 |
 | **U-12** | **Hero/Landing W01:** `hero.svg` ist 320 × 200 – mobil auf 160 px Höhe skaliert über oder neben der Headline? | Platzierung entscheidet UX | W01 |
 | **U-13** | **Tagesdetail „Noch offen"**: gestrichelter Avatar-Ring (wie Teilnahmestatus F-007) statt nur Grau – bitte in W09 übernehmen | bestätigen | W09 |
+| **U-14** (neu, Folge von U-4) | **Begriff „Alle können" in den Vorschlägen (F-009)** meint „niemand ‚Geht nicht'" und ist damit weiter als das ✓-Badge („alle ‚Geht'"). Design trennt optisch: Gruppenüberschrift mit Strich-Häkchen `ww-icon-check`, **nicht** mit dem gefüllten Badge; Zur-Not-Anteil als Chip „◐ 2× zur Not". Offen ist nur die **Benennung**: „Alle können" belassen (Design ok) oder z. B. „Alle dabei" / „Everyone's in"? | Copy-Entscheid UX (ggf. PM); Optik steht | W09, ux-spec §10.2, F-009 |
 
-## 3. Bereits erledigt / keine Aktion nötig
+## 3. Abstimmungsstand (Design-Sicht)
+
+Stand 2026-10-08, nach CEO-Entscheiden. Legende: **erledigt** = beidseitig geklärt · **entschieden (CEO)** = verbindlich, UX setzt in docs/ux/ um · **offen (UX)** = Antwort von UI/UX ausstehend · **Vorbehalt Auftraggeber** = Empfehlung steht, Bestätigung durch Auftraggeber fehlt.
+
+| # | Thema | Status | Anmerkung |
+|---|---|---|---|
+| D-1 | Heatmap-Zelle (Anatomie, Zählwert, Fokus, Band, nodata) | erledigt | Abweichung Badge-Position durch U-2 entschieden; ✓-Bedeutung durch U-4 präzisiert |
+| D-2 | Meine Tage (Geht ohne Häkchen, Vorschau, Startmarke, schreibgeschützt, Feedback) | erledigt | |
+| D-3 | Zellbreite 360 px | entschieden (CEO, 2026-10-08) | über U-1: 8 px Rand, 4 px Fuge |
+| D-4 | Code-Feld als ein `<input>` | erledigt | |
+| D-5 | Werkzeugleiste | erledigt | |
+| D-6 | Abstimmen-Schalter | erledigt | Detail U-8 offen |
+| D-7 | Phasen & To-do | erledigt | |
+| D-8 | Icons | erledigt | Titel `ww-icon-all-available` jetzt „Alle: Geht" |
+| D-9 | Illustrationen | erledigt | Platzierung Hero: U-12 |
+| D-10 | Text & Typo | erledigt | Figtree: Vorbehalt Auftraggeber (s. u.) |
+| D-11 | Sheet & Ebenen | erledigt | Leistenhöhe als Variable: U-7 |
+| D-12 | Dark Mode | Vorbehalt Auftraggeber | Empfehlung: nur System-folgend, kein Schalter im MVP |
+| D-13 | Vorschlagskarte | erledigt | Gruppenüberschrift-Icon angepasst (U-14) |
+| U-1 | Kalender-Seitenrand 8 px, Fuge 4 px | **entschieden (CEO, 2026-10-08)** | UX passt ux-spec §2, W08, W09 an |
+| U-2 | ✓ unten rechts, ◐ unten links (≥ 600 px „◐2") | **entschieden (CEO, 2026-10-08)** | UX passt W09 an; Legende-SVG bereits angepasst |
+| U-3 | Pegel erst ab 600 px | offen (UX) | |
+| U-4 | Zählwert / Bedeutung ✓ | **entschieden (CEO, 2026-10-08)** | Zahl = „Geht"/abgegeben; ✓ nur bei x = n; sonst ◐ |
+| U-5 | Textvergrößerung 200 % → Tagesliste | offen (UX) | Optik liefert Design nach Entscheid |
+| U-6 | Legende als Komponente, Startzustand | offen (UX) | |
+| U-7 | `--ww-sticky-bar-h` | offen (UX) | |
+| U-8 | Abstimmen < 400 px: Icon über Label | offen (UX) | |
+| U-9 | „Platz 1" / „Top choice" | offen (UX) | |
+| U-10 | Mini-Streifen auf Vorschlagskarte | offen (UX) | |
+| U-11 | Feiertagsliste unter dem Monat | offen (UX) | |
+| U-12 | Hero-Platzierung W01 | offen (UX) | |
+| U-13 | „Noch offen" mit gestricheltem Ring | offen (UX) | |
+| U-14 | Benennung „Alle können" (F-009) vs. ✓ „alle Geht" | offen (UX/PM) | neu, Folge von U-4 |
+
+**Vorbehaltlich Auftraggeber (Empfehlungen Design, vom CEO vorzulegen):**
+- **Marke:** „Wir wollen weg" bleibt auch auf Englisch die Marke, mit EN-Untertitel „Find dates for your group trip" (design-system §3.1).
+- **Logo:** Variante A „Sonnenkalender" empfohlen (§3.2); Favicon/App-Icon/Wortmarken basieren darauf.
+- **Dark Mode:** im MVP nur System-folgend (`prefers-color-scheme`), kein Schalter (§13, D-12).
+- **Schrift:** Figtree (selbst gehostet) für Überschriften und Wortmarke, Systemschrift für alles andere (§5).
+
+## 4. Bereits erledigt / keine Aktion nötig
 - WCAG 2.2 AA als Ziel (ux-spec §7): Design ist darauf ausgelegt (2.4.11 Fokus nicht verdeckt über `scroll-padding`, 2.5.8 Zielgrößen, Fokus-Hof).
 - Teilen-Texte ohne Emojis: einverstanden.
 - „Rot heißt Fehler, nicht Nein" inkl. Amber für Warnhinweise wie „Jonas kann nicht": verankert in design-system §2, §9.10.
 
 ## Changelog
+- 2026-10-08 (Abstimmungsrunde): CEO-Entscheide U-1, U-2, U-4 eingearbeitet; U-14 neu; Abschnitt 3 „Abstimmungsstand (Design-Sicht)" mit Status D-1–D-13 / U-1–U-14 und Auftraggeber-Vorbehalten.
 - 2026-10-08: Erstfassung; beantwortet D-1 bis D-13 aus `docs/ux/abstimmung-design.md`, neue Punkte U-1 bis U-13.

@@ -1,6 +1,6 @@
 /* ==========================================================================
    Wir wollen weg – Design Tokens
-   Version 0.1 · 2026-10-08 · Verantwortlich: Designer
+   Version 0.3 · 2026-10-08 · Verantwortlich: Designer
    Dokumentation: docs/design/design-system.md
 
    Aufbau
@@ -326,8 +326,12 @@
      none:  s = 0           few: 0 < s < 0,5
      some:  0,5 ≤ s < 0,75   many: 0,75 ≤ s < 1
      all:   s = 1 (alle „geht")
-     Unabhängig von der Stufe: Häkchen-Badge, wenn niemand „geht nicht"
-     (= „alle können" nach F-009); Halbkreis, wenn jemand „zur Not".
+     Zahl in der Zelle: Anzahl „Geht" / abgegebene Mitglieder (x/n, F-008).
+     Häkchen-Badge (CEO-Entscheid U-4, 2026-10-08): NUR wenn x = n, d. h.
+     alle, die abgegeben haben, haben „Geht" – fällt damit genau mit der
+     Stufe all zusammen (s = 1 genau dann, wenn x = n).
+     Halbkreis: sobald mindestens eine Person „zur Not" hat – auch an Tagen
+     ohne „geht nicht"; diese Tage bekommen KEIN Häkchen.
      Kontrast Zahl/Text: siehe Kommentar je Stufe. */
   --ww-hm-nodata-bg: transparent;
   --ww-hm-nodata-fg: var(--ww-slate-650);         /* 4.8 auf bg */
@@ -674,7 +678,7 @@
      background: var(--ww-pattern-hm-none), var(--ww-hm-none-bg);
      background: var(--ww-pattern-avail-maybe), var(--ww-avail-maybe-bg);
      background: var(--ww-pattern-avail-no), var(--ww-avail-no-bg);
-   SVG-Äquivalente: docs/design/assets/heatmap-patterns.svg
+   SVG-Äquivalente: docs/design/assets/heatmap/heatmap-patterns.svg
    -------------------------------------------------------------------------- */
 :root,
 [data-theme] {

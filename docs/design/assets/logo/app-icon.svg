@@ -5,12 +5,12 @@
   <!-- Bildmarke A (64er Raster) auf 280 px skaliert, zentriert -->
   <g transform="translate(116 116) scale(4.375)">
     <defs>
-      <clipPath id="ww-icon-body">
+      <clipPath id="ww-appicon-body">
         <rect x="6" y="10" width="52" height="48" rx="12"/>
       </clipPath>
     </defs>
     <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
-    <g clip-path="url(#ww-icon-body)">
+    <g clip-path="url(#ww-appicon-body)">
       <circle cx="32" cy="42" r="13" fill="#F4B942"/>
       <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
       <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>

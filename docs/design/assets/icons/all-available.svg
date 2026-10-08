@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-labelledby="t">
-  <title id="t">Alle können</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-labelledby="ww-all-t">
+  <title id="ww-all-t">Alle: Geht</title>
   <defs>
     <mask id="ww-all-cut">
       <rect width="24" height="24" fill="#fff"/>
       <path d="M7.5 12.5l3 3 6-6.5" fill="none" stroke="#000" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
     </mask>
   </defs>
-  <!-- Gefüllter Kreis mit ausgestanztem Häkchen: funktioniert in jeder Textfarbe (currentColor) -->
+  <!-- Badge „Alle: Geht“: alle, die abgegeben haben, haben „Geht“ (x = n). Gefüllter Kreis mit ausgestanztem Häkchen: funktioniert in jeder Textfarbe (currentColor) -->
   <circle cx="12" cy="12" r="10" fill="currentColor" mask="url(#ww-all-cut)"/>
 </svg>

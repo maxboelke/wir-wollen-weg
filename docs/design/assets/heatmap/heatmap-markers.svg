@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="640" height="320" role="img" aria-labelledby="t d">
-  <title id="t">Kalender-Markierungen: Wochenende, Feiertag, Heute, Ausgewählt, Fokus, Vorschlag</title>
-  <desc id="d">Jede Markierung ist über Form oder Position kodiert, nicht nur über Farbe: Wochenende als Spur hinter den Sa/So-Spalten mit Spaltenkopf, Feiertag als Eselsohr-Ecke, Heute als Ring um die Datumszahl, Ausgewählt als Doppelrahmen innen, Fokus als Ring mit Abstand außen, Vorschlag als Band mit Endkappen unter dem Zeitraum. Oben Light, unten Dark.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 320" width="640" height="320" role="img" aria-labelledby="hmk-t hmk-d">
+  <title id="hmk-t">Kalender-Markierungen: Wochenende, Feiertag, Heute, Ausgewählt, Fokus, Vorschlag</title>
+  <desc id="hmk-d">Jede Markierung ist über Form oder Position kodiert, nicht nur über Farbe: Wochenende als Spur hinter den Sa/So-Spalten mit Spaltenkopf, Feiertag als Eselsohr-Ecke, Heute als Ring um die Datumszahl, Ausgewählt als Doppelrahmen innen, Fokus als Ring mit Abstand außen, Vorschlag als Band mit Endkappen unter dem Zeitraum. Die Tage mit 9/9 tragen das Häkchen-Badge unten rechts (alle Abgegebenen haben „Geht“). Oben Light, unten Dark. Zur Vereinfachung ist der Fokus hier nur als Ring dargestellt; in der App liegt zusätzlich ein Hof in Hintergrundfarbe auf beiden Seiten des Rings.</desc>
   <defs>
     <clipPath id="mk-cell"><rect width="48" height="56" rx="8"/></clipPath>
   </defs>
@@ -64,11 +64,13 @@
   <!-- Vorschlag -->
   <g transform="translate(480 50)">
     <rect width="48" height="56" rx="8" fill="#0B4F4A"/>
-    <g fill="#FFFFFF"><text x="5" y="13" class="d">11</text><text x="24" y="37" class="n" text-anchor="middle">9/9</text></g>
+    <g fill="#FFFFFF"><text x="5" y="13" class="d">11</text><text x="24" y="33" class="n" text-anchor="middle">9/9</text><circle cx="40" cy="46" r="6"/></g>
+    <path d="M37 46.2l2 2 3.4-3.8" fill="none" stroke="#0B4F4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g transform="translate(532 50)">
     <rect width="48" height="56" rx="8" fill="#0B4F4A"/>
-    <g fill="#FFFFFF"><text x="5" y="13" class="d">12</text><text x="24" y="37" class="n" text-anchor="middle">9/9</text></g>
+    <g fill="#FFFFFF"><text x="5" y="13" class="d">12</text><text x="24" y="33" class="n" text-anchor="middle">9/9</text><circle cx="40" cy="46" r="6"/></g>
+    <path d="M37 46.2l2 2 3.4-3.8" fill="none" stroke="#0B4F4A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g transform="translate(584 50)">
     <rect width="48" height="56" rx="8" fill="#187E73"/>
@@ -140,11 +142,13 @@
 
   <g transform="translate(480 210)">
     <rect width="48" height="56" rx="8" fill="#B5F0E4"/>
-    <g fill="#0B1F1E"><text x="5" y="13" class="d">11</text><text x="24" y="37" class="n" text-anchor="middle">9/9</text></g>
+    <g fill="#0B1F1E"><text x="5" y="13" class="d">11</text><text x="24" y="33" class="n" text-anchor="middle">9/9</text><circle cx="40" cy="46" r="6"/></g>
+    <path d="M37 46.2l2 2 3.4-3.8" fill="none" stroke="#B5F0E4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g transform="translate(532 210)">
     <rect width="48" height="56" rx="8" fill="#B5F0E4"/>
-    <g fill="#0B1F1E"><text x="5" y="13" class="d">12</text><text x="24" y="37" class="n" text-anchor="middle">9/9</text></g>
+    <g fill="#0B1F1E"><text x="5" y="13" class="d">12</text><text x="24" y="33" class="n" text-anchor="middle">9/9</text><circle cx="40" cy="46" r="6"/></g>
+    <path d="M37 46.2l2 2 3.4-3.8" fill="none" stroke="#B5F0E4" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g transform="translate(584 210)">
     <rect width="48" height="56" rx="8" fill="#6CCFC0"/>
