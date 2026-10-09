@@ -24,6 +24,7 @@ import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client
 import { emailAccess, type AccessEmailPayload, type CodeMailPayload } from "./email-access-plugin";
 import * as emailLimits from "./email-limit-store";
 import { hashPassword, verifyPassword } from "./password-hash";
+import { MAILBOX_SIGN_IN_PATHS, markReauthenticatedIn } from "./reauth";
 
 const SESSION_DAYS = 90;
 
@@ -162,6 +163,12 @@ function createAuth() {
           // "The latest explicit choice wins" (Flow F.3): a language picked in this browser
           // after the account's last choice updates the account at sign-in.
           after: async (session, context) => {
+            // A code or magic-link sign-in just proved the mailbox: counts as confirmation
+            // for changing sign-in methods for 10 minutes (R-023, e.g. the optional
+            // password in the sign-up name step).
+            if (context?.path && MAILBOX_SIGN_IN_PATHS.has(context.path)) {
+              await markReauthenticatedIn(context.context.internalAdapter, session.id);
+            }
             const choice = browserLanguageChoice(context?.headers);
             if (!choice) return;
             const [account] = await db()

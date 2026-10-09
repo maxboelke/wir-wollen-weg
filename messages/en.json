@@ -80,6 +80,8 @@
       "generic": "No connection. Your input is still here – please try again.",
       "wrongCodeRemaining": "That code isn’t right. {count, plural, one {# attempt left.} other {# attempts left.}}",
       "locked": "Too many failed attempts for this address. Please wait {minutes} min and try again.",
+      "lockedUseLink": "Too many attempts. Use the link in the email.",
+      "lockedPassword": "Too many failed attempts for this address. Sign in with a code and use the link in the email – or try again in {minutes} min.",
       "passwordWrong": "Email or password isn’t right. You can also sign in with a code.",
       "passwordTooShort": "At least 10 characters.",
       "passwordTooLong": "At most 128 characters.",

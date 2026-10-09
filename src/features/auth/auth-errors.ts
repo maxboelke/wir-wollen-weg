@@ -10,6 +10,8 @@ export type AuthErrorKey =
   | "expired"
   | "rateLimited"
   | "locked"
+  | "lockedUseLink"
+  | "lockedPassword"
   | "nameRequired"
   | "passwordWrong"
   | "passwordTooShort"

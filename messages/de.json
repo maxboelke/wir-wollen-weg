@@ -80,6 +80,8 @@
       "generic": "Keine Verbindung. Deine Eingaben sind noch da – versuch es nochmal.",
       "wrongCodeRemaining": "Dieser Code stimmt nicht. {count, plural, one {Noch # Versuch.} other {Noch # Versuche.}}",
       "locked": "Zu viele Fehlversuche mit dieser Adresse. Bitte warte {minutes} Min. und versuch es dann nochmal.",
+      "lockedUseLink": "Zu viele Versuche. Nutze den Link in der Mail.",
+      "lockedPassword": "Zu viele Fehlversuche mit dieser Adresse. Melde dich mit Code an und nutze den Link in der Mail – oder versuch es in {minutes} Min. nochmal.",
       "passwordWrong": "E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code anmelden.",
       "passwordTooShort": "Mindestens 10 Zeichen.",
       "passwordTooLong": "Höchstens 128 Zeichen.",

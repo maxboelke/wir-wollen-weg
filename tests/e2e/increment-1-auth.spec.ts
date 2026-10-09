@@ -133,7 +133,7 @@ test.describe("rate limits per e-mail address (F-041, R-005 follow-up)", () => {
     await expect(page).not.toHaveURL(/step=code/);
   });
 
-  test("10 wrong codes lock the address for verification and new codes", async ({ request }) => {
+  test("10 wrong codes lock code entry – not the mail (R-021)", async ({ request }) => {
     const email = uniqueEmail("bruteforce");
     for (let round = 0; round < 2; round++) {
       expect((await requestCode(request, email)).status()).toBe(200);
@@ -150,11 +150,12 @@ test.describe("rate limits per e-mail address (F-041, R-005 follow-up)", () => {
         }
       }
     }
-    // While locked: no new code, no verification – for any code.
-    const blocked = await requestCode(request, email);
-    expect(blocked.status()).toBe(429);
-    expect(await blocked.json()).toMatchObject({ code: "EMAIL_LOCKED" });
-    expect((await verifyCode(request, email, "123456")).status()).toBe(429);
+    // While locked: a new mail is possible (it carries the magic link), entering any code
+    // is refused.
+    expect((await requestCode(request, email)).status()).toBe(200);
+    const locked = await verifyCode(request, email, "123456");
+    expect(locked.status()).toBe(429);
+    expect(await locked.json()).toMatchObject({ code: "EMAIL_LOCKED" });
   });
 
   test("closed endpoints stay closed over HTTP", async ({ request }) => {

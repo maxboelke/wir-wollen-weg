@@ -27,7 +27,8 @@ import { validateNewPassword } from "@/server/auth/breach-check";
 import { CODE_ATTEMPTS } from "@/server/auth/email-access-plugin";
 import {
   assertVerificationAllowed,
-  recordVerificationFailure,
+  releaseVerificationAttempt,
+  reserveVerificationAttempt,
   takeCodeRequest,
 } from "@/server/auth/email-limit-store";
 import { db } from "@/server/db/client";
@@ -207,8 +208,16 @@ export async function signOutEverywhere(): Promise<void> {
 // Password (F-042, /account/password and the optional field on sign-up)
 // ---------------------------------------------------------------------------
 
+/**
+ * Setting, changing or removing the password changes how the account signs in – like the
+ * e-mail change it needs a fresh confirmation (R-023): code or current password within the
+ * last 10 minutes, or a code/magic-link sign-in within the last 10 minutes (sign-up name
+ * step). Otherwise a stolen session could set a password and use it to confirm an e-mail
+ * change (account takeover).
+ */
 export async function savePassword(password: string): Promise<AccountResult> {
   const session = await requireSession();
+  if (!(await isReauthenticated(session.session.id))) return { error: "reauthExpired" };
   const problem = await validateNewPassword(password, session.user.email);
   if (problem === "tooShort") return { error: "passwordTooShort" };
   if (problem === "tooLong") return { error: "passwordTooLong" };
@@ -219,6 +228,7 @@ export async function savePassword(password: string): Promise<AccountResult> {
 
 export async function deletePassword(): Promise<AccountResult> {
   const session = await requireSession();
+  if (!(await isReauthenticated(session.session.id))) return { error: "reauthExpired" };
   await removePassword(session.user.id);
   return { ok: true };
 }
@@ -250,18 +260,31 @@ export async function verifyReauthCode(code: string): Promise<AccountResult> {
   if (!codeSchema.safeParse(code).success) return { error: "codeLength" };
   const email = session.user.email;
   const identifier = `email-verification-otp-${email}`;
+  const context = await auth().$context;
+  // A wrong code only counts while one is pending (R-021); the failure is reserved before
+  // the check so parallel guesses can't exceed the limit (R-022).
+  let reservation: Awaited<ReturnType<typeof reserveVerificationAttempt>> | undefined;
   try {
-    await assertVerificationAllowed(email);
+    const pending = await context.internalAdapter.findVerificationValue(identifier);
+    if (pending && pending.expiresAt > new Date()) {
+      reservation = await reserveVerificationAttempt(email);
+    } else await assertVerificationAllowed(email);
     await auth().api.checkVerificationOTP({
       body: { email, type: "email-verification", otp: code },
     });
   } catch (error) {
     const result = fromAuthError(error);
-    if (result.error !== "wrongCode") return result;
-    const decision = await recordVerificationFailure(email);
-    if (!decision.allowed)
-      return { error: "locked", minutes: retryAfterMinutes(decision.retryAfterSeconds) };
-    const context = await auth().$context;
+    if (!reservation) return result;
+    if (result.error !== "wrongCode") {
+      await releaseVerificationAttempt(reservation.id);
+      return result;
+    }
+    if (!reservation.ifFailed.allowed) {
+      return {
+        error: "locked",
+        minutes: retryAfterMinutes(reservation.ifFailed.retryAfterSeconds),
+      };
+    }
     const row = await context.internalAdapter.findVerificationValue(identifier);
     const used = row
       ? Number.parseInt(row.value.slice(row.value.lastIndexOf(":") + 1), 10) || 0
@@ -273,8 +296,8 @@ export async function verifyReauthCode(code: string): Promise<AccountResult> {
     }
     return { error: "wrongCode", remainingAttempts };
   }
+  if (reservation) await releaseVerificationAttempt(reservation.id);
   // Single use: the code is spent once it confirmed the person.
-  const context = await auth().$context;
   await context.internalAdapter.deleteVerificationByIdentifier(identifier);
   await markReauthenticated(session.session.id);
   return { ok: true };
@@ -283,17 +306,22 @@ export async function verifyReauthCode(code: string): Promise<AccountResult> {
 export async function verifyReauthPassword(password: string): Promise<AccountResult> {
   const session = await requireSession();
   const email = session.user.email;
+  let reservation: Awaited<ReturnType<typeof reserveVerificationAttempt>>;
   try {
-    await assertVerificationAllowed(email);
+    reservation = await reserveVerificationAttempt(email);
   } catch (error) {
     return fromAuthError(error);
   }
   if (!(await checkPassword(session.user.id, password))) {
-    const decision = await recordVerificationFailure(email);
-    if (!decision.allowed)
-      return { error: "locked", minutes: retryAfterMinutes(decision.retryAfterSeconds) };
+    if (!reservation.ifFailed.allowed) {
+      return {
+        error: "locked",
+        minutes: retryAfterMinutes(reservation.ifFailed.retryAfterSeconds),
+      };
+    }
     return { error: "passwordWrong" };
   }
+  await releaseVerificationAttempt(reservation.id);
   await markReauthenticated(session.session.id);
   return { ok: true };
 }

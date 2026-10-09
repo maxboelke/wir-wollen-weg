@@ -1,6 +1,12 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { BetterAuthPlugin } from "better-auth";
-import { APIError, createAuthEndpoint, createAuthMiddleware, isAPIError } from "better-auth/api";
+import {
+  APIError,
+  createAuthEndpoint,
+  createAuthMiddleware,
+  getSessionFromCtx,
+  isAPIError,
+} from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { magicLink } from "better-auth/plugins/magic-link";
@@ -16,7 +22,9 @@ import { toSafeInternalPath } from "@/lib/safe-path";
  *   senders, magic-link GET) answers 404. Server Actions call `auth().api.*` without a
  *   request object and are not affected.
  * - **Rate limits per e-mail address** (src/lib/email-limits.ts) for code mails and failed
- *   verifications, in addition to Better Auth's IP limits.
+ *   verifications, in addition to Better Auth's IP limits. A failure is reserved before the
+ *   secret is checked (atomic, R-022) and only kept when a secret was really checked: a
+ *   wrong password always, a wrong code only while a code was pending (R-021).
  * - **Remaining attempts** on a wrong code ("Noch 3 Versuche", Flow A.2) and the locked
  *   state right after the 5th wrong code.
  *
@@ -41,21 +49,17 @@ export interface CodeMailPayload {
   userId: string | undefined;
 }
 
+type LimitDecision =
+  { allowed: true } | { allowed: false; reason: "requests" | "locked"; retryAfterSeconds: number };
+
 /** Per-address limits, injected so the plugin stays testable without a database. */
 export interface EmailLimits {
   takeCodeRequest: (email: string) => Promise<void>;
   assertVerificationAllowed: (email: string) => Promise<void>;
-  recordVerificationFailure: (
-    email: string,
-  ) => Promise<
-    { allowed: true } | { allowed: false; reason: "requests" | "locked"; retryAfterSeconds: number }
-  >;
+  reserveVerificationAttempt: (email: string) => Promise<{ id: string; ifFailed: LimitDecision }>;
+  releaseVerificationAttempt: (id: string) => Promise<void>;
   clearVerificationFailures: (email: string) => Promise<void>;
-  rateLimitError: (decision: {
-    allowed: false;
-    reason: "requests" | "locked";
-    retryAfterSeconds: number;
-  }) => APIError;
+  rateLimitError: (decision: Extract<LimitDecision, { allowed: false }>) => APIError;
 }
 
 export interface EmailAccessOptions {
@@ -113,6 +117,9 @@ const SEND_PATHS: Record<string, "email" | "newEmail"> = {
   "/email-otp/request-password-reset": "email",
   "/email-otp/request-email-change": "newEmail",
 };
+
+/** Endpoints whose success signs in (clears the failure count of the address). */
+const SIGN_IN_PATHS = new Set(["/sign-in/email-otp", "/sign-in/email"]);
 
 /** OTP type per verification endpoint (for the remaining-attempts lookup). */
 const OTP_TYPES: Record<string, string> = {
@@ -208,33 +215,73 @@ export function emailAccess(options: EmailAccessOptions) {
     },
   });
 
-  /** Wrong code/password: count it, lock the address at the limit, add remaining attempts. */
+  /** Reserved failure per endpoint call (key: the call's auth context, same object in hooks). */
+  const reservations = new WeakMap<object, { id: string; ifFailed: LimitDecision }>();
+
+  /**
+   * Before checking a secret: locked addresses are refused (429). Otherwise one failure is
+   * reserved atomically (R-022) – for passwords always (every address alike, no
+   * enumeration), for codes only while a code is pending (R-021: without one there is
+   * nothing to guess, so such requests can't lock anybody out).
+   */
+  const beforeVerification = createAuthMiddleware(async (ctx) => {
+    const field = VERIFY_PATHS[ctx.path];
+    const email = field ? bodyField(ctx.body, field) : undefined;
+    if (!email) return;
+    // Identifier of the code this endpoint checks (Better Auth's `toOTPIdentifier`);
+    // undefined = password, null = no code possible (e-mail change without session).
+    let identifier: string | null | undefined;
+    const type = OTP_TYPES[ctx.path];
+    if (type) identifier = `${type}-otp-${email}`;
+    else if (ctx.path === "/email-otp/change-email") {
+      const session = await getSessionFromCtx(ctx);
+      identifier = session ? `change-email-otp-${session.user.email.toLowerCase()}-${email}` : null;
+    }
+    if (identifier !== undefined) {
+      const row = identifier
+        ? await ctx.context.internalAdapter.findVerificationValue(identifier)
+        : null;
+      if (!row || row.expiresAt < new Date()) {
+        await limits.assertVerificationAllowed(email);
+        return;
+      }
+    }
+    reservations.set(ctx.context, await limits.reserveVerificationAttempt(email));
+  });
+
+  /** Wrong code/password: keep the reserved failure, lock at the limit, add remaining attempts. */
   const afterVerification = (http: boolean) =>
     createAuthMiddleware(async (ctx) => {
       const path = ctx.path;
       const field = VERIFY_PATHS[path];
       const email = field ? bodyField(ctx.body, field) : undefined;
+      const reservation = reservations.get(ctx.context);
+      reservations.delete(ctx.context);
       if (!email) return;
       const returned = ctx.context.returned;
       const code = errorCode(returned);
 
       if (!isAPIError(returned)) {
         // Success: a correct secret clears the failure count of the address.
-        if (path === "/sign-in/email-otp" || path === "/sign-in/email") {
-          await limits.clearVerificationFailures(email);
-        }
+        if (SIGN_IN_PATHS.has(path)) await limits.clearVerificationFailures(email);
+        else if (reservation) await limits.releaseVerificationAttempt(reservation.id);
         return;
       }
-      if (code !== "INVALID_OTP" && code !== "INVALID_EMAIL_OR_PASSWORD") return;
-
-      const decision = await limits.recordVerificationFailure(email);
-      if (!decision.allowed) return replaceError(http, limits.rateLimitError(decision));
+      if (!reservation) return;
+      if (code !== "INVALID_OTP" && code !== "INVALID_EMAIL_OR_PASSWORD") {
+        // Nothing was guessed (expired code, invalid input, …) – the attempt does not count.
+        await limits.releaseVerificationAttempt(reservation.id);
+        return;
+      }
+      if (!reservation.ifFailed.allowed) {
+        return replaceError(http, limits.rateLimitError(reservation.ifFailed));
+      }
 
       const type = OTP_TYPES[path];
       if (code === "INVALID_OTP" && type) {
         const identifier = `${type}-otp-${email}`;
         const row = await ctx.context.internalAdapter.findVerificationValue(identifier);
-        if (!row) return; // no pending code (e.g. already used) – plain "wrong code"
+        if (!row) return; // code gone meanwhile (e.g. used in parallel) – plain "wrong code"
         const used = Number.parseInt(row.value.slice(row.value.lastIndexOf(":") + 1), 10) || 0;
         const remainingAttempts = Math.max(0, CODE_ATTEMPTS - used);
         if (remainingAttempts === 0) {
@@ -327,14 +374,6 @@ export function emailAccess(options: EmailAccessOptions) {
           }),
         },
         {
-          // Locked addresses cannot verify anything until the lock lifts.
-          matcher: (context) => context.path !== undefined && context.path in VERIFY_PATHS,
-          handler: createAuthMiddleware(async (ctx) => {
-            const email = bodyField(ctx.body, VERIFY_PATHS[ctx.path] ?? "email");
-            if (email) await limits.assertVerificationAllowed(email);
-          }),
-        },
-        {
           // Same password rules as in the account (F-042) – also for "forgot password".
           matcher: (context) => context.path === "/email-otp/reset-password",
           handler: createAuthMiddleware(async (ctx) => {
@@ -363,6 +402,11 @@ export function emailAccess(options: EmailAccessOptions) {
             if (email) await limits.takeCodeRequest(email);
           }),
         },
+        {
+          // Last: lock check + reserved failure right before the secret is checked.
+          matcher: (context) => context.path !== undefined && context.path in VERIFY_PATHS,
+          handler: beforeVerification,
+        },
       ],
       after: [
         {
@@ -378,6 +422,15 @@ export function emailAccess(options: EmailAccessOptions) {
             context.path !== undefined &&
             context.path in VERIFY_PATHS,
           handler: afterVerification(false),
+        },
+        {
+          // The magic link proves the mailbox: it always signs in, even while the address is
+          // locked, and lifts the lock (R-021).
+          matcher: (context) => context.path === "/magic-link/verify",
+          handler: createAuthMiddleware(async (ctx) => {
+            const email = ctx.context.newSession?.user.email;
+            if (email) await limits.clearVerificationFailures(email.toLowerCase());
+          }),
         },
         {
           // "Keep me signed in" is built into password login only. For code login

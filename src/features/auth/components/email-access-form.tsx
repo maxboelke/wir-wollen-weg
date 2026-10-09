@@ -278,7 +278,9 @@ export function EmailAccessForm({
         rememberMe: remember,
       });
       if (!response.ok) {
-        setError(await readAuthError(response));
+        const problem = await readAuthError(response);
+        // Locked (R-021): the way in is a code mail – its link always works.
+        setError(problem.key === "locked" ? { ...problem, key: "lockedPassword" } : problem);
         return;
       }
       clearPendingAuth();
@@ -323,12 +325,14 @@ export function EmailAccessForm({
     try {
       const response = await postAuth("/sign-in/email-otp", { email, otp: value, rememberMe });
       if (!response.ok) {
-        const problem = await readAuthError(response);
+        const read = await readAuthError(response);
+        // Address locked (R-021): entering codes is paused, the link in the mail still works.
+        const problem: AuthError = read.key === "locked" ? { key: "lockedUseLink" } : read;
         setError(problem);
         const locked =
           problem.key === "tooManyAttempts" ||
           problem.key === "expired" ||
-          problem.key === "locked";
+          problem.key === "lockedUseLink";
         setCodeStatus(locked ? "locked" : problem.key === "generic" ? "idle" : "error");
         // Locked: the field is disabled – focus goes to «Neuen Code senden» (the only action).
         if (locked) requestAnimationFrame(() => submitRef.current?.focus());

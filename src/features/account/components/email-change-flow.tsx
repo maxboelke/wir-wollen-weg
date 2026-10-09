@@ -10,19 +10,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
 import { TextField } from "@/components/ui/field";
-import { PasswordField } from "@/components/ui/password-field";
 import { CODE_LENGTH } from "@/lib/code";
 import { formString } from "@/lib/form";
 import { DISTANCE, enter } from "@/lib/motion";
-import {
-  confirmEmailChange,
-  requestEmailChange,
-  sendReauthCode,
-  verifyReauthCode,
-  verifyReauthPassword,
-  type AccountResult,
-} from "../actions";
+import { confirmEmailChange, requestEmailChange, type AccountResult } from "../actions";
 import { useAccountErrorMessage } from "./account-errors";
+import { codeStatusFor, ReauthStep } from "./reauth-step";
 import styles from "./account.module.css";
 
 type Step = "reauth" | "new" | "code" | "done";
@@ -30,18 +23,6 @@ type Step = "reauth" | "new" | "code" | "done";
 interface EmailChangeFlowProps {
   currentEmail: string;
   canUsePassword: boolean;
-}
-
-function statusFor(result: AccountResult): CodeFieldStatus {
-  if (result.ok) return "success";
-  if (
-    result.error === "tooManyAttempts" ||
-    result.error === "expired" ||
-    result.error === "locked"
-  ) {
-    return "locked";
-  }
-  return result.error === "wrongCode" ? "error" : "idle";
 }
 
 /**
@@ -54,16 +35,13 @@ export function EmailChangeFlow({ currentEmail, canUsePassword }: EmailChangeFlo
   const tAll = useTranslations();
   const errorMessage = useAccountErrorMessage();
   const tAuth = useTranslations("auth");
-  const tCommon = useTranslations("common");
   const router = useRouter();
   const id = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
   const newEmailRef = useRef<HTMLInputElement>(null);
-  const passwordRef = useRef<HTMLInputElement>(null);
   const [step, setStep] = useState<Step>("reauth");
-  const [method, setMethod] = useState<"code" | "password">("code");
-  const [reauthSent, setReauthSent] = useState(false);
+  const [reauthExpired, setReauthExpired] = useState(false);
   const [code, setCode] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [result, setResult] = useState<AccountResult>({});
@@ -87,20 +65,6 @@ export function EmailChangeFlow({ currentEmail, canUsePassword }: EmailChangeFlo
     if (next === "code") codeRef.current?.focus();
   }
 
-  function sendCode() {
-    startTransition(async () => {
-      const sent = await sendReauthCode();
-      setResult(sent);
-      if (sent.ok) {
-        flushSync(() => {
-          setReauthSent(true);
-          setResult({});
-        });
-        codeRef.current?.focus();
-      }
-    });
-  }
-
   function checkCode(
     value: string,
     verify: (code: string) => Promise<AccountResult>,
@@ -110,37 +74,14 @@ export function EmailChangeFlow({ currentEmail, canUsePassword }: EmailChangeFlo
     startTransition(async () => {
       const checked = await verify(value);
       setResult(checked);
-      setCodeStatus(statusFor(checked));
+      setCodeStatus(codeStatusFor(checked));
       if (checked.ok) onOk();
-      else if (statusFor(checked) !== "locked") {
+      else if (codeStatusFor(checked) !== "locked") {
         requestAnimationFrame(() => {
           codeRef.current?.focus();
           codeRef.current?.select();
         });
       }
-    });
-  }
-
-  function onReauthCodeChange(value: string) {
-    if (codeStatus === "error") {
-      setCodeStatus("idle");
-      setResult({});
-    }
-    setCode(value);
-    if (value.length === CODE_LENGTH)
-      checkCode(value, verifyReauthCode, () => {
-        go("new");
-      });
-  }
-
-  function onPasswordSubmit(event: SubmitEvent<HTMLFormElement>) {
-    event.preventDefault();
-    const password = formString(event.currentTarget, "password");
-    startTransition(async () => {
-      const checked = await verifyReauthPassword(password);
-      setResult(checked);
-      if (checked.ok) go("new");
-      else passwordRef.current?.focus();
     });
   }
 
@@ -152,8 +93,10 @@ export function EmailChangeFlow({ currentEmail, canUsePassword }: EmailChangeFlo
       const requested = await requestEmailChange(value);
       setResult(requested);
       if (requested.ok) go("code");
-      else if (requested.error === "reauthExpired") go("reauth");
-      else newEmailRef.current?.focus();
+      else if (requested.error === "reauthExpired") {
+        setReauthExpired(true);
+        go("reauth");
+      } else newEmailRef.current?.focus();
     });
   }
 
@@ -188,110 +131,15 @@ export function EmailChangeFlow({ currentEmail, canUsePassword }: EmailChangeFlo
       <div ref={rootRef}>
         <Card className={styles.card}>
           {step === "reauth" ? (
-            <>
-              <h2 className={styles.cardTitle}>{t("reauthTitle")}</h2>
-              {result.error === "reauthExpired" ? (
-                <Banner tone="info">{t("reauthExpired")}</Banner>
-              ) : null}
-              {method === "code" ? (
-                <>
-                  <p className={styles.muted}>
-                    {t.rich(reauthSent ? "reauthSent" : "reauthLead", {
-                      email: currentEmail,
-                      b: (chunks) => <strong>{chunks}</strong>,
-                    })}
-                  </p>
-                  {reauthSent ? (
-                    <form
-                      className={styles.form}
-                      onSubmit={(event) => {
-                        event.preventDefault();
-                        if (codeStatus === "locked") sendCode();
-                        else if (code.length === CODE_LENGTH)
-                          checkCode(code, verifyReauthCode, () => {
-                            go("new");
-                          });
-                      }}
-                      noValidate
-                    >
-                      <CodeField
-                        ref={codeRef}
-                        id={`${id}-reauth-code`}
-                        label={tAuth("codeLabel")}
-                        hint={tAuth("codeHint", { email: currentEmail })}
-                        value={code}
-                        onChange={onReauthCodeChange}
-                        status={codeStatus}
-                        error={message}
-                        checkingLabel={tAuth("checkingCode")}
-                        successLabel={tAuth("codeConfirmed")}
-                      />
-                      <Button type="submit" size="md" loading={pending} className={styles.backLink}>
-                        {codeStatus === "locked" ? tAuth("requestNewCode") : t("confirm")}
-                      </Button>
-                    </form>
-                  ) : (
-                    <>
-                      {message ? (
-                        <p className={styles.muted} role="alert">
-                          {message}
-                        </p>
-                      ) : null}
-                      <Button
-                        size="md"
-                        loading={pending}
-                        className={styles.backLink}
-                        onClick={sendCode}
-                      >
-                        {t("sendCode")}
-                      </Button>
-                    </>
-                  )}
-                </>
-              ) : (
-                <form
-                  className={styles.form}
-                  onSubmit={onPasswordSubmit}
-                  action={() => undefined}
-                  noValidate
-                >
-                  <input
-                    type="email"
-                    name="username"
-                    autoComplete="username"
-                    value={currentEmail}
-                    readOnly
-                    hidden
-                  />
-                  <PasswordField
-                    ref={passwordRef}
-                    id={`${id}-reauth-password`}
-                    name="password"
-                    label={tAuth("passwordLabel")}
-                    autoComplete="current-password"
-                    required
-                    error={message ?? undefined}
-                    showLabel={tCommon("showPassword")}
-                    hideLabel={tCommon("hidePassword")}
-                  />
-                  <Button type="submit" size="md" loading={pending} className={styles.backLink}>
-                    {t("confirm")}
-                  </Button>
-                </form>
-              )}
-              {canUsePassword ? (
-                <button
-                  type="button"
-                  className={styles.textLink}
-                  onClick={() => {
-                    setMethod(method === "code" ? "password" : "code");
-                    setResult({});
-                  }}
-                >
-                  {method === "code" ? t("usePassword") : t("useCode")}
-                </button>
-              ) : null}
-            </>
+            <ReauthStep
+              currentEmail={currentEmail}
+              canUsePassword={canUsePassword}
+              expired={reauthExpired}
+              onConfirmed={() => {
+                setReauthExpired(false);
+                go("new");
+              }}
+            />
           ) : null}
 
           {step === "new" ? (

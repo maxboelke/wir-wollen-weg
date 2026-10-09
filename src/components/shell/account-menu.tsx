@@ -21,7 +21,9 @@ interface AccountMenuProps {
 /**
  * Avatar menu for signed-in users (sitemap §5): Meine Reisen · Konto · Sprache · Hilfe ·
  * Abmelden – always in this order (SC 3.2.6). Disclosure pattern (button + list of links),
- * Esc and outside click close it, focus returns to the button.
+ * Esc and outside click close it, focus returns to the button. Tabbing out of button and
+ * panel closes it too, without moving focus (R-031, WCAG 2.4.11 – the panel must not cover
+ * the newly focused element).
  */
 export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps) {
   const t = useTranslations();
@@ -56,7 +58,15 @@ export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps
   }, [open]);
 
   return (
-    <div className={styles.menu}>
+    <div
+      className={styles.menu}
+      onBlur={(event) => {
+        // Only when focus moves to another element outside (null = window/tab switch or a
+        // click on nothing focusable – the pointer handler covers clicks outside).
+        const next = event.relatedTarget;
+        if (open && next instanceof Node && !event.currentTarget.contains(next)) setOpen(false);
+      }}
+    >
       <button
         ref={buttonRef}
         type="button"

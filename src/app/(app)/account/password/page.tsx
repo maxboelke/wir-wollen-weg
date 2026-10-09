@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PageShell } from "@/components/page-shell";
 import { PasswordSettings } from "@/features/account/components/password-settings";
-import { hasPassword } from "@/server/account";
+import { hasPassword, isReauthenticated } from "@/server/account";
 import { getSession } from "@/server/session";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
   return { title: t("titleSet") };
 }
 
-/** W13 «Passwort» (F-042): set or change (≥ 10 characters, leak check) or remove. */
+/** W13 «Passwort» (F-042): set or change (≥ 10 characters, leak check) or remove – after a fresh confirmation (R-023). */
 export default async function PasswordPage() {
   const session = await getSession();
   if (!session) redirect("/login?next=/account/password");
@@ -20,6 +20,7 @@ export default async function PasswordPage() {
       <PasswordSettings
         email={session.user.email}
         passwordSet={await hasPassword(session.user.id)}
+        confirmed={await isReauthenticated(session.session.id)}
       />
     </PageShell>
   );

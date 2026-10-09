@@ -17,8 +17,16 @@
  *   needs a new mail, so a person who mistypes repeatedly still gets 2 full codes; an
  *   attacker gets at most 10 guesses/hour = a 1-in-100,000 chance per hour for a 6-digit
  *   code (vs. 25 guesses/hour with only the per-code budget). For passwords, 10 guesses/hour
- *   make online guessing pointless. Trade-off: an attacker can lock a known address for an
- *   hour – mitigated by the code also arriving by mail and the lock lifting by itself.
+ *   make online guessing pointless.
+ * - **Lockout is not a denial of service (R-021):** a wrong code only counts while a code
+ *   is actually pending for the address (without one there is nothing to guess), and the
+ *   lock only blocks ENTERING codes and passwords – code mails stay possible within the
+ *   mail budget, and the magic link in them (proof of mailbox, not guessable) always signs
+ *   in and clears the lock. Someone who only knows the address can delay, never prevent
+ *   access. Wrong passwords count for every address alike (no enumeration).
+ * - **Per mailbox (R-027):** `anna+1@…`, `anna+2@…` (and `a.nna@gmail.com`) land in one
+ *   mailbox; the mail budget is also counted per mailbox: 10 per hour, 30 per day.
+ *   Failures stay per exact address (a lock must not spill over to other accounts).
  *
  * The same rules apply to every address, whether an account exists or not (no enumeration).
  */
@@ -26,6 +34,8 @@ export const EMAIL_LIMITS = {
   requestsPerHour: 5,
   requestsPerDay: 20,
   failuresPerHour: 10,
+  mailboxRequestsPerHour: 10,
+  mailboxRequestsPerDay: 30,
 } as const;
 
 export const HOUR_MS = 60 * 60 * 1000;
@@ -59,21 +69,42 @@ export function decideVerification(failures: readonly number[], now: number): Li
     : { allowed: true };
 }
 
-/** Asking for a code mail: blocked while locked or when the hourly/daily budget is used up. */
+/**
+ * Asking for a code mail: blocked only when the mail budget of the address or its mailbox
+ * is used up – NOT while the address is locked (R-021: the mail carries the magic link).
+ */
 export function decideCodeRequest(
   requests: readonly number[],
-  failures: readonly number[],
+  mailboxRequests: readonly number[],
   now: number,
 ): LimitDecision {
-  const verification = decideVerification(failures, now);
-  if (!verification.allowed) return verification;
   const wait = Math.max(
     windowRetryAfter(requests, EMAIL_LIMITS.requestsPerHour, HOUR_MS, now),
     windowRetryAfter(requests, EMAIL_LIMITS.requestsPerDay, DAY_MS, now),
+    windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerHour, HOUR_MS, now),
+    windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerDay, DAY_MS, now),
   );
   return wait > 0
     ? { allowed: false, reason: "requests", retryAfterSeconds: wait }
     : { allowed: true };
+}
+
+/**
+ * The mailbox an address delivers to (R-027) – only for the mail budget, never for
+ * accounts: lower case, without a `+tag`; for Gmail also without dots and with
+ * googlemail.com folded into gmail.com.
+ */
+export function mailboxOf(email: string): string {
+  const address = email.trim().toLowerCase();
+  const at = address.lastIndexOf("@");
+  if (at < 1) return address;
+  let local = address.slice(0, at);
+  let domain = address.slice(at + 1);
+  const plus = local.indexOf("+");
+  if (plus > 0) local = local.slice(0, plus);
+  if (domain === "googlemail.com") domain = "gmail.com";
+  if (domain === "gmail.com") local = local.replaceAll(".", "");
+  return `${local}@${domain}`;
 }
 
 /** Whole minutes for the message «Bitte warte kurz (2 Min.) …» – at least 1. */

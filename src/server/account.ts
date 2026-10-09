@@ -2,13 +2,9 @@ import "server-only";
 import { and, eq, isNotNull } from "drizzle-orm";
 import { auth } from "./auth";
 import { hashPassword, verifyPassword } from "./auth/password-hash";
+import { isReauthenticatedIn, markReauthenticatedIn, reauthIdentifier } from "./auth/reauth";
 import { db } from "./db/client";
 import { account } from "./db/schema";
-
-/** Re-authentication stays valid this long (Flow I.2: e-mail change; later account deletion). */
-export const REAUTH_TTL_MS = 10 * 60 * 1000;
-
-const reauthIdentifier = (sessionId: string) => `reauth-${sessionId}`;
 
 async function context() {
   return auth().$context;
@@ -60,19 +56,12 @@ export async function checkPassword(userId: string, password: string): Promise<b
 
 /** Marks the current session as freshly re-authenticated (code or password). */
 export async function markReauthenticated(sessionId: string): Promise<void> {
-  const ctx = await context();
-  await ctx.internalAdapter.deleteVerificationByIdentifier(reauthIdentifier(sessionId));
-  await ctx.internalAdapter.createVerificationValue({
-    identifier: reauthIdentifier(sessionId),
-    value: "1",
-    expiresAt: new Date(Date.now() + REAUTH_TTL_MS),
-  });
+  await markReauthenticatedIn((await context()).internalAdapter, sessionId);
 }
 
+/** Confirmed within the last 10 minutes (code, password or a code/magic-link sign-in). */
 export async function isReauthenticated(sessionId: string): Promise<boolean> {
-  const ctx = await context();
-  const row = await ctx.internalAdapter.findVerificationValue(reauthIdentifier(sessionId));
-  return row ? row.expiresAt > new Date() : false;
+  return isReauthenticatedIn((await context()).internalAdapter, sessionId);
 }
 
 export async function clearReauthentication(sessionId: string): Promise<void> {

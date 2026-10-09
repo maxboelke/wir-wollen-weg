@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
-import { useId, useRef, useState, useTransition, type SubmitEvent } from "react";
+import { useEffect, useId, useRef, useState, useTransition, type SubmitEvent } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -13,6 +13,7 @@ import { formString } from "@/lib/form";
 import { checkPassword } from "@/lib/password-policy";
 import { deletePassword, savePassword, type AccountResult } from "../actions";
 import { useAccountErrorMessage } from "./account-errors";
+import { ReauthStep } from "./reauth-step";
 import styles from "./account.module.css";
 
 const PROBLEM_ERRORS = {
@@ -21,8 +22,22 @@ const PROBLEM_ERRORS = {
   common: "passwordCommon",
 } as const;
 
-/** /account/password (W13, F-042): set/change and remove (back to passwordless). */
-export function PasswordSettings({ email, passwordSet }: { email: string; passwordSet: boolean }) {
+interface PasswordSettingsProps {
+  email: string;
+  passwordSet: boolean;
+  /** Confirmed within the last 10 minutes (code/password or a code/magic-link sign-in). */
+  confirmed: boolean;
+}
+
+/**
+ * /account/password (W13, F-042): set/change and remove (back to passwordless). Needs a
+ * fresh confirmation first (R-023) – same step as for the e-mail change.
+ */
+export function PasswordSettings({
+  email,
+  passwordSet,
+  confirmed: initiallyConfirmed,
+}: PasswordSettingsProps) {
   const t = useTranslations("account.password");
   const tAll = useTranslations();
   const errorMessage = useAccountErrorMessage();
@@ -34,6 +49,28 @@ export function PasswordSettings({ email, passwordSet }: { email: string; passwo
   const [result, setResult] = useState<AccountResult>({});
   const [pending, startTransition] = useTransition();
   const [confirmRemove, setConfirmRemove] = useState(false);
+  const [confirmed, setConfirmed] = useState(initiallyConfirmed);
+  const reauthRef = useRef<HTMLDivElement>(null);
+  const firstRender = useRef(true);
+
+  // After switching between confirmation and form, focus follows (never lost on <body>).
+  useEffect(() => {
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
+    if (confirmed) inputRef.current?.focus();
+    else reauthRef.current?.focus();
+  }, [confirmed]);
+  const [expired, setExpired] = useState(false);
+
+  /** The confirmation ran out meanwhile: ask again (the form keeps nothing secret). */
+  function askAgain() {
+    setConfirmRemove(false);
+    setResult({});
+    setExpired(true);
+    setConfirmed(false);
+  }
 
   function onSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -47,6 +84,10 @@ export function PasswordSettings({ email, passwordSet }: { email: string; passwo
     }
     startTransition(async () => {
       const saved = await savePassword(password);
+      if (saved.error === "reauthExpired") {
+        askAgain();
+        return;
+      }
       setResult(saved);
       if (saved.ok) {
         toast({ message: t("saved") });
@@ -61,36 +102,53 @@ export function PasswordSettings({ email, passwordSet }: { email: string; passwo
         {tAll("account.back")}
       </Link>
       <h1>{passwordSet ? t("titleChange") : t("titleSet")}</h1>
-      <Card className={styles.card}>
-        <p className={styles.muted}>{t("lead")}</p>
-        <form className={styles.form} onSubmit={onSubmit} action={() => undefined} noValidate>
-          <PasswordField
-            ref={inputRef}
-            id={`${id}-password`}
-            name="password"
-            label={t("label")}
-            hint={t("hint")}
-            autoComplete="new-password"
-            required
-            error={errorMessage(result) ?? undefined}
-            showLabel={tCommon("showPassword")}
-            hideLabel={tCommon("hidePassword")}
-          />
-          {/* Lets password managers store the new password for the right account. */}
-          <input
-            type="email"
-            name="username"
-            autoComplete="username"
-            value={email}
-            readOnly
-            hidden
-          />
-          <Button type="submit" size="md" loading={pending} className={styles.backLink}>
-            {tCommon("save")}
-          </Button>
-        </form>
-      </Card>
-      {passwordSet ? (
+      {confirmed ? null : (
+        <div ref={reauthRef} tabIndex={-1}>
+          <Card className={styles.card}>
+            <ReauthStep
+              currentEmail={email}
+              canUsePassword={passwordSet}
+              expired={expired}
+              onConfirmed={() => {
+                setExpired(false);
+                setConfirmed(true);
+              }}
+            />
+          </Card>
+        </div>
+      )}
+      {confirmed ? (
+        <Card className={styles.card}>
+          <p className={styles.muted}>{t("lead")}</p>
+          <form className={styles.form} onSubmit={onSubmit} action={() => undefined} noValidate>
+            <PasswordField
+              ref={inputRef}
+              id={`${id}-password`}
+              name="password"
+              label={t("label")}
+              hint={t("hint")}
+              autoComplete="new-password"
+              required
+              error={errorMessage(result) ?? undefined}
+              showLabel={tCommon("showPassword")}
+              hideLabel={tCommon("hidePassword")}
+            />
+            {/* Lets password managers store the new password for the right account. */}
+            <input
+              type="email"
+              name="username"
+              autoComplete="username"
+              value={email}
+              readOnly
+              hidden
+            />
+            <Button type="submit" size="md" loading={pending} className={styles.backLink}>
+              {tCommon("save")}
+            </Button>
+          </form>
+        </Card>
+      ) : null}
+      {confirmed && passwordSet ? (
         <>
           <Button
             variant="dangerQuiet"
@@ -129,7 +187,11 @@ export function PasswordSettings({ email, passwordSet }: { email: string; passwo
                   loading={pending}
                   onClick={() => {
                     startTransition(async () => {
-                      await deletePassword();
+                      const removed = await deletePassword();
+                      if (removed.error === "reauthExpired") {
+                        askAgain();
+                        return;
+                      }
                       setConfirmRemove(false);
                       toast({ message: t("removed") });
                       router.push("/account");

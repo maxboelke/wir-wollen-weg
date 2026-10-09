@@ -5,6 +5,7 @@ import {
   decideVerification,
   EMAIL_LIMITS,
   HOUR_MS,
+  mailboxOf,
   retryAfterMinutes,
   windowRetryAfter,
 } from "./email-limits";
@@ -14,7 +15,13 @@ const minutesAgo = (m: number) => NOW - m * 60_000;
 
 describe("rate limits per e-mail address", () => {
   it("uses the documented values", () => {
-    expect(EMAIL_LIMITS).toEqual({ requestsPerHour: 5, requestsPerDay: 20, failuresPerHour: 10 });
+    expect(EMAIL_LIMITS).toEqual({
+      requestsPerHour: 5,
+      requestsPerDay: 20,
+      failuresPerHour: 10,
+      mailboxRequestsPerHour: 10,
+      mailboxRequestsPerDay: 30,
+    });
   });
 
   it("allows 5 code mails per hour, then waits until the oldest leaves the window", () => {
@@ -40,7 +47,7 @@ describe("rate limits per e-mail address", () => {
     }
   });
 
-  it("locks after 10 failed verifications in an hour – for codes and new mails", () => {
+  it("locks verification after 10 failures in an hour – but never the code mail (R-021)", () => {
     const nine = Array.from({ length: 9 }, (_, i) => minutesAgo(i + 1));
     expect(decideVerification(nine, NOW)).toEqual({ allowed: true });
     const ten = [...nine, minutesAgo(30)];
@@ -49,7 +56,30 @@ describe("rate limits per e-mail address", () => {
       reason: "locked",
       retryAfterSeconds: 30 * 60,
     });
-    expect(decideCodeRequest([], ten, NOW)).toMatchObject({ allowed: false, reason: "locked" });
+    // The mail (with the magic link) only depends on the mail budget.
+    expect(decideCodeRequest([], [], NOW)).toEqual({ allowed: true });
+  });
+
+  it("also counts the mail budget per mailbox: 10 per hour, 30 per day (R-027)", () => {
+    const ten = Array.from({ length: 10 }, (_, i) => minutesAgo(i + 1));
+    expect(decideCodeRequest([], ten.slice(1), NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest([], ten, NOW)).toEqual({
+      allowed: false,
+      reason: "requests",
+      retryAfterSeconds: 50 * 60,
+    });
+    const spread = Array.from({ length: 30 }, (_, i) => minutesAgo(61 + i * 40));
+    expect(decideCodeRequest([], spread, NOW)).toMatchObject({ allowed: false });
+    expect(decideCodeRequest([], spread.slice(1), NOW)).toEqual({ allowed: true });
+  });
+
+  it("maps plus addresses and Gmail variants to one mailbox", () => {
+    expect(mailboxOf(" Anna+Trip1@Example.org ")).toBe("anna@example.org");
+    expect(mailboxOf("anna+@example.org")).toBe("anna@example.org");
+    expect(mailboxOf("a.n.na+x@googlemail.com")).toBe("anna@gmail.com");
+    expect(mailboxOf("a.nna@example.org")).toBe("a.nna@example.org");
+    expect(mailboxOf("+tag@example.org")).toBe("+tag@example.org");
+    expect(mailboxOf("no-at-sign")).toBe("no-at-sign");
   });
 
   it("computes window waits and minutes for the message", () => {
