@@ -50,7 +50,6 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
         dialog.close();
         dialog.inert = false;
         dialog.style.pointerEvents = "";
-        dialog.style.pointerEvents = "";
       }
       if (dialog.open) return;
       returnFocus.current =

@@ -55,8 +55,10 @@ describe("pendingAuth (Flow A.4)", () => {
     expect(local.data.size).toBe(0);
     local.data.set(PENDING_AUTH_KEY, "{not json");
     expect(loadPendingAuth(NOW, [local])).toBeNull();
-    local.data.set(PENDING_AUTH_KEY, JSON.stringify({ ...entry, origin: "//evil.example" }));
-    expect(loadPendingAuth(NOW, [local])).toBeNull();
+    for (const origin of ["//evil.example", "/\\evil.example", "/..//evil.example", "https://x"]) {
+      local.data.set(PENDING_AUTH_KEY, JSON.stringify({ ...entry, origin }));
+      expect(loadPendingAuth(NOW, [local]), origin).toBeNull();
+    }
   });
 
   it("prefers the newest entry and can be cleared", () => {

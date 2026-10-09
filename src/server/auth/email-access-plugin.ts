@@ -175,11 +175,22 @@ export function emailAccess(options: EmailAccessOptions) {
       }
       const userId = (ctx?.context as { session?: { user?: { id?: string } } } | undefined)?.session
         ?.user?.id;
-      if (type === "forget-password") {
-        return options.sendPasswordResetEmail({ email, code: otp, userId });
-      }
-      if (type === "change-email") {
-        return options.sendChangeEmailEmail({ email, code: otp, userId });
+      if (type === "forget-password" || type === "change-email") {
+        // Not awaited: Better Auth only sends for existing accounts (reset) or free addresses
+        // (e-mail change) and would otherwise await the SMTP round trip – a measurable
+        // difference that reveals whether an account exists (F-041, no enumeration).
+        const send =
+          type === "forget-password"
+            ? options.sendPasswordResetEmail({ email, code: otp, userId })
+            : options.sendChangeEmailEmail({ email, code: otp, userId });
+        send.catch((error: unknown) => {
+          // Never log address or code.
+          console.error(
+            `email-otp: sending ${type} mail failed`,
+            error instanceof Error ? error.message : "unknown",
+          );
+        });
+        return Promise.resolve();
       }
       // Sign-in codes only through the combined flow (/email-access/request).
       return Promise.reject(new Error(`email-otp: no mail for type "${type}"`));

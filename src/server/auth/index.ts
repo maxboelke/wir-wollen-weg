@@ -81,7 +81,10 @@ function browserLanguageChoice(headers: Headers | undefined) {
   const cookie = headers?.get("cookie");
   const locale = readCookie(cookie, LOCALE_COOKIE);
   const at = Number(readCookie(cookie, LOCALE_CHOSEN_COOKIE));
-  return isLocale(locale) && Number.isFinite(at) && at > 0 ? { locale, at: new Date(at) } : null;
+  // The cookie is client-controlled: a time in the future (or beyond the Date range) would
+  // win every later choice or crash the account update – only accept past timestamps.
+  const valid = Number.isFinite(at) && at > 0 && at <= Date.now() + 60_000;
+  return isLocale(locale) && valid ? { locale, at: new Date(at) } : null;
 }
 
 function createAuth() {

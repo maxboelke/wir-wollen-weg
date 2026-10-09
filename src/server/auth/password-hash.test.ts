@@ -33,10 +33,14 @@ describe("Argon2id password hashing (F-042)", () => {
     expect(await verifyPassword(huge, "x")).toBe(false);
   });
 
-  it("matches the RFC 9106 style reference output and Node's native argon2 where available", async () => {
+  it("matches a known answer and Node's native argon2 where available", async () => {
     const salt = new Uint8Array(16).fill(7);
     const js = await deriveArgon2id("password", salt, { ...ARGON2_PARAMS }, "js");
-    expect(Buffer.from(js).toString("hex")).toHaveLength(64);
+    // Known answer (computed with Node's native crypto.argon2, Node 24.21) – pins the JS path
+    // also on Node 22, where no native cross-check is possible.
+    expect(Buffer.from(js).toString("hex")).toBe(
+      "b95b1097ae2e8cb169c28302867b5192f0372672e9b9fee4099ea37b6746a97c",
+    );
     const native = (nodeCrypto as unknown as { argon2?: unknown }).argon2;
     if (typeof native === "function") {
       // Node ≥ 24.7 (CI, production): both implementations must agree byte for byte.

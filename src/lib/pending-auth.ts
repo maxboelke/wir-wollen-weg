@@ -1,3 +1,5 @@
+import { toSafeInternalPath } from "./safe-path";
+
 /**
  * `pendingAuth` (user-flows A.4): the sign-in/registration flow survives reloads, app
  * switches and in-app browsers that drop the tab. Stored in sessionStorage AND
@@ -48,8 +50,8 @@ function parse(raw: string | null, now: number): PendingAuth | null {
     const value = JSON.parse(raw) as Partial<PendingAuth>;
     if (
       typeof value.origin !== "string" ||
-      !value.origin.startsWith("/") ||
-      value.origin.startsWith("//") ||
+      // Storage is writable by anything on this origin: same open-redirect rules as `next`.
+      toSafeInternalPath(value.origin, "") !== value.origin ||
       typeof value.email !== "string" ||
       value.step !== "code" ||
       typeof value.requestedAt !== "number"

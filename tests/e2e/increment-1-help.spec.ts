@@ -1,8 +1,8 @@
-import AxeBuilder from "@axe-core/playwright";
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import de from "../../messages/de.json" with { type: "json" };
 import en from "../../messages/en.json" with { type: "json" };
 import { openAccountMenu, signUp } from "./helpers/auth";
+import { expectNoSeriousAxeViolations } from "./helpers/axe";
 import { uniqueEmail } from "./helpers/mailpit";
 
 // Increment 1 – help page W15 (F-051), footer (R-018), axe for the new pages.
@@ -116,17 +116,6 @@ test.describe("footer (R-018)", () => {
     ).toBeFocused();
   });
 });
-
-async function expectNoSeriousAxeViolations(page: Page, label: string) {
-  const results = await new AxeBuilder({ page }).analyze();
-  const severe = results.violations.filter(
-    (v) => v.impact === "serious" || v.impact === "critical",
-  );
-  expect(
-    severe,
-    `${label}: ${severe.map((v) => `${v.id} (${v.nodes.map((n) => n.target.join(" ")).join(", ")})`).join("; ")}`,
-  ).toEqual([]);
-}
 
 for (const colorScheme of ["light", "dark"] as const) {
   test.describe(`axe – increment 1 pages – ${colorScheme}`, () => {

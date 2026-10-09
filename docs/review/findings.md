@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-09 (Developer: Inkrement 1) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -23,11 +23,22 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 | R-013 | niedrig | Netzwerkfehler weicht von Flow H.5 Schritt 3e ab | verifiziert |
 | R-014 | niedrig | Eigene IP-Auflösung doppelt zu Better Auth | offen (später entscheiden) |
 | R-015 | niedrig | Hydration-Warnung auf `/auth/magic` (`method="POST"` am Formular mit Action) | verifiziert |
-| R-016 | mittel | Code-Feld: kein sichtbarer Fokus, wenn alle 6 Ziffern stehen | behoben – bitte prüfen |
-| R-017 | mittel | Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein | behoben – bitte prüfen |
-| R-018 | niedrig | Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen | behoben – bitte prüfen |
-| R-019 | niedrig | Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert | behoben – bitte prüfen |
+| R-016 | mittel | Code-Feld: kein sichtbarer Fokus, wenn alle 6 Ziffern stehen | verifiziert |
+| R-017 | mittel | Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein | verifiziert |
+| R-018 | niedrig | Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen | verifiziert |
+| R-019 | niedrig | Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert | verifiziert |
 | R-020 | niedrig | Fokus-Ringe im Kontrastmodus (forced colors) unsichtbar | verifiziert (vom Reviewer behoben) |
+| R-021 | hoch | Lockout-DoS: fremde Adresse mit 10 Anfragen ohne Code komplett sperrbar | offen |
+| R-022 | mittel | Limits pro E-Mail nicht atomar – parallele Anfragen überschreiten 5/Std. und 10 Fehlversuche | offen |
+| R-023 | hoch | Passwort setzen/entfernen ohne Re-Authentifizierung – umgeht Re-Auth der E-Mail-Änderung | offen |
+| R-024 | hoch | Konto-Enumeration über Antwortzeit bei „Passwort vergessen“ | verifiziert (vom Reviewer behoben) |
+| R-025 | niedrig | Manipuliertes Cookie `ww-lang-at` → 500 bei Anmeldung/Registrierung | verifiziert (vom Reviewer behoben) |
+| R-026 | niedrig | `pendingAuth.origin` schwächer geprüft als `toSafeInternalPath` | verifiziert (vom Reviewer behoben) |
+| R-027 | niedrig | Mail-Budget pro Adresse über Plus-Adressen umgehbar | offen |
+| R-028 | niedrig | HMAC-Schlüssel der Limits = `BETTER_AUTH_SECRET` ohne Ableitung, fester Rückfallschlüssel | offen |
+| R-029 | niedrig | axe-Tests messen mitten in Überblendungen (CI rot/flaky, PR #6) | verifiziert (vom Reviewer behoben) |
+| R-030 | niedrig | Argon2id-Test ohne Known-Answer – Node-22-Pfad ungeprüft | verifiziert (vom Reviewer behoben) |
+| R-031 | niedrig | Avatar-Menü bleibt offen, wenn der Tastaturfokus es verlässt | offen |
 
 ## Details
 
@@ -59,7 +70,7 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem: Gefälschtes `X-Forwarded-For` umging das Limit; mehrwertige Header landeten in einem gemeinsamen Topf (Login-DoS).
 - Umsetzung: `src/server/auth/client-ip.ts` (`AUTH_IP_HEADER`, `AUTH_TRUSTED_PROXIES`, rechts-nach-links), interner Header `x-ww-client-ip`, 400 ohne auflösbare IP (außer development/ci). Demo bekommt Caddy-Proxy davor (`docker/Caddyfile.demo`).
 - Grenze: Direkt erreichbares `next start` bleibt per Header täuschbar (Next setzt XFF nur, wenn er fehlt) – nur hinter Proxy betreiben.
-- Offen für Inkrement 1 (hoch priorisiert): Limits pro E-Mail-Adresse. → Umsetzung Inkrement 1: 5 Code-Mails/Std., 20/Tag, Sperre nach 10 Fehlversuchen/Std. (Code + Passwort) pro Adresse, immer aktiv, Adresse nur als HMAC gespeichert (`src/lib/email-limits.ts`, `src/server/auth/email-limit-store.ts`, Tabelle `auth_attempt`); E2E „rate limits per e-mail address“ – behoben – bitte prüfen.
+- Offen für Inkrement 1 (hoch priorisiert): Limits pro E-Mail-Adresse. → Umsetzung Inkrement 1: 5 Code-Mails/Std., 20/Tag, Sperre nach 10 Fehlversuchen/Std. (Code + Passwort) pro Adresse, immer aktiv, Adresse nur als HMAC gespeichert (`src/lib/email-limits.ts`, `src/server/auth/email-limit-store.ts`, Tabelle `auth_attempt`); E2E „rate limits per e-mail address“. Prüfung (Reviewer, Inkrement 1): Werte und Verhalten korrekt, gleiche Antworten für bekannte/unbekannte Adressen; Restprobleme als R-021, R-022, R-027, R-028.
 - Status: verifiziert (Caddy real getestet: 429 ab der 11. Anfrage)
 
 ### R-006: Magic-Link-Landeseite verbraucht Token per GET-Link
@@ -135,7 +146,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Erwartetes Verhalten: Solange das Eingabefeld den Fokus hat, ist immer ein Fokus-Indikator sichtbar (≥ 3:1, design-system §9 „Fokus überall“).
 - Vorschlag: Bei vollem Wert den Fokusring um die ganze Kästchen-Gruppe (z. B. `.group:has(.input:focus-visible)` mit `--ww-focus-ring`) oder am letzten Kästchen zeigen – ohne Caret. Optik kurz mit Designer abstimmen (§9.7 definiert den Fall nicht). E2E: nach falschem Code ist ein Fokus-Indikator vorhanden.
 - Umsetzung (Inkrement 1): Ohne „aktives“ Kästchen (6 Ziffern, Prüfen, Erfolg) liegt derselbe Fokusring (`--ww-focus-ring`, im Kontrastmodus transparente Outline) um die ganze Kästchen-Gruppe (`.groupFocus::after`, `src/components/ui/code-field.*`); im gesperrten Zustand kein Ring, der Fokus springt auf die Primär-Taste „Neuen Code senden“. E2E „R-016“ (`tests/e2e/increment-1-findings.spec.ts`). Optik-Annahme: Ring = Gruppenumriss mit 4 px Abstand (§9.7 definiert den Fall nicht) – Designer bitte kurz bestätigen.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Inkrement 1): E2E „R-016“ grün (desktop + mobile Chromium, Node 24, Produktions-Build); Gruppenring bei 6 Ziffern/Prüfen sichtbar, im Kontrastmodus über die transparente Outline. Designer-Bestätigung der Optik (Gruppenumriss, 4 px) steht noch aus – kein Blocker.
+- Status: verifiziert
 
 ### R-017: Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein
 - Schwere: mittel (sichtbarer Fehler beim ersten Eindruck, W03 Einladung)
@@ -144,7 +156,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Erwartetes Verhalten: Beim ersten Laden (SSR) keine erneute Eintritts-Animation für bereits gemalte Inhalte; Eintritt nur bei clientseitiger Navigation (G-01) bzw. wenn der Inhalt vor dem ersten Paint verborgen war.
 - Vorschlag: Eintritt nur abspielen, wenn das Element nicht schon gemalt wurde – z. B. Modul-Flag „erste Hydration“ (beim Hard-Load überspringen, bei Client-Navigation abspielen) oder CSS-Startzustand nur unter einem im Head-Skript gesetzten Attribut (`html[data-js]`), damit ohne JS weiterhin alles sichtbar bleibt. E2E: Opazität der Reisekarte fällt nach dem ersten Paint nie auf 0.
 - Umsetzung (Inkrement 1): `useWasServerPainted()` (`src/lib/use-hydration.ts`, `useSyncExternalStore`-Server-Snapshot) – `Enter`/`StaggerEnter` spielen nur noch für Inhalte, die clientseitig erscheinen (Navigation, neuer Schritt), nie für schon gemalte SSR-Inhalte. Illustrationen (`IllustrationMotion`): Ebenen sind VOR dem ersten Paint verborgen (`html[data-js]` aus dem Head-Skript + `data-intro="pending"`, nur bei voller Bewegung), CSS-Failsafe nach 2,4 s; ohne JS/reduziert sofort sichtbar. E2E „R-017“: Opazität der Reisekarten-h1 fällt nach dem ersten Paint nie unter 0,99 (CPU ×6) und Schrittwechsel animieren weiter.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Inkrement 1): E2E „R-017“ grün (Opazität der Reisekarten-h1 bleibt ≥ 0,99 bei CPU ×6); Code-Review `useWasServerPainted` (Server-Snapshot nur während der Hydration) und Illustrations-Failsafe (2,4 s, nur mit JS und voller Bewegung) schlüssig.
+- Status: verifiziert
 
 ### R-018: Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen
 - Schwere: niedrig
@@ -153,7 +166,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Erwartetes Verhalten: Footer-Gerüst im Seitenrahmen (Hilfe-Link, Sprach-Segment), Radio(-Gruppe) als Basis-Komponente – oder bewusste Verschiebung durch CEO/PM in die Roadmap (Hilfe-Seite F-051 existiert noch nicht, Ziel `/de/hilfe`).
 - Vorschlag: Mit Inkrement 1 (Code-Schritt, F-051-Hilfelinks) nachziehen; Radio spätestens mit W08-Werkzeugleiste/Abstimmung.
 - Umsetzung (Inkrement 1): Footer im Seitenrahmen und auf der Landing (`src/components/shell/site-footer.tsx`): „Hilfe“ (→ `/de/hilfe` bzw. `/en/help`) + Segment „Deutsch | English“ (App-Routen per Cookie/Konto, Präfix-Seiten per Link; Fokus bleibt nach dem Umschalten auf dem Segment). Datenschutz/Impressum folgen mit den Rechtstexten (Q14/Q16). Radio-Gruppe `src/components/ui/radio-group.tsx` (native Radios, 24 px, Zeile ≥ 44 px, G-12-Pop), genutzt im Konto, Demo in `/dev/ui`. E2E „footer (R-018)“.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Inkrement 1): Footer auf App-, Präfix- und Landing-Seiten mit Hilfe-Link und Segment „Deutsch | English“ (`aria-current`, Fokus bleibt), Radio-Gruppe im Konto und in `/dev/ui`; E2E „footer (R-018)“ grün.
+- Status: verifiziert
 
 ### R-019: Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert
 - Schwere: niedrig
@@ -162,7 +176,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Erwartetes Verhalten: Fokus sofort auf dem Auslöser, Seite sofort bedienbar.
 - Vorschlag: Beim Schließen sofort `dialog.close()` und den Austritt über ein Klon-/Overlay-Element bzw. `@starting-style`/`transition-behavior: allow-discrete` (`overlay`, `display`) per CSS animieren; oder vor der Animation `inert`-Wirkung aufheben (z. B. Dialog per `close()` schließen und nicht-modal (`show()`) bis Animationsende halten).
 - Umsetzung (Inkrement 1): Beim Schließen wird der modale Dialog sofort geschlossen (`close()`), Fokus geht im selben Ereignis an den Auslöser; die Austritts-Animation läuft auf demselben Element nicht-modal, `inert` und mit `pointer-events: none`; erneutes Öffnen während des Austritts bricht ihn ab. E2E „R-019“ (Fokus < 100 ms zurück, nicht mehr `:modal`, Auslöser sofort treffbar).
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Inkrement 1): E2E „R-019“ grün (Fokus < 100 ms zurück, Dialog nicht mehr `:modal`, Auslöser sofort treffbar). Doppelte Zeile `dialog.style.pointerEvents = ""` vom Reviewer entfernt.
+- Status: verifiziert
 
 ### R-020: Fokus-Ringe im Kontrastmodus (forced colors) unsichtbar
 - Schwere: niedrig (vom Reviewer behoben)
@@ -170,3 +185,97 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem: `outline: none` + Ring über `box-shadow`; im Kontrastmodus entfernt der Browser `box-shadow` → kein Fokus an Minze-Taste „Reise planen“, „Anmelden“ im Hero, Marke/Sprachumschalter auf Indigo, Cockpit-Tabs/-Tasten, Schalter, Textfeld, Code-Feld (Playwright `forcedColors: 'active'`, Screenshot).
 - Umsetzung: `outline: var(--ww-focus-width) solid transparent` statt `none` – im Normalmodus unsichtbar, im Kontrastmodus vom System eingefärbt. Geprüft: Fokus in forced colors sichtbar, Normalmodus unverändert.
 - Status: verifiziert
+
+---
+
+## Review Inkrement 1 (Commit d2fc096, Reviewer 2026-10-09)
+
+Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `RATE_LIMIT_ENABLED=true` für die Sicherheits-Proben (Skripte gegen `/api/auth/*` mit wechselnden `X-Forwarded-For`).
+
+### R-021: Lockout-DoS – fremde Adresse mit 10 Anfragen ohne Code komplett sperrbar
+- Schwere: hoch (vor jedem öffentlichen Zugriff zu beheben; Offline-Demo nicht betroffen)
+- Datei: `src/server/auth/email-access-plugin.ts` (`afterVerification`), `src/lib/email-limits.ts:15-22,62-68`
+- Problem / Reproduktion: Better Auth antwortet auch dann mit `INVALID_OTP`, wenn für die Adresse **gar kein Code aussteht** (`atomicVerifyOTP`: kein Datensatz → `INVALID_OTP`). Jeder dieser Aufrufe zählt als Fehlversuch. Probe: Konto `victim@…` anlegen, dann 10 × `POST /api/auth/sign-in/email-otp {email: victim, otp: "000000"}` (ohne vorher einen Code anzufordern; eine IP reicht, IP-Limit 10/Min.) → 10. Antwort 429 `EMAIL_LOCKED`; danach für das Opfer: Code anfordern → 429 `EMAIL_LOCKED` (`retryAfter: 3600`), Passwort-Login → 429. Wiederholt der Angreifer das stündlich (10 Anfragen/Std.), kann sich das Opfer **dauerhaft** nicht mehr anmelden – weder per Code, Link noch Passwort. Bestehende Sitzungen laufen weiter. Der Code-Kommentar „mitigated by the code also arriving by mail“ stimmt nicht: die Sperre blockiert auch die Code-Mail (`decideCodeRequest`).
+- Erwartetes Verhalten: Ein Dritter, der nur die Adresse kennt, kann den Zugang per Mail (Postfach-Besitz) nicht verhindern; die Sperre bremst nur das Raten.
+- Vorschlag: (1) Während der Sperre weiterhin Mails im 5/Std.-Budget zulassen; gesperrt bleibt nur die Code-**Eingabe** und das Passwort, der **Magic-Link** (Postfach-Beweis, nicht ratbar) funktioniert immer – Text im Code-Schritt: „Zu viele Versuche. Nutze den Link in der Mail.“ (Texte mit UI/UX abstimmen). (2) Fehlversuche beim Code nur zählen, wenn ein Code ausstand (vor dem Verify `findVerificationValue` prüfen) – ohne ausstehenden Code ist Raten sinnlos. Beim Passwort für alle Adressen gleich weiterzählen (sonst Enumeration über das Sperrverhalten). (3) E2E: 10 Fehlversuche ohne Code → Code-Anforderung bleibt möglich, Magic-Link meldet an.
+- Status: offen
+
+### R-022: Limits pro E-Mail nicht atomar – parallele Anfragen überschreiten die Grenzen
+- Schwere: mittel
+- Datei: `src/server/auth/email-limit-store.ts:69-88` (`takeCodeRequest`, `assertVerificationAllowed`/`recordVerificationFailure`)
+- Problem / Reproduktion: Prüfen (SELECT) und Zählen (INSERT) sind getrennt; parallele Anfragen sehen alle denselben Stand. Probe (a): 20 parallele `POST /email-access/request` für eine neue Adresse (verschiedene IPs) → **18 angenommen, 18 Mails** zugestellt (Grenze 5/Std.). Probe (b): 40 parallele falsche Passwörter auf ein Konto mit Passwort → **18 Fehlversuche ausgewertet und gezählt** (Grenze 10/Std.); Argon2 (19 MiB, Threadpool) macht das Zeitfenster breit. Gleiches gilt für die Re-Auth per Code (`verifyReauthCode` nutzt das nicht-atomare `checkVerificationOTP` von Better Auth).
+- Erwartetes Verhalten: Grenzen halten auch unter Parallelität (Mailbombing ≤ 5/Std., Raten ≤ 10/Std.).
+- Vorschlag: Pro Schlüssel serialisieren – z. B. Transaktion mit `pg_advisory_xact_lock(hashtextextended(key, 0))`, darin zählen und einfügen; für Fehlversuche einen „Versuch“ **vor** der Prüfung reservieren (Zeile `attempt` einfügen, bei Erfolg löschen) statt nachträglich zu zählen. Unit-/Integrationstest mit `Promise.all`.
+- Status: offen
+
+### R-023: Passwort setzen/entfernen ohne Re-Authentifizierung – umgeht die Re-Auth der E-Mail-Änderung
+- Schwere: hoch
+- Datei: `src/features/account/actions.ts:209-224` (`savePassword`, `deletePassword`), `:263-278` (`verifyReauthPassword`)
+- Problem / Reproduktion: Wer eine Sitzung hat (entsperrtes Handy, fremder Rechner, 90-Tage-Session), kann ohne jede Bestätigung ein Passwort setzen oder ändern. Damit ist die Re-Authentifizierung der E-Mail-Änderung (Flow I.2, F-042) wertlos: `/account/password` → Passwort „X“ festlegen → `/account/email` → „Mit Passwort bestätigen“ mit „X“ → neue Adresse des Angreifers → Code an die eigene Adresse → **Konto übernommen**; das Opfer bekommt nur die Info-Mail und kommt nicht mehr hinein (H.4: kein Self-Service). Ebenso kann ein Angreifer ein bestehendes Passwort ändern/entfernen.
+- Erwartetes Verhalten: Ändern der Anmeldewege (Passwort setzen/ändern/entfernen, E-Mail) verlangt eine frische Bestätigung des Besitzes (Code an die Adresse oder bisheriges Passwort).
+- Vorschlag: `savePassword`/`deletePassword` nur mit `isReauthenticated(session.id)` (gleiche Code/Passwort-Komponente wie `/account/email`); Ausnahme ohne zusätzlichen Schritt: Sitzung ist gerade per Code entstanden (z. B. `session.createdAt` < 10 Min. → beim Login `markReauthenticated` setzen), damit das optionale Passwort im Registrierungsschritt ohne Extra-Code bleibt. Optional: nach Passwort-Änderung andere Sitzungen beenden. UX (Flow I.1 #4) kurz abstimmen; E2E „Passwort festlegen nach > 10 Min. verlangt Bestätigung“.
+- Status: offen
+
+### R-024: Konto-Enumeration über die Antwortzeit bei „Passwort vergessen“
+- Schwere: hoch (F-041: „gleiche Antwortzeiten/Texte unabhängig von der Existenz des Kontos“) · vom Reviewer behoben
+- Datei: `src/server/auth/email-access-plugin.ts` (`sendVerificationOTP`)
+- Problem / Reproduktion: Better Auth ruft `sendVerificationOTP` nur für **existierende** Konten auf und wartet darauf (`runInBackgroundOrAwait` ohne `backgroundTasks.handler` = `await`). `POST /email-otp/request-password-reset`: unbekannte Adressen Median **24 ms**, bekannte **74 ms** (8 + 8 Messungen, lokales Mailpit; mit echtem SMTP noch deutlicher). Text und Status sind gleich, die Zeit verrät das Konto. Gleiches Muster bei `request-email-change` (vergebene neue Adresse = keine Mail = schneller; nur angemeldet).
+- Umsetzung (Reviewer): Reset- und Änderungs-Mail werden nicht mehr abgewartet (Fehler werden ohne Adresse/Code geloggt) – wie schon bei `/email-access/request`.
+- Prüfung: siehe Bericht Inkrement 1 (Nachmessung).
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-025: Manipuliertes Cookie `ww-lang-at` → 500 bei Anmeldung/Registrierung
+- Schwere: niedrig (wirkt nur im eigenen Browser) · vom Reviewer behoben
+- Datei: `src/server/auth/index.ts` (`browserLanguageChoice`)
+- Problem / Reproduktion: `ww-lang-at=100000000000000000` + `lang=de` → `POST /sign-in/email-otp` mit gültigem Code → **500** (`Invalid Date` beim Schreiben von `locale_chosen_at`). Ein Zeitstempel in der Zukunft würde außerdem jede spätere ausdrückliche Wahl „überholen“.
+- Umsetzung: nur Zeitstempel `> 0` und `≤ jetzt + 60 s` werden akzeptiert. `ww-motion` geprüft: nur der exakte Wert `reduce` wirkt, Manipulation harmlos.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-026: `pendingAuth.origin` schwächer geprüft als `toSafeInternalPath`
+- Schwere: niedrig (Defense in depth – Ausnutzen setzt Schreibzugriff auf den Storage dieses Origins voraus) · vom Reviewer behoben
+- Datei: `src/lib/pending-auth.ts` (`parse`), genutzt als `href` im Banner „Weiter“
+- Problem: Prüfung nur `startsWith("/") && !startsWith("//")`; `"/\evil.example"` (Browser: `//evil.example`) und `"/..//evil.example"` wurden akzeptiert.
+- Umsetzung: `origin` muss unverändert durch `toSafeInternalPath` gehen; Unit-Test um `/\…`, `/..//…`, absolute URL ergänzt.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-027: Mail-Budget pro Adresse über Plus-Adressen umgehbar
+- Schwere: niedrig
+- Datei: `src/server/auth/email-limit-store.ts:19-22` (`emailLimitKey`)
+- Problem / Reproduktion: Normalisierung nur `trim().toLowerCase()` – richtig für Konten (Better Auth unterscheidet `a+x@` und `a@`), aber für Mailbombing landen `opfer+1@…`, `opfer+2@…` … alle im selben Postfach mit je eigenem 5/Std.-Budget; Grenze ist dann nur das IP-Limit (3/Min./IP).
+- Vorschlag: Für das **Mail-Budget** zusätzlich einen Postfach-Schlüssel zählen (Plus-Tag entfernen; bei gmail.com/googlemail.com auch Punkte), z. B. 10/Std. und 30/Tag pro Postfach. Fehlversuche bleiben pro exakter Adresse (sonst sperrt man fremde Plus-Konten mit).
+- Status: offen
+
+### R-028: HMAC-Schlüssel der Limits = `BETTER_AUTH_SECRET` ohne Ableitung, fester Rückfallschlüssel
+- Schwere: niedrig
+- Datei: `src/server/auth/email-limit-store.ts:20`
+- Problem: Das Session-/Verschlüsselungs-Secret wird direkt als HMAC-Schlüssel für einen anderen Zweck verwendet (keine Domänentrennung); fehlt es, gilt der im Code stehende Schlüssel `"dev-only-email-limit-key"` – dann sind die gespeicherten HMACs mit bekannten Adressen nachrechenbar (Datensparsamkeit verfehlt). `BETTER_AUTH_SECRET` ist im Env-Schema optional.
+- Vorschlag: Schlüssel ableiten (`hkdfSync("sha256", secret, "", "ww:email-limit:v1", 32)`) und außerhalb von development/ci ohne Secret hart abbrechen statt Rückfall.
+- Status: offen
+
+### R-029: axe-Tests messen mitten in Überblendungen (CI rot/flaky, PR #6)
+- Schwere: niedrig (Test-Stabilität) · vom Reviewer behoben
+- Dateien: `tests/e2e/helpers/axe.ts` (neu), `tests/e2e/increment-1-help.spec.ts`, `tests/e2e/ui-foundation.spec.ts`, `tests/e2e/smoke.spec.ts`
+- Problem: CI meldete `color-contrast` 2,04 (`#514c76` auf `#1f1a45`, z. B. `#code > .answer > p`). `#514c76` ist kein Token, sondern die Mischung aus gedämpftem Text (dunkel) und Hintergrund bei Zwischendeckkraft: Überblendungen bleiben auch bei reduzierter Bewegung (M-D2: G-01 `Enter`, G-14 `ww-help-in`, Avatar-Menü). Keine echte Kontrastverletzung – im Ruhezustand erfüllen die Farben AA.
+- Umsetzung: gemeinsamer Helfer `expectNoSeriousAxeViolations` wartet vor `analyze()` auf alle endlichen Animationen/Transitions (`document.getAnimations()`, unendliche wie Spinner ausgenommen, bis zu 5 Runden); alle drei Specs nutzen ihn. Regeln unverändert (keine abgeschwächte Prüfung).
+- Status: verifiziert (vom Reviewer behoben) – WebKit lokal nicht installiert, dort bitte CI beobachten
+
+### R-030: Argon2id-Test ohne Known-Answer – Node-22-Pfad ungeprüft
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/server/auth/password-hash.test.ts`
+- Problem: Der Test „RFC 9106 style reference output“ prüfte nur die Länge; ohne natives `crypto.argon2` (Node 22) gab es keinen Abgleich.
+- Umsetzung: Known-Answer (`password`, Salz 16 × 0x07, m=19456/t=2/p=1/32 Byte) aus Node 24 nativ; unter Node 22 (@noble/hashes) identisch – beide Implementierungen erzeugen dieselben Hashes. Testtitel korrigiert.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-031: Avatar-Menü bleibt offen, wenn der Tastaturfokus es verlässt
+- Schwere: niedrig (WCAG 2.4.11 Fokus nicht verdeckt, AA)
+- Datei: `src/components/shell/account-menu.tsx:34-56`
+- Problem / Reproduktion: `/trips` → Avatar-Taste fokussieren → Enter (Menü offen) → 7 × Tab: Fokus liegt im Footer („Deutsch“), `aria-expanded` bleibt `true`, das Panel schwebt weiter über dem Inhalt und kann fokussierte Elemente darunter verdecken. Geschlossen wird nur per Esc, Zeiger außerhalb oder Auslöser.
+- Erwartetes Verhalten: Verlässt der Fokus Auslöser und Panel, schließt das Menü (ohne Fokus zu verschieben). Esc und „Fokus zurück auf Auslöser“ sind bereits korrekt (geprüft).
+- Vorschlag: `focusout` auf dem Menü-Container: wenn `relatedTarget` außerhalb von Auslöser/Panel liegt → `setOpen(false)`; E2E ergänzen.
+- Status: offen
+
+#### Hinweise ohne Finding (Inkrement 1)
+- 200 % Textgröße: WCAG 1.4.4 (1280/640 px) und 1.4.10 (320 px, 100 %) ohne Überlauf auf `/account`, `/account/email`, `/de/hilfe`, `/login`, `/trips`; auch eine 80-Zeichen-Adresse bricht um. Nur über WCAG hinaus (360 px **und** 200 %) laufen Footer-Segment (+3 px) und auf `/account/email` der fett gesetzte Satz mit der Adresse (+94 px) über – bei Gelegenheit `overflow-wrap: anywhere` am `<strong>`.
+- Bewegungs-Schalter (ux-spec §7.5): Gerät reduziert → Schalter „an“, `aria-disabled`, Grund sichtbar, Klick ohne Wirkung; Einschalten wirkt sofort (`data-motion`), Snackbar „Gespeichert“; zweites Gerät bekommt `data-motion="reduce"` schon im Server-HTML, Ausschalten wirkt dort nach Neuladen. Abweichung zur Spec: Speicherung im Cookie `ww-motion` statt `localStorage` – gleichwertig (erster Frame korrekt, auch nach Abmelden), Spec bei Gelegenheit nachziehen.
+- Hilfetext „es gilt immer nur der neueste Code“ geprüft: alter Code nach erneutem Senden → `INVALID_OTP`, neuer Code → angemeldet.
+- `remainingAttempts` verrät nur, ob für eine Adresse gerade ein Code aussteht (auch für unbekannte Adressen möglich) – keine Konto-Enumeration.
