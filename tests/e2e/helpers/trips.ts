@@ -32,7 +32,7 @@ export async function newPerson(browser: Browser, name: string): Promise<Person>
 export async function joinSignedIn(page: Page, token: string): Promise<void> {
   await page.goto(`/i/${token}`);
   await page.getByRole("button", { name: en.invite.joinCta, exact: true }).click();
-  await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}(\?welcome=1)?$/);
+  await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}(\/days)?(\?welcome=1)?$/);
 }
 
 /** Opens the «⋯» trip menu in the cockpit. */

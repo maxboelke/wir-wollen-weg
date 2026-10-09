@@ -119,3 +119,36 @@
 .toggle[aria-expanded="true"] .chevron {
   transform: rotate(180deg);
 }
+
+/* Optional comment (F-005), one line with ellipsis – full text on the member's own page */
+.comment {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  min-width: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+.comment q {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manage {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+  padding-inline: var(--ww-space-2);
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.manage:focus-visible {
+  border-radius: var(--ww-radius-sm);
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}

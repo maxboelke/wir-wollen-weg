@@ -174,7 +174,9 @@
     "nameTakenHint": "Es gibt schon jemanden mit diesem Namen in der Reise. Wie wäre es mit „{suggestion}“?",
     "useSuggestion": "Übernehmen",
     "nights": "{count, plural, one {# Nacht} other {# Nächte}}",
-    "nightsRange": "{min}–{max} Nächte"
+    "nightsRange": "{min}–{max} Nächte",
+    "placeholderHello": "Hallo {name}! {orga} hat dich eingeladen.",
+    "placeholderUsed": "Dieser persönliche Link wurde schon verwendet. Du kannst trotzdem normal beitreten."
   },
   "trips": {
     "title": "Meine Reisen",
@@ -592,7 +594,9 @@
     "status": {
       "open": "noch offen",
       "submitted": "abgegeben",
-      "voted": "abgestimmt"
+      "voted": "abgestimmt",
+      "submittedOn": "abgegeben · {date}",
+      "placeholder": "Platzhalter · fehlt noch"
     },
     "organizer": "Orga",
     "you": "du",
@@ -607,7 +611,7 @@
     "welcomeClose": "Hinweis schließen",
     "soon": {
       "title": "{tab} kommt bald",
-      "days": "Hier trägst du bald ein, an welchen Tagen du kannst – mit Tippen oder Wischen.",
+      "days": "Hier markierst du bald, an welchen Tagen du kannst – per Tippen oder Wischen.",
       "group": "Hier erscheinen bald der Kalender der Gruppe und die Zeiträume, in denen alle können.",
       "poll": "Hier stimmt ihr bald über die besten Zeiträume ab.",
       "back": "Zur Übersicht"
@@ -655,7 +659,10 @@
     "notFoundTitle": "Reise nicht gefunden",
     "notFoundText": "Diese Reise gibt es nicht oder du bist nicht dabei. Wenn du eingeladen wurdest, öffne den Einladungslink aus dem Gruppenchat.",
     "notFoundAction": "Meine Reisen",
-    "kpiMore": "{count} weitere"
+    "kpiMore": "{count} weitere",
+    "membersTitlePlaceholders": "Wer ist dabei? ({count} + {placeholders} Platzhalter)",
+    "commentOf": "Kommentar von {name}",
+    "placeholderManage": "Verwalten"
   },
   "share": {
     "title": "Freunde einladen",
@@ -686,7 +693,7 @@
     "joinClosedToast": "Beitritt ist geschlossen",
     "renew": "Link erneuern",
     "renewTitle": "Neuen Link erzeugen?",
-    "renewText": "Der bisherige Link funktioniert dann nicht mehr.",
+    "renewText": "Der bisherige Link funktioniert dann nicht mehr – auch für Platzhalter.",
     "renewConfirm": "Neuen Link erzeugen",
     "renewed": "Neuer Link ist da – der alte funktioniert nicht mehr.",
     "closedOrga": "Der Beitritt ist geschlossen. Öffne ihn, um neue Leute einzuladen.",
@@ -695,7 +702,8 @@
     "continue": "Weiter: Meine Tage eintragen",
     "text": {
       "invite": "Wir wollen weg: {trip}! Trag bis {deadline} ein, wann du kannst – dauert 2 Minuten: {link}",
-      "inviteNoDeadline": "Wir wollen weg: {trip}! Trag ein, wann du kannst – dauert 2 Minuten: {link}"
+      "inviteNoDeadline": "Wir wollen weg: {trip}! Trag ein, wann du kannst – dauert 2 Minuten: {link}",
+      "placeholder": "Wir wollen weg: {trip}! {name}, hier ist dein persönlicher Link – trag ein, wann du kannst: {link}"
     }
   },
   "tripSettings": {
@@ -708,5 +716,150 @@
     "deleteTitle": "Reise für alle löschen",
     "deleteText": "Alle Tage, Stimmen und Mitglieder werden sofort gelöscht.",
     "unsaved": "Du hast ungespeicherte Änderungen."
+  },
+  "days": {
+    "title": "Meine Tage",
+    "draft": "Entwurf – zählt erst, wenn du abgibst.",
+    "draftShort": "Entwurf",
+    "holidaysFor": "Feiertage für: {region}",
+    "holidaysChange": "Ändern",
+    "legendTitle": "So funktioniert’s",
+    "legendNo": "Geht nicht",
+    "legendMaybe": "Zur Not",
+    "legendYes": "Geht (nicht markiert)",
+    "legendHoliday": "Feiertag",
+    "legendText": "Pinsel wählen, dann Tage antippen oder darüber wischen. Nicht markierte Tage zählen als „Geht“.",
+    "legendRange": "Zeitraum: Start und Ende antippen – praktisch ohne Wischen.",
+    "legendKeys": "Mit der Tastatur: Pfeiltasten bewegen, Leertaste markiert, Umschalt+Pfeil wählt Zeiträume, 1/2/3 wählt den Pinsel, Strg+Z macht rückgängig.",
+    "calHelp": "Pfeiltasten zum Bewegen, Leertaste zum Markieren, Umschalt+Pfeil für Zeiträume, 1/2/3 wählt den Pinsel.",
+    "jumpLabel": "Zu Monat springen",
+    "skipCalendar": "Zum Kalender",
+    "skipTools": "Zu den Werkzeugen",
+    "state": {
+      "no": "geht nicht",
+      "maybe": "zur Not",
+      "yes": "geht"
+    },
+    "brush": {
+      "no": "Geht nicht",
+      "maybe": "Zur Not",
+      "yes": "Geht"
+    },
+    "brushGroup": "Was markierst du?",
+    "cell": {
+      "today": "heute",
+      "weekend": "Wochenende",
+      "holiday": "Feiertag {name}",
+      "outside": "nicht im Zeitraum",
+      "past": "vergangen"
+    },
+    "holidaysIn": "Feiertage im {month}",
+    "tripHoliday": "{name} (Reise)",
+    "tools": "Werkzeuge",
+    "range": "Zeitraum wählen",
+    "rangeShort": "Zeitraum",
+    "undo": "Rückgängig",
+    "quick": "Schnellaktionen",
+    "rangeHintStart": "Jetzt den Start antippen.",
+    "rangeHintEnd": "Jetzt das Ende antippen.",
+    "rangeCancel": "Abbrechen",
+    "submit": "Fertig – abgeben",
+    "submitting": "Gibt ab …",
+    "submitted": "Abgegeben · {time}",
+    "saving": "Speichert …",
+    "saved": "Gespeichert",
+    "failed": "Nicht gespeichert",
+    "retry": "Erneut versuchen",
+    "announce": {
+      "single": "{date}: {state}",
+      "range": "{range}: {count, plural, one {# Tag} other {# Tage}} auf {state} gesetzt",
+      "toast": "{count, plural, one {# Tag} other {# Tage}} auf „{state}“ gesetzt",
+      "undo": "Rückgängig: {count, plural, one {# Tag} other {# Tage}} zurückgesetzt",
+      "redo": "Wiederholt: {count, plural, one {# Tag} other {# Tage}} geändert",
+      "selection": "Auswahl {range}, {count, plural, one {# Tag} other {# Tage}}",
+      "drag": "{range} · {count, plural, one {# Tag} other {# Tage}}",
+      "rangeStart": "Start: {date}. Jetzt das Ende antippen.",
+      "rangeCancelled": "Zeitraum abgebrochen.",
+      "brush": "Pinsel: {brush}",
+      "nothing": "Keine Änderung."
+    },
+    "quickActions": {
+      "workdaysMaybe": "Alle Werktage (Mo–Fr) auf „zur Not“",
+      "weekendsYes": "Alle Wochenenden auf „geht“",
+      "holidaysYes": "Feiertage auf „geht“",
+      "showTripHolidays": "Auch Feiertage der Reise zeigen ({region})",
+      "hideTripHolidays": "Feiertage der Reise ausblenden ({region})",
+      "reset": "Alles zurücksetzen",
+      "resetTitle": "Alles zurücksetzen?",
+      "resetText": "Alle Markierungen im Zeitraum werden auf „geht“ gesetzt. Du kannst das rückgängig machen.",
+      "resetConfirm": "Zurücksetzen"
+    },
+    "empty": {
+      "title": "Keine Tage markiert",
+      "text": "Du hast keine Tage markiert. Heißt das, du kannst im ganzen Zeitraum?",
+      "yes": "Ja, ich kann immer",
+      "no": "Noch markieren"
+    },
+    "success": {
+      "title": "Danke, {name}! Deine Tage sind drin.",
+      "text": "Du kannst sie jederzeit ändern – das zählt dann sofort.",
+      "feedbackLegend": "Kurze Frage: Hättest du lieber deinen Kalender importiert?",
+      "apple": "Ja, Apple/iCloud",
+      "google": "Ja, Google",
+      "outlook": "Ja, Outlook",
+      "other": "Ja, anderer",
+      "none": "Nein, so passt es",
+      "skip": "Überspringen",
+      "answer": "Antworten",
+      "continue": "Weiter"
+    },
+    "comment": {
+      "label": "Möchtest du etwas dazu sagen?",
+      "optional": "(optional)",
+      "placeholder": "z. B. Juli nur mit Kindern",
+      "hint": "Alle in der Reise können das lesen.",
+      "counter": "{count}/200",
+      "saved": "Kommentar gespeichert",
+      "tooLong": "Höchstens 200 Zeichen."
+    },
+    "banner": {
+      "voting": "Die Abstimmung läuft schon. Änderungen wirken auf die Vorschläge, nicht auf bereits abgegebene Stimmen.",
+      "locked": "Der Termin steht fest – deine Tage sind gesperrt.",
+      "lockedPast": "Diese Reise ist vorbei – deine Tage sind gesperrt.",
+      "offline": "Keine Verbindung. Änderungen werden gespeichert, sobald du wieder online bist.",
+      "offlineSubmit": "Abgeben geht wieder, sobald du online bist.",
+      "rangeChanged": "Der Zeitraum der Reise wurde geändert. Tage außerhalb wurden ausgeblendet.",
+      "reload": "Neu laden",
+      "signedOut": "Du bist abgemeldet – deine Änderungen sind noch hier. Melde dich an, um sie zu speichern.",
+      "signIn": "Anmelden",
+      "error": "Speichern hat nicht geklappt. Deine Markierungen sind noch da."
+    },
+    "welcome": {
+      "title": "Du bist dabei!",
+      "text": "Markier jetzt, wann du nicht kannst – Tage antippen oder über mehrere Tage wischen.",
+      "sketch": "Skizze: ein Finger wischt über vier Tage."
+    }
+  },
+  "placeholders": {
+    "title": "Wer soll dabei sein?",
+    "intro": "Leg Namen an, damit alle sehen, wer noch fehlt. Jeder Platzhalter bekommt einen eigenen Link.",
+    "nameLabel": "Name",
+    "add": "Hinzufügen",
+    "added": "{name} ist angelegt.",
+    "missing": "fehlt noch",
+    "link": "Link",
+    "linkFor": "Persönlicher Link für {name}",
+    "linkIntro": "Schick diesen Link nur an {name}. Wer darüber beitritt, übernimmt den Platzhalter – der Name ist schon eingetragen.",
+    "actions": "Aktionen für {name}",
+    "rename": "Umbenennen",
+    "renameTitle": "„{name}“ umbenennen",
+    "renameDone": "Name gespeichert",
+    "remove": "Entfernen",
+    "removeTitle": "{name} entfernen?",
+    "removeText": "Der persönliche Link von {name} funktioniert dann nicht mehr.",
+    "removeDone": "{name} wurde entfernt.",
+    "full": "Die Reise ist voll (30 von 30, Platzhalter zählen mit).",
+    "nameRequired": "Bitte gib einen Namen ein.",
+    "label": "Platzhalter"
   }
 }

@@ -110,7 +110,9 @@ export default async function InvitePage({ params }: Params) {
   const today = todayIso();
   const phase = uiPhase(preview, today);
   const orga = preview.organizerFirstName;
-  const full = preview.memberCount >= MAX_TRIP_MEMBERS;
+  // A free placeholder already counts – taking it over needs no extra spot (F-007).
+  const claiming = preview.placeholder && !preview.placeholder.claimed ? preview.placeholder : null;
+  const full = !claiming && preview.memberCount + preview.placeholderCount >= MAX_TRIP_MEMBERS;
   const sameYear = preview.rangeStart.slice(0, 4) === preview.rangeEnd.slice(0, 4);
   const nights = nightsText(preview.minNights, preview.preferredNights, {
     nights: (count) => t("nights", { count }),
@@ -152,6 +154,14 @@ export default async function InvitePage({ params }: Params) {
               </li>
             ) : null}
           </ul>
+          {claiming ? (
+            <p className={styles.hello}>{t("placeholderHello", { name: claiming.name, orga })}</p>
+          ) : null}
+          {preview.placeholder?.claimed ? (
+            <Banner tone="info" role="status">
+              {t("placeholderUsed")}
+            </Banner>
+          ) : null}
           {phase === "vote" ? <Banner tone="info">{t("phaseVote")}</Banner> : null}
           {phase === "fixed" && preview.fixedStart && preview.fixedEnd ? (
             <Banner tone="info">
@@ -175,6 +185,7 @@ export default async function InvitePage({ params }: Params) {
           <JoinPanel
             token={token}
             name={session.user.name}
+            joinName={claiming?.name}
             email={session.user.email}
             action={joinTripFormAction.bind(null, token)}
           />
@@ -194,6 +205,7 @@ export default async function InvitePage({ params }: Params) {
               variant="invite"
               onNameSubmit={joinTrip.bind(null, token)}
               tripName={preview.name}
+              defaultName={claiming?.name}
               codeIllustration={<Illustration name="code-sent" />}
             />
           </JoinGate>

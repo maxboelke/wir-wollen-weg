@@ -8,8 +8,10 @@ import { getSession, type Session } from "@/server/session";
 import {
   findMembership,
   listMembers,
+  listPlaceholders,
   type MemberRow,
   type MemberView,
+  type PlaceholderView,
   type TripRow,
 } from "@/server/trips";
 import { viewerFormat, type ViewerFormat } from "@/server/viewer";
@@ -19,6 +21,8 @@ export interface TripView {
   trip: TripRow;
   me: MemberRow;
   members: MemberView[];
+  /** Open placeholders (F-007). Their invite tokens must only reach organiser views. */
+  placeholders: PlaceholderView[];
   isOrganizer: boolean;
   phase: UiPhase;
   progress: Progress | null;
@@ -38,17 +42,23 @@ export const loadTripView = cache(async (publicId: string, path: string): Promis
   const found = await findMembership(publicId, session.user.id);
   if (!found) notFound();
   const today = todayIso();
-  const [members, format] = await Promise.all([listMembers(found.trip.id), viewerFormat(session)]);
+  const [members, placeholders, format] = await Promise.all([
+    listMembers(found.trip.id),
+    listPlaceholders(found.trip.id),
+    viewerFormat(session),
+  ]);
   const phase = uiPhase(found.trip, today);
   return {
     session,
     trip: found.trip,
     me: found.member,
     members,
+    placeholders,
     isOrganizer: found.member.role === "organizer",
     phase,
     progress: phaseProgress(phase, members),
-    full: members.length >= MAX_TRIP_MEMBERS,
+    // Open placeholders count towards the 30 (F-007).
+    full: members.length + placeholders.length >= MAX_TRIP_MEMBERS,
     today,
     format,
   };

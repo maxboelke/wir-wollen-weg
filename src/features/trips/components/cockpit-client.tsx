@@ -31,6 +31,7 @@ export function StickyHead({ children, tail }: { children: ReactNode; tail: bool
       <div ref={sentinel} className={styles.sentinel} aria-hidden="true" />
       <div
         className={cx(styles.head, tail && !stuck && styles.headWithTail, stuck && styles.stuck)}
+        data-sticky-head=""
       >
         {children}
       </div>

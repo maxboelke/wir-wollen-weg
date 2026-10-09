@@ -32,6 +32,7 @@
   "dependencies": {
     "@noble/hashes": "2.4.0",
     "better-auth": "1.7.7",
+    "date-holidays": "3.37.0",
     "drizzle-orm": "0.45.4",
     "next": "16.4.0",
     "next-intl": "4.14.9",

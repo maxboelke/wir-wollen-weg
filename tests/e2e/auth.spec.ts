@@ -39,8 +39,9 @@ test("invite → code from mail → name → joined (token survives sign-up)", a
   await page.getByRole("button", { name: en.invite.confirmJoin }).click();
 
   // Joined: straight into the trip (default tab) with the welcome hint (W03-06).
-  await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
-  await expect(page.getByRole("heading", { level: 1 })).toHaveText(tripName);
+  // CEO decision: after joining → «Meine Tage» (Increment 3).
+  await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}\/days$/);
+  await expect(page.getByRole("heading", { level: 1 })).toContainText(tripName);
   await expect(page.getByText(en.trip.welcomeTitle)).toBeVisible();
 
   const cookie = await sessionCookie(page.context());
@@ -79,8 +80,8 @@ test("magic link from the same mail works in another browser", async ({ page, br
   await expect(tab).toHaveURL(new RegExp(`/i/${token}$`));
   await tab.getByLabel(en.auth.nameLabel).fill("Lena");
   await tab.getByRole("button", { name: en.invite.confirmJoin }).click();
-  await expect(tab).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
-  await expect(tab.getByRole("heading", { level: 1 })).toHaveText(tripName);
+  await expect(tab).toHaveURL(/\/trips\/[a-z0-9]{10}\/days$/);
+  await expect(tab.getByRole("heading", { level: 1 })).toContainText(tripName);
 
   // The link is single-use: the error shows only after the tap, focus on the heading.
   await tab.goto(mail.magicLink);

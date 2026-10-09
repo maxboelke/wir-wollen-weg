@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, eq, inArray, ne, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { cleanDisplayName, firstName, isNameTaken, suggestName } from "@/lib/display-name";
 import type { TripValues } from "@/lib/trip-input";
 import {
@@ -9,7 +9,7 @@ import {
   isPublicIdShape,
 } from "@/lib/tokens";
 import { db } from "./db/client";
-import { MAX_TRIP_MEMBERS, trip, tripMember, type MemberRole } from "./db/schema";
+import { MAX_TRIP_MEMBERS, trip, tripMember, tripPlaceholder, type MemberRole } from "./db/schema";
 
 /**
  * Trip data access (F-001 ff.). Every read or write by trip id goes through a membership
@@ -44,6 +44,9 @@ export interface MemberView {
   joinedAt: Date;
   submittedAt: Date | null;
   votedAt: Date | null;
+  /** Last change of days/comment (F-007 «abgegeben · zuletzt geändert …»). */
+  availabilityUpdatedAt: Date | null;
+  comment: string | null;
 }
 
 /** Members of a trip in joining order – only call after `findMembership` succeeded. */
@@ -56,10 +59,34 @@ export async function listMembers(tripId: string): Promise<MemberView[]> {
       joinedAt: tripMember.joinedAt,
       submittedAt: tripMember.submittedAt,
       votedAt: tripMember.votedAt,
+      availabilityUpdatedAt: tripMember.availabilityUpdatedAt,
+      comment: tripMember.comment,
     })
     .from(tripMember)
     .where(eq(tripMember.tripId, tripId))
     .orderBy(asc(tripMember.joinedAt), asc(tripMember.displayName));
+}
+
+export interface PlaceholderView {
+  id: string;
+  displayName: string;
+  createdAt: Date;
+  /** Personal invite token – only ever handed to the organiser's views (F-007). */
+  inviteToken: string;
+}
+
+/** Open (not yet claimed) placeholders of a trip – only call after `findMembership`. */
+export async function listPlaceholders(tripId: string): Promise<PlaceholderView[]> {
+  return db()
+    .select({
+      id: tripPlaceholder.id,
+      displayName: tripPlaceholder.displayName,
+      createdAt: tripPlaceholder.createdAt,
+      inviteToken: tripPlaceholder.inviteToken,
+    })
+    .from(tripPlaceholder)
+    .where(and(eq(tripPlaceholder.tripId, tripId), isNull(tripPlaceholder.claimedAt)))
+    .orderBy(asc(tripPlaceholder.createdAt), asc(tripPlaceholder.displayName));
 }
 
 export interface TripListItem {
@@ -165,9 +192,25 @@ export async function updateTrip(tripId: string, values: TripValues): Promise<vo
   await db().update(trip).set(values).where(eq(trip.id, tripId));
 }
 
+/**
+ * New invite link (F-002/F-004). The personal placeholder links are renewed too – the dialog
+ * promises «Der bisherige Link funktioniert dann nicht mehr – auch für Platzhalter» (W06).
+ */
 export async function regenerateInviteToken(tripId: string): Promise<string> {
   const token = generateInviteToken();
-  await db().update(trip).set({ inviteToken: token }).where(eq(trip.id, tripId));
+  await db().transaction(async (tx) => {
+    await tx.update(trip).set({ inviteToken: token }).where(eq(trip.id, tripId));
+    const placeholders = await tx
+      .select({ id: tripPlaceholder.id })
+      .from(tripPlaceholder)
+      .where(eq(tripPlaceholder.tripId, tripId));
+    for (const placeholder of placeholders) {
+      await tx
+        .update(tripPlaceholder)
+        .set({ inviteToken: generateInviteToken() })
+        .where(eq(tripPlaceholder.id, placeholder.id));
+    }
+  });
   return token;
 }
 
@@ -270,6 +313,7 @@ export async function renameMember(
   }
 }
 
+/** Names of the other members plus the open placeholders (names are unique across both, F-007). */
 async function namesOfOthers(
   executor: Tx | ReturnType<typeof db>,
   tripId: string,
@@ -279,7 +323,128 @@ async function namesOfOthers(
     .select({ displayName: tripMember.displayName })
     .from(tripMember)
     .where(and(eq(tripMember.tripId, tripId), ne(tripMember.userId, userId)));
-  return rows.map((row) => row.displayName);
+  return [...rows.map((row) => row.displayName), ...(await openPlaceholderNames(executor, tripId))];
+}
+
+async function openPlaceholderNames(
+  executor: Tx | ReturnType<typeof db>,
+  tripId: string,
+  exceptId?: string,
+): Promise<string[]> {
+  const rows = await executor
+    .select({ id: tripPlaceholder.id, displayName: tripPlaceholder.displayName })
+    .from(tripPlaceholder)
+    .where(and(eq(tripPlaceholder.tripId, tripId), isNull(tripPlaceholder.claimedAt)));
+  return rows.filter((row) => row.id !== exceptId).map((row) => row.displayName);
+}
+
+// ---------------------------------------------------------------------------
+// Placeholders (F-007) – organiser only (checked by the caller). All name writes lock the
+// trip row like joins and renames, so names stay unique across members and placeholders.
+// ---------------------------------------------------------------------------
+
+/** Unique index on (trip_id, lower(display_name)) of open placeholders – migration 0004. */
+const PLACEHOLDER_NAME_INDEX = "trip_placeholder_trip_name_idx";
+
+export type PlaceholderResult =
+  | { ok: true }
+  | { ok: false; reason: "full" | "notFound" }
+  | { ok: false; reason: "nameTaken"; suggestion: string };
+
+async function lockTrip(tx: Tx, tripId: string): Promise<void> {
+  await tx.select({ id: trip.id }).from(trip).where(eq(trip.id, tripId)).for("update");
+}
+
+async function allNames(tx: Tx, tripId: string, exceptPlaceholder?: string): Promise<string[]> {
+  const members = await tx
+    .select({ displayName: tripMember.displayName })
+    .from(tripMember)
+    .where(eq(tripMember.tripId, tripId));
+  return [
+    ...members.map((row) => row.displayName),
+    ...(await openPlaceholderNames(tx, tripId, exceptPlaceholder)),
+  ];
+}
+
+async function nameTakenFallback(
+  error: unknown,
+  tripId: string,
+  clean: string,
+): Promise<PlaceholderResult> {
+  if (!isUniqueViolation(error, PLACEHOLDER_NAME_INDEX)) throw error;
+  const taken = await db().transaction(async (tx) => allNames(tx, tripId));
+  return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, [...taken, clean]) };
+}
+
+/** Adds a placeholder (name) with its own 256-bit invite link; counts towards the 30 (Q6). */
+export async function createPlaceholder(tripId: string, name: string): Promise<PlaceholderResult> {
+  const clean = cleanDisplayName(name);
+  try {
+    return await db().transaction(async (tx) => {
+      await lockTrip(tx, tripId);
+      const taken = await allNames(tx, tripId);
+      if (taken.length >= MAX_TRIP_MEMBERS) return { ok: false, reason: "full" } as const;
+      if (isNameTaken(clean, taken)) {
+        return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, taken) } as const;
+      }
+      await tx
+        .insert(tripPlaceholder)
+        .values({ tripId, displayName: clean, inviteToken: generateInviteToken() });
+      await tx.update(trip).set({ updatedAt: new Date() }).where(eq(trip.id, tripId));
+      return { ok: true } as const;
+    });
+  } catch (error) {
+    return nameTakenFallback(error, tripId, clean);
+  }
+}
+
+export async function renamePlaceholder(
+  tripId: string,
+  placeholderId: string,
+  name: string,
+): Promise<PlaceholderResult> {
+  const clean = cleanDisplayName(name);
+  try {
+    return await db().transaction(async (tx) => {
+      await lockTrip(tx, tripId);
+      const taken = await allNames(tx, tripId, placeholderId);
+      if (isNameTaken(clean, taken)) {
+        return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, taken) } as const;
+      }
+      const updated = await tx
+        .update(tripPlaceholder)
+        .set({ displayName: clean })
+        .where(
+          and(
+            eq(tripPlaceholder.id, placeholderId),
+            eq(tripPlaceholder.tripId, tripId),
+            isNull(tripPlaceholder.claimedAt),
+          ),
+        )
+        .returning({ id: tripPlaceholder.id });
+      return updated.length > 0
+        ? ({ ok: true } as const)
+        : ({ ok: false, reason: "notFound" } as const);
+    });
+  } catch (error) {
+    return nameTakenFallback(error, tripId, clean);
+  }
+}
+
+/** Removes an open placeholder – its personal link stops working at once (Flow J). */
+export async function removePlaceholder(tripId: string, placeholderId: string): Promise<boolean> {
+  const removed = await db()
+    .delete(tripPlaceholder)
+    .where(
+      and(
+        eq(tripPlaceholder.id, placeholderId),
+        eq(tripPlaceholder.tripId, tripId),
+        isNull(tripPlaceholder.claimedAt),
+      ),
+    )
+    .returning({ id: tripPlaceholder.id });
+  if (removed.length > 0) await touch(tripId);
+  return removed.length > 0;
 }
 
 async function touch(tripId: string): Promise<void> {
@@ -305,14 +470,46 @@ export interface InvitePreview {
   locale: string;
   joinOpen: boolean;
   memberCount: number;
+  /** Open placeholders – they count towards the limit of 30 (F-007). */
+  placeholderCount: number;
   /** Only the organiser's FIRST name – never other names (F-003 privacy). */
   organizerFirstName: string;
+  /**
+   * Set when the token is a personal placeholder link (F-007): its name (shown only to the
+   * holder of that link) and whether someone already took it over (Flow A.3).
+   */
+  placeholder: { name: string; claimed: boolean } | null;
+}
+
+/** Trip id behind a trip or placeholder token (same route /i/<token>, sitemap §4). */
+function tripIdForToken(token: string) {
+  return or(
+    eq(trip.inviteToken, token),
+    eq(
+      trip.id,
+      sql`(select ${tripPlaceholder.tripId} from ${tripPlaceholder} where ${tripPlaceholder.inviteToken} = ${token})`,
+    ),
+  );
+}
+
+async function placeholderByToken(executor: Tx | ReturnType<typeof db>, token: string) {
+  const [row] = await executor
+    .select({
+      id: tripPlaceholder.id,
+      displayName: tripPlaceholder.displayName,
+      claimedAt: tripPlaceholder.claimedAt,
+    })
+    .from(tripPlaceholder)
+    .where(eq(tripPlaceholder.inviteToken, token))
+    .limit(1);
+  return row;
 }
 
 /**
  * Preview behind an invite token: only what F-003 allows before joining (name, range,
- * duration, description, organiser's first name, number of members). Unknown, renewed and
- * deleted tokens all return null (one shared message, Flow A.3).
+ * duration, description, organiser's first name, number of members) – plus, for a personal
+ * placeholder link, that placeholder's name. Unknown, renewed and deleted tokens all return
+ * null (one shared message, Flow A.3).
  */
 export async function findInvite(token: string): Promise<InvitePreview | null> {
   if (!isInviteTokenShape(token)) return null;
@@ -331,17 +528,26 @@ export async function findInvite(token: string): Promise<InvitePreview | null> {
       fixedEnd: trip.fixedEnd,
       locale: trip.locale,
       joinOpen: trip.joinOpen,
+      inviteToken: trip.inviteToken,
       memberCount: sql<number>`(select count(*)::int from ${tripMember} where ${tripMember.tripId} = ${trip.id})`,
+      placeholderCount: sql<number>`(select count(*)::int from ${tripPlaceholder} where ${tripPlaceholder.tripId} = ${trip.id} and ${tripPlaceholder.claimedAt} is null)`,
       organizerName: sql<
         string | null
       >`(select ${tripMember.displayName} from ${tripMember} where ${tripMember.tripId} = ${trip.id} and ${tripMember.role} = 'organizer' limit 1)`,
     })
     .from(trip)
-    .where(eq(trip.inviteToken, token))
+    .where(tripIdForToken(token))
     .limit(1);
   if (!row) return null;
-  const { organizerName, ...rest } = row;
-  return { ...rest, organizerFirstName: firstName(organizerName ?? "") };
+  const { organizerName, inviteToken, ...rest } = row;
+  const placeholder = inviteToken === token ? undefined : await placeholderByToken(db(), token);
+  return {
+    ...rest,
+    organizerFirstName: firstName(organizerName ?? ""),
+    placeholder: placeholder
+      ? { name: placeholder.displayName, claimed: placeholder.claimedAt !== null }
+      : null,
+  };
 }
 
 /** Trip name behind an invite token (mail context «Du trittst „…“ bei», magic-link page). */
@@ -352,7 +558,7 @@ export async function findTripByInviteToken(
   const [row] = await db()
     .select({ id: trip.id, name: trip.name })
     .from(trip)
-    .where(eq(trip.inviteToken, token))
+    .where(tripIdForToken(token))
     .limit(1);
   return row;
 }
@@ -372,8 +578,9 @@ export type JoinOutcome =
   | { ok: false; reason: "nameTaken"; suggestion: string };
 
 /**
- * Joins via invite token (F-003). One transaction with the trip row locked, so the
- * 30-member limit (Q6) and the name check hold under parallel joins.
+ * Joins via invite token (F-003) or a personal placeholder link (F-007: whoever joins through
+ * it takes the placeholder over). One transaction with the trip row locked, so the limit of
+ * 30 incl. open placeholders (Q6) and the name check hold under parallel joins.
  */
 export async function joinByToken(
   token: string,
@@ -389,13 +596,13 @@ export async function joinByToken(
     // The app check and the index can disagree on rare case foldings (JS vs. PostgreSQL
     // lower()) – the index wins, the person gets a suggestion (R-039).
     if (!isUniqueViolation(error, NAME_INDEX)) throw error;
-    const rows = await db()
-      .select({ displayName: tripMember.displayName })
-      .from(tripMember)
-      .innerJoin(trip, eq(trip.id, tripMember.tripId))
-      .where(eq(trip.inviteToken, token));
-    const taken = [...rows.map((row) => row.displayName), clean];
-    return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, taken, accountName) };
+    const [row] = await db().select({ id: trip.id }).from(trip).where(tripIdForToken(token));
+    const taken = row ? await db().transaction(async (tx) => allNames(tx, row.id)) : [];
+    return {
+      ok: false,
+      reason: "nameTaken",
+      suggestion: suggestName(clean, [...taken, clean], accountName),
+    };
   }
 }
 
@@ -409,9 +616,12 @@ async function joinLocked(
     const [row] = await tx
       .select({ id: trip.id, publicId: trip.publicId, joinOpen: trip.joinOpen })
       .from(trip)
-      .where(eq(trip.inviteToken, token))
+      .where(tripIdForToken(token))
       .for("update");
     if (!row) return { ok: false, reason: "invalid" } as const;
+    // Read after the lock: a parallel join may just have claimed the placeholder.
+    const placeholder = await placeholderByToken(tx, token);
+    const claiming = placeholder && placeholder.claimedAt === null ? placeholder : undefined;
     const members = await tx
       .select({ userId: tripMember.userId, displayName: tripMember.displayName })
       .from(tripMember)
@@ -420,8 +630,11 @@ async function joinLocked(
       return { ok: true, publicId: row.publicId, alreadyMember: true } as const;
     }
     if (!row.joinOpen) return { ok: false, reason: "closed" } as const;
-    if (members.length >= MAX_TRIP_MEMBERS) return { ok: false, reason: "full" } as const;
-    const taken = members.map((m) => m.displayName);
+    const others = await openPlaceholderNames(tx, row.id, claiming?.id);
+    // Taking over a placeholder does not need a free spot – it already counts.
+    const occupied = members.length + others.length + (claiming ? 1 : 0);
+    if (!claiming && occupied >= MAX_TRIP_MEMBERS) return { ok: false, reason: "full" } as const;
+    const taken = [...members.map((m) => m.displayName), ...others];
     if (isNameTaken(clean, taken)) {
       return {
         ok: false,
@@ -429,8 +642,16 @@ async function joinLocked(
         suggestion: suggestName(clean, taken, accountName),
       } as const;
     }
+    const now = new Date();
+    if (claiming) {
+      // Free the name first – the partial unique index only covers open placeholders.
+      await tx
+        .update(tripPlaceholder)
+        .set({ claimedAt: now, claimedBy: userId })
+        .where(eq(tripPlaceholder.id, claiming.id));
+    }
     await tx.insert(tripMember).values({ tripId: row.id, userId, displayName: clean });
-    await tx.update(trip).set({ updatedAt: new Date() }).where(eq(trip.id, row.id));
+    await tx.update(trip).set({ updatedAt: now }).where(eq(trip.id, row.id));
     return { ok: true, publicId: row.publicId, alreadyMember: false } as const;
   });
 }

@@ -72,11 +72,11 @@ export function daysUntil(start: IsoDate, today: IsoDate): number {
 export type TripTab = "overview" | "days" | "group" | "poll";
 
 /**
- * Tabs that already exist as real views. Increment 2 builds the overview; «Meine Tage»
- * (Increment 3), «Gruppe» (4) and «Abstimmen» (5) are "coming soon" placeholders until then,
+ * Tabs that already exist as real views. Increment 2 built the overview, Increment 3
+ * «Meine Tage»; «Gruppe» (4) and «Abstimmen» (5) are "coming soon" placeholders until then,
  * so the default tab does not send people to an empty page.
  */
-export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>(["overview"]);
+export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>(["overview", "days"]);
 
 /** Tab when opening a trip (sitemap §2): own dates missing → days, own vote missing → poll. */
 export function defaultTab(

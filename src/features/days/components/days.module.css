@@ -1,0 +1,970 @@
+/*
+ * «Meine Tage» – W08 B, design-system §6.1/§6.3/§6.4/§9.8/§9.9, ux-spec §4.12/§7.2/§7.3,
+ * motion W08-01…15. Only tokens; motion through transform/opacity (transitions use the
+ * duration tokens, which collapse to 0.01 ms with reduced motion).
+ */
+
+.editor {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+/* ---------------------------------------------------------------- skip links (§7.1) */
+.skips {
+  position: relative;
+  height: 0;
+}
+
+.skipLink {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: calc(-1 * var(--ww-space-16) - var(--ww-space-16));
+  z-index: var(--ww-z-toast);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-color-surface-raised);
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.skipLink:focus {
+  inset-block-start: 0;
+  box-shadow: var(--ww-shadow-2);
+}
+
+/* ---------------------------------------------------------------- notes above the calendar */
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.draft {
+  margin: 0;
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-inline-start: var(--ww-space-1) solid var(--ww-color-primary);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.region {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1) var(--ww-space-2);
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+.region > svg {
+  color: var(--ww-color-holiday-mark);
+}
+
+.inlineLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+.textButton {
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-1);
+  border: 0;
+  background: transparent;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.textButton:focus-visible,
+.inlineLink:focus-visible,
+.jump:focus-visible,
+.quickItem:focus-visible,
+.legendSummary:focus-visible,
+.tool:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+/* ---------------------------------------------------------------- legend (G-14, U-6) */
+.legend {
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.legendSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--ww-size-touch-min);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-radius: var(--ww-radius-lg);
+  font-weight: var(--ww-font-weight-bold);
+  list-style: none;
+  cursor: pointer;
+}
+
+.legendSummary::-webkit-details-marker {
+  display: none;
+}
+
+.chevron {
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.legend[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.legendBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  padding: 0 var(--ww-space-4) var(--ww-space-4);
+  font-size: var(--ww-text-sm);
+}
+
+.legendBody p {
+  margin: 0;
+}
+
+.legendKeys {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2) var(--ww-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.legendKeys li {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+}
+
+.legendRange {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+}
+
+/* Mini field = surface + pattern + symbol (brushes and legend, design-system §9.9) */
+.mini {
+  display: inline-grid;
+  place-items: center;
+  width: 38px;
+  height: 22px;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-xs);
+  box-shadow: inset 0 0 0 1.5px var(--ww-avail-plaque-ring);
+  background: var(--ww-avail-yes-bg);
+  color: var(--ww-avail-day-text);
+}
+
+.mini[data-state="maybe"] {
+  background: var(--ww-pattern-avail-maybe), var(--ww-avail-maybe-bg);
+  color: var(--ww-avail-maybe-fg);
+}
+
+.mini[data-state="no"] {
+  background: var(--ww-pattern-avail-no), var(--ww-avail-no-bg);
+  color: var(--ww-avail-no-fg);
+}
+
+.miniHoliday {
+  position: relative;
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-xs);
+  background: var(--ww-avail-yes-bg);
+}
+
+.miniHoliday::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-block-start: 9px solid var(--ww-hm-holiday);
+  border-inline-start: 9px solid transparent;
+  border-start-end-radius: var(--ww-radius-xs);
+}
+
+/* ---------------------------------------------------------------- month jump chips (§9.8) */
+.jumps {
+  display: flex;
+  gap: var(--ww-space-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.jump {
+  position: relative;
+  flex: none;
+  min-height: 36px;
+  margin-block: 4px;
+  padding: 0 var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-button-sm);
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text);
+  font: inherit;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+/* 44 px hit area around the 36 px chip (D-20) */
+.jump::before {
+  content: "";
+  position: absolute;
+  inset: -4px 0;
+}
+
+/* ---------------------------------------------------------------- calendar card + grid */
+.calendar {
+  position: relative;
+  display: grid;
+  gap: var(--ww-space-4);
+  margin-inline: calc(var(--ww-size-cal-card-gutter-sm) - var(--ww-space-4));
+  padding: var(--ww-size-cal-card-pad-sm);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+  outline: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.month {
+  min-width: 0;
+}
+
+.monthHeading {
+  position: sticky;
+  top: var(--ww-sticky-head-h, var(--ww-size-cockpit-compact-h));
+  z-index: 2;
+  margin: 0;
+  padding: var(--ww-space-2) var(--ww-space-1);
+  background: var(--ww-color-surface);
+  font-family: var(--ww-font-display);
+  font-size: 1.125rem;
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.grid {
+  width: calc(100% + 2 * var(--ww-size-cal-gap));
+  margin-inline: calc(-1 * var(--ww-size-cal-gap));
+  border-collapse: separate;
+  border-spacing: var(--ww-size-cal-gap) calc(var(--ww-size-cal-row-gap) - var(--ww-size-cal-gap));
+  table-layout: fixed;
+  isolation: isolate;
+}
+
+.grid th {
+  height: 24px;
+  padding: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.weekendHead {
+  border-radius: var(--ww-radius-xs) var(--ww-radius-xs) 0 0;
+  background: var(--ww-pattern-weekend-lane);
+  color: var(--ww-hm-weekday-weekend-fg) !important;
+  font-weight: var(--ww-font-weight-extrabold) !important;
+}
+
+/* Large text (U-5): the grid stays; cells grow with the text size (rem) so the date is never
+   cut – at 100 % the token height applies. */
+.dayCell,
+.weekendCell,
+.weekendPad {
+  position: relative;
+  height: max(var(--ww-size-cal-cell-h), 2.875rem);
+  padding: 0;
+}
+
+/* Weekend lane behind Sa/So incl. the gaps (design-system §6.3) */
+.weekendCell::before,
+.weekendPad::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * (var(--ww-size-cal-row-gap) - var(--ww-size-cal-gap)))
+    calc(-0.5 * var(--ww-size-cal-gap));
+  z-index: -1;
+  background: var(--ww-pattern-weekend-lane);
+}
+
+.cell,
+.cellStatic {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: max(var(--ww-size-cal-cell-h), 2.875rem);
+  padding: 0;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-cell);
+  background: var(--ww-avail-yes-bg);
+  color: var(--ww-avail-day-text);
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+  touch-action: pan-y;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.cell {
+  cursor: pointer;
+  transition: transform var(--ww-duration-base) var(--ww-ease-spring-soft);
+}
+
+/* W08-01: presses in at once, springs back on release */
+.cell:active {
+  transform: scale(var(--ww-motion-scale-cell));
+  transition-duration: var(--ww-duration-instant);
+}
+
+@media (hover: hover) {
+  .cell:hover {
+    box-shadow: inset 0 0 0 1px var(--ww-color-border-strong);
+  }
+}
+
+.cell:focus-visible {
+  z-index: 1;
+  outline: none;
+  box-shadow: var(--ww-focus-ring-isolated);
+}
+
+.cell[data-state="maybe"],
+.cellStatic[data-state="maybe"] {
+  background: var(--ww-pattern-avail-maybe), var(--ww-avail-maybe-bg);
+}
+
+.cell[data-state="no"],
+.cellStatic[data-state="no"] {
+  background: var(--ww-pattern-avail-no), var(--ww-avail-no-bg);
+}
+
+/* Outside the range / past: no surface, muted date (Flow B.1) */
+.cellStatic:not([data-state]) {
+  background: transparent;
+  color: var(--ww-hm-outside-fg);
+}
+
+.readOnly .cellStatic[data-state] {
+  color: var(--ww-avail-day-text);
+}
+
+.num {
+  position: absolute;
+  inset-block-start: 4px;
+  inset-inline-start: 4px;
+  min-width: 18px;
+  height: 18px;
+  padding-inline: 2px;
+  border-radius: 5px;
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-semibold);
+  line-height: 18px;
+  text-align: center;
+}
+
+/* The date sits on a small shield on patterned cells (design-system §6.4) */
+[data-state="maybe"] > .num {
+  background: var(--ww-avail-maybe-bg);
+}
+
+[data-state="no"] > .num {
+  background: var(--ww-avail-no-bg);
+}
+
+[data-today] > .num {
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px currentcolor;
+}
+
+/* Symbol plaque ✕ / ◐ – pops in, shrinks out (W08-01) */
+.plaque {
+  position: absolute;
+  inset-block-end: 4px;
+  inset-inline-end: 50%;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--ww-avail-plaque-ring);
+  opacity: 0;
+  transform: translateX(50%) scale(var(--ww-motion-scale-pop));
+  transition:
+    opacity var(--ww-duration-instant) var(--ww-ease-exit),
+    transform var(--ww-duration-instant) var(--ww-ease-exit);
+}
+
+[data-state="maybe"] > .plaque,
+[data-state="no"] > .plaque {
+  opacity: 1;
+  transform: translateX(50%);
+  transition:
+    opacity var(--ww-duration-fast) var(--ww-ease-standard),
+    transform var(--ww-duration-fast) var(--ww-ease-spring-soft);
+}
+
+[data-state="maybe"] > .plaque {
+  background: var(--ww-avail-maybe-bg);
+  color: var(--ww-avail-maybe-fg);
+}
+
+[data-state="no"] > .plaque {
+  background: var(--ww-avail-no-bg);
+  color: var(--ww-avail-no-fg);
+}
+
+/* Preview cells: surface of the brush, no plaque yet (W08-02) */
+.calendar [data-preview] > .plaque {
+  opacity: 0;
+}
+
+/* Holiday dog-ear with a notch in card colour (design-system §6.3) */
+.calendar [data-holiday]::before {
+  content: "";
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-end: 0;
+  border-block-start: 13px solid var(--ww-hm-holiday);
+  border-inline-start: 13px solid transparent;
+  border-start-end-radius: var(--ww-radius-cell);
+  filter: drop-shadow(-1.5px 1.5px 0 var(--ww-hm-holiday-edge));
+}
+
+/* Dashed outline per row segment, open at row breaks (--ww-cal-preview-border) */
+.calendar [data-preview]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-block: 2px dashed var(--ww-cal-preview-border);
+  pointer-events: none;
+}
+
+.calendar [data-preview][data-edge-start]::after {
+  border-inline-start: 2px dashed var(--ww-cal-preview-border);
+  border-start-start-radius: var(--ww-radius-cell);
+  border-end-start-radius: var(--ww-radius-cell);
+}
+
+.calendar [data-preview][data-edge-end]::after {
+  border-inline-end: 2px dashed var(--ww-cal-preview-border);
+  border-start-end-radius: var(--ww-radius-cell);
+  border-end-end-radius: var(--ww-radius-cell);
+}
+
+/* Range mode start: double frame + anchor dot (--ww-cal-anchor) */
+.calendar [data-anchor] {
+  box-shadow: var(--ww-selected-ring);
+}
+
+.calendar [data-anchor]::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: -4px;
+  width: 8px;
+  height: 8px;
+  margin-block-start: -4px;
+  border-radius: 50%;
+  background: var(--ww-cal-anchor);
+  box-shadow: 0 0 0 2px var(--ww-cal-anchor-ring);
+}
+
+.holidayList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-0-5) var(--ww-space-3);
+  margin: var(--ww-space-2) var(--ww-space-1) 0;
+  padding: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  list-style: none;
+}
+
+.earMini {
+  display: inline-block;
+  margin-inline-end: var(--ww-space-1);
+  border-block-start: 9px solid var(--ww-hm-holiday);
+  border-inline-start: 9px solid transparent;
+  vertical-align: 1px;
+}
+
+/* Floating range label while dragging (W08-02) – follows via transform */
+.dragLabel {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: 3;
+  padding: var(--ww-space-1) var(--ww-space-2);
+  border-radius: var(--ww-radius-button-sm);
+  background: var(--ww-color-inverse-bg);
+  color: var(--ww-color-inverse-text);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dragLabel[data-visible] {
+  opacity: 1;
+}
+
+/* Gesture hint (W03-07): semi-transparent finger dot */
+.gestureDot {
+  position: absolute;
+  inset-block-start: -14px;
+  inset-inline-start: -14px;
+  z-index: 3;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--ww-color-primary);
+  box-shadow: 0 0 0 4px var(--ww-color-primary-tint);
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ---------------------------------------------------------------- comment */
+.comment {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.commentLabel {
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.commentField {
+  width: 100%;
+  min-height: 72px;
+  padding: var(--ww-space-3);
+  border: 1.5px solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font: inherit;
+  font-size: var(--ww-text-md);
+  resize: vertical;
+}
+
+.commentField:focus-visible {
+  border-color: var(--ww-color-selected);
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.commentInvalid {
+  border: 2px solid var(--ww-color-danger);
+}
+
+.commentHint {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+/* ---------------------------------------------------------------- tool bar (§9.9) */
+.toolbar {
+  position: fixed;
+  inset-inline: 0;
+  inset-block-end: 0;
+  z-index: var(--ww-z-sticky);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  max-height: 40dvh;
+  padding: var(--ww-space-2) 14px calc(var(--ww-space-2) + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  border: var(--ww-border-forced);
+  border-start-start-radius: var(--ww-radius-xl);
+  border-start-end-radius: var(--ww-radius-xl);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-sticky-bottom);
+}
+
+/* Space under the page so nothing hides behind the fixed bar */
+:global(body):has(.toolbar) {
+  padding-block-end: var(--ww-sticky-bar-h, 0px);
+}
+
+.rangeHint {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  padding: 0 var(--ww-space-2) 0 var(--ww-space-3);
+  border-radius: var(--ww-radius-button-sm);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.statusLine {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  min-height: var(--ww-size-toolbar-status-h);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.saveState {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+}
+
+.saveState .textButton {
+  min-height: auto;
+  padding: 0;
+}
+
+.savedTick {
+  color: var(--ww-color-accent-text);
+}
+
+.saveError {
+  color: var(--ww-color-warning-text);
+}
+
+.smallSpinner {
+  width: 12px;
+  height: 12px;
+}
+
+/* Brush segments with ONE gliding indicator (W08-06, M-D7) */
+.brushes {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 3px;
+  border: var(--ww-border-forced);
+  border-radius: 18px;
+  background: var(--ww-color-surface-sunken);
+}
+
+.brushIndicator {
+  position: absolute;
+  inset-block: 3px;
+  inset-inline-start: 3px;
+  width: calc((100% - 6px) / 3);
+  border: 2px solid var(--ww-color-selected);
+  border-radius: 14px;
+  background: var(--ww-color-surface-raised);
+  box-shadow: var(--ww-shadow-selected);
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+/* Dot mark 8 px top right inside the indicator */
+.brushIndicator::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 5px;
+  inset-inline-end: 6px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ww-color-selected);
+}
+
+.brush {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  min-height: 52px;
+  padding: 5px;
+  border-radius: 14px;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+  text-align: center;
+  cursor: pointer;
+}
+
+.brushActive {
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.brush:has(input:focus-visible) {
+  box-shadow: var(--ww-focus-ring-isolated);
+}
+
+.brushLabel {
+  line-height: var(--ww-leading-tight);
+}
+
+.toolRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: var(--ww-space-1);
+}
+
+.tool {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ww-space-2);
+  width: var(--ww-size-toolbar-tool-w);
+  height: var(--ww-size-toolbar-tool-h);
+  padding: 0;
+  border: var(--ww-border-forced);
+  border-radius: 14px;
+  background: var(--ww-btn-tool-bg);
+  color: var(--ww-btn-tool-fg);
+  font: inherit;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.toolPressed {
+  background: var(--ww-color-primary);
+  color: var(--ww-color-text-on-primary);
+}
+
+.tool[aria-disabled="true"] {
+  color: var(--ww-color-disabled-text);
+  cursor: default;
+}
+
+.toolText {
+  display: none;
+}
+
+.undoIcon {
+  display: inline-grid;
+}
+
+.submit {
+  flex: 1;
+  min-width: 0;
+  min-height: var(--ww-size-toolbar-tool-h);
+  white-space: nowrap;
+}
+
+.submittedState {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ww-space-1);
+  min-height: var(--ww-size-toolbar-tool-h);
+  margin: 0;
+  color: var(--ww-color-accent-text);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.blocked {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+.lockedBar {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  margin: 0;
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface-sunken);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* ---------------------------------------------------------------- sheets */
+.sheetBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.sheetBody p {
+  margin: 0;
+}
+
+.sheetActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ww-space-3);
+}
+
+.successArt {
+  display: flex;
+  justify-content: center;
+}
+
+.quickList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.quickItem {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  width: 100%;
+  min-height: 52px;
+  padding: var(--ww-space-2) var(--ww-space-2);
+  border: 0;
+  border-radius: var(--ww-radius-md);
+  background: transparent;
+  color: var(--ww-color-text);
+  font: inherit;
+  font-weight: var(--ww-font-weight-semibold);
+  text-align: start;
+  cursor: pointer;
+}
+
+.quickItem > svg {
+  flex: none;
+  color: var(--ww-color-primary-text);
+}
+
+@media (hover: hover) {
+  .quickItem:hover {
+    background: var(--ww-color-surface-sunken);
+  }
+}
+
+.quickDivider {
+  margin-block-start: var(--ww-space-2);
+  padding-block-start: var(--ww-space-2);
+  border-block-start: 1px solid var(--ww-color-border-subtle);
+}
+
+/* ---------------------------------------------------------------- larger screens */
+@media (min-width: 400px) {
+  .tool {
+    width: var(--ww-size-toolbar-tool-h);
+  }
+}
+
+@media (min-width: 600px) {
+  .calendar {
+    margin-inline: 0;
+    padding: var(--ww-size-cal-inset);
+  }
+
+  .dayCell,
+  .weekendCell,
+  .weekendPad,
+  .cell,
+  .cellStatic {
+    height: max(var(--ww-size-cal-cell-h-lg), 4rem);
+    min-height: max(var(--ww-size-cal-cell-h-lg), 4rem);
+  }
+
+  .num {
+    inset-block-start: 6px;
+    inset-inline-start: 6px;
+    min-width: 20px;
+    height: 20px;
+    font-size: var(--ww-text-meta);
+    line-height: 20px;
+  }
+
+  .tool {
+    width: auto;
+    padding: 0 var(--ww-space-3);
+  }
+
+  .toolText {
+    display: inline;
+  }
+
+  .toolbar {
+    inset-inline: max(0px, calc((100% - var(--ww-size-content-narrow)) / 2));
+  }
+}
+
+@media (min-width: 960px) {
+  .toolbar {
+    position: sticky;
+    inset-block: calc(var(--ww-sticky-head-h, var(--ww-size-cockpit-compact-h)) + var(--ww-space-2))
+      auto;
+    inset-inline: auto;
+    order: 0;
+    max-height: none;
+    padding: var(--ww-space-3) var(--ww-space-4);
+    border-radius: var(--ww-radius-xl);
+    box-shadow: var(--ww-shadow-2);
+  }
+
+  /* Months side by side under the sticky bar – headings scroll with them. */
+  .monthHeading {
+    position: static;
+  }
+
+  .calendar {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--ww-space-6);
+  }
+}
+
+@media (min-width: 1200px) {
+  .calendar {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (forced-colors: active) {
+  .cell[data-state="no"],
+  .cellStatic[data-state="no"],
+  .cell[data-state="maybe"],
+  .cellStatic[data-state="maybe"] {
+    border-style: dashed;
+  }
+
+  .calendar [data-anchor] {
+    outline: 2px solid Highlight;
+  }
+}

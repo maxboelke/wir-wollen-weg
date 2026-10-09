@@ -4,6 +4,7 @@ import {
   boolean,
   check,
   date,
+  foreignKey,
   index,
   integer,
   pgTable,
@@ -145,7 +146,7 @@ export type TripPhase = (typeof TRIP_PHASES)[number];
 export const MEMBER_ROLES = ["organizer", "member"] as const;
 export type MemberRole = (typeof MEMBER_ROLES)[number];
 
-/** Upper limit of members per trip (PRD Q6; placeholders will count too, F-007). */
+/** Upper limit of members per trip (PRD Q6; open placeholders count too, F-007). */
 export const MAX_TRIP_MEMBERS = 30;
 
 export const trip = pgTable(
@@ -204,6 +205,15 @@ export const tripMember = pgTable(
     submittedAt: timestamp("submitted_at", { withTimezone: true }),
     /** Voted in the current poll (F-007 status "abgestimmt", Increment 5). */
     votedAt: timestamp("voted_at", { withTimezone: true }),
+    /** Last change of the own days or comment (F-007: «abgegeben · zuletzt geändert …»). */
+    availabilityUpdatedAt: timestamp("availability_updated_at", { withTimezone: true }),
+    /** Optional comment for the group (F-005, ≤ 200 characters, «Juli nur mit Kindern»). */
+    comment: text("comment"),
+    /**
+     * One-off feedback after the first submission (F-005, A3/A7): which calendar import would
+     * have helped – "apple" | "google" | "outlook" | "other" | "none" | "skipped".
+     */
+    importFeedback: text("import_feedback"),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
@@ -215,6 +225,70 @@ export const tripMember = pgTable(
       .on(table.tripId)
       .where(sql`${table.role} = 'organizer'`),
     check("trip_member_role_check", sql`${table.role} in ('organizer', 'member')`),
+    check(
+      "trip_member_comment_check",
+      sql`${table.comment} is null or char_length(${table.comment}) <= 200`,
+    ),
+    check(
+      "trip_member_import_feedback_check",
+      sql`${table.importFeedback} is null or ${table.importFeedback} in ('apple', 'google', 'outlook', 'other', 'none', 'skipped')`,
+    ),
+  ],
+);
+
+/** Stored day states (F-005). "Geht" is the default and never stored (no row = geht). */
+export const AVAILABILITY_STATES = ["maybe", "no"] as const;
+export type StoredDayState = (typeof AVAILABILITY_STATES)[number];
+
+/**
+ * Own availability per day (F-005, Increment 3): only the exceptions «zur Not» / «geht nicht».
+ * The composite foreign key on the membership deletes the days when someone leaves or is
+ * removed (F-004/F-013) – no orphaned availability.
+ */
+export const availability = pgTable(
+  "availability",
+  {
+    tripId: uuid("trip_id").notNull(),
+    userId: uuid("user_id").notNull(),
+    day: date("day", { mode: "string" }).notNull(),
+    state: text("state", { enum: AVAILABILITY_STATES }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.tripId, table.userId, table.day] }),
+    foreignKey({
+      name: "availability_member_fk",
+      columns: [table.tripId, table.userId],
+      foreignColumns: [tripMember.tripId, tripMember.userId],
+    }).onDelete("cascade"),
+    check("availability_state_check", sql`${table.state} in ('maybe', 'no')`),
+  ],
+);
+
+/**
+ * Placeholders (F-007): people the organiser expects but who have not joined yet. Each has
+ * its own invite link (256 bit like the trip link); whoever joins through it takes the
+ * placeholder over (name pre-filled). A claimed placeholder keeps its row so the link can say
+ * «already used – you can still join normally» (Flow A.3); it no longer counts or shows.
+ * Names are unique per trip together with the members – checked under the trip row lock.
+ */
+export const tripPlaceholder = pgTable(
+  "trip_placeholder",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    displayName: text("display_name").notNull(),
+    inviteToken: text("invite_token").notNull().unique(),
+    createdAt: createdAt(),
+    claimedBy: uuid("claimed_by").references(() => user.id, { onDelete: "set null" }),
+    claimedAt: timestamp("claimed_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("trip_placeholder_trip_id_idx").on(table.tripId),
+    uniqueIndex("trip_placeholder_trip_name_idx")
+      .on(table.tripId, sql`lower(${table.displayName})`)
+      .where(sql`${table.claimedAt} is null`),
   ],
 );
 
