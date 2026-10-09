@@ -8,7 +8,10 @@ import { mailIds, uniqueEmail, waitForAccessMail, waitForCodeMail } from "./help
 // Increment 1 – sign-in flows complete (F-040, F-041, F-042; Flows A, H; spike-auth §4).
 // Browser locale en-US → English UI.
 
-const ORIGIN = { origin: "http://localhost:3000" };
+// Same origin as baseURL in playwright.config.ts (also when PORT / E2E_BASE_URL differ).
+const ORIGIN = {
+  origin: process.env.E2E_BASE_URL ?? `http://localhost:${process.env.PORT ?? 3000}`,
+};
 
 function requestCode(request: APIRequestContext, email: string) {
   return request.post("/api/auth/email-access/request", {

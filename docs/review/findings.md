@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033; Reviewer: Nachprüfung Commit 9baea12 – R-032, R-033 verifiziert) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -39,9 +39,10 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 | R-029 | niedrig | axe-Tests messen mitten in Überblendungen (CI rot/flaky, PR #6) | verifiziert (vom Reviewer behoben) |
 | R-030 | niedrig | Argon2id-Test ohne Known-Answer – Node-22-Pfad ungeprüft | verifiziert (vom Reviewer behoben) |
 | R-031 | niedrig | Avatar-Menü bleibt offen, wenn der Tastaturfokus es verlässt | verifiziert |
-| R-032 | hoch | Konto-Enumeration über „Passwort vergessen“: `remainingAttempts` und Sperre nur für bestehende Konten | behoben – bitte prüfen |
-| R-033 | hoch | Postfach-Budget (R-027) sperrt die echte Adresse – Mail-Anmeldung über Plus-Adressen dauerhaft blockierbar | behoben – bitte prüfen |
+| R-032 | hoch | Konto-Enumeration über „Passwort vergessen“: `remainingAttempts` und Sperre nur für bestehende Konten | verifiziert |
+| R-033 | hoch | Postfach-Budget (R-027) sperrt die echte Adresse – Mail-Anmeldung über Plus-Adressen dauerhaft blockierbar | verifiziert |
 | R-034 | niedrig | Text-Button «Mit Passwort/Code bestätigen» mit nativem Button-Look (Dark Mode: Kontrast 3,4:1) | verifiziert (vom Reviewer behoben) |
+| R-035 | mittel | Restrisiko R-033: Konto-Adresse ist selbst eine Variante (vor Go-Live) | offen |
 
 ## Details
 
@@ -309,7 +310,13 @@ Node 24.21, Produktions-Build im CI-Modus (`APP_ENV=ci`, Postgres 18, Mailpit), 
 - Erwartetes Verhalten: Antworten auf `reset-password` (Status, Body, Restversuche, Sperrverhalten, Zeit) sind für bekannte und unbekannte Adressen gleich.
 - Vorschlag: Für unbekannte Adressen denselben Zustand herstellen: After-Hook auf `/email-otp/request-password-reset` – fehlt danach `forget-password-otp-<email>`, einen Platzhalter mit zufälligem (nie versendetem) Code im selben Format anlegen (`storeOTP: "hashed"` → `<hash>:0`, gleiche `expiresAt`). Dann laufen Zählen, `remainingAttempts`, 5er-Grenze und Sperre identisch; `reset-password` scheitert für Unbekannte ohnehin an `INVALID_OTP`. Alternative: für `reset-password` nie `remainingAttempts` liefern **und** Fehlversuche dort immer zählen (wie beim Passwort) – schlechter für echte Nutzer. E2E: bekannte/unbekannte Adresse → identische Antwortfolge über 11 Versuche.
 - Umsetzung (Developer, 2026-10-09): After-Hook auf `/email-otp/request-password-reset` (`src/server/auth/email-access-plugin.ts`): fehlt nach erfolgreicher Anfrage der Datensatz `forget-password-otp-<email>` (unbekannte Adresse), wird ein **Platzhalter** angelegt – Format wie ein gehashter Code (`<base64url-SHA-256>:0`, aber Hash aus 32 Zufallsbytes, also nie eingebbar), gleiche Gültigkeit (15 Min.). Bei bestehenden Konten macht der Hook einen gleichartigen Schreibzugriff (Ablaufzeit unverändert gesetzt) – gleiche Antwortzeit. Damit laufen Reservierung/Zählen, `remainingAttempts`, 5er-Grenze (`TOO_MANY_ATTEMPTS`) und Sperre (`EMAIL_LOCKED`) für beide Fälle identisch. Tests: E2E „R-032“ (`tests/e2e/increment-1-security.spec.ts`) vergleicht die komplette Antwortfolge (2 Reset-Anforderungen + 11 falsche Codes: Status und Body, `retryAfter` normalisiert) für bekannte und unbekannte Adresse → identisch (`200, 400×4 (Rest 4…1), 403, 200, 400×4, 429, 429`). Messung (Produktions-Build, je 10, Median bekannt/unbekannt): `request-password-reset` 35,6/34,0 ms, `reset-password` mit falschem Code 44,0/42,8 ms; Body der ersten Fehlantwort byte-gleich (`{"code":"INVALID_OTP","message":"Invalid OTP","remainingAttempts":4}`).
-- Status: behoben – bitte prüfen
+- Nachprüfung (Reviewer 2026-10-09, Commit 9baea12, Node 24.21, Produktions-Build `APP_ENV=ci`, `RATE_LIMIT_ENABLED=true`, direkt gegen `/api/auth/*`):
+  - Antwortfolge bekannt/unbekannt identisch: `200, 400 INVALID_OTP/4…/1, 403 TOO_MANY_ATTEMPTS, req 200, 400/4…/1, 429 EMAIL_LOCKED ×2` – auch mit GROSS geschriebener Adresse (Better Auth und Hook normalisieren beide auf Kleinschreibung) und mit führendem Leerzeichen (beide gleich: Rest bleibt 5, Sperre nach 10; keine Mail, kein Unterschied).
+  - 7 parallele Reset-Anforderungen: Budget der exakten Adresse greift gleich (bekannt 4 × 200 + 3 × 429, weil die Registrierung 1 Mail verbraucht hat; unbekannt 5 × 200 + 2 × 429); danach gleiche Fehlversuchsfolge. 8 parallele falsche Codes: Restversuche-Verteilung bei beiden gleichartig (Race-Rauschen, kein Merkmal).
+  - Antwortzeiten (Median, je 30 bzw. 120, zwei Läufe): `request-password-reset` 32,1/32,8 und 29,1/32,3 ms, falscher Code 36,8/36,1 und 35,0/34,8 ms (bekannt/unbekannt) – kein verwertbarer Unterschied.
+  - Platzhalter nie nutzbar: Wert = SHA-256 von 32 Zufallsbytes (`storeOTP: "hashed"` vergleicht Hash des eingegebenen Codes), nie versendet; leerer Code → `INVALID_OTP`. Selbst bei Treffer würde `reset-password` für Unbekannte an `findUserByEmail` scheitern (kein Konto-Anlegen); `sign-in/email-otp` nutzt einen anderen Identifier (`sign-in-otp-…`) → `INVALID_OTP`, Passwort-Anmeldung → 401; `check-verification-otp` u. a. per Allow-List gesperrt (404). Echter Nutzer nach Platzhalter (Leerzeichen-Trick legt Platzhalter unter seinem Identifier an): Reset anfordern → Mail → Code → 200, Anmeldung mit neuem Passwort 200.
+  - E2E „R-032“ in `--repeat-each=3` grün.
+- Status: verifiziert
 
 ### R-033: Postfach-Budget (R-027) sperrt die echte Adresse – Mail-Anmeldung über Plus-Adressen dauerhaft blockierbar
 - Schwere: hoch (wie R-021 vor jedem öffentlichen Zugriff zu beheben; Offline-Demo nicht betroffen)
@@ -318,7 +325,12 @@ Node 24.21, Produktions-Build im CI-Modus (`APP_ENV=ci`, Postgres 18, Mailpit), 
 - Erwartetes Verhalten: Anfragen für andere Adressen desselben Postfachs dürfen die Mail-Anmeldung der exakten Adresse nicht vollständig blockieren; Mail-Bombing pro Postfach bleibt begrenzt.
 - Vorschlag (mit CEO/UX abwägen): (a) Mindestkontingent pro exakter Adresse, das das Postfach-Budget nicht verbrauchen kann – z. B. die ersten 2 Mails/Std. einer exakten Adresse zählen nur gegen ihr eigenes Budget (Obergrenze pro Postfach dann 10 + 2 × Varianten, praktisch weiter durch IP-Limit begrenzt); oder (b) Postfach-Budget nur für Adressen anwenden, die von ihrem Postfach abweichen (`email !== mailboxOf(email)`) – die Grundadresse ist nie blockierbar, Plus-/Punkt-Konten bleiben dann aber angreifbar. **Nicht** nach Konto-Existenz unterscheiden (Enumeration). E2E: 10 Plus-Adressen → Grundadresse bekommt weiter eine Mail.
 - Umsetzung (Developer, 2026-10-09, CEO-Entscheidung): Die **exakte Adresse** (nur Groß/Klein und Leerzeichen normalisiert) hat immer ihr eigenes Budget (5/Std., 20/Tag). Das **Postfach-Budget** (10/Std., 30/Tag) zählt und begrenzt **nur Varianten** (`isMailboxVariant`: Adresse ≠ `mailboxOf(Adresse)`, also `+tag`, Gmail-Punkte, googlemail.com); die kanonische Adresse zählt nicht hinein und wird davon nie begrenzt. Keine Unterscheidung nach Konto-Existenz. Dateien: `src/lib/email-limits.ts` (`decideCodeRequest(…, isVariant, …)`, `isMailboxVariant`, `normalizeEmail`), `src/server/auth/email-limit-store.ts` (`takeCodeRequest`), Doku `docs/ops/tech-stack.md`. Tests: Unit (`email-limits.test.ts`: Varianten 10/30, kanonische Adresse trotz vollem Postfach-Budget erlaubt, nur eigenes 5er-Budget; Varianten-Erkennung); E2E „R-027/R-033“ für bekannte **und** unbekannte Grundadresse: 12 parallele Plus-Varianten → genau 10 × 200, weitere Variante 429 `EMAIL_RATE_LIMITED`, die Grundadresse bekommt danach weiter Code-Mail (200 + Mail) und Reset (200); Grundadresse allein: 7 parallele → 5 × 200, eine Variante danach weiter 200. **Restrisiko (bewusst, CEO-Abwägung):** Steht im Konto selbst eine Variante (z. B. `max.mustermann@gmail.com` oder `anna+reisen@…`), unterliegt diese Adresse dem Postfach-Budget und kann über andere Varianten blockiert werden; ohne Konto-Abfrage (Enumeration) lässt sich das nicht unterscheiden. Mail-Obergrenze pro Postfach: 5 (kanonisch) + 10 (Varianten) pro Stunde.
-- Status: behoben – bitte prüfen
+- Nachprüfung (Reviewer 2026-10-09, Commit 9baea12, wie R-032): je 12 parallele Varianten-Anfragen an `/email-access/request`, danach die Grundadresse:
+  - `anna…+xN@example.org` gemischt mit `Anna…+xN@Example.ORG` (Konto vorhanden): 10 × 200, 2 × 429; Grundadresse 200 + Mail (Code + Link), Reset 200; `ANNA…@EXAMPLE.ORG` 200 (gleiche exakte Adresse); `a.nna…@example.org` 200 und `a.nna…+q@example.org` 200 (Punkte außerhalb Gmail = eigenes Postfach, korrekt); weitere Plus-Variante 429.
+  - Gmail (ohne Konto): Varianten über Punkte, `googlemail.com` (auch GROSS), `+tag` gemischt → 10 × 200, 2 × 429; `bert…@gmail.com` 200 + Mail, Reset 200; `BERT…@Gmail.com` 200; `b.ert…@gmail.com` 429 (Variante, erwartet).
+  - Sonderfälle: `carl+@…` (leerer Tag) zählt als Variante; `+carl@…` (Plus an Position 0) ist eigene Adresse (200). Adresse mit Leerzeichen am Rand → 400 `VALIDATION_ERROR` (z.email).
+  - Unit-Tests (153) und E2E „R-027/R-033“ (`--repeat-each=3`) grün. Restrisiko → R-035.
+- Status: verifiziert
 
 ### R-034: Text-Button «Mit Passwort/Code bestätigen» mit nativem Button-Look
 - Schwere: niedrig · vom Reviewer behoben
@@ -336,4 +348,8 @@ Node 24.21, Produktions-Build im CI-Modus (`APP_ENV=ci`, Postgres 18, Mailpit), 
 - Problem: Steht im Konto eine Variante (z. B. `max.mustermann@gmail.com`, `anna+reisen@…`), gilt für sie das Postfach-Budget; Dritte können sie über weitere Varianten bis zu 1 h blockieren (Magic-Link-Mail/Reset betroffen).
 - CEO-Entscheidung (2026-10-09): für die Offline-Demo akzeptiert; **vor Go-Live beheben** (Go-Live-Checkliste).
 - Lösungsskizze: Konto-Lookup serverseitig immer durchführen (gleiche Laufzeit), Konto-Adresse vom Postfach-Budget ausnehmen; Überschreitung des Postfach-Budgets **still** behandeln (gleiche 200-Antwort, nur keine Mail), damit kein 429-Unterschied Konten verrät.
+- Reviewer-Einschätzung zur Lösungsskizze (2026-10-09): plausibel. Beim Umsetzen beachten: (1) „still“ heißt auch gleiche Antwortzeit – Mailversand in beiden Fällen gleich (z. B. im Hintergrund) oder fehlende Mail durch gleich lange Arbeit ausgleichen, sonst wird aus dem 429-Unterschied ein Zeit-Unterschied; (2) gilt für alle Mail-Endpunkte (`email-access/request`, `request-password-reset`, `request-email-change` mit `newEmail`); (3) Nutzer ohne Konto auf einer Varianten-Adresse bekommen bei Überschreitung kommentarlos keine Mail – Hilfetext „Keine Mail bekommen?“ (F-051) reicht vermutlich; (4) E2E: Konto auf `max.mustermann@gmail.com` + 10 andere Varianten → Konto-Adresse bekommt weiter Mail, Antworten für Konto/Nicht-Konto gleich.
 - Status: offen (vor Go-Live)
+
+#### Nachprüfung Commit 9baea12 – vom Reviewer behoben (2026-10-09)
+- `tests/e2e/increment-1-security.spec.ts`, `tests/e2e/increment-1-auth.spec.ts`: `Origin`-Header war fest `http://localhost:3000`; mit anderem `PORT`/`E2E_BASE_URL` scheiterten alle API-Proben mit 403 (Origin-Prüfung). Jetzt wie `baseURL` in `playwright.config.ts` abgeleitet. Beide Specs auf Port 3200 grün (50/50).
