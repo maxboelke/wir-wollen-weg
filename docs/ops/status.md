@@ -1,6 +1,6 @@
 # Status-Board – Wir wollen weg
 
-Stand: 2026-10-08 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
+Stand: 2026-10-09 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
 
 Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer ✅ bzw. CEO-Abnahme bei Konzeptdokumenten) · **blockiert** · **zurückgestellt** (bewusst bis Go-Live verschoben, nicht blockierend)
 
@@ -8,7 +8,7 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 
 ## Aktuelle Phase
 
-**Phase 1 – MVP, Inkrement 1** (M0 abgenommen 2026-10-08, Konzept-PR gemergt). Entwicklung und Abnahme laufen lokal als Offline-Demo.
+**Phase 1 – MVP, Inkrement 1 im Review** (M0 abgenommen 2026-10-08; Schritt 0a „UI-Fundament“ fertig, PR #5 gemergt; Review-Fixes R-021–R-031 in Nachprüfung). Entwicklung und Abnahme laufen lokal als Offline-Demo.
 
 ## Übersicht
 
@@ -26,10 +26,11 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 
 | ID | Inkrement | Agent | Feature-IDs | Status | Abhängig von |
 |---|---|---|---|---|---|
-| P1-0 | Projekt-Scaffold nach `docs/ops/tech-stack.md` (Next.js, pnpm, Drizzle, next-intl, ESLint/Prettier, Vitest, Playwright, Docker-Compose dev mit PostgreSQL + Mailpit, `compose.demo.yml` + Platzhalter-Startschutz (deployment.md §0), Skript-Vertrag für CI) | developer → reviewer | – | **im Review** – Reviewer ⚠️ freigegeben mit Anmerkungen; R-001–R-004 behoben, R-008 erledigt (Ops-Doku), R-005 + R-009 in Arbeit (developer), R-006 + R-007 → Inkrement 1 (P1-1); Abweichungen in tech-stack.md v1.1 übernommen | M0 ✅ |
-| P1-0a | Spike Auth: Kombi-Mail Code + Magic-Link, „angemeldet bleiben“ bei OTP (tech-stack.md §11, T1) – **lokal mit Mailpit, ohne In-App-Browser-Gerätetest**; T2 (WhatsApp/Instagram) später per Tunnel oder Staging | developer → reviewer | F-040, F-041 | **im Review** – Reviewer ⚠️ (siehe P1-0, gemeinsames Review); Ergebnis [spike-auth.md](spike-auth.md), T1 + T3 gelöst, T2 (Gerätetest) offen → OPS-10 | P1-0 |
+| P1-0 | Projekt-Scaffold nach `docs/ops/tech-stack.md` (Next.js, pnpm, Drizzle, next-intl, ESLint/Prettier, Vitest, Playwright, Docker-Compose dev mit PostgreSQL + Mailpit, `compose.demo.yml` + Platzhalter-Startschutz (deployment.md §0), Skript-Vertrag für CI) | developer → reviewer | – | **fertig** (PR #4 gemergt 2026-10-08; T2-Gerätetest offen → OPS-10) | M0 ✅ |
+| P1-0a | Spike Auth: Kombi-Mail Code + Magic-Link, „angemeldet bleiben“ bei OTP (tech-stack.md §11, T1) – **lokal mit Mailpit, ohne In-App-Browser-Gerätetest**; T2 (WhatsApp/Instagram) später per Tunnel oder Staging | developer → reviewer | F-040, F-041 | **fertig** (PR #4 gemergt 2026-10-08; T2-Gerätetest offen → OPS-10) | P1-0 |
+| P1-0c | Schritt 0a „UI-Fundament“ (Look & Feel 2.0: Design-System v1.0 „Reise-Cockpit“, Indigo & Minze, Motion-System) | designer, motion-designer, developer → reviewer | F-046 (Basis) | **fertig** (PR #5 gemergt; Reviewer ⚠️ mit Anmerkungen, R-016–R-019 → Inkrement 1) | P1-0 |
 | P1-0b | Demo-Seed `db:seed:demo` (synthetische Personen `@demo.test`, Reisen in allen Phasen, relative Daten) – wächst mit jedem Inkrement | developer | – | **geplant** | P1-0; Ausbau mit P1-2 … P1-5 |
-| P1-1 | i18n-Gerüst (DE/EN) + Konto-Basis: Registrierung, Login/Logout, Zugangswiederherstellung | developer → reviewer | F-046, F-040, F-041, F-042 | **geplant** | P1-0, P1-0a, P0-2, P0-3 |
+| P1-1 | Inkrement 1: i18n-Gerüst (DE/EN) + Konto-Basis: Registrierung, Login/Logout, Zugangswiederherstellung, Konto (E-Mail/Passwort mit Re-Auth, „Bewegung reduzieren“), Hilfelinks F-051, Limits pro E-Mail | developer → reviewer | F-046, F-040, F-041, F-042, F-051 | **im Review** – Fixes R-021–R-031 in Nachprüfung durch den Reviewer (`docs/review/findings.md`); tech-stack.md §3.2 auf Ist-Stand (v1.2) | P1-0, P1-0a, P1-0c |
 | P1-2 | Reise anlegen, einladen, Beitritt im Einladungsflow, Rollen, „Meine Reisen“ | developer → reviewer | F-001, F-002, F-003, F-004, F-044 | **geplant** | P1-1 |
 | P1-3 | Verfügbarkeit manuell + Status + Feiertage/Wochenenden | developer → reviewer | F-005, F-007, F-016 | **geplant** | P1-2 |
 | P1-4 | Heatmap + Kandidaten-Berechnung | developer → reviewer | F-008, F-009 | **geplant** | P1-3 |
@@ -59,7 +60,7 @@ P0-1 Produktkonzept ──┬─> P0-2 UX ──┐
                       ├─> P0-3 Design ┴─> P0-5 Abstimmung ─┐
                       └─> P0-4 Ops ──> P0-6 Entscheidungen ─┼─> P0-7 M0
                                                             │
-M0 ─> P1-0 Scaffold ─> P1-0a Auth-Spike ─> P1-1 ─> P1-2 ─> P1-3 ─> P1-4 ─> P1-5 ─> P1-7
+M0 ─> P1-0 Scaffold ─> P1-0a Auth-Spike ─> P1-0c UI-Fundament ─> P1-1 ─> P1-2 ─> P1-3 ─> P1-4 ─> P1-5 ─> P1-7
                                                      └──────────> P1-6 (vor M2)
 Offline-Demo (lokal) ─> … ─> Go-Live-Gate (go-live.md, Auftraggeber) ─> OPS-1/OPS-2 (Staging + Mail) ─> OPS-3/OPS-4 ─> Beta M1
 P1-1 ─> optional OPS-10 (Tunnel-Gerätetest T2)
@@ -90,3 +91,4 @@ Offene Produktfragen: siehe PRD §12 (Q11–Q16 am 2026-10-08 entschieden bzw. b
 - 2026-10-08 (CEO): Konzeptphase abgeschlossen – P0-2, P0-3, P0-4, P0-5 fertig; M0 wartet auf Freigabe durch den Auftraggeber.
 - 2026-10-08 (Operations, nach Auftraggeber-Entscheidung Q11/Q14–Q16): M0 abgenommen – P0-6, P0-7 fertig. Betriebsmodus **Offline-Demo** (deployment.md §0). B1–B4 sowie OPS-1–OPS-5 zurückgestellt bis Go-Live, nicht mehr blockierend; Go-Live-Gate neu ([go-live.md](go-live.md)). P1-0 und P1-0a in Arbeit (developer, lokal ohne In-App-Browser-Gerätetest). Neu: P1-0b (Demo-Seed), OPS-9 (Go-Live-Vorbereitung inkl. Markenrecherche beider Namen), OPS-10 (optionaler Tunnel-Test T2).
 - 2026-10-08 (Operations, nach Review P1-0/P1-0a): P1-0 und P1-0a **im Review** (Reviewer ⚠️ mit Anmerkungen; R-001–R-004 behoben, R-005/R-009 in Arbeit, R-006/R-007 → Inkrement 1). R-008 erledigt: deployment.md §0.2/§5 – Migration/Seed über Service `tools` statt `app` (Standalone-Image ohne Skripte), `pnpm demo:*`-Kurzbefehle dokumentiert. tech-stack.md v1.1: Routing nach sitemap.md §4 (App-Routen ohne Präfix, `/de`/`/en` öffentlich, Cookie `lang`, zwei Root-Layouts, kein `proxy.ts`), ESLint 9.39 / TypeScript 6.0.x, T3 gelöst, `standalone` nur mit `NEXT_OUTPUT_STANDALONE=1`, `Referrer-Policy: same-origin` auf `/i/*` + `/auth/*`. compliance-checklist.md §4: Sprach-Cookie `lang` statt `NEXT_LOCALE`.
+- 2026-10-09 (Operations): P1-0c Schritt 0a „UI-Fundament“ **fertig** (PR #5 gemergt). P1-1 (Inkrement 1) **im Review** – Fixes R-021–R-031 in Nachprüfung. tech-stack.md v1.2 (§3.2 Ist-Stand: Mail-Budget pro Adresse/Postfach, Fehlversuche nur bei ausstehendem Code, Sperre ohne Mail-Sperre, HKDF-Schlüssel, Re-Auth, Argon2id, `PASSWORD_BREACH_CHECK`); go-live.md v1.1: Entscheidungspunkt „HIBP-Check einschalten?“ (Stufe 2a).

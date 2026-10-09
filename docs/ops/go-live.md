@@ -1,6 +1,6 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v1.0 (gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08)
+Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.1 (gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
@@ -46,6 +46,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | **Markenprüfung für beide Namen** „Wir wollen weg“ und „When do we go?“: Identitäts-/Ähnlichkeitsrecherche in DPMA (DPMAregister), EUIPO (eSearch/TMview) und WIPO (Global Brand Database) für relevante Klassen (v. a. 9 Software, 42 SaaS, ggf. 39 Reiseorganisation) sowie App-Stores und Domains; Ergebnis dokumentieren. Eigene Markenanmeldung optional (Kosten ca.: DPMA ab ca. 290 € für bis zu 3 Klassen, EUIPO ab ca. 850 € für 1 Klasse – vor Anmeldung aktuell prüfen) | Auftraggeber (ggf. mit Anwalt), Operations recherchiert vor | PRD Q11 |
 | ☐ | **AVV-Liste vollständig** (Hosting, Mail, Postfach, ggf. Backup-Speicher), Ablage außerhalb des Repos | Operations | compliance §3 |
 | ☐ | VVT angelegt, Löschkonzept final, Schwellwertanalyse DSFA dokumentiert | Operations (OPS-6) | compliance §5, §6 |
+| ☐ | **Entscheidung: HIBP-Check einschalten?** (`PASSWORD_BREACH_CHECK=hibp`) – neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität: nur 5 Zeichen des SHA-1-Hashs verlassen den Server; kein Konto, keine Kosten, fail-open). **Ja (Empfehlung Operations):** bessere Passwortqualität; Datenschutzerklärung muss die Übermittlung nennen, Server braucht ausgehende HTTPS-Verbindung zu `api.pwnedpasswords.com`. **Nein:** nur Offline-Liste (Ist-Stand Demo) | Auftraggeber, Operations setzt Env-Variable | tech-stack.md §3.2, deployment.md (Env-Variablen), compliance §2 |
 | ☐ | Registrierungshinweis mit Links auf Datenschutz (und ab M2 Nutzungsbedingungen), Mindestalter 16 | Developer, Reviewer | compliance §9 |
 
 ### 2b. Betrieb (Q15)
