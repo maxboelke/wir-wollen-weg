@@ -1,0 +1,18 @@
+/* «Orga» chip: crown + text (F-004, design-system §9.6) */
+.orga {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  min-height: calc(var(--ww-space-6) + var(--ww-space-0-5));
+  padding: var(--ww-space-0-5) calc(var(--ww-space-2) + var(--ww-space-0-5));
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.orga svg {
+  color: var(--ww-color-warning-text);
+}

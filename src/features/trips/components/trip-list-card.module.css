@@ -1,0 +1,106 @@
+/* Trip card «Meine Reisen» – design-system §9.6, W04 */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  overflow: hidden;
+}
+
+/* One focus ring for the card link; the to-do button has its own (ux-spec §4.8). */
+.card.card:focus-within {
+  outline: none;
+}
+
+.card.card:has(.link:focus-visible) {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: var(--ww-focus-offset);
+}
+
+/* To-do line: coral tint with a 4 px edge on the left (design-system §9.6, §4.4) */
+.todo {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  margin: calc(-1 * var(--ww-space-4)) calc(-1 * var(--ww-space-4)) var(--ww-space-1);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-left: var(--ww-space-1) solid var(--ww-todo-bar);
+  background: var(--ww-todo-bg);
+  color: var(--ww-todo-fg);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.name {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  overflow-wrap: anywhere;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-extrabold);
+  line-height: var(--ww-leading-snug);
+}
+
+.link {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Stretched link: the whole card is the click target, the link stays the focus target. */
+.link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.link:focus-visible {
+  outline: none;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-1-5);
+}
+
+.progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+}
+
+.bar {
+  display: block;
+  height: var(--ww-space-1-5);
+  overflow: hidden;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-progress-track);
+}
+
+.fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ww-progress-fill);
+  transform-origin: left center;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* The action sits above the stretched link. */
+.action {
+  position: relative;
+  z-index: 1;
+  margin-top: var(--ww-space-1);
+}

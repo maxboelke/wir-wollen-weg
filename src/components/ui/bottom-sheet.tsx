@@ -11,6 +11,11 @@ interface BottomSheetProps {
   title: ReactNode;
   closeLabel: string;
   children: ReactNode;
+  /**
+   * Multi-step sheets (e.g. trip menu → confirmation): when this changes while the sheet is
+   * open, focus moves to the new heading (ux-spec §4.2).
+   */
+  focusKey?: string | undefined;
 }
 
 /**
@@ -19,7 +24,14 @@ interface BottomSheetProps {
  * Motion G-05/G-05b: slides up (`slow` · emphasized), closes faster; reduced = fade.
  * Basic version: dragging and snap points follow with the first real sheet (Increment 3).
  */
-export function BottomSheet({ open, onClose, title, closeLabel, children }: BottomSheetProps) {
+export function BottomSheet({
+  open,
+  onClose,
+  title,
+  closeLabel,
+  children,
+  focusKey,
+}: BottomSheetProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
@@ -97,6 +109,14 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
       };
     }
   }, [open]);
+
+  // A new step inside the open sheet: focus its heading.
+  const lastFocusKey = useRef(focusKey);
+  useEffect(() => {
+    if (lastFocusKey.current === focusKey) return;
+    lastFocusKey.current = focusKey;
+    if (dialogRef.current?.open && !closing.current) titleRef.current?.focus();
+  }, [focusKey]);
 
   return (
     <dialog

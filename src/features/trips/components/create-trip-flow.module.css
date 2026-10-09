@@ -1,0 +1,55 @@
+/* W05 – create trip; signed out: summary + sign-in steps (Flow G #4) */
+.heading {
+  font-size: var(--ww-text-3xl);
+}
+
+.heading:focus {
+  outline: none;
+}
+
+.auth {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-5);
+}
+
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+}
+
+.summaryName {
+  overflow-wrap: anywhere;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.summaryMeta {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.edit {
+  align-self: flex-start;
+  min-height: var(--ww-size-touch-min);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.edit:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}

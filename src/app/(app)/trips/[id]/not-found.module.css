@@ -1,0 +1,11 @@
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-4);
+  padding-top: var(--ww-space-4);
+}
+
+.text {
+  color: var(--ww-color-text-muted);
+}

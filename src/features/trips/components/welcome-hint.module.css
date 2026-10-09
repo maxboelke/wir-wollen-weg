@@ -1,0 +1,50 @@
+/* «Du bist dabei!» – W03 Z5, design-system §9.18 (success banner with seal) */
+.hint {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-3) var(--ww-space-2) var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-accent-tint);
+  color: var(--ww-color-text);
+}
+
+.hint svg[data-illustration] {
+  width: var(--ww-size-seal-md);
+  height: var(--ww-size-seal-md);
+}
+
+.text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+  font-size: var(--ww-text-sm);
+}
+
+.title {
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.close {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-touch-min);
+  height: var(--ww-size-touch-min);
+  margin-block: calc(-1 * var(--ww-space-2));
+  border: 0;
+  border-radius: var(--ww-radius-pill);
+  background: none;
+  color: var(--ww-color-text);
+  cursor: pointer;
+}
+
+.close:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}

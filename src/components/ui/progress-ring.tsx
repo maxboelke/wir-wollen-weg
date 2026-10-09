@@ -29,6 +29,7 @@ export function ProgressRing({
         <circle className={styles.track} cx="26" cy="26" r={RADIUS} />
         <circle
           className={styles.fill}
+          data-ring-fill=""
           cx="26"
           cy="26"
           r={RADIUS}

@@ -1,0 +1,30 @@
+.gate {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.cta {
+  display: none;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.notes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+/* Phones with JavaScript: preview first, form after «Mitmachen» (W03 Z1/Z2). */
+@media (max-width: 599.98px) {
+  :global(html[data-js]) .gate:not(.open) .cta {
+    display: flex;
+  }
+
+  :global(html[data-js]) .gate:not(.open) .form {
+    display: none;
+  }
+}

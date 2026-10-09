@@ -1,0 +1,27 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-6);
+  max-width: var(--ww-size-content-narrow);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.intro h1 {
+  font-size: var(--ww-text-3xl);
+}
+
+.created {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+}
+
+.lead {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-lg);
+}

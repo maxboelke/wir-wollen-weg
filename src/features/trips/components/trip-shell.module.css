@@ -1,0 +1,12 @@
+.main {
+  width: 100%;
+  max-width: var(--ww-size-content-wide);
+  margin-inline: auto;
+  padding: var(--ww-space-6) var(--ww-space-4) var(--ww-space-16);
+}
+
+@media (min-width: 600px) {
+  .main {
+    padding-inline: var(--ww-space-6);
+  }
+}

@@ -204,7 +204,8 @@ function createAuth() {
     advanced: {
       cookiePrefix: "ww",
       // Only the header written by handleAuthRequest – never a client-supplied one (R-005).
-      ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER] },
+      // IPv6 limits per /64 network, like the app limits (R-036; also Better Auth's default).
+      ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER], ipv6Subnet: 64 },
       database: { generateId: false }, // PostgreSQL generates UUIDv7 (schema.ts)
       // First-party cookies only, SameSite=Lax – NOT Strict: links from WhatsApp/mail are
       // cross-site navigations and must still carry the session (tech-stack.md §3.3).

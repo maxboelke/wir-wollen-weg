@@ -120,8 +120,11 @@ export function clearPendingAuth(storages = browserStorages()): void {
 }
 
 /** Where a flow starts: the invite itself, or /login with its return target. */
-export function pendingOrigin(variant: "login" | "invite", returnTo: string): string {
-  return variant === "invite" ? returnTo : `/login?next=${encodeURIComponent(returnTo)}`;
+export function pendingOrigin(
+  variant: "login" | "invite" | "createTrip",
+  returnTo: string,
+): string {
+  return variant === "login" ? `/login?next=${encodeURIComponent(returnTo)}` : returnTo;
 }
 
 /** Seconds until "send a new code" is available again (0 = now). */

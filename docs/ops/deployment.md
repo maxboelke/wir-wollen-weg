@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: v0.2 – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v0.3 (v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -22,7 +22,8 @@ Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-ch
 | `mailpit` | `axllent/mailpit` | `8025` (Web-UI), SMTP `1025` nur intern | fängt **alle** Mails ab – Codes und Magic-Links werden **nie** echt versendet, sondern in der Mailpit-Web-UI angezeigt |
 
 - Datei: `docker/compose.demo.yml` (legt der Developer mit dem Scaffold P1-0 an, neben `compose.dev.yml`). Minimaler Caddy ohne TLS als Vorschaltung (seit R-005), kein Bugsink, kein Backup-Container.
-- **Client-IP für Rate-Limits (R-005):** Next.js übernimmt einen vom Client mitgeschickten `X-Forwarded-For` ungeprüft, wenn die App direkt erreichbar ist – IP-Limits ließen sich so per Header umgehen. Deshalb ist die App **nie direkt** erreichbar, sondern nur über einen Proxy, der den Header **überschreibt**: in der Demo `proxy` (Caddy vertraut keinem vorgelagerten Proxy und setzt `X-Forwarded-For` = echte Absender-IP), ab Go-Live Caddy (§5.2). Die App liest die IP aus `AUTH_IP_HEADER` (Standard `x-forwarded-for`), überspringt von rechts Einträge aus `AUTH_TRUSTED_PROXIES` und nimmt den ersten anderen Eintrag. Anfragen ohne auflösbare IP werden außerhalb von `development`/`ci` mit 400 abgelehnt (kein gemeinsamer Sammeltopf).
+- **Client-IP für Rate-Limits (R-005):** Next.js übernimmt einen vom Client mitgeschickten `X-Forwarded-For` ungeprüft, wenn die App direkt erreichbar ist – IP-Limits ließen sich so per Header umgehen. Deshalb ist die App **nie direkt** erreichbar, sondern nur über einen Proxy, der den Header **überschreibt**: in der Demo `proxy` (Caddy vertraut keinem vorgelagerten Proxy und setzt `X-Forwarded-For` = echte Absender-IP), ab Go-Live Caddy (§5.2). Die App liest die IP aus `AUTH_IP_HEADER` (Standard `x-forwarded-for`), überspringt von rechts Einträge aus `AUTH_TRUSTED_PROXIES` und nimmt den ersten anderen Eintrag. Anfragen ohne auflösbare IP werden außerhalb von `development`/`ci` mit 400 abgelehnt (kein gemeinsamer Sammeltopf). Gleiches gilt für die App-Limits (Einladungen, R-036): ohne IP wird ein Beitritt abgelehnt und ein Fehlversuch nicht gezählt – nie ein Topf „unknown“; IPv6-Adressen zählen dort wie bei Better Auth pro /64-Netz. Ein gültiger Einladungslink wird nie durch das IP-Limit gesperrt.
+- **Zugriffslogs in der Demo (R-037):** `docker/Caddyfile.demo` enthält **keine** `log`-Direktive → Caddy schreibt **kein** Zugriffslog; Einladungs- und Magic-Link-Tokens landen also nicht in `docker compose logs proxy`. Die Ausnahme `logging.incomingRequests.ignore` in `next.config.ts` wirkt nur bei `next dev`, nicht im Demo-/Prod-Image. **Änderung für den Developer (Empfehlung, nicht dringend):** in `docker/Caddyfile.demo` einen Kommentar ergänzen „Zugriffslog nur mit Token-Filter aus deployment.md §5.4 einschalten“ – oder gleich den Block aus §5.4 mit `output stdout` übernehmen, damit Demo und Produktion gleich loggen und der Filter lokal testbar ist (Prüfung: `/i/<token>` aufrufen, in `docker compose logs proxy` darf nur `/i/[redacted]` stehen). Der Operations Manager ändert die Datei nicht selbst.
 - Umgebungsdatei: `.env.demo` (in `.gitignore`), erzeugt aus `.env.example`; `APP_ENV=demo` (siehe §4).
 - `APP_ENV=demo` bewirkt: Mail-Transport fest auf Mailpit (kein externer SMTP möglich), `noindex` überall, sichtbares Banner „Demo – keine echten Daten eingeben“ (DE/EN), Rechtstext-Seiten mit Platzhaltern erlaubt (compliance-checklist.md §0a).
 
@@ -212,7 +213,7 @@ Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; 
 2. VM (Ubuntu LTS) in DE mit SSH-Key, Hetzner-Firewall: nur 22 (auf feste IPs bzw. per Key), 80, 443. Server-Backups aktivieren.
 3. Härtung: eigener Deploy-Nutzer, kein Root-Login, kein Passwort-Login, `unattended-upgrades`, `fail2ban`, Zeitzone UTC.
 4. Docker Engine + Compose-Plugin; Verzeichnisse `/opt/wir-wollen-weg/{production,staging}` mit `compose.yml` und `.env`.
-5. Caddy als Reverse-Proxy: automatische TLS-Zertifikate (Let's Encrypt), HTTP→HTTPS, HSTS, Kompression, Zugriffslogs ohne Query-Strings (Tokens!) und mit 7 Tagen Aufbewahrung.
+5. Caddy als Reverse-Proxy: automatische TLS-Zertifikate (Let's Encrypt), HTTP→HTTPS, HSTS, Kompression, Zugriffslogs **ohne Tokens** – weder im Pfad (`/i/<token>`, `/auth/*`) noch in Query-Strings oder `Referer` – und mit 7 Tagen Aufbewahrung (Caddyfile-Baustein §5.4, R-037).
 6. DNS-Einträge (§7), Mail-Domain beim Anbieter verifizieren.
 
 ### 5.2 Compose-Dienste (prod)
@@ -228,6 +229,52 @@ Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; 
 7. Release-Notiz in `docs/ops/status.md` (Version, Datum, Feature-IDs).
 
 Kurze Downtime (Sekunden) beim Container-Neustart ist im MVP akzeptiert; Zero-Downtime (z. B. zwei App-Container hinter Caddy) bei Bedarf nach Launch.
+
+### 5.4 Zugriffslogs ohne Tokens (Caddy, staging + prod, R-037)
+
+**Problem:** Tokens stehen nicht nur in Query-Strings, sondern auch im **Pfad**: Einladungslink `/i/<token>` (wer ihn kennt, kann der Reise beitreten) und Magic-Link `/auth/magic?token=…`. Außerdem tragen Folgeanfragen derselben Seite (Assets, Server Actions) die URL im **`Referer`**, weil auf `/i/*` und `/auth/*` bewusst `Referrer-Policy: same-origin` gilt (tech-stack.md §8). Ein Filter nur für Query-Strings reicht deshalb nicht. Die Ausnahme in `next.config.ts` (`logging.incomingRequests.ignore`) wirkt nur bei `next dev`.
+
+**Lösung:** ein gemeinsamer Log-Baustein im Caddyfile, den Staging und Produktion importieren:
+
+```caddyfile
+# Access log without tokens (R-037): mask everything after /i/ and /auth/,
+# drop every query string, drop Referer/Location (may contain a token URL).
+(access_log_redacted) {
+	log {
+		output file /data/logs/access-{args[0]}.log {
+			roll_size 50MiB
+			roll_keep_for 168h   # 7 days (compliance-checklist.md §6)
+		}
+		format filter {
+			wrap json
+			fields {
+				request>uri regexp `^(/(?:i|auth)/)\S*|(\?)\S*` `$1$2[redacted]`
+				request>headers>Referer delete
+				resp_headers>Location delete
+			}
+		}
+	}
+}
+
+app.<domain> {
+	import access_log_redacted prod
+	reverse_proxy app:3000
+}
+
+staging.<domain> {
+	import access_log_redacted staging
+	basic_auth { … }               # STAGING_BASIC_AUTH
+	reverse_proxy app-staging:3000
+}
+```
+
+Ergebnis der Ersetzung: `/i/AbC…xyz` → `/i/[redacted]`, `/auth/magic?token=…` → `/auth/[redacted]`, `/login?next=/i/AbC…` → `/login?[redacted]`, `/trips/k3x9…` bleibt (Reise-ID ist kein Geheimnis). `Cookie`, `Set-Cookie` und `Authorization` schwärzt Caddy standardmäßig (globale Option `log_credentials` **nicht** setzen).
+
+Regeln und Prüfung:
+- Die Regex steht in Backticks (Caddyfile-Rohtext, Backslashes werden nicht verdoppelt); Ersetzung `$1$2[redacted]` ohne geschweifte Klammern, damit Caddy sie nicht als Platzhalter liest. Bei Caddy-Updates mit `caddy validate` und `caddy adapt` prüfen (Syntax von `format filter` hat sich zwischen 2.x-Versionen leicht geändert; `fields { }` wird weiterhin akzeptiert).
+- **Alternative**, falls Filter nicht greifen: `/i/*` und `/auth/*` gar nicht loggen (`log_skip /i/*` bzw. `log_skip /auth/*`, in älteren Versionen `skip_log`). Nachteil: Missbrauch (Token-Raten) ist im Log unsichtbar – Rate-Limit-Zähler der App (§6.2) decken das aber ab.
+- **Fehler-Logs von Caddy** (`http.log.error`, `http.handlers.reverse_proxy`) enthalten das Request-Objekt inkl. URI und gehen über stderr in die Docker-Logs. Bei Einrichtung (OPS-1) eine absichtlich fehlschlagende Anfrage auf `/i/<test-token>` auslösen (z. B. App kurz stoppen → 502) und prüfen; falls die URI ungefiltert erscheint: globales `log default { level WARN }` plus Docker-Log-Rotation von 7 Tagen, oder den Fehlerlogger ebenfalls über `format filter` schicken.
+- **Abnahmetest** (Go-Live-Gate Stufe 2b): Testreise anlegen, Einladungslink und Magic-Link aufrufen, dann `grep -E '/i/[A-Za-z0-9_-]{10,}|token=' /data/logs/*.log` und `docker compose logs caddy app` – erwartet: kein Treffer.
 
 ## 6. Backups, Monitoring, Fehler-Tracking (ab Go-Live)
 
@@ -248,13 +295,13 @@ Kurze Downtime (Sekunden) beim Container-Neustart ist im MVP akzeptiert; Zero-Do
 | Bereich | Werkzeug | Alarm |
 |---|---|---|
 | Erreichbarkeit | externer Uptime-Dienst (Free-Plan, prüft nur `/api/health`, keine personenbezogenen Daten) | Ausfall > 2 Min. → E-Mail/Push an Betreiber |
-| Fehler | Sentry-SDK → **Bugsink selbst gehostet** (Daten bleiben auf unserer VM; `sendDefaultPii: false`, `beforeSend` entfernt E-Mail/Token/Codes; Aufbewahrung 30 Tage). Alternative: Sentry SaaS mit Datenstandort Frankfurt (US-Unternehmen → AVV + SCC/DPF nötig). | neue Fehlerart → E-Mail |
+| Fehler | Sentry-SDK → **Bugsink selbst gehostet** (Daten bleiben auf unserer VM; `sendDefaultPii: false`; `beforeSend` und `beforeBreadcrumb` scrubben E-Mail/Codes und **Tokens in URLs und Headern**: `request.url`, `request.query_string`, `request.headers` (`Referer`, `Cookie`, `Authorization` entfernen), Breadcrumb-URLs (Navigation/Fetch) und Transaktionsnamen – `/i/<token>` → `/i/[redacted]`, `/auth/*` und Query-Strings wie in §5.4; Aufbewahrung 30 Tage; R-037). Alternative: Sentry SaaS mit Datenstandort Frankfurt (US-Unternehmen → AVV + SCC/DPF nötig). | neue Fehlerart → E-Mail |
 | Server | Minimalvariante ohne eigenen Monitoring-Stack: Graphen in der Hetzner-Console + Cron-Skript für Disk > 80 % und Container-Neustarts | E-Mail |
 | Mail-Zustellung | Bounce-/Beschwerde-Webhook des Anbieters → Zähler in DB; Dashboard des Anbieters; DMARC-Aggregatberichte an `dmarc@<domain>` | Bounce-Rate > 5 % oder Zustellung > 1 Min. im Median |
 | Auth-Sicherheit | Zähler für fehlgeschlagene Code-Prüfungen und Rate-Limit-Treffer (aggregiert) | sprunghafter Anstieg → E-Mail |
 | Produkt-Kennzahlen (PRD §4) | **eigene, cookielose Ereignis-Tabelle** (aggregiert, ohne Personenbezug; z. B. „registration_started/verified“, „trip_joined“) – kein Drittanbieter-Analytics | – |
 
-Logs: Docker-JSON-Logs mit Rotation; App-Logs ohne E-Mail/Codes/Tokens; IP-Adressen max. 7 Tage.
+Logs: Docker-JSON-Logs mit Rotation (7 Tage); App-Logs ohne E-Mail/Codes/Tokens; Caddy-Zugriffslogs nach §5.4 (keine Tokens in Pfad, Query, `Referer`); IP-Adressen max. 7 Tage.
 
 ## 7. Domain, DNS & Mail-Authentifizierung (ab Go-Live)
 

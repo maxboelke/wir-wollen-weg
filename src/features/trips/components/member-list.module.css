@@ -1,0 +1,121 @@
+/* «Wer ist dabei?» – W07, design-system §9.17 (avatars) */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.title {
+  font-size: var(--ww-text-xl);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  min-height: var(--ww-size-control-md);
+  padding-block: var(--ww-space-2);
+  border-bottom: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+}
+
+.line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1) var(--ww-space-2);
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  font-weight: var(--ww-font-weight-bold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.you {
+  color: var(--ww-color-text-muted);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.done {
+  color: var(--ww-color-accent-text);
+}
+
+.more {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-touch-min);
+  height: var(--ww-size-touch-min);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: none;
+  color: var(--ww-color-text);
+  cursor: pointer;
+}
+
+.more:focus-visible,
+.toggle:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+@media (hover: hover) {
+  .more:hover {
+    background: var(--ww-color-surface-sunken);
+  }
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: var(--ww-space-1);
+  min-height: var(--ww-size-touch-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ww-radius-sm);
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.chevron {
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.toggle[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}

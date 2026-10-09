@@ -1,0 +1,17 @@
+.soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-6) var(--ww-space-4);
+  text-align: center;
+}
+
+.soon h1 {
+  font-size: var(--ww-text-2xl);
+}
+
+.text {
+  max-width: 36ch;
+  color: var(--ww-color-text-muted);
+}

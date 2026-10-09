@@ -1,0 +1,79 @@
+/* Stepper – ux-spec §4.6: − value + with 44 px buttons; values in tabular digits */
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+}
+
+.button {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-control-md);
+  height: var(--ww-size-control-md);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-button-sm);
+  background: var(--ww-btn-tool-bg);
+  color: var(--ww-btn-tool-fg);
+  cursor: pointer;
+  transition: transform var(--ww-duration-fast) var(--ww-ease-spring-soft);
+}
+
+.button:active:not([aria-disabled="true"]) {
+  transform: scale(var(--ww-motion-scale-press));
+  transition-duration: var(--ww-duration-instant);
+}
+
+/* aria-disabled instead of disabled: the button keeps focus at the limit (R-038). */
+.button[aria-disabled="true"] {
+  background: var(--ww-color-disabled-bg);
+  color: var(--ww-color-disabled-text);
+  cursor: not-allowed;
+}
+
+.button:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.valueBox {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--ww-space-1-5);
+}
+
+.input {
+  width: 3.2em;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-1) var(--ww-space-2);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-extrabold);
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  appearance: textfield;
+}
+
+.input::-webkit-inner-spin-button,
+.input::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.input:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.invalid {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.unit {
+  font-weight: var(--ww-font-weight-bold);
+}

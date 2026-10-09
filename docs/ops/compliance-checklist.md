@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-08 · Verantwortlich: Operations Manager · Status: Entwurf v0.2 (Offline-Demo-Modus, Platzhalter-Regel §0a)
+Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: Entwurf v0.3 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -139,12 +139,13 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Konto (Name, E-Mail, Passwort-Hash, Sprache, Region) | sofort bei Konto-Löschung (F-043); nach 24 Monaten ohne Login, Hinweis-Mail 30 Tage vorher | Retention-Job täglich; Organisatorrolle geht vorher über (F-043) | ☐ |
 | Sessions | Ablauf (Browser-Ende bzw. 90 Tage rollierend), bei Logout/„überall abmelden“, Passwort-Reset, Konto-Löschung | DB-Cleanup täglich | ☐ |
 | Codes / Magic-Link-Tokens | nach Verwendung bzw. 15 Min.; Cleanup täglich | gehasht gespeichert | ☐ |
+| Einladungs-Token der Reise | mit der Reise; beim Erneuern durch die Orga sofort ersetzt | **Klartext** – dokumentierte Ausnahme §7a | ☐ |
 | Rate-Limit-Einträge | nach Ablauf des Zeitfensters (Minuten bis 24 h) | Cleanup | ☐ |
 | Reise inkl. Mitgliedschaften, Verfügbarkeiten, Kommentare, Abstimmungen | Organisator löscht (sofort); automatisch 90 Tage nach festgelegtem Reiseende bzw. 12 Monate nach letzter Aktivität; Hinweis-Mail 14 Tage vorher (F-013) | `ON DELETE CASCADE` + Retention-Job | ☐ |
 | Mitgliedsdaten in einer Reise | sofort bei „Reise verlassen“ oder Entfernen durch Organisator (F-004, F-013) | Cascade | ☐ |
 | Platzhalter (F-007) | mit Reise bzw. bei Übernahme/Entfernen | Cascade | ☐ |
-| Server-/Proxy-Logs mit IP | 7 Tage | Log-Rotation | ☐ |
-| Fehler-Tracking-Ereignisse | 30 Tage, ohne E-Mail/Token | Bugsink-Retention | ☐ |
+| Server-/Proxy-Logs mit IP | 7 Tage; **ohne Tokens** in Pfad/Query/`Referer` (deployment.md §5.4, R-037) | Log-Rotation, Caddy-Log-Filter | ☐ |
+| Fehler-Tracking-Ereignisse | 30 Tage, ohne E-Mail/Token (URLs, Header, Breadcrumbs gescrubbt, deployment.md §6.2) | Bugsink-Retention, `beforeSend` | ☐ |
 | Backups | rollierend max. 30 Tage → gelöschte Daten spätestens dann auch aus Backups entfernt; bei Restore: Löschungen der letzten 30 Tage erneut anwenden (Lösch-Protokoll nur mit IDs, ohne Inhalte) | Backup-Rotation, Runbook | ☐ |
 | Mail-Anbieter-Logs | gemäß Anbieter (Aufbewahrung im AVV prüfen, möglichst ≤ 30 Tage einstellen) | Anbieter-Einstellung | ☐ |
 | Kontakt-/Betroffenenanfragen | 3 Jahre nach Abschluss (Nachweis), danach löschen – Frist prüfen lassen | Postfach | ☐ |
@@ -160,12 +161,24 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 |---|---|---|
 | ☐ | TLS überall, HSTS; DB nur im internen Netz; Firewall | M1 |
 | ☐ | Zugang Server/Hosting/Mail/GitHub nur mit 2FA; SSH nur per Schlüssel | M1 |
-| ☐ | Passwörter Argon2id; Codes/Tokens gehasht; Rate-Limits; keine Konto-Enumeration (tech-stack.md §3) | M1 |
+| ☐ | Passwörter Argon2id; Codes/Login-Tokens gehasht (**Ausnahme:** Einladungs-Token im Klartext, §7a); Rate-Limits; keine Konto-Enumeration (tech-stack.md §3) | M1 |
 | ☐ | Verschlüsselte Backups (`age`), Restore-Test monatlich | M1 |
 | ☐ | Least Privilege für Organisator-/Mitgliedsrechte, serverseitig geprüft (F-004) | M1 |
-| ☐ | Keine personenbezogenen Daten in Logs/CI/Issues | laufend |
+| ☐ | Keine personenbezogenen Daten in Logs/CI/Issues; **keine Tokens in Zugriffs-/Fehler-Logs** – auch nicht im Pfad (`/i/<token>`, `/auth/*`) oder `Referer` (deployment.md §5.4, §6.2; R-037) | laufend |
 | ☐ | **Datenpannen-Prozess** (Art. 33/34): Erkennen → bewerten → Meldung an Aufsichtsbehörde binnen 72 h → ggf. Betroffene informieren; Kontaktdaten der Behörde notieren | M2 |
 | ☐ | `security.txt` mit Kontakt für Sicherheitsmeldungen | M2 |
+
+### 7a. Dokumentierte Ausnahme: Einladungs-Token im Klartext (R-037)
+
+| Punkt | Inhalt |
+|---|---|
+| Was | `trip.invite_token` (256 Bit Zufall, `randomBytes(32)`) wird **unverschlüsselt und ungehasht** in der Datenbank gespeichert. Alle anderen Geheimnisse (Login-Codes, Magic-Link-Tokens, Passwörter) bleiben gehasht. |
+| Warum | Der Einladungslink muss allen Mitgliedern jederzeit **wieder angezeigt** werden (F-002, PRD Q13 b). Ein Hash ist nicht umkehrbar – damit scheidet Hashing aus. |
+| Risiko | Wer Lesezugriff auf DB oder Backups erhält, kann jeder Reise beitreten (Name + Verfügbarkeiten der Gruppe sichtbar). Kein Zugriff auf Konten, Passwörter oder Login. |
+| Schutzmaßnahmen | (1) Orga kann den Link jederzeit **erneuern** – der alte wird sofort ungültig; (2) Orga kann Beitritte **sperren**, Grenze 30 Mitglieder, Entfernen von Mitgliedern (F-004); (3) DB nur im internen Netz, kein öffentlicher Port (deployment.md §5.2); (4) Backups `age`-verschlüsselt, privater Schlüssel offline (deployment.md §6.1); (5) Token **nie in Logs**: Caddy-Filter (deployment.md §5.4), Bugsink-Scrubbing (§6.2), App-Logs ohne Tokens; (6) Formprüfung vor DB-Zugriff + Rate-Limits gegen Raten; (7) `noindex` und `Referrer-Policy: same-origin` auf `/i/*`. |
+| Im Datenpannenfall | Bei DB- oder Backup-Leck: alle Einladungs-Tokens per Migration/Skript neu erzeugen (Runbook OPS-6) und Orgas informieren. |
+| Später (optional) | Token at-rest mit App-Schlüssel verschlüsseln (z. B. AES-GCM, Schlüssel per HKDF aus Secret) – schützt bei reinem DB-/Backup-Leck; Entscheidung nach M1. |
+| Bewertung | vertretbar (Reviewer R-037, Operations); vor Go-Live im VVT/TOM-Dokument (OPS-6) übernehmen. |
 
 ## 8. Barrierefreiheit (BFSG)
 

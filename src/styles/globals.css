@@ -136,3 +136,8 @@ body {
   flex-direction: column;
   min-height: 100dvh;
 }
+
+/* Trip pages: focused elements never hide under the sticky cockpit head (WCAG 2.4.11). */
+html:has(main[data-cockpit]) {
+  scroll-padding-top: calc(var(--ww-size-cockpit-compact-h) + var(--ww-space-2));
+}

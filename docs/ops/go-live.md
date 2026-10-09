@@ -1,6 +1,6 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.1 (gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check)
+Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.2 (gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
@@ -32,6 +32,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | **Postfach** für Kontakt/Impressum/DMARC-Berichte (z. B. mailbox.org, Posteo) inkl. AVV | Auftraggeber | deployment.md §2.2 |
 | ☐ | **SPF, DKIM, DMARC** (`p=none` zum Start), Custom Return-Path; Prüfung mit Mail-Tester | Operations (OPS-2) | deployment.md §7.2 |
 | ☐ | Staging hinter Basic-Auth, `noindex`, Mailpit-UI mit Passwort | Operations (OPS-1) | deployment.md §3 |
+| ☐ | **R-037 – keine Tokens in Logs (Staging):** Caddy-Log-Baustein `access_log_redacted` aktiv; Abnahmetest mit Einladungs- und Magic-Link durchgeführt (kein `/i/<token>`, kein `token=`, kein `Referer` im Zugriffslog, auch nicht in Caddy-Fehler-/Docker-Logs) | Operations (OPS-1), Reviewer | deployment.md §5.4, Finding R-037 |
 | ☐ | Off-site-Backup-Ziel + `age`-Schlüsselpaar (privater Schlüssel offline beim Betreiber) | Auftraggeber (Schlüssel), Operations | deployment.md §6.1 |
 
 ## Stufe 2 – vor Go-Live mit echten Nutzern (Beta M1)
@@ -56,6 +57,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | Produktion eingerichtet (VM, Caddy/TLS, Firewall, Härtung), `deploy.yml` mit manueller Freigabe | Operations (OPS-1, OPS-3) | deployment.md §5 |
 | ☐ | **Backups** laufen (stündlich `pg_dump`, verschlüsselt, off-site; Server-Backups) **und Restore-Test erfolgreich dokumentiert** | Operations (OPS-4) | deployment.md §6.1 |
 | ☐ | **Monitoring:** Uptime-Alarm und Fehler-Alarm (Bugsink) kommen nachweislich beim Betreiber an; Disk-/Container-Alarm | Operations (OPS-4) | deployment.md §6.2 |
+| ☐ | **R-037 – Logs ohne Tokens (Produktion), Pflicht:** (1) Caddy-Zugriffslog mit Filter §5.4, Abnahmetest wiederholt; (2) **Bugsink/Fehler-Tracking:** `sendDefaultPii: false`, `beforeSend`/`beforeBreadcrumb` scrubben **URLs** (`request.url`, Query, Breadcrumbs, Transaktionsnamen: `/i/[redacted]`, `/auth/[redacted]`) und **Header** (`Referer`, `Cookie`, `Authorization` entfernen) – Test: Fehler auf `/i/<token>` provozieren, Ereignis in Bugsink enthält keinen Token; (3) Ausnahme „Einladungs-Token im Klartext“ in VVT/TOM übernommen | Operations (OPS-1, OPS-4), Developer (SDK-Konfiguration), Reviewer | deployment.md §5.4, §6.2; compliance §7, §7a |
 | ☐ | SPF/DKIM/DMARC grün, Zustellung an Gmail/Outlook/GMX/web.de/iCloud getestet (nicht im Spam) | Operations | deployment.md §7 |
 | ☐ | Retention-Job (F-013/F-043) läuft täglich, Testlauf auf Staging | Developer, Operations | compliance §6 |
 | ☐ | Security-Header geprüft, TLS A/A+, `noindex` auf Reiseseiten, Rate-Limits aktiv (`RATE_LIMIT_ENABLED=true`), `/.well-known/security.txt` mit echtem Kontakt | Operations, Reviewer | deployment.md §4, tech-stack.md §8 |

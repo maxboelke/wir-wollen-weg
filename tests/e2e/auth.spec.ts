@@ -1,5 +1,6 @@
 import { expect, test, type BrowserContext } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
+import { openJoinForm } from "./helpers/auth";
 import { createTrip } from "./helpers/db";
 import { uniqueEmail, waitForAccessMail } from "./helpers/mailpit";
 
@@ -21,6 +22,7 @@ test("invite → code from mail → name → joined (token survives sign-up)", a
 
   await page.goto(`/i/${token}`);
   await expect(page.getByRole("heading", { level: 1 })).toHaveText(tripName);
+  await openJoinForm(page);
   await page.getByLabel(en.auth.emailLabel).fill(email);
   await page.getByRole("button", { name: en.auth.sendCode }).click();
 
@@ -36,8 +38,10 @@ test("invite → code from mail → name → joined (token survives sign-up)", a
   await page.getByLabel(en.auth.nameLabel).fill("Kemal");
   await page.getByRole("button", { name: en.invite.confirmJoin }).click();
 
-  await expect(page).toHaveURL(/\/trips$/);
-  await expect(page.getByRole("listitem").filter({ hasText: tripName })).toBeVisible();
+  // Joined: straight into the trip (default tab) with the welcome hint (W03-06).
+  await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText(tripName);
+  await expect(page.getByText(en.trip.welcomeTitle)).toBeVisible();
 
   const cookie = await sessionCookie(page.context());
   expect(cookie, "session cookie").toBeDefined();
@@ -55,6 +59,7 @@ test("magic link from the same mail works in another browser", async ({ page, br
 
   // Browser A (e.g. WhatsApp in-app browser) requests the mail …
   await page.goto(`/i/${token}`);
+  await openJoinForm(page);
   await page.getByLabel(en.auth.emailLabel).fill(email);
   await page.getByRole("button", { name: en.auth.sendCode }).click();
   const mail = await waitForAccessMail(email);
@@ -74,8 +79,8 @@ test("magic link from the same mail works in another browser", async ({ page, br
   await expect(tab).toHaveURL(new RegExp(`/i/${token}$`));
   await tab.getByLabel(en.auth.nameLabel).fill("Lena");
   await tab.getByRole("button", { name: en.invite.confirmJoin }).click();
-  await expect(tab).toHaveURL(/\/trips$/);
-  await expect(tab.getByRole("listitem").filter({ hasText: tripName })).toBeVisible();
+  await expect(tab).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
+  await expect(tab.getByRole("heading", { level: 1 })).toHaveText(tripName);
 
   // The link is single-use: the error shows only after the tap, focus on the heading.
   await tab.goto(mail.magicLink);

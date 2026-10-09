@@ -12,7 +12,9 @@ import {
   LOCALE_COOKIE_MAX_AGE,
 } from "@/i18n/config";
 import { retryAfterMinutes } from "@/lib/email-limits";
+import { FLASH_COOKIE, flashValue } from "@/lib/flash";
 import { MOTION_COOKIE } from "@/lib/motion";
+import { isInviteTokenShape } from "@/lib/tokens";
 import { isCountry, isSubdivisionOf, isWeekStart } from "@/lib/region";
 import {
   checkPassword,
@@ -163,7 +165,7 @@ export async function updateReduceMotion(reduce: boolean): Promise<AccountResult
  * After signing out, the landing page keeps the account language and shows the snackbar
  * «Du bist abgemeldet.» (one-shot cookie read by the client).
  */
-async function afterSignOut(session: Session | null): Promise<never> {
+async function afterSignOut(session: Session | null, target?: string): Promise<never> {
   const store = await cookies();
   const locale = session && isLocale(session.user.locale) ? session.user.locale : undefined;
   if (locale) {
@@ -185,14 +187,21 @@ async function afterSignOut(session: Session | null): Promise<never> {
       path: "/",
     });
   }
-  store.set("ww-flash", "signed-out", { maxAge: 60, sameSite: "lax", path: "/" });
-  redirect(`/${locale ?? "en"}`);
+  store.set(FLASH_COOKIE, flashValue("signed-out"), { maxAge: 60, sameSite: "lax", path: "/" });
+  redirect(target ?? `/${locale ?? "en"}`);
 }
 
 export async function signOut(): Promise<void> {
   const session = await getSession();
   await auth().api.signOut({ headers: await headers() });
   await afterSignOut(session);
+}
+
+/** «Nicht du? Abmelden» on an invite (Flow A.3): sign out and stay on /i/<token>. */
+export async function signOutOnInvite(token: string): Promise<void> {
+  const session = await getSession();
+  await auth().api.signOut({ headers: await headers() });
+  await afterSignOut(session, isInviteTokenShape(token) ? `/i/${token}` : undefined);
 }
 
 /** «Auf allen Geräten abmelden» – ends every session including this one → /login. */
