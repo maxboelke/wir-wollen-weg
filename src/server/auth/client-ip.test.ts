@@ -80,6 +80,8 @@ describe("rateLimitSubject (R-036)", () => {
   it("keeps IPv4 addresses as they are", () => {
     expect(rateLimitSubject("203.0.113.7")).toBe("203.0.113.7");
     expect(rateLimitSubject("::ffff:203.0.113.7")).toBe("203.0.113.7");
+    expect(rateLimitSubject("::ffff:cb00:7107")).toBe("203.0.113.7");
+    expect(rateLimitSubject("::FFFF:CB00:7107")).toBe("203.0.113.7");
   });
 
   it("collapses IPv6 addresses to their /64 network", () => {
@@ -88,6 +90,8 @@ describe("rateLimitSubject (R-036)", () => {
     expect(rateLimitSubject("2001:db8::1")).toBe("2001:db8:0:0::/64");
     expect(rateLimitSubject("2001:db8:1:2::")).toBe("2001:db8:1:2::/64");
     expect(rateLimitSubject("::1")).toBe("0:0:0:0::/64");
+    expect(rateLimitSubject("::")).toBe("0:0:0:0::/64");
+    expect(rateLimitSubject("2001:db8:1:2:3:4:192.0.2.33")).toBe("2001:db8:1:2::/64");
     expect(rateLimitSubject("64:ff9b::192.0.2.33")).toBe("64:ff9b:0:0::/64");
   });
 

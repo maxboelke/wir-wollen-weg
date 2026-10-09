@@ -93,7 +93,14 @@ export function rateLimitSubject(ip: string): string {
   const clean = normalize(ip);
   if (!clean) return ip;
   if (family(clean) === "ipv4") return clean;
-  return `${expandIpv6(clean).slice(0, 4).join(":")}::/64`;
+  const hextets = expandIpv6(clean);
+  // IPv4-mapped in hex notation («::ffff:cb00:7107») is one IPv4 client, not the /64 «0:0:0:0»
+  // that every such address would otherwise share.
+  if (hextets.slice(0, 5).every((part) => part === "0") && hextets[5] === "ffff") {
+    const [high = 0, low = 0] = hextets.slice(6).map((part) => Number.parseInt(part, 16));
+    return [high >> 8, high & 255, low >> 8, low & 255].join(".");
+  }
+  return `${hextets.slice(0, 4).join(":")}::/64`;
 }
 
 /** Eight hextets without leading zeros (handles «::» and an embedded IPv4 tail). */

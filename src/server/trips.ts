@@ -389,7 +389,13 @@ export async function joinByToken(
     // The app check and the index can disagree on rare case foldings (JS vs. PostgreSQL
     // lower()) – the index wins, the person gets a suggestion (R-039).
     if (!isUniqueViolation(error, NAME_INDEX)) throw error;
-    return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, [clean], accountName) };
+    const rows = await db()
+      .select({ displayName: tripMember.displayName })
+      .from(tripMember)
+      .innerJoin(trip, eq(trip.id, tripMember.tripId))
+      .where(eq(trip.inviteToken, token));
+    const taken = [...rows.map((row) => row.displayName), clean];
+    return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, taken, accountName) };
   }
 }
 
