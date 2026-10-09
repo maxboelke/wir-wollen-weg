@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -28,17 +28,20 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 | R-018 | niedrig | Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen | verifiziert |
 | R-019 | niedrig | Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert | verifiziert |
 | R-020 | niedrig | Fokus-Ringe im Kontrastmodus (forced colors) unsichtbar | verifiziert (vom Reviewer behoben) |
-| R-021 | hoch | Lockout-DoS: fremde Adresse mit 10 Anfragen ohne Code komplett sperrbar | behoben – bitte prüfen |
-| R-022 | mittel | Limits pro E-Mail nicht atomar – parallele Anfragen überschreiten 5/Std. und 10 Fehlversuche | behoben – bitte prüfen |
-| R-023 | hoch | Passwort setzen/entfernen ohne Re-Authentifizierung – umgeht Re-Auth der E-Mail-Änderung | behoben – bitte prüfen |
+| R-021 | hoch | Lockout-DoS: fremde Adresse mit 10 Anfragen ohne Code komplett sperrbar | verifiziert |
+| R-022 | mittel | Limits pro E-Mail nicht atomar – parallele Anfragen überschreiten 5/Std. und 10 Fehlversuche | verifiziert |
+| R-023 | hoch | Passwort setzen/entfernen ohne Re-Authentifizierung – umgeht Re-Auth der E-Mail-Änderung | verifiziert |
 | R-024 | hoch | Konto-Enumeration über Antwortzeit bei „Passwort vergessen“ | verifiziert (vom Reviewer behoben) |
 | R-025 | niedrig | Manipuliertes Cookie `ww-lang-at` → 500 bei Anmeldung/Registrierung | verifiziert (vom Reviewer behoben) |
 | R-026 | niedrig | `pendingAuth.origin` schwächer geprüft als `toSafeInternalPath` | verifiziert (vom Reviewer behoben) |
-| R-027 | niedrig | Mail-Budget pro Adresse über Plus-Adressen umgehbar | behoben – bitte prüfen |
-| R-028 | niedrig | HMAC-Schlüssel der Limits = `BETTER_AUTH_SECRET` ohne Ableitung, fester Rückfallschlüssel | behoben – bitte prüfen |
+| R-027 | niedrig | Mail-Budget pro Adresse über Plus-Adressen umgehbar | verifiziert |
+| R-028 | niedrig | HMAC-Schlüssel der Limits = `BETTER_AUTH_SECRET` ohne Ableitung, fester Rückfallschlüssel | verifiziert |
 | R-029 | niedrig | axe-Tests messen mitten in Überblendungen (CI rot/flaky, PR #6) | verifiziert (vom Reviewer behoben) |
 | R-030 | niedrig | Argon2id-Test ohne Known-Answer – Node-22-Pfad ungeprüft | verifiziert (vom Reviewer behoben) |
-| R-031 | niedrig | Avatar-Menü bleibt offen, wenn der Tastaturfokus es verlässt | behoben – bitte prüfen |
+| R-031 | niedrig | Avatar-Menü bleibt offen, wenn der Tastaturfokus es verlässt | verifiziert |
+| R-032 | hoch | Konto-Enumeration über „Passwort vergessen“: `remainingAttempts` und Sperre nur für bestehende Konten | offen |
+| R-033 | hoch | Postfach-Budget (R-027) sperrt die echte Adresse – Mail-Anmeldung über Plus-Adressen dauerhaft blockierbar | offen |
+| R-034 | niedrig | Text-Button «Mit Passwort/Code bestätigen» mit nativem Button-Look (Dark Mode: Kontrast 3,4:1) | verifiziert (vom Reviewer behoben) |
 
 ## Details
 
@@ -199,7 +202,8 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Erwartetes Verhalten: Ein Dritter, der nur die Adresse kennt, kann den Zugang per Mail (Postfach-Besitz) nicht verhindern; die Sperre bremst nur das Raten.
 - Vorschlag: (1) Während der Sperre weiterhin Mails im 5/Std.-Budget zulassen; gesperrt bleibt nur die Code-**Eingabe** und das Passwort, der **Magic-Link** (Postfach-Beweis, nicht ratbar) funktioniert immer – Text im Code-Schritt: „Zu viele Versuche. Nutze den Link in der Mail.“ (Texte mit UI/UX abstimmen). (2) Fehlversuche beim Code nur zählen, wenn ein Code ausstand (vor dem Verify `findVerificationValue` prüfen) – ohne ausstehenden Code ist Raten sinnlos. Beim Passwort für alle Adressen gleich weiterzählen (sonst Enumeration über das Sperrverhalten). (3) E2E: 10 Fehlversuche ohne Code → Code-Anforderung bleibt möglich, Magic-Link meldet an.
 - Umsetzung (Developer, 2026-10-09): (1) Ein falscher Code zählt nur, wenn für die Adresse ein **nicht abgelaufener Code aussteht** (Before-Hook prüft `findVerificationValue` für `sign-in`/`forget-password`/`change-email`; ohne Code nur Sperr-Prüfung, kein Zählen). Falsche Passwörter zählen weiter für alle Adressen gleich. (2) Die Sperre blockiert **keine Mails** mehr (`decideCodeRequest` prüft nur das Mail-Budget); gesperrt sind nur Code-Eingabe und Passwort. (3) Der **Magic-Link** ist nie gesperrt und hebt die Sperre beim Anmelden auf (After-Hook `/magic-link/verify` → `clearVerificationFailures`). UI: Code-Schritt zeigt bei Sperre «Zu viele Versuche. Nutze den Link in der Mail.» (`auth.errors.lockedUseLink`), Passwort-Anmeldung «… Melde dich mit Code an und nutze den Link in der Mail – oder versuch es in {minutes} Min. nochmal.» (`lockedPassword`) – Texte bitte mit UI/UX gegenlesen. Dateien: `src/server/auth/email-access-plugin.ts`, `src/lib/email-limits.ts`, `src/features/auth/components/email-access-form.tsx`, `src/features/account/actions.ts` (Re-Auth-Code ebenso). Tests: `tests/e2e/increment-1-security.spec.ts` (12 Rateversuche ohne Code → nie 429, Code-Anmeldung danach ok; gesperrte Adresse bekommt Mail, Link meldet an und hebt Sperre auf; Passwort-Sperre verweist auf Code-Link), `increment-1-auth.spec.ts` angepasst.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Commit 2e02b3d, `RATE_LIMIT_ENABLED=true`, direkt gegen `/api/auth/*`, wechselnde IPs): 15 × falscher Code ohne ausstehenden Code (auch Varianten `VICTIM@…`, ` victim@… `) → immer 400, nie 429. Mit 2 vom Angreifer angeforderten Codes: 10. Fehlversuch → 429 `EMAIL_LOCKED`; danach bekommt das Opfer weiter eine Mail (200), richtiger Code → 429, Passwort → 429, **Magic-Link meldet an und hebt die Sperre auf** (E2E, 8 × grün inkl. `--repeat-each=3`). Sperr-Antworten (`EMAIL_LOCKED`) für bekannte/unbekannte Adressen byte-gleich, Antwortzeit gleich (Median 17,7 / 17,3 ms). **Restproblem durch R-027:** siehe R-033.
+- Status: verifiziert
 
 ### R-022: Limits pro E-Mail nicht atomar – parallele Anfragen überschreiten die Grenzen
 - Schwere: mittel
@@ -208,7 +212,8 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Erwartetes Verhalten: Grenzen halten auch unter Parallelität (Mailbombing ≤ 5/Std., Raten ≤ 10/Std.).
 - Vorschlag: Pro Schlüssel serialisieren – z. B. Transaktion mit `pg_advisory_xact_lock(hashtextextended(key, 0))`, darin zählen und einfügen; für Fehlversuche einen „Versuch“ **vor** der Prüfung reservieren (Zeile `attempt` einfügen, bei Erfolg löschen) statt nachträglich zu zählen. Unit-/Integrationstest mit `Promise.all`.
 - Umsetzung (Developer, 2026-10-09): `email-limit-store.ts` – Prüfen und Zählen in **einer Transaktion mit `pg_advisory_xact_lock(hashtextextended(key, 0))`** pro Schlüssel (Mail-Budget: Sperre pro Postfach; Fehlversuche: pro Adresse). Fehlversuche werden **vor** der Prüfung reserviert (`reserveVerificationAttempt` → Zeile `failure`), bei nicht zählendem Ausgang wieder freigegeben (`releaseVerificationAttempt`), bei Erfolg alle gelöscht. Die Reservierung liefert gleich mit, ob ein Fehlschlag die Sperre auslöst. Gilt auch für Re-Auth per Code/Passwort (`actions.ts`). Hinweis: Das Limit pro **Code** (5 Versuche, Better Auth) bleibt unter Parallelität „weich“; die harte Grenze ist jetzt 10/Std. pro Adresse. Tests (E2E, parallel): 20 parallele Code-Anforderungen → genau 5 × 200; 25 parallele falsche Passwörter → genau 9 × 401 + 16 × 429 (10. Prüfung meldet Sperre).
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer): parallel, jede Anfrage eigene IP – 30 Code-Anforderungen → genau 5 × 200 / 5 Mails; 30 gemischt `email-access/request` + `request-password-reset` auf ein Konto → 4 × 200 + 1 Registrierung = 5; 30 Plus-Adressen parallel → genau 10 × 200; 40 falsche Passwörter → 9 × 401 + 31 × 429; 30 falsche Codes parallel auf einen ausstehenden Code → 7 × 400 + 2 × 403 + 21 × 429 (= 10 Prüfungen), richtiger Code danach 429.
+- Status: verifiziert
 
 ### R-023: Passwort setzen/entfernen ohne Re-Authentifizierung – umgeht die Re-Auth der E-Mail-Änderung
 - Schwere: hoch
@@ -217,7 +222,8 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Erwartetes Verhalten: Ändern der Anmeldewege (Passwort setzen/ändern/entfernen, E-Mail) verlangt eine frische Bestätigung des Besitzes (Code an die Adresse oder bisheriges Passwort).
 - Vorschlag: `savePassword`/`deletePassword` nur mit `isReauthenticated(session.id)` (gleiche Code/Passwort-Komponente wie `/account/email`); Ausnahme ohne zusätzlichen Schritt: Sitzung ist gerade per Code entstanden (z. B. `session.createdAt` < 10 Min. → beim Login `markReauthenticated` setzen), damit das optionale Passwort im Registrierungsschritt ohne Extra-Code bleibt. Optional: nach Passwort-Änderung andere Sitzungen beenden. UX (Flow I.1 #4) kurz abstimmen; E2E „Passwort festlegen nach > 10 Min. verlangt Bestätigung“.
 - Umsetzung (Developer, 2026-10-09): `savePassword`/`deletePassword` verlangen `isReauthenticated(session.id)` (sonst `reauthExpired`). Eine **Code- oder Magic-Link-Anmeldung** setzt die Bestätigung beim Anlegen der Sitzung für 10 Min. (`databaseHooks.session.create.after`, Pfade `/sign-in/email-otp`, `/magic-link/verify`; Passwort-Login zählt bewusst nicht) – das optionale Passwort im Namensschritt bleibt ohne Extra-Schritt. `/account/password` zeigt sonst zuerst denselben Bestätigungsschritt wie `/account/email` (neue Komponente `reauth-step.tsx`: Code an die Adresse oder aktuelles Passwort); läuft die Bestätigung bei offenem Formular ab, kommt der Schritt mit Hinweis «Bitte bestätige noch einmal, dass du es bist.» zurück. Nicht umgesetzt (optional im Vorschlag): andere Sitzungen nach Passwortänderung beenden. Tests: Unit `reauth.test.ts`; E2E „> 10 Min. nach Code-Anmeldung → erst Code“, „Server lehnt ab, wenn die Bestätigung bei offenem Formular abläuft“, „Passwort-Login ist keine Bestätigung – aktuelles Passwort schon“ (inkl. Entfernen).
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer): Sitzung > 10 Min. (Re-Auth-Marker abgelaufen) → `/account/password` zeigt nur den Bestätigungsschritt, Server lehnt `savePassword`/`deletePassword` mit `reauthExpired` ab (auch bei offenem Formular und offenem Entfernen-Dialog). Missbrauch der 10-Min.-Ausnahme geprüft: Marker hängt an der **neu** angelegten Sitzung (`reauth-<sessionId>`) und entsteht nur bei `/sign-in/email-otp` bzw. `/magic-link/verify` – beides verlangt Code/Token aus dem Postfach; eine gestohlene Sitzung kann sich so nicht selbst „auffrischen“, Code-Anmeldung mit eigenem Konto erzeugt nur eine Sitzung für dieses Konto; `/email-otp/send-verification-otp`/`check-verification-otp` sind per HTTP gesperrt. Andere Sitzungen bleiben nach Passwortänderung bestehen (geprüft) – **vertretbar**: Sitzungen hängen hier nicht am Passwort (Hauptweg Code), ein Angreifer mit Sitzung kann das Passwort ohne Bestätigung nicht mehr ändern, und „Auf allen Geräten abmelden“ ist vorhanden (ASVS verlangt nur die Option). Empfehlung UX (nicht blockierend): nach dem Speichern Hinweis/Link „Auf anderen Geräten abmelden“. Fokus/axe des neuen `reauth-step.tsx`: siehe R-034.
+- Status: verifiziert
 
 ### R-024: Konto-Enumeration über die Antwortzeit bei „Passwort vergessen“
 - Schwere: hoch (F-041: „gleiche Antwortzeiten/Texte unabhängig von der Existenz des Kontos“) · vom Reviewer behoben
@@ -247,7 +253,8 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Problem / Reproduktion: Normalisierung nur `trim().toLowerCase()` – richtig für Konten (Better Auth unterscheidet `a+x@` und `a@`), aber für Mailbombing landen `opfer+1@…`, `opfer+2@…` … alle im selben Postfach mit je eigenem 5/Std.-Budget; Grenze ist dann nur das IP-Limit (3/Min./IP).
 - Vorschlag: Für das **Mail-Budget** zusätzlich einen Postfach-Schlüssel zählen (Plus-Tag entfernen; bei gmail.com/googlemail.com auch Punkte), z. B. 10/Std. und 30/Tag pro Postfach. Fehlversuche bleiben pro exakter Adresse (sonst sperrt man fremde Plus-Konten mit).
 - Umsetzung (Developer, 2026-10-09): Zusätzlicher Budget-Schlüssel pro **Postfach** (`mailboxOf`: Kleinbuchstaben, `+tag` entfernt, Gmail/Googlemail ohne Punkte) – **10/Std., 30/Tag**, nur für das Mail-Budget; Fehlversuche bleiben pro exakter Adresse. Tests: Unit (`email-limits.test.ts`), E2E 12 parallele Plus-Adressen → genau 10 angenommen, danach auch die Grundadresse 429.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer): `RV…@googlemail.com`, `r.v.m…@GMail.com`, `…+t7@gmail.com` → ein Postfach (10 × 200, dann 429, auch die Grundadresse); Punkte bei anderen Domains bleiben getrennte Postfächer. Fehlversuche weiter pro exakter Adresse. **Nebenwirkung:** das Postfach-Budget sperrt auch die echte Adresse → R-033.
+- Status: verifiziert
 
 ### R-028: HMAC-Schlüssel der Limits = `BETTER_AUTH_SECRET` ohne Ableitung, fester Rückfallschlüssel
 - Schwere: niedrig
@@ -255,7 +262,8 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Problem: Das Session-/Verschlüsselungs-Secret wird direkt als HMAC-Schlüssel für einen anderen Zweck verwendet (keine Domänentrennung); fehlt es, gilt der im Code stehende Schlüssel `"dev-only-email-limit-key"` – dann sind die gespeicherten HMACs mit bekannten Adressen nachrechenbar (Datensparsamkeit verfehlt). `BETTER_AUTH_SECRET` ist im Env-Schema optional.
 - Vorschlag: Schlüssel ableiten (`hkdfSync("sha256", secret, "", "ww:email-limit:v1", 32)`) und außerhalb von development/ci ohne Secret hart abbrechen statt Rückfall.
 - Umsetzung (Developer, 2026-10-09): Schlüssel per `hkdfSync("sha256", secret, "", "ww:email-limit:v1", 32)` (`src/server/auth/email-limit-key.ts`). Fester Ersatzschlüssel nur bei `APP_ENV` development/ci; sonst Fehler – beim Serverstart (`src/instrumentation.ts`) und spätestens bei der ersten Nutzung. Hinweis: Bestehende Zähler (alte HMACs) verfallen dadurch einmalig (max. 24 h, unkritisch). Tests: `email-limit-key.test.ts`.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer): `next start` mit `APP_ENV=production|staging|demo` und leerem `BETTER_AUTH_SECRET` → „An error occurred while loading instrumentation hook: BETTER_AUTH_SECRET is required …“; der Prozess läuft weiter (Next-Verhalten), beantwortet aber **jede** Anfrage mit 500 (auch `/api/health` → Healthcheck schlägt fehl) – fail closed. Ohne `APP_ENV` lehnt Better Auth das Standard-Secret in Produktion selbst ab (500). Demo-Compose verlangt das Secret ohnehin.
+- Status: verifiziert
 
 ### R-029: axe-Tests messen mitten in Überblendungen (CI rot/flaky, PR #6)
 - Schwere: niedrig (Test-Stabilität) · vom Reviewer behoben
@@ -278,10 +286,45 @@ Geprüft mit Node 24.21 im CI-Modus (Produktions-Build, Postgres 18, Mailpit), `
 - Erwartetes Verhalten: Verlässt der Fokus Auslöser und Panel, schließt das Menü (ohne Fokus zu verschieben). Esc und „Fokus zurück auf Auslöser“ sind bereits korrekt (geprüft).
 - Vorschlag: `focusout` auf dem Menü-Container: wenn `relatedTarget` außerhalb von Auslöser/Panel liegt → `setOpen(false)`; E2E ergänzen.
 - Umsetzung (Developer, 2026-10-09): `onBlur` (focusout) am Menü-Container – liegt `relatedTarget` außerhalb von Auslöser/Panel, schließt das Menü ohne Fokus zu verschieben (`null` = Fenster-/Tab-Wechsel bleibt unberührt, Klick außerhalb deckt der Pointer-Handler ab). E2E: Menü per Tastatur öffnen, 6 × Tab → `aria-expanded="false"`, Panel verborgen, Fokus bleibt beim Ziel.
-- Status: behoben – bitte prüfen
+- Prüfung (Reviewer, Tastatur): Avatar fokussieren → Enter → Tab durch Meine Reisen, Konto, Deutsch, Hilfe, Abmelden (Menü bleibt offen) → 6. Tab in den Footer: `aria-expanded="false"`, Panel verborgen, Fokus bleibt dort; Shift+Tab aus dem offenen Menü → geschlossen; Esc → zu, Fokus auf Avatar; Leertaste öffnet; Enter auf „Konto“ navigiert. Nebenbefund behoben: E2E „a password sign-in is no confirmation“ öffnete das Menü noch während der Weiterleitung nach `/account` (Kopfzeile wird neu gemountet → Menü zu, Test-Timeout, 1 von 6 Läufen) – Test wartet jetzt auf `/account`.
+- Status: verifiziert
 
 #### Hinweise ohne Finding (Inkrement 1)
 - 200 % Textgröße: WCAG 1.4.4 (1280/640 px) und 1.4.10 (320 px, 100 %) ohne Überlauf auf `/account`, `/account/email`, `/de/hilfe`, `/login`, `/trips`; auch eine 80-Zeichen-Adresse bricht um. Nur über WCAG hinaus (360 px **und** 200 %) laufen Footer-Segment (+3 px) und auf `/account/email` der fett gesetzte Satz mit der Adresse (+94 px) über – bei Gelegenheit `overflow-wrap: anywhere` am `<strong>`.
 - Bewegungs-Schalter (ux-spec §7.5): Gerät reduziert → Schalter „an“, `aria-disabled`, Grund sichtbar, Klick ohne Wirkung; Einschalten wirkt sofort (`data-motion`), Snackbar „Gespeichert“; zweites Gerät bekommt `data-motion="reduce"` schon im Server-HTML, Ausschalten wirkt dort nach Neuladen. Abweichung zur Spec: Speicherung im Cookie `ww-motion` statt `localStorage` – gleichwertig (erster Frame korrekt, auch nach Abmelden), Spec bei Gelegenheit nachziehen. → Spec (ux-spec §7.5) nachgezogen 2026-10-09 (Developer, Freigabe CEO).
 - Hilfetext „es gilt immer nur der neueste Code“ geprüft: alter Code nach erneutem Senden → `INVALID_OTP`, neuer Code → angemeldet.
 - `remainingAttempts` verrät nur, ob für eine Adresse gerade ein Code aussteht (auch für unbekannte Adressen möglich) – keine Konto-Enumeration.
+
+## Nachprüfung Commit 2e02b3d (Reviewer 2026-10-09)
+
+Node 24.21, Produktions-Build im CI-Modus (`APP_ENV=ci`, Postgres 18, Mailpit), Proben mit `RATE_LIMIT_ENABLED=true` direkt gegen `/api/auth/*` mit wechselnden `X-Forwarded-For`.
+
+### R-032: Konto-Enumeration über „Passwort vergessen“ – `remainingAttempts` und Sperre nur für bestehende Konten
+- Schwere: hoch (F-041/H.3: „neutrale Antwort, keine Enumeration“) – bestand schon vor 2e02b3d, durch R-021 (Zählen nur bei ausstehendem Code) um ein zweites Merkmal ergänzt
+- Datei: `src/server/auth/email-access-plugin.ts` (`OTP_TYPES` mit `/email-otp/reset-password`, `beforeVerification`, `afterVerification`); Ursache in Better Auth `requestPasswordResetEmailOTP`: für **unbekannte** Adressen wird der Code sofort wieder gelöscht (`deleteVerificationByIdentifier`), für bekannte bleibt er stehen.
+- Problem / Reproduktion: `POST /email-otp/request-password-reset {email}` (200 für beide), dann `POST /email-otp/reset-password {email, otp:"000000", password:"Totally new pass 2040"}`:
+  - bekanntes Konto → `400 {"code":"INVALID_OTP","remainingAttempts":4}`, nach 10 Versuchen `429 EMAIL_LOCKED`;
+  - unbekannte Adresse → `400 {"code":"INVALID_OTP"}` **ohne** `remainingAttempts`, nie 429.
+  Zwei Anfragen genügen, um für jede Adresse festzustellen, ob ein Konto existiert (und der echte Inhaber bekommt dabei nur eine Reset-Mail). Die Anzeige im Reset-Formular verrät es ebenso („Noch 4 Versuche“).
+- Erwartetes Verhalten: Antworten auf `reset-password` (Status, Body, Restversuche, Sperrverhalten, Zeit) sind für bekannte und unbekannte Adressen gleich.
+- Vorschlag: Für unbekannte Adressen denselben Zustand herstellen: After-Hook auf `/email-otp/request-password-reset` – fehlt danach `forget-password-otp-<email>`, einen Platzhalter mit zufälligem (nie versendetem) Code im selben Format anlegen (`storeOTP: "hashed"` → `<hash>:0`, gleiche `expiresAt`). Dann laufen Zählen, `remainingAttempts`, 5er-Grenze und Sperre identisch; `reset-password` scheitert für Unbekannte ohnehin an `INVALID_OTP`. Alternative: für `reset-password` nie `remainingAttempts` liefern **und** Fehlversuche dort immer zählen (wie beim Passwort) – schlechter für echte Nutzer. E2E: bekannte/unbekannte Adresse → identische Antwortfolge über 11 Versuche.
+- Status: offen
+
+### R-033: Postfach-Budget (R-027) sperrt die echte Adresse – Mail-Anmeldung über Plus-Adressen dauerhaft blockierbar
+- Schwere: hoch (wie R-021 vor jedem öffentlichen Zugriff zu beheben; Offline-Demo nicht betroffen)
+- Datei: `src/lib/email-limits.ts` (`decideCodeRequest`), `src/server/auth/email-limit-store.ts` (`takeCodeRequest`)
+- Problem / Reproduktion: Konto `victimb-…@example.org` (passwortlos, Standard). Angreifer: 10 × `POST /email-access/request` für `victimb-…+x1@…` … `+x10@…` (eine IP genügt bei 3/Min.) → Postfach-Budget voll. Danach für das Opfer: `email-access/request` → `429 EMAIL_RATE_LIMITED, retryAfter 3600`, `request-password-reset` → 429. Die 10 Mails landen zwar im Postfach des Opfers, ihre Links/Codes gelten aber für **andere** (neue) Konten `+x1…` – keiner meldet das Opfer an. Wiederholt der Angreifer das stündlich (10 Anfragen/Std.), kann sich das Opfer auf keinem neuen Gerät mehr anmelden; mit 2 Code-Anforderungen + 10 Fehlversuchen (R-021-Sperre) zusätzlich nicht per Passwort. Genau das sollte R-021 ausschließen („ein Dritter kann den Zugang verzögern, nicht verhindern“). Unterschied zum Budget der exakten Adresse (5/Std.): dort bekommt das Opfer die Mails mit gültigem Link für **sein** Konto.
+- Erwartetes Verhalten: Anfragen für andere Adressen desselben Postfachs dürfen die Mail-Anmeldung der exakten Adresse nicht vollständig blockieren; Mail-Bombing pro Postfach bleibt begrenzt.
+- Vorschlag (mit CEO/UX abwägen): (a) Mindestkontingent pro exakter Adresse, das das Postfach-Budget nicht verbrauchen kann – z. B. die ersten 2 Mails/Std. einer exakten Adresse zählen nur gegen ihr eigenes Budget (Obergrenze pro Postfach dann 10 + 2 × Varianten, praktisch weiter durch IP-Limit begrenzt); oder (b) Postfach-Budget nur für Adressen anwenden, die von ihrem Postfach abweichen (`email !== mailboxOf(email)`) – die Grundadresse ist nie blockierbar, Plus-/Punkt-Konten bleiben dann aber angreifbar. **Nicht** nach Konto-Existenz unterscheiden (Enumeration). E2E: 10 Plus-Adressen → Grundadresse bekommt weiter eine Mail.
+- Status: offen
+
+### R-034: Text-Button «Mit Passwort/Code bestätigen» mit nativem Button-Look
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/features/account/components/account.module.css` (`.textLink`), genutzt als `<button>` in `reauth-step.tsx` (und vorher in `email-change-flow.tsx`)
+- Problem / Reproduktion: Konto mit Passwort, Bestätigung abgelaufen → `/account/password` (bzw. `/account/email`): der Umschalter erschien als volle Breite, grauer UA-Button mit Rahmen (`background: ButtonFace`); im Dark Mode Minze auf `#6b6b6b` → axe `color-contrast` serious (3,4:1, Text 14 px fett). Kein bestehender axe-Test erreichte den Zustand „Passwort gesetzt + Re-Auth“.
+- Umsetzung: `button.textLink` ohne Hintergrund/Rahmen/Innenabstand, `cursor: pointer`, `align-self: flex-start`. axe (hell/dunkel) im Re-Auth-Schritt in allen Zuständen (initial, Code gesendet, falscher Code, Passwort, falsches Passwort, Ablauf-Hinweis) ohne Verstöße; E2E „a password sign-in is no confirmation“ prüft jetzt axe im Dark Mode.
+- Status: verifiziert (vom Reviewer behoben)
+
+#### Hinweise ohne Finding (Nachprüfung)
+- Fokusführung `reauth-step.tsx` / `password-settings.tsx` geprüft: „Code senden“ → Code-Feld; falscher Code → Code-Feld (markiert); falsches Passwort → Passwortfeld; Bestätigung → Feld „Neues Passwort“; Ablauf bei offenem Formular oder Entfernen-Dialog → Container des Bestätigungsschritts (`tabIndex=-1`, Fokus bleibt dort, auch nach der Austritts-Animation des Bottom-Sheets). Beim Wechsel „Mit Passwort bestätigen“ bleibt der Fokus auf dem Umschalter (Text wechselt) – nicht verloren; schöner wäre Fokus aufs Passwortfeld (bei Gelegenheit, auch in `email-change-flow.tsx`).
+- Konto-Existenz über Antwortzeit (je 10 Messungen, Median bekannt/unbekannt): `email-access/request` 34,0/34,9 ms, `request-password-reset` 31,7/34,6 ms, falsches Passwort 85,3/83,7 ms, gesperrt 17,7/17,3 ms – kein verwertbarer Unterschied. Texte `lockedUseLink`/`lockedPassword` werden rein clientseitig aus `EMAIL_LOCKED` abgeleitet; Sperre per Passwort für alle Adressen gleich, per Code nur bei ausstehendem Code (jede Adresse kann einen bekommen) – keine Enumeration, **außer** beim Reset (R-032).

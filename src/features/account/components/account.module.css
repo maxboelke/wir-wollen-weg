@@ -107,6 +107,15 @@
   text-underline-offset: 0.18em;
 }
 
+/* «Mit Passwort/Code bestätigen» is a <button>: no native button look, not stretched. */
+button.textLink {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
 .muted .textLink {
   display: inline;
   min-height: 0;

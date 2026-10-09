@@ -1,6 +1,7 @@
 import { expect, test, type APIRequestContext, type Page } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { openAccountMenu, signOutViaMenu, signUp } from "./helpers/auth";
+import { expectNoSeriousAxeViolations } from "./helpers/axe";
 import { expireReauthentication } from "./helpers/db";
 import { mailIds, uniqueEmail, waitForAccessMail, waitForCodeMail } from "./helpers/mailpit";
 
@@ -194,6 +195,9 @@ test.describe("R-023: changing the password needs a fresh confirmation", () => {
     await page.getByLabel(en.account.password.label).fill("Mountain air 2032");
     await page.getByRole("button", { name: en.common.save }).click();
     await expect(page.getByRole("status").getByText(en.account.password.saved)).toBeVisible();
+    // Wait for the redirect to /account: the header re-mounts there and would close a menu
+    // opened during the navigation (flaky with --repeat-each).
+    await expect(page).toHaveURL(/\/account$/);
     await signOutViaMenu(page, "Tom");
 
     await page.goto("/login");
@@ -203,8 +207,11 @@ test.describe("R-023: changing the password needs a fresh confirmation", () => {
     await page.getByRole("button", { name: en.auth.signInPassword }).click();
     await expect(page).toHaveURL(/\/trips$/);
 
+    // Dark mode: the «confirm with password» text button had the native grey button look.
+    await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/account/password");
     await expect(page.getByRole("heading", { name: en.account.email.reauthTitle })).toBeVisible();
+    await expectNoSeriousAxeViolations(page, "re-auth step (dark, with password)");
     await page.getByRole("button", { name: en.account.email.usePassword }).click();
     await page.getByLabel(en.auth.passwordLabel, { exact: true }).fill("wrong password 999");
     await page.getByRole("button", { name: en.account.email.confirm, exact: true }).click();
