@@ -14,7 +14,20 @@
     "close": "Close",
     "back": "Back",
     "saved": "Saved",
-    "undo": "Undo"
+    "undo": "Undo",
+    "help": "Help",
+    "signOut": "Sign out",
+    "cancel": "Cancel",
+    "save": "Save",
+    "footerLabel": "Footer",
+    "languageLabel": "Language",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "signedOut": "You’re signed out.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "landing": {
     "titleLead": "From the group chat to",
@@ -62,10 +75,44 @@
       "wrongCode": "That code isn’t right.",
       "tooManyAttempts": "Too many attempts. We’ll send you a new code.",
       "expired": "This code has expired. Just request a new one.",
-      "rateLimited": "Please wait a moment before requesting a new code.",
+      "rateLimited": "Please wait a moment ({minutes} min) before requesting a new code.",
       "nameRequired": "Please enter a name.",
-      "generic": "No connection. Your input is still here – please try again."
-    }
+      "generic": "No connection. Your input is still here – please try again.",
+      "wrongCodeRemaining": "That code isn’t right. {count, plural, one {# attempt left.} other {# attempts left.}}",
+      "locked": "Too many failed attempts for this address. Please wait {minutes} min and try again.",
+      "passwordWrong": "Email or password isn’t right. You can also sign in with a code.",
+      "passwordTooShort": "At least 10 characters.",
+      "passwordTooLong": "At most 128 characters.",
+      "passwordCommon": "This password appears in known data leaks. Please choose a different one.",
+      "codeLength": "The code has 6 digits."
+    },
+    "codeSendingTo": "We’re sending a code to <b>{email}</b>.",
+    "statusSending": "Sending code …",
+    "statusSent": "Code sent to {email}.",
+    "welcomeBack": "Welcome back – just enter the code from the email.",
+    "resend": "Send a new code",
+    "resendCountdown": "New code in {time}",
+    "resendAvailable": "You can request a new code now.",
+    "resent": "A new code is on its way. Older codes no longer work.",
+    "inAppTip": "Tip: keep this window open, get the code from your mail app and come back here.",
+    "noMail": {
+      "title": "Nothing there yet?",
+      "spam": "Check your spam or promotions folder",
+      "address": "Is the address right? {email}",
+      "change": "Change",
+      "resend": "Send a new code",
+      "help": "More help"
+    },
+    "withPassword": "Sign in with password",
+    "withCode": "Use a code instead",
+    "passwordLabel": "Password",
+    "forgotPassword": "Forgot your password?",
+    "signInPassword": "Sign in",
+    "signingIn": "Signing in …",
+    "noPasswordHint": "No password set? Just sign in with a code.",
+    "optionalPassword": "Set a password (optional)",
+    "optionalPasswordHint": "At least 10 characters. You can always sign in with a code too.",
+    "sessionExpired": "Please sign in – you’ll continue right where you were."
   },
   "magic": {
     "title": "Sign in",
@@ -100,7 +147,6 @@
   "trips": {
     "title": "My trips",
     "signedInAs": "Signed in as {name}",
-    "signOut": "Sign out",
     "emptyTitle": "No trips planned yet.",
     "emptyText": "Create one and share the link in your group chat – or open the invite link you received.",
     "joinedAs": "Joined as {name}",
@@ -114,13 +160,258 @@
       "device": "On because your device reduces motion. You can change this in your device settings."
     }
   },
+  "menu": {
+    "open": "Menu for {name}",
+    "myTrips": "My trips",
+    "account": "Account",
+    "help": "Help",
+    "signOut": "Sign out"
+  },
+  "pending": {
+    "join": "You were just joining “{trip}”.",
+    "signIn": "You were just signing in.",
+    "continue": "Continue",
+    "dismiss": "Dismiss"
+  },
+  "reset": {
+    "title": "Reset password",
+    "lead": "You can also sign in without a password, using a code.",
+    "useCode": "Sign in with a code",
+    "sendCode": "Send code",
+    "codeTitle": "Code and new password",
+    "codeSentTo": "If there’s an account for <b>{email}</b>, a code is on its way.",
+    "newPasswordLabel": "New password",
+    "newPasswordHint": "At least 10 characters.",
+    "save": "Save password",
+    "saving": "Saving …",
+    "done": "Password changed. You’ve been signed out on other devices."
+  },
+  "account": {
+    "title": "Account",
+    "profile": {
+      "title": "Profile",
+      "nameLabel": "Your name",
+      "nameHint": "Used in all your trips (except where you’ve set a trip-specific name).",
+      "saved": "Name saved"
+    },
+    "language": {
+      "title": "Language & region",
+      "languageLegend": "Language",
+      "countryLabel": "Country",
+      "subdivisionLabel": "State or region (for public holidays)",
+      "subdivisionNone": "Nationwide holidays only",
+      "weekStartLegend": "Week starts on",
+      "weekStartAuto": "Automatic ({day})",
+      "weekStartMon": "Monday",
+      "weekStartSun": "Sunday",
+      "preview": "Dates look like this: {date}"
+    },
+    "appearance": {
+      "title": "Appearance"
+    },
+    "signInMethods": {
+      "title": "Sign-in",
+      "emailLabel": "Email",
+      "change": "Change",
+      "changeEmail": "Change email",
+      "passwordLabel": "Password",
+      "passwordNotSet": "Not set – you sign in with a code.",
+      "passwordSet": "Set",
+      "setPassword": "Set a password",
+      "changePassword": "Change password",
+      "removePassword": "Remove password"
+    },
+    "sessions": {
+      "title": "Sessions",
+      "signOutEverywhere": "Sign out on all devices",
+      "confirmTitle": "Sign out everywhere?",
+      "confirmText": "You’ll be signed out everywhere, including here.",
+      "confirm": "Sign out everywhere"
+    },
+    "privacy": {
+      "title": "Data & privacy",
+      "request": "To request your data or have your account deleted, write to <link>{contact}</link>."
+    },
+    "back": "Back to account",
+    "email": {
+      "title": "Change email",
+      "reauthTitle": "Confirm it’s you",
+      "reauthLead": "We’ll send a code to <b>{email}</b>.",
+      "reauthSent": "We’ve sent a code to <b>{email}</b>.",
+      "sendCode": "Send code",
+      "usePassword": "Confirm with password instead",
+      "useCode": "Confirm with a code instead",
+      "confirm": "Confirm",
+      "newTitle": "New email address",
+      "newLabel": "New email",
+      "sendNew": "Send code to new address",
+      "codeTitle": "Check your inbox",
+      "codeLead": "We’ve sent a code to <b>{email}</b>.",
+      "done": "Your email is now {email}. We’ve let your old address know.",
+      "sameEmail": "That’s already your address.",
+      "reauthExpired": "Please confirm it’s you once more."
+    },
+    "password": {
+      "titleSet": "Set a password",
+      "titleChange": "Change password",
+      "lead": "You can still sign in with a code at any time.",
+      "label": "New password",
+      "hint": "At least 10 characters.",
+      "saved": "Password saved",
+      "removeTitle": "Remove password?",
+      "removeText": "You’ll then sign in with a code only.",
+      "remove": "Remove password",
+      "removed": "Password removed"
+    }
+  },
+  "regions": {
+    "countries": {
+      "DE": "Germany",
+      "AT": "Austria",
+      "CH": "Switzerland",
+      "GB": "United Kingdom",
+      "US": "United States"
+    },
+    "subdivisions": {
+      "DE-BW": "Baden-Württemberg",
+      "DE-BY": "Bavaria",
+      "DE-BE": "Berlin",
+      "DE-BB": "Brandenburg",
+      "DE-HB": "Bremen",
+      "DE-HH": "Hamburg",
+      "DE-HE": "Hesse",
+      "DE-MV": "Mecklenburg-Western Pomerania",
+      "DE-NI": "Lower Saxony",
+      "DE-NW": "North Rhine-Westphalia",
+      "DE-RP": "Rhineland-Palatinate",
+      "DE-SL": "Saarland",
+      "DE-SN": "Saxony",
+      "DE-ST": "Saxony-Anhalt",
+      "DE-SH": "Schleswig-Holstein",
+      "DE-TH": "Thuringia",
+      "AT-1": "Burgenland",
+      "AT-2": "Carinthia",
+      "AT-3": "Lower Austria",
+      "AT-4": "Upper Austria",
+      "AT-5": "Salzburg",
+      "AT-6": "Styria",
+      "AT-7": "Tyrol",
+      "AT-8": "Vorarlberg",
+      "AT-9": "Vienna",
+      "CH-AG": "Aargau",
+      "CH-AI": "Appenzell Inner Rhodes",
+      "CH-AR": "Appenzell Outer Rhodes",
+      "CH-BE": "Bern",
+      "CH-BL": "Basel-Country",
+      "CH-BS": "Basel-City",
+      "CH-FR": "Fribourg",
+      "CH-GE": "Geneva",
+      "CH-GL": "Glarus",
+      "CH-GR": "Grisons",
+      "CH-JU": "Jura",
+      "CH-LU": "Lucerne",
+      "CH-NE": "Neuchâtel",
+      "CH-NW": "Nidwalden",
+      "CH-OW": "Obwalden",
+      "CH-SG": "St. Gallen",
+      "CH-SH": "Schaffhausen",
+      "CH-SO": "Solothurn",
+      "CH-SZ": "Schwyz",
+      "CH-TG": "Thurgau",
+      "CH-TI": "Ticino",
+      "CH-UR": "Uri",
+      "CH-VD": "Vaud",
+      "CH-VS": "Valais",
+      "CH-ZG": "Zug",
+      "CH-ZH": "Zurich",
+      "GB-ENG": "England",
+      "GB-NIR": "Northern Ireland",
+      "GB-SCT": "Scotland",
+      "GB-WLS": "Wales"
+    }
+  },
+  "help": {
+    "title": "Help",
+    "lead": "Short answers to the most common questions.",
+    "topics": {
+      "code": {
+        "q": "My code hasn’t arrived.",
+        "a": "First check your spam or promotions folder. Make sure the address is right – on the code step you can change it with “Use a different email”. After 30 seconds you can request a new code; only the newest one works. Our emails come from {sender}."
+      },
+      "link": {
+        "q": "I’ve lost the invite link.",
+        "a": "Ask in your group chat for the link. If you’ve already joined, just sign in – your trip is under “My trips”.",
+        "action": "Sign in"
+      },
+      "inApp": {
+        "q": "I opened the page in WhatsApp or Instagram.",
+        "a": "That works. Just enter the code in the same window. Later you can also sign in on your browser with your email."
+      },
+      "dates": {
+        "q": "How do I change my dates?",
+        "a": "Open the trip and go to “My dates”. Changes apply right away. Once the dates are locked in, your dates can’t be changed any more."
+      },
+      "vote": {
+        "q": "How do I vote?",
+        "a": "Under “Vote” you choose Yes, Maybe or No for each date range. You can change your vote until voting ends. You’ll see how the others voted once you’ve voted yourself."
+      },
+      "visibility": {
+        "q": "Who can see what I enter?",
+        "a": "Only the members of the trip. We never ask for reasons – there’s just an optional comment."
+      },
+      "delete": {
+        "q": "How do I delete my data?",
+        "a": "If you leave a trip, we delete your dates and votes in that trip. To delete your whole account, write to us at {contact} – soon you’ll be able to do this right in your account."
+      },
+      "motion": {
+        "q": "There’s too much motion.",
+        "a": "Under Account → Appearance you can turn on “Reduce motion”: fewer animations, no confetti, no vibration. If “Reduce motion” is on in your device settings, it applies automatically.",
+        "action": "Go to account"
+      },
+      "noEmail": {
+        "q": "Lost access to your email?",
+        "a": "Write to us at {contact}. Alternatively, create a new account and join the trip again with the invite link."
+      }
+    },
+    "contactTitle": "Still got questions?",
+    "contact": "Write to us: <link>{email}</link>"
+  },
   "mail": {
     "fromName": "When do we go?",
-    "subject": "{code} is your code for When do we go?",
-    "tripLine": "You’re joining “{trip}”.",
-    "codeIntro": "Your code:",
-    "linkIntro": "Or tap here to sign in:",
-    "linkText": "Sign in",
-    "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email."
+    "wordmarkLead": "When do we",
+    "wordmarkAccent": "go?",
+    "signature": "– When do we go?",
+    "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email.",
+    "access": {
+      "subject": "{code} is your code for When do we go?",
+      "heading": "Your sign-in code",
+      "tripLine": "You’re joining “{trip}”.",
+      "codeIntro": "Your code:",
+      "linkIntro": "Or tap here to sign in:",
+      "linkText": "Sign in",
+      "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email."
+    },
+    "reset": {
+      "subject": "{code} is your password reset code",
+      "heading": "Reset your password",
+      "intro": "Enter this code to set a new password:",
+      "passwordless": "By the way: you don’t need a password – you can also just sign in with a code."
+    },
+    "reauth": {
+      "subject": "{code} is your confirmation code",
+      "heading": "Confirm it’s you",
+      "intro": "Use this code to confirm a change to your account:"
+    },
+    "changeEmail": {
+      "subject": "{code} confirms your new email address",
+      "heading": "Confirm your new email address",
+      "intro": "Enter this code to confirm {email} as the new address for your account:"
+    },
+    "emailChanged": {
+      "subject": "Your email address was changed",
+      "heading": "Your email address was changed",
+      "text": "Your account now uses {email}. We won’t send emails to this address any more.",
+      "notYou": "Wasn’t you? Please write to us right away at {contact}."
+    }
   }
 }

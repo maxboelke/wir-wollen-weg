@@ -34,6 +34,19 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").notNull().default(false),
   image: text("image"),
+  // Account settings (F-043, F-046, F-052). Region is separate from the language (Flow F.1).
+  /** UI and mail language: "de" | "en". */
+  locale: text("locale").notNull().default("en"),
+  /** When the language was last chosen explicitly – the latest explicit choice wins (Flow F.3). */
+  localeChosenAt: timestamp("locale_chosen_at", { withTimezone: true }),
+  /** ISO 3166-1 country for date formats, week start and holidays, e.g. "DE", "US". */
+  country: text("country").notNull().default("GB"),
+  /** ISO 3166-2 subdivision for regional holidays, e.g. "DE-BY"; null = nationwide only. */
+  subdivision: text("subdivision"),
+  /** "auto" (by country) | "mon" | "sun". */
+  weekStart: text("week_start").notNull().default("auto"),
+  /** Account switch "Reduce motion" (Q17 a): true = always reduced, false = follow the device. */
+  reduceMotion: boolean("reduce_motion").notNull().default(false),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });
@@ -97,6 +110,25 @@ export const rateLimit = pgTable("rate_limit", {
   // Milliseconds since epoch → bigint (exceeds int4).
   lastRequest: bigint("last_request", { mode: "number" }).notNull(),
 });
+
+/**
+ * Per-address auth events for the rate limits per e-mail address (F-041, R-005 follow-up):
+ * code requests and failed verifications. `key` is an HMAC of the normalised address – the
+ * address itself is never stored here (also not for addresses without an account).
+ */
+export const authAttempt = pgTable(
+  "auth_attempt",
+  {
+    id: id(),
+    key: text("key").notNull(),
+    /** "request" (a code mail was asked for) | "failure" (wrong code or password). */
+    kind: text("kind").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("auth_attempt_key_kind_created_idx").on(table.key, table.kind, table.createdAt),
+  ],
+);
 
 // ---------------------------------------------------------------------------
 // App tables – minimal placeholder for the auth spike (P1-0a).

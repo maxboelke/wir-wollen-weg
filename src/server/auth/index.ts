@@ -2,43 +2,86 @@ import "server-only";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { nextCookies } from "better-auth/next-js";
-import { isLocale } from "@/i18n/config";
+import { eq } from "drizzle-orm";
+import { isLocale, LOCALE_CHOSEN_COOKIE, LOCALE_COOKIE, type Locale } from "@/i18n/config";
 import { negotiateLocale } from "@/i18n/negotiate";
+import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
+import { regionFromAcceptLanguage } from "@/lib/region";
+import { readCookie } from "@/lib/cookies";
 import { inviteTokenFromPath } from "@/lib/safe-path";
 import { db } from "../db/client";
 import * as schema from "../db/schema";
 import { serverEnv } from "../env";
-import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client-ip";
-import { renderAccessEmail } from "../mail/access-email";
-import { sendMail } from "../mail/transport";
+import {
+  renderAccessEmail,
+  renderChangeEmailEmail,
+  renderPasswordResetEmail,
+} from "../mail/templates";
+import { sendLocalizedMail } from "../mail/transport";
 import { findTripByInviteToken } from "../trips";
-import { emailAccess, type AccessEmailPayload } from "./email-access-plugin";
-import de from "../../../messages/de.json";
-import en from "../../../messages/en.json";
+import { validateNewPassword } from "./breach-check";
+import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client-ip";
+import { emailAccess, type AccessEmailPayload, type CodeMailPayload } from "./email-access-plugin";
+import * as emailLimits from "./email-limit-store";
+import { hashPassword, verifyPassword } from "./password-hash";
 
 const SESSION_DAYS = 90;
 
+/** Language of the UI that triggered a request (signed out): cookie → Accept-Language. */
+function requestLocale(headers: Headers | undefined): Locale {
+  return negotiateLocale({
+    cookie: readCookie(headers?.get("cookie"), LOCALE_COOKIE),
+    acceptLanguage: headers?.get("accept-language"),
+  });
+}
+
+/** Account language of an address, if an account exists (mails "danach in Kontosprache", F.3). */
+async function accountLocale(
+  where: { email: string } | { id: string },
+): Promise<Locale | undefined> {
+  const [row] = await db()
+    .select({ locale: schema.user.locale })
+    .from(schema.user)
+    .where("email" in where ? eq(schema.user.email, where.email) : eq(schema.user.id, where.id))
+    .limit(1);
+  return isLocale(row?.locale) ? row.locale : undefined;
+}
+
 async function sendAccessEmail(payload: AccessEmailPayload): Promise<void> {
-  const locale = isLocale(payload.locale)
-    ? payload.locale
-    : negotiateLocale({
-        cookie: /(?:^|;\s*)lang=([^;]+)/.exec(payload.headers?.get("cookie") ?? "")?.[1],
-        acceptLanguage: payload.headers?.get("accept-language"),
-      });
+  // New address: language of the UI that asked for the code; existing account: its language.
+  const locale =
+    (await accountLocale({ email: payload.email })) ??
+    (isLocale(payload.locale) ? payload.locale : requestLocale(payload.headers));
   const inviteToken = inviteTokenFromPath(payload.returnTo);
   const trip = inviteToken ? await findTripByInviteToken(inviteToken) : undefined;
-
-  const mail = renderAccessEmail({
+  await sendLocalizedMail(
+    payload.email,
     locale,
-    code: payload.code,
-    magicLinkUrl: payload.magicLinkUrl,
-    tripName: trip?.name,
-  });
-  const env = serverEnv();
-  const fromName =
-    (locale === "de" ? env.MAIL_FROM_NAME_DE : env.MAIL_FROM_NAME_EN) ??
-    (locale === "de" ? de : en).mail.fromName;
-  await sendMail(payload.email, fromName, mail);
+    renderAccessEmail({
+      locale,
+      code: payload.code,
+      magicLinkUrl: payload.magicLinkUrl,
+      tripName: trip?.name,
+    }),
+  );
+}
+
+async function sendPasswordResetEmail({ email, code }: CodeMailPayload): Promise<void> {
+  const locale = (await accountLocale({ email })) ?? "en";
+  await sendLocalizedMail(email, locale, renderPasswordResetEmail({ locale, code }));
+}
+
+async function sendChangeEmailEmail({ email, code, userId }: CodeMailPayload): Promise<void> {
+  const locale = (userId ? await accountLocale({ id: userId }) : undefined) ?? "en";
+  await sendLocalizedMail(email, locale, renderChangeEmailEmail({ locale, code, newEmail: email }));
+}
+
+/** Explicit language choice made in this browser (cookie pair, Flow F.3). */
+function browserLanguageChoice(headers: Headers | undefined) {
+  const cookie = headers?.get("cookie");
+  const locale = readCookie(cookie, LOCALE_COOKIE);
+  const at = Number(readCookie(cookie, LOCALE_CHOSEN_COOKIE));
+  return isLocale(locale) && Number.isFinite(at) && at > 0 ? { locale, at: new Date(at) } : null;
 }
 
 function createAuth() {
@@ -66,6 +109,73 @@ function createAuth() {
         rateLimit: schema.rateLimit,
       },
     }),
+    user: {
+      // Account settings (F-043, F-046, F-052) – changed only via Server Actions (input: false).
+      additionalFields: {
+        locale: { type: "string", required: false, defaultValue: "en", input: false },
+        localeChosenAt: { type: "date", required: false, input: false },
+        country: { type: "string", required: false, defaultValue: "GB", input: false },
+        subdivision: { type: "string", required: false, input: false },
+        weekStart: { type: "string", required: false, defaultValue: "auto", input: false },
+        reduceMotion: { type: "boolean", required: false, defaultValue: false, input: false },
+      },
+    },
+    // Optional password (F-040/F-042). Never a sign-up path of its own: accounts are created
+    // by code (e-mail verified first); /sign-up/email is disabled and not reachable over HTTP.
+    emailAndPassword: {
+      enabled: true,
+      disableSignUp: true,
+      requireEmailVerification: true,
+      minPasswordLength: PASSWORD_MIN_LENGTH,
+      maxPasswordLength: PASSWORD_MAX_LENGTH,
+      revokeSessionsOnPasswordReset: true, // F-042: reset ends all other sessions
+      password: {
+        hash: hashPassword,
+        verify: ({ hash, password }) => verifyPassword(hash, password),
+      },
+    },
+    databaseHooks: {
+      user: {
+        create: {
+          // New accounts take the language currently shown and a region guessed from the
+          // browser (F-040, Flow F.1/F.3) – silently, changeable in the account.
+          before: (user, context) => {
+            const headers = context?.headers;
+            const choice = browserLanguageChoice(headers);
+            const locale = choice?.locale ?? requestLocale(headers);
+            return Promise.resolve({
+              data: {
+                ...user,
+                locale,
+                localeChosenAt: choice?.at ?? null,
+                country: regionFromAcceptLanguage(headers?.get("accept-language"), locale),
+              },
+            });
+          },
+        },
+      },
+      session: {
+        create: {
+          // "The latest explicit choice wins" (Flow F.3): a language picked in this browser
+          // after the account's last choice updates the account at sign-in.
+          after: async (session, context) => {
+            const choice = browserLanguageChoice(context?.headers);
+            if (!choice) return;
+            const [account] = await db()
+              .select({ locale: schema.user.locale, chosenAt: schema.user.localeChosenAt })
+              .from(schema.user)
+              .where(eq(schema.user.id, session.userId))
+              .limit(1);
+            if (!account || account.locale === choice.locale) return;
+            if (account.chosenAt && account.chosenAt >= choice.at) return;
+            await db()
+              .update(schema.user)
+              .set({ locale: choice.locale, localeChosenAt: choice.at })
+              .where(eq(schema.user.id, session.userId));
+          },
+        },
+      },
+    },
     session: {
       // "Keep me signed in": 90 days, rolling (PRD §8, tech-stack.md §3.2).
       expiresIn: 60 * 60 * 24 * SESSION_DAYS,
@@ -75,8 +185,10 @@ function createAuth() {
       enabled: env.RATE_LIMIT_ENABLED,
       storage: "database",
       // Key = IP resolved by handleAuthRequest (R-005); see client-ip.ts.
+      // Per e-mail address: email-limit-store.ts (always on).
       customRules: {
         "/sign-in/email-otp": { window: 60, max: 10 },
+        "/sign-in/email": { window: 60, max: 10 },
       },
     },
     advanced: {
@@ -90,7 +202,15 @@ function createAuth() {
     },
     telemetry: { enabled: false },
     plugins: [
-      ...emailAccess({ sendAccessEmail, magicLandingPath: "/auth/magic", expiresIn: 900 }),
+      ...emailAccess({
+        sendAccessEmail,
+        sendPasswordResetEmail,
+        sendChangeEmailEmail,
+        limits: emailLimits,
+        validatePassword: validateNewPassword,
+        magicLandingPath: "/auth/magic",
+        expiresIn: 900,
+      }),
       nextCookies(), // must stay last: applies Set-Cookie inside Server Actions
     ],
   });

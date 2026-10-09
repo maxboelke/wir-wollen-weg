@@ -73,9 +73,18 @@ interface IllustrationMotionProps {
   children: ReactNode;
 }
 
+/** Past this point a still hidden illustration has been revealed by the CSS failsafe. */
+const FAILSAFE_MS = 2400;
+
 /**
  * Plays an illustration's layer entrance once (only `transform`/`opacity` on `data-anim`
  * groups). Text and buttons never wait for it; reduced motion: static end state.
+ *
+ * R-017: the layers are hidden by CSS BEFORE the first paint (`data-intro="pending"`, only
+ * with JavaScript and full motion – globals.css), so the entrance starts from "not yet
+ * visible" instead of hiding an already painted picture. Without JavaScript, with reduced
+ * motion or when it already played in this session, the picture is simply there; a CSS
+ * failsafe reveals it after 2.4 s if hydration never happens.
  */
 export function IllustrationMotion({
   choreography,
@@ -87,7 +96,10 @@ export function IllustrationMotion({
 
   useLayoutEffect(() => {
     const root = ref.current;
-    if (!root || prefersReducedMotion()) return;
+    if (!root) return;
+    // Reveal in the same frame the animations start (fill: backwards keeps them hidden).
+    root.removeAttribute("data-intro");
+    if (prefersReducedMotion() || performance.now() > FAILSAFE_MS) return;
     const key = `ww-anim:${sessionKey}`;
     try {
       if (sessionStorage.getItem(key)) return;
@@ -123,7 +135,7 @@ export function IllustrationMotion({
   }, [choreography, sessionKey]);
 
   return (
-    <div ref={ref} className={className}>
+    <div ref={ref} className={className} data-intro="pending">
       {children}
     </div>
   );

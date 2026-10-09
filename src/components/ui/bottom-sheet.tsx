@@ -23,6 +23,7 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
   const returnFocus = useRef<HTMLElement | null>(null);
+  const closing = useRef<Animation | null>(null);
   const titleId = useId();
 
   // Tap on the scrim (the dialog box itself, outside the panel) closes.
@@ -41,7 +42,17 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (open && !dialog.open) {
+    if (open) {
+      // Re-opened while the exit still runs: drop the exit first.
+      if (closing.current) {
+        closing.current.cancel();
+        closing.current = null;
+        dialog.close();
+        dialog.inert = false;
+        dialog.style.pointerEvents = "";
+        dialog.style.pointerEvents = "";
+      }
+      if (dialog.open) return;
       returnFocus.current =
         document.activeElement instanceof HTMLElement ? document.activeElement : null;
       dialog.showModal();
@@ -57,7 +68,15 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
           easing: reduced ? "linear" : EASING.emphasized,
         },
       );
-    } else if (!open && dialog.open) {
+    } else if (dialog.open && !closing.current) {
+      // R-019 / G-05b: close the MODAL dialog right away – the page is interactive again and
+      // focus is back on the trigger in the same event. The exit then plays on the same
+      // element shown non-modal and inert (no focus, no clicks), and it ends closed.
+      dialog.close();
+      dialog.inert = true;
+      dialog.style.pointerEvents = "none";
+      dialog.show();
+      returnFocus.current?.focus();
       const reduced = prefersReducedMotion();
       const exit = dialog.animate(
         reduced
@@ -69,11 +88,14 @@ export function BottomSheet({ open, onClose, title, closeLabel, children }: Bott
           fill: "forwards",
         },
       );
+      closing.current = exit;
       exit.onfinish = () => {
+        closing.current = null;
         dialog.close();
+        dialog.inert = false;
+        dialog.style.pointerEvents = "";
         exit.cancel();
       };
-      returnFocus.current?.focus();
     }
   }, [open]);
 

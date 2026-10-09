@@ -110,3 +110,32 @@
   font-size: var(--ww-text-sm);
   font-weight: var(--ww-font-weight-regular);
 }
+
+/* Password field: room for the show/hide toggle on the right */
+.withToggle {
+  padding-inline-end: calc(var(--ww-size-touch-min) + var(--ww-space-1));
+}
+
+.withToggle:focus-visible {
+  padding-inline-end: calc(var(--ww-size-touch-min) + var(--ww-space-1));
+}
+
+.toggle {
+  position: absolute;
+  inset-inline-end: var(--ww-space-0-5);
+  display: grid;
+  place-items: center;
+  width: var(--ww-size-touch-min);
+  height: var(--ww-size-touch-min);
+  border: 0;
+  border-radius: var(--ww-radius-sm);
+  background: transparent;
+  color: var(--ww-color-text-muted);
+  cursor: pointer;
+}
+
+.toggle:focus-visible {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}

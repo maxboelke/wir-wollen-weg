@@ -4,6 +4,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { brandMetadata, brandViewport, DocumentHead } from "@/components/document-head";
 import { MotionPreferenceSync } from "@/components/motion-preference-sync";
+import { ToastProvider } from "@/components/ui/toast";
 import { isLocale, locales } from "@/i18n/config";
 import "@/styles/globals.css";
 
@@ -43,7 +44,9 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
         <DocumentHead />
       </head>
       <body>
-        <NextIntlClientProvider>{children}</NextIntlClientProvider>
+        <NextIntlClientProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </NextIntlClientProvider>
         <MotionPreferenceSync />
       </body>
     </html>

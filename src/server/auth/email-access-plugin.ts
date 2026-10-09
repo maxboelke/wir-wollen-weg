@@ -1,6 +1,6 @@
 import { AsyncLocalStorage } from "node:async_hooks";
 import type { BetterAuthPlugin } from "better-auth";
-import { APIError, createAuthEndpoint, createAuthMiddleware } from "better-auth/api";
+import { APIError, createAuthEndpoint, createAuthMiddleware, isAPIError } from "better-auth/api";
 import { setSessionCookie } from "better-auth/cookies";
 import { emailOTP } from "better-auth/plugins/email-otp";
 import { magicLink } from "better-auth/plugins/magic-link";
@@ -9,13 +9,18 @@ import { toSafeInternalPath } from "@/lib/safe-path";
 
 /**
  * "email-access" – one request, ONE mail with a 6-digit code AND a magic link
- * (spike T1, docs/ops/spike-auth.md).
+ * (spike T1, docs/ops/spike-auth.md), plus the guards around all code/password flows:
  *
- * Better Auth's `emailOTP` and `magicLink` plugins each send their own mail.
- * This plugin calls both endpoints in-process inside an AsyncLocalStorage scope;
- * their `send*` callbacks only *collect* the code and the link, then a single
- * combined mail is sent. Verification stays 100 % Better Auth
- * (`/sign-in/email-otp`, `/magic-link/verify`) – no custom crypto.
+ * - **HTTP allow-list:** only the endpoints the browser really calls are reachable over
+ *   `/api/auth/*`; everything else (sign-up by password, link-based reset, single-purpose
+ *   senders, magic-link GET) answers 404. Server Actions call `auth().api.*` without a
+ *   request object and are not affected.
+ * - **Rate limits per e-mail address** (src/lib/email-limits.ts) for code mails and failed
+ *   verifications, in addition to Better Auth's IP limits.
+ * - **Remaining attempts** on a wrong code ("Noch 3 Versuche", Flow A.2) and the locked
+ *   state right after the 5th wrong code.
+ *
+ * Verification itself stays 100 % Better Auth – no custom crypto.
  */
 
 export interface AccessEmailPayload {
@@ -29,8 +34,42 @@ export interface AccessEmailPayload {
   headers: Headers | undefined;
 }
 
+export interface CodeMailPayload {
+  email: string;
+  code: string;
+  /** Account of the signed-in user (e-mail change) – for the mail language. */
+  userId: string | undefined;
+}
+
+/** Per-address limits, injected so the plugin stays testable without a database. */
+export interface EmailLimits {
+  takeCodeRequest: (email: string) => Promise<void>;
+  assertVerificationAllowed: (email: string) => Promise<void>;
+  recordVerificationFailure: (
+    email: string,
+  ) => Promise<
+    { allowed: true } | { allowed: false; reason: "requests" | "locked"; retryAfterSeconds: number }
+  >;
+  clearVerificationFailures: (email: string) => Promise<void>;
+  rateLimitError: (decision: {
+    allowed: false;
+    reason: "requests" | "locked";
+    retryAfterSeconds: number;
+  }) => APIError;
+}
+
 export interface EmailAccessOptions {
   sendAccessEmail: (payload: AccessEmailPayload) => Promise<void>;
+  /** "Forgot password" code (Flow H.3). */
+  sendPasswordResetEmail: (payload: CodeMailPayload) => Promise<void>;
+  /** Code to the NEW address when changing the e-mail (Flow I.2). */
+  sendChangeEmailEmail: (payload: CodeMailPayload) => Promise<void>;
+  limits: EmailLimits;
+  /** Server-side password rules for resets (length, leak list, optional HIBP). */
+  validatePassword?: (
+    password: string,
+    email: string,
+  ) => Promise<"tooShort" | "tooLong" | "common" | null>;
   /** Path of the page that turns the magic-link token into a session on click. */
   magicLandingPath?: string;
   /** Code + link validity in seconds (F-040: 15 min). */
@@ -42,19 +81,44 @@ interface Collected {
   token?: string;
 }
 
+/** Code attempts per code (F-040: max. 5). */
+export const CODE_ATTEMPTS = 5;
+
 /**
- * Better Auth endpoints that would send (or try to send) a mail outside the combined flow.
- * The password-reset/email-change senders stay blocked until Increment 1 gives them their
- * own mails – otherwise they create verification rows and error logs only for existing
- * accounts (side channel, log spam).
+ * The only Better Auth endpoints reachable over HTTP. Everything else is used server-side
+ * from Server Actions (account settings, e-mail change) or not at all.
  */
-const BLOCKED_PATHS = new Set([
-  "/email-otp/send-verification-otp",
-  "/sign-in/magic-link",
-  "/email-otp/request-password-reset",
-  "/forget-password/email-otp",
-  "/email-otp/request-email-change",
+export const HTTP_ALLOWED_PATHS = new Set([
+  "/email-access/request", // code + magic link (sign-in / sign-up)
+  "/sign-in/email-otp", // verify code
+  "/sign-in/email", // password sign-in (F-041)
+  "/email-otp/request-password-reset", // Flow H.3 step 1
+  "/email-otp/reset-password", // Flow H.3 step 2
+  "/get-session",
+  "/sign-out",
+  "/ok",
+  "/error",
 ]);
+
+/** Endpoints that check a secret for an address: per-address lock applies (body field). */
+const VERIFY_PATHS: Record<string, "email" | "newEmail"> = {
+  "/sign-in/email-otp": "email",
+  "/sign-in/email": "email",
+  "/email-otp/reset-password": "email",
+  "/email-otp/change-email": "newEmail",
+};
+
+/** Endpoints that send a code mail to an address (body field). */
+const SEND_PATHS: Record<string, "email" | "newEmail"> = {
+  "/email-otp/request-password-reset": "email",
+  "/email-otp/request-email-change": "newEmail",
+};
+
+/** OTP type per verification endpoint (for the remaining-attempts lookup). */
+const OTP_TYPES: Record<string, string> = {
+  "/sign-in/email-otp": "sign-in",
+  "/email-otp/reset-password": "forget-password",
+};
 
 const requestBody = z.object({
   email: z.email(),
@@ -63,27 +127,62 @@ const requestBody = z.object({
   locale: z.enum(["de", "en"]).optional(),
 });
 
+function bodyField(body: unknown, field: string): string | undefined {
+  if (typeof body !== "object" || body === null || !(field in body)) return undefined;
+  const value = (body as Record<string, unknown>)[field];
+  return typeof value === "string" ? value.trim().toLowerCase() : undefined;
+}
+
+/**
+ * Replaces the endpoint's error from an after-hook. Over HTTP a Response is returned:
+ * Better Auth keeps the ORIGINAL status for errors thrown in after-hooks (e.g. 400 instead
+ * of 429). Server-side calls get the APIError thrown (status and body intact). The hook
+ * context has no `request`, so HTTP vs. server is decided by the matcher.
+ */
+function replaceError(http: boolean, error: APIError): Response {
+  if (!http) throw error;
+  const headers = new Headers(error.headers);
+  headers.set("content-type", "application/json");
+  return new Response(JSON.stringify(error.body), { status: error.statusCode, headers });
+}
+
+function errorCode(returned: unknown): string | undefined {
+  if (!isAPIError(returned)) return undefined;
+  const code = (returned.body as { code?: unknown } | undefined)?.code;
+  return typeof code === "string" ? code : undefined;
+}
+
 export function emailAccess(options: EmailAccessOptions) {
   const expiresIn = options.expiresIn ?? 900;
   const landingPath = options.magicLandingPath ?? "/auth/magic";
   const collector = new AsyncLocalStorage<Collected>();
+  const { limits } = options;
 
   const otpPlugin = emailOTP({
     otpLength: 6,
     expiresIn,
-    allowedAttempts: 5,
+    allowedAttempts: CODE_ATTEMPTS,
     storeOTP: "hashed",
     resendStrategy: "rotate",
     disableSignUp: false,
-    sendVerificationOTP({ otp }) {
+    // Re-authentication happens before (Server Action, Flow I.2 step 1).
+    changeEmail: { enabled: true, verifyCurrentEmail: false },
+    sendVerificationOTP({ email, otp, type }, ctx) {
       const store = collector.getStore();
-      if (!store) {
-        // Only the combined flow may issue codes. Other OTP types
-        // (email change, password reset) get their own mails in Increment 1.
-        return Promise.reject(new Error("email-otp: use /email-access/request"));
+      if (store) {
+        store.otp = otp;
+        return Promise.resolve();
       }
-      store.otp = otp;
-      return Promise.resolve();
+      const userId = (ctx?.context as { session?: { user?: { id?: string } } } | undefined)?.session
+        ?.user?.id;
+      if (type === "forget-password") {
+        return options.sendPasswordResetEmail({ email, code: otp, userId });
+      }
+      if (type === "change-email") {
+        return options.sendChangeEmailEmail({ email, code: otp, userId });
+      }
+      // Sign-in codes only through the combined flow (/email-access/request).
+      return Promise.reject(new Error(`email-otp: no mail for type "${type}"`));
     },
   });
 
@@ -98,6 +197,54 @@ export function emailAccess(options: EmailAccessOptions) {
     },
   });
 
+  /** Wrong code/password: count it, lock the address at the limit, add remaining attempts. */
+  const afterVerification = (http: boolean) =>
+    createAuthMiddleware(async (ctx) => {
+      const path = ctx.path;
+      const field = VERIFY_PATHS[path];
+      const email = field ? bodyField(ctx.body, field) : undefined;
+      if (!email) return;
+      const returned = ctx.context.returned;
+      const code = errorCode(returned);
+
+      if (!isAPIError(returned)) {
+        // Success: a correct secret clears the failure count of the address.
+        if (path === "/sign-in/email-otp" || path === "/sign-in/email") {
+          await limits.clearVerificationFailures(email);
+        }
+        return;
+      }
+      if (code !== "INVALID_OTP" && code !== "INVALID_EMAIL_OR_PASSWORD") return;
+
+      const decision = await limits.recordVerificationFailure(email);
+      if (!decision.allowed) return replaceError(http, limits.rateLimitError(decision));
+
+      const type = OTP_TYPES[path];
+      if (code === "INVALID_OTP" && type) {
+        const identifier = `${type}-otp-${email}`;
+        const row = await ctx.context.internalAdapter.findVerificationValue(identifier);
+        if (!row) return; // no pending code (e.g. already used) – plain "wrong code"
+        const used = Number.parseInt(row.value.slice(row.value.lastIndexOf(":") + 1), 10) || 0;
+        const remainingAttempts = Math.max(0, CODE_ATTEMPTS - used);
+        if (remainingAttempts === 0) {
+          // 5th wrong code: locked right away (Flow A.2) – the code is gone, a new one is needed.
+          await ctx.context.internalAdapter.deleteVerificationByIdentifier(identifier);
+          return replaceError(
+            http,
+            new APIError("FORBIDDEN", { code: "TOO_MANY_ATTEMPTS", message: "Too many attempts" }),
+          );
+        }
+        return replaceError(
+          http,
+          new APIError("BAD_REQUEST", {
+            code: "INVALID_OTP",
+            message: "Invalid OTP",
+            remainingAttempts,
+          }),
+        );
+      }
+    });
+
   const accessPlugin = {
     id: "email-access",
     endpoints: {
@@ -106,6 +253,8 @@ export function emailAccess(options: EmailAccessOptions) {
         { method: "POST", body: requestBody, requireHeaders: true },
         async (ctx) => {
           const email = ctx.body.email.toLowerCase();
+          // Same budget for every address – known or not (no enumeration).
+          await limits.takeCodeRequest(email);
           const returnTo = toSafeInternalPath(ctx.body.callbackURL, "/");
           const collected: Collected = {};
           // Same auth context + request headers as the incoming call (origin/CSRF checks).
@@ -157,20 +306,68 @@ export function emailAccess(options: EmailAccessOptions) {
     hooks: {
       before: [
         {
-          // The single-purpose senders would bypass the combined mail – hide them.
+          // HTTP allow-list (see HTTP_ALLOWED_PATHS). Server-side calls have no request.
           matcher: (context) =>
+            context.request !== undefined &&
             context.path !== undefined &&
-            (BLOCKED_PATHS.has(context.path) ||
-              // Magic links are redeemed by POST only (Server Action redeemMagicLink, Flow
-              // H.5, R-006): over HTTP the GET verify endpoint would let link scanners burn
-              // the token. Server-side calls (no request object) stay allowed.
-              (context.path === "/magic-link/verify" && context.request !== undefined)),
+            !HTTP_ALLOWED_PATHS.has(context.path),
           handler: createAuthMiddleware(() => {
             throw new APIError("NOT_FOUND");
           }),
         },
+        {
+          // Locked addresses cannot verify anything until the lock lifts.
+          matcher: (context) => context.path !== undefined && context.path in VERIFY_PATHS,
+          handler: createAuthMiddleware(async (ctx) => {
+            const email = bodyField(ctx.body, VERIFY_PATHS[ctx.path] ?? "email");
+            if (email) await limits.assertVerificationAllowed(email);
+          }),
+        },
+        {
+          // Same password rules as in the account (F-042) – also for "forgot password".
+          matcher: (context) => context.path === "/email-otp/reset-password",
+          handler: createAuthMiddleware(async (ctx) => {
+            const password: unknown = (ctx.body as { password?: unknown } | undefined)?.password;
+            const email = bodyField(ctx.body, "email");
+            if (!options.validatePassword || typeof password !== "string" || !email) return;
+            const problem = await options.validatePassword(password, email);
+            if (problem) {
+              throw new APIError("BAD_REQUEST", {
+                code:
+                  problem === "common"
+                    ? "PASSWORD_COMMON"
+                    : problem === "tooLong"
+                      ? "PASSWORD_TOO_LONG"
+                      : "PASSWORD_TOO_SHORT",
+                message: "Password not accepted",
+              });
+            }
+          }),
+        },
+        {
+          // Code mails outside the combined flow (reset, e-mail change) share the budget.
+          matcher: (context) => context.path !== undefined && context.path in SEND_PATHS,
+          handler: createAuthMiddleware(async (ctx) => {
+            const email = bodyField(ctx.body, SEND_PATHS[ctx.path] ?? "email");
+            if (email) await limits.takeCodeRequest(email);
+          }),
+        },
       ],
       after: [
+        {
+          matcher: (context) =>
+            context.request !== undefined &&
+            context.path !== undefined &&
+            context.path in VERIFY_PATHS,
+          handler: afterVerification(true),
+        },
+        {
+          matcher: (context) =>
+            context.request === undefined &&
+            context.path !== undefined &&
+            context.path in VERIFY_PATHS,
+          handler: afterVerification(false),
+        },
         {
           // "Keep me signed in" is built into password login only. For code login
           // the client sends `rememberMe: false` to get a browser-session cookie

@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef, type ReactNode } from "react";
 import { DISTANCE, DURATION, EASING, enter, STAGGER, staggerDelay } from "@/lib/motion";
+import { useWasServerPainted } from "@/lib/use-hydration";
 
 interface StaggerEnterProps {
   children: ReactNode;
@@ -12,13 +13,15 @@ interface StaggerEnterProps {
 
 /**
  * Card entrance (interaktionen.md W04-01): `[data-stagger]` children fade in and rise,
- * max. 5 staggered, the rest together. Reduced motion: cross-fade only.
+ * max. 5 staggered, the rest together. Reduced motion: cross-fade only. Never for a list that
+ * was already painted from the server HTML (R-017) – only when it appears on the client.
  */
 export function StaggerEnter({ children, sessionKey, className }: StaggerEnterProps) {
   const ref = useRef<HTMLDivElement>(null);
+  const serverPainted = useWasServerPainted();
   useLayoutEffect(() => {
     const root = ref.current;
-    if (!root) return;
+    if (!root || serverPainted) return;
     const key = `ww-anim:${sessionKey}`;
     try {
       if (sessionStorage.getItem(key)) return;
@@ -34,7 +37,7 @@ export function StaggerEnter({ children, sessionKey, className }: StaggerEnterPr
         delay: staggerDelay(Math.min(i, 4), STAGGER.card),
       });
     });
-  }, [sessionKey]);
+  }, [serverPainted, sessionKey]);
   return (
     <div ref={ref} className={className}>
       {children}

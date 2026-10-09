@@ -183,6 +183,7 @@ export function watchSystemMotion(onChange: () => void): () => void {
 
 /**
  * Inline `<head>` script: sets `data-motion="reduce"` before the first paint (no flash of
- * motion). Keep it tiny and dependency-free; it mirrors `syncMotionAttribute`.
+ * motion) and `data-js` (JavaScript runs – entrances may start hidden, R-017). Keep it tiny
+ * and dependency-free; it mirrors `syncMotionAttribute`.
  */
-export const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var d=document.documentElement;if(/(?:^|;\\s*)${MOTION_COOKIE}=reduce(?:;|$)/.test(document.cookie)||matchMedia("${REDUCE_QUERY}").matches)d.setAttribute("data-motion","reduce")}catch(e){}})();`;
+export const MOTION_BOOTSTRAP_SCRIPT = `(function(){try{var d=document.documentElement;d.setAttribute("data-js","");if(/(?:^|;\\s*)${MOTION_COOKIE}=reduce(?:;|$)/.test(document.cookie)||matchMedia("${REDUCE_QUERY}").matches)d.setAttribute("data-motion","reduce")}catch(e){}})();`;

@@ -5,6 +5,9 @@ import { Illustration } from "@/components/illustrations/illustration";
 import { IllustrationMotion } from "@/components/illustrations/illustration-motion";
 import { BrandLink, DemoBanner, SkipLink } from "@/components/page-shell";
 import { Reveal } from "@/components/reveal";
+import { FlashToast } from "@/components/shell/flash-toast";
+import { PendingAuthBanner } from "@/components/shell/pending-auth-banner";
+import { SiteFooter } from "@/components/shell/site-footer";
 import { buttonClassName } from "@/components/ui/button-styles";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Tile, type TileTone } from "@/components/ui/card";
@@ -70,6 +73,7 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
           </div>
         </div>
       </header>
+      <PendingAuthBanner />
       <main id="content">
         <section className={styles.hero} aria-labelledby="landing-title">
           <div className={styles.heroInner}>
@@ -118,9 +122,8 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
           </section>
         </Reveal>
       </main>
-      <footer className={styles.footer}>
-        <LanguageSwitchLink href={`/${other}`} locale={other} />
-      </footer>
+      <SiteFooter alternateHref={`/${other}`} />
+      <FlashToast />
     </>
   );
 }

@@ -9,7 +9,6 @@ import { joinTrip, joinTripFormAction } from "@/features/auth/actions";
 import { EmailAccessForm } from "@/features/auth/components/email-access-form";
 import { JoinForm } from "@/features/invite/join-form";
 import { TripCard } from "@/features/invite/trip-card";
-import { LanguageSwitch } from "@/features/locale/language-switch";
 import { getSession } from "@/server/session";
 import {
   countMembers,
@@ -36,7 +35,7 @@ export default async function InvitePage({ params }: PageProps<"/i/[token]">) {
   if (!trip) {
     // One shared text for invalid/renewed/deleted links – reveals nothing (Flow A.3, R-007: h1).
     return (
-      <PageShell homeHref="/" languageSwitch={<LanguageSwitch />}>
+      <PageShell enter={false}>
         <Enter className={styles.invalid}>
           <Illustration name="error" width={200} />
           <h1>{t("invalidTitle")}</h1>
@@ -57,7 +56,7 @@ export default async function InvitePage({ params }: PageProps<"/i/[token]">) {
   const join = joinTrip.bind(null, token);
 
   return (
-    <PageShell homeHref="/" languageSwitch={<LanguageSwitch />}>
+    <PageShell enter={false}>
       <div className={styles.page}>
         <Enter variant="card">
           <TripCard
@@ -74,6 +73,7 @@ export default async function InvitePage({ params }: PageProps<"/i/[token]">) {
             returnTo={`/i/${token}`}
             variant="invite"
             onNameSubmit={join}
+            tripName={trip.name}
             codeIllustration={<Illustration name="code-sent" />}
           />
         )}

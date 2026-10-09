@@ -30,6 +30,10 @@ const schema = z.object({
   MAIL_FROM_NAME_EN: z.string().optional(),
   MAIL_REPLY_TO: z.string().optional(),
   RATE_LIMIT_ENABLED: z.stringbool().default(true),
+  // Optional online leak check for new passwords (F-042). Off in the offline demo (Q15).
+  PASSWORD_BREACH_CHECK: z.enum(["off", "hibp"]).default("off"),
+  // Contact address on the help page (F-051) – placeholder until go-live (Q15).
+  CONTACT_EMAIL: z.string().default("hallo@example.org"),
 });
 
 export type ServerEnv = z.infer<typeof schema>;

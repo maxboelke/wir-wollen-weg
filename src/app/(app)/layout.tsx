@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import { brandMetadata, brandViewport, DocumentHead } from "@/components/document-head";
 import { MotionPreferenceSync } from "@/components/motion-preference-sync";
 import { ToastProvider } from "@/components/ui/toast";
+import { getSession } from "@/server/session";
 import "@/styles/globals.css";
 
 // Root layout for language-neutral app routes (/login, /i/<token>, /trips, /auth/…).
@@ -22,9 +23,15 @@ export async function generateMetadata(): Promise<Metadata> {
 export const viewport = brandViewport;
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
-  const locale = await getLocale();
+  const [locale, session] = await Promise.all([getLocale(), getSession()]);
+  const accountReduces = session ? session.user.reduceMotion === true : undefined;
   return (
-    <html lang={locale} suppressHydrationWarning>
+    // Signed in, the account's "Reduce motion" applies from the server HTML on (F-052).
+    <html
+      lang={locale}
+      data-motion={accountReduces ? "reduce" : undefined}
+      suppressHydrationWarning
+    >
       <head>
         <DocumentHead />
       </head>
@@ -32,7 +39,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
         <NextIntlClientProvider>
           <ToastProvider>{children}</ToastProvider>
         </NextIntlClientProvider>
-        <MotionPreferenceSync />
+        <MotionPreferenceSync account={accountReduces} />
       </body>
     </html>
   );

@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-08 · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-09 (Developer: Inkrement 1) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -23,10 +23,10 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 | R-013 | niedrig | Netzwerkfehler weicht von Flow H.5 Schritt 3e ab | verifiziert |
 | R-014 | niedrig | Eigene IP-Auflösung doppelt zu Better Auth | offen (später entscheiden) |
 | R-015 | niedrig | Hydration-Warnung auf `/auth/magic` (`method="POST"` am Formular mit Action) | verifiziert |
-| R-016 | mittel | Code-Feld: kein sichtbarer Fokus, wenn alle 6 Ziffern stehen | offen |
-| R-017 | mittel | Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein | offen |
-| R-018 | niedrig | Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen | offen |
-| R-019 | niedrig | Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert | offen |
+| R-016 | mittel | Code-Feld: kein sichtbarer Fokus, wenn alle 6 Ziffern stehen | behoben – bitte prüfen |
+| R-017 | mittel | Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein | behoben – bitte prüfen |
+| R-018 | niedrig | Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen | behoben – bitte prüfen |
+| R-019 | niedrig | Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert | behoben – bitte prüfen |
 | R-020 | niedrig | Fokus-Ringe im Kontrastmodus (forced colors) unsichtbar | verifiziert (vom Reviewer behoben) |
 
 ## Details
@@ -59,7 +59,7 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem: Gefälschtes `X-Forwarded-For` umging das Limit; mehrwertige Header landeten in einem gemeinsamen Topf (Login-DoS).
 - Umsetzung: `src/server/auth/client-ip.ts` (`AUTH_IP_HEADER`, `AUTH_TRUSTED_PROXIES`, rechts-nach-links), interner Header `x-ww-client-ip`, 400 ohne auflösbare IP (außer development/ci). Demo bekommt Caddy-Proxy davor (`docker/Caddyfile.demo`).
 - Grenze: Direkt erreichbares `next start` bleibt per Header täuschbar (Next setzt XFF nur, wenn er fehlt) – nur hinter Proxy betreiben.
-- Offen für Inkrement 1 (hoch priorisiert): Limits pro E-Mail-Adresse.
+- Offen für Inkrement 1 (hoch priorisiert): Limits pro E-Mail-Adresse. → Umsetzung Inkrement 1: 5 Code-Mails/Std., 20/Tag, Sperre nach 10 Fehlversuchen/Std. (Code + Passwort) pro Adresse, immer aktiv, Adresse nur als HMAC gespeichert (`src/lib/email-limits.ts`, `src/server/auth/email-limit-store.ts`, Tabelle `auth_attempt`); E2E „rate limits per e-mail address“ – behoben – bitte prüfen.
 - Status: verifiziert (Caddy real getestet: 429 ab der 11. Anfrage)
 
 ### R-006: Magic-Link-Landeseite verbraucht Token per GET-Link
@@ -134,7 +134,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem / Reproduktion: Fokus wird nur am „aktiven“ Kästchen gezeigt (`activeIndex = focused && !busy && value.length < 6 ? value.length : -1`), das Eingabefeld selbst hat keinen Ring. Sobald 6 Ziffern im Feld stehen, gibt es keinen Fokus-Indikator mehr. Szenario: `/login` → Code-Schritt → falschen Code „111111“ tippen → Fehler, Fokus bleibt laut ux-spec §4.4 im Feld und der Wert ist markiert → alle Kästchen nur roter Rahmen + Tönung, **kein** Fokusring (Screenshot im Review, Playwright: kein Kästchen mit `box-shadow`). Gleiches beim Zurück-Tabben in ein volles Feld und in den Zuständen „Prüfen“/„Erfolg“ (readOnly, aber fokussiert).
 - Erwartetes Verhalten: Solange das Eingabefeld den Fokus hat, ist immer ein Fokus-Indikator sichtbar (≥ 3:1, design-system §9 „Fokus überall“).
 - Vorschlag: Bei vollem Wert den Fokusring um die ganze Kästchen-Gruppe (z. B. `.group:has(.input:focus-visible)` mit `--ww-focus-ring`) oder am letzten Kästchen zeigen – ohne Caret. Optik kurz mit Designer abstimmen (§9.7 definiert den Fall nicht). E2E: nach falschem Code ist ein Fokus-Indikator vorhanden.
-- Status: offen
+- Umsetzung (Inkrement 1): Ohne „aktives“ Kästchen (6 Ziffern, Prüfen, Erfolg) liegt derselbe Fokusring (`--ww-focus-ring`, im Kontrastmodus transparente Outline) um die ganze Kästchen-Gruppe (`.groupFocus::after`, `src/components/ui/code-field.*`); im gesperrten Zustand kein Ring, der Fokus springt auf die Primär-Taste „Neuen Code senden“. E2E „R-016“ (`tests/e2e/increment-1-findings.spec.ts`). Optik-Annahme: Ring = Gruppenumriss mit 4 px Abstand (§9.7 definiert den Fall nicht) – Designer bitte kurz bestätigen.
+- Status: behoben – bitte prüfen
 
 ### R-017: Eintritts-Animationen laufen bei Hydration – Inhalt blinkt weg und blendet neu ein
 - Schwere: mittel (sichtbarer Fehler beim ersten Eindruck, W03 Einladung)
@@ -142,7 +143,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem / Reproduktion: Die Seite ist serverseitig gerendert und sofort sichtbar; `Enter`/`StaggerEnter` starten ihre Animation erst in `useLayoutEffect` nach der Hydration mit `opacity: 0` (`fill: backwards`). Gemessen (Playwright, `/i/<token>`, Reisekarte-h1, Opazität pro Frame): ohne Drosselung sichtbar ab 26 ms → **0 bei 142 ms** → Einblenden bis 406 ms; bei CPU ×6 (Mittelklasse-Handy) sichtbar ab 112 ms → **0 bei 813 ms** → Einblenden bis 1077 ms. Nutzer sehen die Einladungskarte ~0,7 s, dann verschwindet sie und kommt neu. Gilt auch mit reduzierter Bewegung (Überblenden bleibt). Widerspricht interaktionen.md §4 „Texte/CTA ohne Warten auf Animation lesbar“ und motion-system §6.1 (Zustand zuerst).
 - Erwartetes Verhalten: Beim ersten Laden (SSR) keine erneute Eintritts-Animation für bereits gemalte Inhalte; Eintritt nur bei clientseitiger Navigation (G-01) bzw. wenn der Inhalt vor dem ersten Paint verborgen war.
 - Vorschlag: Eintritt nur abspielen, wenn das Element nicht schon gemalt wurde – z. B. Modul-Flag „erste Hydration“ (beim Hard-Load überspringen, bei Client-Navigation abspielen) oder CSS-Startzustand nur unter einem im Head-Skript gesetzten Attribut (`html[data-js]`), damit ohne JS weiterhin alles sichtbar bleibt. E2E: Opazität der Reisekarte fällt nach dem ersten Paint nie auf 0.
-- Status: offen
+- Umsetzung (Inkrement 1): `useWasServerPainted()` (`src/lib/use-hydration.ts`, `useSyncExternalStore`-Server-Snapshot) – `Enter`/`StaggerEnter` spielen nur noch für Inhalte, die clientseitig erscheinen (Navigation, neuer Schritt), nie für schon gemalte SSR-Inhalte. Illustrationen (`IllustrationMotion`): Ebenen sind VOR dem ersten Paint verborgen (`html[data-js]` aus dem Head-Skript + `data-intro="pending"`, nur bei voller Bewegung), CSS-Failsafe nach 2,4 s; ohne JS/reduziert sofort sichtbar. E2E „R-017“: Opazität der Reisekarten-h1 fällt nach dem ersten Paint nie unter 0,99 (CPU ×6) und Schrittwechsel animieren weiter.
+- Status: behoben – bitte prüfen
 
 ### R-018: Schritt 0a unvollständig: Footer mit Hilfe-Link und Radio-Komponente fehlen
 - Schwere: niedrig
@@ -150,7 +152,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem / Reproduktion: Roadmap 0a nennt „Schalter/Checkbox/**Radio**“ und „Seitenrahmen (Header, **Footer mit Hilfe-Link**, Sprachumschalter)“. `PageShell` rendert nur Header + `main` (kein `<footer>` auf `/login`, `/i/…`, `/auth/magic`, `/trips`); eine Radio-Komponente gibt es nicht (auch nicht in `/dev/ui`). ux-spec 3.2.6: «Hilfe» im Footer auf allen Seiten; design-system §9 (Sprachumschalter): Footer-Segment „Deutsch | English“.
 - Erwartetes Verhalten: Footer-Gerüst im Seitenrahmen (Hilfe-Link, Sprach-Segment), Radio(-Gruppe) als Basis-Komponente – oder bewusste Verschiebung durch CEO/PM in die Roadmap (Hilfe-Seite F-051 existiert noch nicht, Ziel `/de/hilfe`).
 - Vorschlag: Mit Inkrement 1 (Code-Schritt, F-051-Hilfelinks) nachziehen; Radio spätestens mit W08-Werkzeugleiste/Abstimmung.
-- Status: offen
+- Umsetzung (Inkrement 1): Footer im Seitenrahmen und auf der Landing (`src/components/shell/site-footer.tsx`): „Hilfe“ (→ `/de/hilfe` bzw. `/en/help`) + Segment „Deutsch | English“ (App-Routen per Cookie/Konto, Präfix-Seiten per Link; Fokus bleibt nach dem Umschalten auf dem Segment). Datenschutz/Impressum folgen mit den Rechtstexten (Q14/Q16). Radio-Gruppe `src/components/ui/radio-group.tsx` (native Radios, 24 px, Zeile ≥ 44 px, G-12-Pop), genutzt im Konto, Demo in `/dev/ui`. E2E „footer (R-018)“.
+- Status: behoben – bitte prüfen
 
 ### R-019: Bottom-Sheet: Fokus kehrt erst nach der Austritts-Animation zurück, Seite bis dahin inert
 - Schwere: niedrig
@@ -158,7 +161,8 @@ Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Revie
 - Problem / Reproduktion: Beim Schließen läuft die Austritts-Animation am noch **modal offenen** `<dialog>`; `returnFocus.current?.focus()` wird währenddessen aufgerufen und scheitert (Seite ist inert). `/dev/ui` → „Bottom-Sheet öffnen“ → Esc: Fokus direkt danach weiter auf der Sheet-Überschrift, erst nach `dialog.close()` (~220 ms, nativer Fokus-Rückgabe) auf dem Auslöser. Bis dahin sind Tipps auf die Seite wirkungslos. interaktionen.md G-05b: „Fokus zurück auf Auslöser (sofort)“; §4: keine Animation blockiert Eingaben.
 - Erwartetes Verhalten: Fokus sofort auf dem Auslöser, Seite sofort bedienbar.
 - Vorschlag: Beim Schließen sofort `dialog.close()` und den Austritt über ein Klon-/Overlay-Element bzw. `@starting-style`/`transition-behavior: allow-discrete` (`overlay`, `display`) per CSS animieren; oder vor der Animation `inert`-Wirkung aufheben (z. B. Dialog per `close()` schließen und nicht-modal (`show()`) bis Animationsende halten).
-- Status: offen
+- Umsetzung (Inkrement 1): Beim Schließen wird der modale Dialog sofort geschlossen (`close()`), Fokus geht im selben Ereignis an den Auslöser; die Austritts-Animation läuft auf demselben Element nicht-modal, `inert` und mit `pointer-events: none`; erneutes Öffnen während des Austritts bricht ihn ab. E2E „R-019“ (Fokus < 100 ms zurück, nicht mehr `:modal`, Auslöser sofort treffbar).
+- Status: behoben – bitte prüfen
 
 ### R-020: Fokus-Ringe im Kontrastmodus (forced colors) unsichtbar
 - Schwere: niedrig (vom Reviewer behoben)

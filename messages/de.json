@@ -14,7 +14,20 @@
     "close": "Schließen",
     "back": "Zurück",
     "saved": "Gespeichert",
-    "undo": "Rückgängig"
+    "undo": "Rückgängig",
+    "help": "Hilfe",
+    "signOut": "Abmelden",
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "footerLabel": "Fußzeile",
+    "languageLabel": "Sprache",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "signedOut": "Du bist abgemeldet.",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen"
   },
   "landing": {
     "titleLead": "Vom Gruppenchat zum",
@@ -62,10 +75,44 @@
       "wrongCode": "Dieser Code stimmt nicht.",
       "tooManyAttempts": "Zu viele Versuche. Wir schicken dir einen neuen Code.",
       "expired": "Dieser Code ist abgelaufen. Fordere einfach einen neuen an.",
-      "rateLimited": "Bitte warte kurz, bevor du einen neuen Code anforderst.",
+      "rateLimited": "Bitte warte kurz ({minutes} Min.), bevor du einen neuen Code anforderst.",
       "nameRequired": "Bitte gib einen Namen ein.",
-      "generic": "Keine Verbindung. Deine Eingaben sind noch da – versuch es nochmal."
-    }
+      "generic": "Keine Verbindung. Deine Eingaben sind noch da – versuch es nochmal.",
+      "wrongCodeRemaining": "Dieser Code stimmt nicht. {count, plural, one {Noch # Versuch.} other {Noch # Versuche.}}",
+      "locked": "Zu viele Fehlversuche mit dieser Adresse. Bitte warte {minutes} Min. und versuch es dann nochmal.",
+      "passwordWrong": "E-Mail oder Passwort stimmt nicht. Du kannst dich auch mit einem Code anmelden.",
+      "passwordTooShort": "Mindestens 10 Zeichen.",
+      "passwordTooLong": "Höchstens 128 Zeichen.",
+      "passwordCommon": "Dieses Passwort taucht in bekannten Datenlecks auf. Bitte wähle ein anderes.",
+      "codeLength": "Der Code hat 6 Ziffern."
+    },
+    "codeSendingTo": "Wir schicken dir gerade einen Code an <b>{email}</b>.",
+    "statusSending": "Code wird gesendet …",
+    "statusSent": "Code an {email} gesendet.",
+    "welcomeBack": "Willkommen zurück – gib einfach den Code aus der Mail ein.",
+    "resend": "Neuen Code senden",
+    "resendCountdown": "Neuer Code in {time}",
+    "resendAvailable": "Du kannst jetzt einen neuen Code anfordern.",
+    "resent": "Neuer Code ist unterwegs. Ältere Codes gelten nicht mehr.",
+    "inAppTip": "Tipp: Lass dieses Fenster offen, hol den Code aus deiner Mail-App und komm hierher zurück.",
+    "noMail": {
+      "title": "Noch nichts da?",
+      "spam": "Spam/Werbung prüfen",
+      "address": "Stimmt die Adresse? {email}",
+      "change": "Ändern",
+      "resend": "Neuen Code senden",
+      "help": "Weitere Hilfe"
+    },
+    "withPassword": "Mit Passwort anmelden",
+    "withCode": "Lieber mit Code anmelden",
+    "passwordLabel": "Passwort",
+    "forgotPassword": "Passwort vergessen?",
+    "signInPassword": "Anmelden",
+    "signingIn": "Anmelden …",
+    "noPasswordHint": "Kein Passwort gesetzt? Melde dich einfach mit einem Code an.",
+    "optionalPassword": "Passwort festlegen (optional)",
+    "optionalPasswordHint": "Mindestens 10 Zeichen. Mit einem Code anmelden kannst du dich trotzdem immer.",
+    "sessionExpired": "Bitte melde dich an – danach geht es dort weiter, wo du warst."
   },
   "magic": {
     "title": "Anmelden",
@@ -100,7 +147,6 @@
   "trips": {
     "title": "Meine Reisen",
     "signedInAs": "Angemeldet als {name}",
-    "signOut": "Abmelden",
     "emptyTitle": "Noch keine Reise geplant.",
     "emptyText": "Leg eine an und schick den Link in euren Gruppenchat – oder öffne den Einladungslink, den du bekommen hast.",
     "joinedAs": "Dabei als {name}",
@@ -114,13 +160,258 @@
       "device": "Ist an, weil dein Gerät Bewegung reduziert. Ändern kannst du das in den Einstellungen deines Geräts."
     }
   },
+  "menu": {
+    "open": "Menü von {name}",
+    "myTrips": "Meine Reisen",
+    "account": "Konto",
+    "help": "Hilfe",
+    "signOut": "Abmelden"
+  },
+  "pending": {
+    "join": "Du warst gerade dabei, „{trip}“ beizutreten.",
+    "signIn": "Du warst gerade dabei, dich anzumelden.",
+    "continue": "Weiter",
+    "dismiss": "Verwerfen"
+  },
+  "reset": {
+    "title": "Passwort zurücksetzen",
+    "lead": "Du kannst dich auch ohne Passwort mit einem Code anmelden.",
+    "useCode": "Mit Code anmelden",
+    "sendCode": "Code senden",
+    "codeTitle": "Code und neues Passwort",
+    "codeSentTo": "Falls es zu <b>{email}</b> ein Konto gibt, ist ein Code unterwegs.",
+    "newPasswordLabel": "Neues Passwort",
+    "newPasswordHint": "Mindestens 10 Zeichen.",
+    "save": "Passwort speichern",
+    "saving": "Wird gespeichert …",
+    "done": "Passwort geändert. Auf anderen Geräten wurdest du abgemeldet."
+  },
+  "account": {
+    "title": "Konto",
+    "profile": {
+      "title": "Profil",
+      "nameLabel": "Dein Name",
+      "nameHint": "Gilt in allen Reisen (außer dort, wo du einen eigenen Namen hast).",
+      "saved": "Name gespeichert"
+    },
+    "language": {
+      "title": "Sprache & Region",
+      "languageLegend": "Sprache",
+      "countryLabel": "Land",
+      "subdivisionLabel": "Bundesland oder Region (für Feiertage)",
+      "subdivisionNone": "Nur landesweite Feiertage",
+      "weekStartLegend": "Woche beginnt am",
+      "weekStartAuto": "Automatisch ({day})",
+      "weekStartMon": "Montag",
+      "weekStartSun": "Sonntag",
+      "preview": "So sehen Daten aus: {date}"
+    },
+    "appearance": {
+      "title": "Darstellung"
+    },
+    "signInMethods": {
+      "title": "Anmeldung",
+      "emailLabel": "E-Mail",
+      "change": "Ändern",
+      "changeEmail": "E-Mail ändern",
+      "passwordLabel": "Passwort",
+      "passwordNotSet": "Nicht gesetzt – du meldest dich mit Code an.",
+      "passwordSet": "Gesetzt",
+      "setPassword": "Passwort festlegen",
+      "changePassword": "Passwort ändern",
+      "removePassword": "Passwort entfernen"
+    },
+    "sessions": {
+      "title": "Sitzungen",
+      "signOutEverywhere": "Auf allen Geräten abmelden",
+      "confirmTitle": "Überall abmelden?",
+      "confirmText": "Du wirst überall abgemeldet, auch hier.",
+      "confirm": "Überall abmelden"
+    },
+    "privacy": {
+      "title": "Daten & Datenschutz",
+      "request": "Deine Daten anfordern oder dein Konto löschen lassen: schreib an <link>{contact}</link>."
+    },
+    "back": "Zurück zum Konto",
+    "email": {
+      "title": "E-Mail ändern",
+      "reauthTitle": "Bestätige, dass du es bist",
+      "reauthLead": "Wir schicken dir einen Code an <b>{email}</b>.",
+      "reauthSent": "Wir haben einen Code an <b>{email}</b> geschickt.",
+      "sendCode": "Code senden",
+      "usePassword": "Lieber mit Passwort bestätigen",
+      "useCode": "Lieber mit Code bestätigen",
+      "confirm": "Bestätigen",
+      "newTitle": "Neue E-Mail-Adresse",
+      "newLabel": "Neue E-Mail",
+      "sendNew": "Code an neue Adresse senden",
+      "codeTitle": "Schau in dein Postfach",
+      "codeLead": "Wir haben einen Code an <b>{email}</b> geschickt.",
+      "done": "Deine E-Mail ist jetzt {email}. Wir haben deine alte Adresse informiert.",
+      "sameEmail": "Das ist schon deine Adresse.",
+      "reauthExpired": "Bitte bestätige noch einmal, dass du es bist."
+    },
+    "password": {
+      "titleSet": "Passwort festlegen",
+      "titleChange": "Passwort ändern",
+      "lead": "Mit einem Code anmelden kannst du dich weiterhin jederzeit.",
+      "label": "Neues Passwort",
+      "hint": "Mindestens 10 Zeichen.",
+      "saved": "Passwort gespeichert",
+      "removeTitle": "Passwort entfernen?",
+      "removeText": "Du meldest dich dann nur noch mit Code an.",
+      "remove": "Passwort entfernen",
+      "removed": "Passwort entfernt"
+    }
+  },
+  "regions": {
+    "countries": {
+      "DE": "Deutschland",
+      "AT": "Österreich",
+      "CH": "Schweiz",
+      "GB": "Vereinigtes Königreich",
+      "US": "USA"
+    },
+    "subdivisions": {
+      "DE-BW": "Baden-Württemberg",
+      "DE-BY": "Bayern",
+      "DE-BE": "Berlin",
+      "DE-BB": "Brandenburg",
+      "DE-HB": "Bremen",
+      "DE-HH": "Hamburg",
+      "DE-HE": "Hessen",
+      "DE-MV": "Mecklenburg-Vorpommern",
+      "DE-NI": "Niedersachsen",
+      "DE-NW": "Nordrhein-Westfalen",
+      "DE-RP": "Rheinland-Pfalz",
+      "DE-SL": "Saarland",
+      "DE-SN": "Sachsen",
+      "DE-ST": "Sachsen-Anhalt",
+      "DE-SH": "Schleswig-Holstein",
+      "DE-TH": "Thüringen",
+      "AT-1": "Burgenland",
+      "AT-2": "Kärnten",
+      "AT-3": "Niederösterreich",
+      "AT-4": "Oberösterreich",
+      "AT-5": "Salzburg",
+      "AT-6": "Steiermark",
+      "AT-7": "Tirol",
+      "AT-8": "Vorarlberg",
+      "AT-9": "Wien",
+      "CH-AG": "Aargau",
+      "CH-AI": "Appenzell Innerrhoden",
+      "CH-AR": "Appenzell Ausserrhoden",
+      "CH-BE": "Bern",
+      "CH-BL": "Basel-Landschaft",
+      "CH-BS": "Basel-Stadt",
+      "CH-FR": "Freiburg",
+      "CH-GE": "Genf",
+      "CH-GL": "Glarus",
+      "CH-GR": "Graubünden",
+      "CH-JU": "Jura",
+      "CH-LU": "Luzern",
+      "CH-NE": "Neuenburg",
+      "CH-NW": "Nidwalden",
+      "CH-OW": "Obwalden",
+      "CH-SG": "St. Gallen",
+      "CH-SH": "Schaffhausen",
+      "CH-SO": "Solothurn",
+      "CH-SZ": "Schwyz",
+      "CH-TG": "Thurgau",
+      "CH-TI": "Tessin",
+      "CH-UR": "Uri",
+      "CH-VD": "Waadt",
+      "CH-VS": "Wallis",
+      "CH-ZG": "Zug",
+      "CH-ZH": "Zürich",
+      "GB-ENG": "England",
+      "GB-NIR": "Nordirland",
+      "GB-SCT": "Schottland",
+      "GB-WLS": "Wales"
+    }
+  },
+  "help": {
+    "title": "Hilfe",
+    "lead": "Kurze Antworten auf die häufigsten Fragen.",
+    "topics": {
+      "code": {
+        "q": "Mein Code kommt nicht an.",
+        "a": "Schau zuerst im Spam- oder Werbe-Ordner nach. Prüfe, ob die Adresse stimmt – im Code-Schritt kannst du sie über „Andere E-Mail“ ändern. Nach 30 Sekunden kannst du einen neuen Code anfordern; es gilt immer nur der neueste. Unsere Mails kommen von {sender}."
+      },
+      "link": {
+        "q": "Ich habe den Einladungslink verloren.",
+        "a": "Frag im Gruppenchat nach dem Link. Bist du schon Mitglied, melde dich einfach an – deine Reise steht unter „Meine Reisen“.",
+        "action": "Anmelden"
+      },
+      "inApp": {
+        "q": "Ich habe die Seite in WhatsApp oder Instagram geöffnet.",
+        "a": "Das funktioniert. Gib den Code einfach im selben Fenster ein. Später kannst du dich auch in deinem Browser mit deiner E-Mail anmelden."
+      },
+      "dates": {
+        "q": "Wie ändere ich meine Tage?",
+        "a": "Öffne die Reise und dort „Meine Tage“. Änderungen wirken sofort. Sobald der Termin festgelegt ist, sind deine Tage gesperrt."
+      },
+      "vote": {
+        "q": "Wie stimme ich ab?",
+        "a": "Unter „Abstimmen“ wählst du für jeden Zeitraum Ja, Vielleicht oder Nein. Bis zum Ende der Abstimmung kannst du deine Stimme ändern. Wie die anderen gestimmt haben, siehst du, sobald du selbst abgestimmt hast."
+      },
+      "visibility": {
+        "q": "Wer sieht meine Angaben?",
+        "a": "Nur die Mitglieder der Reise. Gründe fragen wir nie ab – es gibt nur einen freiwilligen Kommentar."
+      },
+      "delete": {
+        "q": "Wie lösche ich meine Daten?",
+        "a": "Verlässt du eine Reise, löschen wir deine Tage und Stimmen in dieser Reise. Soll dein ganzes Konto weg, schreib uns an {contact} – bald geht das auch direkt im Konto."
+      },
+      "motion": {
+        "q": "Mir ist das zu viel Bewegung.",
+        "a": "Unter Konto → Darstellung kannst du „Bewegung reduzieren“ einschalten: weniger Animationen, kein Konfetti, keine Vibration. Ist auf deinem Gerät „Bewegung reduzieren“ an, gilt das automatisch.",
+        "action": "Zum Konto"
+      },
+      "noEmail": {
+        "q": "Kein Zugriff mehr auf deine E-Mail?",
+        "a": "Schreib uns an {contact}. Alternativ kannst du ein neues Konto anlegen und der Reise mit dem Einladungslink erneut beitreten."
+      }
+    },
+    "contactTitle": "Noch Fragen?",
+    "contact": "Schreib uns: <link>{email}</link>"
+  },
   "mail": {
     "fromName": "Wir wollen weg",
-    "subject": "{code} ist dein Code für Wir wollen weg",
-    "tripLine": "Du trittst „{trip}“ bei.",
-    "codeIntro": "Dein Code:",
-    "linkIntro": "Oder tippe hier, um dich anzumelden:",
-    "linkText": "Anmelden",
-    "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail."
+    "wordmarkLead": "Wir wollen",
+    "wordmarkAccent": "weg",
+    "signature": "– Wir wollen weg",
+    "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail.",
+    "access": {
+      "subject": "{code} ist dein Code für Wir wollen weg",
+      "heading": "Dein Code zum Anmelden",
+      "tripLine": "Du trittst „{trip}“ bei.",
+      "codeIntro": "Dein Code:",
+      "linkIntro": "Oder tippe hier, um dich anzumelden:",
+      "linkText": "Anmelden",
+      "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail."
+    },
+    "reset": {
+      "subject": "{code} ist dein Code zum Zurücksetzen des Passworts",
+      "heading": "Passwort zurücksetzen",
+      "intro": "Gib diesen Code ein, um ein neues Passwort festzulegen:",
+      "passwordless": "Übrigens: Ein Passwort brauchst du nicht – du kannst dich auch einfach mit einem Code anmelden."
+    },
+    "reauth": {
+      "subject": "{code} ist dein Bestätigungscode",
+      "heading": "Bestätige, dass du es bist",
+      "intro": "Mit diesem Code bestätigst du eine Änderung an deinem Konto:"
+    },
+    "changeEmail": {
+      "subject": "{code} bestätigt deine neue E-Mail-Adresse",
+      "heading": "Neue E-Mail-Adresse bestätigen",
+      "intro": "Gib diesen Code ein, um {email} als neue Adresse für dein Konto zu bestätigen:"
+    },
+    "emailChanged": {
+      "subject": "Deine E-Mail-Adresse wurde geändert",
+      "heading": "Deine E-Mail-Adresse wurde geändert",
+      "text": "Dein Konto nutzt ab jetzt die Adresse {email}. An diese Adresse schicken wir keine Mails mehr.",
+      "notYou": "Warst du das nicht? Schreib uns bitte sofort an {contact}."
+    }
   }
 }

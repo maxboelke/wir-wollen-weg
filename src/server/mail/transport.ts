@@ -1,7 +1,9 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { serverEnv } from "../env";
-import type { RenderedEmail } from "./access-email";
+import de from "../../../messages/de.json";
+import en from "../../../messages/en.json";
+import type { RenderedEmail } from "./templates";
 
 let transporter: Transporter | undefined;
 
@@ -33,4 +35,15 @@ export async function sendMail(
     text,
     html,
   });
+}
+
+/** Sends a mail with the sender name in the mail's language (ux-spec §10.5, F-046). */
+export async function sendLocalizedMail(
+  to: string,
+  locale: "de" | "en",
+  rendered: RenderedEmail,
+): Promise<void> {
+  const env = serverEnv();
+  const configured = locale === "de" ? env.MAIL_FROM_NAME_DE : env.MAIL_FROM_NAME_EN;
+  await sendMail(to, configured ?? (locale === "de" ? de : en).mail.fromName, rendered);
 }

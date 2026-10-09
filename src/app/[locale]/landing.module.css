@@ -185,13 +185,6 @@
   color: var(--ww-color-text-muted);
 }
 
-.footer {
-  display: flex;
-  justify-content: center;
-  padding: var(--ww-space-4) var(--ww-space-4) var(--ww-space-8);
-  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
-}
-
 @media (min-width: 600px) {
   .topInner,
   .heroInner,
