@@ -62,10 +62,15 @@ const PASSWORD_PROBLEMS = {
 interface EmailAccessFormProps {
   /** Internal path to continue at after sign-in (e.g. `/i/<token>` or `/trips`). */
   returnTo: string;
-  /** "login": own h1 + visible remember-me checkbox; "invite": h2 below the trip card. */
-  variant: "login" | "invite";
+  /**
+   * "login": own h1 + visible remember-me checkbox; "invite": h2 below the trip card;
+   * "createTrip": h2 below the trip summary, signing in creates the trip (Flow G #4).
+   */
+  variant: "login" | "invite" | "createTrip";
   /** Name step for new accounts – on invites this is the join step (Flow A.1 #6). */
   onNameSubmit: (name: string) => Promise<ActionResult>;
+  /** createTrip: an existing account is signed in – create the trip now. */
+  onSignedIn?: (() => Promise<ActionResult>) | undefined;
   /** Decorative "code sent" illustration, rendered on the server (W02/W03). */
   codeIllustration?: ReactNode;
   /** Trip of the invite – for the `pendingAuth` banner on other pages (A.4). */
@@ -100,10 +105,12 @@ export function EmailAccessForm({
   codeIllustration,
   tripName,
   notice,
+  onSignedIn,
 }: EmailAccessFormProps) {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
   const tInvite = useTranslations("invite");
+  const tTripForm = useTranslations("tripForm");
   const rawLocale = useLocale();
   const locale = isLocale(rawLocale) ? rawLocale : "en";
   const router = useRouter();
@@ -122,6 +129,7 @@ export function EmailAccessForm({
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
   const [error, setError] = useState<AuthError | null>(null);
   const [busy, setBusy] = useState(false);
   const [codeStatus, setCodeStatus] = useState<CodeFieldStatus>("idle");
@@ -299,7 +307,19 @@ export function EmailAccessForm({
    */
   function continueSignedIn() {
     if (variant === "invite") router.refresh();
-    else window.location.assign(returnTo);
+    else if (variant === "createTrip" && onSignedIn) {
+      setBusy(true);
+      void onSignedIn()
+        .then((result) => {
+          if (result.error) setError({ key: result.error });
+        })
+        .catch(() => {
+          setError({ key: "generic" });
+        })
+        .finally(() => {
+          setBusy(false);
+        });
+    } else window.location.assign(returnTo);
   }
 
   /** «Neuen Code senden» – after the countdown, in the help box and when locked. */
@@ -399,7 +419,11 @@ export function EmailAccessForm({
         }
       }
       const result = await onNameSubmit(value);
-      if (result.error) setError({ key: result.error });
+      setSuggestion(result.suggestion ?? null);
+      if (result.error) {
+        setError({ key: result.error, ...(result.minutes ? { minutes: result.minutes } : {}) });
+        nameRef.current?.focus();
+      }
     } catch {
       setError({ key: "generic" });
     } finally {
@@ -419,7 +443,11 @@ export function EmailAccessForm({
       <div ref={rootRef} className={styles.step}>
         <div className={styles.intro}>
           <Heading className={styles.heading}>
-            {variant === "login" ? t("loginTitle") : tInvite("emailTitle")}
+            {variant === "login"
+              ? t("loginTitle")
+              : variant === "createTrip"
+                ? tTripForm("authTitle")
+                : tInvite("emailTitle")}
           </Heading>
           {notice}
           {variant === "login" ? <p className={styles.lead}>{t("loginLead")}</p> : null}
@@ -614,8 +642,26 @@ export function EmailAccessForm({
           maxLength={40}
           required
           defaultValue={name}
-          error={error?.key === "nameRequired" || error?.key === "generic" ? errorText : undefined}
+          error={error && !passwordError ? errorText : undefined}
         />
+        {suggestion ? (
+          <div className={styles.suggestion} role="status">
+            <p>{tInvite("nameTakenHint", { suggestion })}</p>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                if (nameRef.current) nameRef.current.value = suggestion;
+                setName(suggestion);
+                setSuggestion(null);
+                setError(null);
+                nameRef.current?.focus();
+              }}
+            >
+              {tInvite("useSuggestion")}
+            </Button>
+          </div>
+        ) : null}
         {variant === "login" ? (
           <details className={styles.optional} open={passwordError ? true : undefined}>
             <summary className={styles.noMailSummary}>
@@ -638,9 +684,19 @@ export function EmailAccessForm({
           type="submit"
           block
           loading={busy}
-          loadingLabel={variant === "invite" ? tInvite("joining") : t("saving")}
+          loadingLabel={
+            variant === "invite"
+              ? tInvite("joining")
+              : variant === "createTrip"
+                ? tTripForm("submitting")
+                : t("saving")
+          }
         >
-          {variant === "invite" ? tInvite("confirmJoin") : t("saveName")}
+          {variant === "invite"
+            ? tInvite("confirmJoin")
+            : variant === "createTrip"
+              ? tTripForm("submit")
+              : t("saveName")}
         </Button>
       </form>
     </div>

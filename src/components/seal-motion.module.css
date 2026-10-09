@@ -1,0 +1,13 @@
+.seal {
+  display: inline-flex;
+  flex: none;
+}
+
+.seal svg {
+  overflow: visible;
+}
+
+/* Sparks only on the 64 px seal (G-21). */
+.noSparks [data-anim="sparks"] {
+  display: none;
+}

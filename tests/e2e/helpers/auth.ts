@@ -41,3 +41,9 @@ export async function signOutViaMenu(page: Page, name: string): Promise<void> {
   await page.getByRole("banner").getByRole("button", { name: en.menu.signOut }).click();
   await expect(page).toHaveURL(/\/(en|de)$/);
 }
+
+/** W03 on phones: the e-mail form opens after «Join» (from 600 px it is visible at once). */
+export async function openJoinForm(page: Page): Promise<void> {
+  const cta = page.getByRole("button", { name: en.invite.joinCta, exact: true });
+  if (await cta.isVisible()) await cta.click();
+}

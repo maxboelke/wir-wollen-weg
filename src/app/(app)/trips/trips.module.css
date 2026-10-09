@@ -1,18 +1,22 @@
+/* «Meine Reisen» – W04, ux-spec §2 (md: two-column card list) */
 .page {
   display: flex;
   flex-direction: column;
   gap: var(--ww-space-6);
 }
 
-.intro {
+.head {
   display: flex;
   flex-direction: column;
-  gap: var(--ww-space-1);
+  gap: var(--ww-space-3);
+}
+
+.head h1 {
+  font-size: var(--ww-text-3xl);
 }
 
 .muted {
   color: var(--ww-color-text-muted);
-  font-size: var(--ww-text-sm);
 }
 
 .empty {
@@ -28,31 +32,76 @@
   max-width: 34ch;
 }
 
-.list {
+.sections {
   display: flex;
   flex-direction: column;
+  gap: var(--ww-space-8);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.section h2,
+.pastTitle {
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.list {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--ww-space-3);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.trip {
-  display: flex;
-  align-items: center;
-  gap: var(--ww-space-3);
-}
-
-.tripText {
+.past {
   display: flex;
   flex-direction: column;
-  min-width: 0;
 }
 
-.tripName {
-  overflow-wrap: anywhere;
-  font-family: var(--ww-font-display);
-  font-size: var(--ww-text-xl);
-  font-weight: var(--ww-font-weight-extrabold);
-  line-height: var(--ww-leading-snug);
+.pastSummary {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  min-height: var(--ww-size-touch-min);
+  margin-bottom: var(--ww-space-3);
+  list-style: none;
+  cursor: pointer;
+}
+
+.pastSummary::-webkit-details-marker {
+  display: none;
+}
+
+.pastSummary:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border-radius: var(--ww-radius-sm);
+  box-shadow: var(--ww-focus-ring);
+}
+
+/* G-14: chevron turns, no height animation */
+.chevron {
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.past[open] .chevron {
+  transform: rotate(180deg);
+}
+
+@media (min-width: 600px) {
+  .head {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }

@@ -1,0 +1,39 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-8);
+  max-width: var(--ww-size-content-narrow);
+}
+
+.page h1 {
+  font-size: var(--ww-text-3xl);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-3);
+}
+
+.section h2 {
+  font-size: var(--ww-text-xl);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.danger {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-2);
+  width: 100%;
+  border-left: var(--ww-space-1) solid var(--ww-color-danger);
+}
+
+.dangerTitle {
+  font-weight: var(--ww-font-weight-bold);
+}

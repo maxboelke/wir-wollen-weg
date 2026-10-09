@@ -16,11 +16,8 @@ import { LanguageSwitchLink } from "@/features/locale/language-switch";
 import { isLocale, type Locale } from "@/i18n/config";
 import styles from "./landing.module.css";
 
-/**
- * "Plan a trip" leads to W05 (/trips/new) from Increment 2 on; until then to "My trips",
- * which asks for sign-in first.
- */
-const PLAN_HREF = "/trips";
+/** "Plan a trip" leads to W05 – the form works without an account (Flow G: value before hurdle). */
+const PLAN_HREF = "/trips/new";
 
 const STEPS = [
   { icon: "calendar-plus", tone: "lavender", title: "step1Title", text: "step1Text" },

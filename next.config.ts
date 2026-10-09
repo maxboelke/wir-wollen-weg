@@ -32,6 +32,8 @@ const nextConfig: NextConfig = {
   // Project conventions live in CLAUDE.md – do not let `next dev` write AGENTS.md.
   agentRules: false,
   reactStrictMode: true,
+  // Invite and magic-link tokens are secrets – keep their URLs out of the dev request log.
+  logging: { incomingRequests: { ignore: [/^\/i\//, /^\/auth\/magic/] } },
   headers() {
     const base = [
       { key: "X-Content-Type-Options", value: "nosniff" },

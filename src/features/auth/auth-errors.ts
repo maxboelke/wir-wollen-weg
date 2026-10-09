@@ -17,6 +17,12 @@ export type AuthErrorKey =
   | "passwordTooShort"
   | "passwordTooLong"
   | "passwordCommon"
+  | "joinFull"
+  | "joinClosed"
+  | "joinInvalid"
+  | "joinRateLimited"
+  | "nameTaken"
+  | "tripInvalid"
   | "generic";
 
 export interface AuthError {

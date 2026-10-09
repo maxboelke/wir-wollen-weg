@@ -36,7 +36,11 @@ export async function TripCard({ tripId, name, organizerFirstName, memberCount }
         ) : null}
         <div className={styles.people}>
           <AvatarStack members={dots} size="sm" anonymous plusOne className={styles.dots} />
-          <span>{t("memberCount", { count: memberCount })}</span>
+          <span>
+            {memberCount === 1 && organizerFirstName
+              ? t("memberCountOne", { name: organizerFirstName })
+              : t("memberCount", { count: memberCount })}
+          </span>
         </div>
       </div>
     </article>

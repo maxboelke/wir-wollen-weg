@@ -2,12 +2,15 @@ import { sql } from "drizzle-orm";
 import {
   bigint,
   boolean,
+  check,
+  date,
   index,
   integer,
   pgTable,
   primaryKey,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 
@@ -131,16 +134,58 @@ export const authAttempt = pgTable(
 );
 
 // ---------------------------------------------------------------------------
-// App tables – minimal placeholder for the auth spike (P1-0a).
-// The real trip model (F-001 ff.) replaces this in Increment 2.
+// Trips (F-001 ff., Increment 2)
 // ---------------------------------------------------------------------------
 
-export const trip = pgTable("trip", {
-  id: id(),
-  name: text("name").notNull(),
-  inviteToken: text("invite_token").notNull().unique(),
-  createdAt: createdAt(),
-});
+/** Planning phase (sitemap §2). "past" is derived from the dates, never stored. */
+export const TRIP_PHASES = ["collecting", "voting", "fixed"] as const;
+export type TripPhase = (typeof TRIP_PHASES)[number];
+
+/** Member roles (F-004): exactly one organiser ("Orga" in the UI) per trip in the MVP. */
+export const MEMBER_ROLES = ["organizer", "member"] as const;
+export type MemberRole = (typeof MEMBER_ROLES)[number];
+
+/** Upper limit of members per trip (PRD Q6; placeholders will count too, F-007). */
+export const MAX_TRIP_MEMBERS = 30;
+
+export const trip = pgTable(
+  "trip",
+  {
+    id: id(),
+    /** Short, non-speaking id in URLs (/trips/<publicId>) – not a secret (sitemap §4). */
+    publicId: text("public_id").notNull().unique(),
+    name: text("name").notNull(),
+    description: text("description"),
+    /** Search range, calendar days in the trip's time zone (ISO dates, inclusive). */
+    rangeStart: date("range_start", { mode: "string" }).notNull(),
+    rangeEnd: date("range_end", { mode: "string" }).notNull(),
+    /** "at least … nights" (1–30) and optional "ideally … nights" (≥ min). */
+    minNights: integer("min_nights").notNull(),
+    preferredNights: integer("preferred_nights"),
+    /** Optional deadline for adding dates (F-017). */
+    deadline: date("deadline", { mode: "string" }),
+    /** Holiday region of the trip (F-016): ISO 3166-1 country + optional ISO 3166-2 subdivision. */
+    holidayCountry: text("holiday_country").notNull(),
+    holidaySubdivision: text("holiday_subdivision"),
+    /** Language of the organiser at creation – for the link preview (sitemap §4). */
+    locale: text("locale").notNull().default("en"),
+    /** Invite token, 256 bit base64url (F-002: ≥ 128 bit). Renewing replaces it. */
+    inviteToken: text("invite_token").notNull().unique(),
+    /** "New members can join" (F-004). */
+    joinOpen: boolean("join_open").notNull().default(true),
+    phase: text("phase", { enum: TRIP_PHASES }).notNull().default("collecting"),
+    /** Fixed dates (F-012, Increment 5) – set together with phase "fixed". */
+    fixedStart: date("fixed_start", { mode: "string" }),
+    fixedEnd: date("fixed_end", { mode: "string" }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    check("trip_phase_check", sql`${table.phase} in ('collecting', 'voting', 'fixed')`),
+    check("trip_range_check", sql`${table.rangeEnd} > ${table.rangeStart}`),
+    check("trip_nights_check", sql`${table.minNights} between 1 and 30`),
+  ],
+);
 
 export const tripMember = pgTable(
   "trip_member",
@@ -151,8 +196,36 @@ export const tripMember = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => user.id, { onDelete: "cascade" }),
+    /** Name in this trip (F-003: unique per trip, may differ from the account name). */
     displayName: text("display_name").notNull(),
+    role: text("role", { enum: MEMBER_ROLES }).notNull().default("member"),
     joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+    /** Availability submitted (F-007 status "abgegeben", Increment 3). */
+    submittedAt: timestamp("submitted_at", { withTimezone: true }),
+    /** Voted in the current poll (F-007 status "abgestimmt", Increment 5). */
+    votedAt: timestamp("voted_at", { withTimezone: true }),
   },
-  (table) => [primaryKey({ columns: [table.tripId, table.userId] })],
+  (table) => [
+    primaryKey({ columns: [table.tripId, table.userId] }),
+    index("trip_member_user_id_idx").on(table.userId),
+    uniqueIndex("trip_member_one_organizer_idx")
+      .on(table.tripId)
+      .where(sql`${table.role} = 'organizer'`),
+    check("trip_member_role_check", sql`${table.role} in ('organizer', 'member')`),
+  ],
+);
+
+/**
+ * Events for app rate limits outside Better Auth (F-003: joins per trip and IP, failed
+ * invite lookups per IP). `key` is an HMAC – IP addresses are never stored here.
+ */
+export const rateLimitEvent = pgTable(
+  "rate_limit_event",
+  {
+    id: id(),
+    key: text("key").notNull(),
+    kind: text("kind").notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [index("rate_limit_event_key_kind_idx").on(table.key, table.kind, table.createdAt)],
 );

@@ -75,3 +75,8 @@
     padding-inline: var(--ww-space-6);
   }
 }
+
+.header.wide,
+.main.wide {
+  max-width: var(--ww-size-content-wide);
+}

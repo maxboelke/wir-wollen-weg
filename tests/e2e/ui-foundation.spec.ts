@@ -51,7 +51,9 @@ test("invite card shows only the organiser's first name, no initials", async ({ 
   await page.goto(`/i/${token}`);
   const card = page.locator("article", { has: page.getByRole("heading", { level: 1 }) });
   await expect(card.getByText(en.invite.groupTrip)).toBeVisible();
-  await expect(card.getByText("0 people are already in")).toBeVisible();
+  // Only the organiser's first name, the count – no other names (F-003).
+  await expect(card.getByText("by Lena")).toBeVisible();
+  await expect(card.getByText("Lena is already in")).toBeVisible();
 });
 
 test("R-013: a network failure on the magic-link page shows inline above the button", async ({

@@ -4,6 +4,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { brandMetadata, brandViewport, DocumentHead } from "@/components/document-head";
 import { MotionPreferenceSync } from "@/components/motion-preference-sync";
+import { FlashToast } from "@/components/shell/flash-toast";
 import { ToastProvider } from "@/components/ui/toast";
 import { getSession } from "@/server/session";
 import "@/styles/globals.css";
@@ -37,7 +38,10 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <NextIntlClientProvider>
-          <ToastProvider>{children}</ToastProvider>
+          <ToastProvider>
+            {children}
+            <FlashToast />
+          </ToastProvider>
         </NextIntlClientProvider>
         <MotionPreferenceSync account={accountReduces} />
       </body>

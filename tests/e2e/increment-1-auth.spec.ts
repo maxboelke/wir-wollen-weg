@@ -1,7 +1,13 @@
 import { expect, test, type APIRequestContext } from "@playwright/test";
 import de from "../../messages/de.json" with { type: "json" };
 import en from "../../messages/en.json" with { type: "json" };
-import { openAccountMenu, signInWithCode, signOutViaMenu, signUp } from "./helpers/auth";
+import {
+  openAccountMenu,
+  openJoinForm,
+  signInWithCode,
+  signOutViaMenu,
+  signUp,
+} from "./helpers/auth";
 import { createTrip } from "./helpers/db";
 import { mailIds, uniqueEmail, waitForAccessMail, waitForCodeMail } from "./helpers/mailpit";
 
@@ -188,6 +194,7 @@ test.describe("pendingAuth (Flow A.4)", () => {
     const token = await createTrip(tripName);
     const email = uniqueEmail("pending");
     await page.goto(`/i/${token}`);
+    await openJoinForm(page);
     await page.getByLabel(en.auth.emailLabel).fill(email);
     await page.getByRole("button", { name: en.auth.sendCode }).click();
     const mail = await waitForAccessMail(email);
@@ -208,7 +215,7 @@ test.describe("pendingAuth (Flow A.4)", () => {
     await page.getByLabel(en.auth.codeLabel).fill(mail.code);
     await page.getByLabel(en.auth.nameLabel).fill("Pia");
     await page.getByRole("button", { name: en.invite.confirmJoin }).click();
-    await expect(page).toHaveURL(/\/trips$/);
+    await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
 
     // Done: the flow data is gone (never the code).
     const stored = await page.evaluate(() => localStorage.getItem("ww.pendingAuth"));

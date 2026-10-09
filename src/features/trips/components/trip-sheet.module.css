@@ -1,0 +1,89 @@
+/* Trip menu + management dialogs (W07 menu, W12 dialogs) */
+.menu {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-2);
+  border: 0;
+  border-radius: var(--ww-radius-md);
+  background: none;
+  color: var(--ww-color-text);
+  font: inherit;
+  font-weight: var(--ww-font-weight-semibold);
+  text-align: start;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.item svg {
+  flex: none;
+  color: var(--ww-color-text-muted);
+}
+
+.item:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+@media (hover: hover) {
+  .item:hover {
+    background: var(--ww-color-surface-sunken);
+  }
+}
+
+.danger,
+.danger svg {
+  color: var(--ww-color-danger);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ww-space-2);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.suggestion p {
+  flex: 1 1 14rem;
+}

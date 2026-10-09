@@ -1,0 +1,74 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.who {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--ww-space-2);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.who strong {
+  color: var(--ww-color-text);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.as {
+  font-size: var(--ww-text-md);
+}
+
+.inline {
+  position: relative;
+  display: inline;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+/* 44 px hit area without moving the text (2.5.8) */
+.inline::before {
+  content: "";
+  position: absolute;
+  inset: calc(50% - var(--ww-size-touch-min) / 2) calc(-1 * var(--ww-space-1));
+}
+
+.inline:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border-radius: var(--ww-radius-sm);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.suggestion p {
+  flex: 1 1 14rem;
+}

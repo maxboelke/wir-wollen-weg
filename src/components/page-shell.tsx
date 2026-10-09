@@ -61,6 +61,8 @@ interface PageShellProps {
   alternate?: { href: string; locale: Locale } | undefined;
   /** Content entrance on client navigation (G-01); off for pages that animate themselves. */
   enter?: boolean | undefined;
+  /** "wide": up to 1040 px for card grids (W04 «Meine Reisen» from 600 px two columns). */
+  width?: "narrow" | "wide" | undefined;
 }
 
 /**
@@ -68,7 +70,13 @@ interface PageShellProps {
  * design-system §1): skip link, header (signed out: language switch · signed in: avatar
  * menu), `pendingAuth` banner, `<main>` and the footer with help link and language segment.
  */
-export async function PageShell({ children, className, alternate, enter = true }: PageShellProps) {
+export async function PageShell({
+  children,
+  className,
+  alternate,
+  enter = true,
+  width = "narrow",
+}: PageShellProps) {
   const session = alternate ? null : await getSession();
   const rawLocale = await getLocale();
   const locale: Locale = isLocale(rawLocale) ? rawLocale : "en";
@@ -77,7 +85,7 @@ export async function PageShell({ children, className, alternate, enter = true }
     <>
       <SkipLink />
       <DemoBanner />
-      <header className={styles.header}>
+      <header className={cx(styles.header, width === "wide" && styles.wide)}>
         <BrandLink href={session ? "/trips" : alternate ? `/${locale}` : "/"} />
         <div className={styles.headerActions}>
           {session ? (
@@ -95,7 +103,7 @@ export async function PageShell({ children, className, alternate, enter = true }
         </div>
       </header>
       {session ? null : <PendingAuthBanner />}
-      <main id="content" className={cx(styles.main, className)}>
+      <main id="content" className={cx(styles.main, width === "wide" && styles.wide, className)}>
         {content}
       </main>
       <SiteFooter alternateHref={alternate?.href} />

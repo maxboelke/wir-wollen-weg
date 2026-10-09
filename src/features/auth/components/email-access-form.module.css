@@ -202,3 +202,22 @@ h2.heading {
 .subheading {
   font-size: var(--ww-text-xl);
 }
+
+/* Duplicate name in the trip (F-003): hint with the suggestion, one tap takes it over */
+.suggestion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.suggestion p {
+  flex: 1 1 14rem;
+}

@@ -1,0 +1,189 @@
+/* Trip form – W05 / W12, design-system §9.7 (inputs), ux-spec §4.6 (stepper), §4.7 (dates) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-6);
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: var(--ww-space-3);
+  padding: 0;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
+.presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2);
+}
+
+/* Interactive chips: visible 36 px, hit area 44 px (design-system §9.10, D-20) */
+.preset {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  min-height: calc(var(--ww-size-touch-min) - var(--ww-space-2));
+  margin-block: var(--ww-space-1);
+  padding: var(--ww-space-1) var(--ww-space-3);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.preset::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ww-space-1)) 0;
+}
+
+.presetActive {
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  background: var(--ww-color-primary-tint);
+}
+
+.preset:focus-visible,
+.summaryToggle:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.dates {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: var(--ww-space-3);
+}
+
+.date,
+.select,
+.textarea {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+  line-height: var(--ww-leading-snug);
+}
+
+.textarea {
+  resize: vertical;
+  field-sizing: content;
+  min-height: calc(var(--ww-size-control-md) * 2);
+}
+
+.date:focus-visible,
+.select:focus-visible,
+.textarea:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.invalid,
+.invalid:focus-visible {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.plain {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.plain:empty {
+  display: none;
+}
+
+.stepperRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2) var(--ww-space-4);
+}
+
+.stepperLabel {
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.details {
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.summaryToggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: var(--ww-size-touch-min);
+  font-weight: var(--ww-font-weight-bold);
+  list-style: none;
+  cursor: pointer;
+}
+
+.summaryToggle::-webkit-details-marker {
+  display: none;
+}
+
+/* G-14: chevron turns, content appears without height animation */
+.chevron {
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.details[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.optional {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-5);
+  padding-top: var(--ww-space-2);
+}
+
+.summary {
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-danger-tint);
+  color: var(--ww-color-danger);
+}
+
+.summaryTitle {
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.summary ul {
+  margin: var(--ww-space-1) 0 0;
+  padding-inline-start: var(--ww-space-5);
+}
+
+.summary a {
+  color: inherit;
+  font-weight: var(--ww-font-weight-semibold);
+}
