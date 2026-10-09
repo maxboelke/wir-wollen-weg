@@ -6,7 +6,9 @@ import {
   decideCodeRequest,
   decideVerification,
   HOUR_MS,
+  isMailboxVariant,
   mailboxOf,
+  normalizeEmail,
   type LimitDecision,
 } from "@/lib/email-limits";
 import { db, type Database } from "../db/client";
@@ -24,7 +26,7 @@ import { deriveEmailLimitKey, hmacHex } from "./email-limit-key";
  * attempt turns out not to count) – so at most `failuresPerHour` checks can ever run.
  */
 
-/** "request" = code mail (exact address) · "mailbox" = code mail (mailbox) · "failure". */
+/** "request" = code mail (exact address) · "mailbox" = code mail for a variant · "failure". */
 type Kind = "request" | "mailbox" | "failure";
 
 type Executor = Pick<Database, "select" | "insert" | "delete" | "execute">;
@@ -39,7 +41,7 @@ function key(value: string): string {
 
 /** HMAC of the normalised address – the address itself is never stored (data minimisation). */
 export function emailLimitKey(email: string): string {
-  return key(email.trim().toLowerCase());
+  return key(normalizeEmail(email));
 }
 
 /** HMAC of the mailbox (plus tag removed, R-027) – only for the mail budget. */
@@ -89,26 +91,31 @@ export function rateLimitError(decision: Extract<LimitDecision, { allowed: false
 }
 
 /**
- * Before sending a code mail: throws 429 when the mail budget of the address or of its
- * mailbox is used up, otherwise counts the request – atomically. A lock on the address
- * does NOT block the mail (R-021): it carries the magic link.
+ * Before sending a code mail: throws 429 when the mail budget is used up, otherwise counts
+ * the request – atomically. The exact address always has its own budget; only variants
+ * (plus tag, Gmail dots) also use and count against the mailbox budget, so they can never
+ * block the canonical address (R-033). A lock on the address does NOT block the mail
+ * (R-021): it carries the magic link. Same rules for every address, known or not.
  */
 export async function takeCodeRequest(email: string): Promise<void> {
   const exact = emailLimitKey(email);
+  const variant = isMailboxVariant(email);
   const mailbox = mailboxLimitKey(email);
   const decision = await db().transaction(async (tx) => {
     // One lock per mailbox covers every exact address that delivers to it.
     await lock(tx, `mail:${mailbox}`);
     const [requests, mailboxRequests] = await Promise.all([
       times(tx, exact, "request", DAY_MS),
-      times(tx, mailbox, "mailbox", DAY_MS),
+      variant ? times(tx, mailbox, "mailbox", DAY_MS) : Promise.resolve([]),
     ]);
-    const result = decideCodeRequest(requests, mailboxRequests, Date.now());
+    const result = decideCodeRequest(requests, mailboxRequests, variant, Date.now());
     if (result.allowed) {
-      await tx.insert(authAttempt).values([
-        { key: exact, kind: "request" },
-        { key: mailbox, kind: "mailbox" },
-      ]);
+      await tx
+        .insert(authAttempt)
+        .values([
+          { key: exact, kind: "request" as const },
+          ...(variant ? [{ key: mailbox, kind: "mailbox" as const }] : []),
+        ]);
     }
     return result;
   });

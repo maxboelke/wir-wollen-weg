@@ -24,8 +24,12 @@
  *   mail budget, and the magic link in them (proof of mailbox, not guessable) always signs
  *   in and clears the lock. Someone who only knows the address can delay, never prevent
  *   access. Wrong passwords count for every address alike (no enumeration).
- * - **Per mailbox (R-027):** `anna+1@…`, `anna+2@…` (and `a.nna@gmail.com`) land in one
- *   mailbox; the mail budget is also counted per mailbox: 10 per hour, 30 per day.
+ * - **Per mailbox, only for variants (R-027, R-033):** `anna+1@…`, `anna+2@…` (and
+ *   `a.nna@gmail.com`) land in the mailbox `anna@…`. Requests for such VARIANTS (address
+ *   differs from its mailbox) additionally count against a shared budget of 10 per hour,
+ *   30 per day – mail bombing via variants stays capped. The canonical address itself
+ *   (`anna@…`) neither counts against nor is limited by that budget: it only has its own
+ *   5/20, so requests for variants can never block it (CEO decision 2026-10-09).
  *   Failures stay per exact address (a lock must not spill over to other accounts).
  *
  * The same rules apply to every address, whether an account exists or not (no enumeration).
@@ -70,20 +74,28 @@ export function decideVerification(failures: readonly number[], now: number): Li
 }
 
 /**
- * Asking for a code mail: blocked only when the mail budget of the address or its mailbox
- * is used up – NOT while the address is locked (R-021: the mail carries the magic link).
+ * Asking for a code mail: blocked only when the mail budget is used up – NOT while the
+ * address is locked (R-021: the mail carries the magic link). The mailbox budget only
+ * applies to variants (`isVariant`, see `isMailboxVariant`); the canonical address only
+ * has its own budget (R-033).
  */
 export function decideCodeRequest(
   requests: readonly number[],
   mailboxRequests: readonly number[],
+  isVariant: boolean,
   now: number,
 ): LimitDecision {
-  const wait = Math.max(
+  const waits = [
     windowRetryAfter(requests, EMAIL_LIMITS.requestsPerHour, HOUR_MS, now),
     windowRetryAfter(requests, EMAIL_LIMITS.requestsPerDay, DAY_MS, now),
-    windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerHour, HOUR_MS, now),
-    windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerDay, DAY_MS, now),
-  );
+  ];
+  if (isVariant) {
+    waits.push(
+      windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerHour, HOUR_MS, now),
+      windowRetryAfter(mailboxRequests, EMAIL_LIMITS.mailboxRequestsPerDay, DAY_MS, now),
+    );
+  }
+  const wait = Math.max(...waits);
   return wait > 0
     ? { allowed: false, reason: "requests", retryAfterSeconds: wait }
     : { allowed: true };
@@ -95,7 +107,7 @@ export function decideCodeRequest(
  * googlemail.com folded into gmail.com.
  */
 export function mailboxOf(email: string): string {
-  const address = email.trim().toLowerCase();
+  const address = normalizeEmail(email);
   const at = address.lastIndexOf("@");
   if (at < 1) return address;
   let local = address.slice(0, at);
@@ -105,6 +117,19 @@ export function mailboxOf(email: string): string {
   if (domain === "googlemail.com") domain = "gmail.com";
   if (domain === "gmail.com") local = local.replaceAll(".", "");
   return `${local}@${domain}`;
+}
+
+/** Address normalised for accounts and the per-address budget: trimmed, lower case. */
+export function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
+}
+
+/**
+ * Is the address a variant of another mailbox (plus tag, Gmail dots, googlemail.com)?
+ * Only variants share the mailbox budget (R-033).
+ */
+export function isMailboxVariant(email: string): boolean {
+  return normalizeEmail(email) !== mailboxOf(email);
 }
 
 /** Whole minutes for the message «Bitte warte kurz (2 Min.) …» – at least 1. */

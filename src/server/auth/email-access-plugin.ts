@@ -1,4 +1,5 @@
 import { AsyncLocalStorage } from "node:async_hooks";
+import { createHash, randomBytes } from "node:crypto";
 import type { BetterAuthPlugin } from "better-auth";
 import {
   APIError,
@@ -27,6 +28,9 @@ import { toSafeInternalPath } from "@/lib/safe-path";
  *   wrong password always, a wrong code only while a code was pending (R-021).
  * - **Remaining attempts** on a wrong code ("Noch 3 Versuche", Flow A.2) and the locked
  *   state right after the 5th wrong code.
+ * - **"Forgot password" looks the same for every address (R-032):** Better Auth deletes the
+ *   reset code right away when no account exists; an unusable placeholder code takes its
+ *   place, so remaining attempts, the per-code limit and the lock behave identically.
  *
  * Verification itself stays 100 % Better Auth – no custom crypto.
  */
@@ -120,6 +124,14 @@ const SEND_PATHS: Record<string, "email" | "newEmail"> = {
 
 /** Endpoints whose success signs in (clears the failure count of the address). */
 const SIGN_IN_PATHS = new Set(["/sign-in/email-otp", "/sign-in/email"]);
+
+/**
+ * A stored code value nobody can ever enter (R-032): same format as a hashed code
+ * (base64url SHA-256 + `:<attempts>`), but the hash of 32 random bytes instead of 6 digits.
+ */
+export function placeholderCodeValue(): string {
+  return `${createHash("sha256").update(randomBytes(32)).digest("base64url")}:0`;
+}
 
 /** OTP type per verification endpoint (for the remaining-attempts lookup). */
 const OTP_TYPES: Record<string, string> = {
@@ -422,6 +434,31 @@ export function emailAccess(options: EmailAccessOptions) {
             context.path !== undefined &&
             context.path in VERIFY_PATHS,
           handler: afterVerification(false),
+        },
+        {
+          // R-032: for unknown addresses Better Auth deletes the reset code again, so a wrong
+          // code would answer without remaining attempts and never lock – revealing that no
+          // account exists. An unusable placeholder with the same validity takes its place.
+          // Known addresses get a write of the same kind (same response time).
+          matcher: (context) => context.path === "/email-otp/request-password-reset",
+          handler: createAuthMiddleware(async (ctx) => {
+            const email = bodyField(ctx.body, "email");
+            if (!email || isAPIError(ctx.context.returned)) return;
+            const identifier = `forget-password-otp-${email}`;
+            const adapter = ctx.context.internalAdapter;
+            const row = await adapter.findVerificationValue(identifier);
+            if (row) {
+              await adapter.updateVerificationByIdentifier(identifier, {
+                expiresAt: row.expiresAt,
+              });
+              return;
+            }
+            await adapter.createVerificationValue({
+              identifier,
+              value: placeholderCodeValue(),
+              expiresAt: new Date(Date.now() + expiresIn * 1000),
+            });
+          }),
         },
         {
           // The magic link proves the mailbox: it always signs in, even while the address is

@@ -6,7 +6,8 @@ import { expireReauthentication } from "./helpers/db";
 import { mailIds, uniqueEmail, waitForAccessMail, waitForCodeMail } from "./helpers/mailpit";
 
 // Security fixes after the increment-1 review: R-021 (lockout DoS), R-022 (atomic limits),
-// R-023 (re-authentication for password changes), R-027 (mailbox budget), R-031 (menu).
+// R-023 (re-authentication for password changes), R-027/R-033 (mailbox budget), R-031 (menu),
+// R-032 (no account enumeration via "forgot password").
 
 const ORIGIN = { origin: "http://localhost:3000" };
 
@@ -143,17 +144,99 @@ test.describe("R-022: limits hold under parallel requests", () => {
   });
 });
 
-test("R-027: plus addresses share one mailbox budget (10 per hour)", async ({ request }) => {
-  const base = uniqueEmail("mailbox");
-  const [local, domain] = base.split("@");
-  const responses = await Promise.all(
-    Array.from({ length: 12 }, (_, i) => requestCode(request, `${local}+${i}@${domain}`)),
-  );
-  const statuses = responses.map((r) => r.status());
-  expect(statuses.filter((s) => s === 200)).toHaveLength(10);
-  expect(statuses.filter((s) => s === 429)).toHaveLength(2);
-  // The exact address shares the mailbox as well.
-  expect((await requestCode(request, base)).status()).toBe(429);
+/** Creates an account for `email` (code sign-in creates it) – uses 1 mail of the budget. */
+async function createAccount(request: APIRequestContext, email: string) {
+  const seen = await mailIds(email);
+  expect((await requestCode(request, email)).status()).toBe(200);
+  const mail = await waitForCodeMail(email, { seen });
+  expect((await verifyCode(request, email, mail.code)).status()).toBe(200);
+}
+
+function requestReset(request: APIRequestContext, email: string) {
+  return request.post("/api/auth/email-otp/request-password-reset", {
+    data: { email },
+    headers: ORIGIN,
+  });
+}
+
+test.describe("R-027/R-033: mailbox budget only for variants", () => {
+  for (const known of [true, false]) {
+    test(`variants are capped at 10 per hour but never block the address itself (${
+      known ? "known" : "unknown"
+    } address)`, async ({ request }) => {
+      const base = uniqueEmail(known ? "mailbox-known" : "mailbox-unknown");
+      if (known) await createAccount(request, base);
+      const [local, domain] = base.split("@");
+      // The attack from R-033: plus variants fill the mailbox budget.
+      const responses = await Promise.all(
+        Array.from({ length: 12 }, (_, i) => requestCode(request, `${local}+x${i}@${domain}`)),
+      );
+      const statuses = responses.map((r) => r.status());
+      expect(statuses.filter((s) => s === 200)).toHaveLength(10);
+      expect(statuses.filter((s) => s === 429)).toHaveLength(2);
+      // Further variants stay blocked (mail bombing capped) …
+      const variant = await requestCode(request, `${local}+more@${domain}`);
+      expect(variant.status()).toBe(429);
+      expect(await variant.json()).toMatchObject({ code: "EMAIL_RATE_LIMITED" });
+      // … the address itself still gets its mails – code and password reset alike.
+      const seen = await mailIds(base);
+      expect((await requestCode(request, base)).status()).toBe(200);
+      const mail = await waitForCodeMail(base, { seen });
+      expect(mail.code).toMatch(/^\d{6}$/);
+      expect((await requestReset(request, base)).status()).toBe(200);
+    });
+  }
+
+  test("the address itself keeps its own budget of 5 per hour", async ({ request }) => {
+    const base = uniqueEmail("mailbox-own");
+    const statuses = await Promise.all(
+      Array.from({ length: 7 }, () => requestCode(request, base).then((r) => r.status())),
+    );
+    expect(statuses.filter((s) => s === 200)).toHaveLength(5);
+    // Its requests do not use up the budget of the variants.
+    const [local, domain] = base.split("@");
+    expect((await requestCode(request, `${local}+trip@${domain}`)).status()).toBe(200);
+  });
+});
+
+test("R-032: 'forgot password' answers the same for known and unknown addresses", async ({
+  request,
+}) => {
+  /** 2 reset codes × 5 wrong guesses + 1 more – the normalised answer sequence. */
+  async function attack(email: string, known: boolean): Promise<unknown[]> {
+    const answers: unknown[] = [];
+    for (let round = 0; round < 2; round++) {
+      const seen = known ? await mailIds(email) : [];
+      const requested = await requestReset(request, email);
+      answers.push({ status: requested.status(), body: (await requested.json()) as unknown });
+      // Known: the real code arrives by mail – make sure the guess is wrong.
+      const wrong = known ? wrongCodeFor((await waitForCodeMail(email, { seen })).code) : "000000";
+      for (let attempt = 0; attempt < (round === 0 ? 5 : 6); attempt++) {
+        const response = await request.post("/api/auth/email-otp/reset-password", {
+          data: { email, otp: wrong, password: "Totally new pass 2040" },
+          headers: ORIGIN,
+        });
+        const body = (await response.json()) as Record<string, unknown>;
+        // The wait time depends on the clock, not on the account.
+        if (typeof body.retryAfter === "number") body.retryAfter = "<seconds>";
+        answers.push({ status: response.status(), body });
+      }
+    }
+    return answers;
+  }
+
+  const knownEmail = uniqueEmail("reset-known");
+  await createAccount(request, knownEmail);
+  const known = await attack(knownEmail, true);
+  const unknown = await attack(uniqueEmail("reset-unknown"), false);
+
+  expect(unknown).toEqual(known);
+  // And the sequence is the intended one: remaining attempts, per-code stop, address lock.
+  expect(known.map((a) => (a as { status: number }).status)).toEqual([
+    200, 400, 400, 400, 400, 403, 200, 400, 400, 400, 400, 429, 429,
+  ]);
+  expect(known[1]).toMatchObject({ body: { code: "INVALID_OTP", remainingAttempts: 4 } });
+  expect(known[11]).toMatchObject({ body: { code: "EMAIL_LOCKED" } });
 });
 
 test.describe("R-023: changing the password needs a fresh confirmation", () => {

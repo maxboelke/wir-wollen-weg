@@ -5,6 +5,7 @@ import {
   decideVerification,
   EMAIL_LIMITS,
   HOUR_MS,
+  isMailboxVariant,
   mailboxOf,
   retryAfterMinutes,
   windowRetryAfter,
@@ -26,20 +27,20 @@ describe("rate limits per e-mail address", () => {
 
   it("allows 5 code mails per hour, then waits until the oldest leaves the window", () => {
     const four = [1, 2, 3, 4].map(minutesAgo);
-    expect(decideCodeRequest(four, [], NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest(four, [], false, NOW)).toEqual({ allowed: true });
     const five = [10, 20, 30, 40, 50].map(minutesAgo);
-    expect(decideCodeRequest(five, [], NOW)).toEqual({
+    expect(decideCodeRequest(five, [], false, NOW)).toEqual({
       allowed: false,
       reason: "requests",
       retryAfterSeconds: 10 * 60,
     });
     // older than an hour no longer counts
-    expect(decideCodeRequest([...four, minutesAgo(61)], [], NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest([...four, minutesAgo(61)], [], false, NOW)).toEqual({ allowed: true });
   });
 
   it("caps at 20 per day even when spread out", () => {
     const spread = Array.from({ length: 20 }, (_, i) => minutesAgo(70 + i * 60));
-    const decision = decideCodeRequest(spread, [], NOW);
+    const decision = decideCodeRequest(spread, [], false, NOW);
     expect(decision.allowed).toBe(false);
     if (!decision.allowed) {
       // the oldest (19 h 70 min ago) leaves the 24 h window first
@@ -57,20 +58,41 @@ describe("rate limits per e-mail address", () => {
       retryAfterSeconds: 30 * 60,
     });
     // The mail (with the magic link) only depends on the mail budget.
-    expect(decideCodeRequest([], [], NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest([], [], false, NOW)).toEqual({ allowed: true });
   });
 
-  it("also counts the mail budget per mailbox: 10 per hour, 30 per day (R-027)", () => {
+  it("limits variants by the mailbox budget: 10 per hour, 30 per day (R-027)", () => {
     const ten = Array.from({ length: 10 }, (_, i) => minutesAgo(i + 1));
-    expect(decideCodeRequest([], ten.slice(1), NOW)).toEqual({ allowed: true });
-    expect(decideCodeRequest([], ten, NOW)).toEqual({
+    expect(decideCodeRequest([], ten.slice(1), true, NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest([], ten, true, NOW)).toEqual({
       allowed: false,
       reason: "requests",
       retryAfterSeconds: 50 * 60,
     });
     const spread = Array.from({ length: 30 }, (_, i) => minutesAgo(61 + i * 40));
-    expect(decideCodeRequest([], spread, NOW)).toMatchObject({ allowed: false });
-    expect(decideCodeRequest([], spread.slice(1), NOW)).toEqual({ allowed: true });
+    expect(decideCodeRequest([], spread, true, NOW)).toMatchObject({ allowed: false });
+    expect(decideCodeRequest([], spread.slice(1), true, NOW)).toEqual({ allowed: true });
+    // A variant still has its own 5 per hour as well.
+    const five = [1, 2, 3, 4, 5].map(minutesAgo);
+    expect(decideCodeRequest(five, [], true, NOW)).toMatchObject({ allowed: false });
+  });
+
+  it("never limits the canonical address by the mailbox budget (R-033)", () => {
+    const full = Array.from({ length: 30 }, (_, i) => minutesAgo(i + 1));
+    expect(decideCodeRequest([], full, false, NOW)).toEqual({ allowed: true });
+    // … only by its own budget.
+    const five = [1, 2, 3, 4, 5].map(minutesAgo);
+    expect(decideCodeRequest(five, full, false, NOW)).toMatchObject({ allowed: false });
+  });
+
+  it("tells variants from canonical addresses", () => {
+    expect(isMailboxVariant(" Anna@Example.org ")).toBe(false);
+    expect(isMailboxVariant("anna+trip@example.org")).toBe(true);
+    expect(isMailboxVariant("a.nna@gmail.com")).toBe(true);
+    expect(isMailboxVariant("anna@googlemail.com")).toBe(true);
+    expect(isMailboxVariant("anna@gmail.com")).toBe(false);
+    expect(isMailboxVariant("a.nna@example.org")).toBe(false);
+    expect(isMailboxVariant("+tag@example.org")).toBe(false);
   });
 
   it("maps plus addresses and Gmail variants to one mailbox", () => {
