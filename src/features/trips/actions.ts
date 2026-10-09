@@ -113,6 +113,7 @@ export async function updateTripAction(
   const result = validateTrip(draftFromFormData(formData), {
     today: serverToday(),
     originalStart: found.trip.rangeStart,
+    originalDeadline: found.trip.deadline,
   });
   if (!result.ok) return { errors: result.errors };
   await updateTrip(found.trip.id, result.values);

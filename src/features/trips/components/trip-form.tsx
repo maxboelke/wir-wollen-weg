@@ -66,6 +66,8 @@ interface TripFormProps {
   interceptSubmit?: ((draft: TripDraft) => boolean) | undefined;
   /** Edit: start date before the change (may lie in the past). */
   originalStart?: string | undefined;
+  /** Edit: deadline before the change (may have expired). */
+  originalDeadline?: string | null | undefined;
   /** Live draft changes (create: kept in `pendingAuth` storage). */
   onDraftChange?: ((draft: TripDraft) => void) | undefined;
   notice?: ReactNode;
@@ -86,6 +88,7 @@ export function TripForm({
   action,
   interceptSubmit,
   originalStart,
+  originalDeadline,
   onDraftChange,
   notice,
 }: TripFormProps) {
@@ -132,7 +135,7 @@ export function TripForm({
     };
   }, [dirty, mode]);
 
-  const validation = validateTrip(draft, { today: todayIso(), originalStart });
+  const validation = validateTrip(draft, { today: todayIso(), originalStart, originalDeadline });
   const clientErrors: TripErrors = validation.ok ? {} : validation.errors;
   const shown: TripErrors = {};
   for (const field of TRIP_FIELDS) {

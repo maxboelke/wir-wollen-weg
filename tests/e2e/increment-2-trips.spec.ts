@@ -92,6 +92,20 @@ test.describe("F-001 create a trip", () => {
     await expect(page.getByRole("link", { name: en.share.continue })).toBeVisible();
   });
 
+  test("stepper: the button at the limit keeps keyboard focus (R-038)", async ({ page }) => {
+    await page.goto("/trips/new");
+    const value = page.locator('input[name="minNights"]');
+    const more = page.getByRole("button", { name: en.tripForm.increase }).first();
+    await value.fill("29");
+    await more.focus();
+    await page.keyboard.press("Enter");
+    await expect(value).toHaveValue("30");
+    await expect(more).toBeFocused();
+    await expect(more).toHaveAttribute("aria-disabled", "true");
+    await page.keyboard.press("Enter");
+    await expect(value).toHaveValue("30");
+  });
+
   test("validation: error summary, focus on the first field, range too short", async ({ page }) => {
     await signUp(page, "Vera");
     await page.goto("/trips/new");

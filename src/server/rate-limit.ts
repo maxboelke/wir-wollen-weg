@@ -69,22 +69,30 @@ export async function recordEvent(rule: LimitRule, subject: string): Promise<voi
   await db()
     .insert(rateLimitEvent)
     .values({ key: hashKey(subject), kind: rule.kind });
-  // Housekeeping: nothing older than the longest window (1 h) is needed.
-  if (Math.random() < 0.05) {
-    await db()
-      .delete(rateLimitEvent)
-      .where(lt(rateLimitEvent.createdAt, new Date(Date.now() - 2 * 60 * 60 * 1000)));
-  }
+  await housekeeping();
+}
+
+/**
+ * Nothing older than the longest window (1 h) is needed; keys are pseudonymous IP data, so
+ * old rows must not pile up (runs after both recordEvent and takeLimit).
+ */
+async function housekeeping(): Promise<void> {
+  if (Math.random() >= 0.05) return;
+  await db()
+    .delete(rateLimitEvent)
+    .where(lt(rateLimitEvent.createdAt, new Date(Date.now() - 2 * 60 * 60 * 1000)));
 }
 
 /** Atomically: still allowed? then count this event. */
 export async function takeLimit(rule: LimitRule, subject: string): Promise<LimitState> {
   const key = hashKey(subject);
-  return db().transaction(async (tx) => {
+  const result = await db().transaction(async (tx) => {
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${key}, 0))`);
     const times = await eventTimes(key, rule, tx);
     const current = state(times, rule);
     if (!current.limited) await tx.insert(rateLimitEvent).values({ key, kind: rule.kind });
     return current;
   });
+  await housekeeping();
+  return result;
 }

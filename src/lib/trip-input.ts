@@ -148,6 +148,8 @@ interface ValidateOptions {
   today: IsoDate;
   /** When editing: an unchanged start date may lie in the past (trip already running). */
   originalStart?: IsoDate | undefined;
+  /** When editing: an unchanged deadline may lie in the past (it has expired, R-040). */
+  originalDeadline?: IsoDate | null | undefined;
 }
 
 /**
@@ -156,7 +158,7 @@ interface ValidateOptions {
  */
 export function validateTrip(
   draft: TripDraft,
-  { today, originalStart }: ValidateOptions,
+  { today, originalStart, originalDeadline }: ValidateOptions,
 ): { ok: true; values: TripValues } | { ok: false; errors: TripErrors } {
   const errors: TripErrors = {};
   const name = draft.name.trim();
@@ -204,8 +206,9 @@ export function validateTrip(
 
   const deadline = draft.deadline.trim();
   if (deadline !== "") {
-    if (!isIsoDate(deadline) || deadline < today) errors.deadline = { key: "deadlineInPast" };
-    else if (isIsoDate(end) && deadline > end) errors.deadline = { key: "deadlineAfterEnd" };
+    if (!isIsoDate(deadline) || (deadline < today && deadline !== originalDeadline)) {
+      errors.deadline = { key: "deadlineInPast" };
+    } else if (isIsoDate(end) && deadline > end) errors.deadline = { key: "deadlineAfterEnd" };
   }
 
   const region = parseRegion(draft.holidayRegion);

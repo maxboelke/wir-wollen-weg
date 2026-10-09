@@ -20,7 +20,10 @@ function draft(patch: Partial<TripDraft> = {}): TripDraft {
   };
 }
 
-function errorOf(patch: Partial<TripDraft>, options: { originalStart?: string } = {}) {
+function errorOf(
+  patch: Partial<TripDraft>,
+  options: { originalStart?: string; originalDeadline?: string | null } = {},
+) {
   const result = validateTrip(draft(patch), { today: TODAY, ...options });
   return result.ok ? {} : result.errors;
 }
@@ -97,6 +100,13 @@ describe("validateTrip (F-001, ux-spec §5.2)", () => {
     expect(errorOf({ deadline: "2027-01-01" }).deadline).toEqual({ key: "deadlineInPast" });
     expect(errorOf({ deadline: "2027-07-01" }).deadline).toEqual({ key: "deadlineAfterEnd" });
     expect(errorOf({ deadline: "2027-04-01" }).deadline).toBeUndefined();
+    // R-040: editing keeps an expired, unchanged deadline – a new past date is still refused.
+    expect(
+      errorOf({ deadline: "2027-01-01" }, { originalDeadline: "2027-01-01" }).deadline,
+    ).toBeUndefined();
+    expect(
+      errorOf({ deadline: "2027-01-02" }, { originalDeadline: "2027-01-01" }).deadline,
+    ).toEqual({ key: "deadlineInPast" });
     expect(errorOf({ holidayRegion: "FR" }).holidayRegion).toEqual({ key: "regionInvalid" });
     expect(errorOf({ holidayRegion: "DE-XX" }).holidayRegion).toEqual({ key: "regionInvalid" });
   });

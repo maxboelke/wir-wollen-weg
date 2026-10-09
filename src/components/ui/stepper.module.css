@@ -19,12 +19,13 @@
   transition: transform var(--ww-duration-fast) var(--ww-ease-spring-soft);
 }
 
-.button:active:not(:disabled) {
+.button:active:not([aria-disabled="true"]) {
   transform: scale(var(--ww-motion-scale-press));
   transition-duration: var(--ww-duration-instant);
 }
 
-.button:disabled {
+/* aria-disabled instead of disabled: the button keeps focus at the limit (R-038). */
+.button[aria-disabled="true"] {
   background: var(--ww-color-disabled-bg);
   color: var(--ww-color-disabled-text);
   cursor: not-allowed;

@@ -29,6 +29,16 @@ describe("trip draft storage (Flow G #4)", () => {
     expect(loadTripDraft(1_000 + 31 * 60_000, [session, local])).toBeNull();
   });
 
+  it("removes expired and broken entries when loading (R-041)", () => {
+    const local = memory();
+    saveTripDraft(draft, 1_000, [local]);
+    expect(loadTripDraft(1_000 + 31 * 60_000, [local])).toBeNull();
+    expect(local.getItem(TRIP_DRAFT_KEY)).toBeNull();
+    local.setItem(TRIP_DRAFT_KEY, "{not json");
+    expect(loadTripDraft(2, [local])).toBeNull();
+    expect(local.getItem(TRIP_DRAFT_KEY)).toBeNull();
+  });
+
   it("rejects tampered entries and clears", () => {
     const store = memory();
     store.setItem(TRIP_DRAFT_KEY, JSON.stringify({ draft: { name: 1 }, savedAt: 1 }));

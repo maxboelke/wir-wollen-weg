@@ -62,6 +62,8 @@
 .direct a {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  min-width: var(--ww-size-touch-min);
   min-height: var(--ww-size-touch-min);
   color: var(--ww-color-link);
   font-weight: var(--ww-font-weight-bold);

@@ -126,6 +126,8 @@ for (const colorScheme of ["light", "dark"] as const) {
     test.use({ colorScheme, reducedMotion: "reduce" });
 
     test("increment 2 pages have no serious or critical violations", async ({ page }) => {
+      // Nine pages + sign-up + axe runs: ~25–32 s on CI-like machines (R-044).
+      test.slow();
       const closed = await seedTrip(`Closed ${String(Date.now())}`, { joinOpen: false });
       const full = await seedTrip(`Full ${String(Date.now())}`, { extraMembers: 29 });
       const open = await seedTrip(`Open ${String(Date.now())}`, { description: "Hello" });

@@ -131,7 +131,6 @@ export default async function InvitePage({ params }: Params) {
         <div className={styles.preview}>
           <Enter variant="card">
             <TripCard
-              tripId={preview.id}
               name={preview.name}
               organizerFirstName={orga}
               memberCount={preview.memberCount}

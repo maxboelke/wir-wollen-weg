@@ -28,7 +28,8 @@ interface StepperProps {
 
 /**
  * Stepper (ux-spec §4.6): «−» value «+», the value is a directly editable number input
- * (announced natively), buttons ≥ 44 px, the limit disables its button. W05-02 (number
+ * (announced natively), buttons ≥ 44 px, the limit disables its button – via `aria-disabled`,
+ * so keyboard focus stays on it instead of falling back to <body> (R-038). W05-02 (number
  * slides) is "später" in the motion catalogue – the value simply changes.
  */
 export function Stepper({
@@ -74,9 +75,9 @@ export function Stepper({
         className={styles.button}
         aria-label={decreaseLabel}
         aria-controls={id}
-        disabled={!canDecrease}
+        aria-disabled={!canDecrease || undefined}
         onClick={() => {
-          step(-1);
+          if (canDecrease) step(-1);
         }}
       >
         <Icon name="minus" size={20} />
@@ -110,9 +111,9 @@ export function Stepper({
         className={styles.button}
         aria-label={increaseLabel}
         aria-controls={id}
-        disabled={!canIncrease}
+        aria-disabled={!canIncrease || undefined}
         onClick={() => {
-          step(1);
+          if (canIncrease) step(1);
         }}
       >
         <Icon name="plus" size={20} />
