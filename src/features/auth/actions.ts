@@ -115,8 +115,3 @@ export async function redeemMagicLink(
   }
   redirect(next);
 }
-
-export async function signOut(): Promise<void> {
-  await auth().api.signOut({ headers: await headers() });
-  redirect("/");
-}

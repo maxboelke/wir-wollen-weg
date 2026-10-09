@@ -5,10 +5,7 @@ import { Illustration } from "@/components/illustrations/illustration";
 import { IllustrationMotion } from "@/components/illustrations/illustration-motion";
 import { PageShell } from "@/components/page-shell";
 import { StaggerEnter } from "@/components/stagger-enter";
-import { Button } from "@/components/ui/button";
 import { Card, Tile } from "@/components/ui/card";
-import { signOut } from "@/features/auth/actions";
-import { LanguageSwitch } from "@/features/locale/language-switch";
 import { getSession } from "@/server/session";
 import { listTripsForUser } from "@/server/trips";
 import styles from "./trips.module.css";
@@ -26,7 +23,7 @@ export default async function TripsPage() {
   const trips = await listTripsForUser(session.user.id);
 
   return (
-    <PageShell homeHref="/trips" languageSwitch={<LanguageSwitch />}>
+    <PageShell>
       <div className={styles.page}>
         <div className={styles.intro}>
           <h1>{t("title")}</h1>
@@ -57,11 +54,6 @@ export default async function TripsPage() {
             </ul>
           </StaggerEnter>
         )}
-        <form action={signOut}>
-          <Button type="submit" variant="text" size="sm" icon="logout">
-            {t("signOut")}
-          </Button>
-        </form>
       </div>
     </PageShell>
   );

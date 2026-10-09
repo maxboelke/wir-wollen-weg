@@ -80,3 +80,125 @@ h2.heading {
   position: absolute;
   inset: calc(-1 * var(--ww-space-3)) calc(-1 * var(--ww-space-1));
 }
+
+/* Status line under the lead (role=status): «Code wird gesendet …» → «Code an … gesendet» */
+.status {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* «Willkommen zurück …» after restoring a pending flow (A.4) */
+.notice {
+  padding: var(--ww-space-2) var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* Text buttons/links (W02: «Mit Passwort anmelden», «Passwort vergessen?», resend) */
+.textLink,
+.resend {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: var(--ww-size-touch-min);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ww-radius-sm);
+  background: none;
+  color: var(--ww-color-link);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  cursor: pointer;
+}
+
+.resend[aria-disabled="true"] {
+  color: var(--ww-color-text-muted);
+  text-decoration: none;
+  cursor: default;
+}
+
+.countdown {
+  font-variant-numeric: tabular-nums;
+}
+
+.textLink:focus-visible,
+.resend:focus-visible,
+.inlineLink:focus-visible,
+.noMailSummary:focus-visible {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+/* «Noch nichts da?» (Flow A.2) and optional password (W02 step 3): calm disclosure, G-14 */
+.noMail,
+.optional {
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+  padding-top: var(--ww-space-1);
+}
+
+.noMailSummary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  min-height: var(--ww-size-touch-min);
+  border-radius: var(--ww-radius-sm);
+  font-weight: var(--ww-font-weight-bold);
+  list-style: none;
+  cursor: pointer;
+}
+
+.noMailSummary::-webkit-details-marker {
+  display: none;
+}
+
+.chevron {
+  flex: none;
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.noMail[open] > .noMailSummary .chevron,
+.optional[open] > .noMailSummary .chevron {
+  transform: rotate(180deg);
+}
+
+/* G-14: content simply fades in (also with reduced motion: duration-fade stays) */
+.noMail[open] > :not(summary),
+.optional[open] > :not(summary) {
+  animation: ww-details-in var(--ww-duration-fade) linear;
+}
+
+@keyframes ww-details-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.noMailList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  margin: var(--ww-space-1) 0 var(--ww-space-2);
+  padding-inline-start: var(--ww-space-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.optional {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.subheading {
+  font-size: var(--ww-text-xl);
+}

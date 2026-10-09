@@ -146,7 +146,22 @@
   cursor: text;
 }
 
-/* Focus is shown on the active box (2 px + focus ring), not around the whole group. */
+/*
+ * Focus is shown on the active box (2 px + focus ring). Without an active box – all six
+ * digits typed, checking, success – the same ring surrounds the whole group (R-016,
+ * design-system §9.7 "Fokus überall"), so the focused field is always visible.
+ */
+.groupFocus::after {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ww-space-1));
+  border-radius: calc(var(--ww-radius-code) + var(--ww-space-1));
+  /* transparent outline: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+  pointer-events: none;
+}
+
 .input:focus-visible {
   /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
   outline: var(--ww-focus-width) solid transparent;

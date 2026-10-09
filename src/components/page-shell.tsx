@@ -1,9 +1,17 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
+import { LanguageSwitch, LanguageSwitchLink } from "@/features/locale/language-switch";
+import { isLocale, type Locale } from "@/i18n/config";
 import { cx } from "@/lib/cx";
+import { helpHref } from "@/lib/help";
 import { isDemo } from "@/server/env";
+import { getSession } from "@/server/session";
 import { Wordmark } from "./brand/logo";
+import { Enter } from "./enter";
+import { AccountMenu } from "./shell/account-menu";
+import { PendingAuthBanner } from "./shell/pending-auth-banner";
+import { SiteFooter } from "./shell/site-footer";
 import styles from "./page-shell.module.css";
 
 /** First focusable element on every page (ux-spec §7.1). */
@@ -44,38 +52,53 @@ export async function BrandLink({
 }
 
 interface PageShellProps {
-  /** Link target of the brand (landing or "My trips"). */
-  homeHref: string;
-  /** Language switch (prefix link on public pages, cookie form in the app). */
-  languageSwitch?: ReactNode;
-  /** Extra header actions (e.g. sign out). */
-  actions?: ReactNode;
   children: ReactNode;
   className?: string | undefined;
+  /**
+   * Public pages with locale prefix (help, later legal pages): header switch and footer
+   * segment link to this counterpart; no session lookup (stays static and indexable).
+   */
+  alternate?: { href: string; locale: Locale } | undefined;
+  /** Content entrance on client navigation (G-01); off for pages that animate themselves. */
+  enter?: boolean | undefined;
 }
 
-/** Calm page frame for sign-in, invite and account pages (light, no cockpit – design-system §1). */
-export function PageShell({
-  homeHref,
-  languageSwitch,
-  actions,
-  children,
-  className,
-}: PageShellProps) {
+/**
+ * Calm page frame for sign-in, invite, account and help pages (light, no cockpit –
+ * design-system §1): skip link, header (signed out: language switch · signed in: avatar
+ * menu), `pendingAuth` banner, `<main>` and the footer with help link and language segment.
+ */
+export async function PageShell({ children, className, alternate, enter = true }: PageShellProps) {
+  const session = alternate ? null : await getSession();
+  const rawLocale = await getLocale();
+  const locale: Locale = isLocale(rawLocale) ? rawLocale : "en";
+  const content = enter ? <Enter>{children}</Enter> : children;
   return (
     <>
       <SkipLink />
       <DemoBanner />
       <header className={styles.header}>
-        <BrandLink href={homeHref} />
+        <BrandLink href={session ? "/trips" : alternate ? `/${locale}` : "/"} />
         <div className={styles.headerActions}>
-          {languageSwitch}
-          {actions}
+          {session ? (
+            <AccountMenu
+              userId={session.user.id}
+              name={session.user.name || session.user.email}
+              locale={locale}
+              helpHref={helpHref(locale)}
+            />
+          ) : alternate ? (
+            <LanguageSwitchLink href={alternate.href} locale={alternate.locale} />
+          ) : (
+            <LanguageSwitch />
+          )}
         </div>
       </header>
+      {session ? null : <PendingAuthBanner />}
       <main id="content" className={cx(styles.main, className)}>
-        {children}
+        {content}
       </main>
+      <SiteFooter alternateHref={alternate?.href} />
     </>
   );
 }

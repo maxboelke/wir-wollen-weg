@@ -1,0 +1,106 @@
+/* Radio group – design-system §9 (control 24 px, row ≥ 44 px, focus ring, forced colours) */
+.group {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.legend {
+  margin-bottom: var(--ww-space-1);
+  padding: 0;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+}
+
+.row {
+  flex-flow: row wrap;
+  column-gap: var(--ww-space-6);
+}
+
+.option {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ww-space-3);
+  min-height: var(--ww-size-touch-min);
+  padding-block: var(--ww-space-2);
+  cursor: pointer;
+}
+
+/* The real input sits invisibly on top of the drawn control (keeps native behaviour). */
+.input {
+  position: absolute;
+  inset-block-start: var(--ww-space-2);
+  inset-inline-start: 0;
+  width: var(--ww-size-avatar-sm);
+  height: var(--ww-size-avatar-sm);
+  z-index: 1;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.control {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-avatar-sm);
+  height: var(--ww-size-avatar-sm);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface);
+}
+
+.dot {
+  width: calc(var(--ww-size-avatar-sm) / 2);
+  height: calc(var(--ww-size-avatar-sm) / 2);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-selected);
+  opacity: 0;
+}
+
+.input:checked + .control {
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+}
+
+.input:checked + .control .dot {
+  opacity: 1;
+}
+
+.input:focus-visible + .control {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  padding-top: var(--ww-space-0-5);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.hint {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-regular);
+}
+
+@media (forced-colors: active) {
+  .control,
+  .dot {
+    forced-color-adjust: none;
+    border-color: CanvasText;
+  }
+
+  .dot {
+    background: CanvasText;
+  }
+}

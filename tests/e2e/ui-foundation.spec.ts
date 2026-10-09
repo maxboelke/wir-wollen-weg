@@ -1,23 +1,12 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
 import de from "../../messages/de.json" with { type: "json" };
 import en from "../../messages/en.json" with { type: "json" };
+import { expectNoSeriousAxeViolations } from "./helpers/axe";
 import { createTrip } from "./helpers/db";
 import { uniqueEmail, waitForAccessMail } from "./helpers/mailpit";
 
 // Step 0a "UI foundation": look & feel 2.0 (direction B), motion basics (F-052),
 // findings R-007, R-013. Browser locale en-US → English UI on language-neutral routes.
-
-async function expectNoSeriousAxeViolations(page: Page, label: string) {
-  const results = await new AxeBuilder({ page }).analyze();
-  const severe = results.violations.filter(
-    (v) => v.impact === "serious" || v.impact === "critical",
-  );
-  expect(
-    severe,
-    `${label}: ${severe.map((v) => `${v.id} (${v.nodes.map((n) => n.target.join(" ")).join(", ")})`).join("; ")}`,
-  ).toEqual([]);
-}
 
 for (const colorScheme of ["light", "dark"] as const) {
   test.describe(`axe – ${colorScheme}`, () => {

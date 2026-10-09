@@ -28,6 +28,7 @@
 
 .header {
   display: flex;
+  width: 100%;
   align-items: center;
   justify-content: space-between;
   gap: var(--ww-space-3);
@@ -62,6 +63,7 @@
 }
 
 .main {
+  width: 100%;
   max-width: var(--ww-size-content-narrow);
   margin-inline: auto;
   padding: var(--ww-space-2) var(--ww-space-4) var(--ww-space-16);

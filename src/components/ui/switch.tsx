@@ -1,7 +1,8 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { cx } from "@/lib/cx";
+import { animate, DURATION, SCALE, spring } from "@/lib/motion";
 import { Icon } from "./icon";
 import styles from "./switch.module.css";
 
@@ -30,6 +31,22 @@ export function Switch({
   const id = useId();
   const locked = lockedReason !== undefined && lockedReason !== null;
   const on = locked || checked;
+  const knobRef = useRef<HTMLSpanElement>(null);
+  const wasOn = useRef(on);
+
+  // W13-01 / G-12: the check in the knob pops in when switched on (not on first render).
+  // With reduced motion `animate` does nothing – which, when turning reduction ON, already
+  // applies to this very tap ("the reduction acts on the knob itself").
+  useEffect(() => {
+    if (on && !wasOn.current) {
+      animate(
+        knobRef.current?.firstElementChild,
+        [{ transform: `scale(${SCALE.pop})` }, { transform: "scale(1)" }],
+        { duration: DURATION.fast, easing: spring("soft") },
+      );
+    }
+    wasOn.current = on;
+  }, [on]);
   const describedBy = [description ? `${id}-desc` : null, locked ? `${id}-reason` : null]
     .filter(Boolean)
     .join(" ");
@@ -58,7 +75,7 @@ export function Switch({
           if (!locked) onChange(!checked);
         }}
       >
-        <span className={styles.knob}>
+        <span ref={knobRef} className={styles.knob}>
           {on ? <Icon name="check" size={14} className={styles.check} /> : null}
         </span>
       </button>

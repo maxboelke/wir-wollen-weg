@@ -1,0 +1,137 @@
+/* Account pages – W13, design-system §9.6 (cards), §9.20 (switch) */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.page > h1 {
+  margin-bottom: var(--ww-space-2);
+  font-size: var(--ww-text-3xl);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.cardTitle {
+  font-size: var(--ww-text-xl);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.preview {
+  padding: var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-sm);
+  background: var(--ww-color-surface-sunken);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.select {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+}
+
+.select:focus-visible {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.facts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  margin: 0;
+}
+
+.fact {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: var(--ww-space-0-5) var(--ww-space-3);
+  align-items: center;
+}
+
+.fact dt {
+  grid-column: 1 / -1;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.fact dd {
+  margin: 0;
+}
+
+.value {
+  min-width: 0;
+  color: var(--ww-color-text-muted);
+  overflow-wrap: anywhere;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+  border-radius: var(--ww-radius-sm);
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+/* «Mit Passwort/Code bestätigen» is a <button>: no native button look, not stretched. */
+button.textLink {
+  align-self: flex-start;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.muted .textLink {
+  display: inline;
+  min-height: 0;
+}
+
+.textLink:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.backLink {
+  align-self: flex-start;
+}
+
+.success {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}

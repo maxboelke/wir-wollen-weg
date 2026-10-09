@@ -1,7 +1,7 @@
-import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import de from "../../messages/de.json" with { type: "json" };
 import en from "../../messages/en.json" with { type: "json" };
+import { expectNoSeriousAxeViolations } from "./helpers/axe";
 
 test.describe("landing page", () => {
   test("German landing uses the German product name", async ({ page }) => {
@@ -31,11 +31,7 @@ test.describe("landing page", () => {
   test("no serious or critical axe violations", async ({ page }) => {
     for (const path of ["/de", "/en", "/login"]) {
       await page.goto(path);
-      const results = await new AxeBuilder({ page }).analyze();
-      const severe = results.violations.filter(
-        (v) => v.impact === "serious" || v.impact === "critical",
-      );
-      expect(severe, `${path}: ${severe.map((v) => v.id).join(", ")}`).toEqual([]);
+      await expectNoSeriousAxeViolations(page, path);
     }
   });
 });

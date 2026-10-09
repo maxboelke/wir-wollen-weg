@@ -1,30 +1,63 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+  type SubmitEvent,
+  type ReactNode,
+} from "react";
+import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
 import { Checkbox, TextField } from "@/components/ui/field";
-import { normalizeCode, CODE_LENGTH } from "@/lib/code";
+import { Icon } from "@/components/ui/icon";
+import { PasswordField } from "@/components/ui/password-field";
+import { savePassword } from "@/features/account/actions";
+import { isLocale } from "@/i18n/config";
+import { CODE_LENGTH, normalizeCode } from "@/lib/code";
+import { helpHref } from "@/lib/help";
+import { formString } from "@/lib/form";
 import { DISTANCE, enter } from "@/lib/motion";
+import { checkPassword } from "@/lib/password-policy";
+import {
+  clearPendingAuth,
+  isInAppBrowser,
+  loadPendingAuth,
+  pendingOrigin,
+  resendSecondsLeft,
+  savePendingAuth,
+} from "@/lib/pending-auth";
 import type { ActionResult } from "../actions";
+import {
+  EMAIL_PATTERN,
+  postAuth,
+  readAuthError,
+  type AuthError,
+  type AuthErrorKey,
+} from "../auth-errors";
 import styles from "./email-access-form.module.css";
+import { NoMailHelp } from "./no-mail-help";
+import { ResendCode } from "./resend-code";
 
 type Step = "email" | "code" | "name";
-type ErrorKey =
-  | "invalidEmail"
-  | "wrongCode"
-  | "tooManyAttempts"
-  | "expired"
-  | "rateLimited"
-  | "nameRequired"
-  | "generic";
+type SendState = "sending" | "sent";
 
 /** Success state stays visible this long before the next step (W02-05: ≤ 450 ms). */
 export const SUCCESS_HOLD_MS = 450;
 
 const STEP_ORDER: Record<Step, number> = { email: 0, code: 1, name: 2 };
+const STEP_PARAM = "step";
+const PASSWORD_PROBLEMS = {
+  tooShort: "passwordTooShort",
+  tooLong: "passwordTooLong",
+  common: "passwordCommon",
+} as const satisfies Record<string, AuthErrorKey>;
 
 interface EmailAccessFormProps {
   /** Internal path to continue at after sign-in (e.g. `/i/<token>` or `/trips`). */
@@ -35,37 +68,69 @@ interface EmailAccessFormProps {
   onNameSubmit: (name: string) => Promise<ActionResult>;
   /** Decorative "code sent" illustration, rendered on the server (W02/W03). */
   codeIllustration?: ReactNode;
+  /** Trip of the invite – for the `pendingAuth` banner on other pages (A.4). */
+  tripName?: string | undefined;
+  /** Hint above the form when a protected page sent the user here (H.1). */
+  notice?: ReactNode;
+}
+
+function urlWithStep(step: Step | null): string {
+  const url = new URL(window.location.href);
+  if (step) url.searchParams.set(STEP_PARAM, step);
+  else url.searchParams.delete(STEP_PARAM);
+  return `${url.pathname}${url.search}${url.hash}`;
+}
+
+function formText(formData: FormData, field: string): string {
+  const value = formData.get(field);
+  return typeof value === "string" ? value.trim() : "";
 }
 
 /**
- * E-mail → 6-digit code → (new accounts) name, all on the same URL via fetch, so the
- * invite token in the URL survives the whole registration (tech-stack.md §3.4).
- * Look & motion: direction B, motion package M-1 (W02-01 … W02-08).
+ * E-mail → 6-digit code → (new accounts) name, all on the same URL via fetch, so the invite
+ * token survives the whole registration (tech-stack.md §3.4). Complete per Flow A/H:
+ * optimistic code step (M-U5), `pendingAuth` restore (A.4), resend countdown, remaining
+ * attempts, locked state, per-address rate limits, «Noch nichts da?» help, optional
+ * password sign-in and optional password on sign-up. Motion W02-01 … W02-08.
  */
 export function EmailAccessForm({
   returnTo,
   variant,
   onNameSubmit,
   codeIllustration,
+  tripName,
+  notice,
 }: EmailAccessFormProps) {
   const t = useTranslations("auth");
+  const tCommon = useTranslations("common");
   const tInvite = useTranslations("invite");
-  const locale = useLocale();
+  const rawLocale = useLocale();
+  const locale = isLocale(rawLocale) ? rawLocale : "en";
   const router = useRouter();
   const ids = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const emailRef = useRef<HTMLInputElement>(null);
   const codeRef = useRef<HTMLInputElement>(null);
   const nameRef = useRef<HTMLInputElement>(null);
+  const submitRef = useRef<HTMLButtonElement>(null);
   const previousStep = useRef<Step>("email");
+  const origin = pendingOrigin(variant, returnTo);
 
   const [step, setStep] = useState<Step>("email");
+  const [mode, setMode] = useState<"code" | "password">("code");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
   const [name, setName] = useState("");
   const [rememberMe, setRememberMe] = useState(true);
-  const [error, setError] = useState<ErrorKey | null>(null);
+  const [error, setError] = useState<AuthError | null>(null);
   const [busy, setBusy] = useState(false);
   const [codeStatus, setCodeStatus] = useState<CodeFieldStatus>("idle");
+  const [sendState, setSendState] = useState<SendState>("sending");
+  const [sentAt, setSentAt] = useState<number | null>(null);
+  const [resent, setResent] = useState(false);
+  const [restored, setRestored] = useState(false);
+  const [inApp, setInApp] = useState(false);
+  const [now, setNow] = useState(() => Date.now());
 
   // W02-01: the new step fades in from the right (back: from the left); reduced = fade.
   useLayoutEffect(() => {
@@ -76,105 +141,220 @@ export function EmailAccessForm({
     enter(rootRef.current, { x: direction * DISTANCE.sm });
   }, [step]);
 
-  // Focus moves into the new step right away (R-003; the old field is unmounted).
+  // Focus moves into the new step (R-003); the optimistic switch already focused
+  // synchronously, this covers restore and back navigation.
   useEffect(() => {
     if (step === "code") codeRef.current?.focus();
     if (step === "name") nameRef.current?.focus();
   }, [step]);
 
-  async function post(path: string, body: unknown): Promise<Response> {
-    return fetch(`/api/auth${path}`, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(body),
-      credentials: "same-origin",
-    });
-  }
-
-  async function sendCode(value: string): Promise<boolean> {
-    const response = await post("/email-access/request", {
-      email: value,
-      callbackURL: returnTo,
-      locale,
-    });
-    if (!response.ok) {
-      setError(response.status === 429 ? "rateLimited" : "generic");
-      return false;
+  // A.4: restore a pending flow of THIS page (reload, in-app browser, app switch).
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect -- browser storage is only readable after mounting */
+    setInApp(isInAppBrowser(navigator.userAgent));
+    const pending = loadPendingAuth();
+    if (pending && pending.origin === origin) {
+      setEmail(pending.email);
+      setSentAt(pending.requestedAt);
+      setSendState("sent");
+      setRestored(true);
+      setStep("code");
+      window.history.replaceState(window.history.state, "", urlWithStep("code"));
+    } else if (new URL(window.location.href).searchParams.has(STEP_PARAM)) {
+      window.history.replaceState(window.history.state, "", urlWithStep(null));
     }
-    return true;
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [origin]);
+
+  // Browser back from the code step returns to the e-mail step (ux-spec §3), e-mail stays.
+  useEffect(() => {
+    const onPop = () => {
+      const wanted = new URL(window.location.href).searchParams.get(STEP_PARAM);
+      setStep((current) => {
+        if (wanted === "code" && current === "email" && email) return "code";
+        if (!wanted && current === "code") return "email";
+        return current;
+      });
+    };
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+    };
+  }, [email]);
+
+  // Countdown tick (only on the code step, once per second, no animation – G-16).
+  const ticking = step === "code" && resendSecondsLeft(sentAt, now) > 0;
+  useEffect(() => {
+    if (!ticking) return;
+    const timer = window.setInterval(() => {
+      setNow(Date.now());
+    }, 1000);
+    return () => {
+      window.clearInterval(timer);
+    };
+  }, [ticking]);
+  const secondsLeft =
+    sendState === "sent" ? resendSecondsLeft(sentAt, now) : resendSecondsLeft(null, now);
+
+  async function requestCode(value: string): Promise<AuthError | null> {
+    try {
+      const response = await postAuth("/email-access/request", {
+        email: value,
+        callbackURL: returnTo,
+        locale,
+      });
+      return response.ok ? null : await readAuthError(response);
+    } catch {
+      return { key: "generic" };
+    }
   }
 
-  // Email and name steps use form actions with FormData: values typed before
-  // hydration are not lost, and React blocks a native (URL-leaking) submit.
-  async function requestCode(formData: FormData) {
-    setError(null);
-    const value = formText(formData, "email");
+  function codeSent(value: string) {
+    const at = Date.now();
+    setSentAt(at);
+    setNow(at);
+    setSendState("sent");
+    savePendingAuth({ origin, email: value, step: "code", requestedAt: at, tripName });
+  }
+
+  /** Back to the e-mail step with the message at the field (A.1 #3, W02-01). */
+  function backToEmail(problem: AuthError | null) {
+    flushSync(() => {
+      setStep("email");
+      setError(problem);
+      setCode("");
+      setCodeStatus("idle");
+      setRestored(false);
+    });
+    window.history.replaceState(window.history.state, "", urlWithStep(null));
+    emailRef.current?.focus();
+  }
+
+  function onEmailSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const value = formText(formData, "email").toLowerCase();
     const remember = variant === "login" ? formData.get("rememberMe") === "on" : true;
     setEmail(value);
     setRememberMe(remember);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setError("invalidEmail");
+    setError(null);
+    if (!EMAIL_PATTERN.test(value)) {
+      setError({ key: "invalidEmail" });
+      emailRef.current?.focus();
       return;
     }
+    if (mode === "password") {
+      void signInWithPassword(value, formString(formData, "password"), remember);
+      return;
+    }
+    // Optimistic (M-U5): switch and focus in the same tap, so iOS opens the keyboard.
+    flushSync(() => {
+      setStep("code");
+      setSendState("sending");
+      setSentAt(null);
+      setCode("");
+      setCodeStatus("idle");
+      setResent(false);
+      setRestored(false);
+    });
+    codeRef.current?.focus();
+    void (async () => {
+      const problem = await requestCode(value);
+      if (problem) {
+        backToEmail(problem);
+        return;
+      }
+      codeSent(value);
+      window.history.pushState(window.history.state, "", urlWithStep("code"));
+    })();
+  }
+
+  async function signInWithPassword(value: string, password: string, remember: boolean) {
     setBusy(true);
     try {
-      if (await sendCode(value)) {
-        setCode("");
-        setCodeStatus("idle");
-        setStep("code");
+      const response = await postAuth("/sign-in/email", {
+        email: value,
+        password,
+        rememberMe: remember,
+      });
+      if (!response.ok) {
+        const problem = await readAuthError(response);
+        // Locked (R-021): the way in is a code mail – its link always works.
+        setError(problem.key === "locked" ? { ...problem, key: "lockedPassword" } : problem);
+        return;
       }
+      clearPendingAuth();
+      continueSignedIn();
     } catch {
-      setError("generic");
+      setError({ key: "generic" });
     } finally {
       setBusy(false);
     }
   }
 
-  /** Locked after too many attempts: "Send a new code" is the primary action (ux-spec §4.4). */
-  async function requestNewCode() {
+  /**
+   * Signed in by fetch: the root layout (language of the account, "reduce motion" of the
+   * account) must render anew – a full load instead of a client navigation. On the invite
+   * page a refresh swaps the form for the join step.
+   */
+  function continueSignedIn() {
+    if (variant === "invite") router.refresh();
+    else window.location.assign(returnTo);
+  }
+
+  /** «Neuen Code senden» – after the countdown, in the help box and when locked. */
+  async function resendCode() {
     setError(null);
     setBusy(true);
-    try {
-      if (await sendCode(email)) {
-        setCode("");
-        setCodeStatus("idle");
-        requestAnimationFrame(() => codeRef.current?.focus());
-      }
-    } catch {
-      setError("generic");
-    } finally {
-      setBusy(false);
+    const problem = await requestCode(email);
+    setBusy(false);
+    if (problem) {
+      setError(problem);
+      return;
     }
+    codeSent(email);
+    setResent(true);
+    setCode("");
+    setCodeStatus("idle");
+    codeRef.current?.focus();
   }
 
   async function verifyCode(value: string) {
     setError(null);
     setCodeStatus("checking");
     try {
-      const response = await post("/sign-in/email-otp", { email, otp: value, rememberMe });
+      const response = await postAuth("/sign-in/email-otp", { email, otp: value, rememberMe });
       if (!response.ok) {
-        const body = (await response.json().catch(() => ({}))) as { code?: string };
-        const key = errorFromVerification(response.status, body.code);
-        setError(key);
-        setCodeStatus(
-          key === "tooManyAttempts" ? "locked" : key === "wrongCode" ? "error" : "idle",
-        );
+        const read = await readAuthError(response);
+        // Address locked (R-021): entering codes is paused, the link in the mail still works.
+        const problem: AuthError = read.key === "locked" ? { key: "lockedUseLink" } : read;
+        setError(problem);
+        const locked =
+          problem.key === "tooManyAttempts" ||
+          problem.key === "expired" ||
+          problem.key === "lockedUseLink";
+        setCodeStatus(locked ? "locked" : problem.key === "generic" ? "idle" : "error");
+        // Locked: the field is disabled – focus goes to «Neuen Code senden» (the only action).
+        if (locked) requestAnimationFrame(() => submitRef.current?.focus());
         // Keep the value selected for quick overwriting, focus stays (ux-spec §4.4).
-        requestAnimationFrame(() => {
-          codeRef.current?.focus();
-          codeRef.current?.select();
-        });
+        if (!locked) {
+          requestAnimationFrame(() => {
+            codeRef.current?.focus();
+            codeRef.current?.select();
+          });
+        }
         return;
       }
       const { user } = (await response.json()) as { user: { name: string } };
+      clearPendingAuth();
       setCodeStatus("success");
       window.setTimeout(() => {
+        window.history.replaceState(window.history.state, "", urlWithStep(null));
         if (!user.name) setStep("name");
-        else if (variant === "invite") router.refresh();
-        else router.push(returnTo);
+        else continueSignedIn();
       }, SUCCESS_HOLD_MS);
     } catch {
-      setError("generic");
+      setError({ key: "generic" });
       setCodeStatus("idle");
     }
   }
@@ -185,48 +365,112 @@ export function EmailAccessForm({
       setError(null);
     }
     setCode(value);
-    // Auto-submit at 6 digits (ux-spec §4.4).
+    // Auto-submit at 6 digits (ux-spec §4.4) – only once the code is on its way.
     if (value.length === CODE_LENGTH && codeStatus !== "checking") void verifyCode(value);
   }
 
-  async function submitName(formData: FormData) {
+  async function onNameFormSubmit(event: SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
     setError(null);
     const value = formText(formData, "name");
+    const password = formString(formData, "password");
     setName(value);
     if (!value) {
-      setError("nameRequired");
+      setError({ key: "nameRequired" });
+      nameRef.current?.focus();
       return;
     }
     setBusy(true);
-    const result = await onNameSubmit(value).catch(() => ({ error: "generic" as const }));
-    setBusy(false);
-    if (result.error) setError(result.error);
+    try {
+      // Optional password right at sign-up (F-040, W02 step 3): checked here and on the server.
+      if (password !== "") {
+        const problem = checkPassword(password, email);
+        if (problem) {
+          setError({ key: PASSWORD_PROBLEMS[problem] });
+          return;
+        }
+        const saved = await savePassword(password);
+        if (saved.error) {
+          setError({
+            key: saved.error.startsWith("password") ? (saved.error as AuthErrorKey) : "generic",
+          });
+          return;
+        }
+      }
+      const result = await onNameSubmit(value);
+      if (result.error) setError({ key: result.error });
+    } catch {
+      setError({ key: "generic" });
+    } finally {
+      setBusy(false);
+    }
   }
 
   const Heading = variant === "login" ? "h1" : "h2";
-  const errorText = error ? t(`errors.${error}`) : null;
+  const errorText = error
+    ? t(`errors.${error.key}`, { minutes: error.minutes ?? 1, count: error.count ?? 0 })
+    : null;
+  const passwordError = error?.key.startsWith("password") ? errorText : null;
 
   if (step === "email") {
+    const passwordMode = mode === "password";
     return (
       <div ref={rootRef} className={styles.step}>
         <div className={styles.intro}>
           <Heading className={styles.heading}>
             {variant === "login" ? t("loginTitle") : tInvite("emailTitle")}
           </Heading>
+          {notice}
           {variant === "login" ? <p className={styles.lead}>{t("loginLead")}</p> : null}
         </div>
-        <form key="email" className={styles.form} action={requestCode} noValidate>
+        <form
+          key="email"
+          className={styles.form}
+          onSubmit={onEmailSubmit}
+          action={() => undefined}
+          noValidate
+        >
           <TextField
+            ref={emailRef}
             id={`${ids}-email`}
             label={t("emailLabel")}
             type="email"
             name="email"
-            autoComplete="email"
+            autoComplete={passwordMode ? "username" : "email"}
             inputMode="email"
             required
             defaultValue={email}
-            error={error ? errorText : undefined}
+            error={error && !passwordMode ? errorText : undefined}
           />
+          {passwordMode ? (
+            <PasswordField
+              id={`${ids}-password`}
+              name="password"
+              label={t("passwordLabel")}
+              autoComplete="current-password"
+              required
+              hint={t("noPasswordHint")}
+              error={errorText ?? undefined}
+              showLabel={tCommon("showPassword")}
+              hideLabel={tCommon("hidePassword")}
+            />
+          ) : null}
+          {passwordMode ? (
+            <Link
+              className={styles.textLink}
+              href="/login/reset"
+              onClick={(event) => {
+                // Take the address along (WCAG 3.3.7: no redundant entry).
+                const typed = emailRef.current?.value.trim();
+                if (!typed) return;
+                event.preventDefault();
+                router.push(`/login/reset?email=${encodeURIComponent(typed)}`);
+              }}
+            >
+              {t("forgotPassword")}
+            </Link>
+          ) : null}
           {variant === "login" ? (
             <Checkbox
               name="rememberMe"
@@ -237,24 +481,43 @@ export function EmailAccessForm({
           ) : (
             <p className={styles.small}>{t("rememberMeInline")}</p>
           )}
-          <Button type="submit" block loading={busy} loadingLabel={t("sendingCode")}>
-            {t("sendCode")}
+          <Button
+            type="submit"
+            block
+            loading={busy}
+            loadingLabel={passwordMode ? t("signingIn") : t("sendingCode")}
+          >
+            {passwordMode ? t("signInPassword") : t("sendCode")}
           </Button>
         </form>
-        {variant === "login" ? <p className={styles.small}>{t("newHere")}</p> : null}
+        <button
+          type="button"
+          className={styles.textLink}
+          onClick={() => {
+            setMode(passwordMode ? "code" : "password");
+            setError(null);
+          }}
+        >
+          {passwordMode ? t("withCode") : t("withPassword")}
+        </button>
+        {variant === "login" && !passwordMode ? (
+          <p className={styles.small}>{t("newHere")}</p>
+        ) : null}
       </div>
     );
   }
 
   if (step === "code") {
     const locked = codeStatus === "locked";
+    const sending = sendState === "sending";
     return (
       <div ref={rootRef} className={styles.step}>
         {codeIllustration ? <div className={styles.illustration}>{codeIllustration}</div> : null}
         <div className={styles.intro}>
           <Heading className={styles.heading}>{t("codeTitle")}</Heading>
+          {restored ? <p className={styles.notice}>{t("welcomeBack")}</p> : null}
           <p className={styles.lead}>
-            {t.rich("codeSentTo", {
+            {t.rich(sending ? "codeSendingTo" : "codeSentTo", {
               email,
               b: (chunks) => <strong className={styles.email}>{chunks}</strong>,
             })}{" "}
@@ -262,14 +525,15 @@ export function EmailAccessForm({
               type="button"
               className={styles.inlineLink}
               onClick={() => {
-                setStep("email");
-                setCode("");
-                setCodeStatus("idle");
-                setError(null);
+                backToEmail(null);
               }}
             >
               {t("otherEmail")}
             </button>
+          </p>
+          {/* Visible while sending and after a resend; «sent» is only announced (the lead says it). */}
+          <p className={sending || resent ? styles.status : "visually-hidden"} role="status">
+            {sending ? t("statusSending") : resent ? t("resent") : t("statusSent", { email })}
           </p>
         </div>
         <form
@@ -277,9 +541,12 @@ export function EmailAccessForm({
           className={styles.form}
           onSubmit={(event) => {
             event.preventDefault();
-            if (locked) void requestNewCode();
+            if (locked) void resendCode();
             else if (code.length === CODE_LENGTH) void verifyCode(normalizeCode(code));
-            else codeRef.current?.focus();
+            else {
+              setError({ key: "codeLength" });
+              codeRef.current?.focus();
+            }
           }}
           noValidate
         >
@@ -296,6 +563,7 @@ export function EmailAccessForm({
             successLabel={t("codeConfirmed")}
           />
           <Button
+            ref={submitRef}
             type="submit"
             block
             loading={codeStatus === "checking" || busy}
@@ -305,8 +573,22 @@ export function EmailAccessForm({
           </Button>
         </form>
         <div className={styles.help}>
+          {locked ? null : (
+            <ResendCode secondsLeft={secondsLeft} busy={busy} onResend={() => void resendCode()} />
+          )}
           <p className={styles.small}>{t("spamHint")}</p>
+          {inApp ? <p className={styles.small}>{t("inAppTip")}</p> : null}
           <p className={styles.small}>{t("magicHint")}</p>
+          <NoMailHelp
+            email={email}
+            sentAt={sentAt}
+            helpHref={helpHref(locale, "code")}
+            canResend={secondsLeft === 0 && !busy}
+            onChangeEmail={() => {
+              backToEmail(null);
+            }}
+            onResend={() => void resendCode()}
+          />
         </div>
       </div>
     );
@@ -314,7 +596,13 @@ export function EmailAccessForm({
 
   return (
     <div ref={rootRef} className={styles.step}>
-      <form key="name" className={styles.form} action={submitName} noValidate>
+      <form
+        key="name"
+        className={styles.form}
+        onSubmit={(event) => void onNameFormSubmit(event)}
+        action={() => undefined}
+        noValidate
+      >
         <Heading className={styles.heading}>{t("nameTitle")}</Heading>
         <TextField
           ref={nameRef}
@@ -326,8 +614,26 @@ export function EmailAccessForm({
           maxLength={40}
           required
           defaultValue={name}
-          error={error ? errorText : undefined}
+          error={error?.key === "nameRequired" || error?.key === "generic" ? errorText : undefined}
         />
+        {variant === "login" ? (
+          <details className={styles.optional} open={passwordError ? true : undefined}>
+            <summary className={styles.noMailSummary}>
+              <span>{t("optionalPassword")}</span>
+              <Icon name="chevron-down" size={18} className={styles.chevron} />
+            </summary>
+            <PasswordField
+              id={`${ids}-new-password`}
+              name="password"
+              label={t("passwordLabel")}
+              autoComplete="new-password"
+              hint={t("optionalPasswordHint")}
+              error={passwordError ?? undefined}
+              showLabel={tCommon("showPassword")}
+              hideLabel={tCommon("hidePassword")}
+            />
+          </details>
+        ) : null}
         <Button
           type="submit"
           block
@@ -339,16 +645,4 @@ export function EmailAccessForm({
       </form>
     </div>
   );
-}
-
-function errorFromVerification(status: number, code: string | undefined): ErrorKey {
-  if (status === 429) return "rateLimited";
-  if (code === "OTP_EXPIRED") return "expired";
-  if (code === "TOO_MANY_ATTEMPTS") return "tooManyAttempts";
-  return "wrongCode";
-}
-
-function formText(formData: FormData, field: string): string {
-  const value = formData.get(field);
-  return typeof value === "string" ? value.trim() : "";
 }

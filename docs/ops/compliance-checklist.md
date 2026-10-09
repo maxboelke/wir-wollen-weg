@@ -63,7 +63,7 @@ Seit 14.05.2024 gilt das **Digitale-Dienste-Gesetz (DDG)** statt TMG – im Impr
 | ☐ | **Konto** (F-040–F-043): Anzeigename, E-Mail, optional Passwort-Hash, Sprache, Region – Zweck Vertragserfüllung, Rechtsgrundlage Art. 6 Abs. 1 lit. b DSGVO | M1 |
 | ☐ | **Reisedaten**: Mitgliedschaft, Rolle, Verfügbarkeiten, Kommentar, Stimmen – sichtbar für andere Mitglieder derselben Reise (Transparenzhinweis „namentlich sichtbar“, F-008/F-011) – Art. 6 Abs. 1 lit. b | M1 |
 | ☐ | **Anmeldung per Code/Magic-Link**, Sessions, Rate-Limiting, Sicherheits-Logs mit IP (max. 7 Tage) – Art. 6 Abs. 1 lit. f (Sicherheit), Interessenabwägung kurz begründen | M1 |
-| ☐ | **Passwort-Leak-Prüfung** (Have I Been Pwned, k-Anonymität: nur 5 Zeichen eines Hashwerts werden übermittelt, kein Personenbezug) erwähnen | M1 |
+| ☐ | **Passwort-Leak-Prüfung** (Have I Been Pwned, k-Anonymität: nur 5 Zeichen eines Hashwerts werden übermittelt, kein Personenbezug) erwähnen – **nur falls `PASSWORD_BREACH_CHECK=hibp`** eingeschaltet wird (Entscheidung im [Go-Live-Gate](go-live.md); in der Offline-Demo aus, dann nur Offline-Liste) | M1 |
 | ☐ | **Transaktionsmails** (Code, Reset, E-Mail-Änderung, Lösch-/Inaktivitätshinweise) – kein Tracking, Empfänger: Mail-Anbieter (AVV) | M1 |
 | ☐ | **Hosting** (Hetzner, Deutschland), **Mail-Anbieter** (z. B. Lettermint, Niederlande), **Backup-Speicher**, **Fehler-Tracking** (selbst gehostet) als Empfänger/Auftragsverarbeiter | M1 |
 | ☐ | **Keine Drittlandübermittlung** (bei Umsetzung gemäß deployment.md); sonst Abschnitt mit Rechtsgrundlage (DPF/SCC) ergänzen | M1 |

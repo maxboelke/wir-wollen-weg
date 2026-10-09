@@ -28,8 +28,8 @@ test("invite → code from mail → name → joined (token survives sign-up)", a
   expect(mail.subject).toBe(`${mail.code} is your code for When do we go?`);
   expect(mail.text).toContain(tripName); // invite context in the mail
 
-  // Still on the invite URL – no page change during registration.
-  await expect(page).toHaveURL(new RegExp(`/i/${token}$`));
+  // Still on the invite URL – no page change during registration (only the step entry).
+  await expect(page).toHaveURL(new RegExp(`/i/${token}(\\?step=code)?$`));
   await page.getByLabel(en.auth.codeLabel).fill(mail.code); // auto-submits at 6 digits
 
   await expect(page.getByRole("heading", { name: en.auth.nameTitle })).toBeVisible();

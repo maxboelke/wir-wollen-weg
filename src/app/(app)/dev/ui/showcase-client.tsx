@@ -6,6 +6,7 @@ import { useEffect, useId, useState } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
+import { RadioGroup } from "@/components/ui/radio-group";
 import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/components/ui/toast";
 import { CODE_LENGTH } from "@/lib/code";
@@ -194,5 +195,24 @@ export function SheetDemo() {
         </div>
       </BottomSheet>
     </>
+  );
+}
+
+/** Radio group (R-018): native radios, dot pops in (G-12), reduced = at once. */
+export function RadioDemo() {
+  const [value, setValue] = useState<"auto" | "mon" | "sun">("auto");
+  const id = useId();
+  return (
+    <RadioGroup
+      legend="Woche beginnt am"
+      name={`week-${id}`}
+      value={value}
+      onChange={setValue}
+      options={[
+        { value: "auto", label: "Automatisch (Montag)", hint: "Nach deiner Region" },
+        { value: "mon", label: "Montag" },
+        { value: "sun", label: "Sonntag" },
+      ]}
+    />
   );
 }

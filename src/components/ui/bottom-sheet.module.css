@@ -13,6 +13,8 @@
   color: var(--ww-color-text);
   box-shadow: var(--ww-shadow-3);
   overscroll-behavior: contain;
+  /* Only matters during the non-modal exit (R-019) – modal dialogs live in the top layer. */
+  z-index: var(--ww-z-sheet);
 }
 
 .sheet::backdrop {

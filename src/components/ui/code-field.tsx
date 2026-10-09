@@ -118,6 +118,8 @@ export function CodeField({
 
   const busy = status === "checking" || status === "success" || status === "locked";
   const activeIndex = focused && !busy && value.length < CODE_LENGTH ? value.length : -1;
+  // R-016: no "active" box (all 6 digits, checking, success) → ring around the whole group.
+  const groupFocused = focused && activeIndex === -1 && status !== "locked";
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = error ? `${id}-error` : undefined;
 
@@ -156,6 +158,7 @@ export function CodeField({
         ref={groupRef}
         className={cx(
           styles.group,
+          groupFocused && styles.groupFocus,
           status === "error" && styles.error,
           status === "checking" && styles.checking,
           status === "success" && styles.success,

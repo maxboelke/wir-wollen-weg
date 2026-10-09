@@ -3,13 +3,25 @@ import { getRequestConfig } from "next-intl/server";
 import { isLocale, LOCALE_COOKIE, type Locale } from "./config";
 import { negotiateLocale } from "./negotiate";
 
-/** Resolves the locale for routes without prefix (/login, /i/…, /trips …). */
-export async function resolveRequestLocale(): Promise<Locale> {
+/** Signed-out language: cookie `lang` → Accept-Language → en (Flow F.1, priorities 2–3). */
+export async function resolveBrowserLocale(): Promise<Locale> {
   const [cookieStore, headerStore] = await Promise.all([cookies(), headers()]);
   return negotiateLocale({
     cookie: cookieStore.get(LOCALE_COOKIE)?.value,
     acceptLanguage: headerStore.get("accept-language"),
   });
+}
+
+/**
+ * Resolves the locale for routes without prefix (/login, /i/…, /trips, /account …):
+ * signed in → account language (priority 1), otherwise the browser's (Flow F.1).
+ */
+export async function resolveRequestLocale(): Promise<Locale> {
+  // Imported lazily: the auth module is server-only and pulls in the database.
+  const { getSession } = await import("@/server/session");
+  const session = await getSession().catch(() => null);
+  const accountLocale = session?.user.locale;
+  return isLocale(accountLocale) ? accountLocale : resolveBrowserLocale();
 }
 
 export default getRequestConfig(async (params) => {

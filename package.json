@@ -30,6 +30,7 @@
     "demo:reset": "docker compose -f docker/compose.demo.yml --env-file .env.demo down -v"
   },
   "dependencies": {
+    "@noble/hashes": "2.4.0",
     "better-auth": "1.7.7",
     "drizzle-orm": "0.45.4",
     "next": "16.4.0",

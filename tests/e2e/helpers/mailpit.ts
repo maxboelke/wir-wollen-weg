@@ -42,3 +42,52 @@ export async function waitForAccessMail(email: string, timeoutMs = 15_000): Prom
 export function uniqueEmail(prefix: string): string {
   return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}@example.org`;
 }
+
+export interface CodeMail {
+  id: string;
+  subject: string;
+  code: string;
+  text: string;
+}
+
+/**
+ * Waits for the newest mail to `email` whose subject matches and that is not one of
+ * `seen` (message IDs) – for flows that send several mails to one address.
+ */
+export async function waitForCodeMail(
+  email: string,
+  { subject, seen = [] }: { subject?: RegExp; seen?: string[] } = {},
+  timeoutMs = 15_000,
+): Promise<CodeMail> {
+  const deadline = Date.now() + timeoutMs;
+  while (Date.now() < deadline) {
+    const search = await fetch(
+      `${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}&limit=20`,
+    );
+    if (search.ok) {
+      const { messages } = (await search.json()) as { messages: MessageSummary[] };
+      const match = messages.find(
+        (m) => !seen.includes(m.ID) && (!subject || subject.test(m.Subject)),
+      );
+      if (match) {
+        const detail = (await (await fetch(`${MAILPIT}/api/v1/message/${match.ID}`)).json()) as {
+          Text: string;
+        };
+        const code = /^(\d{6})$/m.exec(detail.Text)?.[1] ?? "";
+        return { id: match.ID, subject: match.Subject, code, text: detail.Text };
+      }
+    }
+    await new Promise((resolve) => setTimeout(resolve, 250));
+  }
+  throw new Error(`No matching mail for ${email} within ${timeoutMs} ms`);
+}
+
+/** IDs of all mails to `email` so far (to wait for the next one). */
+export async function mailIds(email: string): Promise<string[]> {
+  const search = await fetch(
+    `${MAILPIT}/api/v1/search?query=${encodeURIComponent(`to:"${email}"`)}&limit=50`,
+  );
+  if (!search.ok) return [];
+  const { messages } = (await search.json()) as { messages: MessageSummary[] };
+  return messages.map((m) => m.ID);
+}

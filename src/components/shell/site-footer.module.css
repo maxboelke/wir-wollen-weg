@@ -1,0 +1,97 @@
+/* Footer – sitemap §5; segment look per design-system §9.10 (track sunken, items 44 px) */
+.footer {
+  margin-top: auto;
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-3) var(--ww-space-6);
+  max-width: var(--ww-size-content-narrow);
+  margin-inline: auto;
+  padding: var(--ww-space-4) var(--ww-space-4) calc(var(--ww-space-6) + env(safe-area-inset-bottom));
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-4);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+  border-radius: var(--ww-radius-sm);
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.link:focus-visible,
+.segmentItem:focus-visible {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.segment {
+  display: inline-flex;
+  gap: var(--ww-space-1);
+  padding: var(--ww-space-1);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface-sunken);
+}
+
+.segmentForm {
+  display: contents;
+}
+
+.segmentItem {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: var(--ww-size-touch-min);
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-3);
+  border: var(--ww-border-thick) solid transparent;
+  border-radius: var(--ww-radius-segment);
+  background: transparent;
+  color: var(--ww-color-text-muted);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.segmentItem[aria-current="true"] {
+  border-color: var(--ww-color-selected);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-extrabold);
+  box-shadow: var(--ww-shadow-selected);
+  cursor: default;
+}
+
+@media (hover: hover) {
+  a.segmentItem:hover,
+  button.segmentItem:hover {
+    color: var(--ww-color-text);
+  }
+}
+
+@media (min-width: 600px) {
+  .inner {
+    padding-inline: var(--ww-space-6);
+  }
+}

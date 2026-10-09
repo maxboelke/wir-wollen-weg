@@ -111,3 +111,28 @@ a {
 :root[data-motion="reduce"] {
   scroll-behavior: auto;
 }
+
+/*
+ * Illustration entrances (R-017): with JavaScript and full motion the animated layers are
+ * hidden before the first paint, so their entrance never hides something already visible.
+ * `data-js` comes from the inline head script. Failsafe: shown after 2.4 s regardless.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :root[data-js]:not([data-motion="reduce"]) [data-intro="pending"] [data-anim] {
+    opacity: 0;
+    animation: ww-intro-failsafe 0s linear 2.4s forwards;
+  }
+}
+
+@keyframes ww-intro-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sticky footer: pages are a column, the footer sits at the bottom of short pages. */
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+}

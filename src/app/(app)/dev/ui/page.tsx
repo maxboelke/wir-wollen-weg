@@ -27,6 +27,7 @@ import {
   CodeFieldDemo,
   CodeFieldState,
   MotionSwitchDemo,
+  RadioDemo,
   SheetDemo,
   ToastDemo,
 } from "./showcase-client";
@@ -49,7 +50,7 @@ export default async function UiShowcasePage() {
   const t = await getTranslations();
 
   return (
-    <PageShell homeHref="/" languageSwitch={<LanguageSwitch />} className={styles.wide}>
+    <PageShell className={styles.wide}>
       <div className={styles.page}>
         <div className={styles.intro}>
           <h1>UI-Fundament</h1>
@@ -337,6 +338,10 @@ export default async function UiShowcasePage() {
 
             <Block title="Schalter „Bewegung reduzieren“">
               <MotionSwitchDemo />
+            </Block>
+
+            <Block title="Radio-Gruppe (R-018)">
+              <RadioDemo />
             </Block>
 
             <Block title="Sprachumschalter">

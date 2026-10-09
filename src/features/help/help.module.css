@@ -1,0 +1,128 @@
+/* W15 – help page: one column, max. 640 px (content-narrow), details ≥ 44 px, G-14 */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-6);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.intro h1 {
+  font-size: var(--ww-text-3xl);
+}
+
+.lead {
+  color: var(--ww-color-text-muted);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.item + .item {
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.item {
+  scroll-margin-top: var(--ww-space-4);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-3);
+  min-height: calc(var(--ww-size-touch-min) + var(--ww-space-2));
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border-radius: var(--ww-radius-lg);
+  list-style: none;
+  cursor: pointer;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:focus-visible {
+  /* transparent, not none: becomes visible in forced-colors mode (box-shadow is dropped there) */
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.question {
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-snug);
+}
+
+.chevron {
+  flex: none;
+  color: var(--ww-color-text-muted);
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard);
+}
+
+.item[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.answer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-2);
+  padding: 0 var(--ww-space-4) var(--ww-space-4);
+  color: var(--ww-color-text-muted);
+}
+
+/* G-14: content fades in, no height animation (fade stays with reduced motion) */
+.item[open] .answer {
+  animation: ww-help-in var(--ww-duration-fade) linear;
+}
+
+@keyframes ww-help-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.action {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--ww-size-touch-min);
+  border-radius: var(--ww-radius-sm);
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  overflow-wrap: anywhere;
+}
+
+.contact p .action {
+  display: inline;
+  min-height: 0;
+}
+
+.action:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.contact {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.contact h2 {
+  font-size: var(--ww-text-xl);
+}

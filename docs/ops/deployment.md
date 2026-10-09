@@ -174,7 +174,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende | `http://localhost:3000` |
 | `DATABASE_URL` | ja | PostgreSQL-Verbindung | `postgres://app:app@localhost:5432/wirwollenweg` |
 | `POSTGRES_PASSWORD` | ja (Compose) | Passwort des DB-Containers | `change-me` |
-| `BETTER_AUTH_SECRET` | ja | ≥ 32 Byte Zufall (Signatur/Verschlüsselung von Cookies/Tokens); je Umgebung verschieden | `generate-with-openssl-rand-base64-32` |
+| `BETTER_AUTH_SECRET` | ja | ≥ 32 Byte Zufall (Signatur/Verschlüsselung von Cookies/Tokens; per HKDF abgeleitet auch HMAC-Schlüssel der Limits pro E-Mail, tech-stack.md §3.2); je Umgebung verschieden. **Fehlt es außerhalb von `APP_ENV` `development`/`ci`, bricht der Start ab** (R-028) | `generate-with-openssl-rand-base64-32` |
 | `BETTER_AUTH_URL` | ja | = `APP_URL` | `http://localhost:3000` |
 | `AUTH_TRUSTED_ORIGINS` | nein | zusätzliche erlaubte Origins (kommagetrennt) | – |
 | `AUTH_IP_HEADER` | nein | Header mit der Client-IP für Rate-Limits; muss vom vorgeschalteten Proxy **überschrieben** werden (R-005, §0.1). Caddy (Demo, staging, prod): `x-forwarded-for`; Cloudflare-Tunnel: `cf-connecting-ip` | `x-forwarded-for` |
@@ -189,7 +189,9 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `SENTRY_DSN` | nein | DSN des Bugsink-Projekts (leer = aus) | – |
 | `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE` | nein | Umgebung, Git-SHA | `development` |
 | `LOG_LEVEL` | nein | `info` (prod), `debug` (dev) | `debug` |
-| `RATE_LIMIT_ENABLED` | nein | in E2E-Tests gezielt abschaltbar (nie in prod) | `true` |
+| `RATE_LIMIT_ENABLED` | nein | in E2E-Tests gezielt abschaltbar (nie in prod); betrifft nur die IP-Limits – die Limits pro E-Mail-Adresse (Inkrement 1) sind immer aktiv | `true` |
+| `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
+| `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |
 | `BACKUP_AGE_RECIPIENT` | ja (prod) | öffentlicher `age`-Schlüssel zur Verschlüsselung der Dumps (privater Schlüssel **offline** beim Betreiber) | – |

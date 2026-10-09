@@ -60,6 +60,8 @@ Link-Weg (anderer Browser):  GET /auth/magic?token=… (zeigt nur die Seite, Tok
 
 ## 4. Was der Spike bewusst NICHT enthält (→ Inkrement 1, F-040–F-042, F-046)
 
+> **Stand 2026-10-09:** In Inkrement 1 umgesetzt (außer React Email – bewusst schlichtes Tabellen-HTML, siehe `src/server/mail/templates.ts`; HIBP nur optional per `PASSWORD_BREACH_CHECK=hibp`, in der Offline-Demo aus).
+
 - Code-Feld in Segment-Optik, „Code erneut senden“ mit 30-s-Countdown, Restversuche-Anzeige, Hilfebereich nach 60 s (ux-spec §4.4, Flow A.2).
 - `pendingAuth` in `sessionStorage`/`localStorage` + Wiederherstellung nach WebView-Reload (Flow A.4 Regeln 1–3), Banner auf anderen Seiten.
 - **Hoch priorisiert (R-005):** Rate-Limits **pro E-Mail-Adresse** (5/Std., 20/Tag; Sperre nach 10 Fehlversuchen) – bisher nur IP-Limits aktiv. IP-Limits allein schützen eine einzelne Adresse nicht vor verteilten Anfragen (Mail-Bombing, Code-Raten über viele IPs) und sind nur so gut wie die Proxy-Konfiguration (`AUTH_IP_HEADER`, deployment.md §0.1).
