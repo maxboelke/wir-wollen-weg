@@ -351,6 +351,7 @@ export function TripForm({
             min={nightsValid ? Math.min(minNights, NIGHTS_MAX) : NIGHTS_MIN}
             max={NIGHTS_MAX}
             placeholder={t("preferredPlaceholder")}
+            emptyAnnouncement={t("preferredCleared")}
             unit={t("nightsUnit", { count: Number(draft.preferredNights) || 2 })}
             decreaseLabel={t("decrease")}
             increaseLabel={t("increase")}

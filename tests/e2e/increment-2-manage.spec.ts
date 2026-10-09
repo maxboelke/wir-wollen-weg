@@ -1,7 +1,7 @@
 import { expect, test, type Page, type Request } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { signUp } from "./helpers/auth";
-import { memberNames, organizerName, tripRow } from "./helpers/db";
+import { memberNames, organizerName, renameInParallel, tripRow } from "./helpers/db";
 import { createTripViaUi, joinSignedIn, newPerson, openTripMenu } from "./helpers/trips";
 
 // Increment 2: F-004 roles & management (W12, Flow J), rights checked on the server, no IDOR.
@@ -130,6 +130,42 @@ test.describe("Flow J dialogs", () => {
     await expect(page.getByText(en.trip.dialogs.leaveOrgaSolo)).toBeVisible();
     await expect(page.getByRole("button", { name: en.trip.dialogs.transfer })).toHaveCount(0);
     await ben.context.close();
+  });
+
+  test("parallel renames to the same name never create a duplicate (R-039)", async ({
+    page,
+    browser,
+  }) => {
+    const { publicId, ben } = await tripWithMember(page, browser);
+    await page.goto(`/trips/${publicId}`);
+    const dialogs = [page, ben.page];
+    for (const p of dialogs) {
+      await openTripMenu(p);
+      await p.getByRole("button", { name: en.trip.menuItems.rename }).click();
+      await p
+        .getByRole("dialog")
+        .getByLabel(en.trip.dialogs.renameLabel, { exact: true })
+        .fill(p === page ? "Kemal" : "kemal");
+    }
+    // Both save at the same time.
+    await Promise.all(dialogs.map((p) => p.getByRole("button", { name: en.common.save }).click()));
+    await expect
+      .poll(async () => (await memberNames(publicId)).filter((n) => n.toLowerCase() === "kemal"))
+      .toHaveLength(1);
+    // Exactly one of them gets «saved», the other one a suggestion instead.
+    const saved = (p: Page) =>
+      p.getByRole("status").filter({ hasText: en.trip.dialogs.renameDone }).isVisible();
+    await expect
+      .poll(async () => (await Promise.all(dialogs.map(saved))).filter(Boolean).length)
+      .toBe(1);
+    await ben.context.close();
+  });
+
+  test("the database rejects a duplicate name even without the app check (R-039)", async () => {
+    // Two transactions rename two members of one trip to «Kemal»/«KEMAL» at the same time,
+    // bypassing the app: exactly one succeeds, the other hits the unique index.
+    const outcome = await renameInParallel(["Kemal", "KEMAL"]);
+    expect(outcome.sort()).toEqual(["23505", "ok"]);
   });
 
   test("hand over the organizer role, remove a member", async ({ page, browser }) => {

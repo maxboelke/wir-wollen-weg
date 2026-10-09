@@ -106,44 +106,58 @@ export async function listTripsForUser(userId: string): Promise<TripListItem[]> 
   });
 }
 
-async function insertWithUniqueIds(values: TripValues & { locale: string }) {
-  // The public id has 50 bit – a collision is practically impossible, retry anyway.
+type Tx = Parameters<Parameters<ReturnType<typeof db>["transaction"]>[0]>[0];
+
+/** PostgreSQL unique violation (23505), optionally of one constraint/index – also when wrapped. */
+function isUniqueViolation(error: unknown, constraint?: string): boolean {
+  for (let current = error; current instanceof Error; current = current.cause) {
+    const pgError = current as Error & { code?: unknown; constraint?: unknown };
+    if (pgError.code === "23505") return !constraint || pgError.constraint === constraint;
+  }
+  return false;
+}
+
+/** Unique index on (trip_id, lower(display_name)) – migration 0003 (R-039). */
+const NAME_INDEX = "trip_member_trip_name_idx";
+
+async function insertWithUniqueIds(tx: Tx, values: TripValues & { locale: string }) {
+  // The public id has 50 bit – a collision is practically impossible, retry anyway. Each
+  // attempt runs in a savepoint, so a collision does not abort the surrounding transaction.
   for (let attempt = 0; attempt < 5; attempt++) {
     try {
-      const [row] = await db()
-        .insert(trip)
-        .values({ ...values, publicId: generatePublicId(), inviteToken: generateInviteToken() })
-        .returning();
+      const row = await tx.transaction(async (sp) => {
+        const [inserted] = await sp
+          .insert(trip)
+          .values({ ...values, publicId: generatePublicId(), inviteToken: generateInviteToken() })
+          .returning();
+        return inserted;
+      });
       if (row) return row;
     } catch (error) {
-      if (!(error instanceof Error) || !/unique/i.test(`${error.message} ${String(error.cause)}`)) {
-        throw error;
-      }
+      if (!isUniqueViolation(error)) throw error;
     }
   }
   throw new Error("trip: could not allocate a unique id");
 }
 
-/** F-001: creates the trip; the creator is its organiser and first member. */
+/**
+ * F-001: creates the trip; the creator is its organiser and first member. One transaction –
+ * a trip never exists without its organiser (R-039).
+ */
 export async function createTrip(
   values: TripValues,
   creator: { userId: string; displayName: string; locale: string },
 ): Promise<TripRow> {
-  const row = await insertWithUniqueIds({ ...values, locale: creator.locale });
-  try {
-    await db()
-      .insert(tripMember)
-      .values({
-        tripId: row.id,
-        userId: creator.userId,
-        displayName: cleanDisplayName(creator.displayName),
-        role: "organizer",
-      });
-  } catch (error) {
-    await db().delete(trip).where(eq(trip.id, row.id));
-    throw error;
-  }
-  return row;
+  return db().transaction(async (tx) => {
+    const row = await insertWithUniqueIds(tx, { ...values, locale: creator.locale });
+    await tx.insert(tripMember).values({
+      tripId: row.id,
+      userId: creator.userId,
+      displayName: cleanDisplayName(creator.displayName),
+      role: "organizer",
+    });
+    return row;
+  });
 }
 
 /** F-001: edit trip data (organiser only – checked by the caller). */
@@ -224,24 +238,48 @@ export async function transferOrganizer(
 
 export type RenameResult = { ok: true } | { ok: false; suggestion: string };
 
-/** «Mein Name in dieser Reise» – unique per trip (F-003/F-004). */
+/**
+ * «Mein Name in dieser Reise» – unique per trip (F-003/F-004). Runs with the trip row locked
+ * (like `joinByToken`), so parallel renames and joins are serialised; the unique index
+ * (trip_id, lower(display_name)) is the final guarantee – a violation there is reported as
+ * «name taken» with a suggestion, never as an error (R-039).
+ */
 export async function renameMember(
   tripId: string,
   userId: string,
   name: string,
 ): Promise<RenameResult> {
   const clean = cleanDisplayName(name);
-  const others = await db()
+  try {
+    return await db().transaction(async (tx) => {
+      await tx.select({ id: trip.id }).from(trip).where(eq(trip.id, tripId)).for("update");
+      const taken = await namesOfOthers(tx, tripId, userId);
+      if (isNameTaken(clean, taken)) {
+        return { ok: false, suggestion: suggestName(clean, taken) } as const;
+      }
+      await tx
+        .update(tripMember)
+        .set({ displayName: clean })
+        .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
+      return { ok: true } as const;
+    });
+  } catch (error) {
+    if (!isUniqueViolation(error, NAME_INDEX)) throw error;
+    const taken = await namesOfOthers(db(), tripId, userId);
+    return { ok: false, suggestion: suggestName(clean, [...taken, clean]) };
+  }
+}
+
+async function namesOfOthers(
+  executor: Tx | ReturnType<typeof db>,
+  tripId: string,
+  userId: string,
+): Promise<string[]> {
+  const rows = await executor
     .select({ displayName: tripMember.displayName })
     .from(tripMember)
     .where(and(eq(tripMember.tripId, tripId), ne(tripMember.userId, userId)));
-  const taken = others.map((row) => row.displayName);
-  if (isNameTaken(clean, taken)) return { ok: false, suggestion: suggestName(clean, taken) };
-  await db()
-    .update(tripMember)
-    .set({ displayName: clean })
-    .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
-  return { ok: true };
+  return rows.map((row) => row.displayName);
 }
 
 async function touch(tripId: string): Promise<void> {
@@ -344,6 +382,23 @@ export async function joinByToken(
   accountName?: string,
 ): Promise<JoinOutcome> {
   if (!isInviteTokenShape(token)) return { ok: false, reason: "invalid" };
+  const clean = cleanDisplayName(name);
+  try {
+    return await joinLocked(token, userId, clean, accountName);
+  } catch (error) {
+    // The app check and the index can disagree on rare case foldings (JS vs. PostgreSQL
+    // lower()) – the index wins, the person gets a suggestion (R-039).
+    if (!isUniqueViolation(error, NAME_INDEX)) throw error;
+    return { ok: false, reason: "nameTaken", suggestion: suggestName(clean, [clean], accountName) };
+  }
+}
+
+async function joinLocked(
+  token: string,
+  userId: string,
+  clean: string,
+  accountName?: string,
+): Promise<JoinOutcome> {
   return db().transaction(async (tx) => {
     const [row] = await tx
       .select({ id: trip.id, publicId: trip.publicId, joinOpen: trip.joinOpen })
@@ -360,7 +415,6 @@ export async function joinByToken(
     }
     if (!row.joinOpen) return { ok: false, reason: "closed" } as const;
     if (members.length >= MAX_TRIP_MEMBERS) return { ok: false, reason: "full" } as const;
-    const clean = cleanDisplayName(name);
     const taken = members.map((m) => m.displayName);
     if (isNameTaken(clean, taken)) {
       return {

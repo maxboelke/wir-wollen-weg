@@ -82,3 +82,32 @@ export function resolveClientIp(headers: Headers, config: ClientIpConfig): strin
   }
   return ip;
 }
+
+/**
+ * Rate-limit subject for a resolved client IP (R-036): IPv4 addresses as they are, IPv6
+ * addresses collapsed to their /64 network («2001:db8:1:2::/64») – a single IPv6 connection
+ * usually owns a whole /64 and could otherwise rotate addresses freely. Better Auth does the
+ * same for its own IP limits (`advanced.ipAddress.ipv6Subnet`, default 64).
+ */
+export function rateLimitSubject(ip: string): string {
+  const clean = normalize(ip);
+  if (!clean) return ip;
+  if (family(clean) === "ipv4") return clean;
+  return `${expandIpv6(clean).slice(0, 4).join(":")}::/64`;
+}
+
+/** Eight hextets without leading zeros (handles «::» and an embedded IPv4 tail). */
+function expandIpv6(ip: string): string[] {
+  let address = ip;
+  const v4 = /(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(address);
+  if (v4) {
+    const [a, b, c, d] = v4.slice(1).map(Number) as [number, number, number, number];
+    const tail = `${((a << 8) | b).toString(16)}:${((c << 8) | d).toString(16)}`;
+    address = address.slice(0, v4.index) + tail;
+  }
+  const [head = "", rest] = address.split("::");
+  const left = head ? head.split(":") : [];
+  const right = rest ? rest.split(":") : [];
+  const fill = rest === undefined ? [] : Array<string>(8 - left.length - right.length).fill("0");
+  return [...left, ...fill, ...right].map((part) => Number.parseInt(part, 16).toString(16));
+}

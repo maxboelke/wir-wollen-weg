@@ -20,7 +20,7 @@ import { formatDate, todayIso } from "@/lib/dates";
 import { INVITE_MISS_LIMIT } from "@/lib/invite-limits";
 import { defaultTab, uiPhase } from "@/lib/trip-status";
 import { MAX_TRIP_MEMBERS } from "@/server/db/schema";
-import { checkLimit, recordEvent, requestIp } from "@/server/rate-limit";
+import { checkLimit, recordEvent, requestLimitSubject } from "@/server/rate-limit";
 import { getSession } from "@/server/session";
 import { findInvite, findMembership } from "@/server/trips";
 import { viewerFormat } from "@/server/viewer";
@@ -29,19 +29,23 @@ import styles from "./invite.module.css";
 type Params = PageProps<"/i/[token]">;
 
 /**
- * One lookup per request for metadata and page. IPs with too many unknown tokens pause
- * (F-003 security: no scanning); misses are counted, the token never appears in logs.
+ * One lookup per request for metadata and page. A valid token is always delivered – the
+ * miss limit never blocks it, also not from a shared address that has hit it (R-036, CEO
+ * decision (a)). Misses are counted per IP (IPv6: /64); beyond the limit they are no longer
+ * recorded and only logged (database protection, no further writes) – the visitor sees the
+ * same «link not valid» page either way (Flow A.3). Without a resolvable IP misses are not
+ * counted at all (no shared bucket). The token never appears in logs.
  */
 const lookup = cache(async (token: string) => {
-  const ip = await requestIp();
-  const limit = await checkLimit(INVITE_MISS_LIMIT, ip);
-  if (limit.limited) return { kind: "limited" as const, minutes: limit.retryMinutes };
   const preview = await findInvite(token);
-  if (!preview) {
-    await recordEvent(INVITE_MISS_LIMIT, ip);
-    return { kind: "invalid" as const };
+  if (preview) return { kind: "ok" as const, preview };
+  const subject = await requestLimitSubject();
+  if (subject) {
+    const limit = await checkLimit(INVITE_MISS_LIMIT, subject);
+    if (limit.limited) console.warn("invite: miss limit reached – possible token scanning");
+    else await recordEvent(INVITE_MISS_LIMIT, subject);
   }
-  return { kind: "ok" as const, preview };
+  return { kind: "invalid" as const };
 });
 
 /**
@@ -75,18 +79,6 @@ export default async function InvitePage({ params }: Params) {
   const { token } = await params;
   const t = await getTranslations("invite");
   const [result, session] = await Promise.all([lookup(token), getSession()]);
-
-  if (result.kind === "limited") {
-    return (
-      <PageShell enter={false}>
-        <Enter className={styles.invalid}>
-          <Illustration name="error" width={200} />
-          <h1>{t("rateLimitedTitle")}</h1>
-          <p className={styles.lead}>{t("rateLimited", { minutes: result.minutes })}</p>
-        </Enter>
-      </PageShell>
-    );
-  }
 
   if (result.kind === "invalid") {
     // R-007: the invalid state has a level-1 heading.

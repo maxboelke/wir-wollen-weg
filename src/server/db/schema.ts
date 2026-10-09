@@ -208,6 +208,9 @@ export const tripMember = pgTable(
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
     index("trip_member_user_id_idx").on(table.userId),
+    // F-003: names unique per trip, case-insensitive – the database guarantees it under
+    // parallel renames/joins (R-039); the app checks first and offers a suggestion.
+    uniqueIndex("trip_member_trip_name_idx").on(table.tripId, sql`lower(${table.displayName})`),
     uniqueIndex("trip_member_one_organizer_idx")
       .on(table.tripId)
       .where(sql`${table.role} = 'organizer'`),

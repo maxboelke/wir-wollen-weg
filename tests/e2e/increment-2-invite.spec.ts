@@ -2,7 +2,14 @@ import { randomBytes } from "node:crypto";
 import { expect, test } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { openJoinForm, signUp } from "./helpers/auth";
-import { addTripMembers, fillJoinLimit, memberNames, seedTrip, tripRow } from "./helpers/db";
+import {
+  addTripMembers,
+  fillJoinLimit,
+  limitEventCount,
+  memberNames,
+  seedTrip,
+  tripRow,
+} from "./helpers/db";
 import { uniqueEmail, waitForAccessMail } from "./helpers/mailpit";
 import { createTripViaUi, joinSignedIn } from "./helpers/trips";
 
@@ -149,20 +156,43 @@ test.describe("F-003 blocked states", () => {
 });
 
 test.describe("security: invite rate limits", () => {
-  test("after 20 unknown tokens the IP pauses – even for a valid link", async ({ page }) => {
-    const trip = await seedTrip(`Scan ${String(Date.now())}`);
-    // Own client IP for this test (x-forwarded-for without proxy in dev/CI).
+  test("a shared IP with 20+ unknown tokens still opens a valid link (R-036)", async ({ page }) => {
+    const name = `Scan ${String(Date.now())}`;
+    const trip = await seedTrip(name);
+    // One address shared by many people (CGNAT, campus Wi-Fi) – own address for this test.
     const ip = `203.0.113.${String(1 + Math.floor(Math.random() * 250))}`;
     await page.context().setExtraHTTPHeaders({ "x-forwarded-for": ip });
-    for (let i = 0; i < 20; i++) {
+    for (let i = 0; i < 22; i++) {
       const response = await page.request.get(`/i/${randomToken()}`, {
         headers: { "x-forwarded-for": ip },
       });
       expect(await response.text()).toContain(en.invite.invalidTitle);
     }
+    // Only 20 misses are recorded – beyond the limit nothing is written any more.
+    expect(await limitEventCount("invite-miss", ip)).toBe(20);
+    // The valid link is never blocked: preview and join step as usual.
     await page.goto(`/i/${trip.token}`);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText(en.invite.rateLimitedTitle);
-    await expect(page.locator("body")).not.toContainText(/^Scan /);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
+    await expect(page.getByRole("list", { name: en.invite.factsLabel })).toBeVisible();
+    // Unknown tokens keep showing the one shared «not valid» page (Flow A.3).
+    await page.goto(`/i/${randomToken()}`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(en.invite.invalidTitle);
+  });
+
+  test("IPv6: misses count per /64, the valid link still opens (R-036)", async ({ page }) => {
+    const name = `Scan6 ${String(Date.now())}`;
+    const trip = await seedTrip(name);
+    const net = `2001:db8:${Math.floor(Math.random() * 0xffff).toString(16)}:42`;
+    // 20 different addresses of the same /64 – rotating addresses does not escape the limit.
+    for (let i = 1; i <= 20; i++) {
+      await page.request.get(`/i/${randomToken()}`, {
+        headers: { "x-forwarded-for": `${net}::${i.toString(16)}` },
+      });
+    }
+    expect(await limitEventCount("invite-miss", `${net}::/64`)).toBe(20);
+    await page.context().setExtraHTTPHeaders({ "x-forwarded-for": `${net}:dead:beef:0:1` });
+    await page.goto(`/i/${trip.token}`);
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText(name);
   });
 
   test("join limit: max. 20 joins per trip and hour per IP (F-003)", async ({ page }) => {
@@ -180,5 +210,18 @@ test.describe("security: invite rate limits", () => {
     await page.context().setExtraHTTPHeaders({ "x-forwarded-for": "203.0.113.251" });
     await joinSignedIn(page, trip.token);
     expect(await memberNames(trip.publicId)).toContain("Burst Larry");
+  });
+
+  test("join limit for IPv6 counts the whole /64 network (R-036)", async ({ page }) => {
+    const trip = await seedTrip(`Burst6 ${String(Date.now())}`);
+    const net = `2001:db8:${Math.floor(Math.random() * 0xffff).toString(16)}:7`;
+    await fillJoinLimit(trip.tripId, `${net}::/64`, 20);
+    await signUp(page, "Burst Ivy");
+    // Another address of the same /64 is limited as well.
+    await page.context().setExtraHTTPHeaders({ "x-forwarded-for": `${net}:a:b:c:d` });
+    await page.goto(`/i/${trip.token}`);
+    await page.getByRole("button", { name: en.invite.joinCta, exact: true }).click();
+    await expect(page.getByText(/Lots of people are joining right now/)).toBeVisible();
+    expect(await memberNames(trip.publicId)).toEqual(["Lena Berg"]);
   });
 });

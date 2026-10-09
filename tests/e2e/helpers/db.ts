@@ -172,21 +172,78 @@ export async function expireReauthentication(email: string): Promise<void> {
   });
 }
 
-/**
- * Pre-fills the join limit of one trip for one client IP (same HMAC key as the app,
- * src/server/rate-limit.ts) – as if `count` people had joined from there within the hour.
- */
-export async function fillJoinLimit(tripId: string, ip: string, count: number): Promise<void> {
-  const key = hmacHex(
+/** HMAC key of an app rate-limit subject – same derivation as src/server/rate-limit.ts. */
+function limitKey(subject: string): string {
+  return hmacHex(
     deriveEmailLimitKey({
       appEnv: process.env.APP_ENV || undefined,
       secret: process.env.BETTER_AUTH_SECRET || undefined,
     }),
-    `app-limit:${tripId}:${ip}`,
+    `app-limit:${subject}`,
   );
+}
+
+/**
+ * Pre-fills the join limit of one trip for one client subject (IPv4 address or IPv6 /64
+ * network such as «2001:db8:1:2::/64», R-036) – as if `count` people had joined from there
+ * within the hour.
+ */
+export async function fillJoinLimit(tripId: string, subject: string, count: number): Promise<void> {
+  const key = limitKey(`${tripId}:${subject}`);
   await withClient(async (client) => {
     for (let i = 0; i < count; i++) {
       await client.query("insert into rate_limit_event (key, kind) values ($1, 'join')", [key]);
     }
   });
+}
+
+/** Number of recorded events of one kind for one subject (e.g. invite misses, R-036). */
+export async function limitEventCount(kind: string, subject: string): Promise<number> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ n: number }>(
+      "select count(*)::int as n from rate_limit_event where key = $1 and kind = $2",
+      [limitKey(subject), kind],
+    );
+    return rows.rows[0]?.n ?? 0;
+  });
+}
+
+/**
+ * Seeds a trip with an organiser and one member and renames both in two parallel
+ * transactions directly in the database (bypassing the app check). Returns "ok" or the
+ * PostgreSQL error code per rename – proves the unique index (trip_id, lower(name)) (R-039).
+ */
+export async function renameInParallel(names: [string, string]): Promise<string[]> {
+  const seeded = await seedTrip(`Race ${String(Date.now())}`, { extraMembers: 1 });
+  const userIds = await withClient(async (client) => {
+    const rows = await client.query<{ user_id: string }>(
+      "select user_id from trip_member where trip_id = $1 order by joined_at",
+      [seeded.tripId],
+    );
+    return rows.rows.map((row) => row.user_id);
+  });
+  const a = new pg.Client({ connectionString: databaseUrl });
+  const b = new pg.Client({ connectionString: databaseUrl });
+  await Promise.all([a.connect(), b.connect()]);
+  try {
+    const clients = [a, b];
+    await Promise.all(clients.map((client) => client.query("begin")));
+    const updates = clients.map((client, i) =>
+      client
+        .query("update trip_member set display_name = $1 where trip_id = $2 and user_id = $3", [
+          names[i],
+          seeded.tripId,
+          userIds[i],
+        ])
+        .then(() => client.query("commit"))
+        .then(() => "ok")
+        .catch(async (error: unknown) => {
+          await client.query("rollback");
+          return String((error as { code?: unknown }).code);
+        }),
+    );
+    return await Promise.all(updates);
+  } finally {
+    await Promise.all([a.end(), b.end()]);
+  }
 }

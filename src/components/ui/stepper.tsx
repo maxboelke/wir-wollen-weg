@@ -1,7 +1,8 @@
 "use client";
 
-import { useId } from "react";
+import { useId, useState } from "react";
 import { cx } from "@/lib/cx";
+import { stepperAnnouncement } from "@/lib/stepper-announcement";
 import { Icon } from "./icon";
 import styles from "./stepper.module.css";
 
@@ -21,6 +22,8 @@ interface StepperProps {
   decreaseLabel: string;
   increaseLabel: string;
   placeholder?: string | undefined;
+  /** Announced when «−» clears an optional stepper (e.g. «Ideally: not set»). */
+  emptyAnnouncement?: string | undefined;
   describedBy?: string | undefined;
   invalid?: boolean | undefined;
   onBlur?: (() => void) | undefined;
@@ -29,7 +32,9 @@ interface StepperProps {
 /**
  * Stepper (ux-spec §4.6): «−» value «+», the value is a directly editable number input
  * (announced natively), buttons ≥ 44 px, the limit disables its button – via `aria-disabled`,
- * so keyboard focus stays on it instead of falling back to <body> (R-038). W05-02 (number
+ * so keyboard focus stays on it instead of falling back to <body> (R-038). Focus stays on
+ * the button, so a polite live region reads the new value after «−»/«+» («5 nights»);
+ * typing in the field is announced natively and does not trigger it. W05-02 (number
  * slides) is "später" in the motion catalogue – the value simply changes.
  */
 export function Stepper({
@@ -45,17 +50,20 @@ export function Stepper({
   decreaseLabel,
   increaseLabel,
   placeholder,
+  emptyAnnouncement = "",
   describedBy,
   invalid,
   onBlur,
 }: StepperProps) {
   const unitId = useId();
+  const [stepped, setStepped] = useState(false);
   const number = value === "" ? null : Number(value);
   const valid = number !== null && Number.isFinite(number);
   const canDecrease = valid ? number > min || optional : false;
   const canIncrease = valid ? number < max : true;
 
   function step(delta: number) {
+    setStepped(true);
     if (!valid) {
       onChange(String(min));
       return;
@@ -98,6 +106,7 @@ export function Stepper({
           aria-describedby={[unitId, describedBy].filter(Boolean).join(" ")}
           aria-invalid={invalid || undefined}
           onChange={(event) => {
+            setStepped(false);
             onChange(event.target.value);
           }}
           onBlur={onBlur}
@@ -118,6 +127,9 @@ export function Stepper({
       >
         <Icon name="plus" size={20} />
       </button>
+      <span className="visually-hidden" aria-live="polite" aria-atomic="true">
+        {stepperAnnouncement(stepped, value, unit, emptyAnnouncement)}
+      </span>
     </div>
   );
 }

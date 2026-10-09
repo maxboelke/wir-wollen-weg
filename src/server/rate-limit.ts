@@ -2,7 +2,7 @@ import "server-only";
 import { and, asc, eq, gt, lt, sql } from "drizzle-orm";
 import { headers } from "next/headers";
 import { isOverLimit, minutesUntilFree, type LimitRule } from "@/lib/invite-limits";
-import { CLIENT_IP_HEADER } from "./auth/client-ip";
+import { CLIENT_IP_HEADER, rateLimitSubject } from "./auth/client-ip";
 import { deriveEmailLimitKey, hmacHex } from "./auth/email-limit-key";
 import { withTrustedClientIp } from "./auth";
 import { db } from "./db/client";
@@ -25,11 +25,22 @@ function hashKey(value: string): string {
 }
 
 /**
- * Client IP from the trusted proxy header (same resolution as the auth limits, R-005).
- * Without a resolvable address all such requests share one bucket ("unknown").
+ * Rate-limit subject of the current request: the client IP from the trusted proxy header
+ * (same resolution as the auth limits, R-005), IPv6 collapsed to its /64 network (R-036).
+ *
+ * Returns `undefined` when no address can be resolved – this only happens outside
+ * development/CI (there the loopback address is used) and means the proxy setup is broken.
+ * Callers must then NOT fall back to a shared bucket such as "unknown": one bucket for all
+ * visitors would let a single person lock everyone out (R-036). Instead they reject the
+ * request (joins, like the 400 of the auth route) or skip counting (invite misses).
  */
-export async function requestIp(): Promise<string> {
-  return withTrustedClientIp(await headers()).get(CLIENT_IP_HEADER) ?? "unknown";
+export async function requestLimitSubject(): Promise<string | undefined> {
+  const ip = withTrustedClientIp(await headers()).get(CLIENT_IP_HEADER);
+  if (!ip) {
+    console.warn("rate-limit: no client IP – check AUTH_IP_HEADER and the proxy setup");
+    return undefined;
+  }
+  return rateLimitSubject(ip);
 }
 
 export interface LimitState {
@@ -59,7 +70,7 @@ function state(times: number[], rule: LimitRule): LimitState {
   };
 }
 
-/** Read-only check (e.g. before looking up an invite token). */
+/** Read-only check (e.g. after an invite lookup missed). */
 export async function checkLimit(rule: LimitRule, subject: string): Promise<LimitState> {
   return state(await eventTimes(hashKey(subject), rule), rule);
 }

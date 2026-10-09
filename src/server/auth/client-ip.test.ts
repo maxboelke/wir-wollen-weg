@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseTrustedProxies, resolveClientIp } from "./client-ip";
+import { parseTrustedProxies, rateLimitSubject, resolveClientIp } from "./client-ip";
 
 function resolve(value: string | null, trusted?: string, header = "x-forwarded-for") {
   const headers = new Headers(value === null ? {} : { [header]: value });
@@ -74,4 +74,26 @@ describe("parseTrustedProxies", () => {
       expect(() => parseTrustedProxies(entry)).toThrow(/AUTH_TRUSTED_PROXIES/);
     },
   );
+});
+
+describe("rateLimitSubject (R-036)", () => {
+  it("keeps IPv4 addresses as they are", () => {
+    expect(rateLimitSubject("203.0.113.7")).toBe("203.0.113.7");
+    expect(rateLimitSubject("::ffff:203.0.113.7")).toBe("203.0.113.7");
+  });
+
+  it("collapses IPv6 addresses to their /64 network", () => {
+    expect(rateLimitSubject("2001:db8:1:2:3:4:5:6")).toBe("2001:db8:1:2::/64");
+    expect(rateLimitSubject("2001:0DB8:0001:0002:ffff::1")).toBe("2001:db8:1:2::/64");
+    expect(rateLimitSubject("2001:db8::1")).toBe("2001:db8:0:0::/64");
+    expect(rateLimitSubject("2001:db8:1:2::")).toBe("2001:db8:1:2::/64");
+    expect(rateLimitSubject("::1")).toBe("0:0:0:0::/64");
+    expect(rateLimitSubject("64:ff9b::192.0.2.33")).toBe("64:ff9b:0:0::/64");
+  });
+
+  it("gives every address of one /64 the same subject, other networks another one", () => {
+    const a = rateLimitSubject("2001:db8:aa:bb::1");
+    expect(rateLimitSubject("2001:db8:aa:bb:ffff:ffff:ffff:ffff")).toBe(a);
+    expect(rateLimitSubject("2001:db8:aa:bc::1")).not.toBe(a);
+  });
 });

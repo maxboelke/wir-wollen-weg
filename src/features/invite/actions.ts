@@ -8,7 +8,7 @@ import { JOIN_LIMIT } from "@/lib/invite-limits";
 import { isInviteTokenShape } from "@/lib/tokens";
 import { defaultTab } from "@/lib/trip-status";
 import { auth } from "@/server/auth";
-import { requestIp, takeLimit } from "@/server/rate-limit";
+import { requestLimitSubject, takeLimit } from "@/server/rate-limit";
 import { getSession } from "@/server/session";
 import { findInvite, joinByToken } from "@/server/trips";
 import type { ActionResult } from "../auth/actions";
@@ -36,7 +36,11 @@ export async function joinTrip(token: string, name: string): Promise<ActionResul
 
   const preview = await findInvite(token);
   if (!preview) return { error: "joinInvalid" };
-  const limit = await takeLimit(JOIN_LIMIT, `${preview.id}:${await requestIp()}`);
+  // Per trip and client IP (IPv6: /64). No resolvable IP (broken proxy setup outside
+  // dev/CI): reject like the auth route (400) instead of a shared bucket (R-005, R-036).
+  const subject = await requestLimitSubject();
+  if (!subject) return { error: "generic" };
+  const limit = await takeLimit(JOIN_LIMIT, `${preview.id}:${subject}`);
   if (limit.limited) return { error: "joinRateLimited", minutes: limit.retryMinutes };
 
   // New account without a name: the name of the join step becomes the account name.

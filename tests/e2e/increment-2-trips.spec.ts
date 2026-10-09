@@ -106,6 +106,24 @@ test.describe("F-001 create a trip", () => {
     await expect(value).toHaveValue("30");
   });
 
+  test("stepper: «−»/«+» announce the new value politely", async ({ page }) => {
+    await page.goto("/trips/new");
+    const announcements = page.locator('span[aria-live="polite"][aria-atomic="true"]');
+    const min = page.locator('input[name="minNights"]');
+    await min.fill("4");
+    // Typing is announced natively – the live region stays silent.
+    await expect(announcements.first()).toHaveText("");
+    await page.getByRole("button", { name: en.tripForm.increase }).first().click();
+    await expect(min).toHaveValue("5");
+    await expect(announcements.first()).toHaveText("5 nights");
+    // Optional «ideally»: «+» from empty starts at the minimum, «−» clears it and says so.
+    await page.getByRole("button", { name: en.tripForm.increase }).nth(1).click();
+    await expect(announcements.nth(1)).toHaveText("5 nights");
+    await page.getByRole("button", { name: en.tripForm.decrease }).nth(1).click();
+    await expect(page.locator('input[name="preferredNights"]')).toHaveValue("");
+    await expect(announcements.nth(1)).toHaveText(en.tripForm.preferredCleared);
+  });
+
   test("validation: error summary, focus on the first field, range too short", async ({ page }) => {
     await signUp(page, "Vera");
     await page.goto("/trips/new");
