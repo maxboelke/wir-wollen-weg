@@ -1,0 +1,51 @@
+.ring {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-kpi-ring);
+  height: var(--ww-size-kpi-ring);
+}
+
+.ring > svg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.track,
+.fill {
+  fill: none;
+  stroke-width: 6;
+}
+
+.fill {
+  stroke-linecap: round;
+}
+
+.onBrand .track {
+  stroke: var(--ww-cockpit-ring-track);
+}
+
+.onBrand .fill {
+  stroke: var(--ww-cockpit-accent);
+}
+
+.onBrand {
+  color: var(--ww-cockpit-text);
+}
+
+.light .track {
+  stroke: var(--ww-progress-track);
+}
+
+.light .fill {
+  stroke: var(--ww-progress-fill);
+}
+
+.center {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}

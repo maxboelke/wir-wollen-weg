@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" aria-hidden="true" focusable="false">
+  <title>Siegel</title>
+  <desc>Belohnungs-Siegel: Minze-Kreis mit Indigo-Häkchen und Ring in Flächenfarbe. Für Beitritt, Abgabe und „Alle haben abgestimmt“. Dekorativ – der Text daneben trägt die Aussage.</desc>
+  <!-- Komponente M-D4 (v1.0): Größen 20 / 40 / 64 px (size-seal-sm/md/lg). Feder spring-bouncy nur hier.
+       Farben über Tokens: seal-bg, seal-fg, seal-ring. Ebenen: disc (Pop von scale-pop auf 1), check (Strich zeichnen,
+       pathLength 1), sparks (nur 64 px). Die große Feier (Termin steht fest) ist der Vorfreude-Ring, nicht dieses Siegel. -->
+  <g data-anim="disc">
+    <circle cx="32" cy="32" r="27" fill="#52E5B8" stroke="#FFFFFF" stroke-width="4" style="fill: var(--ww-seal-bg, #52E5B8); stroke: var(--ww-seal-ring, #FFFFFF)"/>
+  </g>
+  <g data-anim="check">
+    <path d="M20 33l8 8 16-17" pathLength="1" fill="none" stroke="#2B2266" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ww-seal-fg, #2B2266)"/>
+  </g>
+  <g data-anim="sparks" fill="#FFCF4A" style="fill: var(--ww-color-sun, #FFCF4A)">
+    <path d="M56 4l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+    <path d="M6 48l1.2 2.8 2.8 1.2-2.8 1.2-1.2 2.8-1.2-2.8-2.8-1.2 2.8-1.2z"/>
+  </g>
+</svg>

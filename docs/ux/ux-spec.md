@@ -1,6 +1,6 @@
 # UX-Spezifikation – Wir wollen weg (MVP)
 
-Stand: 2026-10-08 (Abstimmungsrunde 2 mit Design-System v0.3) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
+Stand: 2026-10-08 (Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17 Motion/Haptik) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
 
 Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, Abstände, Radien, Icons) kommt vom Designer (`docs/design/`). Bei Widersprüchen gilt: Struktur/Verhalten → dieses Dokument; Aussehen → Design-System; Konflikte klärt der CEO.
 
@@ -29,7 +29,7 @@ Breakpoints identisch mit dem Design-System (`docs/design/tokens.css`: 360 Basis
 In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 
 - **Mindestens bedienbar ab 320 px** ohne horizontales Scrollen (WCAG 1.4.10 Reflow). Bei 320 px sinkt die Kalenderzelle auf ≈ 41 px Breite (zulässig, ≥ 24 px Minimum, s. §7.2).
-- **Höhe:** Fixierte Leisten (Header + Tabs oben, Aktionsleiste unten) zusammen ≤ 40 % der Viewport-Höhe bei 640 px Höhe; bei Querformat mit < 480 px Höhe wird der Reise-Header beim Scrollen nach unten ausgeblendet und bei Scroll nach oben wieder eingeblendet.
+- **Höhe:** Fixierte Leisten (kompakter Cockpit-Kopf + Tabs oben, Aktionsleiste unten) zusammen ≤ 40 % der Viewport-Höhe bei 640 px Höhe – Richtung B: Kopf ≈ 104 px + Werkzeugleiste W08 ≤ 150 px = 254 px; bei Querformat mit < 480 px Höhe wird der Reise-Kopf beim Scrollen nach unten ausgeblendet und bei Scroll nach oben wieder eingeblendet.
 - **Safe Areas:** `env(safe-area-inset-*)` für fixierte Leisten (iPhone, In-App-Browser-Toolbars).
 - **Viewport:** `width=device-width, initial-scale=1`; **kein** `maximum-scale`/`user-scalable=no` (Zoom muss erlaubt sein). Eingabefelder ≥ 16 px Schrift, damit iOS nicht automatisch zoomt.
 - **Dynamische Viewport-Höhe:** Bottom-Sheets und Vollbild-Ansichten mit `dvh`, damit In-App-Browser-Leisten nichts verdecken.
@@ -40,6 +40,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - **Zurück-Taste:** Jeder Flow-Schritt (E-Mail → Code → Name), jedes geöffnete Bottom-Sheet mit Inhalt (Tagesdetail, Teilen) und die Ansicht Vorschläge/Kalender erzeugen History-Einträge. Zurück schließt zuerst das Sheet, dann den Schritt.
 - **Scrollposition** wird beim Zurückkehren wiederhergestellt; beim Tab-Wechsel beginnt der neue Tab oben – außer Meine Tage, der zum ersten Monat mit ungeklärten Tagen bzw. zum heutigen Monat springt.
 - **Seitentitel** (`<title>`): «Meine Tage · Lissabon 2027 · Wir wollen weg» / «My dates · Lisbon 2027 · When do we go?» – Ansicht zuerst (Screenreader, Tab-Leiste), Produktname immer **am Ende** (dadurch steht das Fragezeichen des EN-Namens nie mitten im Titel, s. §10.6). Landing: «Wir wollen weg – Gemeinsam den Urlaubstermin finden» / «When do we go? Find dates for your group trip».
+- **Reise-Kopf „Cockpit“ (Richtung B, §4.10):** In Reise-Ansichten gibt es keinen globalen Header; der Indigo-Kopf beginnt mit Zeile 1 `[← Meine Reisen]` · Reisename (1 Zeile, „…“) + **Phasenzeile** · `[⋯]` und der Tab-Leiste. **Sticky ist nur dieser kompakte Kopf (≈ 104 px).** Darunter liegende Kopf-Inhalte (Kennzahl-Box W09, Vorfreude-Ring W11, Phase-Kennzahl W07) scrollen mit dem Inhalt weg – keine Einklapp-Animation, kein Layout-Sprung.
 - **Ungespeicherte Änderungen** (nur Formulare mit explizitem Speichern: Reise bearbeiten, Konto-Profil): Bestätigungsdialog beim Verlassen.
 
 ## 4. Komponenten-Verhalten
@@ -52,6 +53,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 ### 4.2 Dialoge & Bottom-Sheets
 - Mobil (< 600 px): Bottom-Sheet mit Griff, schließbar per Wischen nach unten, Tipp auf Hintergrund, `Esc`, Zurück-Taste. Desktop: zentrierter modaler Dialog.
 - `role="dialog"`, `aria-modal="true"`, `aria-labelledby` = Überschrift; Fokus beim Öffnen auf die Überschrift (bei Bestätigungsdialogen) bzw. auf das erste Feld; Fokusfalle; beim Schließen Fokus zurück auf den Auslöser.
+- **Fokus nach „Termin festlegen“ (F-012):** Das Sheet schließt, der Fokus geht **sofort** (im selben Ereignis, nicht nach der Animation) auf die h1 «Es geht los!» der Ergebnis-Karte (`tabindex="-1"`, `aria-describedby` → Datumszeile). Ausnahme von „Fokus zurück auf den Auslöser“, weil der Auslöser (Tab Abstimmen) nicht mehr existiert. (M-U10)
 - **Destruktive Bestätigung:** Überschrift als Frage, Folgen in einem Satz, Buttons `[Abbrechen]` (sekundär, links/oben) und `[<Verb>]` (destruktiv). Standardfokus auf `[Abbrechen]`.
 - Tagesdetail (Heatmap) ist **nicht modal** auf Desktop (Seitenpanel), damit man parallel im Kalender navigieren kann.
 
@@ -95,7 +97,36 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 - **Ausgeblendete Personen** (Was-wäre-wenn-Filter) verringern n lokal; kein eigener Zellzustand, nur aktiver Filter-Chip «✓ 1 ausgeblendet ▾».
 - **Legende (U-6):** Komponente mit echten Mini-Zellen (Stufen „–, 0, 2, 3, 4, 5 ✓“ mit Beispielzahlen der aktuellen Gruppe), danach Zeile «4/5 = 4 von 5 haben „Geht“ · ✓ Alle: Geht · ◐ Jemand nur „Zur Not“ · ◥ Feiertag · Band = Vorschlag». Umsetzung als `<details>`/`<summary>` („Legende“). **Zustand:** mobil beim ersten Besuch der Kalenderansicht aufgeklappt; sobald die Person sie einmal zuklappt, bleibt sie zu (gemerkt pro Gerät, `localStorage`, kein Cookie). ≥ 960 px immer sichtbar in der Filterzeile (genug Platz). Meine Tage: Legende „So funktioniert’s“ aufgeklappt bis zur ersten Abgabe, danach zugeklappt (B.1).
 - **Feiertagsliste (U-11):** unter jedem Monat mit Feiertagen eine Liste (`<ul aria-label="Feiertage im Mai">`), je Eintrag kleines Eselsohr-Dreieck (dekorativ, `aria-hidden`) + «1.5. Tag der Arbeit»; 13 px `--ww-color-text-muted`. Monate ohne Feiertag: keine Zeile. Gleich in Meine Tage, Heatmap und Mini-Kalender (W10).
-- **Mini-Streifen auf Vorschlagskarten (U-10): nicht im MVP** (Information steht als Text auf der Karte; „Im Kalender zeigen“ übernimmt die Wiedererkennung). Kandidat nach Beta-Feedback.
+- **Mini-Streifen auf Vorschlagskarten (U-10): nicht im MVP** (Information steht als Text auf der Karte; „Im Kalender zeigen“ übernimmt die Wiedererkennung). Kandidat nach Beta-Feedback. Die „Tages-Balken“ aus Richtung B sind dieselbe Idee: **MVP+**, nur dekorativ (`aria-hidden`).
+
+### 4.10 Cockpit-Kopf & Kennzahlen (Richtung B, Q18)
+Optik: Design-System v1.0 / `richtungen/b`. Verhalten verbindlich hier (abstimmung-design §8.1):
+- **Aufbau:** Zeile 1 (48 px): runde Icon-Taste Zurück (44 px, `aria-label` «Meine Reisen»), Reisename (h-Stil, 1 Zeile mit „…“, voller Name auf Übersicht), darunter **Phasenzeile**, runde Taste `⋯` (`aria-label` «Reisemenü»). Zeile 2: Tab-Leiste (Pillen ≥ 44 px, Spur 48 px; < 375 px horizontal scrollbar mit Verlaufskante, aktiver Tab in Sicht). Diese beiden Zeilen sind sticky.
+- **Phasenzeile:** «Tage sammeln · 5/7 fertig» · «Abstimmung läuft · 4/7 fertig» · «Steht fest · 7 dabei» (EN §10.2). „5/7“ hat sr-only-Text «5 von 7». Farbiger Punkt ist Zusatz. Bei großer Schrift Umbruch auf 2 Zeilen, nie gekürzt.
+- **Höchstens eine Kennzahl pro Cockpit**, unterhalb der Tabs, scrollt mit:
+  | Tab | Kennzahl im Kopf |
+  |---|---|
+  | Übersicht (W07) | Phase 1: Ring + «5 von 7 haben abgegeben» · Phase 2: Ring + «4 von 7 haben abgestimmt» + Frist · Phase 3: Vorfreude-Ring mit Countdown (W11) |
+  | Meine Tage (W08) | keine (Platz für den Kalender) |
+  | Gruppe (W09) | **Kennzahl-Box** (ersetzt das Statusband): Ring + «5 von 7 haben abgegeben» + «Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» + Orga `[Erinnern]` (Minze-Taste, ≥ 44 px). Alle abgegeben: «Alle haben abgegeben.» + Orga `[Abstimmung starten]`. |
+  | Abstimmen (W10) | keine im Kopf; **Kennzahl-Kacheln** im Inhalt (s. u.) |
+- **Ringe und Balken sind `aria-hidden`**, die Werte stehen als Text daneben. Zahlen wechseln **sofort** (kein Hochzählen, G-16); nur Ring/Balken dürfen wachsen (§7.5).
+- **Kennzahl-Kacheln (W10):** zwei Karten nebeneinander (je halbe Breite, Text zweizeilig erlaubt; bei großer Schrift untereinander per `minmax(9.5em, 1fr)`): Frist «noch 3 Tage / bis Do., 15. April» und Beteiligung «4 von 7 / haben abgestimmt». Ohne Frist nur die Beteiligungs-Kachel (volle Breite). Frist abgelaufen: «Frist abgelaufen» + Warn-Icon (Amber). Die **Beteiligungs-Kachel ist ein Button** → Bottom-Sheet «Wer hat abgestimmt?» mit «Abgestimmt (4)» / «Noch offen (3)» (nur Status, keine Stimmen) und für die Orga `[Erinnern]`. Die Avatar-Reihe im Kopf entfällt.
+
+### 4.11 Vorschlag-Leiste in der Kalender-Ansicht (W09, < 960 px)
+- **Fixierte Leiste unten** in der Ansicht Kalender (nicht in Vorschläge, nicht ≥ 960 px – dort Seitenspalte). Kein Griff, nicht ziehbar. Höhe ≤ 120 px + Safe Area; setzt `--ww-sticky-bar-h` (Snackbar, `scroll-padding-bottom`).
+- **Inhalt:** `[‹ Vorheriger Vorschlag]` (44 px) · Mitte · `[Nächster Vorschlag ›]` (44 px). Mitte: Rang + Gruppe + Position («1 · Alle dabei · 1 von 5»), Zeitraum («Mi., 5. Mai – Mo., 10. Mai»), «bis zu 5 Nächte · ca. 3 Urlaubstage», höchstens **eine** Chip-Zeile ohne Umbruch (Überlauf als «+1»). Reihenfolge = Vorschlagsliste (F-009, „Alle dabei“ vor „Fast alle dabei“).
+- **Verhalten:** Beim Betreten der Ansicht ist Vorschlag 1 gewählt (bzw. der per „Im Kalender zeigen“ gewählte) und sein **Band** steht im Kalender. Blättern wählt den nächsten Vorschlag, das Band wechselt, die Seite scrollt so, dass der Anreisetag im oberen Drittel steht (Smooth-Scroll, reduziert: Sprung). Kein Umlauf an den Enden; Pfeil `aria-disabled` mit sichtbarem Zustand (≥ 3:1). Ansage (polite): «Vorschlag 2 von 5: Sa., 12. Juni – Sa., 19. Juni, Alle dabei». Fokus bleibt auf dem Pfeil.
+- **Mitte ist ein Button** (zugänglicher Name: Zeitraum + «in der Liste zeigen») → wechselt zur Ansicht Vorschläge und fokussiert die Karte. Dort liegen Details und die Orga-Checkbox „Zur Abstimmung“. **Keine Orga-Auswahl in der Leiste** (eine fixierte Leiste je Ansicht; die Auswahlleiste „2 ausgewählt · Abstimmung erstellen“ gibt es nur in der Listenansicht).
+- **Keine Treffer / niemand abgegeben:** Leiste zeigt eine Zeile «Gerade kein passender Zeitraum.» + `[Tipps ansehen]` (→ Liste, Leerzustand mit Filter-Vorschlägen) bzw. entfällt, wenn noch niemand abgegeben hat.
+- **DOM-Reihenfolge:** vor dem Kalender (nach Filterzeile und Legende); Skip-Link «Zum Kalender». Das Tagesdetail-Sheet liegt darüber (modal).
+
+### 4.12 Werkzeugleiste „Meine Tage“ (Richtung B)
+Ergänzt §7.3 und W08. Mobil fixiert, **≤ 150 px ohne Safe Area**, kein Griff:
+- Statuszeile 16 px: links «Entwurf» (vor 1. Abgabe) bzw. leer, rechts Speicherstatus «Gespeichert» / «Speichert …» / «Nicht gespeichert – Erneut versuchen».
+- Pinsel-Leiste (Radiogruppe, `aria-label` «Was markierst du?» – **kein** sichtbares Label), ≤ 58 px.
+- Werkzeugzeile 48 px: drei Kachel-Tasten **44 × 48 px** unter 400 px (sonst 48 × 48), Lücke 6 px – `[Zeitraum]` (Icon, `aria-pressed`), `[Rückgängig]`, `[Schnellaktionen]` – und `[Fertig – abgeben]` (primär, 48 px hoch, einzeilig) im Rest. Nach Abgabe ersetzt «✓ Abgegeben · 14:32» den Primärbutton.
+- **Icon-only unter 600 px** zulässig, weil: Name als `aria-label` **und** Tooltip (Hover/Fokus); `[Zeitraum]` gedrückt = gefüllte Kachel + Hinweiszeile «Jetzt den Start antippen.» über der Leiste; die Legende „So funktioniert's“ erklärt das Zeitraum-Icon in Textform. Ab 600 px Icon + Text.
 
 ## 5. Formulare & Validierung
 
@@ -138,7 +169,7 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 | Aktion mit Wartezeit (Code senden, Reise anlegen, Löschen) | Button-Ladezustand (§4.1). |
 | Berechnung Vorschläge | Kurz-Skelett der Liste; Ergebnis < 500 ms (F-009). |
 | Erfolg kleiner Aktion | Snackbar (§4.3) oder Inline-Bestätigung. |
-| Erfolg großer Meilenstein | Eigene Erfolgsansicht/-karte: Beitritt, Abgabe, Abstimmung gestartet, Termin festgelegt. Dezente Animation (≤ 600 ms, entfällt bei `prefers-reduced-motion`). |
+| Erfolg großer Meilenstein | Eigene Erfolgsansicht/-karte: Beitritt, Abgabe, Abstimmung gestartet, Termin festgelegt. Kernanimation **≤ 1 s**; nur „Es geht los!“ (F-012) mit Ausklang (Konfetti) bis **2,6 s**. Text und Tasten sind ab spätestens **300 ms** lesbar und bedienbar; jede Interaktion und `visibilitychange` beendet die Animation; nichts wiederholt sich. Bei reduzierter Bewegung (§7.5): Überblenden ≤ 140 ms bzw. sofort. (M-U2) |
 | Feldfehler | Inline (§5). |
 | Seitenfehler (Server 5xx) | Inline-Fehlerbereich anstelle des Inhalts: «Da ist etwas schiefgelaufen. [Neu laden]» + Hinweis, dass Daten nicht verloren sind (wo zutreffend). |
 | Offline | Banner oben (unter Header), `role="status"`: «Keine Verbindung. Änderungen werden gespeichert, sobald du wieder online bist.» Aktionen, die Server brauchen (Code senden, Abstimmung starten), deaktiviert mit Hinweis. |
@@ -155,14 +186,15 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 - **Skip-Link** «Zum Inhalt springen» als erstes Element; in Meine Tage zusätzlich «Zum Kalender» und «Zu den Werkzeugen».
 - **Kontraste:** Text ≥ 4,5:1 (groß ≥ 3:1), UI-Komponenten und Zustandsgrafiken (Heatmap-Stufen gegen Nachbarn, Rahmen, Fokus) ≥ 3:1. Heatmap-Zahlen auf allen Intensitätsstufen ≥ 4,5:1 (Designer, s. abstimmung-design.md).
 - **Nie nur Farbe** (1.4.1): Zustände Tag (Symbol/Muster), Heatmap (Zahl + Symbol „alle“), Stimmen (Text), Fehler (Symbol + Text).
-- **Bewegung:** `prefers-reduced-motion` → keine Animationen außer Opazität; nichts blinkt.
+- **Bewegung:** reduzierte Bewegung (System `prefers-reduced-motion` **oder** Konto-Schalter, §7.5) → keine Animationen außer Überblenden ≤ 140 ms; nichts blinkt; Bedienfunktionen (Auto-Scroll beim Ziehen) bleiben.
 - **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Labels umbrechen. **Kalender bei großer Schrift (U-5):** Umschaltung per Container-Query in `em` (nicht `px`), damit sie auf die Schriftgröße reagiert: Ist die Zelle schmaler als **3,25 em** (bei 360 px ab ca. 175 % Textgröße), wird die **Heatmap** zur **Tagesliste** (je Tag eine Zeile: Datum mit Wochentag · „4 von 5: Geht“ · Abzeichen ◐ n Zur Not / ✓ alle / Feiertag / Vorschlag n; gleiche Reihenfolge, Monatsüberschriften bleiben, Antippen/Enter öffnet das Tagesdetail, Wochenenden über „Sa./So.“ im Datum). **Meine Tage** bleibt ein Raster (Malen braucht die Fläche): Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl, Datumszahl wird nie gekürzt. Kein manueller Umschalter im MVP.
 - **Dark Mode:** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter in Konto/Menü (*bestätigt (Auftraggeber 2026-10-08)*). Alle obigen Kontrastregeln gelten auch dort.
 
 ### 7.2 Zielgrößen & Fokus
 - **Ziel 44 × 44 px** für alle Bedienelemente auf Touch (Kalenderzellen bei 360 px 45,7 × 52 px, bei 320 px 41 × 52 px – U-1). **Minimum 24 × 24 px** (SC 2.5.8) nur für sekundäre Inline-Elemente (z. B. Info-Icon im Fließtext) mit ausreichend Abstand.
+- Gilt ausdrücklich auch für Richtung-B-Elemente: Tab-Pillen, Segment Vorschläge/Kalender, Monats-Sprung-Chips, Filter-Chips, „Erinnern“, „Anmelden“, Kachel-Tasten (abstimmung-design D-20).
 - Abstand zwischen benachbarten Zielen ≥ 4 px **oder** Zellen grenzen ohne Lücke an, sind aber ≥ 44 px (Kalender).
-- **Fokus sichtbar** auf allen Elementen: Fokusring ≥ 2 px, Kontrast ≥ 3:1 gegen Hintergrund **und** gegen Zellfarbe (Heatmap); `:focus-visible`. Standard `--ww-focus-ring`; in dichten Rastern (Kalender, Segmente) `--ww-focus-ring-isolated` (Hof 2 px + Ring 3 px + Hof 2 px), fokussierte Zelle `z-index: 1`.
+- **Fokus sichtbar** auf allen Elementen: Fokusring ≥ 2 px, Kontrast ≥ 3:1 gegen Hintergrund **und** gegen Zellfarbe (Heatmap); `:focus-visible`. Standard `--ww-focus-ring`; in dichten Rastern (Kalender, Segmente) `--ww-focus-ring-isolated` (Hof 2 px + Ring 3 px + Hof 2 px), fokussierte Zelle `z-index: 1`. **Auf Indigo-Flächen (Cockpit, B):** weißer Ring 3 px mit 2 px Indigo-Hof – auch um die weiße aktive Tab-Pille (D-22).
 - **Fokus nicht verdeckt (2.4.11):** `scroll-padding-top/bottom` = Höhe der fixierten Leisten (`--ww-sticky-bar-h`, §4.3), damit fokussierte Kalendertage nie unter Header/Werkzeugleiste liegen.
 - Fokusreihenfolge = visuelle Reihenfolge. Fixierte Werkzeugleiste unten steht im DOM **vor** dem Kalender (wird zuerst erreicht) – visuelle Position unten ist zulässig, weil Skip-Links beide Ziele erreichbar machen. (Alternative bei Review-Bedenken: DOM nach Kalender + Skip-Link „Zu den Werkzeugen“.)
 
@@ -221,13 +253,33 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 - Snackbar `role="status"`; kritische Fehler `role="alert"`.
 - Bilder: Illustrationen in Leerzuständen dekorativ (`alt=""`); informative Icons ohne Text bekommen `aria-label` (z. B. Kommentar-Symbol «Kommentar von Kemal»).
 
+### 7.5 Bewegung, Feier & Haptik (F-052, Q17)
+Motion-Details: `docs/motion/interaktionen.md`. UX-Regeln:
+
+**Schalter „Bewegung reduzieren“ (W13, Karte „Darstellung“)**
+- Echter Schalter `<button role="switch" aria-checked>` mit sichtbarem Label, Standard **aus = folgt dem Gerät**. An = reduzierte Bewegung unabhängig vom Gerät. Kann Bewegung nur reduzieren.
+- Speichert **sofort** (wie „Sprache & Region“, Snackbar «Gespeichert»), im Konto (geräteübergreifend) und in `localStorage` (erster Frame nach dem Laden korrekt, auch nach Abmelden auf diesem Gerät). Wirkt ohne Neuladen über `data-motion="reduce"` am `<html>`.
+- **Gerät meldet bereits „reduzieren“:** Schalter wird **an** angezeigt und ist nicht bedienbar (`aria-disabled="true"`), Grund steht darunter (Regel §1.4). Nicht angemeldet: Gerät bzw. lokal gespeicherte Wahl.
+- Texte: Label «Bewegung reduzieren» / «Reduce motion» · Hilfetext «Weniger Animationen, kein Konfetti, keine Vibration. Inhalte blenden nur noch sanft ein.» / «Fewer animations, no confetti, no vibration. Content simply fades in.» · Zustand aus: «Aus: Wir richten uns nach der Einstellung deines Geräts.» / «Off: we follow your device setting.» · Gerät reduziert: «Ist an, weil dein Gerät Bewegung reduziert. Ändern kannst du das in den Einstellungen deines Geräts.» / «On because your device reduces motion. You can change this in your device settings.»
+- **Wirkung:** keine Skalierung, kein Gleiten, kein Konfetti, keine Wellen/Staffeln, kein Wackeln (Code-Feld), kein Smooth-Scroll (Sprung), kein blinkender Caret, keine Geste-Animation (statische Skizze), **keine Vibration**. Unverändert: Zustände, Texte, Fokus, Auto-Scroll beim Ziehen, Ladezustände.
+
+**Feier „Es geht los!“ (F-012)**
+- Orga: sofort nach `[Termin festlegen]` (Fokus §4.2). Mitglieder: beim **ersten Öffnen der Übersicht** nach der Festlegung (Standard-Tab in Phase 3). Öffnet jemand direkt einen anderen Tab, steht dort ein Banner «Der Termin steht fest! [Ansehen]» → Übersicht → Feier. Konflikt-Banner (W14) ebenso.
+- **Einmal pro Person und Festlegung**, serverseitig je Mitgliedschaft gemerkt (geräteübergreifend); der Merker wird gesetzt, sobald die Feier sichtbar startet (`visibilityState = visible`). Spätere Besuche: Ergebnis-Karte statisch. Neue Festlegung mit **anderem** Zeitraum → erneut; gleicher Zeitraum → nicht. Wer in Phase 3 beitritt, sieht sie einmal.
+- Kein Fokus-Sprung bei Mitgliedern (normaler Seitenaufruf). Konfetti-Ebene `aria-hidden`, `pointer-events: none`, beendet bei Tipp/Scroll/Taste.
+- Countdown steht als **Text** in der Ergebnis-Karte (W11), Ring ist Dekoration.
+
+**Vibration (Haptik)**
+- Nur zwei Stellen: (1) Ziehen startet nach 300 ms Halten (Meine Tage, B.2) – 10 ms; (2) Ring/Siegel der Feier schließt sich – kurzes Muster (≈ 12-40-12 ms).
+- Nur mit `navigator.vibrate` (praktisch Android); iOS nie. **Best effort:** Fehler/fehlende Nutzer-Aktivierung still ignorieren (beim Öffnen per Chat-Link vibriert die Mitglieder-Feier daher oft nicht – gewollt). Aus bei reduzierter Bewegung. Nie Töne. Nie einzige Rückmeldung (es gibt immer eine sichtbare).
+
 ## 8. Interaktions-Details nach Ansicht (Kurzreferenz)
 
 | Ansicht | Kernregeln | Flow |
 |---|---|---|
 | Einladung | Ein URL-Zustandsautomat, Kontext-Karte immer sichtbar, `pendingAuth` | A |
 | Meine Tage | Pinsel, Tippen = Umschalten, Ziehen = Datumsbereich, Bereichsmodus, Undo, Autosave, Abgabe | B |
-| Gruppe | Vorschläge zuerst (mobil), lokale Filter, Tagesdetail mit Tag-für-Tag-Navigation | C |
+| Gruppe | Vorschläge zuerst (mobil), Kennzahl-Box im Kopf, lokale Filter, Vorschlag-Leiste im Kalender (§4.11), Tagesdetail mit Tag-für-Tag-Navigation | C |
 | Abstimmen | Vorbelegung bestätigen, Sofortspeichern, Ergebnisse erst nach eigener Stimme (Orga sieht immer alles; *bestätigt (Auftraggeber 2026-10-08)*) | D |
 | Meine Reisen | To-dos zuerst, Karten mit Phase + Fortschritt | E |
 
@@ -285,6 +337,11 @@ Optik und Maße: design-system §6.1–§6.5. Verhalten/Inhalt verbindlich hier:
 | festlegen | Termin festlegen | Lock in dates |
 | Organisator (Rolle) | Orga | Organizer – *bestätigt (Auftraggeber 2026-10-08)* |
 | Rang-Abzeichen Abstimmung | Platz 1 | Top choice |
+| Phasenzeile im Reise-Kopf (B) | Tage sammeln · 5/7 fertig · Abstimmung läuft · 4/7 fertig · Steht fest · 7 dabei | Collecting dates · 5/7 done · Voting open · 4/7 done · It's on · 7 going |
+| Kennzahl-Box Gruppe (B) | 5 von 7 haben abgegeben · Alle haben abgegeben. | 5 of 7 have submitted · Everyone has submitted. |
+| Kennzahl-Kacheln Abstimmen (B) | noch 3 Tage / bis Do., 15. April · 4 von 7 / haben abgestimmt · Frist abgelaufen | 3 days left / until Thu, 15 April · 4 of 7 / have voted · Deadline passed |
+| Countdown Ergebnis | noch 23 Tage · noch 1 Tag · Heute geht's los! · Gute Reise! | 23 days to go · 1 day to go · It's today! · Have a great trip! |
+| Konto-Abschnitt / Schalter | Darstellung · Bewegung reduzieren | Appearance · Reduce motion |
 | Mitglied | Mitglied | Member |
 | Platzhalter | Platzhalter („fehlt noch“) | Placeholder („not joined yet“) |
 | Einladungslink | Einladungslink | Invite link |
@@ -329,6 +386,9 @@ Regeln: `{names}` als «Kemal, Sara und Jonas» / «Kemal, Sara and Jonas»; ab 
 | Pinsel-Label | ≤ 10 | „Geht nicht“ / „Can't“ |
 | Primärbutton mobil | ≤ 22 | „Fertig – abgeben“ / „Done – submit“ |
 | Phasen-Chip | ≤ 22 (+ Datum) | „Abstimmung läuft“ / „Voting open“ |
+| Phasenzeile Reise-Kopf (B) | ≤ 30, Umbruch statt Kürzen | „Abstimmung läuft · 4/7 fertig“ / „Voting open · 4/7 done“ |
+| Kennzahl-Kachel (B) | Zahl ≤ 12 + Zeile ≤ 22, 2 Zeilen | „noch 3 Tage“ / „bis Do., 15. April“ |
+| „So geht's“-Kacheltitel W01 (B) | ≤ 32, max. 3 Zeilen | „2 · Alle tippen ihre freien Tage“ |
 | Kalenderzelle | nur Ziffern/Symbole | – |
 | Snackbar | ≤ 60 + Aktion ≤ 12 | „8 Tage auf ‚geht nicht‘ gesetzt“ · „Rückgängig“ / „Undo“ |
 | Überschrift h1 mobil | ≤ 28 je Zeile, max. 2 Zeilen | – |
@@ -360,11 +420,12 @@ Bestätigt vom Auftraggeber 2026-10-08. Gilt für UI, Titel, Mails, Teilen-Texte
 9. **Kein Mischbetrieb** und Sprachwechsel: s. §9.
 
 ## 11. Datenschutz in der Oberfläche
-- Einladungs-Vorschau zeigt nie Namen außer Orga-Vorname (F-003).
+- Einladungs-Vorschau zeigt nie Namen außer Orga-Vorname (F-003) – auch keine Initialen in Avatar-Reihen (Reisekarte B: neutrale Punkte + „+1“).
 - Hinweis Datenschutz/Nutzungsbedingungen als Satz unter dem Namensfeld bzw. E-Mail-Feld: «Mit dem Fortfahren akzeptierst du die [Nutzungsbedingungen] und hast den [Datenschutzhinweis] gelesen.» – Links öffnen in neuem Tab (Flow bleibt erhalten).
 - Kommentar-Feld: Hinweis «Alle in der Reise können das lesen.»
 - Keine Tracker, kein Cookie-Banner (F-013); Sprache-Cookie ist technisch notwendig.
 
 ## Änderungen
+- 2026-10-08 (Runde 3, Richtung B + Q17): §2 Höhenbudget mit Cockpit-Kopf; §3 kompakter sticky Kopf, kein globaler Header in Reisen; §4.2 Fokus nach Festlegen (M-U10); neu §4.10 Cockpit-Kopf & Kennzahlen (Kennzahl-Box W09, Kacheln W10), §4.11 Vorschlag-Leiste W09, §4.12 Werkzeugleiste W08; §6 Erfolgsmomente ≤ 1 s / Feier ≤ 2,6 s (M-U2); §7.1 Bewegung; neu §7.5 Schalter „Bewegung reduzieren“, Feier für alle, Vibration (Q17); §10.2/§10.4 Glossar und Budgets für B. Entscheidungen: abstimmung-design §8–§9.
 - 2026-10-08 (Auftraggeber-Entscheidungen): EN-Produktname „When do we go?“ (§3 Seitentitel, §4.5, §9, §10.2, EN-Teilen-Text Einladung §10.3, Mail-Betreff/Absender §10.5, neue Schreibregeln §10.6); Vermerke „vorbehaltlich Auftraggeber“ → „bestätigt (Auftraggeber 2026-10-08)“.
 - 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.

@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 800 210" width="800" height="210">
+  <title>Phasen-Himmel mit Sonnenbogen (Richtung A) – Kopfbereich einer Reise je Phase, rein dekorativ</title>
+  <desc>Vier Varianten nebeneinander: Tage sammeln (Sonne tief), Abstimmen (Sonne steigt), Steht fest (Sonne oben), Dunkel (Mond). Für die App: nur der Bogen samt Sonne/Mond als Deko-Ebene über einem CSS-Verlauf; Koordinaten gelten für 390 px Breite und 171 px Höhe.</desc>
+  <defs>
+    <linearGradient id="ww-a-p1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#BFE9E1"/><stop offset="1" stop-color="#DDF3EE"/></linearGradient>
+    <linearGradient id="ww-a-p2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D7CCFF"/><stop offset="1" stop-color="#ECE6FF"/></linearGradient>
+    <linearGradient id="ww-a-p3" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFC76B"/><stop offset="1" stop-color="#FFEBD0"/></linearGradient>
+    <linearGradient id="ww-a-night" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0F22"/><stop offset="1" stop-color="#1A2048"/></linearGradient>
+    <path id="ww-a-arc" d="M28 110A62 62 0 0 1 152 110"/>
+    <path id="ww-a-wave" d="M0 172C20 166 40 166 60 171S100 177 120 171S165 166 190 171V200H0Z"/>
+  </defs>
+  <g transform="translate(5 5)">
+    <rect width="190" height="200" rx="18" fill="url(#ww-a-p1)"/>
+    <use xlink:href="#ww-a-arc" href="#ww-a-arc" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/>
+    <circle cx="36.3" cy="79" r="11" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2"/>
+    <use xlink:href="#ww-a-wave" href="#ww-a-wave" fill="#FFF8EF"/>
+  </g>
+  <g transform="translate(205 5)">
+    <rect width="190" height="200" rx="18" fill="url(#ww-a-p2)"/>
+    <use xlink:href="#ww-a-arc" href="#ww-a-arc" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/>
+    <circle cx="46.2" cy="66.2" r="12" fill="#FFC93C" stroke="#1D2440" stroke-width="2.2"/>
+    <use xlink:href="#ww-a-wave" href="#ww-a-wave" fill="#FFF8EF"/>
+  </g>
+  <g transform="translate(405 5)">
+    <rect width="190" height="200" rx="18" fill="url(#ww-a-p3)"/>
+    <use xlink:href="#ww-a-arc" href="#ww-a-arc" fill="none" stroke="#1D2440" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".45"/>
+    <g transform="translate(90 48)" fill="#FFC93C" stroke="#1D2440" stroke-width="1.8">
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(45)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(90)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(135)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(180)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(225)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(270)"/>
+      <rect x="-2.5" y="-24" width="5" height="8" rx="2.5" transform="rotate(315)"/>
+      <circle r="13" stroke-width="2.2"/>
+    </g>
+    <use xlink:href="#ww-a-wave" href="#ww-a-wave" fill="#FFF8EF"/>
+  </g>
+  <g transform="translate(605 5)">
+    <rect width="190" height="200" rx="18" fill="url(#ww-a-night)"/>
+    <use xlink:href="#ww-a-arc" href="#ww-a-arc" fill="none" stroke="#F5EEE3" stroke-width="2" stroke-dasharray="1 7" stroke-linecap="round" opacity=".35"/>
+    <path d="M121 44A12 12 0 0 0 121 68A16 16 0 0 1 121 44Z" fill="#FFE08A"/>
+    <g fill="#F5EEE3"><circle cx="20" cy="24" r="1.3"/><circle cx="60" cy="40" r="1"/><circle cx="96" cy="18" r="1.4"/><circle cx="170" cy="80" r="1"/><circle cx="150" cy="28" r="1.2"/></g>
+    <path d="M86 86l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFE08A"/>
+    <use xlink:href="#ww-a-wave" href="#ww-a-wave" fill="#12162B"/>
+  </g>
+</svg>

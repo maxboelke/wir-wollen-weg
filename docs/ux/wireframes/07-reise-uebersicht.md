@@ -14,7 +14,37 @@ Diese Datei zeigt auch den **Reise-Rahmen** (Header + Tabs), der für W08–W11 
 │ Übersicht│Meine Tage│Gruppe│Abstimmen│  sticky Tabs (Links, aria-current)
 └────────────────────────────────────┘
 ```
-Reisemenü „⋯“ (Bottom-Sheet): Freunde einladen · Mein Name in dieser Reise · *(Orga:)* Reise bearbeiten · Gruppe erinnern · Festlegung aufheben · Reise löschen · Reise verlassen.
+Reisemenü „⋯“ (Bottom-Sheet): Freunde einladen · Mein Name in dieser Reise · *(Orga:)* Reise bearbeiten · Gruppe erinnern · Festlegung aufheben · Reise löschen · Reise verlassen · Hilfe.
+
+## Reise-Rahmen Richtung B „Cockpit“ (Q18) – maßgeblich ab Look & Feel 2.0
+
+Ersetzt den Rahmen oben (kein globaler Header in Reisen). Regeln: [ux-spec §3, §4.10](../ux-spec.md), Entscheidungen [abstimmung-design §8.1](../abstimmung-design.md).
+
+```
+┌────────────────────────────────────┐
+│▓(←)  Lissabon 2027             (⋯)▓│  48 px · sticky · runde Icon-Tasten 44 px
+│▓     ● Tage sammeln · 5/7 fertig  ▓│  Phasenzeile (Text trägt die Phase, Punkt = Zusatz;
+│▓(Übersicht)(Meine Tage)(Gruppe)(Ab│  sr-only „5 von 7 fertig“) · Tab-Pillen ≥ 44 px, Spur 48 px,
+│▓                                  ▓│  < 375 px scrollbar mit Verlaufskante · sticky
+│▓ ┌──────────────────────────────┐ ▓│  ── ab hier NICHT sticky, scrollt mit ──
+│▓ │ (◔) 5 von 7 haben abgegeben  │ ▓│  höchstens EINE Kennzahl je Tab (Tabelle unten)
+│▓ │     Noch offen: Kemal, Sara  │ ▓│
+│▓ │                  [Erinnern]  │ ▓│  nur Orga
+│▓ └──────────────────────────────┘ ▓│
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯  Unterkante gerundet
+```
+
+| Tab | Kennzahl unter den Tabs (scrollt mit) |
+|---|---|
+| Übersicht | Phase 1: Ring + «5 von 7 haben abgegeben» (+ Orga `[Erinnern]`) · Phase 2: Ring + «4 von 7 haben abgestimmt» + Frist · Phase 3: Vorfreude-Ring + Countdown (W11) |
+| Meine Tage | keine |
+| Gruppe | Kennzahl-Box (W09) |
+| Abstimmen | keine (Kennzahl-Kacheln im Inhalt, W10) |
+
+- Phasenzeile: «Tage sammeln · 5/7 fertig» · «Abstimmung läuft · 4/7 fertig» · «Steht fest · 7 dabei» (EN «Collecting dates · 5/7 done» · «Voting open · 4/7 done» · «It's on · 7 going»).
+- Die „Nächster Schritt“-Karte (unten) bleibt im Inhalt; ihr Fortschrittsbalken entfällt, wenn der Ring im Kopf dieselbe Zahl zeigt (keine Doppelung) – Text und Aktion bleiben.
+- Reisemenü „⋯“ zusätzlich mit «Hilfe» als letztem Eintrag (sitemap §5).
+- Querformat < 480 px Höhe: kompakter Kopf blendet beim Scrollen nach unten aus.
 
 ## Phase 1 „Tage sammeln“ (mobil, Sicht Orga)
 

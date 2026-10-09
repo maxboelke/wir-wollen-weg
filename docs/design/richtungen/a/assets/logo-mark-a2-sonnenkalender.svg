@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-labelledby="t d">
+  <title id="t">Bildmarke A 2.0 „Sonnenkalender“ (Richtung A)</title>
+  <desc id="d">Kalenderblatt mit Morgenhimmel in Koralle, Sonne geht über zwei Wellen auf; Tinte-Kontur im Aufkleber-Stil. Grundidee von Logo A bleibt.</desc>
+  <rect x="6" y="11" width="52" height="47" rx="13" fill="#FF8A6B"/>
+  <circle cx="32" cy="41" r="12.5" fill="#FFC93C" stroke="#1D2440" stroke-width="2.5"/>
+  <path d="M6 43c6-3.5 13-3.5 19 0s13 3.5 19 0c5-3 10-3.2 14-1.5V45a13 13 0 0 1-13 13H19A13 13 0 0 1 6 45z" fill="#0F7D72"/>
+  <path d="M7.5 51c6-3 12-3 18 0s12 3 18 0c5-2.5 9.5-2.7 13-1A13 13 0 0 1 45 58H19A13 13 0 0 1 7.5 51z" fill="#0B4A52"/>
+  <path d="M6 43c6-3.5 13-3.5 19 0s13 3.5 19 0c5-3 10-3.2 14-1.5" fill="none" stroke="#1D2440" stroke-width="2.5" stroke-linecap="round"/>
+  <rect x="6" y="11" width="52" height="47" rx="13" fill="none" stroke="#1D2440" stroke-width="3"/>
+  <rect x="18" y="4.5" width="7" height="13" rx="3.5" fill="#FFF8EF" stroke="#1D2440" stroke-width="3"/>
+  <rect x="39" y="4.5" width="7" height="13" rx="3.5" fill="#FFF8EF" stroke="#1D2440" stroke-width="3"/>
+</svg>

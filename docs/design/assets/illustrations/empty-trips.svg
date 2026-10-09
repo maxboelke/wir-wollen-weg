@@ -1,48 +1,43 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" role="img" aria-labelledby="t d">
-  <title id="t">Noch keine Reisen</title>
-  <desc id="d">Ein gepackter Koffer steht am Meer, eine gepunktete Route führt zur aufgehenden Sonne. Leerzustand für „Meine Reisen“ (F-044).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Noch keine Reisen</title>
+  <desc>Leerzustand „Meine Reisen“ (W04, F-044): ein Koffer vor der aufgehenden Sonne über Minze-Wellen, in einer Lavendel-Kachel. Dekorativ.</desc>
+  <!-- v1.0, Stil B: flach, ohne Kontur, Kachel statt Teller, max. 5 Palettenfarben. Ebenen (M-D3): plate, sun, sea, suitcase. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .sea   { fill: var(--ww-illu-teal-light, #A6DBD2); }
-    .sea2  { fill: var(--ww-illu-teal, #0E6A68); }
-    .sun   { fill: var(--ww-illu-sun, #F4B942); }
-    .case  { fill: var(--ww-illu-coral, #E8694A); }
-    .strap { fill: var(--ww-illu-coral-dark, #B23F22); }
-    .ink   { fill: var(--ww-illu-ink, #1C2526); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .route { stroke: var(--ww-illu-teal, #0E6A68); }
-    .shadow{ fill: var(--ww-illu-ink, #1C2526); opacity: 0.12; }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-coral { fill: var(--ww-illu-coral, #F0503F); }
+    .wi-s-brand { stroke: var(--ww-illu-brand, #2B2266); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .sea   { fill: var(--ww-illu-teal-light, #1D4B46); }
-      .sea2  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
-      .case  { fill: var(--ww-illu-coral, #F28A6E); }
-      .strap { fill: var(--ww-illu-coral-dark, #B23F22); }
-      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .route { stroke: var(--ww-illu-teal, #5FC9BA); }
-      .shadow{ fill: #000000; opacity: 0.35; }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+      .wi-coral { fill: var(--ww-illu-coral, #FF8A7A); }
+      .wi-s-brand { stroke: var(--ww-illu-brand, #5B48C9); }
     }
   </style>
   <defs>
-    <clipPath id="et-plate"><circle cx="120" cy="96" r="76"/></clipPath>
+    <clipPath id="wwet-plate"><rect x="28" y="12" width="184" height="156" rx="32"/></clipPath>
   </defs>
-  <circle class="plate" cx="120" cy="96" r="76"/>
-  <g clip-path="url(#et-plate)">
-    <circle class="sun" cx="164" cy="92" r="24"/>
-    <path class="sea" d="M30 112c18-6 36-6 54 0s36 6 54 0 36-6 54 0 36 6 54 0v80H30z"/>
-    <path class="sea2" d="M30 132c18-5 36-5 54 0s36 5 54 0 36-5 54 0 36 5 54 0v60H30z" opacity="0.35"/>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g clip-path="url(#wwet-plate)">
+    <g data-anim="sun">
+      <circle class="wi-sun" cx="160" cy="92" r="34" opacity=".3"/>
+      <circle class="wi-sun" cx="160" cy="92" r="22"/>
+    </g>
+    <g data-anim="sea">
+      <path class="wi-mint" d="M28 118c18-6 36-6 54 0s36 6 54 0 36-6 54 0 22 4 30 2v50H28z"/>
+      <path class="wi-mintd" d="M28 136c18-5 36-5 54 0s36 5 54 0 36-5 54 0 22 4 30 2v30H28z"/>
+    </g>
   </g>
-  <!-- Route -->
-  <path class="route" d="M150 126c14-4 24-14 30-30" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-dasharray="0 9"/>
-  <!-- Koffer -->
-  <ellipse class="shadow" cx="112" cy="150" rx="42" ry="4"/>
-  <path class="inkS" d="M100 94v-9a4 4 0 0 1 4-4h16a4 4 0 0 1 4 4v9" fill="none" stroke-width="4" stroke-linecap="round"/>
-  <rect class="case" x="76" y="94" width="72" height="52" rx="9"/>
-  <rect class="strap" x="92" y="94" width="5" height="52"/>
-  <rect class="strap" x="127" y="94" width="5" height="52"/>
-  <circle class="sun" cx="112" cy="118" r="8"/>
-  <circle class="ink" cx="88" cy="149" r="4"/>
-  <circle class="ink" cx="136" cy="149" r="4"/>
+  <g data-anim="suitcase">
+    <path class="wi-s-brand" d="M86 84v-9a5 5 0 0 1 5-5h18a5 5 0 0 1 5 5v9" fill="none" stroke-width="5" stroke-linecap="round"/>
+    <rect class="wi-coral" x="64" y="84" width="72" height="56" rx="12"/>
+    <rect class="wi-brand" x="80" y="84" width="6" height="56" opacity=".25"/>
+    <rect class="wi-brand" x="114" y="84" width="6" height="56" opacity=".25"/>
+    <circle class="wi-sun" cx="100" cy="110" r="8"/>
+  </g>
 </svg>

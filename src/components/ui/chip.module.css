@@ -1,0 +1,71 @@
+/* Status chips – design-system §9.14 (height 26, padding 3/10, 13/700, icon 15). */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  min-height: calc(var(--ww-space-6) + var(--ww-space-0-5));
+  padding: var(--ww-space-0-5) calc(var(--ww-space-2) + var(--ww-space-0-5));
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-snug);
+}
+
+.yes {
+  background: var(--ww-vote-yes-bg);
+  color: var(--ww-vote-yes-fg);
+}
+
+.maybe {
+  background: var(--ww-vote-maybe-bg);
+  color: var(--ww-vote-maybe-fg);
+}
+
+.no {
+  background: var(--ww-vote-no-bg);
+  color: var(--ww-vote-no-fg);
+}
+
+.holiday {
+  background: var(--ww-color-holiday-tint);
+  color: var(--ww-color-holiday-text);
+}
+
+.info {
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+}
+
+.neutral {
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text-muted);
+}
+
+.collect {
+  background: var(--ww-phase-collect-bg);
+  color: var(--ww-phase-collect-fg);
+}
+
+.vote {
+  background: var(--ww-phase-vote-bg);
+  color: var(--ww-phase-vote-fg);
+}
+
+.fixed {
+  background: var(--ww-phase-fixed-bg);
+  color: var(--ww-phase-fixed-fg);
+}
+
+.past {
+  background: var(--ww-phase-past-bg);
+  color: var(--ww-phase-past-fg);
+}
+
+/* Holiday dog-ear in front of the text (decorative; the word carries the meaning). */
+.dogEar {
+  width: 0;
+  height: 0;
+  border-top: var(--ww-space-2) solid var(--ww-color-holiday-mark);
+  border-left: var(--ww-space-2) solid transparent;
+}

@@ -18,11 +18,12 @@ Der CEO:
 | `developer` | Umsetzung in Code, Tests | Quellcode |
 | `reviewer` | Code-Review, Tests, Bugs, Fix-Aufträge | `docs/review/` |
 | `operations-manager` | Stack, Tooling, CI/CD, Hosting, Recht, Status-Board | `docs/ops/` |
+| `motion-designer` | Animationen, Übergänge, Micro-Interactions, Scroll-/Klick-Effekte, Motion-Tokens | `docs/motion/` |
 
 ## Standard-Ablauf
 1. **Planung** – `product-manager` erstellt PRD, Features und Roadmap. CEO klärt offene Fragen mit dem Nutzer.
-2. **Konzept (parallel)** – `ui-ux` (Sitemap, Flows, Wireframes), `designer` (Design-System, Tokens, Assets), `operations-manager` (Tech-Stack, Setup, Hosting).
-3. **Abstimmung** – Designer und UI/UX gleichen sich über `docs/design/abstimmung-ux.md` und `docs/ux/abstimmung-design.md` ab; der CEO löst verbleibende Konflikte.
+2. **Konzept (parallel)** – `ui-ux` (Sitemap, Flows, Wireframes), `designer` (Design-System, Tokens, Assets), `motion-designer` (Bewegung, Übergänge, Prototypen), `operations-manager` (Tech-Stack, Setup, Hosting).
+3. **Abstimmung** – Designer und UI/UX gleichen sich über `docs/design/abstimmung-ux.md` und `docs/ux/abstimmung-design.md` ab, der Motion Designer über `docs/motion/abstimmung.md`; der CEO löst verbleibende Konflikte.
 4. **Umsetzung** – `developer` baut Feature für Feature (nach Feature-IDs).
 5. **Review** – `reviewer` prüft und testet. Bei ❌ gehen Fix-Aufträge (`docs/review/findings.md`) zurück an `developer`; Schleife bis ✅.
 6. **Release** – `operations-manager` bereitet Deployment vor; CEO berichtet dem Nutzer.
@@ -45,6 +46,9 @@ Der CEO liest zu Beginn jeder Sitzung diesen Abschnitt, `docs/product/PRD.md` (i
 - **Arbeitsmodus: Offline-Demo.** Kein Hosting, keine Domain, keine Konten/Abos – alles läuft lokal (Mails über Mailpit).
 - **⚠ Vor Go-Live zwingend mit dem Auftraggeber klären (CEO erinnert daran!):** echte Betreiber-/Impressumsangaben statt Platzhalter (Q14), Rechtstexte-Weg Generator/Anwalt (Q16), Domain + Hosting-/Mail-Konten (Q15). Checkliste: `docs/ops/compliance-checklist.md`, `docs/ops/deployment.md`.
 - **Offen beim Auftraggeber (nicht blockierend):** PRD §12 Q7–Q10.
-- **P1-0 Scaffold + P1-0a Auth-Spike (2026-10-08):** umgesetzt, Reviewer ⚠️ freigegeben mit Anmerkungen (R-001–R-006, R-008–R-012 erledigt), CI grün, PR #4 wartet auf Freigabe des Auftraggebers. Offen fürs Inkrement 1: R-007, R-013, R-014; Rate-Limits pro E-Mail (hoch). Hinweis: lokal Node ≥ 24 verwenden (CI läuft auf 24).
-- **Offen beim Auftraggeber:** Ablage `docs/review/findings.md` (Reviewer durfte nicht schreiben – Freigabe erfragt).
-- **Nächster Schritt:** Nach Merge von PR #4 Inkrement 1 (F-046, F-040–F-042, F-051-Hilfelinks) mit `developer`; optional Tunnel-Test T2 (OPS-10, erst nach R-005 – erledigt).
+- **P1-0 Scaffold + P1-0a Auth-Spike:** PR #4 gemergt (2026-10-08). Findings in `docs/review/findings.md` (offen: R-007, R-013, R-014, R-015; Rate-Limits pro E-Mail hoch priorisiert). Lokal Node ≥ 24 verwenden.
+- **Auftraggeber-Feedback 2026-10-08 zum App-Stand:** Optik „zu spartanisch“ – App soll ansprechend sein und Spaß machen; später Animationen/Motion Graphics. Neuer Agent `motion-designer` angelegt.
+- **Design-Sprint „Look & Feel 2.0“ (freigegeben 2026-10-08):** Designer erstellt zuerst **Richtung A ohne Vorgabe (unbeeinflusst)**, danach **Richtung B mit Inspiration von der App „Finanzguru“** (Wunsch des Auftraggebers – Finanzguru dem Designer erst NACH Fertigstellung von A nennen). Motion Designer parallel (Motion-System, Interaktions-Katalog, Prototypen). Danach Auswahl durch den Auftraggeber → UI-Fundament → Inkremente 1–5 im neuen Look.
+- **Richtungswahl (2026-10-08):** Auftraggeber bevorzugt **Richtung B „Reise-Cockpit“** (`docs/design/richtungen/b/`); **Palette entschieden: B0 „Indigo & Minze“** (erste Version; Alternativen B1–B3 verworfen, PRD Q18). Motion-Entscheidungen Q17 (a)–(c): ja.
+- **Look & Feel 2.0 umgesetzt (2026-10-08):** Design-System v1.0 (Reise-Cockpit, Indigo & Minze), Motion-System + Prototypen (`docs/motion/`), Schritt 0a „UI-Fundament“ gebaut – Reviewer ⚠️ freigegeben mit Anmerkungen, PR #5 (CI grün) wartet auf Freigabe des Auftraggebers. Offen für Inkrement 1: R-016 (Fokus im vollen Code-Feld), R-017 (Eintritts-Animation blinkt bei Hydration), R-018 (Footer/Hilfe-Link, Radio – verschoben nach Inkrement 1, CEO), R-019 (Bottom-Sheet blockiert kurz), R-014; Rate-Limits pro E-Mail.
+- **Nächster Schritt:** Nach Merge von PR #5 Inkrement 1 (F-046, F-040–F-042 inkl. Konto-Schalter „Bewegung reduzieren“, F-051-Hilfelinks, Findings oben) mit `developer`, dann `reviewer`.

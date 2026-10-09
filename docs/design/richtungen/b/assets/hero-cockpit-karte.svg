@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 358 200" width="358" height="200" aria-hidden="true" focusable="false" overflow="visible">
+  <!-- Hero Startseite (W01): Übersichtskarte als Illustration. Liegt halb auf dem Indigo-Cockpit, halb auf Nebel.
+       Gruppen-IDs für Animation: ring-fortschritt, zellen, rahmen-alle, sonne, haken. -->
+  <defs>
+    <filter id="hs" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#2B2266" flood-opacity=".3"/></filter>
+  </defs>
+  <rect x="30" y="14" width="300" height="168" rx="22" fill="#A79AF2" transform="rotate(-4 180 98)"/>
+  <rect x="14" y="20" width="330" height="172" rx="24" fill="#FFFFFF" filter="url(#hs)"/>
+  <g transform="translate(56 62)">
+    <circle r="22" fill="none" stroke="#ECE9F7" stroke-width="8"/>
+    <circle id="ring-fortschritt" r="22" fill="none" stroke="#52E5B8" stroke-width="8" stroke-linecap="round" stroke-dasharray="98.7 138.3" transform="rotate(-90)"/>
+    <text y="5" text-anchor="middle" font-family="Plus Jakarta Sans, Figtree, sans-serif" font-weight="800" font-size="14" fill="#1E1A3D">5/7</text>
+  </g>
+  <rect x="92" y="48" width="118" height="10" rx="5" fill="#1E1A3D"/>
+  <rect x="92" y="66" width="80" height="8" rx="4" fill="#D6CFFA"/>
+  <g stroke="#FFFFFF" stroke-width="2.5">
+    <circle cx="258" cy="60" r="13" fill="#FFD3C7"/><circle cx="279" cy="60" r="13" fill="#C9DBFF"/><circle cx="300" cy="60" r="13" fill="#D4F2B0"/><circle cx="321" cy="60" r="13" fill="#DCD3FF"/>
+  </g>
+  <g id="zellen">
+    <rect x="31" y="98" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="74" y="98" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="117" y="98" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="160" y="98" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="203" y="98" width="38" height="24" rx="7" fill="#2B2266"/><rect x="246" y="98" width="38" height="24" rx="7" fill="#2B2266"/><rect x="289" y="98" width="38" height="24" rx="7" fill="#2B2266"/>
+    <rect x="31" y="128" width="38" height="24" rx="7" fill="#2B2266"/><rect x="74" y="128" width="38" height="24" rx="7" fill="#2B2266"/><rect x="117" y="128" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="160" y="128" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="203" y="128" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="246" y="128" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="289" y="128" width="38" height="24" rx="7" fill="#5B48C9"/>
+    <rect x="31" y="158" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="74" y="158" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="117" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="160" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="203" y="158" width="38" height="24" rx="7" fill="#EEECF5"/><rect x="246" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="289" y="158" width="38" height="24" rx="7" fill="#A79AF2"/>
+  </g>
+  <g fill="#52E5B8"><circle cx="232" cy="114" r="4.5"/><circle cx="275" cy="114" r="4.5"/><circle cx="318" cy="114" r="4.5"/><circle cx="60" cy="144" r="4.5"/><circle cx="103" cy="144" r="4.5"/></g>
+  <g id="rahmen-alle" fill="none" stroke="#52E5B8" stroke-width="3">
+    <rect x="199" y="94" width="132" height="32" rx="10"/>
+    <rect x="27" y="124" width="89" height="32" rx="10"/>
+  </g>
+  <g id="sonne">
+    <circle cx="336" cy="18" r="22" fill="#FFCF4A" opacity=".3"/>
+    <circle cx="336" cy="18" r="15" fill="#FFCF4A"/>
+  </g>
+  <g id="haken">
+    <circle cx="22" cy="186" r="16" fill="#52E5B8"/>
+    <path d="M15 186.5l4.5 4.5 8-8.5" fill="none" stroke="#2B2266" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <path d="M24 12l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#52E5B8"/>
+</svg>

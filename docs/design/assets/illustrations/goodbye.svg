@@ -1,38 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
-  <title id="t">Auf Wiedersehen</title>
-  <desc id="d">Ein kleines Segelboot fährt in den Sonnenuntergang. Für „Konto gelöscht“ und Abschiedsmomente (W14, F-043).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Auf Wiedersehen</title>
+  <desc>Konto gelöscht (W14, F-043): die Sonne geht über Minze-Wellen unter, ein kleiner Flieger zieht davon. Dekorativ.</desc>
+  <!-- v1.0, Stil B. Ruhe-Bereich (E0). Ebenen (M-D3): plate, sun, sea, plane. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .ink   { fill: var(--ww-illu-ink, #1C2526); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .sun   { fill: var(--ww-illu-sun, #F4B942); }
-    .coral { fill: var(--ww-illu-coral, #E8694A); }
-    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
-    .sea   { fill: var(--ww-illu-teal, #0E6A68); }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-brand { stroke: var(--ww-illu-brand, #2B2266); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .ink   { fill: var(--ww-illu-ink, #ECF1F0); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
-      .coral { fill: var(--ww-illu-coral, #F28A6E); }
-      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
-      .sea   { fill: var(--ww-illu-teal, #5FC9BA); }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-s-brand { stroke: var(--ww-illu-brand, #5B48C9); }
     }
   </style>
   <defs>
-    <clipPath id="gb-plate"><circle cx="80" cy="62" r="52"/></clipPath>
+    <clipPath id="wwgb-plate"><rect x="28" y="12" width="184" height="156" rx="32"/></clipPath>
   </defs>
-  <circle class="plate" cx="80" cy="62" r="52"/>
-  <g clip-path="url(#gb-plate)">
-    <circle class="coral" cx="70" cy="78" r="26"/>
-    <circle class="sun" cx="70" cy="78" r="18"/>
-    <path class="tealL" d="M20 78c10-3 20-3 30 0s20 3 30 0 20-3 30 0 20 3 30 0v50H20z"/>
-    <path class="sea" d="M20 94c10-2 20-2 30 0s20 2 30 0 20-2 30 0 20 2 30 0v30H20z" opacity="0.35"/>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g clip-path="url(#wwgb-plate)">
+    <g data-anim="sun">
+      <circle class="wi-sun" cx="120" cy="118" r="44" opacity=".25"/>
+      <circle class="wi-sun" cx="120" cy="118" r="30"/>
+    </g>
+    <g data-anim="sea">
+      <path class="wi-mint" d="M28 122c18-6 36-6 54 0s36 6 54 0 36-6 54 0 22 4 30 2v46H28z"/>
+      <path class="wi-mintd" d="M28 140c18-5 36-5 54 0s36 5 54 0 36-5 54 0 22 4 30 2v28H28z"/>
+    </g>
   </g>
-  <!-- Boot -->
-  <path class="inkS" d="M106 52v26" stroke-width="2" stroke-linecap="round"/>
-  <path class="paper inkS" d="M108 54l14 22h-14z" stroke-width="2" stroke-linejoin="round"/>
-  <path class="ink" d="M94 80h30l-5 6h-20z"/>
+  <g data-anim="plane">
+    <g transform="rotate(-14 170 50)">
+      <path class="wi-paper" d="M152 52l34-12-12 30-7-12z"/>
+      <path class="wi-s-brand" d="M152 52l34-12-12 30-7-12zM167 58l19-18" fill="none" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <path class="wi-s-brand" d="M140 66c-10 6-22 8-34 4" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0 7" opacity=".6"/>
+  </g>
 </svg>

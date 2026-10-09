@@ -1,0 +1,56 @@
+/* Snackbar – design-system §9.15, ux-spec §4.3, motion G-04 */
+.region {
+  position: fixed;
+  inset-inline: 0;
+  bottom: calc(
+    var(--ww-sticky-bar-h, 0px) + var(--ww-size-toast-gap) + env(safe-area-inset-bottom)
+  );
+  z-index: var(--ww-z-toast);
+  display: flex;
+  justify-content: center;
+  padding-inline: var(--ww-space-4);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  width: min(100%, 30rem);
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-inverse-bg);
+  color: var(--ww-color-inverse-text);
+  box-shadow: var(--ww-shadow-3);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-semibold);
+  pointer-events: auto;
+}
+
+.icon {
+  color: var(--ww-color-inverse-link);
+}
+
+.message {
+  flex: 1;
+  min-width: 0;
+}
+
+.action {
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-2);
+  border: 0;
+  background: transparent;
+  color: var(--ww-color-inverse-link);
+  font-weight: var(--ww-font-weight-extrabold);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+@media (min-width: 960px) {
+  .region {
+    justify-content: flex-start;
+    padding-inline: var(--ww-space-6);
+  }
+}

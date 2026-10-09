@@ -1,45 +1,33 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
-  <title id="t">Keine Treffer</title>
-  <desc id="d">Eine Lupe über einem Kalender mit schraffierten, blockierten Tagen – kein passender Zeitraum gefunden. Für „Keine Treffer“ in den Vorschlägen (W09, F-009).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Keine Treffer</title>
+  <desc>Leerzustand Vorschläge (W09, F-009): zwei Zeitraum-Balken, die sich nicht überlappen, darüber eine Lupe mit Funkel – hier passt gerade nichts zusammen. Dekorativ.</desc>
+  <!-- v1.0, Stil B. Ebenen (M-D3): plate, ranges, search. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
-    .tealL { fill: var(--ww-illu-teal-light, #A6DBD2); }
-    .none  { fill: #F1EEE8; }
-    .line  { fill: #CFC9C0; }
-    .subS  { stroke: var(--ww-illu-subtle, #858C8A); }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-lav { fill: var(--ww-illu-lavender, #A79AF2); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-ink { stroke: var(--ww-illu-ink, #1E1A3D); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .tealL { fill: var(--ww-illu-teal-light, #1D4B46); }
-      .none  { fill: #1C2526; }
-      .line  { fill: #3A4544; }
-      .subS  { stroke: var(--ww-illu-subtle, #6B7775); }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+      .wi-s-ink { stroke: var(--ww-illu-ink, #F3F1FF); }
     }
   </style>
-  <defs>
-    <pattern id="nm-hatch" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-      <rect class="line" width="1.5" height="5"/>
-    </pattern>
-  </defs>
-  <circle class="plate" cx="80" cy="62" r="52"/>
-  <rect class="paper inkS" x="26" y="30" width="86" height="66" rx="8" stroke-width="2"/>
-  <path class="teal" d="M27 44v-5a8 8 0 0 1 8-8h68a8 8 0 0 1 8 8v5z"/>
-  <g>
-    <rect class="none" x="34" y="52" width="14" height="12" rx="2.5"/><rect x="34" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
-    <rect class="tealL" x="52" y="52" width="14" height="12" rx="2.5"/>
-    <rect class="none" x="70" y="52" width="14" height="12" rx="2.5"/><rect x="70" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
-    <rect class="none" x="88" y="52" width="14" height="12" rx="2.5"/><rect x="88" y="52" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
-    <rect class="tealL" x="34" y="70" width="14" height="12" rx="2.5"/>
-    <rect class="none" x="52" y="70" width="14" height="12" rx="2.5"/><rect x="52" y="70" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
-    <rect class="none" x="70" y="70" width="14" height="12" rx="2.5"/><rect x="70" y="70" width="14" height="12" rx="2.5" fill="url(#nm-hatch)"/>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g data-anim="ranges">
+    <rect class="wi-paper" x="48" y="100" width="144" height="48" rx="14"/>
+    <rect class="wi-lav" x="60" y="112" width="58" height="10" rx="5"/>
+    <rect class="wi-violet" x="126" y="128" width="54" height="10" rx="5"/>
   </g>
-  <!-- Lupe -->
-  <path class="inkS" d="M122 86l14 14" stroke-width="6" stroke-linecap="round"/>
-  <circle class="paper inkS" cx="110" cy="74" r="17" stroke-width="4"/>
-  <path class="subS" d="M101 74h18" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="0 6"/>
+  <g data-anim="search">
+    <circle class="wi-paper" cx="112" cy="66" r="26"/>
+    <circle class="wi-s-ink" cx="112" cy="66" r="20" fill="none" stroke-width="6"/>
+    <path class="wi-s-ink" d="M127 81l16 16" fill="none" stroke-width="8" stroke-linecap="round"/>
+    <path class="wi-sun" d="M160 34l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/>
+    <circle class="wi-mint" cx="70" cy="44" r="5"/>
+  </g>
 </svg>

@@ -1,0 +1,70 @@
+/* Trip card – 196 px, radius 26, gradient + motif, white text only top left (§9.6) */
+.card {
+  position: relative;
+  min-height: calc(var(--ww-space-16) * 3 + var(--ww-space-1));
+  overflow: hidden;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-trip-card);
+  background: var(--ww-gradient-trip-card);
+  color: var(--ww-cockpit-text);
+  box-shadow: var(--ww-shadow-3);
+}
+
+.motif {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.content {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  min-height: inherit;
+  /* keep 80 px free on the right for the sun, 28 px at the bottom for the waves */
+  padding: var(--ww-space-4) calc(var(--ww-space-16) + var(--ww-space-4))
+    calc(var(--ww-space-6) + var(--ww-space-4)) var(--ww-space-5);
+}
+
+.label {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.plane {
+  color: var(--ww-cockpit-accent);
+}
+
+.name {
+  overflow: hidden;
+  font-size: var(--ww-text-3xl);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.by {
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.people {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  margin-top: auto;
+  padding-top: var(--ww-space-3);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.dots {
+  --ww-avatar-ring: var(--ww-indigo-600);
+}

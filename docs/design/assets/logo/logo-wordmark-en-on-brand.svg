@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 72" width="320" height="72" role="img" aria-labelledby="wwwmenb-t wwwmenb-d">
+  <title id="wwwmenb-t">When do we go?</title>
+  <desc id="wwwmenb-d">English wordmark for indigo surfaces (cockpit header, landing page): white type, "go?" in mint.</desc>
+  <!-- Nur auf Indigo #2B2266 bzw. Mitternacht: Weiß 13,7 : 1, Minze 8,7 : 1. -->
+  <defs>
+    <clipPath id="wwwmenb-clip"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
+  </defs>
+  <g transform="translate(2 6) scale(0.875)">
+    <rect x="6" y="11" width="52" height="47" rx="14" fill="#5B48C9"/>
+    <g clip-path="url(#wwwmenb-clip)">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".3"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
+    </g>
+    <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
+    <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
+  </g>
+  <text x="64" y="46" font-family="Plus Jakarta Sans, Figtree, system-ui, sans-serif" font-weight="800" font-size="28" letter-spacing="-0.56"><tspan fill="#FFFFFF">When do we </tspan><tspan fill="#52E5B8">go?</tspan></text>
+</svg>

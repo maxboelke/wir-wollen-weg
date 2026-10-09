@@ -2,7 +2,8 @@
 
 import { useTranslations } from "next-intl";
 import { useActionState, useId } from "react";
-import ui from "@/components/ui.module.css";
+import { Button } from "@/components/ui/button";
+import { FieldError, TextField } from "@/components/ui/field";
 import type { ActionResult } from "../auth/actions";
 import styles from "../auth/components/email-access-form.module.css";
 
@@ -17,36 +18,33 @@ export function JoinForm({ currentName, action }: JoinFormProps) {
   const t = useTranslations();
   const ids = useId();
   const [state, formAction, pending] = useActionState(action, {});
+  const error = state.error ? t(`auth.errors.${state.error}`) : undefined;
 
   return (
     <form className={styles.form} action={formAction} noValidate>
       {currentName ? (
-        <p>{t("invite.joinAs", { name: currentName })}</p>
+        <>
+          <p className={styles.lead}>{t("invite.joinAs", { name: currentName })}</p>
+          {error ? <FieldError id={`${ids}-error`}>{error}</FieldError> : null}
+        </>
       ) : (
         <>
-          <label className={styles.label} htmlFor={`${ids}-name`}>
-            {t("auth.nameLabel")}
-          </label>
-          <input
+          <h2 className={styles.heading}>{t("auth.nameTitle")}</h2>
+          <TextField
             id={`${ids}-name`}
-            className={styles.input}
+            label={t("auth.nameLabel")}
             type="text"
             name="name"
             autoComplete="nickname"
             maxLength={40}
             required
-            aria-invalid={state.error === "nameRequired"}
+            error={error}
           />
         </>
       )}
-      {state.error ? (
-        <p className={ui.error} role="alert">
-          {t(`auth.errors.${state.error}`)}
-        </p>
-      ) : null}
-      <button className={ui.button} type="submit" disabled={pending}>
+      <Button type="submit" block loading={pending} loadingLabel={t("invite.joining")}>
         {t("invite.confirmJoin")}
-      </button>
+      </Button>
     </form>
   );
 }

@@ -1,6 +1,6 @@
 # W13 – Konto (`/account`, `/account/email`, `/account/password`, `/account/delete`)
 
-Features: F-041, F-042, F-043, F-046, F-016 (Region) · Flows: [I](../user-flows.md#i-konto-verwalten--löschen-f-043-f-042), [F](../user-flows.md#f-sprachumschaltung-f-046), [H.2](../user-flows.md#h2-abmelden)
+Features: F-041, F-042, F-043, F-046, F-016 (Region), F-052 (Bewegung) · Flows: [I](../user-flows.md#i-konto-verwalten--löschen-f-043-f-042), [F](../user-flows.md#f-sprachumschaltung-f-046), [H.2](../user-flows.md#h2-abmelden)
 
 ## Kontoeinstellungen (mobil)
 
@@ -24,6 +24,14 @@ Features: F-041, F-042, F-043, F-046, F-016 (Region) · Flows: [I](../user-flows
 │  (•) Automatisch (Montag)          │
 │  ( ) Montag  ( ) Sonntag           │
 │ Vorschau: Fr., 3. Juli 2027        │
+│                                    │
+│ Darstellung                        │  Karte, speichert sofort (Q17 a, F-052)
+│ Bewegung reduzieren        [  ○ ]  │  role="switch", Standard aus
+│ Weniger Animationen, kein Konfetti,│  Hilfetext (aria-describedby)
+│ keine Vibration. Inhalte blenden   │
+│ nur noch sanft ein.                │
+│ Aus: Wir richten uns nach der Ein- │  Zustandszeile
+│ stellung deines Geräts.            │
 │                                    │
 │ Anmeldung                          │
 │ E-Mail  kemal@beispiel.de [Ändern] │
@@ -91,6 +99,21 @@ Setzen/Ändern: «Neues Passwort» (`new-password`, Anzeigen-Schalter, ≥ 10 Ze
 → letzter Dialog «Konto endgültig löschen?» → `/goodbye` (W14).
 
 ## Desktop
-Einspaltig, max. 640 px; Abschnitte als Karten. Optional linke Unternavigation (Profil · Sprache & Region · Anmeldung · Datenschutz) ab 960 px.
+Einspaltig, max. 640 px; Abschnitte als Karten. Optional linke Unternavigation (Profil · Sprache & Region · Darstellung · Anmeldung · Datenschutz) ab 960 px.
 
-**Darstellung / Dark Mode:** kein Schalter im MVP – die App folgt der Systemeinstellung (*bestätigt (Auftraggeber 2026-10-08)*). Kommt später ein Schalter, gehört er als „Darstellung: System · Hell · Dunkel“ in die Karte „Sprache & Region“.
+## Karte „Darstellung“ – Schalter „Bewegung reduzieren“ (Q17 a, F-052)
+
+Regeln und Texte: [ux-spec §7.5](../ux-spec.md). Reihenfolge: Profil · Sprache & Region · **Darstellung** · Anmeldung · Sitzungen · Daten & Datenschutz.
+
+| Zustand | Schalter | Zeile unter dem Schalter (DE / EN) |
+|---|---|---|
+| Standard (Gerät normal) | aus, bedienbar | «Aus: Wir richten uns nach der Einstellung deines Geräts.» / «Off: we follow your device setting.» |
+| eingeschaltet | an, bedienbar | – (Hilfetext genügt) |
+| Gerät meldet „reduzieren“ | **an, nicht bedienbar** (`aria-disabled="true"`, Kontrast ≥ 3:1) | «Ist an, weil dein Gerät Bewegung reduziert. Ändern kannst du das in den Einstellungen deines Geräts.» / «On because your device reduces motion. You can change this in your device settings.» |
+
+- Label «Bewegung reduzieren» / «Reduce motion»; Hilfetext «Weniger Animationen, kein Konfetti, keine Vibration. Inhalte blenden nur noch sanft ein.» / «Fewer animations, no confetti, no vibration. Content simply fades in.»; Kartentitel «Darstellung» / «Appearance».
+- Umschalten wirkt **sofort** ohne Neuladen; Snackbar «Gespeichert» / «Saved»; Fokus bleibt auf dem Schalter. Gespeichert im Konto + `localStorage`.
+- Leertaste/Enter schalten; Schalter-Daumen gleitet nur bei normaler Bewegung (G-12).
+- Hilfe-Seite verlinkt hierher (W15 `#bewegung`).
+
+**Dark Mode:** kein Schalter im MVP – die App folgt der Systemeinstellung (*bestätigt (Auftraggeber 2026-10-08)*). Kommt später einer, gehört er als „Farbschema: System · Hell · Dunkel“ in die Karte „Darstellung“.

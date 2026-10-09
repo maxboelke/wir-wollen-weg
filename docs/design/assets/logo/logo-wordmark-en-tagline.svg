@@ -1,36 +1,37 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 84" width="320" height="84" role="img" aria-labelledby="t d">
-  <title id="t">When do we go? Find dates for your group trip</title>
-  <desc id="d">English wordmark with tagline: calendar-sun symbol, the name "When do we go?" with "go?" in the brand colour, and the tagline "Find dates for your group trip" below.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 84" width="320" height="84" role="img" aria-labelledby="wwwmet-t wwwmet-d">
+  <title id="wwwmet-t">When do we go? Find dates for your group trip</title>
+  <desc id="wwwmet-d">English wordmark with tagline: calendar-sun symbol, the name "When do we go?" with "go?" in the brand colour, and below it "Find dates for your group trip".</desc>
   <style>
-    .ww-ink { fill: #1C2526; }
-    .ww-muted { fill: #55605F; }
-    .ww-accent { fill: #0E6A68; }
+    .wwwmet-ink { fill: #1E1A3D; }
+    .wwwmet-muted { fill: #57527A; }
+    .wwwmet-accent { fill: #5A3FD0; }
+    .wwwmet-sheet { fill: #2B2266; }
+    .wwwmet-ring { fill: #A79AF2; }
     @media (prefers-color-scheme: dark) {
-      .ww-ink { fill: #ECF1F0; }
-      .ww-muted { fill: #A9B4B2; }
-      .ww-accent { fill: #5FC9BA; }
+      .wwwmet-ink { fill: #F3F1FF; }
+      .wwwmet-muted { fill: #B9B4DC; }
+      .wwwmet-accent { fill: #52E5B8; }
+      .wwwmet-sheet { fill: #5B48C9; }
+      .wwwmet-ring { fill: #FFFFFF; }
     }
-    .ww-word { font-family: Figtree, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 750; font-size: 30px; letter-spacing: -0.01em; }
-    .ww-sub { font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 600; font-size: 13px; letter-spacing: 0.02em; }
+    .wwwmet-word { font-family: "Plus Jakarta Sans", Figtree, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 800; font-size: 28px; letter-spacing: -0.02em; }
+    .wwwmet-tag { font-family: Figtree, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; font-weight: 600; font-size: 13px; }
   </style>
-  <!-- Bildmarke A, 56 px -->
+  <defs>
+    <clipPath id="wwwmet-clip"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
+  </defs>
   <g transform="translate(2 6) scale(0.875)">
-    <defs>
-      <clipPath id="ww-wmentl-body">
-        <rect x="6" y="10" width="52" height="48" rx="12"/>
-      </clipPath>
-    </defs>
-    <rect x="6" y="10" width="52" height="48" rx="12" fill="#0E6A68"/>
-    <g clip-path="url(#ww-wmentl-body)">
-      <circle cx="32" cy="42" r="13" fill="#F4B942"/>
-      <path d="M0 44c8-4 16-4 24 0s16 4 24 0 12-4 16-2v22H0z" fill="#08403F"/>
-      <path d="M0 52c8-3 16-3 24 0s16 3 24 0 12-3 16-1v13H0z" fill="#0B4F4A"/>
+    <rect class="wwwmet-sheet" x="6" y="11" width="52" height="47" rx="14"/>
+    <g clip-path="url(#wwwmet-clip)">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".25"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
     </g>
-    <rect x="18" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
-    <rect x="40" y="4" width="6" height="12" rx="3" fill="#FBF8F3" stroke="#08403F" stroke-width="2"/>
+    <rect class="wwwmet-ring" x="18" y="5" width="7" height="12" rx="3.5"/>
+    <rect class="wwwmet-ring" x="39" y="5" width="7" height="12" rx="3.5"/>
   </g>
-  <!-- Variante mit Untertitel fuer Startseite (W01), Open Graph EN und Mail-Kopf. Nicht in der Kopfzeile verwenden.
-       Name vor Produktion in Pfade umwandeln; Untertitel darf Systemschrift bleiben. -->
-  <text x="70" y="40" class="ww-word"><tspan class="ww-ink">When do we </tspan><tspan class="ww-accent">go?</tspan></text>
-  <text x="71" y="62" class="ww-sub ww-muted">Find dates for your group trip</text>
+  <!-- Mindestbreite 300 px (Untertitel ≥ 12 px). Nur Startseite W01, OG-Bild EN, Mail-Kopf – nie in der Kopfzeile. -->
+  <text x="64" y="40" class="wwwmet-word"><tspan class="wwwmet-ink">When do we </tspan><tspan class="wwwmet-accent">go?</tspan></text>
+  <text x="65" y="62" class="wwwmet-tag wwwmet-muted">Find dates for your group trip</text>
 </svg>

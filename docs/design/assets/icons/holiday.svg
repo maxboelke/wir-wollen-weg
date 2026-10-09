@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-labelledby="t">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" role="img" aria-labelledby="t" color="#A3321F" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
   <title id="t">Feiertag</title>
-  <path d="M5 21V4"/>
-  <path d="M5 4h12l-2.5 4.5L17 13H5"/>
+  <path d="M5.5 21V4"/>
+  <path d="M5.5 4.5h12l-2.5 4.25 2.5 4.25h-12" fill="currentColor" fill-opacity=".16"/>
 </svg>

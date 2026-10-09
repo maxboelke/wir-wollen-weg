@@ -121,6 +121,28 @@ Werkzeugleiste ersetzt durch Hinweis mit Schloss-Icon (`ww-icon-lock`): «Der Te
 ### Große Schrift (≥ ca. 175 %)
 Raster bleibt; Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl (ux-spec §7.1, U-5). Werkzeugleiste: Labels umbrechen, Leiste darf höher werden; ist sie > 40 % der Viewport-Höhe, wird sie nicht fixiert, sondern steht über dem Kalender (Skip-Link „Zu den Werkzeugen“).
 
+## Richtung B „Reise-Cockpit“ (Q18) – Werkzeugleiste mobil
+
+Maßgeblich ab Look & Feel 2.0; ersetzt die Leisten-Skizze oben (Inhalte gleich). Regeln: [ux-spec §4.12](../ux-spec.md), Entscheidung [abstimmung-design §8.1 „W08“](../abstimmung-design.md). Die HTML-Skizze ([08-meine-tage.html](08-meine-tage.html)) bleibt Referenz für Grid, Tastatur und ARIA; wo sie bei der Leiste abweicht, gilt dieser Abschnitt.
+
+```
+├────────────────────────────────────┤  fixiert · KEIN Griff (kein Sheet) · obere Rundung + Schatten
+│ Entwurf                Gespeichert │  Statuszeile 16 px (links Entwurf/leer, rechts Speicherstatus)
+│ ┌──────────┬──────────┬──────────┐ │
+│ │ [▩] ✕   ●│ [▨] ◐    │ [▢] ✓    │ │  Pinsel-Radiogruppe ≤ 58 px, aria-label „Was markierst du?“
+│ │Geht nicht│ Zur Not  │  Geht    │ │  (kein sichtbares Label); gewählt = Fläche + 2-px-Rahmen + ● + fett
+│ └──────────┴──────────┴──────────┘ │
+│ [⇤⇥][↶][✦] [  Fertig – abgeben  ] │  Kacheln 44 × 48 (< 400 px), Lücke 6 · Primär 48 px, einzeilig
+└────────────────────────────────────┘  = 8 + 16 + 4 + 58 + 8 + 48 + 8 = 150 px (+ Safe Area)
+```
+- **Icon-Tasten:** `[⇤⇥]` «Zeitraum wählen» (`aria-pressed`; gedrückt = gefüllte Kachel + Hinweiszeile «Jetzt den Start antippen.» über der Leiste) · `[↶]` «Rückgängig» (`aria-disabled`, wenn leer) · `[✦]` «Schnellaktionen». Name jeweils als `aria-label` **und** Tooltip (Hover/Fokus). Ab 600 px Icon + Text.
+- **Legende „So funktioniert's“** ergänzt eine Zeile: «⇤⇥ Zeitraum: Start und Ende antippen – praktisch ohne Wischen».
+- **Nach Abgabe:** Primärbutton → «✓ Abgegeben · 14:32» (Text, gleiche Zeile) – Leiste bleibt gleich hoch, kein Layout-Sprung.
+- **Breite 360 px:** 360 − 2 × 14 Rand − 3 × 44 − 3 × 6 = **182 px** für „Fertig – abgeben“ (≈ 150 px Text + Polster) – passt; EN „Done – submit“ kürzer.
+- **Kalender-Karte (B):** unter 400 px Gesamtrand ≤ 8 px je Seite, damit die Zelle bei 360 px ≥ 44 px breit bleibt (U-1, abstimmung-design D-21).
+- **Höhen (B, 360 × 640):** kompakter Cockpit-Kopf ≈ 104 px (kein globaler Header, keine Kennzahl in diesem Tab) + Leiste 150 px = 254 px fixiert (≤ 40 %) → ≈ 300 px sichtbarer Kalender nach Browserleisten (≈ 5 Kalenderzeilen à 55 px).
+- **Vibration:** Ziehen nach 300 ms Halten → 10 ms (Android, best effort, aus bei reduzierter Bewegung; ux-spec §7.5).
+
 ## Desktop (≥ 960 px)
 
 ```

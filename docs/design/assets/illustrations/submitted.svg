@@ -1,34 +1,42 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
-  <title id="t">Deine Tage sind drin</title>
-  <desc id="d">Ein ausgefüllter Kalender mit Siegel-Häkchen. Kleine Erfolgsgrafik nach der Abgabe der Verfügbarkeit (W08, F-005).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Tage abgegeben</title>
+  <desc>Erfolg nach Abgabe (W08, F-005): Kalenderkarte mit eingetragenen Tagen in Minze, Sonne und Kreuzschraffur-Grau, rechts oben ein Minze-Siegel mit Häkchen und Funkeln. Dekorativ.</desc>
+  <!-- v1.0, Stil B. Ebenen (M-D3): plate, calendar, seal, sparks. Klein einsetzen (≤ 120 px hoch). -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .paperS{ stroke: var(--ww-illu-paper, #FFFFFF); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
-    .yes   { fill: #C6E9E2; }
-    .maybe { fill: #FDF0CF; }
-    .no    { fill: #CFC9C0; }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-yes { fill: var(--ww-avail-yes-bg, #D9F8EC); }
+    .wi-maybe { fill: var(--ww-avail-maybe-stripe, #FFDB73); }
+    .wi-no { fill: var(--ww-avail-no-bg, #DDD9EA); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-seal { stroke: var(--ww-seal-fg, #2B2266); }
+    .wi-s-plate { stroke: var(--ww-illu-plate, #ECE6FF); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .paperS{ stroke: var(--ww-illu-paper, #232E2F); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .yes   { fill: #1D4B46; }
-      .maybe { fill: #3A2E12; }
-      .no    { fill: #262D2C; }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-yes { fill: var(--ww-avail-yes-bg, #133C3B); }
+      .wi-maybe { fill: var(--ww-avail-maybe-stripe, #5A4A17); }
+      .wi-no { fill: var(--ww-avail-no-bg, #2E2860); }
+      .wi-s-seal { stroke: var(--ww-seal-fg, #14112E); }
+      .wi-s-plate { stroke: var(--ww-illu-plate, #221C4A); }
     }
   </style>
-  <circle class="plate" cx="80" cy="62" r="52"/>
-  <rect class="paper inkS" x="34" y="36" width="80" height="62" rx="8" stroke-width="2"/>
-  <path class="teal" d="M35 50v-5a8 8 0 0 1 8-8h62a8 8 0 0 1 8 8v5z"/>
-  <g>
-    <rect class="yes" x="42" y="58" width="14" height="12" rx="2.5"/><rect class="yes" x="60" y="58" width="14" height="12" rx="2.5"/><rect class="no" x="78" y="58" width="14" height="12" rx="2.5"/><rect class="no" x="96" y="58" width="12" height="12" rx="2.5"/>
-    <rect class="maybe" x="42" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="60" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="78" y="76" width="14" height="12" rx="2.5"/><rect class="yes" x="96" y="76" width="12" height="12" rx="2.5"/>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g data-anim="calendar">
+    <rect class="wi-paper" x="50" y="44" width="140" height="104" rx="18"/>
+    <rect class="wi-brand" x="64" y="58" width="56" height="8" rx="4"/>
+    <rect class="wi-yes" x="64" y="76" width="24" height="22" rx="6"/><rect class="wi-yes" x="92" y="76" width="24" height="22" rx="6"/><rect class="wi-maybe" x="120" y="76" width="24" height="22" rx="6"/><rect class="wi-yes" x="148" y="76" width="24" height="22" rx="6"/>
+    <rect class="wi-no" x="64" y="104" width="24" height="22" rx="6"/><rect class="wi-yes" x="92" y="104" width="24" height="22" rx="6"/><rect class="wi-yes" x="120" y="104" width="24" height="22" rx="6"/><rect class="wi-yes" x="148" y="104" width="24" height="22" rx="6"/>
   </g>
-  <!-- Siegel -->
-  <circle class="teal" cx="114" cy="40" r="16"/>
-  <path class="paperS" d="M106.5 40.5l5 5 9.5-10" fill="none" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <g data-anim="seal">
+    <circle class="wi-mint wi-s-plate" cx="184" cy="46" r="21" stroke-width="4"/>
+    <path class="wi-s-seal" d="M174 46.5l6.5 6.5 11-11.5" fill="none" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g data-anim="sparks">
+    <path class="wi-sun" d="M44 28l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path class="wi-mint" d="M206 92l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+  </g>
 </svg>

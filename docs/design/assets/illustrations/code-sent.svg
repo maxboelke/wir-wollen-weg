@@ -1,31 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 160 120" width="160" height="120" role="img" aria-labelledby="t d">
-  <title id="t">Code ist unterwegs</title>
-  <desc id="d">Ein Briefumschlag, aus dem eine Karte mit sechs Feldern ragt – der 6-stellige Code. Für „Code gesendet“ (W02/W03, F-040/F-041).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 96" width="120" height="96" aria-hidden="true" focusable="false">
+  <title>Code ist unterwegs</title>
+  <desc>W02/W03 (F-040/F-041): ein Brief in einer Lavendel-Kachel, oben rechts ein Minze-Siegel mit Häkchen, oben links ein Sonnen-Funkel. Dekorativ.</desc>
+  <!-- v1.0, Stil B, klein (≤ 96 px). Ruhe-Bereich (E0): nur Überblenden, höchstens Brief gleitet 8 px.
+       Ebenen (M-D3): plate, letter, seal, sparks. -->
   <style>
-    .plate { fill: var(--ww-illu-plate, #ECE5D9); }
-    .paper { fill: var(--ww-illu-paper, #FFFFFF); }
-    .inkS  { stroke: var(--ww-illu-ink, #1C2526); }
-    .teal  { fill: var(--ww-illu-teal, #0E6A68); }
-    .sun   { fill: var(--ww-illu-sun, #F4B942); }
-    .coral { fill: var(--ww-illu-coral, #E8694A); }
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-lavl { fill: var(--ww-illu-lavender-light, #D6CFFA); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-violet { stroke: var(--ww-illu-violet, #5B48C9); }
+    .wi-s-seal { stroke: var(--ww-seal-fg, #2B2266); }
     @media (prefers-color-scheme: dark) {
-      .plate { fill: var(--ww-illu-plate, #1A2324); }
-      .paper { fill: var(--ww-illu-paper, #232E2F); }
-      .inkS  { stroke: var(--ww-illu-ink, #ECF1F0); }
-      .teal  { fill: var(--ww-illu-teal, #5FC9BA); }
-      .sun   { fill: var(--ww-illu-sun, #F2C46B); }
-      .coral { fill: var(--ww-illu-coral, #F28A6E); }
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-lavl { fill: var(--ww-illu-lavender-light, #362C7A); }
+      .wi-s-violet { stroke: var(--ww-illu-violet, #A79AF2); }
+      .wi-s-seal { stroke: var(--ww-seal-fg, #14112E); }
     }
   </style>
-  <circle class="plate" cx="80" cy="64" r="52"/>
-  <circle class="sun" cx="124" cy="30" r="9"/>
-  <!-- Karte mit Code -->
-  <rect class="paper inkS" x="46" y="28" width="68" height="46" rx="6" stroke-width="2"/>
-  <g class="teal">
-    <rect x="52" y="42" width="8" height="12" rx="2"/><rect x="62" y="42" width="8" height="12" rx="2"/><rect x="72" y="42" width="8" height="12" rx="2"/>
-    <rect x="86" y="42" width="8" height="12" rx="2"/><rect x="96" y="42" width="8" height="12" rx="2"/><rect x="106" y="42" width="8" height="12" rx="2" class="coral"/>
+  <g data-anim="plate"><rect class="wi-plate" x="6" y="10" width="100" height="78" rx="26"/></g>
+  <g data-anim="letter">
+    <rect class="wi-paper" x="24" y="28" width="66" height="46" rx="10"/>
+    <path class="wi-s-violet" d="M28 34l29 21 29-21" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+    <g class="wi-lavl"><circle cx="40" cy="66" r="3"/><circle cx="50" cy="66" r="3"/><circle cx="60" cy="66" r="3"/></g>
   </g>
-  <!-- Umschlag -->
-  <path class="paper inkS" d="M34 60h92v40a6 6 0 0 1-6 6H40a6 6 0 0 1-6-6z" stroke-width="2" stroke-linejoin="round"/>
-  <path class="inkS" d="M35 62l45 26 45-26" fill="none" stroke-width="2" stroke-linejoin="round"/>
+  <g data-anim="seal">
+    <circle class="wi-mint" cx="94" cy="26" r="15"/>
+    <path class="wi-s-seal" d="M87 26.5l4.5 4.5 8-8.5" fill="none" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g data-anim="sparks">
+    <path class="wi-sun" d="M14 8l1.8 4.4 4.4 1.8-4.4 1.8-1.8 4.4-1.8-4.4-4.4-1.8 4.4-1.8z"/>
+  </g>
 </svg>

@@ -1,0 +1,26 @@
+.skeleton {
+  display: block;
+  border-radius: var(--ww-radius-xs);
+  background: var(--ww-color-surface-sunken);
+  animation: pulse 1200ms var(--ww-ease-standard) 4;
+}
+
+.round {
+  border-radius: var(--ww-radius-pill);
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
+  }
+}
+
+:global(:root[data-motion="reduce"]) .skeleton {
+  animation: none;
+}

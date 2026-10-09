@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Richtung B · Reise-Cockpit · Wir wollen weg</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500..800&amp;family=Figtree:wght@400..800&amp;display=swap" rel="stylesheet">
+<style>
+/* Richtung B: Reise-Cockpit. Primitive Farben */
+:root{
+  --ink:#1E1A3D; --ink-2:#57527A; --ink-3:#6E6992; --border:#8A86A8;
+  --mist:#F4F2FB; --sunk:#ECE9F7; --line:#E3DFF0;
+  --indigo:#2B2266; --indigo-h:#3A2F86; --indigo-p:#221B52; --violet:#5B48C9;
+  --lav-300:#A79AF2; --lav-200:#D6CFFA; --lav-100:#ECE6FF; --lav-text:#5A3FD0; --on-head-2:#CFC9F2;
+  --mint:#52E5B8; --mint-deep:#1FBF94; --mint-100:#D9F8EC; --mint-text:#00775A;
+  --sun:#FFCF4A; --sun-200:#FFDB73; --sun-100:#FFF3CC; --sun-text:#7A5200;
+  --coral:#F0503F; --coral-100:#FFE4DF; --coral-text:#A3321F;
+  --stone:#DDD9EA; --night:#14112E; --danger:#B42318; --focus:#2B59C3;
+  --f-display:"Plus Jakarta Sans","Figtree",system-ui,sans-serif;
+  --f-ui:"Figtree",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --sh-card:0 1px 2px rgba(30,26,61,.06),0 14px 30px -18px rgba(43,34,102,.38);
+  --sh-btn:0 10px 22px -10px rgba(43,34,102,.6);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%}
+body{font-family:var(--f-ui);color:var(--ink);background:#E9E6F4;line-height:1.45;
+  background-image:radial-gradient(circle at 8% 0,#D9F8EC 0,transparent 30%),radial-gradient(circle at 92% 2%,#DCD3FF 0,transparent 30%)}
+a{color:inherit}
+ul,ol{list-style:none}
+
+/* Präsentationsseite */
+.doc{max-width:1240px;margin:0 auto;padding:56px 28px 8px}
+.doc-eyebrow{display:inline-flex;align-items:center;gap:8px;font:700 13px/1 var(--f-ui);letter-spacing:.08em;text-transform:uppercase;color:var(--lav-text);background:#fff;padding:9px 14px;border-radius:999px;box-shadow:var(--sh-card)}
+.doc h1{font:800 clamp(48px,8vw,96px)/.95 var(--f-display);letter-spacing:-.035em;margin:18px 0 10px}
+.doc h1 em{font-style:normal;color:var(--lav-text)}
+.doc-sub{font:600 18px/1.45 var(--f-ui);color:var(--ink-2);max-width:780px}
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:24px;margin-top:36px}
+.doc-card{background:#fff;border-radius:28px;box-shadow:var(--sh-card);padding:24px}
+.doc-card h2{font:800 22px/1.2 var(--f-display);letter-spacing:-.01em;margin-bottom:12px}
+.doc-card p{font-size:16px;color:var(--ink-2);margin-bottom:10px;text-wrap:pretty}
+.doc-card b{color:var(--ink)}
+.doc-card.dark-card{background:var(--indigo);color:#fff;
+  background-image:radial-gradient(60% 50% at 100% 0,rgba(82,229,184,.22),rgba(82,229,184,0)),radial-gradient(60% 60% at 0 0,rgba(167,154,242,.3),rgba(167,154,242,0))}
+.dark-card p,.dark-card li{color:var(--on-head-2)}
+.dark-card b{color:#fff}
+.learn{display:grid;gap:14px;margin-top:4px}
+.learn li{display:grid;grid-template-columns:40px 1fr;gap:12px;align-items:start;font-size:15.5px;line-height:1.45}
+.learn .num{width:40px;height:40px;border-radius:13px;background:rgba(255,255,255,.1);display:grid;place-items:center;font:800 17px/1 var(--f-display);color:var(--mint)}
+.learn li span b{display:block;font:800 16px/1.3 var(--f-display);margin-bottom:2px}
+.learn li span em{font-style:normal;color:var(--mint)}
+.notake{margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.18);font-size:14.5px}
+.src{margin-top:10px;font-size:13px}
+.src a{color:var(--mint);text-underline-offset:3px}
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px}
+.sw{border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 0 0 1px var(--line)}
+.sw-c{height:64px}
+.sw-c.ramp{display:flex}
+.sw-c.ramp span{flex:1}
+.sw-t{padding:8px 10px 10px;font-size:12.5px;line-height:1.35;color:var(--ink-2)}
+.sw-t b{display:block;font-size:14px;color:var(--ink)}
+.fonts{display:grid;gap:14px}
+.font-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px solid var(--line);padding-bottom:10px}
+.font-row small{font:600 12.5px var(--f-ui);color:var(--ink-3);text-align:right}
+.spec-display{font:800 34px/1 var(--f-display);letter-spacing:-.03em}
+.spec-num{font:800 34px/1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--lav-text)}
+.spec-ui{font:500 19px/1.2 var(--f-ui)}
+.diff{display:grid;gap:8px;margin-top:4px}
+.diff li{display:grid;grid-template-columns:112px 1fr;gap:10px;font-size:14.5px;color:var(--ink-2);padding-bottom:8px;border-bottom:1px solid var(--line)}
+.diff li b{font:800 14px/1.35 var(--f-display);color:var(--ink)}
+.gallery{display:flex;flex-wrap:wrap;justify-content:center;gap:72px 56px;padding:56px 24px 40px;max-width:1900px;margin:0 auto}
+.shot{display:flex;flex-direction:column;align-items:center;gap:22px}
+.shot figcaption{text-align:center;max-width:390px}
+.shot figcaption b{display:block;font:800 20px/1.2 var(--f-display)}
+.shot figcaption span{font-size:14px;color:var(--ink-2)}
+.phone{width:390px;height:844px;border-radius:50px;overflow:hidden;position:relative;flex:none;
+  box-shadow:0 0 0 10px #1E1A3D,0 0 0 12px #3B3570,0 40px 70px -26px rgba(30,26,61,.55);margin:12px}
+.section-title{max-width:1240px;margin:24px auto 0;padding:0 28px;font:800 34px/1.1 var(--f-display);letter-spacing:-.02em}
+.parts{max-width:1240px;margin:0 auto;padding:24px 28px 96px;display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:24px}
+
+/* App: semantische Variablen (hell) */
+.app{--bg:var(--mist);--surface:#fff;--sunken:var(--sunk);--text:var(--ink);--text-2:var(--ink-2);--text-3:var(--ink-3);
+  --line-c:var(--line);--border-c:var(--border);--link:var(--lav-text);--cta:var(--indigo);--cta-text:#fff;
+  --yes-bg:var(--mint-100);--yes-fg:var(--mint-text);--maybe-bg:var(--sun-100);--maybe-fg:var(--sun-text);--no-bg:var(--sunk);--no-fg:var(--ink-2);
+  --hol-bg:var(--coral-100);--hol-fg:var(--coral-text);--hol-mark:var(--coral);--band:var(--indigo);--sel:var(--indigo);
+  --lav-bg:var(--lav-100);--lav-fg:var(--lav-text);--head:var(--indigo);--head-2:var(--on-head-2);--lane:rgba(167,154,242,.16);--sh:var(--sh-card);
+  position:absolute;inset:0;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font:400 16px/1.45 var(--f-ui);overflow:hidden}
+/* App: Dunkelmodus "Mitternacht" */
+.app.dark{--bg:#14112E;--surface:#1F1A45;--sunken:#191538;--text:#F3F1FF;--text-2:#B9B4DC;--text-3:#9C97C4;
+  --line-c:#2F2963;--border-c:#7D77AD;--link:var(--mint);--cta:var(--mint);--cta-text:#14112E;
+  --yes-bg:#133C3B;--yes-fg:var(--mint);--maybe-bg:#3A3113;--maybe-fg:#FFDB73;--no-bg:#2E2860;--no-fg:#D9D5F2;
+  --hol-bg:#4A1F1A;--hol-fg:#FFB4A8;--hol-mark:#FF8A7A;--band:var(--mint);--sel:var(--mint);
+  --lav-bg:#2E2566;--lav-fg:#C3B8FF;--head:#221B52;--lane:rgba(167,154,242,.08);--sh:0 14px 30px -16px rgba(0,0,0,.7)}
+
+.status{height:47px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:4px 30px 0 36px;font:700 15px/1 var(--f-ui);position:relative;z-index:3}
+.status svg{width:68px;height:12px}
+.home{position:absolute;bottom:8px;left:50%;width:134px;height:5px;margin-left:-67px;border-radius:3px;background:var(--text);z-index:30}
+.ic{width:20px;height:20px;flex:none;display:inline-block;vertical-align:middle}
+.ic-s{width:16px;height:16px}
+.pad{padding:0 16px}
+
+/* Kopf, Marke */
+.apphead{height:56px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:4px;padding:0 10px 0 14px;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:7px;text-decoration:none;min-width:0}
+.brand svg{width:30px;height:30px;flex:none}
+.wm{font:800 17px/1 var(--f-display);letter-spacing:-.02em;white-space:nowrap}
+.wm em{font-style:normal;color:var(--lav-text)}
+.head-actions{display:flex;align-items:center;gap:2px;flex:none}
+.lang{display:inline-flex;align-items:center;gap:4px;min-height:44px;padding:0 6px;border-radius:12px;font:700 14px/1 var(--f-ui);color:var(--link);text-decoration:none}
+.lang .ic{width:18px;height:18px}
+.pill-out{display:inline-flex;align-items:center;min-height:38px;padding:0 12px;border-radius:12px;border:1.5px solid var(--border-c);font:700 14px/1 var(--f-ui);text-decoration:none;background:var(--surface)}
+.back-link{display:inline-flex;align-items:center;gap:4px;min-height:44px;font:700 15px/1 var(--f-ui);text-decoration:none;padding-right:8px}
+
+/* Cockpit (Indigo-Kopf) */
+.cockpit{position:relative;flex:none;color:#fff;border-radius:0 0 30px 30px;padding-bottom:14px;
+  background:radial-gradient(70% 60% at 100% 0,rgba(82,229,184,.22) 0,rgba(82,229,184,0) 100%),radial-gradient(70% 70% at 0 0,rgba(167,154,242,.30) 0,rgba(167,154,242,0) 100%),var(--head)}
+.cockpit .wm em{color:var(--mint)}
+.cockpit .lang{color:var(--mint)}
+.cockpit .pill-out{background:transparent;color:#fff;border-color:rgba(255,255,255,.6)}
+.trip-head{display:flex;align-items:center;gap:8px;padding:2px 12px 10px;position:relative;z-index:3}
+.round-btn{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;flex:none;background:rgba(255,255,255,.12);color:#fff}
+.trip-t{flex:1;min-width:0}
+.trip-t b{display:block;font:800 21px/1.15 var(--f-display);letter-spacing:-.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.trip-t span{display:flex;align-items:center;gap:6px;font:600 13px/1.3 var(--f-ui);color:var(--head-2);margin-top:3px}
+.pdot{width:8px;height:8px;border-radius:50%;flex:none}
+.pdot.p1{background:var(--mint)}
+.pdot.p2{background:var(--lav-300)}
+.pdot.p3{background:var(--sun)}
+.tabs{position:relative;z-index:3;display:flex;gap:2px;margin:2px 12px 0;padding:4px;border-radius:999px;background:rgba(255,255,255,.10);overflow-x:auto;scrollbar-width:none}
+.tab{flex:1 0 auto;text-align:center;padding:9px 7px;border-radius:999px;font:700 14px/1.1 var(--f-ui);color:var(--head-2);text-decoration:none;white-space:nowrap}
+.tab[aria-current]{background:#fff;color:var(--indigo);font-weight:800;box-shadow:0 6px 14px -6px rgba(0,0,0,.45)}
+.dark .tab[aria-current]{background:#F3F1FF;color:#14112E}
+
+/* Kennzahl im Kopf */
+.kpi{display:grid;grid-template-columns:52px 1fr auto;column-gap:10px;row-gap:3px;align-items:center;margin:12px 12px 0;padding:10px 12px;border-radius:20px;background:rgba(255,255,255,.08)}
+.kpi .ring{grid-row:1 / span 2;width:52px;height:52px}
+.kpi b{grid-column:2 / span 2;font:800 16px/1.2 var(--f-display);letter-spacing:-.01em}
+.kpi p{grid-column:2;font:500 13px/1.35 var(--f-ui);color:var(--head-2)}
+.kpi .btn{grid-column:3;grid-row:2;align-self:end}
+
+/* Typo */
+.h-display{font:800 32px/1.08 var(--f-display);letter-spacing:-.03em;text-wrap:balance}
+.h1{font:800 26px/1.15 var(--f-display);letter-spacing:-.025em;text-wrap:balance}
+.h2{font:800 19px/1.2 var(--f-display);letter-spacing:-.015em}
+.lead{font:500 16px/1.45 var(--f-ui);color:var(--text-2);text-wrap:pretty}
+.cockpit .lead{color:var(--head-2)}
+.small{font-size:14px;line-height:1.45;color:var(--text-2)}
+.cockpit .small{color:var(--head-2)}
+.center{text-align:center}
+.hl-mint{font-style:normal;color:var(--mint)}
+.link{color:var(--link);font-weight:700;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:2px}
+.num{font-family:var(--f-display);font-variant-numeric:tabular-nums}
+
+/* Buttons */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;min-height:54px;padding:12px 22px;border-radius:16px;
+  border:2px solid var(--indigo);font:700 17px/1.2 var(--f-ui);text-decoration:none;text-align:center;background:var(--surface);color:var(--indigo)}
+.dark .btn{border-color:var(--text);color:var(--text)}
+.btn-primary{background:var(--cta);color:var(--cta-text);border-color:transparent;box-shadow:var(--sh-btn)}
+.dark .btn-primary{border-color:transparent;color:var(--cta-text);box-shadow:0 10px 24px -12px rgba(82,229,184,.55)}
+.btn-mint,.dark .btn-mint{background:var(--mint);color:var(--indigo);border-color:transparent;box-shadow:0 12px 26px -12px rgba(82,229,184,.75)}
+.btn-block{width:100%}
+.btn-xs{min-height:40px;padding:6px 12px;font-size:14px;border-radius:12px;gap:5px}
+
+/* Chips */
+.tag{display:inline-flex;align-items:center;gap:5px;min-height:26px;padding:3px 10px;border-radius:999px;font:700 13px/1.2 var(--f-ui)}
+.tag .ic{width:15px;height:15px}
+.tag-maybe{background:var(--maybe-bg);color:var(--maybe-fg)}
+.tag-no{background:var(--no-bg);color:var(--no-fg)}
+.tag-hol{background:var(--hol-bg);color:var(--hol-fg)}
+.tag-yes{background:var(--yes-bg);color:var(--yes-fg)}
+.tag-lav{background:var(--lav-bg);color:var(--lav-fg)}
+.tri{width:10px;height:10px;background:currentColor;clip-path:polygon(0 0,100% 0,100% 100%);flex:none}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Avatare: weiche Pastell-Plaketten mit Ring */
+.av{width:32px;height:32px;border-radius:50%;background:var(--c,#BDEFE0);display:inline-grid;place-items:center;
+  font:800 11.5px/1 var(--f-ui);color:var(--ink);flex:none;position:relative;letter-spacing:.02em;box-shadow:0 0 0 2px var(--ring,var(--surface))}
+.av-l{width:40px;height:40px;font-size:13.5px}
+.av.open{background:transparent;box-shadow:none;border:1.5px dashed var(--border-c);color:var(--text-2)}
+.av .crown{position:absolute;top:-8px;right:-6px;width:18px;height:18px;border-radius:50%;background:var(--sun);color:var(--ink);display:grid;place-items:center;box-shadow:0 0 0 2px var(--ring,var(--surface))}
+.av .crown svg{width:11px;height:11px}
+.avs{display:flex;align-items:center}
+.avs .av+.av{margin-left:-8px}
+
+/* Kacheln (Kategorie-Prinzip) */
+.tile{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none}
+.tile .ic{width:22px;height:22px}
+.t-lav{background:var(--lav-100);color:var(--lav-text)}
+.t-mint{background:var(--mint-100);color:var(--mint-text)}
+.t-sun{background:var(--sun-100);color:var(--sun-text)}
+.t-coral{background:var(--coral-100);color:var(--coral-text)}
+.t-ind{background:var(--indigo);color:var(--mint)}
+
+/* Karten */
+.card{background:var(--surface);border-radius:24px;padding:16px;box-shadow:var(--sh)}
+
+/* Kalender */
+.calcard{margin:10px 12px 0;background:var(--surface);border-radius:24px;padding:4px 8px 6px;box-shadow:var(--sh)}
+.month{display:flex;align-items:center;justify-content:space-between;padding:8px 6px 6px}
+.month b{font:800 18px/1.2 var(--f-display);letter-spacing:-.015em}
+.jump{display:flex;gap:6px}
+.jump span{display:inline-grid;place-items:center;min-height:32px;padding:0 12px;border-radius:10px;background:var(--sunken);font:700 13px/1 var(--f-ui);color:var(--text-2)}
+.jump span.on{background:var(--indigo);color:#fff}
+.wd{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;text-align:center;font:700 12px/1 var(--f-ui);color:var(--text-2);padding:8px 0 7px;
+  background:linear-gradient(90deg,transparent calc(71.43% + 1px),var(--lane) calc(71.43% + 1px));border-radius:10px 10px 0 0}
+.wd .we{color:var(--text);font-weight:800}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);column-gap:4px;row-gap:9px;padding-bottom:9px;
+  background:linear-gradient(90deg,transparent calc(71.43% + 1px),var(--lane) calc(71.43% + 1px));border-radius:0 0 10px 10px}
+.c{position:relative;height:46px;border-radius:11px;color:var(--ink);font-variant-numeric:tabular-nums}
+.c .d{position:absolute;top:5px;left:6px;font:600 12px/1 var(--f-ui)}
+.c .n{position:absolute;left:0;right:0;top:20px;text-align:center;font:800 14px/1 var(--f-display)}
+.c.l0{background:repeating-linear-gradient(45deg,rgba(30,26,61,.18) 0 1.5px,transparent 1.5px 6px),#EEECF5}
+.c.l1{background:#D6CFFA}
+.c.l2{background:#A79AF2}
+.c.l3{background:#5B48C9;color:#fff}
+.c.l4{background:#2B2266;color:#fff}
+.c.hol::before{content:"";position:absolute;top:0;right:0;width:18px;height:18px;background:var(--surface);clip-path:polygon(0 0,100% 0,100% 100%);border-top-right-radius:11px}
+.c.hol::after{content:"";position:absolute;top:0;right:0;width:13px;height:13px;background:var(--hol-mark);clip-path:polygon(0 0,100% 0,100% 100%);border-top-right-radius:11px}
+.mb{position:absolute;left:5px;bottom:5px;width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+.seal{position:absolute;right:3px;bottom:3px;width:16px;height:16px}
+.band{position:absolute;left:-2px;right:-2px;bottom:-7px;height:4px;background:var(--band)}
+.band.s{left:0;border-radius:2px 0 0 2px}
+.band.e{right:0;border-radius:0 2px 2px 0}
+.band.ol{left:0}
+.band.or{right:0}
+.band.s::before,.band.e::after{content:"";position:absolute;bottom:-2px;width:4px;height:9px;border-radius:2px;background:var(--band)}
+.band.s::before{left:0}
+.band.e::after{right:0}
+/* Meine Tage */
+.c.yes{background:var(--mint-100)}
+.c.no{--plq:#DDD9EA;background:repeating-linear-gradient(45deg,rgba(30,26,61,.26) 0 1.5px,transparent 1.5px 7px),repeating-linear-gradient(-45deg,rgba(30,26,61,.26) 0 1.5px,transparent 1.5px 7px),#DDD9EA}
+.c.maybe{--plq:#FFF3CC;background:repeating-linear-gradient(135deg,#FFDB73 0 6px,#FFF3CC 6px 12px)}
+.c.no .d,.c.maybe .d{background:var(--plq);padding:2px 3px;border-radius:5px;top:3px;left:3px}
+.pl{position:absolute;left:50%;top:31px;transform:translate(-50%,-50%);width:22px;height:22px;border-radius:50%;background:var(--plq);display:grid;place-items:center;box-shadow:0 0 0 1.5px rgba(30,26,61,.4)}
+.pl svg{width:13px;height:13px}
+.info-row{display:flex;align-items:center;flex-wrap:wrap;gap:6px 8px;font:500 14px/1.35 var(--f-ui);color:var(--text-2)}
+.info-row b{color:var(--text)}
+
+/* Werkzeugleiste unten */
+.sheet-bar{position:absolute;left:0;right:0;bottom:0;z-index:10;background:var(--surface);border-radius:28px 28px 0 0;padding:8px 14px 30px;box-shadow:0 -16px 34px -18px rgba(43,34,102,.45)}
+.sheet-bar::before{content:"";display:block;width:40px;height:5px;border-radius:3px;background:var(--line-c);margin:0 auto 10px}
+.dark .sheet-bar{box-shadow:0 -16px 34px -12px rgba(0,0,0,.7)}
+.tb-top{display:flex;justify-content:space-between;align-items:center;margin:0 2px 8px;font:700 13px/1.2 var(--f-ui);color:var(--text-2)}
+.saved{display:inline-flex;align-items:center;gap:4px;color:var(--yes-fg)}
+.saved .ic{width:16px;height:16px}
+.brushes{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;padding:4px;background:var(--sunken);border-radius:18px}
+.brush{position:relative;display:flex;flex-direction:column;align-items:center;gap:5px;padding:8px 4px;border-radius:14px;border:2px solid transparent;font:600 14px/1.1 var(--f-ui);color:var(--text-2)}
+.brush.on{background:var(--surface);color:var(--text);font-weight:800;border-color:var(--indigo);box-shadow:0 8px 16px -10px rgba(43,34,102,.6)}
+.brush.on::after{content:"";position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--indigo)}
+.swm{width:38px;height:22px;border-radius:7px;display:grid;place-items:center;box-shadow:0 0 0 1.5px rgba(30,26,61,.35)}
+.swm svg{width:13px;height:13px;color:var(--ink)}
+.swm.no{background:repeating-linear-gradient(45deg,rgba(30,26,61,.3) 0 1.5px,transparent 1.5px 6px),repeating-linear-gradient(-45deg,rgba(30,26,61,.3) 0 1.5px,transparent 1.5px 6px),#DDD9EA}
+.swm.maybe{background:repeating-linear-gradient(135deg,#FFDB73 0 5px,#FFF3CC 5px 10px)}
+.swm.yes{background:var(--mint-100)}
+.tb-row{display:flex;align-items:center;gap:8px;margin-top:10px}
+.tool{width:48px;height:48px;border-radius:14px;background:var(--sunken);display:grid;place-items:center;flex:none;color:var(--text)}
+.tb-row .btn{flex:1;min-height:50px;padding:8px 12px;font-size:16px}
+
+/* Segment, Legende */
+.seg{display:grid;grid-template-columns:1fr 1fr;padding:4px;border-radius:16px;background:var(--sunken);gap:4px}
+.seg span{display:grid;place-items:center;min-height:40px;border-radius:12px;border:2px solid transparent;font:700 14px/1 var(--f-ui);color:var(--text-2)}
+.seg span.on{background:var(--surface);color:var(--text);font-weight:800;border-color:var(--sel);box-shadow:0 6px 14px -10px rgba(43,34,102,.6)}
+.legend{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;text-align:center;font:600 12px/1.2 var(--f-ui);color:var(--text-2);padding:8px 2px 0}
+.legend .c{height:28px;margin-bottom:4px}
+.legend .c .n{top:8px}
+.c.nodata{border:1.5px dashed var(--border-c);color:var(--text-2)}
+.legend-key{display:flex;flex-wrap:wrap;gap:4px 12px;margin:8px 2px 2px;font:600 12.5px/1.3 var(--f-ui);color:var(--text-2)}
+.legend-key span{display:inline-flex;align-items:center;gap:5px}
+.legend-key .mbk{width:11px;height:11px;border-radius:50%;border:1.5px solid currentColor;background:linear-gradient(90deg,currentColor 50%,transparent 50%)}
+.legend-key .bandk{width:18px;height:4px;background:var(--band);border-radius:2px}
+
+/* Vorschlag-Leiste */
+.sugg-bar{display:flex;align-items:center;gap:8px}
+.sugg-mid{flex:1;min-width:0}
+.nav-btn{width:44px;height:44px;border-radius:14px;background:var(--sunken);display:grid;place-items:center;flex:none;color:var(--text)}
+.eyebrow{display:flex;align-items:center;gap:6px;font:700 13px/1.2 var(--f-ui);color:var(--text-2)}
+.eyebrow .ic{width:16px;height:16px;color:var(--yes-fg)}
+.rank{display:inline-grid;place-items:center;min-width:22px;height:22px;border-radius:8px;background:var(--indigo);color:#fff;font:800 12px/1 var(--f-display);padding:0 6px}
+.sugg-date{font:800 19px/1.2 var(--f-display);letter-spacing:-.015em;margin:4px 0 2px}
+.sugg-meta{font:500 14px/1.35 var(--f-ui);color:var(--text-2)}
+
+/* Abstimmung */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.stat{background:var(--surface);border-radius:20px;padding:12px;box-shadow:var(--sh);display:flex;flex-direction:column;gap:6px;min-width:0}
+.stat b{font:800 20px/1.1 var(--f-display);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.stat span{font:500 13px/1.3 var(--f-ui);color:var(--text-2)}
+.stat .tile{width:34px;height:34px;border-radius:11px}
+.stat .tile .ic{width:19px;height:19px}
+.vcard{position:relative;background:var(--surface);border-radius:24px;padding:16px;box-shadow:var(--sh)}
+.vtop{display:flex;justify-content:space-between;align-items:flex-start;gap:8px}
+.vdate{font:800 18px/1.25 var(--f-display);letter-spacing:-.015em}
+.vmeta{font:500 14px/1.4 var(--f-ui);color:var(--text-2);margin-top:2px}
+.vavail{display:flex;align-items:center;gap:6px;font:700 14px/1.3 var(--f-ui);margin-top:6px}
+.top-pill{display:inline-flex;align-items:center;gap:4px;padding:5px 10px 5px 8px;border-radius:999px;background:var(--sun);color:var(--ink);font:800 13px/1 var(--f-ui);white-space:nowrap;flex:none}
+.top-pill .ic{width:14px;height:14px}
+.vseg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}
+.vopt{position:relative;min-height:60px;border-radius:16px;border:1.5px solid var(--border-c);background:var(--surface);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:700 14px/1.1 var(--f-ui);color:var(--text-2)}
+.vopt .ic{width:20px;height:20px}
+.vopt.sel{background:var(--indigo);border-color:var(--indigo);color:#fff;font-weight:800;box-shadow:var(--sh-btn)}
+.vopt .tick{position:absolute;top:-8px;right:-8px;width:22px;height:22px;border-radius:50%;background:var(--mint);color:var(--indigo);display:grid;place-items:center;box-shadow:0 0 0 2px var(--surface)}
+.vopt .tick svg{width:12px;height:12px}
+.vopt.ghost{border:2px dashed var(--ink-2);color:var(--ink-2)}
+.vlabel{font:700 13px/1.3 var(--f-ui);color:var(--text-2);margin-top:12px}
+.vbar{display:flex;gap:4px;height:12px;margin-top:16px}
+.vbar span{border-radius:999px}
+.vcounts{display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;margin-top:8px;font:800 14px/1.2 var(--f-ui);font-variant-numeric:tabular-nums}
+.vcounts span{display:inline-flex;align-items:center;gap:4px}
+.vcounts .ic{width:16px;height:16px}
+.vwho{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:1px solid var(--line-c);font:700 14px/1.2 var(--f-ui)}
+.vph{margin-top:12px;font:400 14px/1.4 var(--f-ui);color:var(--text-2)}
+
+/* Reisekarte (Einladung) */
+.tripcard{position:relative;height:196px;border-radius:26px;overflow:hidden;color:#fff;padding:18px 18px 0;
+  background:linear-gradient(135deg,#2B2266 0%,#3F2F99 60%,#5B48C9 100%);box-shadow:0 22px 40px -22px rgba(43,34,102,.8)}
+.tripcard > svg{position:absolute;inset:0;width:100%;height:100%}
+.tc-label{position:relative;display:flex;align-items:center;gap:6px;font:700 13px/1.2 var(--f-ui);color:var(--on-head-2)}
+.tc-label .ic{width:16px;height:16px;color:var(--mint)}
+.tc-name{position:relative;font:800 28px/1.1 var(--f-display);letter-spacing:-.03em;margin-top:6px}
+.tc-people{position:relative;display:flex;align-items:center;gap:10px;margin-top:30px;font:700 14px/1.2 var(--f-ui)}
+.tc-people .av{--ring:#3F2F99}
+.tc-people .av.open{border-color:rgba(255,255,255,.75);color:#fff}
+.rows li{display:flex;gap:12px;align-items:center;padding:10px 0}
+.rows li+li{border-top:1px solid var(--line-c)}
+.rows small{display:block;font:600 13px/1.3 var(--f-ui);color:var(--text-3)}
+.rows .v{font:600 15px/1.35 var(--f-ui)}
+.quote{display:flex;gap:10px;align-items:flex-end;margin-top:12px}
+.quote p{background:var(--surface);border-radius:18px 18px 18px 6px;padding:10px 14px;font:600 15px/1.4 var(--f-ui);box-shadow:var(--sh)}
+
+/* Code-Feld */
+.otp{display:flex;gap:8px;margin-top:8px}
+.otp span{width:48px;height:58px;border-radius:14px;border:1.5px solid var(--border-c);background:var(--surface);display:grid;place-items:center;font:800 26px/1 var(--f-display);font-variant-numeric:tabular-nums;position:relative}
+.otp span.f{border:2px solid var(--indigo);background:var(--lav-100)}
+.otp span.act{border:2px solid var(--indigo);box-shadow:0 0 0 2px var(--surface),0 0 0 5px var(--focus)}
+.otp span.act::after{content:"";width:2px;height:26px;background:var(--ink);border-radius:1px}
+.otp .gap{width:8px;border:0;background:none}
+
+/* Ergebnis */
+.feier{height:352px;padding-bottom:0}
+.feier > svg{position:absolute;left:0;top:0}
+.cd{position:absolute;left:50%;top:158px;width:156px;height:156px;margin-left:-78px;z-index:2}
+.cd svg{position:absolute;inset:0;width:100%;height:100%}
+.cd-t{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;font:700 13px/1.1 var(--f-ui);color:var(--on-head-2)}
+.cd-t b{font:800 46px/1 var(--f-display);letter-spacing:-.03em;color:#fff;font-variant-numeric:tabular-nums}
+.result{position:relative;z-index:4;margin:-32px 16px 0;background:var(--surface);border-radius:28px;padding:20px 20px 20px;box-shadow:0 24px 40px -24px rgba(43,34,102,.6)}
+.result .eyebrow{color:var(--yes-fg)}
+.result-date{font:800 24px/1.15 var(--f-display);letter-spacing:-.02em;margin-top:6px}
+.result-meta{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 0 16px;font:700 15px/1.2 var(--f-ui);color:var(--text-2)}
+.result-meta span{display:inline-flex;align-items:center;gap:6px}
+.steps3{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:16px 16px 0}
+.steps3 li{display:flex;flex-direction:column;gap:7px;font:700 13px/1.2 var(--f-ui);color:var(--text-2)}
+.steps3 li::before{content:"";height:6px;border-radius:999px;background:var(--indigo)}
+.steps3 li span{display:inline-flex;align-items:center;gap:4px}
+.steps3 li .ic{width:15px;height:15px}
+.steps3 li.now{color:var(--text);font-weight:800}
+.steps3 li.now::before{background:var(--sun);box-shadow:inset 0 0 0 1.5px var(--sun-text)}
+
+/* Vorschlagskarten (dunkel) */
+.sg-h{display:flex;align-items:center;gap:8px;font:800 17px/1.2 var(--f-display);margin:18px 0 10px}
+.sg-h .ic{color:var(--link)}
+.sg-card{position:relative;background:var(--surface);border:2px solid transparent;border-radius:22px;padding:14px 16px 10px;margin-bottom:12px}
+.sg-card.picked{border-color:var(--sel)}
+.sg-meta{display:flex;align-items:center;gap:4px;font:500 14px/1.35 var(--f-ui);color:var(--text-2);margin:2px 0 8px}
+.sg-meta .ic{width:16px;height:16px}
+.dbars{display:flex;align-items:flex-end;gap:4px;height:30px;margin:0 0 10px}
+.dbars i{flex:1;border-radius:6px 6px 3px 3px}
+.dbars .b4{height:72%;background:#A79AF2}
+.dbars .b5{height:100%;background:var(--mint)}
+.sg-act{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px;min-height:44px}
+.chk{display:inline-flex;align-items:center;gap:8px;font:700 14px/1.2 var(--f-ui)}
+.chk .box{width:24px;height:24px;border-radius:7px;border:2px solid var(--border-c);display:grid;place-items:center}
+.chk.on .box{background:var(--sel);border-color:var(--sel);color:var(--bg)}
+.chk .box svg{width:15px;height:15px}
+
+/* Bausteine */
+.board-row{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start;margin-bottom:16px}
+.board-row .btn{min-height:50px}
+.state-cap{font:600 12px/1.2 var(--f-ui);color:var(--ink-3);display:block;margin-top:8px;text-align:center}
+.icons-row{display:flex;flex-wrap:wrap;gap:10px}
+.icons-row span{width:44px;height:44px;border-radius:13px;display:grid;place-items:center;background:var(--mist);color:var(--ink)}
+.icons-row .ic{width:24px;height:24px}
+.plate{background:var(--indigo);border-radius:20px;padding:16px;display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+</style>
+</head>
+<body>
+
+<!-- Symbol-Bibliothek: Icons (24er Raster, 2-px-Strich, runde Enden, weiche Duoton-Füllung 16 %) -->
+<svg xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true" focusable="false">
+  <defs>
+    <clipPath id="lb-clip"><rect x="6" y="11" width="52" height="47" rx="14"/></clipPath>
+  </defs>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-l" viewBox="0 0 24 24"><path d="M14.5 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-r" viewBox="0 0 24 24"><path d="M9.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-chev-d" viewBox="0 0 24 24"><path d="M6 9.5l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5.5" cy="12" r="1.9" fill="currentColor"/><circle cx="12" cy="12" r="1.9" fill="currentColor"/><circle cx="18.5" cy="12" r="1.9" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-maybe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M12 4a8 8 0 0 0 0 16z" fill="currentColor"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5" fill="currentColor" fill-opacity=".16"/><path d="M3.5 10h17M8 3v4M16 3v4"/></g></symbol>
+  <symbol id="i-cal-add" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5" width="17" height="15.5" rx="3.5" fill="currentColor" fill-opacity=".16"/><path d="M3.5 10h17M8 3v4M16 3v4M12 12.5v5M9.5 15h5"/></g></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M19.5 14.5A8 8 0 1 1 9.5 4.5a6.3 6.3 0 0 0 10 10z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8.5" r="3.3" fill="currentColor" fill-opacity=".16"/><path d="M3 19.5c.7-3.2 3-5 6-5s5.3 1.8 6 5"/><circle cx="16.8" cy="9.3" r="2.6"/><path d="M16.4 14.4c2.4 0 4 1.5 4.6 4.3"/></g></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4.5 12h15M13.5 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-globe" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.4 2.3 3.5 5.2 3.5 8.5s-1.1 6.2-3.5 8.5c-2.4-2.3-3.5-5.2-3.5-8.5s1.1-6.2 3.5-8.5z"/></g></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="8.5" fill="currentColor" fill-opacity=".16"/><path d="M12 7.5V12l3 2"/></g></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6L4 11l5 5"/><path d="M4.5 11h10a5 5 0 0 1 0 10H12"/></g></symbol>
+  <symbol id="i-range" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5v14M20 5v14M8 12h8M10.5 9.5L8 12l2.5 2.5M13.5 9.5L16 12l-2.5 2.5"/></g></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M10.5 3.5l1.7 4.8 4.8 1.7-4.8 1.7-1.7 4.8-1.7-4.8L4 10l4.8-1.7z" fill="currentColor" fill-opacity=".16"/><path d="M18 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></g></symbol>
+  <symbol id="i-mega" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 10v4h3l7 4.5v-13L7 10z" fill="currentColor" fill-opacity=".16"/><path d="M17.5 9a4 4 0 0 1 0 6"/></g></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="8.5"/><path d="M12 11v5.5"/></g><circle cx="12" cy="7.8" r="1.25" fill="currentColor"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5V15M7.5 8L12 3.5 16.5 8"/><path d="M5 12.5v5.5a2.5 2.5 0 0 0 2.5 2.5h9a2.5 2.5 0 0 0 2.5-2.5v-5.5"/></g></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="13" rx="3" fill="currentColor" fill-opacity=".16"/><path d="M4.5 7.5l7.5 5.5 7.5-5.5"/></g></symbol>
+  <symbol id="i-pencil" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 19l1-4.2L15.6 5.2a2.1 2.1 0 0 1 3 3L9 17.8z"/><path d="M13.8 7l3 3"/></g></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.1 5.6.8-4 3.9 1 5.6-5.1-2.6-5.1 2.6 1-5.6-4-3.9 5.6-.8z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 18l-1.2-10 5.2 4.2L12 5l4 7.2 5.2-4.2L20 18z" fill="currentColor" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4.2" fill="currentColor" fill-opacity=".16"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/></g></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M5.5 5h13a2.5 2.5 0 0 1 2.5 2.5v7.5a2.5 2.5 0 0 1-2.5 2.5h-6l-4.5 3.5V17.5H5.5A2.5 2.5 0 0 1 3 15V7.5A2.5 2.5 0 0 1 5.5 5z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="10.5" width="14" height="10" rx="3" fill="currentColor" fill-opacity=".16"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></g></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"><path d="M5 19.5v-6M10 19.5V6.5M15 19.5v-9M20 19.5v-4"/></g></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M12 2.8c.9 0 1.5.8 1.5 1.8v4.9l6.5 4v2l-6.5-2v4.2l2 1.6v1.8L12 20.1l-3.5 1v-1.8l2-1.6v-4.2L4 15.5v-2l6.5-4V4.6c0-1 .6-1.8 1.5-1.8z" fill="currentColor" fill-opacity=".16" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></symbol>
+  <symbol id="b-seal" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.8" fill="#52E5B8" stroke="#FFFFFF" stroke-width="1.4"/><path d="M5.5 9.3l2.3 2.3 4.6-4.9" fill="none" stroke="#2B2266" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="b-seal-d" viewBox="0 0 18 18"><circle cx="9" cy="9" r="7.8" fill="#14112E"/><path d="M5.5 9.3l2.3 2.3 4.6-4.9" fill="none" stroke="#52E5B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="sb-icons" viewBox="0 0 68 12"><g fill="currentColor"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="4.5" y="6" width="3" height="6" rx="1"/><rect x="9" y="3.5" width="3" height="8.5" rx="1"/><rect x="13.5" y="1" width="3" height="11" rx="1"/></g><g fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M23 4.6a10 10 0 0 1 14 0"/><path d="M25.6 7.3a6.3 6.3 0 0 1 8.8 0"/></g><circle cx="30" cy="10.2" r="1.5" fill="currentColor"/><rect x="42.5" y=".9" width="22" height="10.2" rx="3" fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55"/><rect x="44.5" y="2.9" width="15" height="6.2" rx="1.6" fill="currentColor"/><rect x="65.6" y="4.2" width="1.8" height="3.6" rx=".9" fill="currentColor" opacity=".55"/></symbol>
+  <!-- Bildmarke B: Sonnenkalender, Indigo-Blatt, ohne Kontur -->
+  <symbol id="logo-b" viewBox="0 0 64 64">
+    <rect x="6" y="11" width="52" height="47" rx="14" fill="#2B2266"/>
+    <g clip-path="url(#lb-clip)">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".25"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
+    </g>
+    <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
+    <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#A79AF2"/>
+  </symbol>
+  <!-- Variante auf Indigo-Flächen: Blatt in Violett, Ringe weiß -->
+  <symbol id="logo-b-dark" viewBox="0 0 64 64">
+    <rect x="6" y="11" width="52" height="47" rx="14" fill="#5B48C9"/>
+    <g clip-path="url(#lb-clip)">
+      <circle cx="32" cy="42" r="19" fill="#FFCF4A" opacity=".3"/>
+      <circle cx="32" cy="42" r="12" fill="#FFCF4A"/>
+      <path d="M0 45C8 41 16 41 24 45S40 49 48 45S60 41 64 43V64H0Z" fill="#52E5B8"/>
+      <path d="M0 52C8 49 16 49 24 52S40 55 48 52S60 49 64 51V64H0Z" fill="#1FBF94"/>
+    </g>
+    <rect x="18" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
+    <rect x="39" y="5" width="7" height="12" rx="3.5" fill="#FFFFFF"/>
+  </symbol>
+</svg>
+
+<header class="doc">
+  <p class="doc-eyebrow">Look &amp; Feel 2.0 · Richtung B · Entwurf 2026-10-08</p>
+  <h1>Reise-<em>Cockpit</em></h1>
+  <p class="doc-sub">Wir wollen weg / When do we go? – so klar wie ein gutes Finanz-Dashboard, so fröhlich wie Urlaubsvorfreude. Inspiriert von den Gestaltungsprinzipien von Finanzguru, nicht kopiert.</p>
+
+  <div class="doc-grid">
+    <section class="doc-card" aria-labelledby="t-idee">
+      <h2 id="t-idee">Leitidee</h2>
+      <p><b>Die Gruppe auf einen Blick.</b> Jede Reise hat ein Cockpit: oben eine tiefe Indigo-Fläche mit der einen Zahl, die gerade zählt – „5 von 7 haben abgegeben“, „noch 3 Tage“, „noch 23 Tage“. Darunter liegen ruhige, weiße Karten mit den Details.</p>
+      <p><b>Farbe heißt immer etwas:</b> Minze = passt / alle können, Sonne = Freude und „zur Not“, Lavendel = Abstimmung, Koralle = Feiertag. Die Heatmap ist eine Indigo-Rampe – je dunkler, desto mehr können.</p>
+      <p><b>Spaß entsteht durch Fortschritt</b> – Ringe, die sich füllen, Balken, die wachsen, Kacheln, die man gern antippt – statt durch Deko. Wenn der Termin feststeht, füllt sich der Vorfreude-Ring: Das ist der laute Moment.</p>
+    </section>
+
+    <section class="doc-card dark-card" aria-labelledby="t-fg">
+      <h2 id="t-fg">Was wir von Finanzguru gelernt haben</h2>
+      <ol class="learn">
+        <li><span class="num">1</span><span><b>Mut zur Markenfarbe</b>Tiefes Violett mit leuchtendem Türkis statt Bank-Blau – seriös und frisch zugleich. <em>Bei uns: Indigo + Minze, eigene Töne.</em></span></li>
+        <li><span class="num">2</span><span><b>Die eine Zahl zuerst</b>Das Dashboard ist die Zentrale: Kennzahl groß und oben, Details in Karten darunter. <em>Bei uns: Cockpit-Kopf mit Fortschritt.</em></span></li>
+        <li><span class="num">3</span><span><b>Diagramme lesbar statt dekorativ</b>Wenige Farben, Farbe nach Bedeutung, runde Formen. <em>Bei uns: Indigo-Rampe, Tages-Balken, Ringe.</em></span></li>
+        <li><span class="num">4</span><span><b>Farbige Kacheln zur Orientierung</b>Icons in getönten Kacheln – verspielt, aber stimmig, eine eigene Bildebene. <em>Bei uns: Kacheln für Zeitraum, Dauer, Schritte.</em></span></li>
+        <li><span class="num">5</span><span><b>Charakter in kleinen Momenten</b>Ein sympathischer Ladebildschirm und Du-Ton nehmen dem Thema die Schwere. <em>Bei uns: Die Logo-Sonne geht im Kalender auf, keine Figur.</em></span></li>
+      </ol>
+      <p class="notake"><b>Nicht übernommen:</b> Logo, Name, Guru-Figur, Illustrationen, Screens und Farbcodes von Finanzguru. Unsere Werte weichen bewusst ab (z. B. Minze #52E5B8 ist grüner, Indigo #2B2266 tiefer und kühler).</p>
+      <p class="src">Quellen: <a href="https://therichgirl.club/finanz-app-im-test-finanzguru/">therichgirl.club</a> · <a href="https://www.kagels-trading.de/finanzguru-test/">kagels-trading.de</a> · <a href="https://finanzwissen.de/anbieter/finanzguru/test/">finanzwissen.de</a> · <a href="https://brandfetch.com/finanzguru.de">Brandfetch</a> · <a href="https://grossehalbuer.com/finanzguru-icon-set">Icon-Set (S. Große Halbuer)</a> – Details in richtung-b.md</p>
+    </section>
+
+    <section class="doc-card" aria-labelledby="t-schrift">
+      <h2 id="t-schrift">Schriften</h2>
+      <div class="fonts">
+        <div class="font-row"><span class="spec-display">Es geht los!</span><small>Plus Jakarta Sans 700–800<br>Titel, Daten, Kennzahlen</small></div>
+        <div class="font-row"><span class="spec-num">5/7 · 23 · 4/5</span><small>Plus Jakarta Sans 800, tabellarische Ziffern<br>Zahlen sind Helden</small></div>
+        <div class="font-row"><span class="spec-ui">Fertig – abgeben · Mitmachen</span><small>Figtree 400–800 (freigegeben)<br>UI, Fließtext, Labels</small></div>
+      </div>
+      <p style="margin-top:14px">Keine Handschrift: Die Freude steckt in Zahlen, Fortschritt und Farbe, nicht in Randnotizen.</p>
+    </section>
+
+    <section class="doc-card" aria-labelledby="t-diff">
+      <h2 id="t-diff">B im Vergleich zu A</h2>
+      <ul class="diff">
+        <li><b>Stimmung</b>A: verspielt, Reisepost, Aufkleber · B: klar, aufgeräumt, „Dashboard mit guter Laune“</li>
+        <li><b>Form</b>A: Tinte-Konturen + harter Versatzschatten · B: keine Konturen, weiche Schatten, Kacheln</li>
+        <li><b>Kopf</b>A: Phasen-Himmel mit Welle · B: Indigo-Cockpit mit Kennzahl</li>
+        <li><b>Aktion</b>A: Koralle-Pille · B: Indigo-Taste (hell), Minze-Taste auf Indigo</li>
+        <li><b>Heatmap</b>A: Meer-Rampe + Sonnen-Siegel · B: Indigo-Rampe + Minze-Siegel</li>
+        <li><b>Feier</b>A: Goldene Stunde, Ticket, Marke · B: Vorfreude-Ring mit Countdown</li>
+      </ul>
+    </section>
+  </div>
+
+  <section class="doc-card" style="margin-top:24px" aria-labelledby="t-farbe">
+    <h2 id="t-farbe">Palette (Kontrast nach WCAG 2.x, abgerundet)</h2>
+    <div class="swatches">
+      <div class="sw"><div class="sw-c" style="background:#F4F2FB"></div><div class="sw-t"><b>Nebel</b>#F4F2FB · Grund</div></div>
+      <div class="sw"><div class="sw-c" style="background:#1E1A3D"></div><div class="sw-t"><b>Tinte</b>#1E1A3D · Text · 14,9 : 1 auf Nebel · 16,5 auf Weiß</div></div>
+      <div class="sw"><div class="sw-c" style="background:#2B2266"></div><div class="sw-t"><b>Indigo</b>#2B2266 · Cockpit, Haupt-Taste · Weiß darauf 13,7 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#52E5B8"></div><div class="sw-t"><b>Minze</b>#52E5B8 · „alle“, Taste auf Indigo · Indigo darauf 8,7 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#00775A"></div><div class="sw-t"><b>Minze-Text</b>#00775A · „Geht/Ja“ als Text · 5,5 Weiß · 5,0 Nebel</div></div>
+      <div class="sw"><div class="sw-c" style="background:#5A3FD0"></div><div class="sw-t"><b>Lavendel-Text</b>#5A3FD0 · Links, Abstimmung · 6,8 Weiß · 5,6 auf #ECE6FF</div></div>
+      <div class="sw"><div class="sw-c" style="background:#FFCF4A"></div><div class="sw-t"><b>Sonne</b>#FFCF4A · Platz 1, Freude · Tinte 11,2 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#F0503F"></div><div class="sw-t"><b>Koralle</b>#F0503F · Feiertag (Nicht-Text) · 3,5 Weiß</div></div>
+      <div class="sw"><div class="sw-c ramp"><span style="background:#EEECF5"></span><span style="background:#D6CFFA"></span><span style="background:#A79AF2"></span><span style="background:#5B48C9"></span><span style="background:#2B2266"></span></div><div class="sw-t"><b>Indigo-Rampe</b>Heatmap niemand → alle · Zahl ≥ 6,5 : 1 auf jeder Stufe</div></div>
+      <div class="sw"><div class="sw-c" style="background:#14112E"></div><div class="sw-t"><b>Mitternacht</b>#14112E · Dunkel-Grund · Text #F3F1FF 16,3 : 1</div></div>
+      <div class="sw"><div class="sw-c" style="background:#B42318"></div><div class="sw-t"><b>Fehler</b>#B42318 · nur Fehler · 6,5 Weiß · 5,9 Nebel</div></div>
+    </div>
+  </section>
+</header>
+
+<main class="gallery">
+
+<!-- 01 Startseite -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="cockpit" style="padding-bottom:0">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <header class="apphead">
+      <a class="brand" href="#" aria-label="Wir wollen weg"><svg aria-hidden="true"><use href="#logo-b-dark"/></svg><span class="wm" aria-hidden="true">Wir wollen <em>weg</em></span></a>
+      <div class="head-actions">
+        <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+        <a class="pill-out" href="#">Anmelden</a>
+      </div>
+    </header>
+    <div class="pad" style="padding-top:12px">
+      <h1 class="h-display">Vom Gruppenchat zum <em class="hl-mint">festen Reisetermin.</em></h1>
+      <p class="lead" style="margin-top:10px">Alle tragen ein, wann sie können. Wir finden die Zeiträume, in denen alle Zeit haben.</p>
+      <a class="btn btn-mint btn-block" href="#" style="margin-top:20px">Reise planen <svg class="ic" aria-hidden="true"><use href="#i-arrow"/></svg></a>
+      <p class="small center" style="margin-top:10px;font-weight:600">Kostenlos · ohne App · ohne Passwort</p>
+    </div>
+    <div style="position:relative;z-index:2;margin:14px 16px -104px">
+      <svg viewBox="0 0 358 200" width="358" height="200" aria-hidden="true" focusable="false" style="display:block;overflow:visible">
+        <defs><filter id="hs1" x="-10%" y="-10%" width="120%" height="140%"><feDropShadow dx="0" dy="12" stdDeviation="10" flood-color="#2B2266" flood-opacity=".3"/></filter></defs>
+        <rect x="30" y="14" width="300" height="168" rx="22" fill="#A79AF2" transform="rotate(-4 180 98)"/>
+        <rect x="14" y="20" width="330" height="172" rx="24" fill="#FFFFFF" filter="url(#hs1)"/>
+        <g transform="translate(56 62)">
+          <circle r="22" fill="none" stroke="#ECE9F7" stroke-width="8"/>
+          <circle r="22" fill="none" stroke="#52E5B8" stroke-width="8" stroke-linecap="round" stroke-dasharray="98.7 138.3" transform="rotate(-90)"/>
+          <text y="5" text-anchor="middle" font-family="Plus Jakarta Sans, Figtree, sans-serif" font-weight="800" font-size="14" fill="#1E1A3D">5/7</text>
+        </g>
+        <rect x="92" y="48" width="118" height="10" rx="5" fill="#1E1A3D"/>
+        <rect x="92" y="66" width="80" height="8" rx="4" fill="#D6CFFA"/>
+        <g stroke="#FFFFFF" stroke-width="2.5">
+          <circle cx="258" cy="60" r="13" fill="#FFD3C7"/><circle cx="279" cy="60" r="13" fill="#C9DBFF"/><circle cx="300" cy="60" r="13" fill="#D4F2B0"/><circle cx="321" cy="60" r="13" fill="#DCD3FF"/>
+        </g>
+        <g>
+          <rect x="31" y="98" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="74" y="98" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="117" y="98" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="160" y="98" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="203" y="98" width="38" height="24" rx="7" fill="#2B2266"/><rect x="246" y="98" width="38" height="24" rx="7" fill="#2B2266"/><rect x="289" y="98" width="38" height="24" rx="7" fill="#2B2266"/>
+          <rect x="31" y="128" width="38" height="24" rx="7" fill="#2B2266"/><rect x="74" y="128" width="38" height="24" rx="7" fill="#2B2266"/><rect x="117" y="128" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="160" y="128" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="203" y="128" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="246" y="128" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="289" y="128" width="38" height="24" rx="7" fill="#5B48C9"/>
+          <rect x="31" y="158" width="38" height="24" rx="7" fill="#5B48C9"/><rect x="74" y="158" width="38" height="24" rx="7" fill="#A79AF2"/><rect x="117" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="160" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="203" y="158" width="38" height="24" rx="7" fill="#EEECF5"/><rect x="246" y="158" width="38" height="24" rx="7" fill="#D6CFFA"/><rect x="289" y="158" width="38" height="24" rx="7" fill="#A79AF2"/>
+        </g>
+        <g fill="#52E5B8"><circle cx="232" cy="114" r="4.5"/><circle cx="275" cy="114" r="4.5"/><circle cx="318" cy="114" r="4.5"/><circle cx="60" cy="144" r="4.5"/><circle cx="103" cy="144" r="4.5"/></g>
+        <rect x="199" y="94" width="132" height="32" rx="10" fill="none" stroke="#52E5B8" stroke-width="3"/>
+        <rect x="27" y="124" width="89" height="32" rx="10" fill="none" stroke="#52E5B8" stroke-width="3"/>
+        <circle cx="336" cy="18" r="22" fill="#FFCF4A" opacity=".3"/>
+        <circle cx="336" cy="18" r="15" fill="#FFCF4A"/>
+        <circle cx="22" cy="186" r="16" fill="#52E5B8"/>
+        <path d="M15 186.5l4.5 4.5 8-8.5" fill="none" stroke="#2B2266" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M24 12l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#52E5B8"/>
+      </svg>
+    </div>
+  </div>
+  <div class="pad" style="padding-top:120px">
+    <h2 class="h2">So geht’s</h2>
+    <ol style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px">
+      <li class="card" style="padding:12px 10px;border-radius:20px"><span class="tile t-lav"><svg class="ic" aria-hidden="true"><use href="#i-cal-add"/></svg></span><b style="display:block;font:800 14px/1.25 var(--f-display);margin-top:8px">1 · Reise anlegen</b><span class="small" style="display:block;font-size:13px;line-height:1.3;margin-top:2px">Link in den Gruppenchat</span></li>
+      <li class="card" style="padding:12px 10px;border-radius:20px"><span class="tile t-mint"><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg></span><b style="display:block;font:800 14px/1.25 var(--f-display);margin-top:8px">2 · Alle tippen ihre Tage</b><span class="small" style="display:block;font-size:13px;line-height:1.3;margin-top:2px">ohne App, ohne Passwort</span></li>
+      <li class="card" style="padding:12px 10px;border-radius:20px"><span class="tile t-sun"><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg></span><b style="display:block;font:800 14px/1.25 var(--f-display);margin-top:8px">3 · Termin wählen</b><span class="small" style="display:block;font-size:13px;line-height:1.3;margin-top:2px">abstimmen, fertig</span></li>
+    </ol>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>01 · Startseite</b><span>W01 · Indigo-Cockpit mit Minze-Taste. Hero ist das Produkt selbst: eine Übersichtskarte mit Fortschrittsring und Heatmap, die Zeiträume „alle können“ sind minzgrün eingerahmt.</span></figcaption>
+</figure>
+
+<!-- 02a Einladung -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+  <header class="apphead">
+    <a class="brand" href="#" aria-label="Wir wollen weg"><svg aria-hidden="true"><use href="#logo-b"/></svg><span class="wm" aria-hidden="true">Wir wollen <em>weg</em></span></a>
+    <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+  </header>
+  <div class="pad">
+    <p style="display:flex;align-items:center;gap:10px;margin:6px 0 14px;font:600 16px/1.3 var(--f-ui)">
+      <span class="av av-l" style="--c:#FFD3C7;--ring:var(--mist)">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span>
+      <span><b>Lena</b> lädt dich ein</span>
+    </p>
+    <article class="tripcard">
+      <svg viewBox="0 0 358 196" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+        <g fill="none" stroke="#FFFFFF" stroke-opacity=".12" stroke-width="2"><circle cx="312" cy="62" r="46"/><circle cx="312" cy="62" r="66"/><circle cx="312" cy="62" r="88"/></g>
+        <circle cx="312" cy="62" r="38" fill="#FFCF4A" opacity=".2"/>
+        <circle cx="312" cy="62" r="27" fill="#FFCF4A"/>
+        <path d="M0 176C40 168 80 168 120 176S200 184 240 176S320 168 358 174V196H0Z" fill="#52E5B8"/>
+        <path d="M0 187C46 181 92 181 138 187S230 193 276 187S334 182 358 185V196H0Z" fill="#1FBF94"/>
+        <path d="M250 112l2 5 5 2-5 2-2 5-2-5-5-2 5-2z" fill="#FFFFFF" opacity=".85"/>
+        <path d="M222 30l1.4 3.4 3.4 1.4-3.4 1.4-1.4 3.4-1.4-3.4-3.4-1.4 3.4-1.4z" fill="#52E5B8"/>
+      </svg>
+      <p class="tc-label"><svg class="ic" aria-hidden="true"><use href="#i-plane"/></svg>Gruppenreise</p>
+      <h1 class="tc-name">Lissabon 2027</h1>
+      <div class="tc-people">
+        <span class="avs" aria-hidden="true"><span class="av" style="--c:#FFD3C7">LE</span><span class="av" style="--c:#C9DBFF">JO</span><span class="av" style="--c:#D4F2B0">TI</span><span class="av" style="--c:#DCD3FF">AN</span><span class="av" style="--c:#FFE7A3">PA</span><span class="av" style="--c:#FFCFE6">SA</span><span class="av open">+1</span></span>
+        <span>6 sind schon dabei</span>
+      </div>
+    </article>
+    <ul class="rows card" style="margin-top:12px;padding:4px 16px">
+      <li><span class="tile t-lav"><svg class="ic" aria-hidden="true"><use href="#i-cal"/></svg></span><span><small>Zeitraum</small><span class="v">Irgendwann zwischen 1. Mai und 30. Juni 2027</span></span></li>
+      <li><span class="tile t-sun"><svg class="ic" aria-hidden="true"><use href="#i-moon"/></svg></span><span><small>Dauer</small><span class="v">4–5 Nächte</span></span></li>
+    </ul>
+    <div class="quote">
+      <span class="av" style="--c:#FFD3C7;--ring:var(--mist)" aria-hidden="true">LE</span>
+      <p>Sonne, Pastéis, Surfen. Wer ist dabei?</p>
+    </div>
+    <a class="btn btn-primary btn-block" href="#" style="margin-top:20px">Mitmachen</a>
+    <p class="small center" style="margin-top:10px">Dauert 2 Minuten. Kostenlos, ohne App und ohne Passwort.</p>
+    <p class="small center" style="margin-top:4px">Schon ein Konto? Einfach auf „Mitmachen“ tippen.</p>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>02a · Einladung</b><span>W03 Z1 · Die Reise als „Reisekarte“ – wie eine Kontokarte im Dashboard: Indigo-Verlauf, Abendsonne, Minze-Wellen, der freie Platz „+1“ ist für dich. Fakten darunter in Kachel-Zeilen.</span></figcaption>
+</figure>
+
+<!-- 02b Code -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+  <header class="apphead">
+    <a class="back-link" href="#"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg>Zurück</a>
+    <a class="lang" href="#" lang="en"><svg class="ic" aria-hidden="true"><use href="#i-globe"/></svg>English</a>
+  </header>
+  <div class="pad">
+    <div class="card" style="display:flex;gap:12px;align-items:center;padding:10px 14px 10px 10px;border-radius:20px;margin-top:4px">
+      <span style="width:52px;height:52px;border-radius:15px;overflow:hidden;flex:none;background:linear-gradient(135deg,#2B2266,#5B48C9)">
+        <svg viewBox="0 0 52 52" width="52" height="52" aria-hidden="true" focusable="false" style="display:block"><circle cx="36" cy="20" r="13" fill="#FFCF4A" opacity=".25"/><circle cx="36" cy="20" r="8.5" fill="#FFCF4A"/><path d="M0 38C9 34 18 34 27 38S43 42 52 38V52H0Z" fill="#52E5B8"/><path d="M0 45C9 42 18 42 27 45S43 48 52 45V52H0Z" fill="#1FBF94"/></svg>
+      </span>
+      <span><b style="font:800 17px/1.2 var(--f-display)">Lissabon 2027</b><br><span class="small">Lena lädt dich ein · 4–5 Nächte</span></span>
+    </div>
+    <svg viewBox="0 0 120 96" width="120" height="96" aria-hidden="true" focusable="false" style="display:block;margin:18px 0 6px -4px">
+      <rect x="6" y="10" width="100" height="78" rx="26" fill="#ECE6FF"/>
+      <rect x="24" y="28" width="66" height="46" rx="10" fill="#FFFFFF"/>
+      <path d="M28 34l29 21 29-21" fill="none" stroke="#5B48C9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <g fill="#D6CFFA"><circle cx="40" cy="66" r="3"/><circle cx="50" cy="66" r="3"/><circle cx="60" cy="66" r="3"/></g>
+      <circle cx="94" cy="26" r="15" fill="#52E5B8"/>
+      <path d="M87 26.5l4.5 4.5 8-8.5" fill="none" stroke="#2B2266" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M14 8l1.8 4.4 4.4 1.8-4.4 1.8-1.8 4.4-1.8-4.4-4.4-1.8 4.4-1.8z" fill="#FFCF4A"/>
+    </svg>
+    <h1 class="h1">Schau in dein Postfach</h1>
+    <p style="margin-top:8px;font-size:16px;color:var(--text-2)">Wir haben einen 6-stelligen Code an <b style="color:var(--text)">kemal@beispiel.de</b> geschickt. <a class="link" href="#">Andere E-Mail?</a></p>
+    <p style="margin-top:20px;font:700 14px/1.2 var(--f-ui)">6-stelliger Code</p>
+    <div class="otp" aria-hidden="true"><span class="f">4</span><span class="f">8</span><span class="f">1</span><span class="gap"></span><span class="act"></span><span></span><span></span></div>
+    <p class="small" style="display:flex;align-items:center;gap:6px;margin-top:10px"><svg class="ic ic-s" aria-hidden="true"><use href="#i-clock"/></svg>Gültig 15 Minuten</p>
+    <a class="btn btn-primary btn-block" href="#" style="margin-top:22px">Bestätigen</a>
+    <p class="small center" style="margin-top:16px">Keine Mail? Schau im Spam-Ordner.</p>
+    <p class="center" style="margin-top:4px;font:700 15px/2.8 var(--f-ui);color:var(--text-3)" aria-disabled="true">Neuen Code senden (in 0:27)</p>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>02b · Code eingeben</b><span>W03 Z3 / W02 · Ruhig und vertrauensvoll: Brief in einer Lavendel-Kachel mit Minze-Häkchen. Ausgefüllte Kästchen bekommen Indigo-Rahmen, das aktive trägt den Fokus-Ring.</span></figcaption>
+</figure>
+
+<!-- 03 Meine Tage -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="cockpit">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span><i class="pdot p1" aria-hidden="true"></i>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#" aria-current="page">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+  </div>
+  <div class="pad" style="padding-top:12px">
+    <p class="info-row"><span class="tag tag-lav"><svg class="ic" aria-hidden="true"><use href="#i-pencil"/></svg>Entwurf</span>zählt erst, wenn du abgibst.</p>
+    <p class="info-row" style="margin-top:6px">Feiertage für: <b>Bayern</b> · <a class="link" href="#">Ändern</a></p>
+  </div>
+  <div class="calcard">
+    <div class="month"><b>Mai 2027</b><span class="jump" aria-hidden="true"><span class="on">Mai</span><span>Juni</span></span></div>
+    <div class="wd"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span class="we">Sa</span><span class="we">So</span></div>
+    <div class="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div class="c yes hol"><span class="d">1</span></div>
+      <div class="c yes"><span class="d">2</span></div>
+      <div class="c yes"><span class="d">3</span></div>
+      <div class="c yes"><span class="d">4</span></div>
+      <div class="c yes"><span class="d">5</span></div>
+      <div class="c yes hol"><span class="d">6</span></div>
+      <div class="c yes"><span class="d">7</span></div>
+      <div class="c yes"><span class="d">8</span></div>
+      <div class="c yes"><span class="d">9</span></div>
+      <div class="c yes"><span class="d">10</span></div>
+      <div class="c yes"><span class="d">11</span></div>
+      <div class="c yes"><span class="d">12</span></div>
+      <div class="c yes"><span class="d">13</span></div>
+      <div class="c no"><span class="d">14</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">15</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">16</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no hol"><span class="d">17</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">18</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">19</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">20</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c no"><span class="d">21</span><span class="pl"><svg aria-hidden="true"><use href="#i-cross"/></svg></span></div>
+      <div class="c yes"><span class="d">22</span></div>
+      <div class="c yes"><span class="d">23</span></div>
+      <div class="c yes"><span class="d">24</span></div>
+      <div class="c yes"><span class="d">25</span></div>
+      <div class="c yes"><span class="d">26</span></div>
+      <div class="c maybe hol"><span class="d">27</span><span class="pl"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span></div>
+      <div class="c maybe"><span class="d">28</span><span class="pl"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span></div>
+      <div class="c yes"><span class="d">29</span></div>
+      <div class="c yes"><span class="d">30</span></div>
+      <div class="c yes"><span class="d">31</span></div>
+    </div>
+  </div>
+  <div class="sheet-bar">
+    <div class="tb-top"><span>Was markierst du?</span><span class="saved"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Gespeichert</span></div>
+    <div class="brushes" role="radiogroup" aria-label="Was markierst du?">
+      <span class="brush on" role="radio" aria-checked="true"><span class="swm no"><svg aria-hidden="true"><use href="#i-cross"/></svg></span>Geht nicht</span>
+      <span class="brush" role="radio" aria-checked="false"><span class="swm maybe"><svg aria-hidden="true"><use href="#i-maybe"/></svg></span>Zur Not</span>
+      <span class="brush" role="radio" aria-checked="false"><span class="swm yes"><svg aria-hidden="true" style="color:#00775A"><use href="#i-check"/></svg></span>Geht</span>
+    </div>
+    <div class="tb-row">
+      <span class="tool" role="button" aria-label="Zeitraum wählen"><svg class="ic" aria-hidden="true"><use href="#i-range"/></svg></span>
+      <span class="tool" role="button" aria-label="Rückgängig"><svg class="ic" aria-hidden="true"><use href="#i-undo"/></svg></span>
+      <span class="tool" role="button" aria-label="Schnellaktionen"><svg class="ic" aria-hidden="true"><use href="#i-spark"/></svg></span>
+      <a class="btn btn-primary" href="#">Fertig – abgeben</a>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>03 · Meine Tage</b><span>W08 · Cockpit-Kopf, Kalender als weiße Karte. „Geht“ ist ruhige Minze, „Geht nicht“ Kreuzschraffur + ✕, „Zur Not“ Sonnenstreifen + ◐. Pinsel als Segment-Leiste: gewählt = Rahmen + Punkt + fett.</span></figcaption>
+</figure>
+
+<!-- 04 Gruppe Heatmap -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="cockpit">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span><i class="pdot p1" aria-hidden="true"></i>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#" aria-current="page">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <div class="kpi">
+      <svg class="ring" viewBox="0 0 52 52" aria-hidden="true" focusable="false"><circle cx="26" cy="26" r="20" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="6"/><circle cx="26" cy="26" r="20" fill="none" stroke="#52E5B8" stroke-width="6" stroke-linecap="round" stroke-dasharray="89.8 125.7" transform="rotate(-90 26 26)"/><g transform="translate(16 16)" color="#FFFFFF"><use href="#i-users" width="20" height="20"/></g></svg>
+      <b>5 von 7 haben abgegeben</b>
+      <p>Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.</p>
+      <a class="btn btn-mint btn-xs" href="#"><svg class="ic ic-s" aria-hidden="true"><use href="#i-mega"/></svg>Erinnern</a>
+    </div>
+  </div>
+  <div class="pad" style="padding-top:12px">
+    <div class="seg" aria-hidden="true"><span>Vorschläge</span><span class="on">Kalender</span></div>
+  </div>
+  <div class="calcard">
+    <div class="legend" aria-label="Legende">
+      <div><div class="c nodata"><span class="n">–</span></div>keine Daten</div>
+      <div><div class="c l0"><span class="n">0</span></div>niemand</div>
+      <div><div class="c l1"><span class="n">2</span></div>wenige</div>
+      <div><div class="c l2"><span class="n">3</span></div>einige</div>
+      <div><div class="c l3"><span class="n">4</span></div>viele</div>
+      <div><div class="c l4"><span class="n">5</span><svg class="seal" style="width:13px;height:13px;right:2px;bottom:2px" aria-hidden="true"><use href="#b-seal"/></svg></div>alle</div>
+    </div>
+    <p class="legend-key"><span>4/5 = 4 von 5 „Geht“</span><span><svg class="ic ic-s" aria-hidden="true"><use href="#b-seal"/></svg>alle</span><span><i class="mbk"></i>jemand zur Not</span><span><i class="tri" style="color:var(--hol-mark)"></i>Feiertag</span><span><i class="bandk"></i>Vorschlag</span></p>
+    <div class="month" style="padding-top:10px"><b>Mai 2027</b></div>
+    <div class="wd"><span>Mo</span><span>Di</span><span>Mi</span><span>Do</span><span>Fr</span><span class="we">Sa</span><span class="we">So</span></div>
+    <div class="grid">
+      <div></div><div></div><div></div><div></div><div></div>
+      <div class="c l2 hol"><span class="d">1</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">2</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">3</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">4</span><span class="n">3/5</span><i class="mb"></i></div>
+      <div class="c l3"><span class="d">5</span><span class="n">4/5</span><i class="mb"></i><i class="band s"></i></div>
+      <div class="c l4 hol"><span class="d">6</span><span class="n">5/5</span><svg class="seal" aria-hidden="true"><use href="#b-seal"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">7</span><span class="n">5/5</span><svg class="seal" aria-hidden="true"><use href="#b-seal"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">8</span><span class="n">5/5</span><svg class="seal" aria-hidden="true"><use href="#b-seal"/></svg><i class="band"></i></div>
+      <div class="c l4"><span class="d">9</span><span class="n">5/5</span><svg class="seal" aria-hidden="true"><use href="#b-seal"/></svg><i class="band or"></i></div>
+      <div class="c l3"><span class="d">10</span><span class="n">4/5</span><i class="mb"></i><i class="band ol e"></i></div>
+      <div class="c l2"><span class="d">11</span><span class="n">3/5</span></div>
+      <div class="c l2"><span class="d">12</span><span class="n">3/5</span></div>
+      <div class="c l3"><span class="d">13</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">14</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">15</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">16</span><span class="n">4/5</span></div>
+      <div class="c l3 hol"><span class="d">17</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">18</span><span class="n">4/5</span></div>
+      <div class="c l3"><span class="d">19</span><span class="n">4/5</span></div>
+      <div class="c l1"><span class="d">20</span><span class="n">2/5</span></div>
+      <div class="c l1"><span class="d">21</span><span class="n">1/5</span></div>
+      <div class="c l0"><span class="d">22</span><span class="n">0/5</span></div>
+      <div class="c l1"><span class="d">23</span><span class="n">1/5</span></div>
+    </div>
+  </div>
+  <div class="sheet-bar" style="padding:8px 10px 30px">
+    <div class="sugg-bar">
+      <span class="nav-btn" role="button" aria-label="Vorheriger Vorschlag"><svg class="ic" aria-hidden="true"><use href="#i-chev-l"/></svg></span>
+      <div class="sugg-mid">
+        <p class="eyebrow"><span class="rank">1</span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Alle dabei · 1 von 5</p>
+        <p class="sugg-date">Mi., 5. Mai – Mo., 10. Mai</p>
+        <p class="sugg-meta">bis zu 5 Nächte · ca. 3 Urlaubstage</p>
+        <div class="chips" style="margin-top:6px"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span><span class="tag tag-hol"><i class="tri"></i>Christi Himmelfahrt</span></div>
+      </div>
+      <span class="nav-btn" role="button" aria-label="Nächster Vorschlag"><svg class="ic" aria-hidden="true"><use href="#i-chev-r"/></svg></span>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>04 · Gruppe: Heatmap + Vorschläge</b><span>W09 · Kennzahl „5 von 7“ als Ring im Cockpit. Indigo-Rampe hell → tief, Zahl in jeder Zelle, Minze-Siegel = alle „Geht“, Indigo-Band markiert den Vorschlag. Leiste unten blättert durch die Vorschläge.</span></figcaption>
+</figure>
+
+<!-- 05 Abstimmung -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="cockpit">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span><i class="pdot p2" aria-hidden="true"></i>Abstimmung läuft</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#" aria-current="page">Abstimmen</a></nav>
+  </div>
+  <div class="pad" style="padding-top:16px">
+    <h1 class="h1" style="font-size:24px">Abstimmung läuft</h1>
+    <div class="stats">
+      <div class="stat"><span class="tile t-lav"><svg class="ic" aria-hidden="true"><use href="#i-clock"/></svg></span><b>noch 3 Tage</b><span>bis Do., 15. April</span></div>
+      <div class="stat"><span class="tile t-mint"><svg class="ic" aria-hidden="true"><use href="#i-chart"/></svg></span><b>4 von 7</b><span>haben abgestimmt</span></div>
+    </div>
+
+    <article class="vcard" style="margin-top:14px">
+      <div class="vtop"><h2 class="vdate">Mi., 5. Mai – Mo., 10. Mai</h2><span class="top-pill"><svg class="ic" aria-hidden="true"><use href="#i-star"/></svg>Platz 1</span></div>
+      <p class="vmeta">5 Nächte · ca. 3 Urlaubstage</p>
+      <p class="vavail" style="color:var(--yes-fg)"><svg class="ic ic-s" aria-hidden="true"><use href="#i-check"/></svg>laut Kalender: alle können</p>
+      <div class="vseg" role="radiogroup" aria-label="Deine Stimme">
+        <span class="vopt sel" role="radio" aria-checked="true"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ja<span class="tick" aria-hidden="true"><svg><use href="#i-check"/></svg></span></span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>Vielleicht</span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>Nein</span>
+      </div>
+      <div class="vbar" aria-hidden="true"><span style="flex:4;background:#00775A"></span><span style="flex:1;background:#E3A700"></span></div>
+      <p class="vcounts"><span style="color:var(--yes-fg)"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>4 Ja</span><span style="color:var(--sun-text)"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>1 Vielleicht</span><span style="color:var(--text-2)"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>0 Nein</span></p>
+      <div class="vwho"><span>Wer hat wie gestimmt?</span><svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></div>
+    </article>
+
+    <article class="vcard" style="margin-top:14px">
+      <h2 class="vdate">Do., 13. Mai – Di., 18. Mai</h2>
+      <p class="vmeta">5 Nächte · ca. 4 Urlaubstage</p>
+      <p class="vavail" style="color:var(--text-2)"><svg class="ic ic-s" aria-hidden="true"><use href="#i-cross"/></svg>laut Kalender: ohne Jonas</p>
+      <p class="vlabel">Vorschlag aus deinen Tagen: Nein – bitte bestätigen</p>
+      <div class="vseg" role="radiogroup" aria-label="Deine Stimme" style="margin-top:8px">
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Ja</span>
+        <span class="vopt" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>Vielleicht</span>
+        <span class="vopt ghost" role="radio" aria-checked="false"><svg class="ic" aria-hidden="true"><use href="#i-cross"/></svg>Nein?</span>
+      </div>
+      <p class="vph">Stimm ab, um das Ergebnis zu sehen.</p>
+    </article>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>05 · Abstimmung</b><span>W10 B · Lavendel-Punkt = Phase 2. Zwei Kennzahl-Kacheln oben, darunter Karten. Gewählt = Indigo-Fläche + Minze-Häkchen + fett; Ergebnis als runder Balken mit Zahlen daneben.</span></figcaption>
+</figure>
+
+<!-- 06 Termin steht fest -->
+<figure class="shot">
+<div class="phone"><div class="app">
+  <div class="cockpit feier">
+    <svg viewBox="0 0 390 352" width="390" height="352" aria-hidden="true" focusable="false">
+      <circle cx="195" cy="236" r="150" fill="#FFCF4A" opacity=".08"/>
+      <circle cx="195" cy="236" r="112" fill="#FFCF4A" opacity=".12"/>
+      <g>
+        <rect x="34" y="176" width="9" height="15" rx="3" fill="#52E5B8" transform="rotate(-24 38 183)"/>
+        <rect x="76" y="232" width="8" height="13" rx="3" fill="#FFCF4A" transform="rotate(18 80 238)"/>
+        <circle cx="56" cy="286" r="5" fill="#A79AF2"/>
+        <rect x="92" y="170" width="8" height="12" rx="3" fill="#F0503F" transform="rotate(40 96 176)"/>
+        <rect x="22" y="236" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(-12 26 242)"/>
+        <rect x="300" y="174" width="9" height="15" rx="3" fill="#FFCF4A" transform="rotate(22 304 181)"/>
+        <rect x="346" y="226" width="8" height="13" rx="3" fill="#52E5B8" transform="rotate(-30 350 232)"/>
+        <circle cx="334" cy="292" r="5" fill="#F0503F"/>
+        <rect x="290" y="240" width="8" height="12" rx="3" fill="#A79AF2" transform="rotate(-12 294 246)"/>
+        <rect x="358" y="176" width="8" height="12" rx="3" fill="#FFFFFF" transform="rotate(30 362 182)"/>
+        <path d="M70 196l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#52E5B8"/>
+        <path d="M322 200l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z" fill="#FFFFFF"/>
+        <path d="M104 296l1.8 4.2 4.2 1.8-4.2 1.8-1.8 4.2-1.8-4.2-4.2-1.8 4.2-1.8z" fill="#FFCF4A"/>
+      </g>
+    </svg>
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span><i class="pdot p3" aria-hidden="true"></i>Steht fest · 7 dabei</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#" aria-current="page">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <div class="cd" aria-hidden="true">
+      <svg viewBox="0 0 156 156" focusable="false">
+        <defs><linearGradient id="cdg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52E5B8"/><stop offset="1" stop-color="#FFCF4A"/></linearGradient></defs>
+        <circle cx="78" cy="78" r="66" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="12"/>
+        <circle cx="78" cy="78" r="66" fill="none" stroke="url(#cdg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="400 414.7" transform="rotate(-90 78 78)"/>
+        <circle cx="63.4" cy="13.6" r="9" fill="#FFCF4A" stroke="#2B2266" stroke-width="3"/>
+      </svg>
+      <span class="cd-t">noch<b>23</b>Tage</span>
+    </div>
+  </div>
+  <article class="result">
+    <p class="eyebrow"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Termin steht fest</p>
+    <h1 class="h-display" style="font-size:34px;margin-top:4px">Es geht los!</h1>
+    <p class="result-date">Mi., 5. Mai – Mo., 10. Mai 2027</p>
+    <p class="result-meta"><span><svg class="ic" aria-hidden="true"><use href="#i-moon"/></svg>5 Nächte</span><span><svg class="ic" aria-hidden="true"><use href="#i-users"/></svg>7 dabei</span></p>
+    <a class="btn btn-primary btn-block" href="#"><svg class="ic" aria-hidden="true"><use href="#i-cal-add"/></svg>Zum Kalender hinzufügen<svg class="ic" aria-hidden="true"><use href="#i-chev-d"/></svg></a>
+    <a class="btn btn-block" href="#" style="margin-top:10px"><svg class="ic" aria-hidden="true"><use href="#i-share"/></svg>Allen Bescheid geben</a>
+  </article>
+  <ol class="steps3" aria-label="Fortschritt">
+    <li><span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Tage</span></li>
+    <li><span><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Abstimmen</span></li>
+    <li class="now" aria-current="step"><span><svg class="ic" aria-hidden="true"><use href="#i-sun"/></svg>Steht fest</span></li>
+  </ol>
+  <div class="pad" style="margin-top:16px">
+    <p style="font:800 16px/1.2 var(--f-display);margin-bottom:10px">Wer ist dabei? (7)</p>
+    <div style="display:flex;gap:8px">
+      <span class="av av-l" style="--c:#FFD3C7;--ring:var(--mist)">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span><span class="av av-l" style="--c:#C9DBFF;--ring:var(--mist)">JO</span><span class="av av-l" style="--c:#D4F2B0;--ring:var(--mist)">TI</span><span class="av av-l" style="--c:#DCD3FF;--ring:var(--mist)">AN</span><span class="av av-l" style="--c:#FFE7A3;--ring:var(--mist)">PA</span><span class="av av-l" style="--c:#BDEFE0;--ring:var(--mist)">KE</span><span class="av av-l" style="--c:#FFCFE6;--ring:var(--mist)">SA</span>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>06 · Termin steht fest</b><span>W11 · Der Vorfreude-Ring füllt sich von Minze zu Sonne, in der Mitte der Countdown. Konfetti in allen Palettenfarben, Ergebnis-Karte schwebt darüber, Fortschritt in drei Balken. Der eine laute Moment.</span></figcaption>
+</figure>
+
+<!-- 07 Dunkel: Vorschläge -->
+<figure class="shot">
+<div class="phone" style="box-shadow:0 0 0 10px #07051A,0 0 0 12px #3B3570,0 40px 70px -26px rgba(30,26,61,.55)"><div class="app dark">
+  <div class="cockpit">
+    <div class="status"><span>9:41</span><svg aria-hidden="true"><use href="#sb-icons"/></svg></div>
+    <div class="trip-head">
+      <a class="round-btn" href="#" aria-label="Meine Reisen"><svg class="ic" aria-hidden="true"><use href="#i-back"/></svg></a>
+      <div class="trip-t"><b>Lissabon 2027</b><span><i class="pdot p1" aria-hidden="true"></i>Tage sammeln · 5 von 7 fertig</span></div>
+      <a class="round-btn" href="#" aria-label="Mehr"><svg class="ic" aria-hidden="true"><use href="#i-more"/></svg></a>
+    </div>
+    <nav class="tabs" aria-label="Reise"><a class="tab" href="#">Übersicht</a><a class="tab" href="#">Meine Tage</a><a class="tab" href="#" aria-current="page">Gruppe</a><a class="tab" href="#">Abstimmen</a></nav>
+    <div class="kpi">
+      <svg class="ring" viewBox="0 0 52 52" aria-hidden="true" focusable="false"><circle cx="26" cy="26" r="20" fill="none" stroke="#FFFFFF" stroke-opacity=".18" stroke-width="6"/><circle cx="26" cy="26" r="20" fill="none" stroke="#52E5B8" stroke-width="6" stroke-linecap="round" stroke-dasharray="89.8 125.7" transform="rotate(-90 26 26)"/><g transform="translate(16 16)" color="#FFFFFF"><use href="#i-users" width="20" height="20"/></g></svg>
+      <b>5 von 7 haben abgegeben</b>
+      <p>Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.</p>
+      <a class="btn btn-mint btn-xs" href="#"><svg class="ic ic-s" aria-hidden="true"><use href="#i-mega"/></svg>Erinnern</a>
+    </div>
+  </div>
+  <div class="pad" style="padding-top:12px">
+    <div class="seg" aria-hidden="true"><span class="on">Vorschläge</span><span>Kalender</span></div>
+    <h2 class="sg-h"><svg class="ic" aria-hidden="true"><use href="#i-check"/></svg>Alle dabei (2)</h2>
+    <article class="sg-card picked">
+      <div class="vtop"><h3 class="vdate">Mi., 5. Mai – Mo., 10. Mai</h3><span class="rank" style="background:#F3F1FF;color:#14112E">1</span></div>
+      <p class="sg-meta">bis zu 5 Nächte · ca. 3 Urlaubstage <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg></p>
+      <div class="dbars" aria-hidden="true"><i class="b4"></i><i class="b5"></i><i class="b5"></i><i class="b5"></i><i class="b5"></i><i class="b4"></i></div>
+      <div class="chips"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span><span class="tag tag-hol"><i class="tri"></i>inkl. Christi Himmelfahrt</span></div>
+      <div class="sg-act"><a class="link" href="#">Im Kalender zeigen</a><span class="chk on" role="checkbox" aria-checked="true"><span class="box"><svg aria-hidden="true"><use href="#i-check"/></svg></span>Zur Abstimmung</span></div>
+    </article>
+    <article class="sg-card">
+      <h3 class="vdate">Sa., 12. Juni – Sa., 19. Juni</h3>
+      <p class="sg-meta">bis zu 7 Nächte · ca. 5 Urlaubstage <svg class="ic" aria-hidden="true"><use href="#i-info"/></svg></p>
+      <div class="dbars" aria-hidden="true"><i class="b5"></i><i class="b4"></i><i class="b4"></i><i class="b5"></i><i class="b4"></i><i class="b5"></i><i class="b5"></i><i class="b4"></i></div>
+      <div class="chips"><span class="tag tag-maybe"><svg class="ic" aria-hidden="true"><use href="#i-maybe"/></svg>2× zur Not</span></div>
+      <div class="sg-act"><a class="link" href="#">Im Kalender zeigen</a><span class="chk" role="checkbox" aria-checked="false"><span class="box"></span>Zur Abstimmung</span></div>
+    </article>
+  </div>
+  <div class="sheet-bar" style="padding:8px 16px 30px">
+    <div style="display:flex;align-items:center;gap:12px">
+      <span style="font:700 14px/1.2 var(--f-ui);color:var(--text-2);flex:none">1 ausgewählt</span>
+      <a class="btn btn-primary" href="#" style="flex:1;min-height:50px;font-size:16px">Abstimmung erstellen</a>
+    </div>
+  </div>
+  <div class="home" aria-hidden="true"></div>
+</div></div>
+<figcaption><b>07 · Dunkel: Vorschläge</b><span>W09 im Dunkelmodus „Mitternacht“ – Cockpit bleibt Indigo, Flächen werden heller statt Schatten. Haupt-Taste wird Minze. Tages-Balken auf den Karten zeigen die Verfügbarkeit pro Tag (Ausblick, siehe offene Punkte).</span></figcaption>
+</figure>
+
+</main>
+
+<h2 class="section-title">Bausteine</h2>
+<div class="parts">
+  <section class="doc-card" aria-labelledby="t-btn">
+    <h2 id="t-btn">Tasten &amp; Zustände</h2>
+    <div class="board-row app" style="position:static;display:flex;flex-direction:row;background:none;overflow:visible">
+      <div><a class="btn btn-primary" href="#">Mitmachen</a><span class="state-cap">Standard</span></div>
+      <div><a class="btn btn-primary" href="#" style="background:#3A2F86;transform:translateY(-1px)">Mitmachen</a><span class="state-cap">Hover</span></div>
+      <div><a class="btn btn-primary" href="#" style="background:#221B52;transform:translateY(1px) scale(.98);box-shadow:0 4px 10px -6px rgba(43,34,102,.6)">Mitmachen</a><span class="state-cap">Gedrückt</span></div>
+      <div><a class="btn btn-primary" href="#" style="outline:3px solid #2B59C3;outline-offset:3px">Mitmachen</a><span class="state-cap">Fokus</span></div>
+      <div><span class="btn" aria-disabled="true" style="background:#ECE9F7;color:#57527A;border:2px dashed #8A86A8">Mitmachen</span><span class="state-cap">Deaktiviert + Grund daneben</span></div>
+      <div><a class="btn" href="#">Allen Bescheid geben</a><span class="state-cap">Sekundär</span></div>
+    </div>
+    <div class="plate">
+      <a class="btn btn-mint" href="#" style="min-height:50px">Reise planen</a>
+      <a class="btn btn-mint" href="#" style="min-height:50px;outline:3px solid #FFFFFF;outline-offset:3px">Fokus auf Indigo</a>
+      <span style="color:#CFC9F2;font-size:14px;flex-basis:100%">Auf Indigo: Minze-Taste, Fokus-Ring weiß (13,7 : 1 gegen Indigo).</span>
+    </div>
+  </section>
+
+  <section class="doc-card" aria-labelledby="t-kpi">
+    <h2 id="t-kpi">Kennzahlen &amp; Diagramme</h2>
+    <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap">
+      <svg viewBox="0 0 64 64" width="72" height="72" aria-hidden="true" focusable="false"><circle cx="32" cy="32" r="25" fill="none" stroke="#ECE9F7" stroke-width="8"/><circle cx="32" cy="32" r="25" fill="none" stroke="#00775A" stroke-width="8" stroke-linecap="round" stroke-dasharray="112.2 157.1" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-family="Plus Jakarta Sans, Figtree, sans-serif" font-weight="800" font-size="15" fill="#1E1A3D">5/7</text></svg>
+      <div style="flex:1;min-width:180px">
+        <p style="margin:0 0 6px"><b>Fortschrittsring</b> – Zahl immer als Text daneben oder darin.</p>
+        <div class="dbars" aria-hidden="true" style="height:34px;max-width:220px"><i style="height:60%;background:#A79AF2"></i><i style="height:80%;background:#5B48C9"></i><i style="height:100%;background:#2B2266"></i><i style="height:100%;background:#2B2266"></i><i style="height:100%;background:#2B2266"></i><i style="height:80%;background:#5B48C9"></i><i style="height:40%;background:#D6CFFA"></i></div>
+        <p style="margin:6px 0 0;font-size:14px">Tages-Balken (hell): Höhe = Anzahl „Geht“, Farbe = Rampe.</p>
+      </div>
+    </div>
+    <div class="vbar" aria-hidden="true" style="max-width:320px"><span style="flex:4;background:#00775A"></span><span style="flex:1;background:#E3A700"></span><span style="flex:.6;background:#C9C5DC"></span></div>
+    <p style="margin-top:8px;font-size:14px">Stimmen-Balken: rund, 4 px Lücke, Zahlen immer als Text darunter.</p>
+  </section>
+
+  <section class="doc-card" aria-labelledby="t-icons">
+    <h2 id="t-icons">Icons &amp; Kacheln</h2>
+    <div class="icons-row" aria-hidden="true">
+      <span><svg class="ic"><use href="#i-cal"/></svg></span><span><svg class="ic"><use href="#i-moon"/></svg></span><span><svg class="ic"><use href="#i-users"/></svg></span><span><svg class="ic"><use href="#i-check"/></svg></span><span><svg class="ic"><use href="#i-maybe"/></svg></span><span><svg class="ic"><use href="#i-cross"/></svg></span><span><svg class="ic"><use href="#i-sun"/></svg></span><span><svg class="ic"><use href="#i-star"/></svg></span><span><svg class="ic"><use href="#i-crown"/></svg></span><span><svg class="ic"><use href="#i-chart"/></svg></span><span><svg class="ic"><use href="#i-plane"/></svg></span><span><svg class="ic"><use href="#i-spark"/></svg></span><span><svg class="ic"><use href="#i-mega"/></svg></span><span><svg class="ic"><use href="#i-share"/></svg></span><span><svg class="ic"><use href="#i-cal-add"/></svg></span><span><svg class="ic"><use href="#i-clock"/></svg></span><span><svg class="ic"><use href="#i-mail"/></svg></span><span><svg class="ic"><use href="#i-lock"/></svg></span><span><svg class="ic"><use href="#i-chat"/></svg></span><span><svg class="ic"><use href="#i-globe"/></svg></span>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:14px" aria-hidden="true">
+      <span class="tile t-lav"><svg class="ic"><use href="#i-cal"/></svg></span><span class="tile t-mint"><svg class="ic"><use href="#i-users"/></svg></span><span class="tile t-sun"><svg class="ic"><use href="#i-moon"/></svg></span><span class="tile t-coral"><svg class="ic"><use href="#i-star"/></svg></span><span class="tile t-ind"><svg class="ic"><use href="#i-plane"/></svg></span>
+    </div>
+    <p style="margin-top:12px">Strich 2 px wie bisher, neu mit <b>weicher Duoton-Füllung</b> (16 % der Strichfarbe). Kacheln 40 px, Radius 13, Icon in der Textfarbe der Kachel (≥ 4,9 : 1).</p>
+  </section>
+
+  <section class="doc-card" aria-labelledby="t-avatar">
+    <h2 id="t-avatar">Avatare &amp; Heatmap</h2>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <span class="av av-l" style="--c:#FFD3C7">LE<span class="crown"><svg aria-hidden="true"><use href="#i-crown"/></svg></span></span><span class="av av-l" style="--c:#C9DBFF">JO</span><span class="av av-l" style="--c:#D4F2B0">TI</span><span class="av av-l" style="--c:#DCD3FF">AN</span><span class="av av-l" style="--c:#FFE7A3">PA</span><span class="av av-l" style="--c:#BDEFE0">KE</span><span class="av av-l" style="--c:#FFCFE6">SA</span><span class="av av-l" style="--c:#EADFCF">MO</span><span class="av av-l open" style="color:#57527A;border-color:#8A86A8">KE</span>
+    </div>
+    <p style="margin-top:12px">8 Pastelltöne ohne Kontur, Initialen in Tinte (≥ 10 : 1), 2-px-Ring in Flächenfarbe. Krone = Orga (immer mit Text), gestrichelt = noch offen.</p>
+    <div class="app" style="position:static;background:none;overflow:visible">
+      <div class="legend" style="max-width:340px;padding:0">
+        <div><div class="c nodata"><span class="n">–</span></div>keine</div>
+        <div><div class="c l0"><span class="n">0</span></div>niemand</div>
+        <div><div class="c l1"><span class="n">2</span></div>wenige</div>
+        <div><div class="c l2"><span class="n">3</span></div>einige</div>
+        <div><div class="c l3"><span class="n">4</span></div>viele</div>
+        <div><div class="c l4"><span class="n">5</span><svg class="seal" style="width:13px;height:13px;right:2px;bottom:2px" aria-hidden="true"><use href="#b-seal"/></svg></div>alle</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</body>
+</html>

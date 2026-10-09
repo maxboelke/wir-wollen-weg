@@ -1,17 +1,36 @@
 {
   "app": {
     "name": "When do we go?",
-    "tagline": "Find the dates for your group trip."
+    "tagline": "Find the dates for your group trip.",
+    "nameLead": "When do we",
+    "nameAccent": "go?",
+    "subtitle": "Find dates for your group trip"
   },
   "common": {
     "switchLanguage": "Deutsch",
     "skipToContent": "Skip to content",
-    "demoBanner": "Demo – please don’t enter real data."
+    "demoBanner": "Demo – please don’t enter real data.",
+    "signIn": "Sign in",
+    "close": "Close",
+    "back": "Back",
+    "saved": "Saved",
+    "undo": "Undo"
   },
   "landing": {
-    "title": "When are we off?",
-    "lead": "Everyone adds when they can. You instantly see which days work for the whole group.",
-    "login": "Sign in"
+    "titleLead": "From the group chat to",
+    "titleHighlight": "fixed travel dates.",
+    "lead": "Everyone adds when they can. We find the dates when everyone is free.",
+    "cta": "Plan a trip",
+    "ctaNote": "Free · no app · no password",
+    "stepsTitle": "How it works",
+    "step1Title": "1 · Create a trip",
+    "step1Text": "Share the link in your group chat",
+    "step2Title": "2 · Everyone adds their dates",
+    "step2Text": "no app, no password",
+    "step3Title": "3 · Pick the dates",
+    "step3Text": "vote, done",
+    "invitedTitle": "Got an invite?",
+    "invitedText": "Just open the link from your group chat."
   },
   "auth": {
     "loginTitle": "Sign in or sign up",
@@ -23,13 +42,21 @@
     "rememberMeInline": "You’ll stay signed in on this device.",
     "codeLabel": "6-digit code",
     "codeHint": "Sent to {email} · valid for 15 minutes",
-    "codeSentLead": "We’ve sent you a 6-digit code.",
     "verify": "Confirm",
     "otherEmail": "Use a different email",
     "magicHint": "Tapped the link in the email? Then you’ll continue in the other browser. You can enter the code here instead.",
     "nameTitle": "Almost there! What should the others call you?",
     "nameLabel": "Your name",
     "saveName": "Continue",
+    "newHere": "New here? Just enter your email – we’ll create your account automatically.",
+    "sendingCode": "Sending code …",
+    "codeTitle": "Check your inbox",
+    "codeSentTo": "We’ve sent a 6-digit code to <b>{email}</b>.",
+    "checkingCode": "Checking code …",
+    "codeConfirmed": "Code confirmed.",
+    "spamHint": "No email? Check your spam folder.",
+    "requestNewCode": "Send a new code",
+    "saving": "Saving …",
     "errors": {
       "invalidEmail": "Please enter a valid email address, e.g. name@example.com.",
       "wrongCode": "That code isn’t right.",
@@ -58,18 +85,34 @@
   },
   "invite": {
     "title": "Invitation",
-    "invitedBy": "You’re invited to “{trip}”.",
     "memberCount": "{count, plural, one {# person is already in} other {# people are already in}}",
-    "join": "Join in",
     "joinAs": "You’re joining as {name}.",
     "confirmJoin": "Join",
-    "invalid": "This invite link doesn’t work any more. It may have been renewed. Please ask in your group chat for the current link."
+    "invalid": "This invite link doesn’t work any more. It may have been renewed. Please ask in your group chat for the current link.",
+    "groupTrip": "Group trip",
+    "byOrganizer": "by {name}",
+    "emailTitle": "Join in seconds with your email.",
+    "joining": "Joining …",
+    "invalidTitle": "This link no longer works",
+    "planOwn": "Plan your own trip",
+    "myTrips": "My trips"
   },
   "trips": {
     "title": "My trips",
     "signedInAs": "Signed in as {name}",
-    "empty": "You haven’t joined any trips yet.",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "emptyTitle": "No trips planned yet.",
+    "emptyText": "Create one and share the link in your group chat – or open the invite link you received.",
+    "joinedAs": "Joined as {name}",
+    "listLabel": "Your trips"
+  },
+  "settings": {
+    "motion": {
+      "label": "Reduce motion",
+      "help": "Fewer animations, no confetti, no vibration. Content simply fades in.",
+      "off": "Off: we follow your device setting.",
+      "device": "On because your device reduces motion. You can change this in your device settings."
+    }
   },
   "mail": {
     "fromName": "When do we go?",

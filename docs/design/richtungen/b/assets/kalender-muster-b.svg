@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 130" width="360" height="130" aria-hidden="true" focusable="false">
+  <!-- Richtung B: Kalender-Muster.
+       Reihe 1 Heatmap (Indigo-Rampe): keine Daten, niemand (Schraffur), wenige, einige, viele, alle (+ Minze-Siegel).
+       Reihe 2 Meine Tage: Geht (glatt), Zur Not (Sonnenstreifen + Halbkreis), Geht nicht (Kreuzschraffur + Kreuz),
+       Feiertag (Eselsohr Koralle mit Kerbe), Vorschlag (Indigo-Band in der Fuge). -->
+  <defs>
+    <pattern id="km-l0" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="6" fill="#EEECF5"/><rect width="1.5" height="6" fill="#1E1A3D" fill-opacity=".18"/>
+    </pattern>
+    <pattern id="km-no" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="7" height="7" fill="#DDD9EA"/><rect width="1.5" height="7" fill="#1E1A3D" fill-opacity=".26"/><rect width="7" height="1.5" fill="#1E1A3D" fill-opacity=".26"/>
+    </pattern>
+    <pattern id="km-maybe" width="12" height="12" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="6" height="12" fill="#FFDB73"/><rect x="6" width="6" height="12" fill="#FFF3CC"/>
+    </pattern>
+  </defs>
+  <rect width="360" height="130" fill="#FFFFFF"/>
+  <!-- Reihe 1 -->
+  <g font-family="Plus Jakarta Sans, Figtree, sans-serif" font-weight="800" font-size="14" text-anchor="middle">
+    <rect x="5" y="6" width="52" height="46" rx="11" fill="none" stroke="#8A86A8" stroke-width="1.5" stroke-dasharray="4 3"/>
+    <text x="31" y="34" fill="#57527A">–</text>
+    <rect x="65" y="6" width="52" height="46" rx="11" fill="url(#km-l0)"/>
+    <text x="91" y="34" fill="#1E1A3D">0/5</text>
+    <rect x="125" y="6" width="52" height="46" rx="11" fill="#D6CFFA"/>
+    <text x="151" y="34" fill="#1E1A3D">2/5</text>
+    <rect x="185" y="6" width="52" height="46" rx="11" fill="#A79AF2"/>
+    <text x="211" y="34" fill="#1E1A3D">3/5</text>
+    <rect x="245" y="6" width="52" height="46" rx="11" fill="#5B48C9"/>
+    <text x="271" y="34" fill="#FFFFFF">4/5</text>
+    <rect x="305" y="6" width="52" height="46" rx="11" fill="#2B2266"/>
+    <text x="331" y="34" fill="#FFFFFF">5/5</text>
+  </g>
+  <g transform="translate(338 33)">
+    <circle cx="8" cy="8" r="7.8" fill="#52E5B8" stroke="#FFFFFF" stroke-width="1.4"/>
+    <path d="M4.5 8.3l2.3 2.3 4.6-4.9" fill="none" stroke="#2B2266" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Reihe 2 -->
+  <rect x="5" y="72" width="52" height="46" rx="11" fill="#D9F8EC"/>
+  <rect x="65" y="72" width="52" height="46" rx="11" fill="url(#km-maybe)"/>
+  <circle cx="91" cy="98" r="11" fill="#FFF3CC" stroke="#1E1A3D" stroke-opacity=".4" stroke-width="1.5"/>
+  <circle cx="91" cy="98" r="5.5" fill="none" stroke="#1E1A3D" stroke-width="1.6"/>
+  <path d="M91 92.5a5.5 5.5 0 0 0 0 11z" fill="#1E1A3D"/>
+  <rect x="125" y="72" width="52" height="46" rx="11" fill="url(#km-no)"/>
+  <circle cx="151" cy="98" r="11" fill="#DDD9EA" stroke="#1E1A3D" stroke-opacity=".4" stroke-width="1.5"/>
+  <path d="M147 94l8 8M155 94l-8 8" stroke="#1E1A3D" stroke-width="2" stroke-linecap="round"/>
+  <rect x="185" y="72" width="52" height="46" rx="11" fill="#A79AF2"/>
+  <path d="M219 72H226A11 11 0 0 1 237 83V90Z" fill="#FFFFFF"/>
+  <path d="M224 72H226A11 11 0 0 1 237 83V85Z" fill="#F0503F"/>
+  <rect x="245" y="72" width="52" height="46" rx="11" fill="#2B2266"/>
+  <rect x="305" y="72" width="52" height="46" rx="11" fill="#2B2266"/>
+  <rect x="245" y="121" width="112" height="4" fill="#2B2266"/>
+  <rect x="245" y="119" width="4" height="9" rx="2" fill="#2B2266"/>
+  <rect x="353" y="119" width="4" height="9" rx="2" fill="#2B2266"/>
+</svg>
