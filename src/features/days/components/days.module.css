@@ -19,17 +19,27 @@
 .skipLink {
   position: absolute;
   inset-inline-start: 0;
-  inset-block-start: calc(-1 * var(--ww-space-16) - var(--ww-space-16));
+  inset-block-start: 0;
   z-index: var(--ww-z-toast);
   padding: var(--ww-space-2) var(--ww-space-4);
   border-radius: var(--ww-radius-sm);
   background: var(--ww-color-surface-raised);
   color: var(--ww-color-link);
   font-weight: var(--ww-font-weight-bold);
+  white-space: nowrap;
+}
+
+/* Hidden until focused (R-046): moving the links up by a fixed offset put them on top of the
+   welcome hint / cockpit head, visible for everyone. */
+.skipLink:not(:focus) {
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
 }
 
 .skipLink:focus {
-  inset-block-start: 0;
   box-shadow: var(--ww-shadow-2);
 }
 

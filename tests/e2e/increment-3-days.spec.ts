@@ -2,7 +2,15 @@ import { expect, test, type Page } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { expectNoSeriousAxeViolations, waitForAnimations } from "./helpers/axe";
 import { signUp } from "./helpers/auth";
-import { addAccountToTrip, availabilityOf, memberStatus, seedTrip } from "./helpers/db";
+import {
+  addAccountToTrip,
+  availabilityOf,
+  fixTripDates,
+  isoDay,
+  memberStatus,
+  seedTrip,
+  setAvailability,
+} from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
 import { createTripViaUi } from "./helpers/trips";
 
@@ -298,6 +306,51 @@ test.describe("security and phases", () => {
     await other.close();
   });
 
+  test("R-045: marks on past days (incl. yesterday) survive later saves", async ({ page }) => {
+    const email = await signUp(page, "Pia", uniqueEmail("pia"));
+    const trip = await seedTrip(`Past ${String(Date.now())}`, {
+      rangeStart: isoDay(-5),
+      rangeEnd: isoDay(20),
+    });
+    await addAccountToTrip(trip.tripId, email, "Pia");
+    await setAvailability(trip.tripId, email, { [isoDay(-3)]: "no", [isoDay(-1)]: "maybe" });
+    await page.goto(`/trips/${trip.publicId}/days`);
+    const [day] = await firstDates(page, 1);
+    await cell(page, day ?? "").click();
+    await waitSaved(page);
+    await expect
+      .poll(() => availabilityOf(trip.publicId, email))
+      .toEqual({ [isoDay(-3)]: "no", [isoDay(-1)]: "maybe", [day ?? ""]: "no" });
+  });
+
+  test("R-047: dates fixed while the page is open – the save is refused with the lock notice", async ({
+    page,
+  }) => {
+    const email = await signUp(page, "Tom", uniqueEmail("tom"));
+    const trip = await seedTrip(`Lock ${String(Date.now())}`);
+    await addAccountToTrip(trip.tripId, email, "Tom");
+    await page.goto(`/trips/${trip.publicId}/days`);
+    const [day] = await firstDates(page, 1);
+    await fixTripDates(trip.tripId);
+    await cell(page, day ?? "").click();
+    await expect(page.getByText(days.banner.locked).first()).toBeVisible();
+    await expect(page.getByText(days.banner.rangeChanged)).toHaveCount(0);
+    expect(await availabilityOf(trip.publicId, email)).toEqual({});
+  });
+
+  test("R-048: opening «My dates» without changes saves nothing", async ({ page }) => {
+    const { publicId } = await setUp(page);
+    const posts: string[] = [];
+    page.on("request", (request) => {
+      if (request.method() === "POST" && request.headers()["next-action"])
+        posts.push(request.url());
+    });
+    await page.goto(`/trips/${publicId}/days`);
+    await expect(cells(page).first()).toBeVisible();
+    await page.waitForTimeout(1500);
+    expect(posts).toEqual([]);
+  });
+
   test("fixed dates: «My dates» is read-only, states stay visible", async ({ page }) => {
     const email = await signUp(page, "Lia", uniqueEmail("lia"));
     const trip = await seedTrip(`Fixed ${String(Date.now())}`, { phase: "fixed" });
@@ -329,6 +382,19 @@ test.describe("motion and accessibility", () => {
         }).length,
     );
     expect(transforms).toBe(0);
+  });
+
+  test("R-046: skip links stay hidden until they get focus", async ({ page }) => {
+    await setUp(page);
+    const skip = page.getByRole("link", { name: days.skipCalendar });
+    const hidden = () =>
+      skip.evaluate((element) => {
+        const rect = element.getBoundingClientRect();
+        return rect.width <= 1 && rect.height <= 1;
+      });
+    expect(await hidden()).toBe(true);
+    await skip.focus();
+    expect(await hidden()).toBe(false);
   });
 
   test("axe – «My dates» light and dark, after painting", async ({ page }) => {

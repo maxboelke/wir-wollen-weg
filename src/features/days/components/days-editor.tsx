@@ -179,7 +179,9 @@ export function DaysEditor(props: DaysEditorProps) {
   const [updatedAt, setUpdatedAt] = useState(props.updatedAt ?? props.submittedAt);
   const [submitting, setSubmitting] = useState(false);
   const [online, setOnline] = useState(true);
-  const [problem, setProblem] = useState<"rangeChanged" | "signedOut" | "error" | null>(null);
+  const [problem, setProblem] = useState<"rangeChanged" | "locked" | "signedOut" | "error" | null>(
+    null,
+  );
   const [legendOpen, setLegendOpen] = useState(!props.submittedAt);
   const [announcement, setAnnouncement] = useState("");
   const [comment, setComment] = useState(props.comment);
@@ -234,14 +236,19 @@ export function DaysEditor(props: DaysEditorProps) {
   // ---------------------------------------------------------------------------
   // Saving
   // ---------------------------------------------------------------------------
+  // Full snapshot of the search range – including past days (unchanged, read-only here): the
+  // server replaces from ITS «today − 1» (time-zone slack), so leaving yesterday out would
+  // delete yesterday's mark on every save (R-045).
   const snapshot = useCallback(
-    () => toEntries(statesRef.current, (date) => isEditable(date)),
-    [isEditable],
+    () =>
+      toEntries(statesRef.current, (date) => date >= props.rangeStart && date <= props.rangeEnd),
+    [props.rangeStart, props.rangeEnd],
   );
   const onRejected = useCallback(
     (error: DaysError) => {
       if (error === "rangeChanged" || error === "readOnly") {
-        setProblem("rangeChanged");
+        // readOnly = the dates were fixed meanwhile (phase 3) – say so, not «range changed».
+        setProblem(error === "readOnly" ? "locked" : "rangeChanged");
         router.refresh();
       } else if (error === "signedOut") {
         setProblem("signedOut");
@@ -276,11 +283,11 @@ export function DaysEditor(props: DaysEditorProps) {
   }, [saver.status]);
 
   // Offline banner (ux-spec §6) – back online retries right away.
-  const { retry } = saver;
+  const { resume } = saver;
   useEffect(() => {
     const update = () => {
       setOnline(navigator.onLine);
-      if (navigator.onLine) retry();
+      if (navigator.onLine) resume();
     };
     update();
     window.addEventListener("online", update);
@@ -289,7 +296,7 @@ export function DaysEditor(props: DaysEditorProps) {
       window.removeEventListener("online", update);
       window.removeEventListener("offline", update);
     };
-  }, [retry]);
+  }, [resume]);
 
   // ---------------------------------------------------------------------------
   // Motion helpers (W08-03/-07/-08): springs in date order, only transform
@@ -1173,7 +1180,7 @@ export function DaysEditor(props: DaysEditorProps) {
             {t("banner.offline")}
           </Banner>
         ) : null}
-        {problem === "rangeChanged" ? (
+        {problem === "rangeChanged" || problem === "locked" ? (
           <Banner
             tone="warning"
             role="status"
@@ -1189,7 +1196,7 @@ export function DaysEditor(props: DaysEditorProps) {
               </button>
             }
           >
-            {t("banner.rangeChanged")}
+            {problem === "locked" ? t("banner.locked") : t("banner.rangeChanged")}
           </Banner>
         ) : null}
         {problem === "signedOut" ? (

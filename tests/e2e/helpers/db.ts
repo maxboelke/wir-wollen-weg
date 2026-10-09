@@ -313,3 +313,30 @@ export async function memberStatus(publicIdValue: string, email: string) {
     return rows.rows[0];
   });
 }
+
+/** Stores days of one member directly (e.g. marks on days that are already past) – F-005. */
+export async function setAvailability(
+  tripId: string,
+  email: string,
+  entries: Record<string, "no" | "maybe">,
+): Promise<void> {
+  await withClient(async (client) => {
+    for (const [day, state] of Object.entries(entries)) {
+      await client.query(
+        `insert into availability (trip_id, user_id, day, state)
+         select $1, id, $3::date, $4 from "user" where email = $2`,
+        [tripId, email, day, state],
+      );
+    }
+  });
+}
+
+/** The organiser fixes the dates (phase 3) – e.g. while someone still has «Meine Tage» open. */
+export async function fixTripDates(tripId: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip set phase = 'fixed', fixed_start = $2, fixed_end = $3 where id = $1`,
+      [tripId, isoDay(40), isoDay(45)],
+    );
+  });
+}

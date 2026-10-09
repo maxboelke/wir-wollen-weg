@@ -102,6 +102,16 @@ export function useAutosave({
     void flush();
   }, [flush]);
 
+  /**
+   * Back online: retries only if something is still unsaved. (Calling `retry` here on mount
+   * saved an unchanged snapshot on every visit – bumping «zuletzt geändert», R-048.)
+   */
+  const resume = useCallback(() => {
+    if (!dirty.current) return;
+    attempt.current = 0;
+    void flush();
+  }, [flush]);
+
   /** Waits for a running save and drops a pending one (the caller sends the snapshot itself). */
   const settle = useCallback(async () => {
     window.clearTimeout(timer.current);
@@ -133,5 +143,5 @@ export function useAutosave({
     [],
   );
 
-  return { status, schedule, retry, settle, markSaved, flush };
+  return { status, schedule, retry, resume, settle, markSaved, flush };
 }
