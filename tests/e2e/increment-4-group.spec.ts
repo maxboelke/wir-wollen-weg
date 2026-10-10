@@ -398,6 +398,9 @@ test.describe("motion (F-052, W09-05)", () => {
     expect(direct).toBe(0);
 
     test.skip((page.viewportSize()?.width ?? 0) >= 960, "segment only below 960 px");
+    // The wave only plays over cells in the viewport. On short phones (iPhone 15: 659 px) the
+    // first calendar row starts below the fold after switching, so give the page room.
+    await page.setViewportSize({ width: page.viewportSize()?.width ?? 393, height: 900 });
     await page.evaluate(() => {
       sessionStorage.clear();
     });
