@@ -69,9 +69,13 @@ describe("defaultTab (sitemap §2)", () => {
     expect(defaultTab("fixed", member(), all)).toBe("overview");
   });
 
-  it("falls back to the overview while «Meine Tage»/«Abstimmen» are placeholders", () => {
-    expect(BUILT_TABS.has("days")).toBe(false);
-    expect(defaultTab("collect", member())).toBe("overview");
+  it("Increment 3: «Meine Tage» is built – missing dates open it, «Abstimmen» not yet", () => {
+    expect(BUILT_TABS.has("days")).toBe(true);
+    expect(BUILT_TABS.has("poll")).toBe(false);
+    expect(defaultTab("collect", member())).toBe("days");
+    expect(defaultTab("collect", member({ submittedAt: "x" }))).toBe("overview");
+    expect(defaultTab("vote", member())).toBe("overview");
+    expect(defaultTab("fixed", member())).toBe("overview");
   });
 });
 

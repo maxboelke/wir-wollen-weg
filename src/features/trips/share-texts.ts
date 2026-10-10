@@ -40,3 +40,22 @@ export async function inviteShareTexts(input: {
   );
   return Object.fromEntries(entries) as Record<Locale, string>;
 }
+
+/**
+ * Texts for a personal placeholder link (F-007): same product-name rules as the invite
+ * (ux-spec §10.3/§10.6), addressed to the expected person.
+ */
+export async function placeholderShareTexts(input: {
+  tripName: string;
+  token: string;
+  name: string;
+}): Promise<Record<Locale, string>> {
+  const link = inviteLink(input.token);
+  const entries = await Promise.all(
+    locales.map(async (locale) => {
+      const t = await getTranslations({ locale, namespace: "share.text" });
+      return [locale, t("placeholder", { trip: input.tripName, name: input.name, link })] as const;
+    }),
+  );
+  return Object.fromEntries(entries) as Record<Locale, string>;
+}

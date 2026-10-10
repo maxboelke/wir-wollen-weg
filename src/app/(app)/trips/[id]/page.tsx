@@ -178,14 +178,32 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
           <Card as="div" className={styles.members}>
             <MemberList
               phase={phase}
-              members={members.map((m) => ({
-                userId: m.userId,
-                displayName: m.displayName,
-                role: m.role,
-                joinedAt: m.joinedAt.toISOString(),
-                submitted: m.submittedAt !== null,
-                voted: m.votedAt !== null,
+              members={members.map((m) => {
+                const changed = m.availabilityUpdatedAt ?? m.submittedAt;
+                return {
+                  userId: m.userId,
+                  displayName: m.displayName,
+                  role: m.role,
+                  joinedAt: m.joinedAt.toISOString(),
+                  submitted: m.submittedAt !== null,
+                  voted: m.votedAt !== null,
+                  // F-007: «abgegeben» with the date of the last change (viewer's format).
+                  changedOn: changed
+                    ? formatDate(changed.toISOString().slice(0, 10), format.intl, {
+                        weekday: false,
+                        year: false,
+                      })
+                    : undefined,
+                  comment: m.submittedAt ? m.comment : null,
+                };
+              })}
+              placeholders={view.placeholders.map((p) => ({
+                id: p.id,
+                displayName: p.displayName,
               }))}
+              manageHref={
+                isOrganizer ? `${tripPath(trip.publicId, "invite")}#placeholders` : undefined
+              }
               context={sheetContext(view)}
             />
             <div className={styles.invite}>

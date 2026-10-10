@@ -6,7 +6,8 @@ import { z } from "zod";
 import { cleanDisplayName, DISPLAY_NAME_MAX } from "@/lib/display-name";
 import { JOIN_LIMIT } from "@/lib/invite-limits";
 import { isInviteTokenShape } from "@/lib/tokens";
-import { defaultTab } from "@/lib/trip-status";
+import { todayIso } from "@/lib/dates";
+import { defaultTab, uiPhase } from "@/lib/trip-status";
 import { auth } from "@/server/auth";
 import { requestLimitSubject, takeLimit } from "@/server/rate-limit";
 import { getSession } from "@/server/session";
@@ -60,7 +61,9 @@ export async function joinTrip(token: string, name: string): Promise<ActionResul
         return { error: "nameTaken", suggestion: outcome.suggestion };
     }
   }
-  const tab = defaultTab(preview.phase === "voting" ? "vote" : "collect", {
+  // CEO decision (Increment 2): after joining → «Meine Tage» while dates are collected; in
+  // phase 2/3 the overview (Flow A.5: dates are read-only once fixed).
+  const tab = defaultTab(uiPhase(preview, todayIso()), {
     role: "member",
     submittedAt: null,
     votedAt: null,

@@ -10,16 +10,20 @@ import { draftFromFormData, validateTrip, type TripDraft, type TripErrors } from
 import { auth } from "@/server/auth";
 import { getSession } from "@/server/session";
 import {
+  createPlaceholder,
   createTrip as insertTrip,
   deleteTrip,
   findMembership,
   regenerateInviteToken,
   removeMember,
+  removePlaceholder,
   renameMember,
+  renamePlaceholder,
   setJoinOpen,
   transferOrganizer,
   updateTrip,
   type Membership,
+  type PlaceholderResult,
 } from "@/server/trips";
 import { FLASH_COOKIE, flashValue } from "@/lib/flash";
 import { tripPath } from "./paths";
@@ -219,4 +223,56 @@ export async function deleteTripAction(
   await deleteTrip(found.trip.id);
   await flash("trip-deleted", found.trip.name);
   redirect("/trips");
+}
+
+// ---------------------------------------------------------------------------
+// Placeholders (F-007) – organiser only, checked on the server (F-004)
+// ---------------------------------------------------------------------------
+
+export interface PlaceholderActionResult {
+  ok?: boolean;
+  error?: TripActionError | "nameRequired" | "full";
+  suggestion?: string;
+}
+
+function placeholderResult(result: PlaceholderResult): PlaceholderActionResult {
+  if (result.ok) return { ok: true };
+  if (result.reason === "nameTaken") return { suggestion: result.suggestion };
+  return { error: result.reason === "full" ? "full" : "generic" };
+}
+
+/** «Wer soll dabei sein?» – adds a placeholder with its own invite link (W06). */
+export async function addPlaceholderAction(
+  publicId: string,
+  name: string,
+): Promise<PlaceholderActionResult> {
+  const found = await organizer(publicId);
+  if (!found) return { error: "notAllowed" };
+  const parsed = nameSchema.safeParse(name);
+  if (!parsed.success) return { error: "nameRequired" };
+  return placeholderResult(await createPlaceholder(found.trip.id, parsed.data));
+}
+
+export async function renamePlaceholderAction(
+  publicId: string,
+  placeholderId: string,
+  name: string,
+): Promise<PlaceholderActionResult> {
+  const found = await organizer(publicId);
+  const id = userIdSchema.safeParse(placeholderId);
+  if (!found || !id.success) return { error: "notAllowed" };
+  const parsed = nameSchema.safeParse(name);
+  if (!parsed.success) return { error: "nameRequired" };
+  return placeholderResult(await renamePlaceholder(found.trip.id, id.data, parsed.data));
+}
+
+/** Flow J «Platzhalter entfernen»: the personal link stops working at once. */
+export async function removePlaceholderAction(
+  publicId: string,
+  placeholderId: string,
+): Promise<PlaceholderActionResult> {
+  const found = await organizer(publicId);
+  const id = userIdSchema.safeParse(placeholderId);
+  if (!found || !id.success) return { error: "notAllowed" };
+  return (await removePlaceholder(found.trip.id, id.data)) ? { ok: true } : { error: "generic" };
 }

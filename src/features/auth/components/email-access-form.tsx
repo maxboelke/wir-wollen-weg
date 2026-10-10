@@ -77,6 +77,8 @@ interface EmailAccessFormProps {
   tripName?: string | undefined;
   /** Hint above the form when a protected page sent the user here (H.1). */
   notice?: ReactNode;
+  /** Pre-filled name of the name step – the placeholder's name on a personal link (F-007). */
+  defaultName?: string | undefined;
 }
 
 function urlWithStep(step: Step | null): string {
@@ -106,6 +108,7 @@ export function EmailAccessForm({
   tripName,
   notice,
   onSignedIn,
+  defaultName,
 }: EmailAccessFormProps) {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
@@ -127,7 +130,7 @@ export function EmailAccessForm({
   const [mode, setMode] = useState<"code" | "password">("code");
   const [email, setEmail] = useState("");
   const [code, setCode] = useState("");
-  const [name, setName] = useState("");
+  const [name, setName] = useState(defaultName ?? "");
   const [rememberMe, setRememberMe] = useState(true);
   const [suggestion, setSuggestion] = useState<string | null>(null);
   const [error, setError] = useState<AuthError | null>(null);

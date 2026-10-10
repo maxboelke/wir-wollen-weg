@@ -1,0 +1,105 @@
+/* «Wer soll dabei sein?» – W06 (F-007), design-system §9.6/§9.17 */
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  scroll-margin-top: calc(var(--ww-size-cockpit-compact-h) + var(--ww-space-4));
+}
+
+.title {
+  margin: 0;
+  font-size: var(--ww-text-xl);
+}
+
+.intro {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-3);
+}
+
+.form > :first-child {
+  align-self: stretch;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  min-height: var(--ww-size-control-md);
+  padding-block: var(--ww-space-2);
+  border-bottom: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.row:last-child {
+  border-bottom: 0;
+}
+
+.who {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  font-weight: var(--ww-font-weight-bold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.more {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-touch-min);
+  height: var(--ww-size-touch-min);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-button-sm);
+  background: transparent;
+  color: var(--ww-color-text);
+  cursor: pointer;
+}
+
+.more:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.sheet {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.sheet > p {
+  margin: 0;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-3);
+}

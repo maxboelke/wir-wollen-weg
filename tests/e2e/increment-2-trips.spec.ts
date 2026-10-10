@@ -53,7 +53,8 @@ test.describe("F-044 my trips", () => {
     );
     // The whole card is one link to the trip.
     await ownCard.getByRole("link", { name: /^Own / }).click();
-    await expect(page).toHaveURL(new RegExp(`/trips/${own}$`));
+    // Own dates missing → «Meine Tage» is the default tab (sitemap §2, Increment 3).
+    await expect(page).toHaveURL(new RegExp(`/trips/${own}/days$`));
   });
 });
 

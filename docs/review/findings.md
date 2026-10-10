@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-09 (Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033; Reviewer: Nachprüfung Commit 9baea12 – R-032, R-033 verifiziert) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-09 (Reviewer: Review Inkrement 3, Commit 2c9f373 – R-045–R-049; Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033; Reviewer: Nachprüfung Commit 9baea12 – R-032, R-033 verifiziert) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -454,3 +454,60 @@ Zusätzliche Reviewer-Proben (temporäres Spec, nicht eingecheckt):
 - **Tippflächen:** gemessen (Pixel 7): alle Bedienelemente ≥ 44 px bis auf den Skip-Link (39 px Höhe, nur bei Fokus sichtbar, Altbestand) und den Direktlink „Email“ (40 px breit) → vom Reviewer `min-width: 44px` ergänzt (`share-panel.module.css`). Schalter „Neue Mitglieder können beitreten“: ganze Zeile tippbar.
 - **Screenshots** (`scratchpad/inkrement-2/`, hell/dunkel) grob gegen design-system §9 und W04–W07/W12 abgeglichen: Cockpit (Indigo-Kopf, Pillen-Tabs, KPI-Ring), Reisekarte mit Abendsonne, Minz-CTA, Chips mit Text + Symbol, Statuszeilen „✓ abgegeben / ◷ noch offen“ – stimmig. Datumsfelder zeigen in den Screenshots `mm/dd/yyyy` (Browser-Locale en-US von Playwright, nicht die App) – bei echten DE-Browsern `TT.MM.JJJJ`.
 - **Teilen-Texte:** Wortlaut DE/EN entspricht ux-spec §10.3 (Produktname der Textsprache, mit/ohne Frist, Datumsformat der Textsprache über `shareTextIntl`), Glossar „Orga“/„Organizer“ eingehalten. Kleinigkeit: der Betreff des E-Mail-Direktlinks („Einladung: …“) folgt der Oberflächensprache, nicht der gewählten Textsprache. Kopieren ohne HTTPS: Clipboard-API nur im Secure Context → `execCommand` → Text markieren + Hinweis (E2E abgedeckt); Web Share nur nach Fähigkeitsprüfung, Abbruch ohne Folgeaktion.
+
+## Review Inkrement 3 (Reviewer 2026-10-09, Commit 2c9f373)
+
+Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08, Flow A.3/B/J, ux-spec §7.3, Motion-Katalog. Checks unter Node 24.21: format, lint, typecheck, i18n, Unit (229), Build, Migration 0004, E2E im CI-Modus (Chromium desktop + mobile; WebKit hier nicht installierbar).
+
+| ID | Schwere | Kurztitel | Status |
+|---|---|---|---|
+| R-045 | hoch | Jedes Speichern löscht die Markierung von gestern | verifiziert (vom Reviewer behoben) |
+| R-046 | mittel | Skip-Links auf „Meine Tage“ dauerhaft sichtbar (verdecken den Willkommens-Hinweis) | verifiziert (vom Reviewer behoben) |
+| R-047 | niedrig | Termin inzwischen festgelegt → irreführender Hinweis „Zeitraum geändert“ | verifiziert (vom Reviewer behoben) |
+| R-048 | mittel | Jeder Besuch von „Meine Tage“ speichert und setzt „zuletzt geändert“ | verifiziert (vom Reviewer behoben) |
+| R-049 | niedrig | 360 × 640: beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar | offen |
+
+### R-045: Jedes Speichern löscht die Markierung von gestern
+- Schwere: hoch · vom Reviewer behoben
+- Datei: `src/features/days/components/days-editor.tsx` (`snapshot`), `src/features/days/actions.ts` (`serverToday`)
+- Problem / Reproduktion: Der Server ersetzt beim Speichern alle Tage ab **seinem „heute − 1“** (Zeitzonen-Puffer), der Client schickte aber nur Tage ab **„heute“** (`isEditable`). Reise 5 Tage in der Vergangenheit begonnen, gespeichert `{vorgestern: no, gestern: no}` → einen beliebigen Tag antippen → DB danach `{vorgestern: no, heute: no}` – **gestern ist weg**. Passiert bei jedem Autosave, für alle Mitglieder, täglich; verfälscht später Heatmap/Vorschläge für laufende Zeiträume.
+- Umsetzung: Snapshot enthält alle eigenen Markierungen **im Suchzeitraum** (vergangene unverändert); der Server schreibt weiterhin nur sein Fenster. Regressionstest `increment-3-days.spec.ts` „R-045 …“.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-046: Skip-Links auf „Meine Tage“ dauerhaft sichtbar
+- Schwere: mittel · vom Reviewer behoben
+- Datei: `src/features/days/components/days.module.css` (`.skipLink`)
+- Problem / Reproduktion: Die Links „Zum Kalender / Zu den Werkzeugen“ wurden nur um 128 px nach oben verschoben statt versteckt. Nach dem Beitritt (`?welcome=1`, 360 px) lagen beide übereinander **auf der Überschrift des Willkommens-Hinweises** – sichtbar für alle, ohne Fokus (Screenshot geprüft).
+- Umsetzung: visuell versteckt (`clip-path`, 1 × 1 px) bis `:focus`, dann oben links eingeblendet. Regressionstest „R-046 …“.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-047: Termin inzwischen festgelegt → Hinweis „Zeitraum geändert“
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/features/days/components/days-editor.tsx` (`onRejected`)
+- Problem / Reproduktion: „Meine Tage“ offen, Orga legt den Termin fest, Mitglied tippt einen Tag → Server lehnt korrekt ab (`readOnly`, DB unverändert), angezeigt wurde aber „Der Zeitraum der Reise wurde geändert …“.
+- Umsetzung: `readOnly` zeigt „Der Termin steht fest – deine Tage sind gesperrt.“ + „Neu laden“. Regressionstest „R-047 …“.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-048: Jeder Besuch von „Meine Tage“ speichert und setzt „zuletzt geändert“
+- Schwere: mittel · vom Reviewer behoben
+- Datei: `src/features/days/components/days-editor.tsx` (Online-Effekt), `src/features/days/use-autosave.ts`
+- Problem / Reproduktion: Der Online-Effekt rief beim Mount `retry()` auf, das `dirty = true` setzt → bei **jedem** Seitenaufruf ein `saveDaysAction` mit unverändertem Snapshot. Folgen: `availability_updated_at` = Zeitpunkt des letzten **Besuchs** (F-007 verlangt „Datum der letzten Änderung“), unnötige Schreibzugriffe; in Phase 3 erschien dadurch beim Öffnen zusätzlich ein Fehler-Banner (bestehender E2E „fixed dates …“ auf mobile-chromium rot: Text doppelt). Gemessen: 1 POST pro Besuch ohne Änderung, `availability_updated_at` gesetzt.
+- Umsetzung: neues `resume()` im Hook – speichert nach „wieder online“ nur, wenn wirklich etwas offen ist; `retry()` bleibt für „Erneut versuchen“. Regressionstest „R-048 …“ (0 POSTs).
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-049: 360 × 640 – beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar
+- Schwere: niedrig
+- Datei: `src/features/days/components/days-editor.tsx` (Hinweise über dem Kalender), `days.module.css`
+- Problem / Reproduktion: Pixel-Viewport 360 × 640, erster Besuch (noch nicht abgegeben): Cockpit-Kopf, Entwurfs-Hinweis, „Feiertage für …“ und die offene Legende „So funktioniert's“ füllen den Bereich über der Werkzeugleiste komplett – der erste Kalendertag liegt unterhalb der Falz (mit Willkommens-Hinweis noch weiter). W08 rechnet mit ~380 px sichtbarem Kalender; F-005 betont Eingabe-Geschwindigkeit.
+- Erwartetes Verhalten: Mindestens die erste Kalenderwoche ohne Scrollen sichtbar.
+- Vorschlag: Legende kompakter (Schlüssel einzeilig, Erklärtext kürzer) oder auf < 600 px eingeklappt mit Chip-Zeile; Entwurfs-Hinweis und „Feiertage für“ in eine Zeile; „Feiertage für“ laut W08 nur zeigen, wenn die Region geraten ist (Annahme 6 des Developers). Mit UI/UX abstimmen.
+- Status: offen
+
+#### Hinweise ohne Finding (Inkrement 3)
+- **IDOR/Replay:** alle Tage-Actions lösen die Reise über `findMembership(publicId, session.user.id)` auf; Replay eines abgefangenen `saveDaysAction` mit fremder Session → `notAllowed`, DB unverändert (E2E). Platzhalter-Actions über `organizer()` + `userIdSchema` (UUID) + `trip_id`-Bedingung im WHERE. Phase 3/vergangen serverseitig gesperrt (live geprüft: Termin während offener Seite festgelegt → DB bleibt leer).
+- **`checkEntries`:** Array ≤ 400, Paare, echte Kalenderdaten (`isIsoDate` mit Round-Trip), nur `maybe`/`no`, nur Suchzeitraum, keine Duplikate; DB zusätzlich mit CHECK-Constraint und PK (trip, user, day). Kommentar: Code-Points ≤ 200 + DB-CHECK `char_length`.
+- **Platzhalter-Übernahme:** `joinLocked` sperrt die Reisezeile (`FOR UPDATE`) und liest den Platzhalter **nach** dem Lock – zwei parallele Übernahmen: eine übernimmt, die zweite wird normaler Beitritt (falls Platz) bzw. erhält einen Namensvorschlag. Grenze 30 zählt offene Platzhalter, Übernahme braucht keinen freien Platz. Namen eindeutig über Mitglieder + offene Platzhalter (App-Prüfung unter Lock + Partial Unique Index für Platzhalter). Entfernen vs. Übernahme parallel: `claimed_at is null` im DELETE verhindert Löschen eines gerade übernommenen Platzhalters.
+- **Platzhalter-Tokens:** 256 Bit, Formprüfung vor DB, Erneuern ersetzt Reise- **und** Platzhalter-Links in einer Transaktion. Live geprüft: Token erscheint für ein normales Mitglied weder im HTML noch in der RSC-Payload von Übersicht, Meine Tage, Einladen, Einstellungen, Gruppe; für die Orga nur auf `/invite`. Ein bereits übernommener Platzhalter-Link bleibt ein normaler Einladungslink (Flow A.3 so vorgesehen). Rate-Limits /i/* unverändert (Fehlversuche nur für ungültige Tokens, R-036-konform).
+- **Barrierefreiheit:** ein Grid pro Monat, Roving Tabindex über alle Monate, Tastatur laut §7.3 (E2E), Live-Region für Ansagen, Zustände mit Symbol + Muster, Bereichsmodus als Alternative zum Ziehen (WCAG 2.5.7), axe hell/dunkel ohne serious/critical, 360 px ohne horizontales Scrollen, keine Hydration-Fehler in der Konsole (R-017). Im gesperrten Zustand (Phase 3) hat das Grid keinen fokussierbaren Tag – Screenreader lesen die Tage im Lesemodus, für Tastatur ist nichts zu tun; vertretbar.
+- **Touch-Ziehen (Code-Review):** `touch-action: pan-y` auf den Zellen, horizontal > 10 px (< 30°) oder 300 ms Halten startet das Malen, vertikal = Scrollen (`pointercancel` wird sauber behandelt), nicht-passiver `touchmove`-Blocker nur während aktivem Ziehen, Auto-Scroll an den Rändern. Reduced Motion: keine Transform-Animationen (E2E), keine Vibration.
+- **Datum „abgegeben · geändert am“** wird als UTC-Tag formatiert (Annahme 7): Änderung um 00:30 MESZ zeigt den Vortag. Für die Demo vertretbar; mit Zeitzone des Kontos später korrigieren.

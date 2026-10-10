@@ -1,0 +1,47 @@
+/* W08 page frame + the static gesture sketch for reduced motion (W03-07, M-U9) */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+/* Static sketch: four mini days with a dashed outline and a finger dot – only shown when motion
+   is reduced (otherwise the gesture plays on the real calendar). No time limit. */
+.sketch {
+  display: none;
+  position: relative;
+  gap: 3px;
+  margin-block-start: var(--ww-space-2);
+  padding: 3px;
+  border: 2px dashed var(--ww-cal-preview-border);
+  border-radius: var(--ww-radius-xs);
+}
+
+.sketch > span {
+  width: 22px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--ww-avail-yes-bg);
+}
+
+.sketch > i {
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 70%;
+  width: 16px;
+  height: 16px;
+  margin-block-start: -8px;
+  border-radius: 50%;
+  background: var(--ww-color-primary);
+  box-shadow: 0 0 0 3px var(--ww-color-primary-tint);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sketch {
+    display: inline-flex;
+  }
+}
+
+:global(html[data-motion="reduce"]) .sketch {
+  display: inline-flex;
+}

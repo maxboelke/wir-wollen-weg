@@ -174,7 +174,9 @@
     "nameTakenHint": "Someone in this trip already has this name. How about “{suggestion}”?",
     "useSuggestion": "Use it",
     "nights": "{count, plural, one {# night} other {# nights}}",
-    "nightsRange": "{min}–{max} nights"
+    "nightsRange": "{min}–{max} nights",
+    "placeholderHello": "Hi {name}! {orga} has invited you.",
+    "placeholderUsed": "This personal link has already been used. You can still join normally."
   },
   "trips": {
     "title": "My trips",
@@ -592,7 +594,9 @@
     "status": {
       "open": "not yet",
       "submitted": "submitted",
-      "voted": "voted"
+      "voted": "voted",
+      "submittedOn": "submitted · {date}",
+      "placeholder": "Placeholder · not joined yet"
     },
     "organizer": "Organizer",
     "you": "you",
@@ -655,7 +659,10 @@
     "notFoundTitle": "Trip not found",
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
     "notFoundAction": "My trips",
-    "kpiMore": "{count} more"
+    "kpiMore": "{count} more",
+    "membersTitlePlaceholders": "Who's in? ({count} + {placeholders} placeholders)",
+    "commentOf": "Comment from {name}",
+    "placeholderManage": "Manage"
   },
   "share": {
     "title": "Invite friends",
@@ -686,7 +693,7 @@
     "joinClosedToast": "Joining is closed",
     "renew": "Renew link",
     "renewTitle": "Create a new link?",
-    "renewText": "The current link will stop working.",
+    "renewText": "The current link will stop working – for placeholders too.",
     "renewConfirm": "Create new link",
     "renewed": "New link ready – the old one no longer works.",
     "closedOrga": "Joining is closed. Open it to invite new people.",
@@ -695,7 +702,8 @@
     "continue": "Next: add my dates",
     "text": {
       "invite": "When do we go? {trip} – add your dates by {deadline}, takes 2 minutes: {link}",
-      "inviteNoDeadline": "When do we go? {trip} – add the dates that work for you, takes 2 minutes: {link}"
+      "inviteNoDeadline": "When do we go? {trip} – add the dates that work for you, takes 2 minutes: {link}",
+      "placeholder": "When do we go? {trip} – {name}, here's your personal link to add your dates: {link}"
     }
   },
   "tripSettings": {
@@ -708,5 +716,150 @@
     "deleteTitle": "Delete trip for everyone",
     "deleteText": "All dates, votes and members will be deleted right away.",
     "unsaved": "You have unsaved changes."
+  },
+  "days": {
+    "title": "My dates",
+    "draft": "Draft – it only counts once you submit.",
+    "draftShort": "Draft",
+    "holidaysFor": "Holidays for: {region}",
+    "holidaysChange": "Change",
+    "legendTitle": "How it works",
+    "legendNo": "Can't",
+    "legendMaybe": "If needed",
+    "legendYes": "Works (not marked)",
+    "legendHoliday": "Holiday",
+    "legendText": "Pick a brush, then tap days or swipe across them. Days you don't mark count as “Works”.",
+    "legendRange": "Date range: tap the start and the end – no swiping needed.",
+    "legendKeys": "With a keyboard: arrow keys move, Space marks, Shift+arrow selects a range, 1/2/3 picks the brush, Ctrl+Z undoes.",
+    "calHelp": "Arrow keys to move, Space to mark, Shift+arrow for ranges, 1/2/3 picks the brush.",
+    "jumpLabel": "Jump to month",
+    "skipCalendar": "Skip to calendar",
+    "skipTools": "Skip to tools",
+    "state": {
+      "no": "can't",
+      "maybe": "if needed",
+      "yes": "works"
+    },
+    "brush": {
+      "no": "Can't",
+      "maybe": "If needed",
+      "yes": "Works"
+    },
+    "brushGroup": "What are you marking?",
+    "cell": {
+      "today": "today",
+      "weekend": "weekend",
+      "holiday": "holiday {name}",
+      "outside": "not in the date range",
+      "past": "past"
+    },
+    "holidaysIn": "Holidays in {month}",
+    "tripHoliday": "{name} (trip)",
+    "tools": "Tools",
+    "range": "Select a date range",
+    "rangeShort": "Range",
+    "undo": "Undo",
+    "quick": "Quick actions",
+    "rangeHintStart": "Now tap the start.",
+    "rangeHintEnd": "Now tap the end.",
+    "rangeCancel": "Cancel",
+    "submit": "Done – submit",
+    "submitting": "Submitting …",
+    "submitted": "Submitted · {time}",
+    "saving": "Saving …",
+    "saved": "Saved",
+    "failed": "Not saved",
+    "retry": "Try again",
+    "announce": {
+      "single": "{date}: {state}",
+      "range": "{range}: {count, plural, one {# day} other {# days}} set to {state}",
+      "toast": "{count, plural, one {# day} other {# days}} set to “{state}”",
+      "undo": "Undone: {count, plural, one {# day} other {# days}} reset",
+      "redo": "Redone: {count, plural, one {# day} other {# days}} changed",
+      "selection": "Selected {range}, {count, plural, one {# day} other {# days}}",
+      "drag": "{range} · {count, plural, one {# day} other {# days}}",
+      "rangeStart": "Start: {date}. Now tap the end.",
+      "rangeCancelled": "Date range cancelled.",
+      "brush": "Brush: {brush}",
+      "nothing": "No change."
+    },
+    "quickActions": {
+      "workdaysMaybe": "All weekdays (Mon–Fri) to “if needed”",
+      "weekendsYes": "All weekends to “works”",
+      "holidaysYes": "Holidays to “works”",
+      "showTripHolidays": "Also show the trip's holidays ({region})",
+      "hideTripHolidays": "Hide the trip's holidays ({region})",
+      "reset": "Reset everything",
+      "resetTitle": "Reset everything?",
+      "resetText": "All marks in the date range go back to “works”. You can undo this.",
+      "resetConfirm": "Reset"
+    },
+    "empty": {
+      "title": "No days marked",
+      "text": "You haven't marked any days. Does that mean you can make it any time in the range?",
+      "yes": "Yes, any time works",
+      "no": "Keep marking"
+    },
+    "success": {
+      "title": "Thanks, {name}! Your dates are in.",
+      "text": "You can change them any time – changes count right away.",
+      "feedbackLegend": "Quick question: would you rather have imported your calendar?",
+      "apple": "Yes, Apple/iCloud",
+      "google": "Yes, Google",
+      "outlook": "Yes, Outlook",
+      "other": "Yes, another one",
+      "none": "No, this works for me",
+      "skip": "Skip",
+      "answer": "Answer",
+      "continue": "Continue"
+    },
+    "comment": {
+      "label": "Anything you'd like to add?",
+      "optional": "(optional)",
+      "placeholder": "e.g. July only with the kids",
+      "hint": "Everyone in the trip can read this.",
+      "counter": "{count}/200",
+      "saved": "Comment saved",
+      "tooLong": "200 characters at most."
+    },
+    "banner": {
+      "voting": "Voting has already started. Changes affect the suggestions, not votes already cast.",
+      "locked": "The dates are set – your days are locked.",
+      "lockedPast": "This trip is over – your days are locked.",
+      "offline": "No connection. Your changes will be saved as soon as you're back online.",
+      "offlineSubmit": "You can submit again once you're online.",
+      "rangeChanged": "The trip's date range has changed. Days outside it are hidden now.",
+      "reload": "Reload",
+      "signedOut": "You're signed out – your changes are still here. Sign in to save them.",
+      "signIn": "Sign in",
+      "error": "Saving didn't work. Your marks are still here."
+    },
+    "welcome": {
+      "title": "You're in!",
+      "text": "Now mark when you can't make it – tap days or swipe across several.",
+      "sketch": "Sketch: a finger swipes across four days."
+    }
+  },
+  "placeholders": {
+    "title": "Who should come along?",
+    "intro": "Add names so everyone can see who's still missing. Each placeholder gets its own link.",
+    "nameLabel": "Name",
+    "add": "Add",
+    "added": "{name} added.",
+    "missing": "not joined yet",
+    "link": "Link",
+    "linkFor": "Personal link for {name}",
+    "linkIntro": "Only send this link to {name}. Whoever joins with it takes over the placeholder – the name is already filled in.",
+    "actions": "Actions for {name}",
+    "rename": "Rename",
+    "renameTitle": "Rename “{name}”",
+    "renameDone": "Name saved",
+    "remove": "Remove",
+    "removeTitle": "Remove {name}?",
+    "removeText": "The personal link of {name} will stop working.",
+    "removeDone": "{name} was removed.",
+    "full": "The trip is full (30 of 30, placeholders included).",
+    "nameRequired": "Please enter a name.",
+    "label": "Placeholder"
   }
 }

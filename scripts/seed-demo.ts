@@ -1,6 +1,7 @@
 // Demo seed (deployment.md §0.4): synthetic data only (@demo.test), idempotent.
 // Increment 2: real trips in different phases with several members (F-001 ff.). Dates are
-// relative to today, so the demo always looks current.
+// relative to today, so the demo always looks current. Increment 3: marked days (F-005) for
+// everyone who submitted plus a draft, comments and placeholders (F-007).
 // Usage: pnpm db:seed:demo   (dev: reads .env.local) · demo container: pnpm demo:seed
 import { randomBytes, randomInt } from "node:crypto";
 import pg from "pg";
@@ -20,6 +21,23 @@ const PUBLIC_ID_ALPHABET = "23456789abcdefghijkmnpqrstuvwxyz";
 const publicId = () =>
   Array.from({ length: 10 }, () => PUBLIC_ID_ALPHABET.charAt(randomInt(32))).join("");
 const inviteToken = () => randomBytes(32).toString("base64url");
+
+/**
+ * Deterministic demo pattern for one member (F-005): a few blocks of «geht nicht» and some
+ * «zur Not» days, different per person – enough for a lively heatmap later.
+ */
+function demoDays(rangeStart: string, rangeEnd: string, seed: number): [string, string][] {
+  const out: [string, string][] = [];
+  const start = new Date(`${rangeStart}T00:00:00Z`);
+  const end = new Date(`${rangeEnd}T00:00:00Z`);
+  for (let i = 0, d = new Date(start); d <= end; i++, d.setUTCDate(d.getUTCDate() + 1)) {
+    const iso = d.toISOString().slice(0, 10);
+    if ((i + seed * 7) % 17 < 3) out.push([iso, "no"]);
+    else if ((i + seed * 5) % 13 === 0 && d.getUTCDay() !== 0 && d.getUTCDay() !== 6)
+      out.push([iso, "maybe"]);
+  }
+  return out;
+}
 
 /** ISO date `days` from today (UTC calendar day). */
 function day(days: number): string {
@@ -55,6 +73,9 @@ interface MemberSeed {
   organizer?: boolean;
   submitted?: boolean;
   voted?: boolean;
+  /** Marked days although not submitted yet (draft, F-005). */
+  draft?: boolean;
+  comment?: string;
 }
 
 interface TripSeed {
@@ -73,6 +94,8 @@ interface TripSeed {
   fixedEnd?: string;
   joinOpen?: boolean;
   members: MemberSeed[];
+  /** Expected people who have not joined yet (F-007). */
+  placeholders?: string[];
 }
 
 const TRIPS: TripSeed[] = [
@@ -89,14 +112,15 @@ const TRIPS: TripSeed[] = [
     locale: "de",
     phase: "collecting",
     members: [
-      { person: "anna", organizer: true },
-      { person: "ben", submitted: true },
+      { person: "anna", organizer: true, draft: true },
+      { person: "ben", submitted: true, comment: "Juli nur mit Kindern" },
       { person: "carla", submitted: true },
       { person: "david" },
       { person: "emma" },
       { person: "felix" },
       { person: "greta", submitted: true },
     ],
+    placeholders: ["Mia", "Tom"],
   },
   {
     name: "Skiurlaub Arlberg",
@@ -161,8 +185,9 @@ const TRIPS: TripSeed[] = [
     members: [
       { person: "felix", organizer: true },
       { person: "anna" },
-      { person: "emma", submitted: true },
+      { person: "emma", submitted: true, comment: "Only in September" },
     ],
+    placeholders: ["Jule"],
   },
   {
     name: "Malle 2026",
@@ -245,18 +270,38 @@ try {
     const tripId = row.rows[0]?.id;
     for (const [position, member] of seed.members.entries()) {
       const person = PEOPLE.find((p) => p.key === member.person);
+      const submittedAt = member.submitted
+        ? new Date(Date.now() - (position + 1) * 3_600_000)
+        : null;
       await client.query(
-        `insert into trip_member (trip_id, user_id, display_name, role, joined_at, submitted_at, voted_at)
-         values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7)`,
+        `insert into trip_member (trip_id, user_id, display_name, role, joined_at, submitted_at,
+           voted_at, availability_updated_at, comment)
+         values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9)`,
         [
           tripId,
           ids.get(member.person),
           member.name ?? person?.name.split(" ")[0] ?? member.person,
           member.organizer ? "organizer" : "member",
           20 - position,
-          member.submitted ? new Date(Date.now() - (position + 1) * 3_600_000) : null,
+          submittedAt,
           member.voted ? new Date(Date.now() - (position + 1) * 1_800_000) : null,
+          submittedAt ?? (member.draft ? new Date() : null),
+          member.comment ?? null,
         ],
+      );
+      if (member.submitted || member.draft) {
+        for (const [dayIso, state] of demoDays(seed.rangeStart, seed.rangeEnd, index + position)) {
+          await client.query(
+            `insert into availability (trip_id, user_id, day, state) values ($1, $2, $3, $4)`,
+            [tripId, ids.get(member.person), dayIso, state],
+          );
+        }
+      }
+    }
+    for (const name of seed.placeholders ?? []) {
+      await client.query(
+        `insert into trip_placeholder (trip_id, display_name, invite_token) values ($1, $2, $3)`,
+        [tripId, name, inviteToken()],
       );
     }
     const orga = seed.members.find((m) => m.organizer)?.person ?? "?";

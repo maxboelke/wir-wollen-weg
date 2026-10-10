@@ -51,3 +51,11 @@
   align-items: flex-start;
   gap: var(--ww-space-3);
 }
+
+/* Personal placeholder link (F-007): «Hallo Kemal! Lena hat dich eingeladen.» */
+.hello {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-extrabold);
+}

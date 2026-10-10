@@ -215,7 +215,7 @@ test.describe("pendingAuth (Flow A.4)", () => {
     await page.getByLabel(en.auth.codeLabel).fill(mail.code);
     await page.getByLabel(en.auth.nameLabel).fill("Pia");
     await page.getByRole("button", { name: en.invite.confirmJoin }).click();
-    await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}$/);
+    await expect(page).toHaveURL(/\/trips\/[a-z0-9]{10}\/days$/);
 
     // Done: the flow data is gone (never the code).
     const stored = await page.evaluate(() => localStorage.getItem("ww.pendingAuth"));

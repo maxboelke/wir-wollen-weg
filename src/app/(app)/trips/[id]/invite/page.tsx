@@ -6,11 +6,12 @@ import { Banner } from "@/components/ui/banner";
 import { ButtonLink } from "@/components/ui/button-link";
 import { ClearTripDraft } from "@/features/trips/components/clear-trip-draft";
 import { InviteAdmin } from "@/features/trips/components/invite-admin";
+import { PlaceholderManager } from "@/features/trips/components/placeholder-manager";
 import { SharePanel } from "@/features/trips/components/share-panel";
 import { TripShell } from "@/features/trips/components/trip-shell";
 import { loadTripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
-import { inviteLink, inviteShareTexts } from "@/features/trips/share-texts";
+import { inviteLink, inviteShareTexts, placeholderShareTexts } from "@/features/trips/share-texts";
 import styles from "./invite.module.css";
 
 type Params = PageProps<"/trips/[id]/invite">;
@@ -42,6 +43,21 @@ export default async function InvitePage({ params, searchParams }: Params) {
     senderCountry: format.country,
   });
   const closed = !trip.joinOpen;
+  // Personal placeholder links only ever reach the organiser's page (F-007).
+  const managed = isOrganizer
+    ? await Promise.all(
+        view.placeholders.map(async (placeholder) => ({
+          id: placeholder.id,
+          displayName: placeholder.displayName,
+          link: inviteLink(placeholder.inviteToken),
+          texts: await placeholderShareTexts({
+            tripName: trip.name,
+            token: placeholder.inviteToken,
+            name: placeholder.displayName,
+          }),
+        })),
+      )
+    : [];
 
   return (
     <TripShell view={view} tab={null} subtitle={t("title")}>
@@ -80,6 +96,16 @@ export default async function InvitePage({ params, searchParams }: Params) {
             locked={closed}
           />
         )}
+
+        {isOrganizer ? (
+          <PlaceholderManager
+            publicId={trip.publicId}
+            tripName={trip.name}
+            placeholders={managed}
+            defaultLocale={format.locale}
+            full={full}
+          />
+        ) : null}
 
         {isOrganizer ? <InviteAdmin publicId={trip.publicId} joinOpen={trip.joinOpen} /> : null}
 

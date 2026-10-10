@@ -56,16 +56,17 @@ test.describe("F-003 preview and join", () => {
     await page.getByLabel(en.auth.nameLabel).fill("Kemal");
     await page.getByRole("button", { name: en.invite.confirmJoin }).click();
 
-    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/days$`));
     await expect(page.getByRole("status").filter({ hasText: en.trip.welcomeTitle })).toBeVisible();
+    await page.goto(`/trips/${trip.publicId}`);
     const members = page.getByRole("region", { name: /Who's in\? \(2\)/ });
     await expect(members.getByText("Kemal")).toBeVisible();
     await expect(members.getByText(en.trip.status.open).first()).toBeVisible();
     expect(await memberNames(trip.publicId)).toEqual(["Lena Berg", "Kemal"]);
 
-    // Opening the link again: straight to the trip, no preview (Flow A.3).
+    // Opening the link again: straight to the trip (default tab «Meine Tage»), no preview.
     await page.goto(`/i/${trip.token}`);
-    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/days$`));
   });
 
   test("signed in: one tap; a taken name gets a suggestion", async ({ page }) => {

@@ -12,6 +12,8 @@ interface WelcomeHintProps {
   closeLabel: string;
   /** Server-rendered 40 px seal (SealMotion). */
   seal: ReactNode;
+  /** Optional addition below the text (e.g. the static gesture sketch on «Meine Tage»). */
+  extra?: ReactNode;
 }
 
 /**
@@ -19,7 +21,7 @@ interface WelcomeHintProps {
  * its seal pops (G-21). Once, closable; the `?welcome=1` marker leaves the URL right away,
  * so a reload or a shared link does not show it again. Reduced motion: static.
  */
-export function WelcomeHint({ title, text, closeLabel, seal }: WelcomeHintProps) {
+export function WelcomeHint({ title, text, closeLabel, seal, extra }: WelcomeHintProps) {
   const ref = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(true);
   const serverPainted = useWasServerPainted();
@@ -47,6 +49,7 @@ export function WelcomeHint({ title, text, closeLabel, seal }: WelcomeHintProps)
       <div className={styles.text}>
         <p className={styles.title}>{title}</p>
         <p>{text}</p>
+        {extra}
       </div>
       <button
         type="button"
