@@ -407,13 +407,21 @@ test.describe("motion (F-052, W09-05)", () => {
     await hydrated(page);
     await page.getByRole("link", { name: g.segment.calendar, exact: true }).click();
     await expect(page).toHaveURL(/view=calendar$/);
-    const waved = await page.evaluate(
-      () =>
-        document
-          .getAnimations()
-          .filter((a) => (a.effect as KeyframeEffect | null)?.target?.matches("button[data-date]"))
-          .length,
-    );
-    expect(waved).toBeGreaterThan(0);
+    // The URL is pushed in the click handler, before React renders the calendar and runs the
+    // wave (WebKit commits a task later than Chromium) – poll instead of reading once.
+    await expect
+      .poll(
+        () =>
+          page.evaluate(
+            () =>
+              document
+                .getAnimations()
+                .filter((a) =>
+                  (a.effect as KeyframeEffect | null)?.target?.matches("button[data-date]"),
+                ).length,
+          ),
+        { timeout: 2000, intervals: [50] },
+      )
+      .toBeGreaterThan(0);
   });
 });
