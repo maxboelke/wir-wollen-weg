@@ -381,3 +381,127 @@ export async function addPlaceholder(tripId: string, name: string): Promise<void
     );
   });
 }
+
+// ---------------------------------------------------------------------------
+// Increment 5: vote (F-010, F-011, F-012)
+// ---------------------------------------------------------------------------
+
+/** Makes an account the organiser of a trip (the seeded organiser becomes a member). */
+export async function makeOrganizer(tripId: string, email: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip_member set role = 'member' where trip_id = $1 and role = 'organizer'`,
+      [tripId],
+    );
+    await client.query(
+      `update trip_member set role = 'organizer'
+        where trip_id = $1 and user_id = (select id from "user" where email = $2)`,
+      [tripId, email],
+    );
+  });
+}
+
+/**
+ * Starts a vote directly (phase «voting») with the given periods; `fixed` additionally fixes
+ * the first option (phase 3). Returns the option ids in creation order.
+ */
+export async function seedPoll(
+  tripId: string,
+  periods: [string, string][],
+  options: { fixed?: boolean; deadline?: string } = {},
+): Promise<string[]> {
+  return withClient(async (client) => {
+    const ids: string[] = [];
+    for (const [index, [start, end]] of periods.entries()) {
+      const row = await client.query<{ id: string }>(
+        `insert into poll_option (trip_id, start_date, end_date, created_at)
+         values ($1, $2, $3, now() - make_interval(secs => $4)) returning id`,
+        [tripId, start, end, 100 - index],
+      );
+      ids.push(row.rows[0]?.id ?? "");
+    }
+    const [first] = periods;
+    await client.query(
+      `update trip set phase = $2, poll_deadline = $3, poll_started_at = now(),
+         fixed_start = $4, fixed_end = $5, fixed_at = case when $2 = 'fixed' then now() end
+       where id = $1`,
+      [
+        tripId,
+        options.fixed ? "fixed" : "voting",
+        options.deadline ?? null,
+        options.fixed ? (first?.[0] ?? null) : null,
+        options.fixed ? (first?.[1] ?? null) : null,
+      ],
+    );
+    return ids;
+  });
+}
+
+/** A synthetic member with answers per option (null = no answer); «abgestimmt» if complete. */
+export async function addVoter(
+  tripId: string,
+  name: string,
+  optionIds: string[],
+  choices: ("yes" | "maybe" | "no" | null)[],
+): Promise<void> {
+  await withClient(async (client) => {
+    const userId = await insertUser(client, name);
+    const complete = choices.length === optionIds.length && choices.every((c) => c !== null);
+    await client.query(
+      `insert into trip_member (trip_id, user_id, display_name, submitted_at, voted_at)
+       values ($1, $2, $3, now(), $4)`,
+      [tripId, userId, name, complete ? new Date() : null],
+    );
+    for (const [index, choice] of choices.entries()) {
+      if (!choice) continue;
+      await client.query(
+        `insert into poll_vote (option_id, trip_id, user_id, choice) values ($1, $2, $3, $4)`,
+        [optionIds[index], tripId, userId, choice],
+      );
+    }
+  });
+}
+
+export async function pollState(publicIdValue: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      phase: string;
+      fixed_start: string | null;
+      fixed_end: string | null;
+      poll_deadline: string | null;
+      options: number;
+    }>(
+      `select phase, fixed_start::text, fixed_end::text, poll_deadline::text,
+         (select count(*)::int from poll_option o where o.trip_id = t.id) as options
+         from trip t where public_id = $1`,
+      [publicIdValue],
+    );
+    return rows.rows[0];
+  });
+}
+
+/** Own answers of an account: { "start/end": choice }. */
+export async function votesOf(publicIdValue: string, email: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{ key: string; choice: string }>(
+      `select o.start_date::text || '/' || o.end_date::text as key, v.choice
+         from poll_vote v join poll_option o on o.id = v.option_id
+         join trip t on t.id = v.trip_id join "user" u on u.id = v.user_id
+        where t.public_id = $1 and u.email = $2`,
+      [publicIdValue, email],
+    );
+    return Object.fromEntries(rows.rows.map((row) => [row.key, row.choice]));
+  });
+}
+
+export async function memberVoteStatus(publicIdValue: string, email: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{ voted: boolean; celebrated_for: string | null }>(
+      `select m.voted_at is not null as voted, m.celebrated_for
+         from trip_member m join trip t on t.id = m.trip_id join "user" u on u.id = m.user_id
+        where t.public_id = $1 and u.email = $2`,
+      [publicIdValue, email],
+    );
+    return rows.rows[0];
+  });
+}

@@ -19,5 +19,6 @@ export function sheetContext(view: TripView): TripSheetContext {
     })),
     intl: view.format.intl,
     helpHref: helpHref(view.format.locale),
+    canUnfix: view.isOrganizer && view.phase === "fixed",
   };
 }

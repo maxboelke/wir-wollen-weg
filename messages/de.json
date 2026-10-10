@@ -206,14 +206,17 @@
     "todo": {
       "addDates": "Deine Tage fehlen noch",
       "vote": "Jetzt abstimmen",
-      "startVote": "Alle haben abgegeben – Abstimmung starten?"
+      "startVote": "Alle haben abgegeben – Abstimmung starten?",
+      "fixDates": "Bereit zum Festlegen"
     },
     "action": {
       "addDates": "Tage eintragen",
       "vote": "Abstimmen",
-      "startVote": "Abstimmung erstellen"
+      "startVote": "Abstimmung erstellen",
+      "fixDates": "Termin festlegen"
     },
-    "actionFor": "{action}: {trip}"
+    "actionFor": "{action}: {trip}",
+    "voteDeadline": "Abstimmen bis {date}"
   },
   "settings": {
     "motion": {
@@ -581,14 +584,19 @@
       "vote": "Die Abstimmung läuft – stimm ab.",
       "voteDone": "{done} von {total} haben abgestimmt.",
       "fixed": "Der Termin steht: {range}.",
-      "past": "Diese Reise ist vorbei. Zeit für die nächste?"
+      "past": "Diese Reise ist vorbei. Zeit für die nächste?",
+      "fixDates": "Alle haben abgestimmt! Zeit, den Termin festzulegen.",
+      "fixDatesDeadline": "Die Frist ist abgelaufen. Zeit, den Termin festzulegen.",
+      "voteWaiting": "Danke fürs Abstimmen! Bisher haben {done} von {total} abgestimmt."
     },
     "nextAction": {
       "addDates": "Tage eintragen",
       "startVote": "Abstimmung erstellen",
       "suggestions": "Vorschläge ansehen",
       "vote": "Abstimmen",
-      "newTrip": "Neue Reise planen"
+      "newTrip": "Neue Reise planen",
+      "fixDates": "Termin festlegen",
+      "poll": "Zur Abstimmung"
     },
     "membersTitle": "Wer ist dabei? ({count})",
     "status": {
@@ -622,7 +630,8 @@
       "edit": "Reise bearbeiten",
       "leave": "Reise verlassen",
       "delete": "Reise löschen",
-      "help": "Hilfe"
+      "help": "Hilfe",
+      "unfix": "Festlegung aufheben"
     },
     "dialogs": {
       "leaveTitle": "„{trip}“ verlassen?",
@@ -654,7 +663,11 @@
       "deleteText": "Alle Tage, Stimmen und Mitglieder von „{trip}“ werden sofort gelöscht. Das kann nicht rückgängig gemacht werden.",
       "deleteLabel": "Tippe zur Bestätigung den Reisenamen: {trip}",
       "deleteHint": "Tippe „{trip}“ zur Bestätigung.",
-      "deleteConfirm": "Reise löschen"
+      "deleteConfirm": "Reise löschen",
+      "unfixTitle": "Termin wieder offen machen?",
+      "unfixText": "Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.",
+      "unfixConfirm": "Termin aufheben",
+      "unfixDone": "Die Abstimmung ist wieder offen."
     },
     "notFoundTitle": "Reise nicht gefunden",
     "notFoundText": "Diese Reise gibt es nicht oder du bist nicht dabei. Wenn du eingeladen wurdest, öffne den Einladungslink aus dem Gruppenchat.",
@@ -662,7 +675,9 @@
     "kpiMore": "{count} weitere",
     "membersTitlePlaceholders": "Wer ist dabei? ({count} + {placeholders} Platzhalter)",
     "commentOf": "Kommentar von {name}",
-    "placeholderManage": "Verwalten"
+    "placeholderManage": "Verwalten",
+    "kpiVoteDeadline": "Abstimmen bis {date}",
+    "kpiAllVoted": "Alle haben abgestimmt."
   },
   "share": {
     "title": "Freunde einladen",
@@ -703,7 +718,10 @@
     "text": {
       "invite": "Wir wollen weg: {trip}! Trag bis {deadline} ein, wann du kannst – dauert 2 Minuten: {link}",
       "inviteNoDeadline": "Wir wollen weg: {trip}! Trag ein, wann du kannst – dauert 2 Minuten: {link}",
-      "placeholder": "Wir wollen weg: {trip}! {name}, hier ist dein persönlicher Link – trag ein, wann du kannst: {link}"
+      "placeholder": "Wir wollen weg: {trip}! {name}, hier ist dein persönlicher Link – trag ein, wann du kannst: {link}",
+      "poll": "Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm bis {deadline} ab: {link}",
+      "pollNoDeadline": "Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm jetzt ab: {link}",
+      "result": "Fix! {trip}: {range} ({nights} Nächte). Termin in den Kalender: {link}"
     }
   },
   "tripSettings": {
@@ -907,7 +925,7 @@
     "showAll": "Alle {count} anzeigen",
     "showLess": "Weniger anzeigen",
     "createPoll": "Abstimmung erstellen",
-    "createPollHint": "Die Abstimmung kommt mit dem nächsten Schritt.",
+    "createPollHint": "Hak Vorschläge mit „Zur Abstimmung“ an – oder starte mit den besten drei.",
     "empty": {
       "nobody": "Noch keine Vorschläge – sobald die ersten ihre Tage eingetragen haben, rechnen wir los.",
       "addDates": "Meine Tage eintragen",
@@ -987,6 +1005,177 @@
       "title": "Wer hat abgegeben? ({done}/{total})",
       "done": "Abgegeben ({count})",
       "open": "Noch offen ({count})"
-    }
+    },
+    "pick": "Zur Abstimmung",
+    "pickedCount": "{count} ausgewählt",
+    "pickedCreate": "Abstimmung erstellen",
+    "goToPoll": "Zur Abstimmung",
+    "pollOpen": "Die Abstimmung läuft – der Termin wird gerade entschieden."
+  },
+  "poll": {
+    "title": "Abstimmen",
+    "open": "Abstimmung läuft",
+    "closed": "Abstimmung beendet",
+    "emptyMemberTitle": "Noch keine Abstimmung.",
+    "emptyMemberText": "{orga} startet sie, sobald genug Tage eingetragen sind.",
+    "emptyMemberAction": "Vorschläge ansehen",
+    "emptyOrgaTitle": "Bereit für die Abstimmung?",
+    "emptyOrgaText": "Wähle 2–6 Zeiträume aus den Vorschlägen.",
+    "emptyOrgaOpen": "Noch offen: {names}",
+    "emptyOrgaAction": "Abstimmung erstellen",
+    "kpiDeadline": "{count, plural, one {noch # Tag} other {noch # Tage}}",
+    "kpiDeadlineToday": "Letzter Tag",
+    "kpiDeadlineUntil": "bis {date}",
+    "kpiDeadlinePassed": "Frist abgelaufen",
+    "kpiVoted": "{done} von {total}",
+    "kpiVotedLabel": "haben abgestimmt",
+    "kpiAllVoted": "Alle haben abgestimmt",
+    "kpiVotersHint": "Wer hat abgestimmt?",
+    "votersTitle": "Wer hat abgestimmt?",
+    "votersDone": "Abgestimmt ({count})",
+    "votersOpen": "Noch offen ({count})",
+    "votersNone": "Noch niemand.",
+    "votersNote": "Nur der Status – die Stimmen selbst stehen bei den Optionen.",
+    "prefillInfo": "Wir haben deine Stimmen aus deinen Tagen vorbereitet.",
+    "prefillAll": "Alle Vorschläge übernehmen",
+    "suggestedLabel": "Vorschlag aus deinen Tagen",
+    "suggestedSr": "Vorschlag aus deinen Tagen",
+    "byCalendar": "Laut Kalender: {text}",
+    "everyoneCan": "alle können",
+    "nobodySubmitted": "noch hat niemand Tage eingetragen",
+    "canWithout": "{count} können · ohne {names}",
+    "segment": {
+      "yes": "Ja",
+      "maybe": "Vielleicht",
+      "no": "Nein"
+    },
+    "segmentGhost": "{label}?",
+    "voteToSee": "Stimm ab, um das Ergebnis zu sehen.",
+    "resultSr": "Ergebnis: {yes} Ja, {maybe} Vielleicht, {no} Nein",
+    "topChoice": "Platz 1",
+    "without": "ohne {names}",
+    "whoVoted": "Wer hat wie gestimmt?",
+    "whoVotedNone": "Noch keine Stimmen.",
+    "statusOpen": "{count, plural, one {Noch # Option offen.} other {Noch # Optionen offen.}}",
+    "statusDone": "Danke, deine Stimmen sind gespeichert. Du kannst sie bis zum Ende ändern.",
+    "saving": "Speichert …",
+    "saved": "Gespeichert",
+    "saveFailed": "Nicht gespeichert – bitte erneut versuchen.",
+    "retry": "Erneut versuchen",
+    "votedFor": "{range}: {choice}",
+    "addOption": "Option hinzufügen",
+    "addOptionNote": "Bestehende Optionen bleiben unverändert, damit abgegebene Stimmen gültig bleiben.",
+    "addOptionDone": "Option hinzugefügt",
+    "remind": "Gruppe erinnern",
+    "fixButton": "Abstimmung beenden & festlegen",
+    "fixOrgaOnly": "Nur für die Orga.",
+    "deadlinePassedOrga": "Die Frist ist abgelaufen. Zeit, den Termin festzulegen.",
+    "deadlinePassedOrgaAction": "Termin festlegen",
+    "deadlinePassedMember": "Die Frist ist abgelaufen – {orga} legt den Termin bald fest. Du kannst noch abstimmen.",
+    "fixedBanner": "Der Termin steht fest! Die Abstimmung ist beendet.",
+    "fixedLocked": "Abstimmung beendet",
+    "fixedChosen": "Gewählt",
+    "conflict": "{orga} hat den Termin inzwischen festgelegt.",
+    "conflictAction": "Ansehen",
+    "phaseChanged": "Die Abstimmung hat sich inzwischen geändert. Lade die Seite neu.",
+    "reload": "Neu laden",
+    "started": "Abstimmung läuft!",
+    "shareTitle": "Abstimmung läuft!",
+    "shareLead": "Sag der Gruppe Bescheid – es wird keine E-Mail verschickt.",
+    "fix": {
+      "title": "Termin festlegen",
+      "missing": "Noch nicht abgestimmt: {names}.",
+      "tie": "Gleichstand auf Platz 1 – du entscheidest.",
+      "legend": "Welcher Zeitraum?",
+      "place": "Platz 1",
+      "counts": "Ja {yes} · Vielleicht {maybe} · Nein {no}",
+      "without": "(ohne {names})",
+      "note": "Danach sind Tage und Stimmen gesperrt. Du kannst das später wieder aufheben.",
+      "confirm": "Termin festlegen",
+      "pick": "Wähle zuerst einen Zeitraum.",
+      "busy": "Wird festgelegt …"
+    },
+    "create": {
+      "title": "Abstimmung erstellen",
+      "cancel": "Abbrechen",
+      "lead": "Wähle 2–6 Zeiträume, über die die Gruppe abstimmt.",
+      "option": "Option {n}",
+      "earlier": "Früher",
+      "later": "Später",
+      "nights": "Nächte",
+      "nightsHint": "= {days} Tage inkl. An- und Abreise",
+      "remove": "Entfernen",
+      "removeLabel": "Option {n} entfernen",
+      "custom": "Eigener Zeitraum",
+      "deadline": "Abstimmen bis (optional)",
+      "deadlineIn3": "in 3 Tagen",
+      "deadlineIn7": "in 1 Woche",
+      "deadlineClear": "Ohne Frist",
+      "deadlineShown": "Abstimmen bis {date}",
+      "submit": "Abstimmung starten",
+      "busy": "Wird gestartet …",
+      "minOptions": "Mindestens 2 Optionen",
+      "maxOptions": "Höchstens 6 Optionen",
+      "duplicate": "Diesen Zeitraum gibt es schon.",
+      "noSuggestions": "Noch keine Vorschläge – füge eigene Zeiträume hinzu.",
+      "empty": "Noch keine Optionen.",
+      "warnCannot": "{names} kann nicht",
+      "tooShort": "Kürzer als die Vorgabe der Reise ({min} Nächte).",
+      "errors": {
+        "count": "Wähle 2–6 Zeiträume.",
+        "duplicate": "Diesen Zeitraum gibt es schon.",
+        "outsideRange": "Wähle Tage innerhalb des Reisezeitraums.",
+        "past": "Dieser Zeitraum hat schon begonnen.",
+        "tooShort": "Mindestens {min} Nächte, wie für diese Reise festgelegt.",
+        "tooLong": "Das ist zu lang für eine Option.",
+        "invalid": "Bitte prüf die Daten.",
+        "phase": "Die Abstimmung läuft schon.",
+        "full": "Es gibt schon 6 Optionen.",
+        "deadline": "Die Frist darf nicht in der Vergangenheit liegen."
+      },
+      "range": "{start} – {end}",
+      "vacation": "{count, plural, one {ca. # Urlaubstag} other {ca. # Urlaubstage}}",
+      "maybe": "{count}× zur Not",
+      "fewer": "Weniger Nächte",
+      "more": "Mehr Nächte",
+      "nightsUnit": "{count, plural, one {Nacht} other {Nächte}}",
+      "nightsCount": "{count, plural, one {# Nacht} other {# Nächte}}",
+      "deadlineLabel": "Datum",
+      "shifted": "Option {n}: {range}",
+      "removed": "Option entfernt",
+      "added": "Option hinzugefügt"
+    },
+    "period": {
+      "title": "Eigener Zeitraum",
+      "titleAdd": "Option hinzufügen",
+      "start": "Anreise",
+      "end": "Abreise",
+      "summary": "{range} · {nights, plural, one {# Nacht} other {# Nächte}}",
+      "cannot": "{names} können an mindestens einem Tag nicht.",
+      "everyone": "Alle, die Tage eingetragen haben, können.",
+      "add": "Hinzufügen",
+      "hint": "Zwischen {start} und {end}."
+    },
+    "result": {
+      "eyebrow": "Termin steht fest",
+      "title": "Es geht los!",
+      "days": "{count, plural, one {noch # Tag} other {noch # Tage}}",
+      "today": "Heute geht’s los!",
+      "during": "Gute Reise!",
+      "past": "Hoffentlich war’s schön!",
+      "addToCalendar": "Zum Kalender hinzufügen",
+      "icsFile": "Kalenderdatei (Apple, Outlook …)",
+      "google": "Google Kalender",
+      "downloaded": "Heruntergeladen",
+      "tellEveryone": "Allen Bescheid geben",
+      "share": "Teilen",
+      "inAppHint": "Download klappt nicht? Öffne die Seite in Safari oder Chrome.",
+      "bannerFixed": "Der Termin steht fest!",
+      "bannerAction": "Ansehen",
+      "calendarDescription": "Geplant mit Wir wollen weg",
+      "ringLabel": "noch <n>{count}</n> {count, plural, one {Tag} other {Tage}}",
+      "going": "{count} dabei"
+    },
+    "sharePoll": "Abstimmung teilen"
   }
 }

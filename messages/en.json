@@ -206,14 +206,17 @@
     "todo": {
       "addDates": "Your dates are still missing",
       "vote": "Vote now",
-      "startVote": "Everyone's submitted – start the vote?"
+      "startVote": "Everyone's submitted – start the vote?",
+      "fixDates": "Ready to lock in the dates"
     },
     "action": {
       "addDates": "Add your dates",
       "vote": "Vote",
-      "startVote": "Create a vote"
+      "startVote": "Create a vote",
+      "fixDates": "Lock in dates"
     },
-    "actionFor": "{action}: {trip}"
+    "actionFor": "{action}: {trip}",
+    "voteDeadline": "Vote by {date}"
   },
   "settings": {
     "motion": {
@@ -581,14 +584,19 @@
       "vote": "Voting is open – cast your vote.",
       "voteDone": "{done} of {total} have voted.",
       "fixed": "The dates are set: {range}.",
-      "past": "This trip is over. Time for the next one?"
+      "past": "This trip is over. Time for the next one?",
+      "fixDates": "Everyone has voted! Time to lock in the dates.",
+      "fixDatesDeadline": "The voting deadline has passed. Time to lock in the dates.",
+      "voteWaiting": "Thanks for voting! {done} of {total} have voted so far."
     },
     "nextAction": {
       "addDates": "Add your dates",
       "startVote": "Create a vote",
       "suggestions": "See suggestions",
       "vote": "Vote",
-      "newTrip": "Plan a new trip"
+      "newTrip": "Plan a new trip",
+      "fixDates": "Lock in dates",
+      "poll": "Go to the vote"
     },
     "membersTitle": "Who's in? ({count})",
     "status": {
@@ -622,7 +630,8 @@
       "edit": "Edit trip",
       "leave": "Leave trip",
       "delete": "Delete trip",
-      "help": "Help"
+      "help": "Help",
+      "unfix": "Undo locked dates"
     },
     "dialogs": {
       "leaveTitle": "Leave “{trip}”?",
@@ -654,7 +663,11 @@
       "deleteText": "All dates, votes and members of “{trip}” will be deleted right away. This can't be undone.",
       "deleteLabel": "To confirm, type the trip name: {trip}",
       "deleteHint": "Type “{trip}” to confirm.",
-      "deleteConfirm": "Delete trip"
+      "deleteConfirm": "Delete trip",
+      "unfixTitle": "Reopen the dates?",
+      "unfixText": "The vote opens again, all votes are kept. If you already shared the dates, correct them in your group chat yourself.",
+      "unfixConfirm": "Reopen dates",
+      "unfixDone": "The vote is open again."
     },
     "notFoundTitle": "Trip not found",
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
@@ -662,7 +675,9 @@
     "kpiMore": "{count} more",
     "membersTitlePlaceholders": "Who's in? ({count} + {placeholders} placeholders)",
     "commentOf": "Comment from {name}",
-    "placeholderManage": "Manage"
+    "placeholderManage": "Manage",
+    "kpiVoteDeadline": "Vote by {date}",
+    "kpiAllVoted": "Everyone has voted."
   },
   "share": {
     "title": "Invite friends",
@@ -703,7 +718,10 @@
     "text": {
       "invite": "When do we go? {trip} – add your dates by {deadline}, takes 2 minutes: {link}",
       "inviteNoDeadline": "When do we go? {trip} – add the dates that work for you, takes 2 minutes: {link}",
-      "placeholder": "When do we go? {trip} – {name}, here's your personal link to add your dates: {link}"
+      "placeholder": "When do we go? {trip} – {name}, here's your personal link to add your dates: {link}",
+      "poll": "Voting for {trip} is open! {count} options to choose from – vote by {deadline}: {link}",
+      "pollNoDeadline": "Voting for {trip} is open! {count} options to choose from – vote now: {link}",
+      "result": "It's on! {trip}: {range} ({nights} nights). Add it to your calendar: {link}"
     }
   },
   "tripSettings": {
@@ -907,7 +925,7 @@
     "showAll": "Show all {count}",
     "showLess": "Show fewer",
     "createPoll": "Create a vote",
-    "createPollHint": "Voting comes with the next step.",
+    "createPollHint": "Tick “Add to vote” on suggestions – or start with the top three.",
     "empty": {
       "nobody": "No suggestions yet – as soon as the first people add their dates, we'll start working them out.",
       "addDates": "Add my dates",
@@ -987,6 +1005,177 @@
       "title": "Who has submitted? ({done}/{total})",
       "done": "Submitted ({count})",
       "open": "Still open ({count})"
-    }
+    },
+    "pick": "Add to vote",
+    "pickedCount": "{count, plural, one {# selected} other {# selected}}",
+    "pickedCreate": "Create a vote",
+    "goToPoll": "Go to the vote",
+    "pollOpen": "Voting is open – the dates are being decided."
+  },
+  "poll": {
+    "title": "Vote",
+    "open": "Voting open",
+    "closed": "Voting closed",
+    "emptyMemberTitle": "No vote yet.",
+    "emptyMemberText": "{orga} will start it once enough dates are in.",
+    "emptyMemberAction": "See suggestions",
+    "emptyOrgaTitle": "Ready to vote?",
+    "emptyOrgaText": "Pick 2–6 periods from the suggestions.",
+    "emptyOrgaOpen": "Still missing: {names}",
+    "emptyOrgaAction": "Create a vote",
+    "kpiDeadline": "{count, plural, one {# day left} other {# days left}}",
+    "kpiDeadlineToday": "Last day",
+    "kpiDeadlineUntil": "until {date}",
+    "kpiDeadlinePassed": "Deadline passed",
+    "kpiVoted": "{done} of {total}",
+    "kpiVotedLabel": "have voted",
+    "kpiAllVoted": "Everyone has voted",
+    "kpiVotersHint": "Who has voted?",
+    "votersTitle": "Who has voted?",
+    "votersDone": "Voted ({count})",
+    "votersOpen": "Still missing ({count})",
+    "votersNone": "Nobody yet.",
+    "votersNote": "Only the status – the votes themselves stay with the options.",
+    "prefillInfo": "We've prepared your votes from your dates.",
+    "prefillAll": "Accept all suggestions",
+    "suggestedLabel": "Suggestion from your dates",
+    "suggestedSr": "suggestion from your dates",
+    "byCalendar": "By the calendar: {text}",
+    "everyoneCan": "everyone can",
+    "nobodySubmitted": "nobody has added dates yet",
+    "canWithout": "{count} can · without {names}",
+    "segment": {
+      "yes": "Yes",
+      "maybe": "Maybe",
+      "no": "No"
+    },
+    "segmentGhost": "{label}?",
+    "voteToSee": "Vote to see the results.",
+    "resultSr": "Result: {yes} yes, {maybe} maybe, {no} no",
+    "topChoice": "Top choice",
+    "without": "without {names}",
+    "whoVoted": "Who voted how?",
+    "whoVotedNone": "No votes yet.",
+    "statusOpen": "{count, plural, one {# option left.} other {# options left.}}",
+    "statusDone": "Thanks, your votes are saved. You can change them until the end.",
+    "saving": "Saving …",
+    "saved": "Saved",
+    "saveFailed": "Not saved – try again.",
+    "retry": "Try again",
+    "votedFor": "{range}: {choice}",
+    "addOption": "Add option",
+    "addOptionNote": "Existing options stay unchanged so votes already cast remain valid.",
+    "addOptionDone": "Option added",
+    "remind": "Remind the group",
+    "fixButton": "End vote & lock in dates",
+    "fixOrgaOnly": "Only for the organizer.",
+    "deadlinePassedOrga": "The deadline has passed. Time to lock in the dates.",
+    "deadlinePassedOrgaAction": "Lock in dates",
+    "deadlinePassedMember": "The deadline has passed – {orga} will lock in the dates soon. You can still vote.",
+    "fixedBanner": "The dates are set! Voting is closed.",
+    "fixedLocked": "Voting closed",
+    "fixedChosen": "Chosen",
+    "conflict": "{orga} has already locked in the dates.",
+    "conflictAction": "View",
+    "phaseChanged": "The vote has changed meanwhile. Reload the page.",
+    "reload": "Reload",
+    "started": "Voting is open!",
+    "shareTitle": "Voting is open!",
+    "shareLead": "Let the group know – there's no e-mail.",
+    "fix": {
+      "title": "Lock in dates",
+      "missing": "Not voted yet: {names}.",
+      "tie": "Tie for top choice – you decide.",
+      "legend": "Which period?",
+      "place": "Top choice",
+      "counts": "Yes {yes} · Maybe {maybe} · No {no}",
+      "without": "(without {names})",
+      "note": "Dates and votes are locked afterwards. You can undo this later.",
+      "confirm": "Lock in dates",
+      "pick": "Choose a period first.",
+      "busy": "Locking in …"
+    },
+    "create": {
+      "title": "Create a vote",
+      "cancel": "Cancel",
+      "lead": "Choose 2–6 periods for the group to vote on.",
+      "option": "Option {n}",
+      "earlier": "Earlier",
+      "later": "Later",
+      "nights": "Nights",
+      "nightsHint": "= {days} days incl. arrival and departure",
+      "remove": "Remove",
+      "removeLabel": "Remove option {n}",
+      "custom": "Own period",
+      "deadline": "Vote until (optional)",
+      "deadlineIn3": "in 3 days",
+      "deadlineIn7": "in 1 week",
+      "deadlineClear": "No deadline",
+      "deadlineShown": "Vote until {date}",
+      "submit": "Start vote",
+      "busy": "Starting …",
+      "minOptions": "At least 2 options",
+      "maxOptions": "At most 6 options",
+      "duplicate": "This period is already in the list.",
+      "noSuggestions": "No suggestions yet – add your own periods.",
+      "empty": "No options yet.",
+      "warnCannot": "{names} can't make it",
+      "tooShort": "Shorter than the trip minimum ({min} nights).",
+      "errors": {
+        "count": "Choose 2–6 periods.",
+        "duplicate": "This period is already in the list.",
+        "outsideRange": "Choose dates inside the trip's date range.",
+        "past": "This period has already started.",
+        "tooShort": "At least {min} nights, as set for this trip.",
+        "tooLong": "That's too long for one option.",
+        "invalid": "Please check the dates.",
+        "phase": "The vote has already started.",
+        "full": "There are already 6 options.",
+        "deadline": "The deadline must not be in the past."
+      },
+      "range": "{start} – {end}",
+      "vacation": "{count, plural, one {approx. # day off} other {approx. # days off}}",
+      "maybe": "{count}× if needed",
+      "fewer": "Fewer nights",
+      "more": "More nights",
+      "nightsUnit": "{count, plural, one {night} other {nights}}",
+      "nightsCount": "{count, plural, one {# night} other {# nights}}",
+      "deadlineLabel": "Date",
+      "shifted": "Option {n}: {range}",
+      "removed": "Option removed",
+      "added": "Option added"
+    },
+    "period": {
+      "title": "Own period",
+      "titleAdd": "Add option",
+      "start": "Arrival",
+      "end": "Departure",
+      "summary": "{range} · {nights, plural, one {# night} other {# nights}}",
+      "cannot": "{names} can't make it on at least one day.",
+      "everyone": "Everyone who added dates can make it.",
+      "add": "Add",
+      "hint": "Between {start} and {end}."
+    },
+    "result": {
+      "eyebrow": "Dates are set",
+      "title": "It's on!",
+      "days": "{count, plural, one {# day to go} other {# days to go}}",
+      "today": "It's today!",
+      "during": "Have a great trip!",
+      "past": "Hope it was great!",
+      "addToCalendar": "Add to calendar",
+      "icsFile": "Calendar file (Apple, Outlook …)",
+      "google": "Google Calendar",
+      "downloaded": "Downloaded",
+      "tellEveryone": "Tell everyone",
+      "share": "Share",
+      "inAppHint": "Download not working? Open the page in Safari or Chrome.",
+      "bannerFixed": "The dates are set!",
+      "bannerAction": "View",
+      "calendarDescription": "Planned with When do we go?",
+      "ringLabel": "<n>{count}</n> {count, plural, one {day} other {days}} to go",
+      "going": "{count} going"
+    },
+    "sharePoll": "Share the vote"
   }
 }

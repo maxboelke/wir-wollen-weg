@@ -18,16 +18,19 @@ export interface TripListCardData {
   progress: Progress | null;
   todo: TripTodo | null;
   deadline: IsoDate | null;
+  /** Voting deadline (F-017) – shown in phase 2. */
+  pollDeadline: IsoDate | null;
   fixedStart: IsoDate | null;
   fixedEnd: IsoDate | null;
   daysToGo: number | null;
   href: string;
 }
 
-const TODO_TARGET: Record<TripTodo, "days" | "poll"> = {
+const TODO_TARGET: Record<TripTodo, "days" | "poll" | "pollNew"> = {
   addDates: "days",
   vote: "poll",
-  startVote: "poll",
+  startVote: "pollNew",
+  fixDates: "poll",
 };
 
 /**
@@ -101,6 +104,16 @@ export async function TripListCard({
           <span>
             {t("deadline", {
               date: formatDate(trip.deadline, intl, { weekday: true, year: false }),
+            })}
+          </span>
+        </p>
+      ) : null}
+      {trip.pollDeadline && trip.pollDeadline >= today && trip.phase === "vote" ? (
+        <p className={styles.meta}>
+          <Icon name="clock" size={16} />
+          <span>
+            {t("voteDeadline", {
+              date: formatDate(trip.pollDeadline, intl, { weekday: true, year: false }),
             })}
           </span>
         </p>

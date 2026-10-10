@@ -10,3 +10,8 @@
     padding-inline: var(--ww-space-6);
   }
 }
+
+/* «Der Termin steht fest! [Ansehen]» on tabs other than the overview (W11, ux-spec §7.5) */
+.banner {
+  margin-bottom: var(--ww-space-4);
+}

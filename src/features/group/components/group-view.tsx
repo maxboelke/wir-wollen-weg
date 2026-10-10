@@ -46,6 +46,7 @@ import {
   vacationDays,
   type Suggestion,
 } from "@/lib/suggestions";
+import { MAX_OPTIONS } from "@/lib/poll";
 import { useWasServerPainted } from "@/lib/use-hydration";
 import { storeLegendState } from "../legend-cookie";
 import { DayDetail, type DetailPerson } from "./day-detail";
@@ -94,6 +95,10 @@ export interface GroupViewProps {
   inviteHref: string;
   settingsHref: string;
   pollHref: string;
+  /** «Abstimmung erstellen» (W10 A) – ticked suggestions go along as `?pick=`. */
+  pollNewHref: string;
+  /** "none": phase 1 (organiser may create) · "open": voting · "closed": dates fixed. */
+  pollState: "none" | "open" | "closed";
   viewerSubmitted: boolean;
   /** Server-rendered illustrations for the empty states (W09-11). */
   emptyArt?: ReactNode;
@@ -213,6 +218,19 @@ export function GroupView(props: GroupViewProps) {
     setSelected(0);
   }
   const current = list[selected] ?? null;
+
+  // «Zur Abstimmung» (W09, Flow C.2): the organiser ticks suggestions for the vote (max. 6).
+  const pickable = props.isOrganizer && props.pollState === "none";
+  const [picked, setPicked] = useState<string[]>([]);
+  const togglePick = (key: string, on: boolean) => {
+    setPicked((value) =>
+      on
+        ? value.includes(key)
+          ? value
+          : [...value, key].slice(0, MAX_OPTIONS)
+        : value.filter((k) => k !== key),
+    );
+  };
 
   // ---------------------------------------------------------------------------
   // Tallies per day (F-008 counting rule)
@@ -396,6 +414,7 @@ export function GroupView(props: GroupViewProps) {
         missing: s.missing.map(nameOf),
         holidays: holidaysIn(s.start, s.end, props.holidays).map((h) => h.name),
         hidden: hiddenPeople.map((p) => p.name),
+        pickKey: `${s.start}~${s.end}`,
       })),
     [hiddenPeople, holidayDates, list, nameOf, participants.length, props.holidays, rangeText],
   );
@@ -987,6 +1006,17 @@ export function GroupView(props: GroupViewProps) {
                 card={card}
                 selected={card.index === selected}
                 onShow={showInCalendar}
+                pick={
+                  pickable
+                    ? {
+                        checked: picked.includes(card.pickKey),
+                        disabled: !picked.includes(card.pickKey) && picked.length >= MAX_OPTIONS,
+                        onChange: (on) => {
+                          togglePick(card.pickKey, on);
+                        },
+                      }
+                    : undefined
+                }
               />
             ))}
           </ul>
@@ -1037,12 +1067,31 @@ export function GroupView(props: GroupViewProps) {
           {tolerance > 0 || almostCards.length > 0
             ? group("almost", almostCards, t("groups.almost", { count: almostCards.length }))
             : null}
-          {props.isOrganizer ? (
+          {pickable ? (
             <div className={styles.pollHint}>
-              <ButtonLink href={props.pollHref} variant="secondary" size="md" icon="vote">
+              <ButtonLink href={props.pollNewHref} variant="secondary" size="md" icon="vote">
                 {t("createPoll")}
               </ButtonLink>
               <p className={styles.muted}>{t("createPollHint")}</p>
+            </div>
+          ) : props.pollState === "open" ? (
+            <div className={styles.pollHint}>
+              <p className={styles.muted}>{t("pollOpen")}</p>
+              <ButtonLink href={props.pollHref} variant="secondary" size="md" icon="vote">
+                {t("goToPoll")}
+              </ButtonLink>
+            </div>
+          ) : null}
+          {pickable && picked.length > 0 ? (
+            <div className={styles.pickBar} role="group" aria-label={t("pick")}>
+              <p role="status">{t("pickedCount", { count: picked.length })}</p>
+              <ButtonLink
+                href={`${props.pollNewHref}?pick=${picked.join(",")}`}
+                size="md"
+                icon="vote"
+              >
+                {t("pickedCreate")}
+              </ButtonLink>
             </div>
           ) : null}
         </>
