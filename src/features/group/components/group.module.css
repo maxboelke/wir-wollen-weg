@@ -523,6 +523,7 @@ details[open] > .legendSummary .chevron {
 
 /* ---------------------------------------------------------------- calendar card + grid (§6.1) */
 .calendar {
+  container: heatmap / inline-size;
   position: relative;
   display: grid;
   gap: var(--ww-space-4);
@@ -576,11 +577,15 @@ details[open] > .legendSummary .chevron {
   font-weight: var(--ww-font-weight-extrabold) !important;
 }
 
+/* Phones: 52 px high (W09 anatomy 45.7 × 52). At 46 px the ✓ seal covered the last digit of
+   «5/5» (review R-050) – 46 px is only allowed when nothing overlaps (W09 «Zelle (B)»). */
 .dayCell,
 .weekendCell,
 .weekendPad {
+  --hm-cell-h: 3.25rem; /* 52 px at 100 %, grows with the text like date and count */
+
   position: relative;
-  height: max(var(--ww-size-cal-cell-h), 2.875rem);
+  height: var(--hm-cell-h);
   padding: 0;
 }
 
@@ -600,7 +605,7 @@ details[open] > .legendSummary .chevron {
   display: block;
   width: 100%;
   height: 100%;
-  min-height: max(var(--ww-size-cal-cell-h), 2.875rem);
+  min-height: var(--hm-cell-h, 3.25rem);
   padding: 0;
   border: var(--ww-border-forced);
   border-radius: var(--ww-radius-cell);
@@ -689,13 +694,13 @@ details[open] > .legendSummary .chevron {
   position: absolute;
   inset-block-start: 4px;
   inset-inline-start: 4px;
-  min-width: 18px;
-  height: 18px;
+  min-width: 1.125rem;
+  height: 1.125rem;
   padding-inline: 2px;
   border-radius: 5px;
   font-size: var(--ww-text-xs);
   font-weight: var(--ww-font-weight-semibold);
-  line-height: 18px;
+  line-height: 1.125rem;
   text-align: center;
 }
 
@@ -713,7 +718,8 @@ details[open] > .legendSummary .chevron {
 
 .count {
   position: absolute;
-  inset-block-start: 17px;
+  /* Right below the date, scaling with the text size; leaves ≥ 1.5 px to the ✓ seal (R-050). */
+  inset-block-start: 1.125rem;
   inset-inline: 0;
   margin-inline: auto;
   width: fit-content;
@@ -903,9 +909,11 @@ details[open] > .legendSummary .chevron {
   inset-block-end: 0;
   z-index: var(--ww-z-sticky);
   display: flex;
-  align-items: center;
+  align-items: safe center;
   gap: var(--ww-space-2);
   max-height: calc(120px + env(safe-area-inset-bottom));
+  overflow-y: auto;
+  overscroll-behavior: contain;
   padding: var(--ww-space-2) var(--ww-space-3) calc(var(--ww-space-2) + env(safe-area-inset-bottom));
   border: var(--ww-border-forced);
   border-start-start-radius: var(--ww-radius-xl);
@@ -1173,14 +1181,14 @@ details[open] > .legendSummary .chevron {
   .num {
     inset-block-start: 6px;
     inset-inline-start: 6px;
-    min-width: 20px;
-    height: 20px;
+    min-width: 1.25rem;
+    height: 1.25rem;
     font-size: var(--ww-text-meta);
-    line-height: 20px;
+    line-height: 1.25rem;
   }
 
   .count {
-    inset-block-start: 24px;
+    inset-block-start: 1.375rem;
     font-size: 0.9375rem;
   }
 
@@ -1268,9 +1276,39 @@ details[open] > .legendSummary .chevron {
     position: static;
   }
 
+  /* One month per row (R-052): next to the 340 px suggestion column two months side by side
+     left only ~37 px per cell – the ✓ seal covered «5/5» and ◐2 ran into the gauge. */
   .calendar {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--ww-space-6);
+  }
+}
+
+/* ---------------------------------------------------------------- large text (ux-spec §12 A2) */
+/* Measured in em of the calendar, so the browser's text size and zoom both trigger it (R-050).
+   Step 1 – the cells get tight (≥ 600 px with larger text): drop the side info (◐ count, gauge). */
+@container heatmap (max-width: 26em) {
+  .maybeCount,
+  .gauge {
+    display: none;
+  }
+}
+
+/* Step 2 – «x/n» no longer fits next to the date (≈ 140 % text and more on a 360 px phone):
+   date + level (surface/pattern) + ✓/◐ only; the count stays in the accessible name and in the
+   day detail – nothing is clipped. */
+@container heatmap (max-width: 15.5em) {
+  .count {
+    display: none;
+  }
+
+  .num {
+    min-width: 0;
+    height: auto;
+    line-height: 1.25;
+  }
+
+  [data-today] > .num {
+    min-width: 1.25em;
   }
 }
 

@@ -494,11 +494,13 @@ export function GroupView(props: GroupViewProps) {
       },
     );
     const top = Math.min(...visible.map((e) => e.getBoundingClientRect().top));
+    // Row pitch = cell height + row gap (61 px on phones, more with large text / ≥ 600 px).
+    const rowPitch = Math.max(1, (visible[0]?.offsetHeight ?? 52) + 9);
     let last = 0;
     for (const element of visible) {
       const td = element.parentElement;
       const column = td ? [...(td.parentElement?.children ?? [])].indexOf(td) : 0;
-      const row = Math.round((element.getBoundingClientRect().top - top) / 55);
+      const row = Math.round((element.getBoundingClientRect().top - top) / rowPitch);
       const delay = staggerDelay(row + column, WAVE_STEP);
       last = Math.max(last, delay);
       animate(

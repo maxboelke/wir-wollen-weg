@@ -200,6 +200,19 @@ describe("computeSuggestions – edge cases", () => {
     expect(computeSuggestions(w09())).toEqual(computeSuggestions(w09()));
   });
 
+  it("never suggests a span nobody can make (tolerance ≥ participants, e.g. after hiding)", () => {
+    const result = computeSuggestions(base([person("a", ["2027-07-05"])]));
+    expect(result.almost).toEqual([]);
+    expect(short(result.all)).toEqual([
+      "2027-07-01..2027-07-04 3n - ◐0",
+      "2027-07-06..2027-07-31 25n - ◐0",
+    ]);
+    const two = computeSuggestions(
+      base([person("a", ["2027-07-05"]), person("b", ["2027-07-20"])], { tolerance: 3 }),
+    );
+    expect(two.almost.every((s) => s.missing.length === 1)).toBe(true);
+  });
+
   it("placeholders and drafts never count: only the passed participants are used", () => {
     // A member without submission is simply not a participant – even if their draft blocks.
     const { all } = computeSuggestions(base([person("submitted")]));

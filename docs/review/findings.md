@@ -1,6 +1,6 @@
 # Review-Findings
 
-Stand: 2026-10-09 (Reviewer: Review Inkrement 3, Commit 2c9f373 – R-045–R-049; Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033; Reviewer: Nachprüfung Commit 9baea12 – R-032, R-033 verifiziert) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
+Stand: 2026-10-10 (Reviewer: Review Inkrement 4, Commit d31c977 – R-050–R-054, R-049 verifiziert; Reviewer: Review Inkrement 3, Commit 2c9f373 – R-045–R-049; Reviewer: Review Inkrement 1, Commit d2fc096; Developer: Fixes R-021–R-023, R-027, R-028, R-031; Reviewer: Nachprüfung Commit 2e02b3d, neue Findings R-032–R-034; Developer: Fixes R-032, R-033; Reviewer: Nachprüfung Commit 9baea12 – R-032, R-033 verifiziert) · Reviewer · Bezug: P1-0 (Scaffold) + P1-0a (Auth-Spike), PR #4 (gemergt); Schritt 0a „UI-Fundament“ (Commit a6063e9)
 
 Status: **offen** · **behoben – bitte prüfen** · **verifiziert** (vom Reviewer bestätigt)
 
@@ -465,7 +465,7 @@ Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08
 | R-046 | mittel | Skip-Links auf „Meine Tage“ dauerhaft sichtbar (verdecken den Willkommens-Hinweis) | verifiziert (vom Reviewer behoben) |
 | R-047 | niedrig | Termin inzwischen festgelegt → irreführender Hinweis „Zeitraum geändert“ | verifiziert (vom Reviewer behoben) |
 | R-048 | mittel | Jeder Besuch von „Meine Tage“ speichert und setzt „zuletzt geändert“ | verifiziert (vom Reviewer behoben) |
-| R-049 | niedrig | 360 × 640: beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar | behoben – bitte prüfen |
+| R-049 | niedrig | 360 × 640: beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar | verifiziert |
 
 ### R-045: Jedes Speichern löscht die Markierung von gestern
 - Schwere: hoch · vom Reviewer behoben
@@ -502,7 +502,7 @@ Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08
 - Erwartetes Verhalten: Mindestens die erste Kalenderwoche ohne Scrollen sichtbar.
 - Vorschlag: Legende kompakter (Schlüssel einzeilig, Erklärtext kürzer) oder auf < 600 px eingeklappt mit Chip-Zeile; Entwurfs-Hinweis und „Feiertage für“ in eine Zeile; „Feiertage für“ laut W08 nur zeigen, wenn die Region geraten ist (Annahme 6 des Developers). Mit UI/UX abstimmen.
 - Umsetzung (Inkrement 4, Developer – Entscheidung, bitte von UI/UX bestätigen): (1) Legende „So funktioniert's“ startet **immer eingeklappt** (Abweichung von Flow B.1 „aufgeklappt bis zur ersten Abgabe“); die Kernregel steht stattdessen im Entwurfs-Hinweis: «Entwurf – zählt erst, wenn du abgibst. Nicht markierte Tage zählen als „Geht“.» (2) Die Zeile «Feiertage für: … Ändern» steht jetzt **in der Legende** statt darüber (ob die Region geraten ist, wird nicht gespeichert; die Feiertage selbst bleiben an Eselsohr und Monatsliste sichtbar). Gemessen 360 × 640 (Lissabon-Demo, erster Besuch ohne Willkommens-Hinweis): erste Kalenderwoche vorher bei y ≈ 830, jetzt vollständig über der Werkzeugleiste (y ≈ 430–480 < 483). Mit Willkommens-Hinweis (`?welcome=1`) liegt die erste Woche weiterhin unter der Falz – der Hinweis ist schließbar. Regressionstest `increment-4-group.spec.ts` „R-049 …“; `increment-3-days.spec.ts` (Feiertags-Region) öffnet die Legende jetzt zuerst.
-- Status: behoben – bitte prüfen
+- Status: verifiziert (Reviewer 2026-10-10, Commit d31c977: E2E „R-049 …“ grün auf desktop/mobile-chromium; UI/UX hat die Abweichung in ux-spec §12 A1 bestätigt)
 
 #### Hinweise ohne Finding (Inkrement 3)
 - **IDOR/Replay:** alle Tage-Actions lösen die Reise über `findMembership(publicId, session.user.id)` auf; Replay eines abgefangenen `saveDaysAction` mit fremder Session → `notAllowed`, DB unverändert (E2E). Platzhalter-Actions über `organizer()` + `userIdSchema` (UUID) + `trip_id`-Bedingung im WHERE. Phase 3/vergangen serverseitig gesperrt (live geprüft: Termin während offener Seite festgelegt → DB bleibt leer).
@@ -512,3 +512,63 @@ Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08
 - **Barrierefreiheit:** ein Grid pro Monat, Roving Tabindex über alle Monate, Tastatur laut §7.3 (E2E), Live-Region für Ansagen, Zustände mit Symbol + Muster, Bereichsmodus als Alternative zum Ziehen (WCAG 2.5.7), axe hell/dunkel ohne serious/critical, 360 px ohne horizontales Scrollen, keine Hydration-Fehler in der Konsole (R-017). Im gesperrten Zustand (Phase 3) hat das Grid keinen fokussierbaren Tag – Screenreader lesen die Tage im Lesemodus, für Tastatur ist nichts zu tun; vertretbar.
 - **Touch-Ziehen (Code-Review):** `touch-action: pan-y` auf den Zellen, horizontal > 10 px (< 30°) oder 300 ms Halten startet das Malen, vertikal = Scrollen (`pointercancel` wird sauber behandelt), nicht-passiver `touchmove`-Blocker nur während aktivem Ziehen, Auto-Scroll an den Rändern. Reduced Motion: keine Transform-Animationen (E2E), keine Vibration.
 - **Datum „abgegeben · geändert am“** wird als UTC-Tag formatiert (Annahme 7): Änderung um 00:30 MESZ zeigt den Vortag. Für die Demo vertretbar; mit Zeitzone des Kontos später korrigieren.
+
+## Review Inkrement 4 (Reviewer 2026-10-10, Commit d31c977 gegen 5f8f5d4)
+
+Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), Weiterleitung nach Abgabe → `/group`, Q20 (offene Platzhalter im Fortschritt), R-049, Motion W09 (Welle, Band, Karten) gegen features.md, W09 (md + HTML-Skizze), ux-spec §4.9–§4.11/§7.3/§12, Motion-Katalog. Checks unter Node 24.21 (lokal zusätzlich Node 22 für Lint/Typecheck/Unit): format, lint, typecheck, i18n, Unit (265), Build, E2E im CI-Modus (Chromium desktop + mobile; WebKit hier nicht installierbar). Fixes des Reviewers liegen uncommittet im Working Tree.
+
+| ID | Schwere | Kurztitel | Status |
+|---|---|---|---|
+| R-050 | mittel | Heatmap-Zelle: ✓-Siegel verdeckt „5/5“ (360 px); bei 200 % Text ragen Zahlen in Nachbarzellen | verifiziert (vom Reviewer behoben) |
+| R-051 | mittel | Vorschlag-Leiste bei großer Schrift: Inhalt quillt aus der Leiste (über den Kalender und unter den Bildschirmrand) | verifiziert (vom Reviewer behoben) |
+| R-052 | mittel | Desktop ≥ 960 px: zwei Monate nebeneinander → Zellen 37 px, ✓ verdeckt „5/5“, „◐1“ läuft in den Pegel | verifiziert (vom Reviewer behoben) – UI/UX bitte Layout bestätigen |
+| R-053 | niedrig | „Fast alle dabei“ schlägt Zeiträume vor, die niemand kann („0 können · ohne Tim“) | verifiziert (vom Reviewer behoben) |
+| R-054 | niedrig | Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis (ux-spec §12 A3) | offen |
+
+### R-050: Heatmap-Zelle – Siegel verdeckt den Zählwert, große Schrift sprengt die Zelle
+- Schwere: mittel · vom Reviewer behoben
+- Datei: `src/features/group/components/group.module.css` (`.dayCell`, `.cell`, `.num`, `.count`, neue Container-Queries `heatmap`)
+- Problem / Reproduktion: (1) 360 × 640, Kalender, Tag mit x = n: Zelle 45,7 × 46 px, Zählwert ab 17 px Oberkante, Siegel Ø 15 px unten rechts → das Siegel deckt die untere rechte Hälfte der letzten Ziffer von „5/5“ ab (Screenshot; auch 320/412 px). W09 erlaubt 46 px nur, „wenn die Anatomie ohne Überlappung passt“; die HTML-Skizze rechnet mit 45,7 × 52. (2) Schriftgröße 200 % (Root 200 %), 360 px: Datum und „x/n“ überlappen sich und „5/5“ ragt ~7 px links und rechts in die Nachbarzellen (183 Kollisionen gemessen) – Verstoß gegen den Mindest-Fallback ux-spec §12 A2.
+- Umsetzung: Zellhöhe mobil `3.25rem` (= 52 px, wächst mit der Schrift); Datum-Box und Zählwert-Oberkante in `rem` statt `px` (≥ 600 px: Zählwert 1,375 rem) → sichtbarer Abstand Zahl ↔ Siegel bei 100–150 %. Kalender ist Size-Container `heatmap`: unter 26 em Nebeninfos aus (◐-Zahl, Pegel), unter 15,5 em (≈ 140 % Text bei 360 px) nur Datum + Stufe + ✓/◐, die Zählung bleibt im zugänglichen Namen und im Tagesdetail. Messmatrix 320/360/412/600/1280 px × 100–200 %: keine Kollision von Datum/Zahl/◐/✓, nichts außerhalb der Zelle. Regressionstest `increment-4-group.spec.ts` „R-050/R-052 … 200 % text at 360 px“. Die Wellen-Animation rechnet die Zeilenhöhe jetzt aus der Zelle statt fest 55 px.
+- Hinweis an UI/UX/Designer: design-system §6.1 („Zählwert Oberkante 20 px“, Siegel Ø 16, Höhe 46) überlappt rechnerisch selbst; bitte §6.1 auf 52 px bzw. die jetzt gebauten Werte nachziehen.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-051: Vorschlag-Leiste bei großer Schrift
+- Schwere: mittel · vom Reviewer behoben
+- Datei: `src/features/group/components/group.module.css` (`.bar`)
+- Problem / Reproduktion: 360 px, Text 150–200 %, Kalender-Ansicht: die Leiste ist auf 120 px begrenzt, der Inhalt wird aber zentriert und läuft nach oben aus der weißen Fläche (Eyebrow „Everyone's in · 1 of 2“ liegt ohne Hintergrund über Kennzahl-Box/Kalender) und nach unten aus dem Bildschirm (Zeitraum, Nächte unerreichbar) – WCAG 1.4.4.
+- Umsetzung: `align-items: safe center` + `overflow-y: auto` (Inhalt bleibt in der Leiste und ist scrollbar, 120-px-Budget aus W09 bleibt). Regressionstest im selben E2E-Fall.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-052: Desktop – zwei Monate nebeneinander, Zellen zu schmal
+- Schwere: mittel · vom Reviewer behoben (Layout-Entscheidung bitte bestätigen)
+- Datei: `src/features/group/components/group.module.css` (`@media (min-width: 960px) .calendar`)
+- Problem / Reproduktion: 1280 × 800, Kalender: Inhaltsbreite 1040 px − 340 px Vorschlagsspalte → zwei Monatsraster à ~300 px → Zellen **37 px** breit (W09 Desktop nennt 64 px). Mit der ≥ 600-px-Anatomie (Zahl 15 px, Siegel 18 px, „◐1“, Pegel) verdeckt das Siegel bei jedem „alle“-Tag „5/5“, „◐1“ läuft in den Pegel (Screenshot, 41 Kollisionen). Zwei Monate + Spalte + 64-px-Zellen passen in 1040 px grundsätzlich nicht.
+- Umsetzung: ab 960 px ein Monat pro Zeile (Zellen ~81 px bei 1280 px, keine Kollision bis 200 % Text). Regressionstest „desktop: one month per row …“.
+- Erwartetes Verhalten / offen für UI/UX: W09-Desktop-Skizze („Mai | Juni | Vorschläge“) entsprechend anpassen oder eine Alternative vorgeben (z. B. zwei Monate erst ab breiterem Inhalt). Kein Blocker.
+- Status: verifiziert (vom Reviewer behoben) – UI/UX bitte Layout bestätigen
+
+### R-053: „Fast alle dabei“ mit 0 Personen
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/lib/suggestions.ts` (`computeSuggestions`)
+- Problem / Reproduktion: 2 Personen haben abgegeben (Toleranz-Standard 1), der Betrachter blendet eine aus („Personen ausblenden“) → 1 Teilnehmer, Toleranz bleibt 1 → Karte „0 können · ohne Tim · bis zu 60 Nächte“. Unit-Reproduktion: 1 Teilnehmer mit einem „Geht nicht“, Toleranz 1 → `almost = [{missing: ["a"], nights: 9}]`.
+- Umsetzung: Toleranz wird in der reinen Funktion auf n − 1 begrenzt (mind. eine Person muss können). Unit-Test „never suggests a span nobody can make …“.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-054: Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis
+- Schwere: niedrig
+- Datei: `src/features/group/components/group-view.tsx` (Filterzeile)
+- Problem / Reproduktion: Reise mit Mindestdauer 4, Filter „Dauer“ = 2 Nächte → Vorschläge mit 2 Nächten erscheinen ohne Hinweis, dass die Orga mindestens 4 vorgegeben hat. UI/UX fordert (ux-spec §12 A3, nicht blockierend) unter dem Filter: «Kürzer als die Orga-Vorgabe (mind. n Nächte).»
+- Erwartetes Verhalten: Hinweiszeile in der Filterzeile (kein Dialog), DE/EN.
+- Vorschlag: neben/unter `filters.onlyYou` eine zweite Zeile, solange `duration < minNights`.
+- Status: offen
+
+#### Hinweise ohne Finding (Inkrement 4)
+- **Zählregel/Algorithmus:** gegen F-008/F-009 geprüft – x zählt nur „Geht“, n nur Abgegebene (Entwürfe/Platzhalter nie), ✓ ⇔ x = n ≥ 1, ◐ und ✓ schließen sich aus, „Zur Not“ blockiert nie. Vorschläge: maximale Spannen, Ränder des Suchzeitraums, Minimum = Suchzeitraum − 1, niemand abgegeben, einer blockiert alles, Sortierung (Fehlende → ◐-Personentage → Abstand zur Wunschlänge → Start → Ende → Ids, deterministisch), überlappende „Fast alle“-Spannen verschiedener Personensets (gewollt, „ohne Tim: 1.–19. Juni“). Abweichung 1 (Dauer = Wunsch, Minimum = min(Reise, Dauer)) logisch und von UI/UX bestätigt. Laufzeit: 30 × 365 × Toleranz 3 deutlich < 500 ms; `noMatchHints` im ungünstigsten Fall (Minimum 21, nichts passt) 40–150 ms.
+- **Datenschutz/IDOR:** `listSubmittedAvailability` joint auf `submitted_at is not null`, wird nur nach `loadTripView` (Mitgliedschaft) aufgerufen; Nicht-Mitglied → 404 ohne Namen/Zellen (E2E). Live geprüft: Entwurf „Draft“ (blockiert alles) erscheint im HTML/RSC nur als `{"name":"Draft","placeholder":false}` in „Noch offen“, nie mit Tagen; Kommentare nur von Abgegebenen; Platzhalter nur mit Id + Name (kein Token). Mitglieder-Ids (UUID) gehen als Schlüssel in die Payload – nur an Mitglieder, vertretbar.
+- **Barrierefreiheit:** Roving Tabindex, Pfeile/Pos1/Ende/Bild, Enter öffnet Tagesdetail, ←/→ blättern, Esc **und** „Schließen“-Taste geben den Fokus an den zuletzt gezeigten Tag zurück (beides geprüft). Zugängliche Namen nach W09 („… 4 von 5 Geht, 1 Zur Not, Teil von Vorschlag 1“). Kontraste gemessen (Zahl auf Fläche): hell einige 6,7 · viele 6,5 · alle 13,8; dunkel einige 6,5 · viele 7,4 · alle 11,5; Band hell `#2B2266` auf Weiß, dunkel `#52E5B8` auf `#1F1A45` (beide ≫ 3:1); axe hell/dunkel ohne serious/critical (E2E). 320 px ohne horizontales Scrollen im Gruppen-Inhalt. Bei 150–200 % Text läuft die Tab-Leiste des Cockpits horizontal (bestehende, scrollbare Leiste aus Inkrement 2, nicht W09-spezifisch).
+- **Große Schrift (Abweichung 6 / U-5):** Tagesliste bewusst nicht gebaut (ux-spec §12 A2, vor Go-Live). Mindest-Fallback jetzt erfüllt (R-050). In Stufe 2 unterscheiden sich „wenige/einige/viele“ nur über die Fläche – von UI/UX so akzeptiert, Werte im Namen und im Tagesdetail.
+- **Motion:** Server-gemalte Heatmap animiert nicht (R-017, E2E), Welle nur beim ersten Öffnen per Segment (sessionStorage), Band zeichnet sich per `scaleX`, reduzierte Bewegung → keine Welle/kein Zeichnen, Leiste ohne Einflug am Desktop.
+- **Cookie `ww-hm-legend` (Abweichung 4):** nur Wert `closed`, 12 Monate, `SameSite=Lax`, Aufklappen löscht es; reine UI-Einstellung (§ 25 Abs. 2 Nr. 2 TDDDG). In `docs/ops/compliance-checklist.md` §4 nachgetragen – zusammen mit den bisher fehlenden Einträgen `ww-motion` und `sessionStorage` `ww-anim:*`/`ww-tab-from`.
+- **Kleinigkeit:** EN-Zeiträume mischen das Format: „Thu 10 December – Fri, 8 January 2027“ (Intl setzt mit Jahr ein Komma nach dem Wochentag). Kosmetisch, bei Gelegenheit einheitliches Muster.
+

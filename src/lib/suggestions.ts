@@ -105,7 +105,13 @@ export function compareSuggestions(a: Suggestion, b: Suggestion, targetNights: n
 export function computeSuggestions(input: SuggestionInput): SuggestionResult {
   const { participants, from, to } = input;
   const minNights = Math.max(1, Math.floor(input.minNights));
-  const tolerance = Math.min(MAX_TOLERANCE, Math.max(0, Math.floor(input.tolerance)));
+  // At least one person must come: with n participants at most n − 1 may miss out (a span
+  // «0 können · ohne Lena» is no suggestion – reachable when the viewer hides people locally).
+  const tolerance = Math.min(
+    MAX_TOLERANCE,
+    Math.max(0, Math.floor(input.tolerance)),
+    Math.max(0, participants.length - 1),
+  );
   const length = diffDays(from, to) + 1;
   if (participants.length === 0 || length < minNights + 1) return { all: [], almost: [] };
   if (participants.length > MAX_PARTICIPANTS) {

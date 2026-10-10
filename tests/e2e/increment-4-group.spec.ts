@@ -268,6 +268,88 @@ test.describe("accessibility", () => {
   });
 });
 
+/** Parts of each heatmap cell (text boxes of date/count, ◐, ✓) that overlap or leave the cell. */
+async function cellCollisions(page: Page): Promise<string[]> {
+  return page.evaluate(() => {
+    const issues: string[] = [];
+    const textBox = (el: Element) => {
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      return range.getBoundingClientRect();
+    };
+    const shown = (el: Element | null | undefined): el is Element =>
+      !!el && getComputedStyle(el).display !== "none" && el.getClientRects().length > 0;
+    for (const button of document.querySelectorAll<HTMLElement>("button[data-date]")) {
+      const box = button.getBoundingClientRect();
+      const parts: [string, DOMRect][] = [];
+      const [num, count] = [button.children[0], button.children[1]];
+      if (num) parts.push(["date", textBox(num)]);
+      if (shown(count)) {
+        for (const child of count.children) if (shown(child)) parts.push(["count", textBox(child)]);
+      }
+      for (const name of ["maybe", "seal"]) {
+        const el = button.querySelector(`[data-anim='${name}']`);
+        if (shown(el)) parts.push([name, el.getBoundingClientRect()]);
+      }
+      for (const [name, r] of parts) {
+        if (r.left < box.left - 0.5 || r.right > box.right + 0.5 || r.bottom > box.bottom + 0.5) {
+          issues.push(`${button.dataset.date ?? ""} ${name} outside`);
+        }
+      }
+      for (let i = 0; i < parts.length; i++) {
+        for (let j = i + 1; j < parts.length; j++) {
+          const [a, ra] = parts[i] ?? ["", box];
+          const [b, rb] = parts[j] ?? ["", box];
+          const w = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left);
+          const h = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
+          if (w > 0.5 && h > 0.5) issues.push(`${button.dataset.date ?? ""} ${a}×${b}`);
+        }
+      }
+    }
+    return issues;
+  });
+}
+
+test.describe("R-050/R-052: cell anatomy without overlaps", () => {
+  test("200 % text at 360 px: date + level + ✓/◐, count only in the name; nothing collides", async ({
+    page,
+  }) => {
+    await page.setViewportSize({ width: 360, height: 640 });
+    const { publicId } = await setUp(page);
+    await page.goto(`/trips/${publicId}/group?view=calendar`);
+    await hydrated(page);
+    await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
+    await expect(cell(page, day(15)).locator("[data-anim='seal']")).toBeVisible();
+    expect(await cellCollisions(page)).toEqual([]);
+    // The count is not shown in the cell but stays in the accessible name.
+    await expect(cell(page, day(15))).toHaveAttribute("aria-label", /2 of 2 works – everyone/);
+    // The suggestion bar keeps its content inside its surface (scrolls instead of spilling).
+    const bar = page.getByRole("group", { name: g.bar.label });
+    const spill = await bar.evaluate((el) => {
+      const box = el.getBoundingClientRect();
+      return [...el.querySelectorAll("*")].some((child) => {
+        const r = child.getBoundingClientRect();
+        return (
+          r.height > 0 && r.top < box.top - 0.5 && getComputedStyle(el).overflowY === "visible"
+        );
+      });
+    });
+    expect(spill).toBe(false);
+  });
+
+  test("desktop: one month per row, cells wide enough for «x/n» next to ✓ and the gauge", async ({
+    page,
+  }) => {
+    test.skip((page.viewportSize()?.width ?? 0) < 960, "desktop layout only");
+    const { publicId } = await setUp(page);
+    await page.goto(`/trips/${publicId}/group?view=calendar`);
+    await hydrated(page);
+    const width = await cell(page, day(15)).evaluate((el) => el.getBoundingClientRect().width);
+    expect(width).toBeGreaterThanOrEqual(56);
+    expect(await cellCollisions(page)).toEqual([]);
+  });
+});
+
 test.describe("flow and Q20 elsewhere", () => {
   test("«My trips» and the overview count placeholders (Q20)", async ({ page }) => {
     const { publicId } = await setUp(page);
