@@ -187,7 +187,7 @@ Ergänzt §7.3 und W08. Mobil fixiert, **≤ 150 px ohne Safe Area**, kein Griff
 - **Kontraste:** Text ≥ 4,5:1 (groß ≥ 3:1), UI-Komponenten und Zustandsgrafiken (Heatmap-Stufen gegen Nachbarn, Rahmen, Fokus) ≥ 3:1. Heatmap-Zahlen auf allen Intensitätsstufen ≥ 4,5:1 (Designer, s. abstimmung-design.md).
 - **Nie nur Farbe** (1.4.1): Zustände Tag (Symbol/Muster), Heatmap (Zahl + Symbol „alle“), Stimmen (Text), Fehler (Symbol + Text).
 - **Bewegung:** reduzierte Bewegung (System `prefers-reduced-motion` **oder** Konto-Schalter, §7.5) → keine Animationen außer Überblenden ≤ 140 ms; nichts blinkt; Bedienfunktionen (Auto-Scroll beim Ziehen) bleiben.
-- **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Labels umbrechen. **Kalender bei großer Schrift (U-5):** Umschaltung per Container-Query in `em` (nicht `px`), damit sie auf die Schriftgröße reagiert: Ist die Zelle schmaler als **3,25 em** (bei 360 px ab ca. 175 % Textgröße), wird die **Heatmap** zur **Tagesliste** (je Tag eine Zeile: Datum mit Wochentag · „4 von 5: Geht“ · Abzeichen ◐ n Zur Not / ✓ alle / Feiertag / Vorschlag n; gleiche Reihenfolge, Monatsüberschriften bleiben, Antippen/Enter öffnet das Tagesdetail, Wochenenden über „Sa./So.“ im Datum). **Meine Tage** bleibt ein Raster (Malen braucht die Fläche): Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl, Datumszahl wird nie gekürzt. Kein manueller Umschalter im MVP.
+- **Textvergrößerung** 200 % und Textabstände (1.4.12) ohne Abschneiden; Labels umbrechen. **Kalender bei großer Schrift (U-5):** Umschaltung per Container-Query in `em` (nicht `px`), damit sie auf die Schriftgröße reagiert: Ist die Zelle schmaler als **3,25 em** (bei 360 px ab ca. 175 % Textgröße), wird die **Heatmap** zur **Tagesliste** (je Tag eine Zeile: Datum mit Wochentag · „4 von 5: Geht“ · Abzeichen ◐ n Zur Not / ✓ alle / Feiertag / Vorschlag n; gleiche Reihenfolge, Monatsüberschriften bleiben, Antippen/Enter öffnet das Tagesdetail, Wochenenden über „Sa./So.“ im Datum). **Meine Tage** bleibt ein Raster (Malen braucht die Fläche): Zellen wachsen in der Höhe, Symbol rutscht unter die Datumszahl, Datumszahl wird nie gekürzt. Kein manueller Umschalter im MVP. **Stand Inkrement 4 (2026-10-10):** Tagesliste der Heatmap auf „vor Go-Live“ verschoben; bis dahin gilt der Mindest-Fallback aus §12 (A2).
 - **Dark Mode:** Im MVP folgt die App **nur dem System** (`prefers-color-scheme`), kein Schalter in Konto/Menü (*bestätigt (Auftraggeber 2026-10-08)*). Alle obigen Kontrastregeln gelten auch dort.
 
 ### 7.2 Zielgrößen & Fokus
@@ -425,7 +425,33 @@ Bestätigt vom Auftraggeber 2026-10-08. Gilt für UI, Titel, Mails, Teilen-Texte
 - Kommentar-Feld: Hinweis «Alle in der Reise können das lesen.»
 - Keine Tracker, kein Cookie-Banner (F-013); Sprache-Cookie ist technisch notwendig.
 
+## 12. Abweichungen Inkrement 4 – UX-Bewertung (2026-10-10)
+Bewertung der vom Developer gemeldeten Abweichungen (Commit d31c977). Diese Festlegungen gehen den älteren Angaben in user-flows.md (B.1, D) und W08/W09 vor.
+
+**A1 – R-049 Meine Tage auf 360 × 640: OK.**
+- Legende „So funktioniert’s“ startet immer eingeklappt (statt „offen bis zur 1. Abgabe“, Flow B.1). Tragfähig, weil die Kernregel «Nicht markierte Tage zählen als ‚Geht‘» im Entwurfs-Hinweis steht und die Pinsel sichtbare Text-Labels tragen; das Zeitraum-Icon hat `aria-label` + Tooltip.
+- „Feiertage für: …“ in der Legende: OK (seltene Einstellung; Feiertage selbst bleiben im Kalender sichtbar).
+- Willkommens-Hinweis (nur einmal nach Beitritt, schließbar, erklärt das Malen) darf die erste Woche unter die Falz schieben.
+
+**A2 – W09-Abweichungen: OK, eine Ausnahme mit Mindest-Anpassung.**
+- Tagesdetail ab 960 px als Dialog statt Seitenpanel: OK (Fokusführung wie §4.2, Rückfokus auf die Zelle).
+- Wischen im Sheet, Label über der Startzelle des Vorschlags, Hover-Vorschau (MVP+): OK – Band/Abzeichen und zugänglicher Name «Teil von Vorschlag n» tragen die Information.
+- FLIP beim Filtern → gestaffeltes Einblenden: OK (ruhiger, reduced-motion-tauglich).
+- Kommentar im Tagesdetail direkt als Text statt hinter Icon: OK, sogar besser (ein Tipp weniger). Lange Kommentare umbrechen, nicht abschneiden.
+- Legende der Gruppe auch ab 960 px aufklappbar, Zustand per Cookie: OK (abweichend von U-6), da Standard beim ersten Besuch „offen“. Cookie ist reine UI-Einstellung (kein Banner nötig, wie Sprache/Motion).
+- **U-5 Tagesliste bei großer Schrift: für das MVP-Inkrement nicht zwingend, vor Go-Live (WCAG-Prüfung) nachziehen.** Begründung: Standardansicht der Gruppe sind die Vorschläge (eine Liste, skaliert sauber); jede Zelle hat einen vollständigen zugänglichen Namen und öffnet das Tagesdetail mit allen Werten; ein Kalender-Raster fällt bei Reflow (1.4.10) unter die Ausnahme „zweidimensionales Layout“. **Mindest-Fallback (vor Merge prüfen, 360 px, 200 % Text):** Zellinhalte dürfen nicht überlappen oder in Nachbarzellen ragen. Wird die Zelle zu schmal (< 3,25 em), Nebeninfos ausblenden (◐-Zahl, Pegel), Datum + Zählung „x/n“ behalten; passt auch das nicht, Datum + Stufe (Farbe/Muster) + ✓/◐ – die Zählung steht dann im Tagesdetail. Abschneiden ohne Ersatz ist nicht zulässig.
+
+**A3 – Filter „Dauer“: OK mit Anpassung (nicht blockierend).**
+- Dauer = Wunschlänge (Standard = Wunschdauer der Reise), Mindestdauer = min(Reise-Minimum, Dauer) – logisch und deckt sich mit der Karte «bis zu n Nächte».
+- Anpassung: Wählt jemand eine Dauer unter dem Reise-Minimum, unter dem Filter einen Hinweis zeigen: «Kürzer als die Orga-Vorgabe (mind. n Nächte).» Gehört in die Filterzeile, nicht in einen Dialog.
+
+**A4 – Q20 Platzhalter im Fortschritt: OK** (Auftraggeber-Entscheidung).
+- „3 von 9 · Noch offen: …, Mia, Tom“ – Platzhalter erscheinen wie Personen in „Noch offen“; das erklärt zugleich, warum „Abstimmung starten“ noch fehlt.
+- Orga-Aufgabe erst, wenn alle Platzhalter beigetreten oder entfernt sind: OK; die Orga ist nicht blockiert („Abstimmung erstellen“ in den Vorschlägen bleibt nutzbar).
+- Anpassung (nicht blockierend, spätestens mit F-015 „Erinnern“): Für die Orga neben „Noch offen“ ein Link «Platzhalter verwalten» bzw. „Link teilen“, solange offene Platzhalter existieren.
+
 ## Änderungen
 - 2026-10-08 (Runde 3, Richtung B + Q17): §2 Höhenbudget mit Cockpit-Kopf; §3 kompakter sticky Kopf, kein globaler Header in Reisen; §4.2 Fokus nach Festlegen (M-U10); neu §4.10 Cockpit-Kopf & Kennzahlen (Kennzahl-Box W09, Kacheln W10), §4.11 Vorschlag-Leiste W09, §4.12 Werkzeugleiste W08; §6 Erfolgsmomente ≤ 1 s / Feier ≤ 2,6 s (M-U2); §7.1 Bewegung; neu §7.5 Schalter „Bewegung reduzieren“, Feier für alle, Vibration (Q17); §10.2/§10.4 Glossar und Budgets für B. Entscheidungen: abstimmung-design §8–§9.
 - 2026-10-08 (Auftraggeber-Entscheidungen): EN-Produktname „When do we go?“ (§3 Seitentitel, §4.5, §9, §10.2, EN-Teilen-Text Einladung §10.3, Mail-Betreff/Absender §10.5, neue Schreibregeln §10.6); Vermerke „vorbehaltlich Auftraggeber“ → „bestätigt (Auftraggeber 2026-10-08)“.
 - 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.
+- 2026-10-10 (Inkrement 4): neu §12 – Bewertung der Abweichungen R-049, W09, Filter „Dauer“, Q20; §7.1 U-5 Tagesliste auf „vor Go-Live“ verschoben, Mindest-Fallback definiert.
