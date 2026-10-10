@@ -266,7 +266,9 @@ export function OptionCard(props: OptionCardProps) {
                   {VOTE_CHOICES.filter((choice) => result.names[choice].length > 0).map(
                     (choice) => (
                       <li key={choice}>
-                        <b>{`${t(`segment.${choice}`)}:`}</b> {result.names[choice].join(", ")}
+                        {/* ux-spec §13 B3: text label + count per group */}
+                        <b>{`${t(`segment.${choice}`)} (${String(result.names[choice].length)}):`}</b>{" "}
+                        {result.names[choice].join(", ")}
                       </li>
                     ),
                   )}

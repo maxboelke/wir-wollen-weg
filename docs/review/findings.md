@@ -572,3 +572,47 @@ Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), We
 - **Cookie `ww-hm-legend` (Abweichung 4):** nur Wert `closed`, 12 Monate, `SameSite=Lax`, Aufklappen löscht es; reine UI-Einstellung (§ 25 Abs. 2 Nr. 2 TDDDG). In `docs/ops/compliance-checklist.md` §4 nachgetragen – zusammen mit den bisher fehlenden Einträgen `ww-motion` und `sessionStorage` `ww-anim:*`/`ww-tab-from`.
 - **Kleinigkeit:** EN-Zeiträume mischen das Format: „Thu 10 December – Fri, 8 January 2027“ (Intl setzt mit Jahr ein Komma nach dem Wochentag). Kosmetisch, bei Gelegenheit einheitliches Muster.
 
+
+## Review Inkrement 5 (Reviewer 2026-10-10, Commit e8f645f gegen 0502b2d)
+
+Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Feier „Es geht los!“ (W11-02), F-017 (Frist), Migration `0005_increment5_vote.sql`, Phasen 2/3 in Übersicht/Meine Reisen/Gruppe – gegen features.md, PRD §12 (Q13 a, Q17), W10/W11, ux-spec (inkl. §13 B1–B9), Motion-Katalog. Checks lokal unter Node 22: lint, typecheck, i18n, format, Unit (290), Build, E2E im CI-Modus (Chromium desktop + mobile, 296 bestanden, 1 flaky aus Inkrement 2, 3 übersprungen); zusätzlich `increment-5-poll.spec.ts` auf 393 × 659 (iPhone-15-Viewport, Chromium) – 15/15. WebKit hier nicht installierbar. Fixes des Reviewers liegen uncommittet im Working Tree.
+
+| ID | Schwere | Kurztitel | Status |
+|---|---|---|---|
+| R-055 | mittel | Suchzeitraum-Änderung in Phase 2 kann die Abstimmung in „Vergangen“ kippen (Festlegen unmöglich, alle sehen alle Ergebnisse); Optionen außerhalb zeigen ISO-Datum | offen |
+| R-056 | niedrig | „Wer hat wie gestimmt?“ ohne Zähler je Gruppe (ux-spec §13 B3) | verifiziert (vom Reviewer behoben) |
+| R-057 | niedrig | Vorfreude-Ring: Glow-Scheibe oben gerade abgeschnitten, wirkt im Cockpit als graubraune Scheibe | offen (Designer) |
+
+### R-055: Suchzeitraum-Änderung in Phase 2 kippt die Abstimmung in „Vergangen“
+- Schwere: mittel
+- Datei: `src/features/trips/actions.ts` (`updateTripAction`) / `src/lib/trip-input.ts:187–199` (`validateTrip`); Folge in `src/lib/trip-status.ts` (`uiPhase`), `src/features/poll/load.ts` (`seeAll`), `src/features/poll/actions.ts` (`fixDatesAction`)
+- Problem / Reproduktion: Reise mit Suchzeitraum 01.09.–31.12.2026, Abstimmung läuft (Optionen im November). Am 10.10. ändert die Orga in „Reise bearbeiten“ das Ende auf 08.10. → `validateTrip` akzeptiert (Start = ursprünglicher Start darf in der Vergangenheit liegen, Ende muss nur > Start sein; per Unit-Reproduktion bestätigt) → `uiPhase` = „past“. Folgen: (1) „Termin festlegen“ und „Option hinzufügen“ antworten `phase`, die Abstimmung ist eine Sackgasse; (2) `loadPoll` setzt `seeAll` für „past“ → **alle Mitglieder sehen alle Zahlen und Namen**, auch ohne eigene Stimme (Q13 a umgangen); (3) Reise verschwindet aus „Meine Reisen → Aktuell“. Unabhängig davon: Optionen außerhalb eines verkleinerten Zeitraums zeigen in den Karten das Rohdatum „2026-11-05 – 2026-11-10“, weil `shortLabels` nur Tage des Suchzeitraums enthält.
+- Erwartetes Verhalten (ux-spec §13.1 b): Zeitraum in Phase 2/3 änderbar, bestehende Optionen und Stimmen bleiben; eine Änderung darf die laufende Abstimmung aber nie beenden.
+- Vorschlag (minimale Regel): in `validateTrip` bei Phase ≠ „collecting“ zusätzlich `rangeEnd ≥ today` (Fehler am Feld „Ende liegt in der Vergangenheit“) – damit wird „past“ nur noch durch Zeitablauf erreicht. Zusätzlich `seeAll` in `loadPoll` nur bei `trip.phase === "fixed"` (nicht bei „past“ einer nie festgelegten Abstimmung) und Optionsdaten unabhängig vom Suchzeitraum formatieren (Formatter statt Lookup, Hinweis „Liegt außerhalb des aktuellen Suchzeitraums“ laut §13.1 b). Unit-Test für die Regel.
+- Status: offen
+
+### R-056: „Wer hat wie gestimmt?“ ohne Zähler je Gruppe
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/features/poll/components/option-card.tsx` (Liste in `<details>`)
+- Problem / Reproduktion: ux-spec §13 B3 verlangt Gruppen Ja/Vielleicht/Nein mit Text-Label **und Zähler**; gebaut war „Ja: Zora, Uli“.
+- Umsetzung: „Ja (2): Zora, Uli“ (Zahl aus derselben, bereits freigegebenen Namensliste). `aria-expanded`: natives `<summary>` – im Chromium-Accessibility-Baum geprüft (`DisclosureTriangle`, `expanded: false/true`), daher kein zusätzliches Attribut.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-057: Vorfreude-Ring – Glow-Scheibe abgeschnitten
+- Schwere: niedrig
+- Datei: `src/features/poll/components/countdown-ring.tsx` (`g[data-anim="glow"]`, `viewBox="0 140 390 192"`)
+- Problem / Reproduktion: 393 × 659, Phase 3, Übersicht (hell und dunkel, statischer Endzustand): Die Glow-Kreise (r = 150 bzw. 112, #FFCF4A 8 %/12 %) ragen über die obere viewBox-Kante (Mittelpunkt y = 236, viewBox beginnt bei 140) und werden direkt unter der Tab-Leiste waagerecht abgeschnitten; auf dem Indigo-Cockpit wirkt die Scheibe graubraun statt als warmes Leuchten.
+- Erwartetes Verhalten: weicher Glow ohne harte Kante (design-system §9.12).
+- Vorschlag: Designer entscheidet – z. B. radialer Verlauf, der vor der viewBox-Kante auf 0 ausläuft, oder Radius ≤ 96.
+- Status: offen (Designer)
+
+#### Hinweise ohne Finding (Inkrement 5)
+- **Q13 a serverseitig:** `pollForViewer` liefert `result: null` für unbeantwortete Optionen, `top`/`order` nur wenn alles sichtbar ist; einziger Ausgang für Stimmen sind `loadPoll`/`voteAction` (beide über `pollForViewer`). Übersicht, Meine Reisen, Gruppe, Teilen-Texte (nur Anzahl Optionen + Frist) und `event.ics` (nur Phase „fixed“) enthalten keine Stimmen. „Wer hat abgestimmt?“ zeigt nur den Status (F-007). E2E prüft HTML/RSC auf `tally`/`names`. Ausnahme siehe R-055 (2).
+- **Locking:** Start/Hinzufügen/Festlegen/Aufheben sperren die Reisezeile `FOR UPDATE`, Abstimmen `FOR SHARE` → Abstimmen ↔ Festlegen/Hinzufügen serialisiert; doppelte Stimme durch PK + Upsert ausgeschlossen; Optionsdubletten durch Unique-Index (`duplicate`). Kein Deadlock-Pfad gefunden (FK-Prüfungen nehmen nur `KEY SHARE`, `voted_at`-Updates sind No-Key-Updates).
+- **Migration 0005:** auf frischer DB mit Altzeilen geprüft (fixed ohne Daten, collecting mit Daten, fixed mit halbem Datum, voting mit Enddatum) → bereinigt, `trip_fixed_check` greift.
+- **IDOR/Replay:** alle Actions über eigene Mitgliedschaft, Orga-Rolle serverseitig, Options-Ids müssen zur Reise gehören (zusammengesetzter FK + Prüfung), Antworten nur yes/maybe/no (zod), Zeiträume im Suchzeitraum, ≥ Mindestnächte, ≤ 60 Nächte, nicht vergangen; Frist ≥ heute − 1. `event.ics`: Nicht-Mitglied/entfernt/nicht festgelegt → gleiche 404, `no-store`, Dateiname ASCII-Slug.
+- **„Option hinzufügen“ setzt „abgestimmt“ aller zurück:** fachlich richtig (D.2 #4), von UI/UX bestätigt (§13 B9) – Copy-Hinweis im Sheet + Snackbar sind UX-Anpassung vor Go-Live.
+- **Feier:** Marker `celebrated_for` je Mitgliedschaft und Zeitraum (gleicher Zeitraum erneut → keine Feier, wie F-012), Abbruch bei Tippen/Scrollen/Taste/verstecktem Tab, harter Schluss 2,6 s (Konfetti endet spätestens nach ~2,54 s), Vibration nur im Bewegungs-Pfad und nur per `navigator.vibrate` (iOS hat keine API), reduzierte Bewegung = 140-ms-Überblendung. R-017: der CSS-Versteck betrifft nur die `aria-hidden`-Deko-Ebenen des Rings (`[data-anim]`), Countdown-Text, Karte, Datum und Buttons sind nie versteckt; Failsafe 2,4 s. Zahlen zählen nicht hoch (G-16).
+- **Fokus nach Festlegen (§13 B2):** per rAF-Protokoll geprüft: Sheet-Überschrift → „Lock in dates“ (busy) → h1 „It's on!“ – nie `body`/Kopf; `?fixed=1` wird entfernt, Reload fokussiert nicht erneut, Titel „Overview · …“.
+- **„Wer hat abgestimmt?“:** kein deaktivierter „Erinnern“-Button (§13 B4 erfüllt).
+- **Kosmetik (bekannt aus Inkrement 4):** EN-Zeiträume mischen das Format („Tue 29 December – Sun, 3 January 2027“).
