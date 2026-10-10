@@ -340,3 +340,44 @@ export async function fixTripDates(tripId: string): Promise<void> {
     );
   });
 }
+
+/**
+ * Adds a synthetic member with marked days (F-005); `submitted` false keeps them as a draft
+ * (must never count in the group calendar, F-008 U-4). Days are ISO dates.
+ */
+export async function addMemberWithDays(
+  tripId: string,
+  name: string,
+  days: { no?: string[]; maybe?: string[] },
+  submitted = true,
+): Promise<void> {
+  await withClient(async (client) => {
+    const userId = await insertUser(client, name);
+    await client.query(
+      `insert into trip_member (trip_id, user_id, display_name, submitted_at, availability_updated_at)
+       values ($1, $2, $3, $4, $4)`,
+      [tripId, userId, name, submitted ? new Date() : null],
+    );
+    for (const [state, list] of [
+      ["no", days.no ?? []],
+      ["maybe", days.maybe ?? []],
+    ] as const) {
+      for (const day of list) {
+        await client.query(
+          `insert into availability (trip_id, user_id, day, state) values ($1, $2, $3, $4)`,
+          [tripId, userId, day, state],
+        );
+      }
+    }
+  });
+}
+
+/** An open placeholder (F-007) – counts as «noch offen» in the progress (Q20). */
+export async function addPlaceholder(tripId: string, name: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `insert into trip_placeholder (trip_id, display_name, invite_token) values ($1, $2, $3)`,
+      [tripId, name, randomBytes(32).toString("base64url")],
+    );
+  });
+}

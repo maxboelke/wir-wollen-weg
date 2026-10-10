@@ -49,6 +49,18 @@ describe("progress and to-dos (F-007, F-044)", () => {
     expect(phaseProgress("fixed", members)).toBeNull();
   });
 
+  it("Q20: open placeholders count in the denominator of phase 1, not in phase 2", () => {
+    expect(phaseProgress("collect", members, 2)).toEqual({ done: 2, total: 5 });
+    expect(phaseProgress("vote", [member({ votedAt: "x" }), member()], 2)).toEqual({
+      done: 1,
+      total: 2,
+    });
+    // Everyone joined has submitted, but a placeholder is still open → no «startVote» yet.
+    const organizer = member({ role: "organizer", submittedAt: "x" });
+    const progress = phaseProgress("collect", [organizer], 1);
+    expect(viewerTodo("collect", organizer, progress)).toBeNull();
+  });
+
   it("own dates missing → addDates; organiser with everyone in → startVote; vote missing → vote", () => {
     expect(viewerTodo("collect", member(), { done: 2, total: 3 })).toBe("addDates");
     expect(
@@ -69,8 +81,9 @@ describe("defaultTab (sitemap §2)", () => {
     expect(defaultTab("fixed", member(), all)).toBe("overview");
   });
 
-  it("Increment 3: «Meine Tage» is built – missing dates open it, «Abstimmen» not yet", () => {
+  it("Increment 4: «Meine Tage» and «Gruppe» are built – missing dates open «Meine Tage»", () => {
     expect(BUILT_TABS.has("days")).toBe(true);
+    expect(BUILT_TABS.has("group")).toBe(true);
     expect(BUILT_TABS.has("poll")).toBe(false);
     expect(defaultTab("collect", member())).toBe("days");
     expect(defaultTab("collect", member({ submittedAt: "x" }))).toBe("overview");

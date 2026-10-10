@@ -106,3 +106,22 @@ export async function hasAnsweredImportFeedback(userId: string): Promise<boolean
     .limit(1);
   return row !== undefined;
 }
+
+/**
+ * Days of everyone who SUBMITTED (F-008 counting rule U-4) – drafts of members who have not
+ * submitted yet never leave the server. Only call with the trip id of a membership resolved
+ * through `findMembership` for the session user (the page guard), so only members see it.
+ */
+export async function listSubmittedAvailability(
+  tripId: string,
+): Promise<{ userId: string; day: string; state: "maybe" | "no" }[]> {
+  return db()
+    .select({ userId: availability.userId, day: availability.day, state: availability.state })
+    .from(availability)
+    .innerJoin(
+      tripMember,
+      and(eq(tripMember.tripId, availability.tripId), eq(tripMember.userId, availability.userId)),
+    )
+    .where(and(eq(availability.tripId, tripId), isNotNull(tripMember.submittedAt)))
+    .orderBy(asc(availability.userId), asc(availability.day));
+}

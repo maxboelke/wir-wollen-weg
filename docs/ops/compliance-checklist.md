@@ -105,6 +105,9 @@ Seit 14.05.2024 heißt das TTDSG **TDDDG**. § 25 erfasst jedes Speichern/Ausles
 | Theme-Wahl hell/dunkel (`data-theme`, Designer-Tokens) – Cookie oder localStorage | vom Nutzer gewählte Darstellung | erforderlich (Nutzerwunsch); ohne Wahl folgt die App dem System, nichts wird gespeichert |
 | `pending_invite` (30 Min.) | Einladung über Login hinweg erhalten | erforderlich |
 | `sessionStorage` Formularentwurf (F-001) | Reisedaten vor Login nicht verlieren | erforderlich |
+| `ww-motion` (Cookie, 12 Monate, nur bei expliziter Wahl „Bewegung reduzieren“ im Konto) | vom Nutzer gewählte Darstellung, serverseitig im ersten HTML berücksichtigt | erforderlich (Nutzerwunsch); ohne Wahl nichts gespeichert (Nachtrag Reviewer Inkrement 4) |
+| `ww-hm-legend` (Cookie, 12 Monate, nur nach Zuklappen der Legende im Gruppenkalender, Inkrement 4, U-6) | vom Nutzer gewählter Anzeigezustand, serverseitig im ersten HTML berücksichtigt; Wert nur `closed`, keine Kennung | erforderlich (Nutzerwunsch, funktional); Aufklappen löscht das Cookie |
+| `sessionStorage` `ww-anim:*`, `ww-tab-from` (Sitzungsende) | Einmal-Animationen nicht wiederholen, Tab-Richtung der Übergänge | erforderlich für die gewünschte Darstellung; keine Kennung, nichts verlässt das Gerät |
 | Statistik | **serverseitig**, ohne Endgerätezugriff | nicht von § 25 erfasst |
 
 **Ergebnis:** Bei Umsetzung wie geplant (keine Tracker, keine Werbung, keine eingebetteten Drittinhalte, Schriften selbst gehostet, keine externen Karten/Videos) ist **kein Einwilligungs-Banner nötig** (deckt sich mit F-013). Pflicht bleibt die **Information** in der Datenschutzerklärung.

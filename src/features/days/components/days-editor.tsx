@@ -182,7 +182,9 @@ export function DaysEditor(props: DaysEditorProps) {
   const [problem, setProblem] = useState<"rangeChanged" | "locked" | "signedOut" | "error" | null>(
     null,
   );
-  const [legendOpen, setLegendOpen] = useState(!props.submittedAt);
+  // R-049 (360 × 640): the legend starts folded so the first calendar week is visible without
+  // scrolling; the key rule («unmarked = Geht») stands in the draft hint above it.
+  const [legendOpen, setLegendOpen] = useState(false);
   const [announcement, setAnnouncement] = useState("");
   const [comment, setComment] = useState(props.comment);
   const savedComment = useRef(props.comment);
@@ -1219,13 +1221,6 @@ export function DaysEditor(props: DaysEditorProps) {
         ) : null}
         {props.voting && !readOnly ? <Banner tone="info">{t("banner.voting")}</Banner> : null}
         {!readOnly && submittedAt === null ? <p className={styles.draft}>{t("draft")}</p> : null}
-        <p className={styles.region}>
-          <Icon name="holiday" size={16} />
-          <span>{t("holidaysFor", { region: props.regionLabel })}</span>
-          <Link href={props.accountHref} className={styles.inlineLink}>
-            {t("holidaysChange")}
-          </Link>
-        </p>
         <details
           className={styles.legend}
           open={legendOpen}
@@ -1238,6 +1233,13 @@ export function DaysEditor(props: DaysEditorProps) {
             <Icon name="chevron-down" size={18} className={styles.chevron} />
           </summary>
           <div className={styles.legendBody}>
+            <p className={styles.region}>
+              <Icon name="holiday" size={16} />
+              <span>{t("holidaysFor", { region: props.regionLabel })}</span>
+              <Link href={props.accountHref} className={styles.inlineLink}>
+                {t("holidaysChange")}
+              </Link>
+            </p>
             <ul className={styles.legendKeys}>
               <li>
                 <span className={styles.mini} data-state="no" aria-hidden="true">

@@ -95,6 +95,8 @@ export interface TripListItem {
   memberCount: number;
   submittedCount: number;
   votedCount: number;
+  /** Open placeholders – count as «noch offen» in the progress (Q20). */
+  placeholderCount: number;
 }
 
 /** «Meine Reisen» (F-044): every trip the user is a member of, with progress counters. */
@@ -120,7 +122,21 @@ export async function listTripsForUser(userId: string): Promise<TripListItem[]> 
       ),
     )
     .groupBy(tripMember.tripId);
+  const placeholderCounts = await db()
+    .select({ tripId: tripPlaceholder.tripId, open: count() })
+    .from(tripPlaceholder)
+    .where(
+      and(
+        inArray(
+          tripPlaceholder.tripId,
+          mine.map((row) => row.trip.id),
+        ),
+        isNull(tripPlaceholder.claimedAt),
+      ),
+    )
+    .groupBy(tripPlaceholder.tripId);
   const byTrip = new Map(counts.map((row) => [row.tripId, row]));
+  const openByTrip = new Map(placeholderCounts.map((row) => [row.tripId, row.open]));
   return mine.map((row) => {
     const c = byTrip.get(row.trip.id);
     return {
@@ -129,6 +145,7 @@ export async function listTripsForUser(userId: string): Promise<TripListItem[]> 
       memberCount: c?.members ?? 1,
       submittedCount: c?.submitted ?? 0,
       votedCount: c?.voted ?? 0,
+      placeholderCount: openByTrip.get(row.trip.id) ?? 0,
     };
   });
 }

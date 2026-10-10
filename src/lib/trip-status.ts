@@ -34,10 +34,21 @@ export interface Progress {
   total: number;
 }
 
-/** Phase 1: submitted availability · phase 2: voted (F-007, Flow E.1). */
-export function phaseProgress(phase: UiPhase, members: readonly MemberStatus[]): Progress | null {
+/**
+ * Phase 1: submitted availability · phase 2: voted (F-007, Flow E.1). Open placeholders count
+ * in phase 1 as «noch offen» (Q20, decided 2026-10-10: «3 von 9 haben abgegeben»); they cannot
+ * vote, so phase 2 counts members only.
+ */
+export function phaseProgress(
+  phase: UiPhase,
+  members: readonly MemberStatus[],
+  openPlaceholders = 0,
+): Progress | null {
   if (phase === "collect") {
-    return { done: members.filter((m) => m.submittedAt).length, total: members.length };
+    return {
+      done: members.filter((m) => m.submittedAt).length,
+      total: members.length + Math.max(0, openPlaceholders),
+    };
   }
   if (phase === "vote") {
     return { done: members.filter((m) => m.votedAt).length, total: members.length };
@@ -73,10 +84,10 @@ export type TripTab = "overview" | "days" | "group" | "poll";
 
 /**
  * Tabs that already exist as real views. Increment 2 built the overview, Increment 3
- * «Meine Tage»; «Gruppe» (4) and «Abstimmen» (5) are "coming soon" placeholders until then,
- * so the default tab does not send people to an empty page.
+ * «Meine Tage», Increment 4 «Gruppe»; «Abstimmen» (5) is a "coming soon" placeholder until
+ * then, so the default tab does not send people to an empty page.
  */
-export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>(["overview", "days"]);
+export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>(["overview", "days", "group"]);
 
 /** Tab when opening a trip (sitemap §2): own dates missing → days, own vote missing → poll. */
 export function defaultTab(

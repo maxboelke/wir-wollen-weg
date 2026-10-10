@@ -719,7 +719,7 @@
   },
   "days": {
     "title": "My dates",
-    "draft": "Draft – it only counts once you submit.",
+    "draft": "Draft – it only counts once you submit. Unmarked days count as “Works”.",
     "draftShort": "Draft",
     "holidaysFor": "Holidays for: {region}",
     "holidaysChange": "Change",
@@ -861,5 +861,132 @@
     "full": "The trip is full (30 of 30, placeholders included).",
     "nameRequired": "Please enter a name.",
     "label": "Placeholder"
+  },
+  "group": {
+    "title": "Group",
+    "segment": {
+      "label": "View",
+      "suggestions": "Suggestions",
+      "calendar": "Calendar"
+    },
+    "kpiOpen": "Still open: {names} – the result may still change.",
+    "startVote": "Start a vote",
+    "filters": {
+      "label": "Filters (just for you)",
+      "duration": "Length",
+      "nights": "{count, plural, one {# night} other {# nights}}",
+      "tolerance": "May miss out",
+      "hide": "Hide people",
+      "hidden": "{count} hidden",
+      "onlyYou": "Just for you – the group sees the default view.",
+      "reset": "Reset filters",
+      "hideTitle": "Who should we leave out?",
+      "hideHint": "Just for you: we calculate as if these people weren't coming.",
+      "done": "Done"
+    },
+    "groups": {
+      "all": "Everyone's in ({count})",
+      "almost": "Almost everyone's in ({count})",
+      "allName": "Everyone's in",
+      "almostName": "Almost everyone's in",
+      "allEmpty": "No dates right now where everyone can make it."
+    },
+    "card": {
+      "range": "{start} – {end}",
+      "nights": "up to {count, plural, one {# night} other {# nights}}",
+      "vacation": "approx. {count, plural, one {# day off} other {# days off}}",
+      "vacationInfo": "Days off: working days Mon–Fri minus your public holidays",
+      "maybe": "{count}× if needed",
+      "can": "{count} can",
+      "without": "without {names}",
+      "holiday": "incl. {name}",
+      "hiddenNote": "(calculated without {names})",
+      "show": "Show in calendar",
+      "rank": "Suggestion {rank}"
+    },
+    "showAll": "Show all {count}",
+    "showLess": "Show fewer",
+    "createPoll": "Create a vote",
+    "createPollHint": "Voting comes with the next step.",
+    "empty": {
+      "nobody": "No suggestions yet – as soon as the first people add their dates, we'll start working them out.",
+      "addDates": "Add my dates",
+      "invite": "Invite friends",
+      "onlyOne": "Only one person has submitted so far – not very telling yet.",
+      "noMatch": "Sadly there are no {count, plural, one {# night} other {# nights}} where everyone's in.",
+      "tips": "This might work:",
+      "shorter": "With {nights} instead of {min} nights: {count, plural, one {# option} other {# options}}",
+      "tolerance": "{tolerance, plural, one {If # person may miss out} other {If # people may miss out}}: {count, plural, one {# option} other {# options}}",
+      "show": "Show",
+      "editTrip": "Widen the date range",
+      "none": "Nothing fits with other filters either. A longer date range might help."
+    },
+    "legend": {
+      "title": "What do the colours mean?",
+      "nodata": "no data",
+      "none": "nobody",
+      "few": "a few",
+      "some": "some",
+      "many": "many",
+      "all": "everyone",
+      "count": "{x}/{n} = {x} of {n} chose “Works”",
+      "allYes": "Everyone: works",
+      "maybe": "Someone only “If needed”",
+      "holiday": "Holiday",
+      "band": "Suggestion",
+      "note": "“Everyone's in” means nobody chose “Can't” – days with “If needed” count too."
+    },
+    "calHelp": "Arrow keys to move, Enter opens the day details.",
+    "skipCalendar": "Skip to calendar",
+    "cell": {
+      "today": "today",
+      "holiday": "holiday {name}",
+      "past": "past",
+      "outside": "not in the date range",
+      "nodata": "no dates yet",
+      "count": "{x} of {n} works",
+      "countAll": "{x} of {n} works – everyone",
+      "maybe": "{count} if needed",
+      "no": "can't: {names}",
+      "noCount": "{count} can't",
+      "suggestion": "part of suggestion {rank}"
+    },
+    "detail": {
+      "prev": "Previous day",
+      "next": "Next day",
+      "count": "{x} of {n}: works",
+      "all": "Everyone: works",
+      "maybe": "Everyone's in – {count} only if needed",
+      "no": "Can't: {names}",
+      "noCount": "{count} can't",
+      "yes": "Works ({count})",
+      "maybeGroup": "If needed ({count})",
+      "noGroup": "Can't ({count})",
+      "open": "Still open ({count})",
+      "hidden": "Hidden ({count})",
+      "nobody": "nobody",
+      "nodata": "Nobody has submitted yet.",
+      "placeholder": "not joined yet",
+      "you": "you",
+      "comment": "Comment from {name}"
+    },
+    "bar": {
+      "label": "Suggestions in the calendar",
+      "prev": "Previous suggestion",
+      "next": "Next suggestion",
+      "position": "{group} · {rank} of {total}",
+      "toList": "{range} – show in the list",
+      "none": "No dates fit right now.",
+      "tips": "See tips"
+    },
+    "announce": {
+      "suggestion": "Suggestion {rank} of {total}: {range}, {group}",
+      "highlight": "Dates {range} highlighted"
+    },
+    "submitted": {
+      "title": "Who has submitted? ({done}/{total})",
+      "done": "Submitted ({count})",
+      "open": "Still open ({count})"
+    }
   }
 }
