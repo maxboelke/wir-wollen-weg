@@ -579,9 +579,9 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 
 | ID | Schwere | Kurztitel | Status |
 |---|---|---|---|
-| R-055 | mittel | Suchzeitraum-Änderung in Phase 2 kann die Abstimmung in „Vergangen“ kippen (Festlegen unmöglich, alle sehen alle Ergebnisse); Optionen außerhalb zeigen ISO-Datum | offen |
+| R-055 | mittel | Suchzeitraum-Änderung in Phase 2 kann die Abstimmung in „Vergangen“ kippen (Festlegen unmöglich, alle sehen alle Ergebnisse); Optionen außerhalb zeigen ISO-Datum | behoben – bitte prüfen |
 | R-056 | niedrig | „Wer hat wie gestimmt?“ ohne Zähler je Gruppe (ux-spec §13 B3) | verifiziert (vom Reviewer behoben) |
-| R-057 | niedrig | Vorfreude-Ring: Glow-Scheibe oben gerade abgeschnitten, wirkt im Cockpit als graubraune Scheibe | offen (Designer) |
+| R-057 | niedrig | Vorfreude-Ring: Glow-Scheibe oben gerade abgeschnitten, wirkt im Cockpit als graubraune Scheibe | behoben – bitte prüfen |
 
 ### R-055: Suchzeitraum-Änderung in Phase 2 kippt die Abstimmung in „Vergangen“
 - Schwere: mittel
@@ -589,7 +589,13 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 - Problem / Reproduktion: Reise mit Suchzeitraum 01.09.–31.12.2026, Abstimmung läuft (Optionen im November). Am 10.10. ändert die Orga in „Reise bearbeiten“ das Ende auf 08.10. → `validateTrip` akzeptiert (Start = ursprünglicher Start darf in der Vergangenheit liegen, Ende muss nur > Start sein; per Unit-Reproduktion bestätigt) → `uiPhase` = „past“. Folgen: (1) „Termin festlegen“ und „Option hinzufügen“ antworten `phase`, die Abstimmung ist eine Sackgasse; (2) `loadPoll` setzt `seeAll` für „past“ → **alle Mitglieder sehen alle Zahlen und Namen**, auch ohne eigene Stimme (Q13 a umgangen); (3) Reise verschwindet aus „Meine Reisen → Aktuell“. Unabhängig davon: Optionen außerhalb eines verkleinerten Zeitraums zeigen in den Karten das Rohdatum „2026-11-05 – 2026-11-10“, weil `shortLabels` nur Tage des Suchzeitraums enthält.
 - Erwartetes Verhalten (ux-spec §13.1 b): Zeitraum in Phase 2/3 änderbar, bestehende Optionen und Stimmen bleiben; eine Änderung darf die laufende Abstimmung aber nie beenden.
 - Vorschlag (minimale Regel): in `validateTrip` bei Phase ≠ „collecting“ zusätzlich `rangeEnd ≥ today` (Fehler am Feld „Ende liegt in der Vergangenheit“) – damit wird „past“ nur noch durch Zeitablauf erreicht. Zusätzlich `seeAll` in `loadPoll` nur bei `trip.phase === "fixed"` (nicht bei „past“ einer nie festgelegten Abstimmung) und Optionsdaten unabhängig vom Suchzeitraum formatieren (Formatter statt Lookup, Hinweis „Liegt außerhalb des aktuellen Suchzeitraums“ laut §13.1 b). Unit-Test für die Regel.
-- Status: offen
+- Umsetzung (Developer 2026-10-10):
+  - `validateTrip` (`src/lib/trip-input.ts`): neue Optionen `endNotBefore` + `originalEnd`, Fehler `endInPast` am Feld „Bis“ (DE „Sobald abgestimmt wird, muss das Ende heute oder später liegen.“ / EN „Once the vote has started, the end has to be today or later.“). Ein **unverändertes** Ende bleibt ausgenommen (sonst ließe sich eine durch Zeitablauf vergangene Reise nicht mehr umbenennen). Formular: `endNotPast` bei Phase ≠ „collecting“ (Einstellungsseite), Prüfung gegen das lokale Heute.
+  - `updateTripAction`: Prüfung gegen das echte Server-Heute (ohne die 1-Tages-Toleranz des Starts – `uiPhase` nutzt dasselbe Heute). Race-Schutz: verschiebt die Änderung das Ende in die Vergangenheit (nur in Phase „collecting“ erlaubt), speichert `updateTrip` mit `WHERE phase = 'collecting'` in derselben Anweisung; wurde die Abstimmung inzwischen gestartet, antwortet die Action mit dem Feldfehler.
+  - `loadPoll`: `seeAll` über `seesAllResults()` (`src/lib/poll.ts`) = Orga oder gespeicherte Phase „fixed“ – nie die abgeleitete Phase „past“.
+  - Optionskarten: Datum über `shortLabelFormatter()` (unabhängig vom Suchzeitraum, kein ISO-Rohdatum mehr); `periodInRange()` → `inRange` je Karte; außerhalb/teilweise außerhalb Info-Hinweis „Liegt außerhalb des aktuellen Suchzeitraums“ / „Outside the current search range“ (Lavendel `info-*`), Verfügbarkeitszeile nur, solange Tage im Zeitraum liegen. Urlaubstage der Karten über Suchzeitraum ∪ Optionen berechnet. Neue Optionen weiterhin nur im Zeitraum (`checkOption` unverändert).
+  - Tests: Unit `trip-input.test.ts` (R-055-Regel inkl. unverändertem Ende), `poll.test.ts` (`seesAllResults`, `periodInRange`); E2E `increment-5-poll.spec.ts` › „R-055 …“: Client-Fehler am Feld, Server-Ablehnung per Formular-Post ohne JavaScript (+ Kontroll-Post), Ende = heute erlaubt → Phase bleibt „voting“, Karten ohne ISO-Datum mit Hinweis, Mitglied ohne Stimme sieht keine Ergebnisse (HTML/RSC ohne `tally`); zweiter Test: abgelaufener Zeitraum (abgeleitet „past“) → weiterhin keine Ergebnisse für Mitglieder, Umbenennen weiter möglich.
+- Status: behoben – bitte prüfen
 
 ### R-056: „Wer hat wie gestimmt?“ ohne Zähler je Gruppe
 - Schwere: niedrig · vom Reviewer behoben
@@ -604,7 +610,8 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 - Problem / Reproduktion: 393 × 659, Phase 3, Übersicht (hell und dunkel, statischer Endzustand): Die Glow-Kreise (r = 150 bzw. 112, #FFCF4A 8 %/12 %) ragen über die obere viewBox-Kante (Mittelpunkt y = 236, viewBox beginnt bei 140) und werden direkt unter der Tab-Leiste waagerecht abgeschnitten; auf dem Indigo-Cockpit wirkt die Scheibe graubraun statt als warmes Leuchten.
 - Erwartetes Verhalten: weicher Glow ohne harte Kante (design-system §9.12).
 - Vorschlag: Designer entscheidet – z. B. radialer Verlauf, der vor der viewBox-Kante auf 0 ausläuft, oder Radius ≤ 96.
-- Status: offen (Designer)
+- Umsetzung (Developer 2026-10-10, im Auftrag des CEO; Designer-Abnahme der Feinabstimmung offen): beide Sonnen-Kreise ersetzt durch **einen** Kreis r = 96 (= Abstand Mittelpunkt → obere viewBox-Kante) mit radialem Verlauf in Minze (`--ww-ring-start`): Deckkraft 8 % innen → 22 % auf Höhe des Rings → 7 % → **0 % am Rand**, daher keine harte Kante und keine graubraune Scheibe auf Indigo. Animation unverändert (nur `opacity`/`transform: scale(0.7 → 1)`; ein Feder-Überschwinger bleibt unsichtbar, weil der Rand transparent ist). Geprüft per Screenshot 393 × 659 hell/dunkel (statischer Endzustand). Das Design-Asset `docs/design/assets/illustrations/countdown-ring.svg` (mit eigenem Hintergrund) ist unverändert.
+- Status: behoben – bitte prüfen
 
 #### Hinweise ohne Finding (Inkrement 5)
 - **Q13 a serverseitig:** `pollForViewer` liefert `result: null` für unbeantwortete Optionen, `top`/`order` nur wenn alles sichtbar ist; einziger Ausgang für Stimmen sind `loadPoll`/`voteAction` (beide über `pollForViewer`). Übersicht, Meine Reisen, Gruppe, Teilen-Texte (nur Anzahl Optionen + Frist) und `event.ics` (nur Phase „fixed“) enthalten keine Stimmen. „Wer hat abgestimmt?“ zeigt nur den Status (F-007). E2E prüft HTML/RSC auf `tally`/`names`. Ausnahme siehe R-055 (2).

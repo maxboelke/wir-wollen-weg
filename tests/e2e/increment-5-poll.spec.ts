@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Browser, type Page } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { expectNoSeriousAxeViolations, waitForAnimations } from "./helpers/axe";
 import { signUp } from "./helpers/auth";
@@ -13,6 +13,9 @@ import {
   seedPoll,
   seedTrip,
   setAvailability,
+  setTripRange,
+  tripRange,
+  tripRow,
   votesOf,
 } from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
@@ -426,6 +429,112 @@ test.describe("«It's on!» celebration (Q17 b)", () => {
       () => document.getAnimations().filter((a) => a.playState === "running").length,
     );
     expect(running).toBe(0);
+  });
+});
+
+test.describe("R-055 search range changed during the vote", () => {
+  /** Running trip (started 20 days ago) in phase 2; Kemal = organiser, Mia = member without vote. */
+  async function runningVote(page: Page, browser: Browser) {
+    const trip = await seedTrip(`Range ${String(Date.now())}`, {
+      rangeStart: isoDay(-20),
+      rangeEnd: isoDay(90),
+    });
+    const email = await signUp(page, "Kemal", uniqueEmail("kemal"));
+    await addAccountToTrip(trip.tripId, email, "Kemal");
+    await makeOrganizer(trip.tripId, email);
+    const optionIds = await seedPoll(trip.tripId, [
+      [isoDay(10), isoDay(15)],
+      [isoDay(38), isoDay(43)],
+      [isoDay(50), isoDay(55)],
+    ]);
+    await addVoter(trip.tripId, "Zora", optionIds, ["yes", "no", "maybe"]);
+    const mia = await newPerson(browser, "Mia");
+    await addAccountToTrip(trip.tripId, mia.email, "Mia");
+    return { ...trip, mia };
+  }
+
+  const endField = (page: Page) => page.getByLabel(en.tripForm.endLabel, { exact: true });
+  /** The error at the field «To» (the summary above repeats it as a link). */
+  const endError = (page: Page) => page.locator('[id$="-rangeEnd-error"]');
+  const iso = /\d{4}-\d{2}-\d{2}/;
+
+  test("the end cannot move into the past (client and server), the vote stays open", async ({
+    page,
+    browser,
+  }) => {
+    const { publicId, mia } = await runningVote(page, browser);
+    await page.goto(`/trips/${publicId}/settings`);
+    await hydrated(page);
+    await endField(page).fill(isoDay(-2));
+    await page.getByRole("button", { name: en.tripForm.save }).click();
+    await expect(endError(page)).toHaveText(en.tripForm.errors.endInPast);
+    await expect(endField(page)).toBeFocused();
+    expect((await tripRange(publicId))?.range_end).toBe(isoDay(90));
+
+    // Server (form post without JavaScript, client validation skipped): the whole save is
+    // refused – a control post without the past end goes through.
+    const noJs = await browser.newContext({
+      javaScriptEnabled: false,
+      locale: "en-GB",
+      storageState: await page.context().storageState(),
+    });
+    const plain = await noJs.newPage();
+    const postSettings = async (patch: { name: string; end?: string }) => {
+      await plain.goto(`/trips/${publicId}/settings`);
+      await plain.getByLabel(en.tripForm.nameLabel).fill(patch.name);
+      if (patch.end) await endField(plain).fill(patch.end);
+      const posted = plain.waitForResponse((r) => r.request().method() === "POST");
+      await plain.getByRole("button", { name: en.tripForm.save }).click();
+      await posted;
+    };
+    await postSettings({ name: "Past end", end: isoDay(-2) });
+    expect(await tripRange(publicId)).toEqual({ range_start: isoDay(-20), range_end: isoDay(90) });
+    expect((await tripRow(publicId))?.name).not.toBe("Past end");
+    await postSettings({ name: "Control" });
+    await expect.poll(async () => (await tripRow(publicId))?.name).toBe("Control");
+    await noJs.close();
+
+    // Today is still allowed – the vote keeps running (phase 2, no «Past»).
+    await endField(page).fill(isoDay(40));
+    await page.getByRole("button", { name: en.tripForm.save }).click();
+    await expect(page.getByRole("status").filter({ hasText: en.tripForm.saved })).toBeVisible();
+    expect((await tripRange(publicId))?.range_end).toBe(isoDay(40));
+    expect((await pollState(publicId))?.phase).toBe("voting");
+
+    // Options outside the new range: real dates + info hint; still no results for Mia.
+    await mia.page.goto(`/trips/${publicId}/poll`);
+    await expect(cards(mia.page)).toHaveCount(3);
+    for (const title of await cards(mia.page).locator("h2").allTextContents()) {
+      expect(title).not.toMatch(iso);
+    }
+    await expect(cards(mia.page).nth(0).getByText(p.outsideRange)).toHaveCount(0);
+    await expect(cards(mia.page).nth(1).getByText(p.outsideRange)).toBeVisible();
+    await expect(cards(mia.page).nth(2).getByText(p.outsideRange)).toBeVisible();
+    await expect(mia.page.getByText(p.voteToSee)).toHaveCount(3);
+    expect(await mia.page.content()).not.toContain("tally");
+    await mia.context.close();
+  });
+
+  test("a vote that ran out of time never unlocks the results for members", async ({
+    page,
+    browser,
+  }) => {
+    const { publicId, tripId, mia } = await runningVote(page, browser);
+    // Time passes: the search range is over, the dates were never fixed (derived «Past»).
+    await setTripRange(tripId, isoDay(-20), isoDay(-1));
+    await mia.page.goto(`/trips/${publicId}/poll`);
+    await expect(cards(mia.page)).toHaveCount(3);
+    await expect(mia.page.getByText(p.voteToSee)).toHaveCount(3);
+    const html = await mia.page.content();
+    expect(html).not.toContain("tally");
+    expect(html).not.toMatch(/names\\?":\{/);
+    // Editing other fields of such a trip still works (an unchanged past end is kept).
+    await page.goto(`/trips/${publicId}/settings`);
+    await hydrated(page);
+    await page.getByLabel(en.tripForm.nameLabel).fill("Renamed");
+    await page.getByRole("button", { name: en.tripForm.save }).click();
+    await expect(page.getByRole("status").filter({ hasText: en.tripForm.saved })).toBeVisible();
+    await mia.context.close();
   });
 });
 

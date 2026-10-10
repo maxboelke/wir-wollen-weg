@@ -262,6 +262,31 @@ export interface ViewerPoll {
 }
 
 /**
+ * Who sees every result (Q13 a): the organiser, and everybody once the dates are fixed – the
+ * STORED phase decides. A vote that simply ran out of time (derived «past» without fixed
+ * dates) never unlocks the results for members (R-055).
+ */
+export function seesAllResults(input: {
+  isOrganizer: boolean;
+  storedPhase: "collecting" | "voting" | "fixed";
+}): boolean {
+  return input.isOrganizer || input.storedPhase === "fixed";
+}
+
+/**
+ * Position of an option relative to the CURRENT search range (ux-spec §13.1 b – the range may
+ * change while options and votes stay): "inside", "partly" (overlaps) or "outside".
+ */
+export function periodInRange(
+  period: Period,
+  range: { rangeStart: IsoDate; rangeEnd: IsoDate },
+): "inside" | "partly" | "outside" {
+  if (period.start >= range.rangeStart && period.end <= range.rangeEnd) return "inside";
+  if (period.end < range.rangeStart || period.start > range.rangeEnd) return "outside";
+  return "partly";
+}
+
+/**
  * Q13 a (F-011), enforced on the server: the result of an option (counts AND names) only
  * leaves the server when the viewer has answered THIS option, is the organiser, or the dates
  * are fixed («Nach Festlegung sehen alle Mitglieder das vollständige Ergebnis»). Rank and

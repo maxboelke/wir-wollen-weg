@@ -162,7 +162,15 @@ export function OptionCard(props: OptionCardProps) {
           {t("create.vacation", { count: card.vacationDays })}
         </span>
       </p>
-      <p className={styles.availability}>{t("byCalendar", { text: can })}</p>
+      {card.inRange === "outside" ? null : (
+        <p className={styles.availability}>{t("byCalendar", { text: can })}</p>
+      )}
+      {card.inRange === "inside" ? null : (
+        <p className={styles.outside} data-outside-range="">
+          <Icon name="info" size={16} />
+          {t("outsideRange")}
+        </p>
+      )}
 
       {ghost ? (
         <p className={styles.ghostLabel} id={ghostId}>

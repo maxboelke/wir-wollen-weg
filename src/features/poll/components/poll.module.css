@@ -198,6 +198,19 @@ button.kpi:focus-visible {
   font-weight: var(--ww-font-weight-bold);
 }
 
+/* ux-spec §13.1 b: option outside the current search range – info, not an error. */
+.outside {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  padding: var(--ww-space-1) var(--ww-space-2);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
 .warn {
   display: inline-flex;
   align-items: center;

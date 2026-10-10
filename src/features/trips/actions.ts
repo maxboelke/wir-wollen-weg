@@ -114,13 +114,31 @@ export async function updateTripAction(
 ): Promise<TripFormState> {
   const found = await organizer(publicId);
   if (!found) return { error: "notAllowed" };
-  const result = validateTrip(draftFromFormData(formData), {
+  const draft = draftFromFormData(formData);
+  const options = {
     today: serverToday(),
     originalStart: found.trip.rangeStart,
     originalDeadline: found.trip.deadline,
+    originalEnd: found.trip.rangeEnd,
+  };
+  // R-055: once the vote has started, the end must not move into the past (the trip would tip
+  // into «Vergangen» and end the vote) – the real today, `uiPhase` uses it too.
+  const endNotBefore = todayIso();
+  const result = validateTrip(draft, {
+    ...options,
+    endNotBefore: found.trip.phase === "collecting" ? undefined : endNotBefore,
   });
   if (!result.ok) return { errors: result.errors };
-  await updateTrip(found.trip.id, result.values);
+  const endMovedIntoPast =
+    result.values.rangeEnd < endNotBefore && result.values.rangeEnd !== found.trip.rangeEnd;
+  const saved = await updateTrip(found.trip.id, result.values, {
+    onlyWhileCollecting: endMovedIntoPast,
+  });
+  if (!saved) {
+    // The vote was started in the meantime – answer with the field error of the new phase.
+    const again = validateTrip(draft, { ...options, endNotBefore });
+    return again.ok ? { error: "generic" } : { errors: again.errors };
+  }
   return { ok: true };
 }
 

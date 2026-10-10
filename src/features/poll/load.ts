@@ -8,7 +8,9 @@ import {
   initialOrder,
   nightsOf,
   optionAvailability,
+  periodInRange,
   pollForViewer,
+  seesAllResults,
   suggestedChoice,
   type Period,
   type ViewerPoll,
@@ -34,6 +36,11 @@ export interface OptionCardModel extends Period {
   maybeDays: number;
   /** Pre-filled answer from the viewer's own days (F-011) – a suggestion, not a vote. */
   suggested: VoteChoice | null;
+  /**
+   * Position against the CURRENT search range (ux-spec §13.1 b): the range may have changed
+   * after the option was created – the card then shows «Liegt außerhalb …» as info.
+   */
+  inRange: "inside" | "partly" | "outside";
 }
 
 export interface PollPeople {
@@ -63,11 +70,11 @@ export async function pollPeople(view: TripView): Promise<PollPeople> {
 }
 
 /**
- * «Mi., 5. Mai» per date of the search range (year only when it is not this year) – the
- * client formats option ranges from these while the organiser shifts them (W10 A).
+ * «Mi., 5. Mai» for any date (year only when it is not this year) – independent of the search
+ * range, so options outside a later shrunk range still read as dates (R-055).
  */
-export function shortLabels(view: TripView): Record<IsoDate, string> {
-  const { trip, format, today } = view;
+export function shortLabelFormatter(view: TripView): (date: IsoDate) => string {
+  const { format, today } = view;
   const thisYear = today.slice(0, 4);
   const withYear = utcFormat(format.intl, {
     weekday: "short",
@@ -76,9 +83,18 @@ export function shortLabels(view: TripView): Record<IsoDate, string> {
     year: "numeric",
   });
   const withoutYear = utcFormat(format.intl, { weekday: "short", day: "numeric", month: "long" });
+  return (date) => (date.slice(0, 4) === thisYear ? withoutYear(date) : withYear(date));
+}
+
+/**
+ * Labels per date of the search range – the client formats option ranges from these while the
+ * organiser shifts them (W10 A; new options always lie inside the range).
+ */
+export function shortLabels(view: TripView): Record<IsoDate, string> {
+  const label = shortLabelFormatter(view);
   const labels: Record<IsoDate, string> = {};
-  for (const date of datesBetween(trip.rangeStart, trip.rangeEnd)) {
-    labels[date] = date.slice(0, 4) === thisYear ? withoutYear(date) : withYear(date);
+  for (const date of datesBetween(view.trip.rangeStart, view.trip.rangeEnd)) {
+    labels[date] = label(date);
   }
   return labels;
 }
@@ -112,18 +128,27 @@ export async function loadPoll(view: TripView): Promise<PollData> {
     pollPeople(view),
     listOwnAvailability(view.trip.id, view.me.userId),
   ]);
-  const labels = shortLabels(view);
-  const holidays = new Set(viewerHolidays(view));
+  const label = shortLabelFormatter(view);
+  // Holidays over the search range AND every option (options may lie outside a changed range).
+  const span = options.reduce(
+    (acc, option) => ({
+      start: option.start < acc.start ? option.start : acc.start,
+      end: option.end > acc.end ? option.end : acc.end,
+    }),
+    { start: view.trip.rangeStart, end: view.trip.rangeEnd },
+  );
+  const holidays = new Set(
+    holidaysInRange(view.format.region, span.start, span.end, view.format.locale).map(
+      (h) => h.date,
+    ),
+  );
   const ownNo = new Set(own.filter(([, state]) => state === "no").map(([day]) => day));
   const ownMaybe = new Set(own.filter(([, state]) => state === "maybe").map(([day]) => day));
   const cards = options.map((option) => {
     const availability = optionAvailability(option, people.participants);
     return {
       ...option,
-      range: t("range", {
-        start: labels[option.start] ?? option.start,
-        end: labels[option.end] ?? option.end,
-      }),
+      range: t("range", { start: label(option.start), end: label(option.end) }),
       nights: nightsOf(option),
       vacationDays: vacationDays(option.start, option.end, holidays),
       participants: people.participants.length,
@@ -131,9 +156,11 @@ export async function loadPoll(view: TripView): Promise<PollData> {
       cannot: availability.cannot.map((id) => people.names.get(id) ?? "?"),
       maybeDays: availability.maybeDays,
       suggested: suggestedChoice(option, { no: ownNo, maybe: ownMaybe }),
+      inRange: periodInRange(option, view.trip),
     };
   });
-  const seeAll = view.isOrganizer || view.phase === "fixed" || view.phase === "past";
+  // Stored phase, not the derived one: a vote that ran out of time stays private (R-055).
+  const seeAll = seesAllResults({ isOrganizer: view.isOrganizer, storedPhase: view.trip.phase });
   const poll = pollForViewer({
     options,
     votes,

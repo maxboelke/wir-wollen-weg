@@ -18,6 +18,7 @@ interface CountdownRingProps {
 export function CountdownRing({ percent, label, celebrate }: CountdownRingProps) {
   const uid = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const gradient = `wwcr-grad-${uid}`;
+  const glow = `wwcr-glow-${uid}`;
   const p = Math.max(0, Math.min(100, percent));
   return (
     <div
@@ -37,10 +38,33 @@ export function CountdownRing({ percent, label, celebrate }: CountdownRingProps)
             <stop offset="0" style={{ stopColor: "var(--ww-ring-start, #52E5B8)" }} />
             <stop offset="1" style={{ stopColor: "var(--ww-ring-end, #FFCF4A)" }} />
           </linearGradient>
+          {/* R-057: soft Minze halo that fades to 0 before the viewBox edge (r 96 = distance of
+              the centre to the top edge) – no hard cut under the tabs, no brownish disc. */}
+          <radialGradient id={glow} cx="0.5" cy="0.5" r="0.5">
+            <stop
+              offset="0"
+              style={{ stopColor: "var(--ww-ring-start, #52E5B8)" }}
+              stopOpacity=".08"
+            />
+            <stop
+              offset="0.66"
+              style={{ stopColor: "var(--ww-ring-start, #52E5B8)" }}
+              stopOpacity=".22"
+            />
+            <stop
+              offset="0.84"
+              style={{ stopColor: "var(--ww-ring-start, #52E5B8)" }}
+              stopOpacity=".07"
+            />
+            <stop
+              offset="1"
+              style={{ stopColor: "var(--ww-ring-start, #52E5B8)" }}
+              stopOpacity="0"
+            />
+          </radialGradient>
         </defs>
         <g data-anim="glow">
-          <circle cx="195" cy="236" r="150" fill="#FFCF4A" opacity=".08" />
-          <circle cx="195" cy="236" r="112" fill="#FFCF4A" opacity=".12" />
+          <circle cx="195" cy="236" r="96" fill={`url(#${glow})`} />
         </g>
         <g data-anim="confetti">
           <g data-piece="1">

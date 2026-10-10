@@ -505,3 +505,25 @@ export async function memberVoteStatus(publicIdValue: string, email: string) {
     return rows.rows[0];
   });
 }
+
+/** Search range of a trip (R-055). */
+export async function tripRange(publicIdValue: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{ range_start: string; range_end: string }>(
+      `select range_start::text, range_end::text from trip where public_id = $1`,
+      [publicIdValue],
+    );
+    return rows.rows[0];
+  });
+}
+
+/** Sets the search range directly (e.g. to let a running vote run out of time, R-055). */
+export async function setTripRange(tripId: string, start: string, end: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(`update trip set range_start = $2, range_end = $3 where id = $1`, [
+      tripId,
+      start,
+      end,
+    ]);
+  });
+}

@@ -11,12 +11,14 @@ import {
   hasVotedAll,
   initialOrder,
   optionAvailability,
+  periodInRange,
   periodKey,
   pollForViewer,
   preselectWinner,
   rankOptions,
   resizeWindow,
   ringPercent,
+  seesAllResults,
   shiftWindow,
   suggestedChoice,
   tallyOf,
@@ -217,6 +219,26 @@ describe("pollForViewer – Q13 a visibility rule", () => {
       seeAll: false,
     });
     expect(initialOrder(all)).toEqual(["o2", "o1"]);
+  });
+});
+
+describe("R-055: visibility by stored phase, options vs. a changed search range", () => {
+  it("only the organiser or fixed dates unlock every result – never a vote that ran out", () => {
+    expect(seesAllResults({ isOrganizer: true, storedPhase: "voting" })).toBe(true);
+    expect(seesAllResults({ isOrganizer: false, storedPhase: "fixed" })).toBe(true);
+    // Derived «past» of an unfixed vote has the stored phase «voting» → still private.
+    expect(seesAllResults({ isOrganizer: false, storedPhase: "voting" })).toBe(false);
+    expect(seesAllResults({ isOrganizer: false, storedPhase: "collecting" })).toBe(false);
+  });
+
+  it("classifies options against the current range", () => {
+    const range = { rangeStart: "2026-09-01", rangeEnd: "2026-10-31" };
+    expect(periodInRange({ start: "2026-10-01", end: "2026-10-05" }, range)).toBe("inside");
+    expect(periodInRange({ start: "2026-09-01", end: "2026-10-31" }, range)).toBe("inside");
+    expect(periodInRange({ start: "2026-10-29", end: "2026-11-03" }, range)).toBe("partly");
+    expect(periodInRange({ start: "2026-08-29", end: "2026-09-02" }, range)).toBe("partly");
+    expect(periodInRange({ start: "2026-11-05", end: "2026-11-10" }, range)).toBe("outside");
+    expect(periodInRange({ start: "2026-08-01", end: "2026-08-05" }, range)).toBe("outside");
   });
 });
 
