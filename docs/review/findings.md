@@ -579,9 +579,9 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 
 | ID | Schwere | Kurztitel | Status |
 |---|---|---|---|
-| R-055 | mittel | Suchzeitraum-Änderung in Phase 2 kann die Abstimmung in „Vergangen“ kippen (Festlegen unmöglich, alle sehen alle Ergebnisse); Optionen außerhalb zeigen ISO-Datum | behoben – bitte prüfen |
+| R-055 | mittel | Suchzeitraum-Änderung in Phase 2 kann die Abstimmung in „Vergangen“ kippen (Festlegen unmöglich, alle sehen alle Ergebnisse); Optionen außerhalb zeigen ISO-Datum | verifiziert |
 | R-056 | niedrig | „Wer hat wie gestimmt?“ ohne Zähler je Gruppe (ux-spec §13 B3) | verifiziert (vom Reviewer behoben) |
-| R-057 | niedrig | Vorfreude-Ring: Glow-Scheibe oben gerade abgeschnitten, wirkt im Cockpit als graubraune Scheibe | behoben – bitte prüfen |
+| R-057 | niedrig | Vorfreude-Ring: Glow-Scheibe oben gerade abgeschnitten, wirkt im Cockpit als graubraune Scheibe | verifiziert |
 
 ### R-055: Suchzeitraum-Änderung in Phase 2 kippt die Abstimmung in „Vergangen“
 - Schwere: mittel
@@ -595,7 +595,7 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
   - `loadPoll`: `seeAll` über `seesAllResults()` (`src/lib/poll.ts`) = Orga oder gespeicherte Phase „fixed“ – nie die abgeleitete Phase „past“.
   - Optionskarten: Datum über `shortLabelFormatter()` (unabhängig vom Suchzeitraum, kein ISO-Rohdatum mehr); `periodInRange()` → `inRange` je Karte; außerhalb/teilweise außerhalb Info-Hinweis „Liegt außerhalb des aktuellen Suchzeitraums“ / „Outside the current search range“ (Lavendel `info-*`), Verfügbarkeitszeile nur, solange Tage im Zeitraum liegen. Urlaubstage der Karten über Suchzeitraum ∪ Optionen berechnet. Neue Optionen weiterhin nur im Zeitraum (`checkOption` unverändert).
   - Tests: Unit `trip-input.test.ts` (R-055-Regel inkl. unverändertem Ende), `poll.test.ts` (`seesAllResults`, `periodInRange`); E2E `increment-5-poll.spec.ts` › „R-055 …“: Client-Fehler am Feld, Server-Ablehnung per Formular-Post ohne JavaScript (+ Kontroll-Post), Ende = heute erlaubt → Phase bleibt „voting“, Karten ohne ISO-Datum mit Hinweis, Mitglied ohne Stimme sieht keine Ergebnisse (HTML/RSC ohne `tally`); zweiter Test: abgelaufener Zeitraum (abgeleitet „past“) → weiterhin keine Ergebnisse für Mitglieder, Umbenennen weiter möglich.
-- Status: behoben – bitte prüfen
+- Status: verifiziert (Reviewer 2026-10-10, Commit 056778b): `endInPast` nur bei Phase ≠ „collecting“ und geändertem Ende (Unit + E2E inkl. Formular-Post ohne JS); Race-Schutz per `UPDATE … WHERE phase = 'collecting'` bei Ende in der Vergangenheit, sonst Feldfehler der neuen Phase; `seesAllResults` nach gespeicherter Phase (Mitglied ohne Stimme im abgeleiteten „past“: kein `tally`/`names` im HTML/RSC, E2E); Karten mit echtem Datum, Hinweis „außerhalb“ Kontrast hell 5,67:1 / dunkel 7,39:1 (gemessen, 393 × 659).
 
 ### R-056: „Wer hat wie gestimmt?“ ohne Zähler je Gruppe
 - Schwere: niedrig · vom Reviewer behoben
@@ -611,7 +611,7 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 - Erwartetes Verhalten: weicher Glow ohne harte Kante (design-system §9.12).
 - Vorschlag: Designer entscheidet – z. B. radialer Verlauf, der vor der viewBox-Kante auf 0 ausläuft, oder Radius ≤ 96.
 - Umsetzung (Developer 2026-10-10, im Auftrag des CEO; Designer-Abnahme der Feinabstimmung offen): beide Sonnen-Kreise ersetzt durch **einen** Kreis r = 96 (= Abstand Mittelpunkt → obere viewBox-Kante) mit radialem Verlauf in Minze (`--ww-ring-start`): Deckkraft 8 % innen → 22 % auf Höhe des Rings → 7 % → **0 % am Rand**, daher keine harte Kante und keine graubraune Scheibe auf Indigo. Animation unverändert (nur `opacity`/`transform: scale(0.7 → 1)`; ein Feder-Überschwinger bleibt unsichtbar, weil der Rand transparent ist). Geprüft per Screenshot 393 × 659 hell/dunkel (statischer Endzustand). Das Design-Asset `docs/design/assets/illustrations/countdown-ring.svg` (mit eigenem Hintergrund) ist unverändert.
-- Status: behoben – bitte prüfen
+- Status: verifiziert (Reviewer 2026-10-10, Commit 056778b): radialer Minze-Glow r 96 läuft vor der viewBox-Kante aus – keine harte Kante unter der Tab-Leiste, kein Braunton (Screenshots 393 × 659 hell/dunkel).
 
 #### Hinweise ohne Finding (Inkrement 5)
 - **Q13 a serverseitig:** `pollForViewer` liefert `result: null` für unbeantwortete Optionen, `top`/`order` nur wenn alles sichtbar ist; einziger Ausgang für Stimmen sind `loadPoll`/`voteAction` (beide über `pollForViewer`). Übersicht, Meine Reisen, Gruppe, Teilen-Texte (nur Anzahl Optionen + Frist) und `event.ics` (nur Phase „fixed“) enthalten keine Stimmen. „Wer hat abgestimmt?“ zeigt nur den Status (F-007). E2E prüft HTML/RSC auf `tally`/`names`. Ausnahme siehe R-055 (2).
