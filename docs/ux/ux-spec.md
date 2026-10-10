@@ -363,6 +363,7 @@ Platzhalter: `{trip}` Reisename, `{orga}` Vorname Orga, `{link}`, `{deadline}` F
 **Abstimmung gestartet (F-010)**
 - DE: «Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm bis {deadline} ab: {link}»
 - EN: «Voting for {trip} is open! {count} options to choose from – vote by {deadline}: {link}»
+- ohne Frist (F-017 ist optional): DE «Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm jetzt ab: {link}» · EN «Voting for {trip} is open! {count} options to choose from – vote now: {link}» (ergänzt 2026-10-10, Inkrement 5). `{count}` = aktuelle Anzahl der Optionen beim Teilen (nach „Option hinzufügen“ also die neue Zahl).
 
 **Erinnerung Tage (F-015)**
 - DE: «{names}, ihr fehlt noch bei {trip}! Tragt kurz eure Tage ein, dann können wir planen: {link}» (eine Person: «{name}, du fehlst noch bei {trip}! Trag kurz deine Tage ein: {link}»)
@@ -450,8 +451,58 @@ Bewertung der vom Developer gemeldeten Abweichungen (Commit d31c977). Diese Fest
 - Orga-Aufgabe erst, wenn alle Platzhalter beigetreten oder entfernt sind: OK; die Orga ist nicht blockiert („Abstimmung erstellen“ in den Vorschlägen bleibt nutzbar).
 - Anpassung (nicht blockierend, spätestens mit F-015 „Erinnern“): Für die Orga neben „Noch offen“ ein Link «Platzhalter verwalten» bzw. „Link teilen“, solange offene Platzhalter existieren.
 
+## 13. Abweichungen Inkrement 5 – UX-Bewertung (2026-10-10)
+Bewertung der vom Developer gemeldeten Abweichungen (Commit e8f645f, F-010/F-011/F-012/F-017). Diese Festlegungen gehen den älteren Angaben in user-flows.md (D.1–D.3), W10, W11 und §4.2 vor. Keine der Abweichungen blockiert den Merge.
+
+**B1 – „Eigener Zeitraum“ / „Option hinzufügen“ mit zwei nativen Datumsfeldern statt Mini-Kalender: OK.**
+- Entspricht §4.7 (native Datumsfelder), ist per Tastatur/Screenreader robuster als ein eigenes Raster und erfüllt WCAG 2.5.7 ohne Zusatzmodus. Die Live-Zusammenfassung «… · n Nächte · ⚠ Lena, Paul können nicht» (`role=status`, Warnung Amber + Icon) trägt die entscheidende Information der Heatmap-Färbung.
+- Voraussetzung (erfüllt): `min`/`max` auf Suchzeitraum bzw. heute; da einige Browser `min`/`max` im Picker ignorieren, prüft die Zusammenfassung trotzdem (zu kurz, außerhalb, doppelt) und `[Hinzufügen]` meldet den Fehler am Feld.
+- Mini-Kalender mit Heatmap-Färbung (Sheet) und Mini-Heatmap rechts am Desktop (W10) → **MVP+**. Bis dahin genügt der Tab „Gruppe“ zur Orientierung.
+
+**B2 – Fokus nach „Termin festlegen“ über Weiterleitung (`?fixed=1`) statt im selben Ereignis: OK.**
+- Ziel von M-U10 ist, dass der Fokus nicht verloren geht und **vor** der Feier auf h1 «Es geht los!» landet. Das ist erfüllt, wenn: Fokus beim ersten Rendern (vor Start der Animation) gesetzt wird, nur für die Orga, `?fixed=1` danach aus der URL entfernt wird (kein erneuter Fokus bei Reload/Zurück) und der Seitentitel auf die Übersicht wechselt. Laut Code umgesetzt – Reviewer bitte mit Screenreader/Tastatur gegenprüfen (Fokus darf nicht zuerst auf `body` bzw. dem Kopf landen und dann springen).
+- §4.2 „im selben Ereignis“ gilt damit als „beim ersten Rendern der Zielseite“.
+
+**B3 – „Wer hat wie gestimmt?“ auch am Desktop als aufklappbare Liste pro Option statt Tabelle: OK.**
+- Eine Liste pro Karte ist leichter zu lesen als eine Matrix bei bis zu 6 Optionen × 20 Personen und reflowt bei großer Schrift. Bedingungen: Gruppierung nach Ja / Vielleicht / Nein mit Text-Label (nicht nur Farbe/Icon), Zähler in der Gruppenüberschrift, `aria-expanded` am Auslöser.
+- Abweichung von W10 „Desktop standardmäßig aufgeklappt“: zugeklappt ist zulässig; die Balken mit Zahlen zeigen das Wesentliche. Personen-mal-Option-Tabelle → MVP+ (nur falls Orgas sie vermissen).
+
+**B4 – Frist ohne Pulsieren; „Gruppe erinnern“ (F-015) fehlt: OK.**
+- Kein Pulsieren ist ruhiger und vermeidet Diskussionen zu WCAG 2.2.2; die Kachel «noch 3 Tage» bzw. «Frist abgelaufen» + Warn-Icon reicht. Motion Designer informieren (keine Pflicht-Animation).
+- „Erinnern“ kommt mit Inkrement 7 (CEO-Entscheidung). Bis dahin: Orga-Button „Abstimmung teilen“ im Tab Abstimmen (vorhanden) ist der Ersatz; im Sheet «Wer hat abgestimmt?» entfällt `[Erinnern]` ersatzlos, keine deaktivierte Attrappe.
+
+**B5 – Optionen müssen ≥ Mindestnächte der Reise haben; kürzere vorgewählte Vorschläge werden beim Erstellen ignoriert: OK mit Anpassung (nicht blockierend).**
+- Die Regel selbst ist richtig (die Orga hat die Mindestdauer festgelegt; Fehlertext am Stepper/Sheet «Mindestens n Nächte, wie für diese Reise festgelegt.» ist klar).
+- Anpassung: Stilles Verwerfen ist nicht zulässig. Wurden Vorschläge aus der Liste (z. B. nach lokalem Dauer-Filter unter dem Minimum, §12 A3) nicht übernommen, oben auf „Abstimmung erstellen“ einen Hinweis (Info, nicht Fehler) zeigen: DE «1 gewählter Vorschlag ist kürzer als 4 Nächte und wurde nicht übernommen.» / «2 gewählte Vorschläge sind kürzer als 4 Nächte …» · EN «1 selected option is shorter than 4 nights and wasn't added.» / «2 selected options are shorter …». Zusammen mit dem A3-Hinweis umsetzen, spätestens vor Go-Live.
+
+**B6 – „Platz 1“ sehen Mitglieder erst, wenn sie alle Ergebnisse sehen dürfen: OK.**
+- Folgerichtig zur bestätigten Regel „Ergebnis erst nach eigener Stimme“ (D.2 #5): Ein Rang-Abzeichen verrät indirekt das Ergebnis noch nicht bewerteter Optionen und würde den Mitläufer-Effekt wieder einführen. Präzisierung: Mitglieder sehen „Platz 1“ erst, wenn sie **zu allen Optionen** bestätigt abgestimmt haben; die Orga immer. Gilt sinngemäß für die Rang-Sortierung (M-U3).
+
+**B7 – Teilen-Text ohne Frist: OK.** In §10.3 ergänzt (DE «… – stimm jetzt ab: {link}», EN «… – vote now: {link}»). Länge ≤ 300 Zeichen eingehalten.
+
+**B8 – Mini-Vorfreude-Ring in „Meine Reisen“ (W04-03) nicht gebaut: OK.** War als MVP+ markiert; die Karte zeigt Phase „Steht fest“ und Datum. Nachziehen nach MVP.
+
+**B9 – „Option hinzufügen“ nach dem Start setzt den Status „abgestimmt“ aller zurück: OK mit Anpassung (nicht blockierend).**
+- Folgerichtig zu D.2 #4 („abgestimmt“ erst, wenn **alle** Optionen bestätigt sind) – sonst wäre die Fortschrittsanzeige falsch und die Orga würde zu früh festlegen.
+- Anpassung (reine Copy, vor Go-Live): Die Folge muss die Orga **vor** dem Hinzufügen kennen. Hinweis im Sheet ergänzen: DE «Bestehende Optionen bleiben unverändert, damit abgegebene Stimmen gültig bleiben. Alle müssen die neue Option noch bewerten – wer schon fertig war, steht wieder auf ‚offen‘.» · EN «Existing options stay as they are so votes remain valid. Everyone still needs to rate the new option – people who were done will show as ‘open’ again.» Nach dem Hinzufügen Snackbar «Option hinzugefügt. Teil es der Gruppe, damit alle sie bewerten. [Teilen]» (Teilen-Sheet mit aktuellem `{count}`).
+- Mitglieder: Die neue Karte steht am Ende (Erstellungsreihenfolge), die Statuszeile zeigt wieder «Noch 1 Option offen». Optional (MVP+) Chip „Neu“ auf der Karte bis zur eigenen Stimme.
+
+### 13.1 Offene Produktfragen des Developers – UX-Empfehlung (Entscheidung CEO/PM)
+
+**(a) Laufende Abstimmung abbrechen (zurück zu „Tage sammeln“)? Empfehlung: Ja, nur Orga – nicht blockierend für Inkrement 5, spätestens mit Inkrement 6/7.**
+- Grund: Optionen lassen sich nach dem Start weder ändern noch löschen (F-010). Ohne Abbrechen bleibt bei einer misslungenen Abstimmung (falsche Zeiträume, Gruppe ändert Pläne) nur „Festlegen“ oder „Reise löschen“ – beides falsch.
+- Ort: Reisemenü (⋯) im Tab Abstimmen, Eintrag «Abstimmung abbrechen» (nicht als prominenter Button neben „Festlegen“).
+- Dialog (destruktiv, §4.2): «Abstimmung abbrechen?» – «Alle Optionen und Stimmen werden gelöscht. Eingetragene Tage bleiben erhalten; die Reise geht zurück zu ‚Tage sammeln‘.» `[Abstimmung behalten]` (Standardfokus) `[Abstimmung abbrechen]` (abweichend vom Standard-„Abbrechen“, damit nicht zweimal „abbrechen“ steht). EN «Cancel the vote?» – «All options and votes will be deleted. Everyone's dates are kept and the trip goes back to ‘Collecting dates’.» `[Keep vote]` `[Cancel vote]`.
+- Danach Tab Abstimmen im Leerzustand Orga; Status „abgestimmt“ aller zurückgesetzt; Mitglieder sehen beim nächsten Öffnen des Tabs einen einmaligen Hinweis «Lena hat die Abstimmung abgebrochen. Eine neue folgt.» Nur in Phase 2; in Phase 3 zuerst „Festlegung aufheben“.
+
+**(b) Suchzeitraum in Phase 2/3 änderbar, bestehende Optionen bleiben auch außerhalb? Empfehlung: Ja** – entspricht bereits W12 (Hinweis «Die Abstimmung läuft – bestehende Optionen bleiben unverändert.») und F-001.
+- Bestehende Optionen und Stimmen bleiben unverändert, auch wenn sie außerhalb des neuen Zeitraums oder unter einer neuen Mindestdauer liegen; die Karte zeigt dann die Verfügbarkeitszeile nur, soweit Tage im Suchzeitraum liegen, sonst «Liegt außerhalb des aktuellen Suchzeitraums» (Info, kein Fehler).
+- Neue Optionen („Option hinzufügen“) nur innerhalb des neuen Zeitraums und ≥ neue Mindestdauer.
+- Phase 3: Änderung wirkt nicht auf den festgelegten Termin; Hinweis in den Einstellungen «Der Termin steht schon fest – der Suchzeitraum betrifft nur ‚Meine Tage‘ und die Vorschläge.»
+
 ## Änderungen
 - 2026-10-08 (Runde 3, Richtung B + Q17): §2 Höhenbudget mit Cockpit-Kopf; §3 kompakter sticky Kopf, kein globaler Header in Reisen; §4.2 Fokus nach Festlegen (M-U10); neu §4.10 Cockpit-Kopf & Kennzahlen (Kennzahl-Box W09, Kacheln W10), §4.11 Vorschlag-Leiste W09, §4.12 Werkzeugleiste W08; §6 Erfolgsmomente ≤ 1 s / Feier ≤ 2,6 s (M-U2); §7.1 Bewegung; neu §7.5 Schalter „Bewegung reduzieren“, Feier für alle, Vibration (Q17); §10.2/§10.4 Glossar und Budgets für B. Entscheidungen: abstimmung-design §8–§9.
 - 2026-10-08 (Auftraggeber-Entscheidungen): EN-Produktname „When do we go?“ (§3 Seitentitel, §4.5, §9, §10.2, EN-Teilen-Text Einladung §10.3, Mail-Betreff/Absender §10.5, neue Schreibregeln §10.6); Vermerke „vorbehaltlich Auftraggeber“ → „bestätigt (Auftraggeber 2026-10-08)“.
 - 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.
 - 2026-10-10 (Inkrement 4): neu §12 – Bewertung der Abweichungen R-049, W09, Filter „Dauer“, Q20; §7.1 U-5 Tagesliste auf „vor Go-Live“ verschoben, Mindest-Fallback definiert.
+- 2026-10-10 (Inkrement 5): neu §13 – Bewertung der Abweichungen B1–B9 (Datumsfelder statt Mini-Kalender, Fokus nach Festlegen per Weiterleitung, Stimmenliste, Frist/Erinnern, Mindestnächte, „Platz 1“, Teilen-Text, Vorfreude-Ring, Status-Reset) und Empfehlungen zu „Abstimmung abbrechen“ und Suchzeitraum in Phase 2/3; §10.3 Teilen-Text „Abstimmung“ ohne Frist ergänzt.
