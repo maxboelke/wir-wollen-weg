@@ -54,7 +54,7 @@ async function GroupKpi({ view }: { view: TripView }) {
         }
         action={
           allIn && isOrganizer ? (
-            <ButtonLink href={tripPath(trip.publicId, "poll")} variant="accent" size="sm">
+            <ButtonLink href={tripPath(trip.publicId, "pollNew")} variant="accent" size="sm">
               {tGroup("startVote")}
             </ButtonLink>
           ) : undefined
@@ -143,6 +143,8 @@ export default async function GroupPage({ params }: Params) {
         inviteHref={tripPath(trip.publicId, "invite")}
         settingsHref={tripPath(trip.publicId, "settings")}
         pollHref={tripPath(trip.publicId, "poll")}
+        pollNewHref={tripPath(trip.publicId, "pollNew")}
+        pollState={view.phase === "collect" ? "none" : view.phase === "vote" ? "open" : "closed"}
         viewerSubmitted={me.submittedAt !== null}
       />
     </TripShell>

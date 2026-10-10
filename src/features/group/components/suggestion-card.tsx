@@ -18,12 +18,16 @@ export interface SuggestionCardModel {
   missing: string[];
   holidays: string[];
   hidden: string[];
+  /** «2027-05-05~2027-05-12» – the span handed to «Abstimmung erstellen» (W10 A). */
+  pickKey: string;
 }
 
 interface SuggestionCardProps {
   card: SuggestionCardModel;
   selected: boolean;
   onShow: (index: number) => void;
+  /** Organiser in phase 1: checkbox «Zur Abstimmung» (W09, design-system §9.10). */
+  pick?: { checked: boolean; disabled: boolean; onChange: (on: boolean) => void } | undefined;
 }
 
 /**
@@ -32,14 +36,15 @@ interface SuggestionCardProps {
  * Kalender zeigen». Selected = 2 px frame (never hover only). Focusable (tabIndex −1) so the
  * suggestion bar can move the focus here («in der Liste zeigen»).
  */
-export function SuggestionCard({ card, selected, onShow }: SuggestionCardProps) {
+export function SuggestionCard({ card, selected, onShow, pick }: SuggestionCardProps) {
   const t = useTranslations("group.card");
+  const tGroup = useTranslations("group");
   const titleId = `suggestion-${String(card.index)}-title`;
   return (
     <li>
       <article
         id={`suggestion-${String(card.index)}`}
-        className={cx(styles.card, selected && styles.cardSelected)}
+        className={cx(styles.card, (selected || pick?.checked) && styles.cardSelected)}
         aria-labelledby={titleId}
         tabIndex={-1}
         data-card=""
@@ -111,6 +116,20 @@ export function SuggestionCard({ card, selected, onShow }: SuggestionCardProps) 
           <Icon name="calendar" size={18} />
           {t("show")}
         </button>
+        {pick ? (
+          <label className={styles.pick}>
+            <input
+              type="checkbox"
+              checked={pick.checked}
+              disabled={pick.disabled}
+              aria-describedby={titleId}
+              onChange={(event) => {
+                pick.onChange(event.target.checked);
+              }}
+            />
+            <span>{tGroup("pick")}</span>
+          </label>
+        ) : null}
       </article>
     </li>
   );

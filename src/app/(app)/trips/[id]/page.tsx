@@ -14,8 +14,13 @@ import { nameList, nightsText, rangeText } from "@/features/trips/format";
 import { loadTripView, openNames, type TripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { sheetContext } from "@/features/trips/sheet-context";
-import { formatDate } from "@/lib/dates";
-import { daysUntil, viewerTodo } from "@/lib/trip-status";
+import { CountdownRing } from "@/features/poll/components/countdown-ring";
+import { ResultCard } from "@/features/poll/components/result-card";
+import { resultShareTexts, tripLink } from "@/features/trips/share-texts";
+import { formatDate, formatDateRange, fromUtcDate } from "@/lib/dates";
+import { googleCalendarUrl } from "@/lib/ics";
+import { countdown, nightsOf, ringPercent, type Countdown } from "@/lib/poll";
+import { viewerTodo } from "@/lib/trip-status";
 import styles from "./overview.module.css";
 
 type Params = PageProps<"/trips/[id]">;
@@ -26,12 +31,48 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: `${t("tabs.overview")} · ${view.trip.name}` };
 }
 
-/** KPI of the overview (ux-spec §4.10): phase 1 submissions, phase 2 votes, phase 3 countdown. */
+/** Day the dates were fixed – start of the «Vorfreude» ring (older rows: last change). */
+function fixedOn(view: TripView): string {
+  return fromUtcDate(view.trip.fixedAt ?? view.trip.updatedAt);
+}
+
+/** «noch 23 Tage» · «noch 1 Tag» · «Heute geht's los!» · «Gute Reise!» (W11, D-24). */
+async function countdownText(value: Countdown): Promise<string> {
+  const t = await getTranslations("poll.result");
+  switch (value.kind) {
+    case "days":
+      return t("days", { count: value.count });
+    case "today":
+      return t("today");
+    case "during":
+      return t("during");
+    case "past":
+      return t("past");
+  }
+}
+
+/**
+ * KPI of the overview (ux-spec §4.10): phase 1 submissions, phase 2 votes (+ deadline),
+ * phase 3 the «Vorfreude» ring with the countdown (W11; the number never counts up, G-16).
+ */
 async function OverviewKpi({ view }: { view: TripView }) {
   const t = await getTranslations("trip");
+  const tResult = await getTranslations("poll.result");
   const { phase, progress, trip, today, format } = view;
   if ((phase === "collect" || phase === "vote") && progress) {
     const open = openNames(view);
+    const allDone = open.length === 0;
+    const status = allDone
+      ? t(phase === "vote" ? "kpiAllVoted" : "kpiAllDone")
+      : t("kpiOpen", {
+          names: nameList(open, format.locale, (count) => t("kpiMore", { count })),
+        });
+    const deadline =
+      phase === "vote" && trip.pollDeadline
+        ? t("kpiVoteDeadline", {
+            date: formatDate(trip.pollDeadline, format.intl, { weekday: true, year: false }),
+          })
+        : null;
     return (
       <RingDraw sessionKey={`kpi:${trip.publicId}:${phase}`}>
         <KpiBox
@@ -42,31 +83,86 @@ async function OverviewKpi({ view }: { view: TripView }) {
             total: progress.total,
           })}
           text={
-            open.length === 0
-              ? t("kpiAllDone")
-              : t("kpiOpen", {
-                  names: nameList(open, format.locale, (count) => t("kpiMore", { count })),
-                })
+            deadline ? (
+              <>
+                {status}
+                <br />
+                {deadline}
+              </>
+            ) : (
+              status
+            )
           }
         />
       </RingDraw>
     );
   }
-  if (phase === "fixed" && trip.fixedStart) {
-    const days = daysUntil(trip.fixedStart, today);
+  if (phase === "fixed" && trip.fixedStart && trip.fixedEnd) {
+    const period = { start: trip.fixedStart, end: trip.fixedEnd };
+    const value = countdown(period, today);
     return (
-      <KpiBox
-        value={1}
-        max={1}
-        title={
-          days > 0
-            ? t("kpiFixed", { count: days })
-            : rangeText(trip.fixedStart, trip.fixedEnd ?? trip.fixedStart, format.intl, today)
+      <CountdownRing
+        percent={ringPercent(fixedOn(view), trip.fixedStart, today)}
+        celebrate={view.celebrate}
+        label={
+          value.kind === "days"
+            ? tResult.rich("ringLabel", {
+                count: value.count,
+                n: (chunks) => <b>{chunks}</b>,
+              })
+            : await countdownText(value)
         }
       />
     );
   }
   return null;
+}
+
+/** W11 result card (phase 3) with calendar links and the share text «Fix! …». */
+async function Result({ view, focusHeading }: { view: TripView; focusHeading: boolean }) {
+  const t = await getTranslations("trip");
+  const tResult = await getTranslations("poll.result");
+  const { trip, format, today, members } = view;
+  if (!trip.fixedStart || !trip.fixedEnd) return null;
+  const period = { start: trip.fixedStart, end: trip.fixedEnd };
+  const nights = nightsOf(period);
+  const link = tripLink(tripPath(trip.publicId));
+  const [texts, value] = await Promise.all([
+    resultShareTexts({
+      tripName: trip.name,
+      link,
+      start: period.start,
+      end: period.end,
+      nights,
+      senderCountry: format.country,
+    }),
+    countdownText(countdown(period, today)),
+  ]);
+  return (
+    <ResultCard
+      publicId={trip.publicId}
+      tripName={trip.name}
+      dateText={formatDateRange(period.start, period.end, format.intl, { weekday: true, today })}
+      nightsText={t("nightsFact", { count: nights })}
+      goingText={tResult("going", { count: members.length })}
+      countdownText={value}
+      isOrganizer={view.isOrganizer}
+      celebrate={view.celebrate}
+      focusHeading={focusHeading && view.isOrganizer}
+      percent={ringPercent(fixedOn(view), period.start, today)}
+      icsHref={`${tripPath(trip.publicId)}/event.ics`}
+      googleHref={googleCalendarUrl({
+        title: trip.name,
+        start: period.start,
+        end: period.end,
+        url: link,
+        description: tResult("calendarDescription"),
+      })}
+      shareLink={link}
+      shareTexts={texts}
+      defaultLocale={format.locale}
+    />
+  );
 }
 
 const STEPS = ["collect", "vote", "fixed"] as const;
@@ -81,7 +177,10 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
   const view = await loadTripView(id, `/trips/${id}`);
   const t = await getTranslations("trip");
   const { trip, me, members, phase, progress, format, today, isOrganizer } = view;
-  const todo = viewerTodo(phase, me, progress);
+  const todo = viewerTodo(phase, me, progress, {
+    deadlinePassed: trip.pollDeadline !== null && trip.pollDeadline < today,
+  });
+  const fixed = phase === "fixed";
   const open = openNames(view, me.userId);
   const nights = nightsText(trip.minNights, trip.preferredNights, {
     nights: (count) => t("nightsFact", { count }),
@@ -106,8 +205,13 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
               }
             />
           ) : null}
+          {fixed ? <Result view={view} focusHeading={query.fixed === "1"} /> : null}
           <div className={styles.intro}>
-            <h1 className={styles.name}>{trip.name}</h1>
+            {fixed ? (
+              <h2 className={styles.name}>{trip.name}</h2>
+            ) : (
+              <h1 className={styles.name}>{trip.name}</h1>
+            )}
             <p className={styles.facts}>
               <span className={styles.fact}>
                 <Icon name="calendar" size={18} />
@@ -148,7 +252,11 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
                   data-state={state}
                   aria-current={state === "current" ? "step" : undefined}
                 >
-                  <span className={styles.stepBar} aria-hidden="true" />
+                  <span
+                    className={styles.stepBar}
+                    aria-hidden="true"
+                    data-step-bar={state === "current" ? "current" : undefined}
+                  />
                   <span className={styles.stepLabel}>
                     {state === "done" ? (
                       <Icon name="check" size={14} />
@@ -162,12 +270,14 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
             })}
           </ol>
 
-          <Card as="section" aria-labelledby="next-step" className={styles.next}>
-            <h2 id="next-step" className={styles.nextTitle}>
-              {t("nextTitle")}
-            </h2>
-            <NextStep view={view} todo={todo} open={open} />
-          </Card>
+          {fixed ? null : (
+            <Card as="section" aria-labelledby="next-step" className={styles.next}>
+              <h2 id="next-step" className={styles.nextTitle}>
+                {t("nextTitle")}
+              </h2>
+              <NextStep view={view} todo={todo} open={open} />
+            </Card>
+          )}
         </div>
 
         <div className={styles.side}>
@@ -257,7 +367,16 @@ async function NextStep({
     return (
       <>
         <p>{t("next.startVote")}</p>
-        {link(tripPath(trip.publicId, "poll"), t("nextAction.startVote"))}
+        {link(tripPath(trip.publicId, "pollNew"), t("nextAction.startVote"))}
+      </>
+    );
+  }
+  if (todo === "fixDates") {
+    const everyone = progress !== null && progress.done === progress.total;
+    return (
+      <>
+        <p>{everyone ? t("next.fixDates") : t("next.fixDatesDeadline")}</p>
+        {link(tripPath(trip.publicId, "poll"), t("nextAction.fixDates"))}
       </>
     );
   }
@@ -284,7 +403,12 @@ async function NextStep({
     );
   }
   if (phase === "vote" && progress) {
-    return <p>{t("next.voteDone", { done: progress.done, total: progress.total })}</p>;
+    return (
+      <>
+        <p>{t("next.voteWaiting", { done: progress.done, total: progress.total })}</p>
+        {link(tripPath(trip.publicId, "poll"), t("nextAction.poll"), "secondary")}
+      </>
+    );
   }
   if (phase === "fixed" && trip.fixedStart) {
     return (

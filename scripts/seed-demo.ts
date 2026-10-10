@@ -4,6 +4,9 @@
 // everyone who submitted plus a draft, comments and placeholders (F-007). Increment 4: hand-made
 // patterns for «Lissabon 2027» so the group calendar (F-008) shows clear suggestions (F-009):
 // two «Alle dabei» periods and three «Fast alle dabei» periods (without Ben / David / Greta).
+// Increment 5: «JGA Tim» has a running vote (F-010/F-011: 3 options, deadline, some votes, Anna
+// has answered one option only – so Q13 a is visible: results only where she voted), «Familien-
+// treffen Harz» has fixed dates (F-012) – everyone but Anna still gets the celebration once.
 // Usage: pnpm db:seed:demo   (dev: reads .env.local) · demo container: pnpm demo:seed
 import { randomBytes, randomInt } from "node:crypto";
 import pg from "pg";
@@ -100,6 +103,10 @@ interface MemberSeed {
   comment?: string;
   /** Hand-made days instead of the generic demo pattern. */
   pattern?: DayPattern;
+  /** Answers per option index (F-011). */
+  votes?: ("yes" | "maybe" | "no" | null)[];
+  /** Has already seen «Es geht los!» for the fixed range (F-012). */
+  celebrated?: boolean;
 }
 
 interface TripSeed {
@@ -120,6 +127,11 @@ interface TripSeed {
   members: MemberSeed[];
   /** Expected people who have not joined yet (F-007). */
   placeholders?: string[];
+  /** Vote options as [arrival, departure] (F-010). */
+  options?: [string, string][];
+  pollDeadline?: string;
+  /** Days ago the dates were fixed (start of the «Vorfreude» ring). */
+  fixedDaysAgo?: number;
 }
 
 const TRIPS: TripSeed[] = [
@@ -226,11 +238,17 @@ const TRIPS: TripSeed[] = [
     country: "DE",
     locale: "de",
     phase: "voting",
+    options: [
+      [day(27), day(30)],
+      [day(34), day(37)],
+      [day(48), day(51)],
+    ],
+    pollDeadline: day(5),
     members: [
-      { person: "carla", organizer: true, submitted: true, voted: true },
-      { person: "anna", submitted: true },
-      { person: "ben", submitted: true, voted: true },
-      { person: "felix", submitted: true, voted: true },
+      { person: "carla", organizer: true, submitted: true, votes: ["yes", "maybe", "no"] },
+      { person: "anna", submitted: true, votes: ["yes", null, null] },
+      { person: "ben", submitted: true, votes: ["yes", "yes", "maybe"] },
+      { person: "felix", submitted: true, votes: ["maybe", "yes", "no"] },
       { person: "greta", submitted: true },
     ],
   },
@@ -245,10 +263,39 @@ const TRIPS: TripSeed[] = [
     phase: "fixed",
     fixedStart: day(41),
     fixedEnd: day(45),
+    fixedDaysAgo: 6,
+    options: [
+      [day(41), day(45)],
+      [day(55), day(59)],
+    ],
     members: [
-      { person: "anna", organizer: true, submitted: true, voted: true },
-      { person: "hanna", submitted: true, voted: true },
-      { person: "greta", submitted: true, voted: true },
+      {
+        person: "anna",
+        organizer: true,
+        submitted: true,
+        votes: ["yes", "maybe"],
+        celebrated: true,
+        // Offsets from the range start (day 10): fixed range = 31–35, option 2 = 45–49.
+        pattern: { no: [[0, 5]], maybe: [46, 47] },
+      },
+      {
+        person: "hanna",
+        submitted: true,
+        votes: ["yes", "no"],
+        pattern: {
+          no: [
+            [10, 14],
+            [44, 50],
+          ],
+          maybe: [33],
+        },
+      },
+      {
+        person: "greta",
+        submitted: true,
+        votes: ["yes", "yes"],
+        pattern: { no: [[20, 24]], maybe: [] },
+      },
     ],
   },
   {
@@ -323,8 +370,11 @@ try {
     const row = await client.query<{ id: string }>(
       `insert into trip (public_id, name, description, range_start, range_end, min_nights,
          preferred_nights, deadline, holiday_country, holiday_subdivision, locale, invite_token,
-         join_open, phase, fixed_start, fixed_end, updated_at)
-       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16, now() - make_interval(hours => $17))
+         join_open, phase, fixed_start, fixed_end, updated_at, poll_deadline, poll_started_at,
+         fixed_at)
+       values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16, now() - make_interval(hours => $17),
+         $18, case when $19::boolean then now() - interval '2 days' end,
+         case when $20::int is not null then now() - make_interval(days => $20::int) end)
        returning id`,
       [
         id,
@@ -344,18 +394,34 @@ try {
         seed.fixedStart ?? null,
         seed.fixedEnd ?? null,
         index,
+        seed.pollDeadline ?? null,
+        seed.phase !== "collecting",
+        seed.fixedDaysAgo ?? null,
       ],
     );
     const tripId = row.rows[0]?.id;
+    const optionIds: string[] = [];
+    for (const [position, [start, end]] of (seed.options ?? []).entries()) {
+      const option = await client.query<{ id: string }>(
+        `insert into poll_option (trip_id, start_date, end_date, created_at)
+         values ($1, $2, $3, now() - make_interval(secs => $4)) returning id`,
+        [tripId, start, end, 100 - position],
+      );
+      optionIds.push(option.rows[0]?.id ?? "");
+    }
     for (const [position, member] of seed.members.entries()) {
       const person = PEOPLE.find((p) => p.key === member.person);
       const submittedAt = member.submitted
         ? new Date(Date.now() - (position + 1) * 3_600_000)
         : null;
+      // «abgestimmt» = an answer on every option (Flow D.2 #4).
+      const votedAll =
+        optionIds.length > 0 &&
+        (member.votes ?? []).filter((v) => v !== null).length === optionIds.length;
       await client.query(
         `insert into trip_member (trip_id, user_id, display_name, role, joined_at, submitted_at,
-           voted_at, availability_updated_at, comment)
-         values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9)`,
+           voted_at, availability_updated_at, comment, celebrated_for)
+         values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9, $10)`,
         [
           tripId,
           ids.get(member.person),
@@ -363,11 +429,22 @@ try {
           member.organizer ? "organizer" : "member",
           20 - position,
           submittedAt,
-          member.voted ? new Date(Date.now() - (position + 1) * 1_800_000) : null,
+          member.voted || votedAll ? new Date(Date.now() - (position + 1) * 1_800_000) : null,
           submittedAt ?? (member.draft ? new Date() : null),
           member.comment ?? null,
+          member.celebrated && seed.fixedStart && seed.fixedEnd
+            ? `${seed.fixedStart}/${seed.fixedEnd}`
+            : null,
         ],
       );
+      for (const [optionIndex, choice] of (member.votes ?? []).entries()) {
+        const optionId = optionIds[optionIndex];
+        if (!choice || !optionId) continue;
+        await client.query(
+          `insert into poll_vote (option_id, trip_id, user_id, choice) values ($1, $2, $3, $4)`,
+          [optionId, tripId, ids.get(member.person), choice],
+        );
+      }
       if (member.submitted || member.draft) {
         const days = member.pattern
           ? patternDays(seed.rangeStart, member.pattern)

@@ -57,12 +57,17 @@ export function phaseProgress(
 }
 
 /** Highlighted to-do of the viewer (F-044, Flow E.1). */
-export type TripTodo = "addDates" | "vote" | "startVote";
+export type TripTodo = "addDates" | "vote" | "startVote" | "fixDates";
 
+/**
+ * `deadlinePassed`: the voting deadline is over (F-017) – the organiser is asked to fix the
+ * dates (never decided automatically); likewise once everybody has voted.
+ */
 export function viewerTodo(
   phase: UiPhase,
   viewer: MemberStatus,
   progress: Progress | null,
+  { deadlinePassed = false }: { deadlinePassed?: boolean } = {},
 ): TripTodo | null {
   if (phase === "collect") {
     if (!viewer.submittedAt) return "addDates";
@@ -72,6 +77,10 @@ export function viewerTodo(
     return null;
   }
   if (phase === "vote" && !viewer.votedAt) return "vote";
+  if (phase === "vote" && viewer.role === "organizer") {
+    const everyone = progress !== null && progress.total > 0 && progress.done === progress.total;
+    if (everyone || deadlinePassed) return "fixDates";
+  }
   return null;
 }
 
@@ -83,11 +92,15 @@ export function daysUntil(start: IsoDate, today: IsoDate): number {
 export type TripTab = "overview" | "days" | "group" | "poll";
 
 /**
- * Tabs that already exist as real views. Increment 2 built the overview, Increment 3
- * «Meine Tage», Increment 4 «Gruppe»; «Abstimmen» (5) is a "coming soon" placeholder until
- * then, so the default tab does not send people to an empty page.
+ * Tabs that exist as real views (Increment 2 overview, 3 «Meine Tage», 4 «Gruppe»,
+ * 5 «Abstimmen») – the default tab never sends people to an empty page.
  */
-export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>(["overview", "days", "group"]);
+export const BUILT_TABS: ReadonlySet<TripTab> = new Set<TripTab>([
+  "overview",
+  "days",
+  "group",
+  "poll",
+]);
 
 /** Tab when opening a trip (sitemap §2): own dates missing → days, own vote missing → poll. */
 export function defaultTab(
