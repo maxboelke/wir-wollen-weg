@@ -183,7 +183,7 @@ test.describe("F-005 painting", () => {
 });
 
 test.describe("F-005/F-007 submit and status", () => {
-  test("submitting without marks asks first; then success, feedback once, status in the overview", async ({
+  test("submitting without marks asks first; then success, feedback once, on to the group tab", async ({
     page,
   }) => {
     const { email, publicId } = await setUp(page, "Kemal");
@@ -196,8 +196,11 @@ test.describe("F-005/F-007 submit and status", () => {
     ).toBeVisible();
     await page.getByLabel(days.success.google).check();
     await page.getByRole("button", { name: days.success.answer }).click();
-    await expect(page).toHaveURL(new RegExp(`/trips/${publicId}$`));
+    // Increment 4: after submitting, «Gruppe» (W09) – before it existed, the overview.
+    await expect(page).toHaveURL(new RegExp(`/trips/${publicId}/group$`));
     expect((await memberStatus(publicId, email))?.submitted).toBe(true);
+    await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
+    await page.goto(`/trips/${publicId}`);
     await expect(page.getByText(/^submitted · /)).toBeVisible();
     await expect(page.getByText("Collecting dates · 1/1 done")).toHaveCount(0); // sr text differs
     await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
@@ -255,6 +258,8 @@ test.describe("F-016 holidays and weekends", () => {
     await expect(cell(page, saturday ?? "")).toHaveAttribute("aria-label", /, weekend/);
     // Monday start for en-GB: first column header is Monday.
     await expect(page.locator("thead th").first()).toHaveAttribute("abbr", "Monday");
+    // R-049: the holiday region sits in the (folded) legend «How it works».
+    await page.getByText(days.legendTitle, { exact: true }).click();
     await expect(page.getByText("Holidays for: United Kingdom")).toBeVisible();
 
     // Epiphany (6 Jan) is a holiday in Bavaria (the trip's region), not in the UK.

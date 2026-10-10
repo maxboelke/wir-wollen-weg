@@ -719,7 +719,7 @@
   },
   "days": {
     "title": "Meine Tage",
-    "draft": "Entwurf – zählt erst, wenn du abgibst.",
+    "draft": "Entwurf – zählt erst, wenn du abgibst. Nicht markierte Tage zählen als „Geht“.",
     "draftShort": "Entwurf",
     "holidaysFor": "Feiertage für: {region}",
     "holidaysChange": "Ändern",
@@ -861,5 +861,132 @@
     "full": "Die Reise ist voll (30 von 30, Platzhalter zählen mit).",
     "nameRequired": "Bitte gib einen Namen ein.",
     "label": "Platzhalter"
+  },
+  "group": {
+    "title": "Gruppe",
+    "segment": {
+      "label": "Ansicht",
+      "suggestions": "Vorschläge",
+      "calendar": "Kalender"
+    },
+    "kpiOpen": "Noch offen: {names} – das Ergebnis kann sich noch ändern.",
+    "startVote": "Abstimmung starten",
+    "filters": {
+      "label": "Filter (nur für dich)",
+      "duration": "Dauer",
+      "nights": "{count, plural, one {# Nacht} other {# Nächte}}",
+      "tolerance": "Darf fehlen",
+      "hide": "Personen ausblenden",
+      "hidden": "{count} ausgeblendet",
+      "onlyYou": "Nur für dich – die Gruppe sieht die Standardansicht.",
+      "reset": "Filter zurücksetzen",
+      "hideTitle": "Wen ausblenden?",
+      "hideHint": "Nur für dich: Wir rechnen, als wären diese Personen nicht dabei.",
+      "done": "Fertig"
+    },
+    "groups": {
+      "all": "Alle dabei ({count})",
+      "almost": "Fast alle dabei ({count})",
+      "allName": "Alle dabei",
+      "almostName": "Fast alle dabei",
+      "allEmpty": "Gerade kein Zeitraum, in dem alle können."
+    },
+    "card": {
+      "range": "{start} – {end}",
+      "nights": "bis zu {count, plural, one {# Nacht} other {# Nächte}}",
+      "vacation": "ca. {count, plural, one {# Urlaubstag} other {# Urlaubstage}}",
+      "vacationInfo": "Urlaubstage: Werktage Mo–Fr abzüglich deiner Feiertage",
+      "maybe": "{count}× zur Not",
+      "can": "{count} können",
+      "without": "ohne {names}",
+      "holiday": "inkl. {name}",
+      "hiddenNote": "(ohne {names} gerechnet)",
+      "show": "Im Kalender zeigen",
+      "rank": "Vorschlag {rank}"
+    },
+    "showAll": "Alle {count} anzeigen",
+    "showLess": "Weniger anzeigen",
+    "createPoll": "Abstimmung erstellen",
+    "createPollHint": "Die Abstimmung kommt mit dem nächsten Schritt.",
+    "empty": {
+      "nobody": "Noch keine Vorschläge – sobald die ersten ihre Tage eingetragen haben, rechnen wir los.",
+      "addDates": "Meine Tage eintragen",
+      "invite": "Freunde einladen",
+      "onlyOne": "Bisher hat erst eine Person abgegeben – noch nicht aussagekräftig.",
+      "noMatch": "Leider kein Zeitraum mit {count, plural, one {# Nacht} other {# Nächten}}, in dem alle dabei sind.",
+      "tips": "So klappt es vielleicht:",
+      "shorter": "Mit {nights} statt {min} Nächten: {count, plural, one {# Option} other {# Optionen}}",
+      "tolerance": "{tolerance, plural, one {Wenn # Person fehlen darf} other {Wenn # Personen fehlen dürfen}}: {count, plural, one {# Option} other {# Optionen}}",
+      "show": "Anzeigen",
+      "editTrip": "Suchzeitraum erweitern",
+      "none": "Auch mit anderen Filtern passt gerade nichts. Vielleicht hilft ein längerer Suchzeitraum."
+    },
+    "legend": {
+      "title": "Was bedeuten die Farben?",
+      "nodata": "keine Daten",
+      "none": "niemand",
+      "few": "wenige",
+      "some": "einige",
+      "many": "viele",
+      "all": "alle",
+      "count": "{x}/{n} = {x} von {n} haben „Geht“",
+      "allYes": "Alle: Geht",
+      "maybe": "Jemand nur „Zur Not“",
+      "holiday": "Feiertag",
+      "band": "Vorschlag",
+      "note": "„Alle dabei“ heißt: niemand hat „Geht nicht“ – Tage mit „Zur Not“ zählen dazu."
+    },
+    "calHelp": "Pfeiltasten zum Bewegen, Enter öffnet das Tagesdetail.",
+    "skipCalendar": "Zum Kalender",
+    "cell": {
+      "today": "heute",
+      "holiday": "Feiertag {name}",
+      "past": "vergangen",
+      "outside": "nicht im Zeitraum",
+      "nodata": "noch keine Angaben",
+      "count": "{x} von {n} Geht",
+      "countAll": "{x} von {n} Geht – alle",
+      "maybe": "{count} Zur Not",
+      "no": "nicht: {names}",
+      "noCount": "{count} können nicht",
+      "suggestion": "Teil von Vorschlag {rank}"
+    },
+    "detail": {
+      "prev": "Vortag",
+      "next": "Folgetag",
+      "count": "{x} von {n}: Geht",
+      "all": "Alle: Geht",
+      "maybe": "Alle dabei – {count} nur zur Not",
+      "no": "Nicht: {names}",
+      "noCount": "{count} können nicht",
+      "yes": "Geht ({count})",
+      "maybeGroup": "Zur Not ({count})",
+      "noGroup": "Geht nicht ({count})",
+      "open": "Noch offen ({count})",
+      "hidden": "Ausgeblendet ({count})",
+      "nobody": "niemand",
+      "nodata": "Noch hat niemand abgegeben.",
+      "placeholder": "fehlt noch",
+      "you": "du",
+      "comment": "Kommentar von {name}"
+    },
+    "bar": {
+      "label": "Vorschläge im Kalender",
+      "prev": "Vorheriger Vorschlag",
+      "next": "Nächster Vorschlag",
+      "position": "{group} · {rank} von {total}",
+      "toList": "{range} – in der Liste zeigen",
+      "none": "Gerade kein passender Zeitraum.",
+      "tips": "Tipps ansehen"
+    },
+    "announce": {
+      "suggestion": "Vorschlag {rank} von {total}: {range}, {group}",
+      "highlight": "Zeitraum {range} hervorgehoben"
+    },
+    "submitted": {
+      "title": "Wer hat abgegeben? ({done}/{total})",
+      "done": "Abgegeben ({count})",
+      "open": "Noch offen ({count})"
+    }
   }
 }

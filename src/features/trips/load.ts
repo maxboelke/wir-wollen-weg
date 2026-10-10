@@ -56,10 +56,23 @@ export const loadTripView = cache(async (publicId: string, path: string): Promis
     placeholders,
     isOrganizer: found.member.role === "organizer",
     phase,
-    progress: phaseProgress(phase, members),
+    progress: phaseProgress(phase, members, placeholders.length),
     // Open placeholders count towards the 30 (F-007).
     full: members.length + placeholders.length >= MAX_TRIP_MEMBERS,
     today,
     format,
   };
 });
+
+/**
+ * Who is still open in the current phase (F-007 «Noch offen», Q20): members without
+ * submission/vote in joining order, then the open placeholders (phase 1 only – they cannot
+ * vote). Pass `exceptUserId` to leave out the viewer.
+ */
+export function openNames(view: TripView, exceptUserId?: string): string[] {
+  const voting = view.phase === "vote";
+  const members = view.members
+    .filter((m) => !(voting ? m.votedAt : m.submittedAt) && m.userId !== exceptUserId)
+    .map((m) => m.displayName);
+  return voting ? members : [...members, ...view.placeholders.map((p) => p.displayName)];
+}

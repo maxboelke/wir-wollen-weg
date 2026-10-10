@@ -465,7 +465,7 @@ Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08
 | R-046 | mittel | Skip-Links auf „Meine Tage“ dauerhaft sichtbar (verdecken den Willkommens-Hinweis) | verifiziert (vom Reviewer behoben) |
 | R-047 | niedrig | Termin inzwischen festgelegt → irreführender Hinweis „Zeitraum geändert“ | verifiziert (vom Reviewer behoben) |
 | R-048 | mittel | Jeder Besuch von „Meine Tage“ speichert und setzt „zuletzt geändert“ | verifiziert (vom Reviewer behoben) |
-| R-049 | niedrig | 360 × 640: beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar | offen |
+| R-049 | niedrig | 360 × 640: beim ersten Besuch kein Kalendertag ohne Scrollen sichtbar | behoben – bitte prüfen |
 
 ### R-045: Jedes Speichern löscht die Markierung von gestern
 - Schwere: hoch · vom Reviewer behoben
@@ -501,7 +501,8 @@ Geprüft: F-005, F-007, F-016 und Motion „Tage malen“ (W08-01 ff.) gegen W08
 - Problem / Reproduktion: Pixel-Viewport 360 × 640, erster Besuch (noch nicht abgegeben): Cockpit-Kopf, Entwurfs-Hinweis, „Feiertage für …“ und die offene Legende „So funktioniert's“ füllen den Bereich über der Werkzeugleiste komplett – der erste Kalendertag liegt unterhalb der Falz (mit Willkommens-Hinweis noch weiter). W08 rechnet mit ~380 px sichtbarem Kalender; F-005 betont Eingabe-Geschwindigkeit.
 - Erwartetes Verhalten: Mindestens die erste Kalenderwoche ohne Scrollen sichtbar.
 - Vorschlag: Legende kompakter (Schlüssel einzeilig, Erklärtext kürzer) oder auf < 600 px eingeklappt mit Chip-Zeile; Entwurfs-Hinweis und „Feiertage für“ in eine Zeile; „Feiertage für“ laut W08 nur zeigen, wenn die Region geraten ist (Annahme 6 des Developers). Mit UI/UX abstimmen.
-- Status: offen
+- Umsetzung (Inkrement 4, Developer – Entscheidung, bitte von UI/UX bestätigen): (1) Legende „So funktioniert's“ startet **immer eingeklappt** (Abweichung von Flow B.1 „aufgeklappt bis zur ersten Abgabe“); die Kernregel steht stattdessen im Entwurfs-Hinweis: «Entwurf – zählt erst, wenn du abgibst. Nicht markierte Tage zählen als „Geht“.» (2) Die Zeile «Feiertage für: … Ändern» steht jetzt **in der Legende** statt darüber (ob die Region geraten ist, wird nicht gespeichert; die Feiertage selbst bleiben an Eselsohr und Monatsliste sichtbar). Gemessen 360 × 640 (Lissabon-Demo, erster Besuch ohne Willkommens-Hinweis): erste Kalenderwoche vorher bei y ≈ 830, jetzt vollständig über der Werkzeugleiste (y ≈ 430–480 < 483). Mit Willkommens-Hinweis (`?welcome=1`) liegt die erste Woche weiterhin unter der Falz – der Hinweis ist schließbar. Regressionstest `increment-4-group.spec.ts` „R-049 …“; `increment-3-days.spec.ts` (Feiertags-Region) öffnet die Legende jetzt zuerst.
+- Status: behoben – bitte prüfen
 
 #### Hinweise ohne Finding (Inkrement 3)
 - **IDOR/Replay:** alle Tage-Actions lösen die Reise über `findMembership(publicId, session.user.id)` auf; Replay eines abgefangenen `saveDaysAction` mit fremder Session → `notAllowed`, DB unverändert (E2E). Platzhalter-Actions über `organizer()` + `userIdSchema` (UUID) + `trip_id`-Bedingung im WHERE. Phase 3/vergangen serverseitig gesperrt (live geprüft: Termin während offener Seite festgelegt → DB bleibt leer).

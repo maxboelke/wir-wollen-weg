@@ -32,7 +32,7 @@ function toCard(
   item: TripListItem,
   today: string,
 ): TripListCardData & { updatedAt: string; start: string } {
-  const { trip, me, memberCount, submittedCount, votedCount } = item;
+  const { trip, me, memberCount, submittedCount, votedCount, placeholderCount } = item;
   const phase = uiPhase(trip, today);
   // Counters from the database; only the shape `phaseProgress` needs.
   const members = Array.from({ length: memberCount }, (_, i) => ({
@@ -40,7 +40,7 @@ function toCard(
     submittedAt: i < submittedCount ? "x" : null,
     votedAt: i < votedCount ? "x" : null,
   }));
-  const progress = phaseProgress(phase, members);
+  const progress = phaseProgress(phase, members, placeholderCount);
   const todo = viewerTodo(phase, me, progress);
   return {
     publicId: trip.publicId,

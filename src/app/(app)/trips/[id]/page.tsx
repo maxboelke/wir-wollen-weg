@@ -11,7 +11,7 @@ import { RingDraw } from "@/features/trips/components/ring-draw";
 import { TripShell } from "@/features/trips/components/trip-shell";
 import { WelcomeHint } from "@/features/trips/components/welcome-hint";
 import { nameList, nightsText, rangeText } from "@/features/trips/format";
-import { loadTripView, type TripView } from "@/features/trips/load";
+import { loadTripView, openNames, type TripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { sheetContext } from "@/features/trips/sheet-context";
 import { formatDate } from "@/lib/dates";
@@ -29,11 +29,9 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 /** KPI of the overview (ux-spec §4.10): phase 1 submissions, phase 2 votes, phase 3 countdown. */
 async function OverviewKpi({ view }: { view: TripView }) {
   const t = await getTranslations("trip");
-  const { phase, progress, members, trip, today, format } = view;
+  const { phase, progress, trip, today, format } = view;
   if ((phase === "collect" || phase === "vote") && progress) {
-    const open = members
-      .filter((m) => !(phase === "vote" ? m.votedAt : m.submittedAt))
-      .map((m) => m.displayName);
+    const open = openNames(view);
     return (
       <RingDraw sessionKey={`kpi:${trip.publicId}:${phase}`}>
         <KpiBox
@@ -84,9 +82,7 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
   const t = await getTranslations("trip");
   const { trip, me, members, phase, progress, format, today, isOrganizer } = view;
   const todo = viewerTodo(phase, me, progress);
-  const open = members
-    .filter((m) => !m.submittedAt && m.userId !== me.userId)
-    .map((m) => m.displayName);
+  const open = openNames(view, me.userId);
   const nights = nightsText(trip.minNights, trip.preferredNights, {
     nights: (count) => t("nightsFact", { count }),
     range: (min, max) => t("nightsRangeFact", { min, max }),

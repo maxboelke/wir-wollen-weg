@@ -1,7 +1,9 @@
 // Demo seed (deployment.md §0.4): synthetic data only (@demo.test), idempotent.
 // Increment 2: real trips in different phases with several members (F-001 ff.). Dates are
 // relative to today, so the demo always looks current. Increment 3: marked days (F-005) for
-// everyone who submitted plus a draft, comments and placeholders (F-007).
+// everyone who submitted plus a draft, comments and placeholders (F-007). Increment 4: hand-made
+// patterns for «Lissabon 2027» so the group calendar (F-008) shows clear suggestions (F-009):
+// two «Alle dabei» periods and three «Fast alle dabei» periods (without Ben / David / Greta).
 // Usage: pnpm db:seed:demo   (dev: reads .env.local) · demo container: pnpm demo:seed
 import { randomBytes, randomInt } from "node:crypto";
 import pg from "pg";
@@ -36,6 +38,26 @@ function demoDays(rangeStart: string, rangeEnd: string, seed: number): [string, 
     else if ((i + seed * 5) % 13 === 0 && d.getUTCDay() !== 0 && d.getUTCDay() !== 6)
       out.push([iso, "maybe"]);
   }
+  return out;
+}
+
+/** Explicit pattern: «geht nicht» ranges and «zur Not» days as offsets from the range start. */
+interface DayPattern {
+  no: [number, number][];
+  maybe: number[];
+}
+
+function patternDays(rangeStart: string, pattern: DayPattern): [string, string][] {
+  const at = (offset: number) => {
+    const date = new Date(`${rangeStart}T00:00:00Z`);
+    date.setUTCDate(date.getUTCDate() + offset);
+    return date.toISOString().slice(0, 10);
+  };
+  const out: [string, string][] = [];
+  for (const [from, to] of pattern.no) {
+    for (let offset = from; offset <= to; offset++) out.push([at(offset), "no"]);
+  }
+  for (const offset of pattern.maybe) out.push([at(offset), "maybe"]);
   return out;
 }
 
@@ -76,6 +98,8 @@ interface MemberSeed {
   /** Marked days although not submitted yet (draft, F-005). */
   draft?: boolean;
   comment?: string;
+  /** Hand-made days instead of the generic demo pattern. */
+  pattern?: DayPattern;
 }
 
 interface TripSeed {
@@ -113,12 +137,67 @@ const TRIPS: TripSeed[] = [
     phase: "collecting",
     members: [
       { person: "anna", organizer: true, draft: true },
-      { person: "ben", submitted: true, comment: "Juli nur mit Kindern" },
-      { person: "carla", submitted: true },
-      { person: "david" },
-      { person: "emma" },
+      {
+        person: "ben",
+        submitted: true,
+        comment: "Im Januar nur mit Kindern",
+        pattern: {
+          no: [
+            [0, 4],
+            [16, 20],
+            [50, 60],
+          ],
+          maybe: [10, 45],
+        },
+      },
+      {
+        person: "carla",
+        submitted: true,
+        pattern: {
+          no: [
+            [5, 9],
+            [22, 26],
+          ],
+          maybe: [15],
+        },
+      },
+      {
+        person: "david",
+        submitted: true,
+        pattern: {
+          no: [
+            [0, 2],
+            [16, 23],
+            [46, 49],
+          ],
+          maybe: [38],
+        },
+      },
+      {
+        person: "emma",
+        submitted: true,
+        comment: "Flights from London are cheaper midweek",
+        pattern: {
+          no: [
+            [3, 6],
+            [24, 30],
+            [52, 55],
+          ],
+          maybe: [],
+        },
+      },
       { person: "felix" },
-      { person: "greta", submitted: true },
+      {
+        person: "greta",
+        submitted: true,
+        pattern: {
+          no: [
+            [7, 9],
+            [27, 37],
+          ],
+          maybe: [12],
+        },
+      },
     ],
     placeholders: ["Mia", "Tom"],
   },
@@ -290,7 +369,10 @@ try {
         ],
       );
       if (member.submitted || member.draft) {
-        for (const [dayIso, state] of demoDays(seed.rangeStart, seed.rangeEnd, index + position)) {
+        const days = member.pattern
+          ? patternDays(seed.rangeStart, member.pattern)
+          : demoDays(seed.rangeStart, seed.rangeEnd, index + position);
+        for (const [dayIso, state] of days) {
           await client.query(
             `insert into availability (trip_id, user_id, day, state) values ($1, $2, $3, $4)`,
             [tripId, ids.get(member.person), dayIso, state],
