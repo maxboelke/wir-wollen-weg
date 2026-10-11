@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, isNotNull, isNull, lt, or } from "drizzle-orm";
+import { and, eq, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
 import { isLocale, type Locale } from "@/i18n/config";
 import {
   ACCOUNT_NOTICE_DAYS,
@@ -73,7 +73,14 @@ async function tripPass(now: Date, report: RetentionReport): Promise<void> {
     } else if (action === "delete") {
       const deleted = await db()
         .delete(trip)
-        .where(and(eq(trip.id, row.id), isNotNull(trip.deletionNoticeSentAt)))
+        .where(
+          and(
+            eq(trip.id, row.id),
+            isNotNull(trip.deletionNoticeSentAt),
+            // Nothing happened in the trip since the read above (edits, days, votes, joins).
+            sql`${tripLastActivity} < ${new Date(row.lastActivity.getTime() + 1).toISOString()}::timestamptz`,
+          ),
+        )
         .returning({ id: trip.id });
       report.tripsDeleted += deleted.length;
     } else if (action === "notice") {
@@ -153,7 +160,10 @@ async function accountPass(now: Date, report: RetentionReport): Promise<void> {
       }
     } else if (action === "delete") {
       // The organiser role goes to the longest member (F-043); solo trips go with the account.
-      const result = await deleteAccount(row.id, "auto");
+      // Re-checked under the row lock: a sign-in since the read above keeps the account.
+      const result = await deleteAccount(row.id, "auto", {
+        inactiveSince: new Date(row.lastActiveAt.getTime() + 1),
+      });
       if (!result.ok) continue;
       report.accountsDeleted++;
       await sendLocalizedMail(

@@ -93,7 +93,7 @@ export type DeleteAccountResult =
       /** Trips deleted for everybody (solo trips and «Reise für alle löschen»). */
       deletedTrips: string[];
     }
-  | { ok: false; reason: "planOutdated" | "notFound" };
+  | { ok: false; reason: "planOutdated" | "notFound" | "active" };
 
 async function applyStep(tx: Tx, userId: string, step: DeletionStep): Promise<void> {
   switch (step.kind) {
@@ -122,17 +122,36 @@ async function applyStep(tx: Tx, userId: string, step: DeletionStep): Promise<vo
 /**
  * Deletes the account with all personal data. `choices` by public trip id (from the page) or
  * `"auto"` (inactivity: the role goes to the longest member).
+ *
+ * `inactiveSince` (inactivity job): the account is only deleted if it is STILL unused under
+ * the row lock – last use before that date and the notice still pending. A sign-in between
+ * the job's read and this transaction (touchActivity clears the notice) keeps the account.
  */
 export async function deleteAccount(
   userId: string,
   choices: Readonly<Record<string, DeletionChoice>> | "auto",
+  options: { inactiveSince?: Date } = {},
 ): Promise<DeleteAccountResult> {
   return db().transaction(async (tx) => {
     const [account] = await tx
-      .select({ email: user.email, name: user.name, locale: user.locale })
+      .select({
+        email: user.email,
+        name: user.name,
+        locale: user.locale,
+        lastActiveAt: user.lastActiveAt,
+        noticeSentAt: user.inactivityNoticeSentAt,
+      })
       .from(user)
-      .where(eq(user.id, userId));
+      .where(eq(user.id, userId))
+      .for("update");
     if (!account) return { ok: false, reason: "notFound" } as const;
+    if (
+      options.inactiveSince &&
+      (account.noticeSentAt === null ||
+        account.lastActiveAt.getTime() >= options.inactiveSince.getTime())
+    ) {
+      return { ok: false, reason: "active" } as const;
+    }
 
     // 1. Lock all trips of the person (fixed order), then read the state under the locks.
     const tripIds = await tx
@@ -169,8 +188,10 @@ export async function deleteAccount(
     const email = account.email.toLowerCase();
     await tx.delete(verification).where(
       or(
-        // Codes: «<type>-otp-<email>» and «change-email-otp-<old>-<new>».
-        sql`strpos(${verification.identifier}, ${`-otp-${email}`}) > 0`,
+        // Codes: «<type>-otp-<email>» and «change-email-otp-<old>-<new>» – anchored, so
+        // «a@b.de» never removes the pending code of «a@b.dev».
+        sql`right(${verification.identifier}, ${`-otp-${email}`.length}) = ${`-otp-${email}`}`,
+        sql`strpos(${verification.identifier}, ${`change-email-otp-${email}-`}) = 1`,
         // Magic links: identifier = token, value = JSON with the address.
         sql`strpos(${verification.value}, ${JSON.stringify(email)}) > 0`,
         ...(sessions.length > 0

@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getMessages, getTranslations, setRequestLocale } from "next-intl/server";
 import type { ReactNode } from "react";
 import { PageShell } from "@/components/page-shell";
 import { Banner } from "@/components/ui/banner";
 import type { Locale } from "@/i18n/config";
-import { IMPRINT_PATHS, LICENSES_ANCHOR, PRIVACY_PATHS, PRIVACY_SECTIONS } from "@/lib/legal";
+import {
+  findPlaceholderMarkers,
+  IMPRINT_PATHS,
+  LICENSES_ANCHOR,
+  PRIVACY_PATHS,
+  PRIVACY_SECTIONS,
+} from "@/lib/legal";
 import styles from "./legal.module.css";
 
 type Kind = "privacy" | "imprint";
@@ -13,16 +19,22 @@ const PATHS: Record<Kind, Record<Locale, string>> = {
   imprint: IMPRINT_PATHS,
 };
 
+/** True while the page still shows placeholder texts of the offline demo (Q14/Q16). */
+async function isDraft(kind: Kind, locale: Locale): Promise<boolean> {
+  const messages = await getMessages({ locale });
+  return findPlaceholderMarkers(messages.legal[kind]).length > 0;
+}
+
 export async function legalMetadata(kind: Kind, locale: Locale): Promise<Metadata> {
-  const t = await getTranslations({ locale, namespace: `legal.${kind}` });
+  const t = await getTranslations({ locale, namespace: "legal" });
   return {
-    title: t("title"),
+    title: t(`${kind}.title`),
     alternates: {
       canonical: PATHS[kind][locale],
       languages: { de: PATHS[kind].de, en: PATHS[kind].en },
     },
     // Placeholder texts of the offline demo are never indexed (compliance-checklist §0a).
-    robots: { index: false, follow: false },
+    ...((await isDraft(kind, locale)) ? { robots: { index: false, follow: false } } : {}),
   };
 }
 
@@ -64,7 +76,8 @@ export async function LegalPage({ kind, locale }: { kind: Kind; locale: Locale }
       <article className={styles.page}>
         <header className={styles.intro}>
           <h1>{t(`${kind}.title`)}</h1>
-          <Banner tone="warning">{t("demoNotice")}</Banner>
+          {/* Only while the texts are placeholders – the real texts carry no demo notice. */}
+          {(await isDraft(kind, locale)) ? <Banner tone="warning">{t("demoNotice")}</Banner> : null}
           {locale === "en" ? <p className={styles.muted}>{t("bindingNote")}</p> : null}
         </header>
         {kind === "privacy" ? (

@@ -23,3 +23,8 @@ export async function POST(request: Request): Promise<Response> {
   }
   return Response.json(await runRetention(), { headers: { "cache-control": "no-store" } });
 }
+
+/** Any other method looks the same as a missing endpoint (no 405 that reveals it). */
+export function GET(): Response {
+  return new Response("Not found", { status: 404 });
+}

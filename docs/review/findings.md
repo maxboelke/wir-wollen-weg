@@ -523,7 +523,7 @@ Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), We
 | R-051 | mittel | Vorschlag-Leiste bei großer Schrift: Inhalt quillt aus der Leiste (über den Kalender und unter den Bildschirmrand) | verifiziert (vom Reviewer behoben) |
 | R-052 | mittel | Desktop ≥ 960 px: zwei Monate nebeneinander → Zellen 37 px, ✓ verdeckt „5/5“, „◐1“ läuft in den Pegel | verifiziert (vom Reviewer behoben) – UI/UX bitte Layout bestätigen |
 | R-053 | niedrig | „Fast alle dabei“ schlägt Zeiträume vor, die niemand kann („0 können · ohne Tim“) | verifiziert (vom Reviewer behoben) |
-| R-054 | niedrig | Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis (ux-spec §12 A3) | behoben – bitte prüfen |
+| R-054 | niedrig | Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis (ux-spec §12 A3) | verifiziert |
 
 ### R-050: Heatmap-Zelle – Siegel verdeckt den Zählwert, große Schrift sprengt die Zelle
 - Schwere: mittel · vom Reviewer behoben
@@ -562,7 +562,7 @@ Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), We
 - Erwartetes Verhalten: Hinweiszeile in der Filterzeile (kein Dialog), DE/EN.
 - Vorschlag: neben/unter `filters.onlyYou` eine zweite Zeile, solange `duration < minNights`.
 - Umsetzung (Developer 2026-10-11, Inkrement 6): Hinweiszeile in der Filterzeile (`role="status"`, Info-Icon) «Kürzer als die Orga-Vorgabe (mind. n Nächte).» / «Shorter than the organizer's minimum (at least n nights).» (`group.filters.belowMin`), solange `duration < minNights`; zusammen mit B5 (Hinweis auf „Abstimmung erstellen“, wenn gewählte Vorschläge zu kurz sind). E2E `increment-6-trips.spec.ts` › „short picks … (B5) … (A3)“.
-- Status: behoben – bitte prüfen
+- Status: verifiziert (Reviewer 2026-10-11, Commit 94dfdef): Hinweiszeile erscheint nur bei `duration < minNights`, DE/EN; zusammen mit B5-Banner auf „Abstimmung erstellen“; E2E Desktop/Pixel/393 × 659 grün.
 
 #### Hinweise ohne Finding (Inkrement 4)
 - **Zählregel/Algorithmus:** gegen F-008/F-009 geprüft – x zählt nur „Geht“, n nur Abgegebene (Entwürfe/Platzhalter nie), ✓ ⇔ x = n ≥ 1, ◐ und ✓ schließen sich aus, „Zur Not“ blockiert nie. Vorschläge: maximale Spannen, Ränder des Suchzeitraums, Minimum = Suchzeitraum − 1, niemand abgegeben, einer blockiert alles, Sortierung (Fehlende → ◐-Personentage → Abstand zur Wunschlänge → Start → Ende → Ids, deterministisch), überlappende „Fast alle“-Spannen verschiedener Personensets (gewollt, „ohne Tim: 1.–19. Juni“). Abweichung 1 (Dauer = Wunsch, Minimum = min(Reise, Dauer)) logisch und von UI/UX bestätigt. Laufzeit: 30 × 365 × Toleranz 3 deutlich < 500 ms; `noMatchHints` im ungünstigsten Fall (Minimum 21, nichts passt) 40–150 ms.
@@ -624,3 +624,63 @@ Geprüft: F-010, F-011 (W10), F-012 inkl. Ergebnis-Karte, ICS/Google-Link und Fe
 - **Fokus nach Festlegen (§13 B2):** per rAF-Protokoll geprüft: Sheet-Überschrift → „Lock in dates“ (busy) → h1 „It's on!“ – nie `body`/Kopf; `?fixed=1` wird entfernt, Reload fokussiert nicht erneut, Titel „Overview · …“.
 - **„Wer hat abgestimmt?“:** kein deaktivierter „Erinnern“-Button (§13 B4 erfüllt).
 - **Kosmetik (bekannt aus Inkrement 4):** EN-Zeiträume mischen das Format („Tue 29 December – Sun, 3 January 2027“).
+
+## Review Inkrement 6 (Reviewer 2026-10-11, Commit 94dfdef gegen 23b3b58)
+
+Geprüft: F-043 Konto löschen (W13 /account/delete, /goodbye, Orga-Pflicht, Re-Auth, Bestätigungsmail, Inaktivität 24 Monate), F-013 (automatische Reise-Löschung + Hinweismails, `POST /api/internal/retention`, Datenexport `GET /account/export`, Datenschutz/Impressum mit Platzhaltern, Startschutz `src/instrumentation.ts`), F-051 (Hilfe-Themen, Lizenzhinweise), Q21 `cancelPoll`, Q22-Hinweis, B5/B9/A3 (R-054), Migration `0006_increment6_privacy.sql`. Checks lokal unter Node 22: format, lint, typecheck, i18n, Unit (325), Build, E2E im CI-Modus (Chromium desktop + mobile: 324 bestanden, 1 flaky aus Inkrement 3 – `increment-3-days` „comment is saved …“, im Retry grün –, 3 übersprungen); nach den Reviewer-Fixes Neubau + Inkrement-2/5/6-Specs erneut (74/74) und Inkrement-4/5/6-Specs auf 393 × 659 (Chromium, 45 bestanden, 1 übersprungen). WebKit lokal nicht verfügbar (nur CI). Startschutz live geprüft: `APP_ENV=production pnpm start` → „placeholder texts left (legal.privacy.updated, …)“, jede Anfrage inkl. `/api/health` → 500; `APP_ENV=demo` startet normal. Fixes des Reviewers liegen uncommittet im Working Tree.
+
+| ID | Schwere | Titel | Status |
+|---|---|---|---|
+| R-058 | mittel | Inaktivitäts-Löschung prüft nicht erneut, ob das Konto inzwischen genutzt wurde | verifiziert (vom Reviewer behoben) |
+| R-059 | niedrig | Automatische Reise-Löschung ohne Neuprüfung der Aktivität | verifiziert (vom Reviewer behoben) |
+| R-060 | niedrig | Konto-Löschung entfernt fremde Codes mit gleichem Adress-Präfix | verifiziert (vom Reviewer behoben) |
+| R-061 | niedrig | Rechtsseiten: Demo-Banner und `noindex` bleiben auch nach Ersetzen der Platzhalter | verifiziert (vom Reviewer behoben) |
+| R-062 | niedrig | `GET /api/internal/retention` antwortet 405 statt 404 | verifiziert (vom Reviewer behoben) |
+
+### R-058: Inaktivitäts-Löschung prüft nicht erneut, ob das Konto inzwischen genutzt wurde
+- Schwere: mittel · vom Reviewer behoben
+- Datei: `src/server/retention.ts` (`accountPass`), `src/server/account-deletion.ts` (`deleteAccount`)
+- Problem / Reproduktion: `accountPass` liest zuerst alle Kandidaten und arbeitet sie danach nacheinander ab (inkl. Mailversand an andere Konten – je Mail Sekunden). Meldet sich eine Person mit fälligem Konto (Hinweis vor ≥ 30 Tagen, 24 Monate inaktiv) in diesem Fenster an, setzt `touchActivity`/der Session-Hook `last_active_at = now()` und löscht den Hinweis – `deleteAccount(row.id, "auto")` löscht das Konto trotzdem, weil die Transaktion nur den Plan, nicht die Inaktivität neu prüft. Ergebnis: ein gerade aktiv genutztes Konto wird mit allen Reisen/Stimmen gelöscht – widerspricht F-043 („nach Hinweis … automatisch gelöscht“, Anmelden verhindert die Löschung).
+- Erwartetes Verhalten: Gelöscht wird nur, wenn das Konto unter Sperre immer noch inaktiv und der Hinweis noch offen ist.
+- Umsetzung (Reviewer): `deleteAccount(userId, choices, { inactiveSince })` sperrt die User-Zeile (`FOR UPDATE`) und bricht mit `reason: "active"` ab, wenn `inactivity_notice_sent_at` inzwischen `null` ist oder `last_active_at` nicht mehr vor dem gelesenen Wert (+1 ms wegen µs-Genauigkeit) liegt; `accountPass` übergibt den gelesenen `lastActiveAt`. Sperr-Reihenfolge jetzt User-Zeile → Reisezeilen (nach Id); kein Pfad gefunden, der umgekehrt sperrt (Beitritt/Übergabe/Abstimmen/Entfernen sperren nur die Reise und nehmen auf `user` höchstens `KEY SHARE` per FK der eigenen Person). E2E „inactive accounts …“ weiterhin grün.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-059: Automatische Reise-Löschung ohne Neuprüfung der Aktivität
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/server/retention.ts` (`tripPass`)
+- Problem / Reproduktion: wie R-058 für Reisen – die Reiseliste wird einmal gelesen; trägt jemand nach dem Lesen Tage ein oder ändert die Orga die Reise (12-Monats-Regel), löscht das spätere `DELETE … WHERE id AND deletion_notice_sent_at IS NOT NULL` die Reise trotzdem.
+- Umsetzung (Reviewer): `DELETE` zusätzlich nur, wenn `tripLastActivity` nicht nach dem gelesenen Wert liegt (eine Anweisung, daher atomar). E2E „old trips …“ grün.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-060: Konto-Löschung entfernt fremde Codes mit gleichem Adress-Präfix
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/server/account-deletion.ts` (Löschen in `verification`)
+- Problem / Reproduktion: `strpos(identifier, '-otp-a@b.de') > 0` trifft auch `sign-in-otp-a@b.dev` – löscht `a@b.de` sein Konto, wird der gerade angeforderte Code einer anderen Person (`a@b.dev`) ungültig.
+- Umsetzung (Reviewer): verankert – Identifier endet auf `-otp-<adresse>` oder beginnt mit `change-email-otp-<adresse>-` (Format aus Better Auth `toOTPIdentifier`). Magic-Links bleiben über den JSON-quotierten Wert (`"a@b.de"`) beidseitig verankert.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-061: Rechtsseiten – Demo-Banner und `noindex` bleiben auch nach Ersetzen der Platzhalter
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/features/legal/legal-page.tsx`
+- Problem / Reproduktion: `legal.demoNotice` („Demo-Version – Platzhaltertext, keine gültigen Rechtsangaben“) enthält selbst keinen `[PLATZHALTER`-Marker und wurde unbedingt gerendert; ebenso `robots: noindex`. Nach Ersetzen aller Platzhalter startet die App mit `APP_ENV=production`, zeigt auf echten Rechtstexten aber weiter „keine gültigen Rechtsangaben“.
+- Umsetzung (Reviewer): Banner und `noindex`-Metadaten nur, solange `findPlaceholderMarkers(messages.legal[kind])` etwas findet (gleiche Funktion wie der Startschutz). Globales `X-Robots-Tag` aus `next.config.ts` (Demo) unverändert.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-062: `GET /api/internal/retention` antwortet 405 statt 404
+- Schwere: niedrig · vom Reviewer behoben
+- Datei: `src/app/api/internal/retention/route.ts`
+- Problem / Reproduktion: `curl -X GET …/api/internal/retention` → 405 (verrät den Endpunkt), POST ohne/mit falschem Token → 404.
+- Umsetzung (Reviewer): `GET` antwortet ebenfalls 404.
+- Status: verifiziert (vom Reviewer behoben)
+
+#### Hinweise ohne Finding (Inkrement 6)
+- **deleteAccount – Sperren/Wettläufe:** Reisezeilen `FOR UPDATE` nach Id (zwei Löschungen mit gemeinsamen Reisen deadlockfrei), Plan unter Sperre neu berechnet; Übergabe (`transferOrganizer`) und Entfernen (`removeMember`) sperren jetzt dieselbe Reisezeile → Übergabe an eine Person, die gerade löscht, scheitert sauber (Ziel weg) bzw. macht deren Plan `planOutdated`. Beitritt in eine Solo-Reise → `planOutdated` (E2E). Ein im selben Moment angelegte Reise wird als Waise mitgelöscht; die Aufräum-Anweisung ist global (`updated_at > now() − 1 h` und ohne Mitglieder) – vertretbar, da Reisen ohne Mitglieder sonst nicht vorkommen.
+- **Vollständigkeit:** User, Sessions, Credential, Mitgliedschaften (Name, Kommentar), Tage, Stimmen per Cascade; übernommene Platzhalter-Zeilen, Codes/Magic-Links, Re-Auth-Marker, `auth_attempt` (Adress-Schlüssel) explizit; `poll_canceled_by` → `null`. Nicht gelöscht, aber nicht personenbezogen zuordenbar bzw. kurzlebig: `auth_attempt` mit Postfach-Schlüssel (HMAC, Varianten-Budget, ≤ 24 h), Better-Auth-`rate_limit` (IP-basiert), Mailpit-Postfach (nur Demo). Logs enthalten nur Zähler. Platzhalter, die vor Inkrement 6 per „Reise verlassen“ verwaist sind, behalten ihren (von der Orga vergebenen) Namen – nur Altbestand.
+- **Re-Auth:** `deleteAccountAction` prüft den Marker serverseitig (10 min, je Session), Server-Actions mit Next-Origin-Prüfung; Replay nach Erfolg ins Leere (User weg), abgelaufene Bestätigung → `reauthExpired` (E2E). Kein Cookie-Cache in Better Auth → andere Geräte sind sofort abgemeldet.
+- **Export:** alle Abfragen an `session.user.id` gebunden, aus Reisen nur Reisefakten + eigene Einträge (keine Namen/Tage/Stimmen/Kommentare anderer, E2E), `no-store`, `nosniff`, Dateiname fest; abgemeldet → 303 auf Login.
+- **Retention-Endpunkt:** `timingSafeEqual` nach Längenprüfung (Länge des Tokens ≥ 32 leakt nichts Verwertbares), ohne `RETENTION_TOKEN` 404; Hinweis wird per bedingtem UPDATE beansprucht und bei Mailfehler zurückgegeben → idempotent; Löschung frühestens Hinweis + 14/30 Tage. Der Reisen-Durchlauf liest täglich alle Reisen mit korrelierten Unterabfragen – für die Demo unkritisch, vor Go-Live auf Kandidaten (Fälligkeit nahe) einschränken.
+- **Aktivität:** `touchActivity` = höchstens ein Schreibzugriff pro Konto und Tag (bedingtes UPDATE auf PK, sonst kein Row-Lock), fire-and-forget; Anmeldung setzt zusätzlich im Session-Hook.
+- **Startschutz:** Prozess bleibt bei fehlgeschlagenem Instrumentation-Hook am Leben, beantwortet aber alles mit 500 (auch Health-Check) – wie beim Secret-Schutz R-028; Deployment-Health-Check schlägt damit fehl.
+- **cancelPoll (Q21):** Phase + Rolle unter `FOR UPDATE` neu geprüft, Replay → `phase`; Hinweis einmal je Mitgliedschaft (nicht für Abbrechende, nicht für später Beigetretene, neuer Start löscht den Marker); Dialog-Fokus auf „Abstimmung behalten“, Esc schließt (E2E).
+- **Destruktiver Konto-Dialog:** Fokus auf „Abbrechen“, „Endgültig löschen“ vor Bestätigung `aria-disabled` (Klick öffnet nichts), axe hell/dunkel ohne serious/critical; Layout 393 × 659 geprüft (Screenshot, lange Reisenamen umbrechen).
+- **Kosmetik:** In „Daten & Datenschutz“ (Konto) steht zwischen „Datenschutzerklärung“ und „Meine Daten herunterladen“ ein auffallend großer Abstand.
