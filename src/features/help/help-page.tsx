@@ -4,12 +4,26 @@ import { PageShell } from "@/components/page-shell";
 import { Icon } from "@/components/ui/icon";
 import type { Locale } from "@/i18n/config";
 import { HELP_ANCHORS, HELP_PATHS, HELP_TOPICS, type HelpTopic } from "@/lib/help";
+import { IMPRINT_PATHS, LICENSES_ANCHOR, PRIVACY_PATHS } from "@/lib/legal";
 import { serverEnv } from "@/server/env";
 import { HelpAnchors } from "./help-anchors";
 import styles from "./help.module.css";
 
-/** Optional action under an answer (W15: «Anmelden» for a lost link, «Zum Konto» for motion). */
-const ACTIONS: Partial<Record<HelpTopic, string>> = { link: "/login", motion: "/account" };
+type ActionTopic = "link" | "motion" | "account" | "retention";
+
+/**
+ * Optional action under an answer (W15: «Anmelden» for a lost link, «Zum Konto» for motion;
+ * increment 6: «Konto löschen», privacy policy).
+ */
+function actionHref(topic: HelpTopic, locale: Locale): string | undefined {
+  const actions: Record<ActionTopic, string> = {
+    link: "/login",
+    motion: "/account",
+    account: "/account/delete",
+    retention: PRIVACY_PATHS[locale],
+  };
+  return topic in actions ? actions[topic as ActionTopic] : undefined;
+}
 
 export async function helpMetadata(locale: Locale): Promise<Metadata> {
   const t = await getTranslations({ locale, namespace: "help" });
@@ -45,7 +59,7 @@ export async function HelpPage({ locale }: { locale: Locale }) {
         </div>
         <div className={styles.list}>
           {HELP_TOPICS.map((topic) => {
-            const action = ACTIONS[topic];
+            const action = actionHref(topic, locale);
             return (
               <details key={topic} id={HELP_ANCHORS[topic][locale]} className={styles.item}>
                 <summary className={styles.summary}>
@@ -56,7 +70,7 @@ export async function HelpPage({ locale }: { locale: Locale }) {
                   <p>{t(`topics.${topic}.a`, values)}</p>
                   {action ? (
                     <a className={styles.action} href={action}>
-                      {t(`topics.${topic as "link" | "motion"}.action`)}
+                      {t(`topics.${topic as ActionTopic}.action`)}
                     </a>
                   ) : null}
                 </div>
@@ -71,6 +85,16 @@ export async function HelpPage({ locale }: { locale: Locale }) {
               email: env.CONTACT_EMAIL,
               link: (chunks) => (
                 <a className={styles.action} href={`mailto:${env.CONTACT_EMAIL}`}>
+                  {chunks}
+                </a>
+              ),
+            })}
+          </p>
+          {/* Credits (compliance-checklist §1, tech-stack §2): holiday data CC BY 3.0. */}
+          <p className={styles.credits}>
+            {t.rich("credits", {
+              link: (chunks) => (
+                <a className={styles.action} href={`${IMPRINT_PATHS[locale]}#${LICENSES_ANCHOR}`}>
                   {chunks}
                 </a>
               ),

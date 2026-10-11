@@ -126,3 +126,8 @@
 .contact h2 {
   font-size: var(--ww-text-xl);
 }
+
+.credits {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}

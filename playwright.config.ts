@@ -3,6 +3,8 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = Number(process.env.PORT ?? 3000);
 const baseURL = process.env.E2E_BASE_URL ?? `http://localhost:${PORT}`;
 const isCI = !!process.env.CI;
+/** Token of POST /api/internal/retention in E2E runs (tests/e2e/increment-6-*.spec.ts). */
+const E2E_RETENTION_TOKEN = "e2e-only-retention-token-0123456789abcdef";
 
 // App-side rate limits (failed invite lookups, joins per trip and IP – F-003) are keyed on the
 // client IP, which comes from `x-forwarded-for` without a proxy (dev/CI). Each run gets its own
@@ -53,6 +55,8 @@ export default defineConfig({
       PORT: String(PORT),
       // E2E requests many codes from one IP; rate limits get their own tests later.
       RATE_LIMIT_ENABLED: "false",
+      // Retention job endpoint (F-013/F-043) – test-only token, not a secret.
+      RETENTION_TOKEN: E2E_RETENTION_TOKEN,
     },
   },
 });

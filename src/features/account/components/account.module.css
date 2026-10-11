@@ -135,3 +135,47 @@ button.textLink {
   flex-direction: column;
   gap: var(--ww-space-4);
 }
+
+/* W13 «Konto löschen» (F-043) */
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  margin: 0;
+  padding-inline-start: var(--ww-space-5);
+}
+
+.tripChoice {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-4);
+  border: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface-sunken);
+}
+
+.tripChoiceTitle {
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.label {
+  display: block;
+  margin-bottom: var(--ww-space-1);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.dangerLink {
+  color: var(--ww-color-danger);
+}
+
+.confirmed {
+  display: flex;
+  gap: var(--ww-space-2);
+  align-items: center;
+  color: var(--ww-color-success-text);
+  font-weight: var(--ww-font-weight-bold);
+}

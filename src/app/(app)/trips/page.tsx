@@ -19,6 +19,12 @@ import {
   viewerTodo,
 } from "@/lib/trip-status";
 import { getSession } from "@/server/session";
+import {
+  effectiveDeletionDate,
+  inNoticeWindow,
+  TRIP_NOTICE_DAYS,
+  tripDeletionDate,
+} from "@/lib/retention";
 import { listTripsForUser, type TripListItem } from "@/server/trips";
 import { viewerFormat } from "@/server/viewer";
 import styles from "./trips.module.css";
@@ -59,7 +65,23 @@ function toCard(
     href: tripPath(trip.publicId, defaultTab(phase, me)),
     updatedAt: trip.updatedAt.toISOString(),
     start: trip.fixedStart ?? trip.rangeStart,
+    deletion: me.role === "organizer" ? deletionNotice(trip, item.lastActivity) : null,
   };
+}
+
+/**
+ * Banner «Wird am … gelöscht» for the organiser from 14 days before the automatic deletion on
+ * (F-013, Flow J) – same rule and date as the notice mail (src/server/retention.ts).
+ */
+function deletionNotice(
+  trip: TripListItem["trip"],
+  lastActivity: Date,
+): TripListCardData["deletion"] {
+  const due = tripDeletionDate({ phase: trip.phase, fixedEnd: trip.fixedEnd, lastActivity });
+  const now = new Date();
+  if (!inNoticeWindow(due.at, now)) return null;
+  const at = effectiveDeletionDate(due.at, trip.deletionNoticeSentAt, TRIP_NOTICE_DAYS);
+  return { date: at.toISOString().slice(0, 10), reason: due.reason };
 }
 
 /**
@@ -138,7 +160,11 @@ export default async function TripsPage() {
               ) : null}
             </section>
             {past.length > 0 ? (
-              <details className={styles.past}>
+              // Open when a past trip is about to be deleted – the banner must be seen (F-013).
+              <details
+                className={styles.past}
+                open={past.some((card) => card.deletion) || undefined}
+              >
                 <summary className={styles.pastSummary}>
                   <span className={styles.pastTitle}>{t("pastTitle", { count: past.length })}</span>
                   <Icon name="chevron-down" size={20} className={styles.chevron} />

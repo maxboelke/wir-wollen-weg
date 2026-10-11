@@ -44,6 +44,8 @@ export interface CreatePollProps {
   cancelHref: string;
   pollHref: string;
   intl: string;
+  /** Picked suggestions shorter than the trip minimum that were left out (ux-spec §13 B5). */
+  skippedShort?: number | undefined;
 }
 
 interface Row extends DraftOption {
@@ -205,6 +207,11 @@ export function CreatePoll(props: CreatePollProps) {
           <h1>{t("create.title")}</h1>
           <p className={styles.lead}>{t("create.lead")}</p>
         </div>
+        {props.skippedShort ? (
+          <Banner tone="info">
+            {t("create.skippedShort", { count: props.skippedShort, min: props.minNights })}
+          </Banner>
+        ) : null}
 
         {rows.length === 0 ? (
           <p className={styles.muted}>

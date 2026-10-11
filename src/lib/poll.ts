@@ -385,3 +385,18 @@ export function celebrationDue(
 ): boolean {
   return fixed !== null && celebratedFor !== periodKey(fixed);
 }
+
+/**
+ * One-off notice «{Name} hat die Abstimmung abgebrochen. Eine neue folgt.» (Q21, ux-spec
+ * §13.1 a): only while the trip is back in «Tage sammeln», not for the organiser who cancelled,
+ * not for people who joined afterwards, and only until the member has seen it once.
+ */
+export function pollCancelNoticeDue(
+  trip: { phase: string; pollCanceledAt: Date | null; pollCanceledBy: string | null },
+  member: { userId: string; joinedAt: Date; pollCancelSeenAt: Date | null },
+): boolean {
+  if (trip.phase !== "collecting" || !trip.pollCanceledAt) return false;
+  if (member.userId === trip.pollCanceledBy) return false;
+  if (member.joinedAt.getTime() >= trip.pollCanceledAt.getTime()) return false;
+  return !member.pollCancelSeenAt || member.pollCancelSeenAt < trip.pollCanceledAt;
+}

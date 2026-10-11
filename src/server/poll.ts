@@ -85,7 +85,15 @@ export async function startPoll(
       );
       await tx
         .update(trip)
-        .set({ phase: "voting", pollDeadline: deadline, pollStartedAt: now, updatedAt: now })
+        .set({
+          phase: "voting",
+          pollDeadline: deadline,
+          pollStartedAt: now,
+          updatedAt: now,
+          // A new vote replaces the notice about a cancelled one (Q21).
+          pollCanceledAt: null,
+          pollCanceledBy: null,
+        })
         .where(eq(trip.id, tripId));
       await tx.update(tripMember).set({ votedAt: null }).where(eq(tripMember.tripId, tripId));
       return { ok: true } as const;
@@ -256,4 +264,49 @@ export async function markCelebrated(
     )
     .returning({ userId: tripMember.userId });
   return updated.length > 0;
+}
+
+export type CancelResult = { ok: true } | { ok: false; reason: "phase" | "notAllowed" };
+
+/**
+ * «Abstimmung abbrechen» (Q21, ux-spec §13.1 a – organiser, phase 2 only): deletes all options
+ * (votes cascade), keeps everyone's days, back to «Tage sammeln»; status «abgestimmt» reset.
+ * Like every phase change it runs under the exclusive lock of the trip row – votes (shared
+ * lock), «Termin festlegen» and «Option hinzufügen» are serialised with it. The role is checked
+ * again under the lock: a hand-over in between makes the old organiser's request fail.
+ */
+export async function cancelPoll(tripId: string, userId: string): Promise<CancelResult> {
+  return db().transaction(async (tx) => {
+    if ((await lockedPhase(tx, tripId, "update")) !== "voting") {
+      return { ok: false, reason: "phase" } as const;
+    }
+    const [me] = await tx
+      .select({ role: tripMember.role })
+      .from(tripMember)
+      .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
+    if (me?.role !== "organizer") return { ok: false, reason: "notAllowed" } as const;
+    await tx.delete(pollOption).where(eq(pollOption.tripId, tripId));
+    const now = new Date();
+    await tx
+      .update(trip)
+      .set({
+        phase: "collecting",
+        pollDeadline: null,
+        pollStartedAt: null,
+        pollCanceledAt: now,
+        pollCanceledBy: userId,
+        updatedAt: now,
+      })
+      .where(eq(trip.id, tripId));
+    await tx.update(tripMember).set({ votedAt: null }).where(eq(tripMember.tripId, tripId));
+    return { ok: true } as const;
+  });
+}
+
+/** The member has seen the one-off notice about the cancelled vote (Q21). */
+export async function markPollCancelSeen(tripId: string, userId: string): Promise<void> {
+  await db()
+    .update(tripMember)
+    .set({ pollCancelSeenAt: new Date() })
+    .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
 }

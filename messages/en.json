@@ -32,7 +32,9 @@
     "tripDeleted": "“{trip}” was deleted.",
     "comingSoon": "Coming soon",
     "genericError": "That didn't work. Please try again.",
-    "notAllowed": "Only the organizer can do that."
+    "notAllowed": "Only the organizer can do that.",
+    "privacy": "Privacy",
+    "imprint": "Legal notice"
   },
   "landing": {
     "titleLead": "From the group chat to",
@@ -125,7 +127,8 @@
     "noPasswordHint": "No password set? Just sign in with a code.",
     "optionalPassword": "Set a password (optional)",
     "optionalPasswordHint": "At least 10 characters. You can always sign in with a code too.",
-    "sessionExpired": "Please sign in – you’ll continue right where you were."
+    "sessionExpired": "Please sign in – you’ll continue right where you were.",
+    "privacyNote": "By continuing, you confirm that you have read the <link>privacy notice</link>."
   },
   "magic": {
     "title": "Sign in",
@@ -216,7 +219,11 @@
       "fixDates": "Lock in dates"
     },
     "actionFor": "{action}: {trip}",
-    "voteDeadline": "Vote by {date}"
+    "voteDeadline": "Vote by {date}",
+    "deletion": {
+      "afterTrip": "Will be deleted on {date} (90 days after the trip).",
+      "inactive": "Will be deleted on {date} (12 months without activity)."
+    }
   },
   "settings": {
     "motion": {
@@ -296,7 +303,11 @@
     },
     "privacy": {
       "title": "Data & privacy",
-      "request": "To request your data or have your account deleted, write to <link>{contact}</link>."
+      "request": "Questions about your data? Write to <link>{contact}</link>.",
+      "policy": "Privacy policy",
+      "export": "Download my data (JSON)",
+      "exportHint": "Everything we store about you – only your own entries.",
+      "delete": "Delete account"
     },
     "back": "Back to account",
     "email": {
@@ -328,6 +339,28 @@
       "removeText": "You’ll then sign in with a code only.",
       "remove": "Remove password",
       "removed": "Password removed"
+    },
+    "delete": {
+      "title": "Delete account",
+      "whatTitle": "What gets deleted?",
+      "whatText": "Your name, your email, your dates and votes in all trips. This can't be undone.",
+      "memberOf": "{count, plural, one {Your name, dates and votes disappear from # trip you're a member of.} other {Your name, dates and votes disappear from # trips you're a member of.}}",
+      "organizedTitle": "You organize these trips",
+      "organizedLead": "Decide for each trip: who takes over as organizer – or should the trip be deleted for everyone?",
+      "tripMembers": "{trip} ({count, plural, one {# member} other {# members}})",
+      "transfer": "Hand over the organizer role",
+      "newOrga": "New organizer",
+      "successor": "{name} (joined {date})",
+      "deleteTrip": "Delete the trip for everyone",
+      "deleteTripHint": "All dates, votes and members are deleted.",
+      "soloTitle": "These trips are deleted too (you're the only member)",
+      "confirmedYou": "Confirmed – you can delete your account now.",
+      "confirmFirst": "First confirm that it's you.",
+      "submit": "Delete account for good",
+      "dialogTitle": "Delete your account for good?",
+      "dialogText": "Your account and your data are deleted right away. This can't be undone.",
+      "dialogConfirm": "Delete account",
+      "planOutdated": "Something changed in your trips in the meantime. Please check your choices and try again – nothing was deleted."
     }
   },
   "regions": {
@@ -427,7 +460,7 @@
       },
       "delete": {
         "q": "How do I delete my data?",
-        "a": "If you leave a trip, we delete your dates and votes in that trip. To delete your whole account, write to us at {contact} – soon you’ll be able to do this right in your account."
+        "a": "If you leave a trip (trip menu ⋯ → “Leave trip”), we delete your name, dates, votes and comment in that trip. As the organizer, hand over the role or delete the trip first. Under Account → Data & privacy you can also download all your data."
       },
       "motion": {
         "q": "There’s too much motion.",
@@ -437,10 +470,33 @@
       "noEmail": {
         "q": "Lost access to your email?",
         "a": "Write to us at {contact}. Alternatively, create a new account and join the trip again with the invite link."
+      },
+      "group": {
+        "q": "What does the “Group” tab show?",
+        "a": "How many people can make each day. The stronger the colour, the more can come; ✓ means everyone who has submitted can make it. Tap a day to see who can and who can't. Only submitted dates count – nobody sees drafts."
+      },
+      "suggestions": {
+        "q": "Where do the suggestions come from?",
+        "a": "We look for periods at least as long as the organizer set. First come those where everyone can make it, then those where almost everyone can. With the filters (just for you) you can change the length or hide people – the group still sees the standard view."
+      },
+      "fix": {
+        "q": "Who fixes the dates – and can that be changed?",
+        "a": "The organizer fixes the dates, usually after the vote. Then “My dates” are locked and everyone can add the dates to their calendar. The organizer can undo it; the votes are kept. The organizer can also cancel a running vote – your dates stay, a new vote follows."
+      },
+      "account": {
+        "q": "How do I delete my account?",
+        "a": "Go to Account → Data & privacy → “Delete account”. You confirm with a code (or password), then we immediately delete your name, email, dates and votes in all trips. If you organize trips with others, you first pick a new organizer for each trip or delete the trip for everyone.",
+        "action": "Delete account"
+      },
+      "retention": {
+        "q": "How long do you keep my data?",
+        "a": "Not forever: we delete a trip 90 days after it ends, or 12 months after the last change if no dates were fixed – the organizer hears from us 14 days before. Accounts not used for 24 months are deleted after a reminder. We use no trackers and no advertising cookies.",
+        "action": "Read the privacy policy"
       }
     },
     "contactTitle": "Still got questions?",
-    "contact": "Write to us: <link>{email}</link>"
+    "contact": "Write to us: <link>{email}</link>",
+    "credits": "Holiday data: date-holidays (CC BY 3.0). More under <link>licences</link>."
   },
   "mail": {
     "fromName": "When do we go?",
@@ -478,6 +534,33 @@
       "heading": "Your email address was changed",
       "text": "Your account now uses {email}. We won’t send emails to this address any more.",
       "notYou": "Wasn’t you? Please write to us right away at {contact}."
+    },
+    "imprint": "Legal notice",
+    "accountDeleted": {
+      "subject": "Your account has been deleted",
+      "heading": "Your account has been deleted",
+      "text": "Your account and all your data – name, email, dates and votes in all trips – have been deleted.",
+      "inactive": "Your account wasn't used for 24 months. As announced, we've deleted it together with all your data.",
+      "trips": "Also deleted for everyone: {trips}.",
+      "noMore": "This is our last email to you. Thanks for being part of it."
+    },
+    "tripNotice": {
+      "subject": "“{trip}” will be deleted soon",
+      "heading": "Your trip will be deleted soon",
+      "text": "We'll delete “{trip}” on {date}, with all dates, votes and members.",
+      "afterTrip": "Why: the trip ended almost 90 days ago – that's how long we keep it.",
+      "inactive": "Why: nothing has happened in the trip for almost 12 months. Still planning? Any change, for example to your dates, keeps it.",
+      "linkIntro": "Open the trip:",
+      "link": "Open trip",
+      "service": "This is a service notice about your trip, not marketing."
+    },
+    "inactiveNotice": {
+      "subject": "Your account will be deleted soon",
+      "heading": "Your account will be deleted soon",
+      "text": "You haven't used the app for almost 24 months. We'll delete your account and all its data on {date}.",
+      "keepIntro": "Want to keep it? Just sign in once:",
+      "keep": "Sign in",
+      "service": "This is a service notice, not marketing."
     }
   },
   "tripForm": {
@@ -632,7 +715,8 @@
       "leave": "Leave trip",
       "delete": "Delete trip",
       "help": "Help",
-      "unfix": "Undo locked dates"
+      "unfix": "Undo locked dates",
+      "cancelPoll": "Cancel the vote"
     },
     "dialogs": {
       "leaveTitle": "Leave “{trip}”?",
@@ -668,7 +752,12 @@
       "unfixTitle": "Reopen the dates?",
       "unfixText": "The vote opens again, all votes are kept. If you already shared the dates, correct them in your group chat yourself.",
       "unfixConfirm": "Reopen dates",
-      "unfixDone": "The vote is open again."
+      "unfixDone": "The vote is open again.",
+      "cancelPollTitle": "Cancel the vote?",
+      "cancelPollText": "All options and votes will be deleted. Everyone's dates are kept and the trip goes back to ‘Collecting dates’.",
+      "cancelPollKeep": "Keep vote",
+      "cancelPollConfirm": "Cancel vote",
+      "cancelPollDone": "Vote cancelled"
     },
     "notFoundTitle": "Trip not found",
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
@@ -734,7 +823,8 @@
     "dangerTitle": "Danger zone",
     "deleteTitle": "Delete trip for everyone",
     "deleteText": "All dates, votes and members will be deleted right away.",
-    "unsaved": "You have unsaved changes."
+    "unsaved": "You have unsaved changes.",
+    "fixedNote": "The dates are already fixed – the search range only affects ‘My dates’ and the suggestions."
   },
   "days": {
     "title": "My dates",
@@ -901,7 +991,8 @@
       "reset": "Reset filters",
       "hideTitle": "Who should we leave out?",
       "hideHint": "Just for you: we calculate as if these people weren't coming.",
-      "done": "Done"
+      "done": "Done",
+      "belowMin": "Shorter than the organizer's minimum (at least {count, plural, one {# night} other {# nights}})."
     },
     "groups": {
       "all": "Everyone's in ({count})",
@@ -1066,8 +1157,8 @@
     "retry": "Try again",
     "votedFor": "{range}: {choice}",
     "addOption": "Add option",
-    "addOptionNote": "Existing options stay unchanged so votes already cast remain valid.",
-    "addOptionDone": "Option added",
+    "addOptionNote": "Existing options stay as they are so votes remain valid. Everyone still needs to rate the new option – people who were done will show as ‘open’ again.",
+    "addOptionDone": "Option added. Share it with the group so everyone rates it.",
     "remind": "Remind the group",
     "fixButton": "End vote & lock in dates",
     "fixOrgaOnly": "Only for the organizer.",
@@ -1145,7 +1236,8 @@
       "deadlineLabel": "Date",
       "shifted": "Option {n}: {range}",
       "removed": "Option removed",
-      "added": "Option added"
+      "added": "Option added",
+      "skippedShort": "{count, plural, one {# selected option is shorter than {min} nights and wasn't added.} other {# selected options are shorter than {min} nights and weren't added.}}"
     },
     "period": {
       "title": "Own period",
@@ -1178,6 +1270,78 @@
       "ringLabel": "<n>{count}</n> {count, plural, one {day} other {days}} to go",
       "going": "{count} going"
     },
-    "sharePoll": "Share the vote"
+    "sharePoll": "Share the vote",
+    "canceledNotice": "{name} cancelled the vote. A new one will follow.",
+    "canceledNoticeUnknown": "The vote was cancelled. A new one will follow.",
+    "addOptionShare": "Share"
+  },
+  "goodbye": {
+    "title": "Your account is deleted",
+    "text": "We've sent you a confirmation. Thanks for being part of it.",
+    "home": "Go to the home page"
+  },
+  "legal": {
+    "demoNotice": "Demo version – placeholder text, not valid legal information.",
+    "bindingNote": "Translation – the German version is legally binding.",
+    "privacy": {
+      "title": "Privacy policy",
+      "updated": "Last updated: [PLACEHOLDER: date of this version]",
+      "summaryTitle": "Privacy at a glance",
+      "summary": "We only store what the app needs: your account (name, email, language, region), your trips with your dates, votes and comment, and technical sign-in data. Only the members of a trip see what you enter in it.\n\nNo trackers, no ads, no advertising cookies. You can download your data, leave a trip or delete your account at any time. We delete old trips and long-unused accounts automatically.",
+      "sections": {
+        "controller": {
+          "title": "Controller",
+          "body": "[PLACEHOLDER: name of the operator (private person)]\n\n[PLACEHOLDER: address for service]\n\nEmail: [PLACEHOLDER: contact email]"
+        },
+        "account": {
+          "title": "Your account",
+          "body": "For your account we store your display name, email address, language, region (date format, week start, holidays), the “Reduce motion” setting and – if you set one – a password hash. Purpose: providing the app; legal basis: Art. 6(1)(b) GDPR (contract). Taking part is not possible without an email address."
+        },
+        "trips": {
+          "title": "Trips",
+          "body": "For each trip we store membership, role, your name in the trip, your dates (“if need be”, “can't”), your optional comment and your votes. The other members of the same trip see these entries with your name. Placeholder names are added by the organizer – please use first names or nicknames only. Legal basis: Art. 6(1)(b) GDPR. Suggestions are not binding; there is no automated decision (Art. 22 GDPR)."
+        },
+        "signIn": {
+          "title": "Sign-in and security",
+          "body": "You sign in with a code or link by email, optionally with a password (stored only as an Argon2id hash). We store sessions with IP address and browser identifier to protect your account, and we count sign-in attempts to limit abuse – addresses only as a non-reversible key. Server logs with IP addresses are deleted after 7 days. Legal basis: Art. 6(1)(f) GDPR (legitimate interest in a secure service)."
+        },
+        "mails": {
+          "title": "Emails",
+          "body": "We only send emails your account needs: codes, password reset, email change, notices before automatic deletion and the confirmation of an account deletion. No marketing, no newsletter, no tracking pixels."
+        },
+        "recipients": {
+          "title": "Recipients and hosting",
+          "body": "Hosting: [PLACEHOLDER: hosting provider, servers in Germany]. Email delivery: [PLACEHOLDER: email provider]. Both process data only on our behalf (Art. 28 GDPR). No data is transferred to third countries."
+        },
+        "device": {
+          "title": "Cookies and storage on your device",
+          "body": "We only use technically necessary storage: the sign-in cookie, the chosen language, the “Reduce motion” choice, the state of the legend in the group calendar, an invite during sign-in and a trip draft in your browser. Legal basis: Section 25(2) no. 2 TDDDG. That's why there is no cookie banner."
+        },
+        "retention": {
+          "title": "Retention",
+          "body": "Account: until you delete it, at the latest after 24 months without use (notice 30 days before). Trips: until the organizer deletes them, at the latest 90 days after the fixed end of the trip or 12 months after the last change (notice to the organizer 14 days before). If you leave a trip, we delete your entries in it immediately. Codes are valid for 15 minutes, abuse counters for at most 24 hours. Backups are overwritten after 30 days at the latest."
+        },
+        "rights": {
+          "title": "Your rights",
+          "body": "You have the right of access, rectification, erasure, restriction, data portability and objection (Art. 15–21 GDPR). Much of this works right in the app: download your data and delete your account under Account → Data & privacy, leave a trip in the trip menu. Otherwise write to [PLACEHOLDER: contact email]. You can complain to a supervisory authority: [PLACEHOLDER: competent supervisory authority]."
+        },
+        "automated": {
+          "title": "Statistics",
+          "body": "We only count usage in aggregate on the server, without cookies and without reference to individual people."
+        }
+      }
+    },
+    "imprint": {
+      "title": "Legal notice",
+      "providerTitle": "Information pursuant to Section 5 DDG",
+      "provider": "[PLACEHOLDER: name of the operator (private person)]\n\n[PLACEHOLDER: address for service]",
+      "contactTitle": "Contact",
+      "contact": "Email: [PLACEHOLDER: contact email]\n\n[PLACEHOLDER: second quick contact option, e.g. phone]",
+      "serviceTitle": "Service",
+      "service": "When do we go? (German: “Wir wollen weg”) – a free service for finding travel dates together with friends.",
+      "licensesTitle": "Licences and sources",
+      "holidays": "Holiday data: <lib>date-holidays</lib> by Christoph Lorenz – code under the ISC licence, holiday data under <cc>Creative Commons BY 3.0</cc>. No guarantee of accuracy.",
+      "fonts": "Fonts: Figtree and Plus Jakarta Sans, self-hosted, under the <ofl>SIL Open Font License 1.1</ofl>."
+    }
   }
 }

@@ -12,6 +12,7 @@ import { ProfileCard } from "@/features/account/components/profile-card";
 import { SessionsCard } from "@/features/account/components/sessions-card";
 import styles from "@/features/account/components/account.module.css";
 import { isLocale } from "@/i18n/config";
+import { PRIVACY_PATHS } from "@/lib/legal";
 import { isCountry, isWeekStart } from "@/lib/region";
 import { hasPassword } from "@/server/account";
 import { serverEnv } from "@/server/env";
@@ -24,8 +25,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /**
  * W13 – account settings (F-043, F-046, F-052, F-041/F-042): Profil · Sprache & Region ·
- * Darstellung · Anmeldung · Sitzungen · Daten & Datenschutz · Abmelden. Account deletion
- * (F-043) follows in increment 6.
+ * Darstellung · Anmeldung · Sitzungen · Daten & Datenschutz (privacy policy, own data as
+ * JSON, «Konto löschen» → /account/delete, F-013/F-043) · Abmelden.
  */
 export default async function AccountPage() {
   const session = await getSession();
@@ -35,6 +36,7 @@ export default async function AccountPage() {
   const { user } = session;
   const passwordSet = await hasPassword(user.id);
   const contact = serverEnv().CONTACT_EMAIL;
+  const locale = isLocale(user.locale) ? user.locale : "en";
 
   return (
     <PageShell>
@@ -42,7 +44,7 @@ export default async function AccountPage() {
         <h1>{t("title")}</h1>
         <ProfileCard name={user.name} />
         <LanguageRegionCard
-          locale={isLocale(user.locale) ? user.locale : "en"}
+          locale={locale}
           country={isCountry(user.country) ? user.country : "GB"}
           subdivision={user.subdivision ?? null}
           weekStart={isWeekStart(user.weekStart) ? user.weekStart : "auto"}
@@ -80,6 +82,15 @@ export default async function AccountPage() {
           <h2 id="account-privacy" className={styles.cardTitle}>
             {t("privacy.title")}
           </h2>
+          <a className={`${styles.textLink} ${styles.backLink}`} href={PRIVACY_PATHS[locale]}>
+            {t("privacy.policy")}
+          </a>
+          <div>
+            <a className={styles.textLink} href="/account/export" download>
+              {t("privacy.export")}
+            </a>
+            <p className={styles.muted}>{t("privacy.exportHint")}</p>
+          </div>
           <p className={styles.muted}>
             {t.rich("privacy.request", {
               contact,
@@ -90,6 +101,12 @@ export default async function AccountPage() {
               ),
             })}
           </p>
+          <Link
+            className={`${styles.textLink} ${styles.backLink} ${styles.dangerLink}`}
+            href="/account/delete"
+          >
+            {t("privacy.delete")}
+          </Link>
         </Card>
         <form action={signOut}>
           <Button type="submit" variant="secondary" size="md" icon="logout">

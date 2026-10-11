@@ -16,6 +16,7 @@ import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
 import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
 import { Checkbox, TextField } from "@/components/ui/field";
+import { PRIVACY_PATHS } from "@/lib/legal";
 import { Icon } from "@/components/ui/icon";
 import { PasswordField } from "@/components/ui/password-field";
 import { savePassword } from "@/features/account/actions";
@@ -520,6 +521,24 @@ export function EmailAccessForm({
           >
             {passwordMode ? t("signInPassword") : t("sendCode")}
           </Button>
+          {passwordMode ? null : (
+            // F-013, ux-spec §11: short privacy notice on sign-up and joining – opens in a new
+            // tab so the flow (and a code already on its way) is kept.
+            <p className={styles.small}>
+              {t.rich("privacyNote", {
+                link: (chunks) => (
+                  <a
+                    className={styles.inlineLink}
+                    href={PRIVACY_PATHS[locale]}
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    {chunks}
+                  </a>
+                ),
+              })}
+            </p>
+          )}
         </form>
         <button
           type="button"

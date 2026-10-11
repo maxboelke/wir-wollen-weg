@@ -24,6 +24,8 @@ export interface TripListCardData {
   fixedEnd: IsoDate | null;
   daysToGo: number | null;
   href: string;
+  /** Organiser only: automatic deletion within the next 14 days (F-013). */
+  deletion?: { date: IsoDate; reason: "afterTrip" | "inactive" } | null | undefined;
 }
 
 const TODO_TARGET: Record<TripTodo, "days" | "poll" | "pollNew"> = {
@@ -114,6 +116,16 @@ export async function TripListCard({
           <span>
             {t("voteDeadline", {
               date: formatDate(trip.pollDeadline, intl, { weekday: true, year: false }),
+            })}
+          </span>
+        </p>
+      ) : null}
+      {trip.deletion ? (
+        <p className={styles.deletion}>
+          <Icon name="warning" size={16} />
+          <span>
+            {t(`deletion.${trip.deletion.reason}`, {
+              date: formatDate(trip.deletion.date, intl, { weekday: false, year: true }),
             })}
           </span>
         </p>

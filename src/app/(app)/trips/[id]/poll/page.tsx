@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Illustration } from "@/components/illustrations/illustration";
 import { ButtonLink } from "@/components/ui/button-link";
 import { loadPoll, shortLabels } from "@/features/poll/load";
+import { CancelNotice } from "@/features/poll/components/cancel-notice";
 import { PollView } from "@/features/poll/components/poll-view";
 import styles from "@/features/poll/components/poll.module.css";
 import { TripShell } from "@/features/trips/components/trip-shell";
@@ -11,6 +12,7 @@ import { loadTripView, openNames, type TripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { pollShareTexts, tripLink } from "@/features/trips/share-texts";
 import { diffDays, formatDate } from "@/lib/dates";
+import { pollCancelNoticeDue } from "@/lib/poll";
 
 type Params = PageProps<"/trips/[id]/poll">;
 
@@ -27,11 +29,18 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 async function EmptyPoll({ view }: { view: TripView }) {
   const t = await getTranslations("poll");
   const tTrip = await getTranslations("trip");
-  const { trip, isOrganizer, members, format } = view;
+  const { trip, isOrganizer, members, format, me } = view;
   const orga = members.find((m) => m.role === "organizer")?.displayName ?? "";
   const open = openNames(view);
+  const canceller = members.find((m) => m.userId === trip.pollCanceledBy)?.displayName;
   return (
     <section className={styles.empty}>
+      {pollCancelNoticeDue(trip, me) ? (
+        <CancelNotice
+          publicId={trip.publicId}
+          text={canceller ? t("canceledNotice", { name: canceller }) : t("canceledNoticeUnknown")}
+        />
+      ) : null}
       <Illustration name="vote-waiting" width={180} />
       {isOrganizer ? (
         <>

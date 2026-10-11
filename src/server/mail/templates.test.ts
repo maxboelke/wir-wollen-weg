@@ -3,6 +3,9 @@ import {
   escapeHtml,
   maskEmail,
   renderAccessEmail,
+  renderAccountDeletedEmail,
+  renderAccountInactiveNoticeEmail,
+  renderTripDeletionNoticeEmail,
   renderChangeEmailEmail,
   renderEmailChangedEmail,
   renderPasswordResetEmail,
@@ -44,17 +47,18 @@ describe("renderAccessEmail", () => {
   it("is self-contained: no external images, fonts or tracking", () => {
     const { html } = renderAccessEmail({ ...base, locale: "en" });
     expect(html).not.toMatch(/<img|@import|<link|url\(/i);
-    // the only link is the magic link
-    expect(html.match(/href="/g)).toHaveLength(1);
+    // the only links: the magic link and the imprint in the footer (compliance §0a)
+    expect(html.match(/href="/g)).toHaveLength(2);
+    expect(html).toContain('href="http://localhost:3000/en/imprint"');
     expect(html).toContain('lang="en"');
   });
 
   it("signs with the product name in the mail language", () => {
-    expect(renderAccessEmail({ ...base, locale: "de" }).text.endsWith("– Wir wollen weg")).toBe(
-      true,
+    expect(renderAccessEmail({ ...base, locale: "de" }).text.split("\n")).toContain(
+      "– Wir wollen weg",
     );
-    expect(renderAccessEmail({ ...base, locale: "en" }).text.endsWith("– When do we go?")).toBe(
-      true,
+    expect(renderAccessEmail({ ...base, locale: "en" }).text.split("\n")).toContain(
+      "– When do we go?",
     );
   });
 });
@@ -92,5 +96,41 @@ describe("other transactional mails", () => {
 
   it("masks addresses", () => {
     expect(maskEmail("lena@example.org")).toBe("l•••@example.org");
+  });
+});
+
+describe("privacy mails (F-013, F-043)", () => {
+  it("confirms the deletion and names trips deleted for everybody (escaped)", () => {
+    const mail = renderAccountDeletedEmail({ locale: "de", deletedTrips: ["<Test>", "Wien"] });
+    expect(mail.subject).toBe("Dein Konto wurde gelöscht");
+    expect(mail.text).toContain("Für alle gelöscht wurden auch: „<Test>“, „Wien“.");
+    expect(mail.html).toContain("&lt;Test&gt;");
+    const en = renderAccountDeletedEmail({ locale: "en", deletedTrips: [], inactive: true });
+    expect(en.text).toContain("wasn't used for 24 months");
+    expect(en.text).not.toContain("Also deleted");
+  });
+
+  it("tells the organiser date and reason 14 days before a trip is deleted", () => {
+    const mail = renderTripDeletionNoticeEmail({
+      locale: "de",
+      tripName: "Malle 2026",
+      date: new Date("2026-10-25T00:00:00Z"),
+      reason: "afterTrip",
+      tripUrl: "https://app.example/trips/abcdefghij",
+    });
+    expect(mail.subject).toBe("„Malle 2026“ wird bald gelöscht");
+    expect(mail.text).toContain("am 25. Oktober 2026");
+    expect(mail.text).toContain("90 Tagen");
+    expect(mail.text.split("\n")).toContain("https://app.example/trips/abcdefghij");
+  });
+
+  it("warns an inactive account 30 days before with a sign-in link", () => {
+    const mail = renderAccountInactiveNoticeEmail({
+      locale: "en",
+      date: new Date("2026-11-10T00:00:00Z"),
+      loginUrl: "https://app.example/login",
+    });
+    expect(mail.text).toContain("on 10 November 2026");
+    expect(mail.html).toContain('href="https://app.example/login"');
   });
 });

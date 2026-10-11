@@ -907,6 +907,14 @@ export function GroupView(props: GroupViewProps) {
           </button>
         </p>
       ) : null}
+      {duration < props.minNights ? (
+        // ux-spec §12 A3 / R-054: a duration below the organiser's minimum is allowed for
+        // looking around, but said – such spans cannot become vote options (B5).
+        <p className={styles.onlyYou} role="status">
+          <Icon name="info" size={16} />
+          <span>{t("filters.belowMin", { count: props.minNights })}</span>
+        </p>
+      ) : null}
     </div>
   );
 

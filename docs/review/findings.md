@@ -523,7 +523,7 @@ Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), We
 | R-051 | mittel | Vorschlag-Leiste bei großer Schrift: Inhalt quillt aus der Leiste (über den Kalender und unter den Bildschirmrand) | verifiziert (vom Reviewer behoben) |
 | R-052 | mittel | Desktop ≥ 960 px: zwei Monate nebeneinander → Zellen 37 px, ✓ verdeckt „5/5“, „◐1“ läuft in den Pegel | verifiziert (vom Reviewer behoben) – UI/UX bitte Layout bestätigen |
 | R-053 | niedrig | „Fast alle dabei“ schlägt Zeiträume vor, die niemand kann („0 können · ohne Tim“) | verifiziert (vom Reviewer behoben) |
-| R-054 | niedrig | Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis (ux-spec §12 A3) | offen |
+| R-054 | niedrig | Filter „Dauer“ unter dem Reise-Minimum ohne Hinweis (ux-spec §12 A3) | behoben – bitte prüfen |
 
 ### R-050: Heatmap-Zelle – Siegel verdeckt den Zählwert, große Schrift sprengt die Zelle
 - Schwere: mittel · vom Reviewer behoben
@@ -561,7 +561,8 @@ Geprüft: F-008 (Heatmap, Zählregel U-4), F-009 (Vorschläge, Gruppen U-14), We
 - Problem / Reproduktion: Reise mit Mindestdauer 4, Filter „Dauer“ = 2 Nächte → Vorschläge mit 2 Nächten erscheinen ohne Hinweis, dass die Orga mindestens 4 vorgegeben hat. UI/UX fordert (ux-spec §12 A3, nicht blockierend) unter dem Filter: «Kürzer als die Orga-Vorgabe (mind. n Nächte).»
 - Erwartetes Verhalten: Hinweiszeile in der Filterzeile (kein Dialog), DE/EN.
 - Vorschlag: neben/unter `filters.onlyYou` eine zweite Zeile, solange `duration < minNights`.
-- Status: offen
+- Umsetzung (Developer 2026-10-11, Inkrement 6): Hinweiszeile in der Filterzeile (`role="status"`, Info-Icon) «Kürzer als die Orga-Vorgabe (mind. n Nächte).» / «Shorter than the organizer's minimum (at least n nights).» (`group.filters.belowMin`), solange `duration < minNights`; zusammen mit B5 (Hinweis auf „Abstimmung erstellen“, wenn gewählte Vorschläge zu kurz sind). E2E `increment-6-trips.spec.ts` › „short picks … (B5) … (A3)“.
+- Status: behoben – bitte prüfen
 
 #### Hinweise ohne Finding (Inkrement 4)
 - **Zählregel/Algorithmus:** gegen F-008/F-009 geprüft – x zählt nur „Geht“, n nur Abgegebene (Entwürfe/Platzhalter nie), ✓ ⇔ x = n ≥ 1, ◐ und ✓ schließen sich aus, „Zur Not“ blockiert nie. Vorschläge: maximale Spannen, Ränder des Suchzeitraums, Minimum = Suchzeitraum − 1, niemand abgegeben, einer blockiert alles, Sortierung (Fehlende → ◐-Personentage → Abstand zur Wunschlänge → Start → Ende → Ids, deterministisch), überlappende „Fast alle“-Spannen verschiedener Personensets (gewollt, „ohne Tim: 1.–19. Juni“). Abweichung 1 (Dauer = Wunsch, Minimum = min(Reise, Dauer)) logisch und von UI/UX bestätigt. Laufzeit: 30 × 365 × Toleranz 3 deutlich < 500 ms; `noMatchHints` im ungünstigsten Fall (Minimum 21, nichts passt) 40–150 ms.

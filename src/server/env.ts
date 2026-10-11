@@ -34,6 +34,9 @@ const schema = z.object({
   PASSWORD_BREACH_CHECK: z.enum(["off", "hibp"]).default("off"),
   // Contact address on the help page (F-051) – placeholder until go-live (Q15).
   CONTACT_EMAIL: z.string().default("hallo@example.org"),
+  // Retention job (F-013/F-043): POST /api/internal/retention with «Authorization: Bearer
+  // <token>», scheduled daily by Operations. Unset = endpoint disabled (404).
+  RETENTION_TOKEN: z.string().min(32).optional(),
 });
 
 export type ServerEnv = z.infer<typeof schema>;

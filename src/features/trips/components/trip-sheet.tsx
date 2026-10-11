@@ -13,7 +13,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/toast";
 import { formatDate } from "@/lib/dates";
 import { DISPLAY_NAME_MAX } from "@/lib/display-name";
-import { unfixDatesAction } from "../../poll/actions";
+import { cancelPollAction, unfixDatesAction } from "../../poll/actions";
 import {
   deleteTripAction,
   leaveTripAction,
@@ -39,6 +39,7 @@ export type SheetStep =
   | { kind: "transfer"; preselect?: string | undefined }
   | { kind: "delete" }
   | { kind: "unfix" }
+  | { kind: "cancelPoll" }
   | { kind: "member"; member: SheetMember }
   | { kind: "remove"; member: SheetMember };
 
@@ -54,6 +55,8 @@ export interface TripSheetContext {
   helpHref: string;
   /** Organiser in phase 3: «Festlegung aufheben» (F-012, W11-07). */
   canUnfix: boolean;
+  /** Organiser in phase 2, tab «Abstimmen»: «Abstimmung abbrechen» (Q21, ux-spec §13.1 a). */
+  canCancelPoll: boolean;
 }
 
 interface TripSheetProps extends TripSheetContext {
@@ -109,6 +112,8 @@ function sheetTitle(
       return t("dialogs.deleteTitle");
     case "unfix":
       return t("dialogs.unfixTitle");
+    case "cancelPoll":
+      return t("dialogs.cancelPollTitle");
     case "member":
       return step.member.displayName;
     case "remove":
@@ -135,6 +140,8 @@ function SheetBody({
       return <DeleteStep onClose={onClose} {...context} />;
     case "unfix":
       return <UnfixStep onClose={onClose} {...context} />;
+    case "cancelPoll":
+      return <CancelPollStep onClose={onClose} {...context} />;
     case "member":
       return <MemberStep member={step.member} onStep={onStep} {...context} />;
     case "remove":
@@ -183,11 +190,23 @@ function MenuStep({
   isOrganizer,
   canInvite,
   canUnfix,
+  canCancelPoll,
   helpHref,
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.menuItems");
   return (
     <ul className={styles.menu}>
+      {canCancelPoll ? (
+        <MenuItem
+          icon="undo"
+          onClick={() => {
+            onStep({ kind: "cancelPoll" });
+          }}
+          danger
+        >
+          {t("cancelPoll")}
+        </MenuItem>
+      ) : null}
       {canUnfix ? (
         <MenuItem
           icon="undo"
@@ -571,6 +590,43 @@ function UnfixStep({ onClose, publicId }: { onClose: () => void } & TripSheetCon
           {t("unfixConfirm")}
         </Button>
       </Actions>
+    </div>
+  );
+}
+
+/**
+ * «Abstimmung abbrechen?» (Q21, ux-spec §13.1 a): destructive, so the safe choice
+ * «Abstimmung behalten» has the focus; the action button says what it does – never twice
+ * «abbrechen». Options and votes go, everyone's days stay, back to «Tage sammeln».
+ */
+function CancelPollStep({ onClose, publicId }: { onClose: () => void } & TripSheetContext) {
+  const t = useTranslations("trip.dialogs");
+  const { run, pending, error, toast } = useResult();
+  return (
+    <div className={styles.body}>
+      <p>{t("cancelPollText")}</p>
+      <ErrorLine error={error} />
+      <div className={styles.actions}>
+        <Button variant="secondary" size="md" data-autofocus="" onClick={onClose}>
+          {t("cancelPollKeep")}
+        </Button>
+        <Button
+          variant="danger"
+          size="md"
+          loading={pending}
+          onClick={() => {
+            run(
+              () => cancelPollAction(publicId),
+              () => {
+                toast({ message: t("cancelPollDone") });
+                onClose();
+              },
+            );
+          }}
+        >
+          {t("cancelPollConfirm")}
+        </Button>
+      </div>
     </div>
   );
 }

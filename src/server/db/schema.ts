@@ -51,6 +51,13 @@ export const user = pgTable("user", {
   weekStart: text("week_start").notNull().default("auto"),
   /** Account switch "Reduce motion" (Q17 a): true = always reduced, false = follow the device. */
   reduceMotion: boolean("reduce_motion").notNull().default(false),
+  /**
+   * Last sign-in or use of the app (throttled to once a day) – inactive accounts are deleted
+   * after 24 months, with a notice mail 30 days before (F-043, compliance-checklist §6).
+   */
+  lastActiveAt: timestamp("last_active_at", { withTimezone: true }).notNull().defaultNow(),
+  /** When the inactivity notice was sent; cleared as soon as the account is used again. */
+  inactivityNoticeSentAt: timestamp("inactivity_notice_sent_at", { withTimezone: true }),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });
@@ -184,6 +191,15 @@ export const trip = pgTable(
     pollDeadline: date("poll_deadline", { mode: "string" }),
     /** When the vote was started (F-010) – phase «voting» since then. */
     pollStartedAt: timestamp("poll_started_at", { withTimezone: true }),
+    /**
+     * «Abstimmung abbrechen» (Q21, ux-spec §13.1 a): when and by whom the last vote was
+     * cancelled – members see a one-off notice «{Name} hat die Abstimmung abgebrochen.».
+     * Cleared when a new vote starts.
+     */
+    pollCanceledAt: timestamp("poll_canceled_at", { withTimezone: true }),
+    pollCanceledBy: uuid("poll_canceled_by").references(() => user.id, { onDelete: "set null" }),
+    /** Automatic deletion (F-013): the organiser was told 14 days before (notice mail). */
+    deletionNoticeSentAt: timestamp("deletion_notice_sent_at", { withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -230,6 +246,8 @@ export const tripMember = pgTable(
      * range fixed later celebrates again; the same range does not.
      */
     celebratedFor: text("celebrated_for"),
+    /** Saw the one-off notice about the cancelled vote (Q21) – compared with trip.pollCanceledAt. */
+    pollCancelSeenAt: timestamp("poll_cancel_seen_at", { withTimezone: true }),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),

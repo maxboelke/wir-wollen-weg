@@ -19,6 +19,15 @@ interface BottomSheetProps {
 }
 
 /**
+ * Where focus goes when the sheet (or a new step) opens: the heading – or, for destructive
+ * confirmations whose safe choice must be the default (ux-spec §4.2, §13.1 a), the element
+ * marked `data-autofocus` (e.g. «Abstimmung behalten»).
+ */
+function initialFocusTarget(dialog: HTMLDialogElement, title: HTMLElement | null) {
+  return dialog.querySelector<HTMLElement>("[data-autofocus]") ?? title;
+}
+
+/**
  * Bottom sheet (< 960 px) / dialog (≥ 960 px) on a native modal `<dialog>`: focus trap,
  * Esc and the top layer come from the platform (ux-spec §4.2, design-system §9.16).
  * Motion G-05/G-05b: slides up (`slow` · emphasized), closes faster; reduced = fade.
@@ -68,7 +77,7 @@ export function BottomSheet({
         document.activeElement instanceof HTMLElement ? document.activeElement : null;
       dialog.showModal();
       // Focus at the start of the animation, never at its end (motion-system §6.1).
-      titleRef.current?.focus();
+      initialFocusTarget(dialog, titleRef.current)?.focus();
       const reduced = prefersReducedMotion();
       dialog.animate(
         reduced
@@ -115,7 +124,8 @@ export function BottomSheet({
   useEffect(() => {
     if (lastFocusKey.current === focusKey) return;
     lastFocusKey.current = focusKey;
-    if (dialogRef.current?.open && !closing.current) titleRef.current?.focus();
+    const dialog = dialogRef.current;
+    if (dialog?.open && !closing.current) initialFocusTarget(dialog, titleRef.current)?.focus();
   }, [focusKey]);
 
   return (

@@ -1,0 +1,14 @@
+/* W14 «Konto gelöscht» – centred system page (max. 480 px) */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+  align-items: center;
+  max-width: 30rem;
+  margin-inline: auto;
+  text-align: center;
+}
+
+.lead {
+  color: var(--ww-color-text-muted);
+}
