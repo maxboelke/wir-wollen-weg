@@ -63,6 +63,8 @@ export default async function TripSettingsPage({ params }: Params) {
           regions={regions}
           originalStart={trip.rangeStart}
           originalDeadline={trip.deadline}
+          originalEnd={trip.rangeEnd}
+          endNotPast={trip.phase !== "collecting"}
           action={updateTripAction.bind(null, trip.publicId)}
           notice={
             <Banner tone="info">

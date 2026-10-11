@@ -342,6 +342,51 @@
   margin-block-start: var(--ww-space-4);
 }
 
+/* Organiser checkbox «Zur Abstimmung» (§9.10): 24 px box, 44 px hit area */
+.pick {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  align-self: flex-start;
+  min-height: var(--ww-size-touch-min);
+  padding-inline-end: var(--ww-space-2);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.pick input {
+  width: 24px;
+  height: 24px;
+  margin: 0;
+  accent-color: var(--ww-color-selected, var(--ww-color-primary));
+}
+
+.pick input:focus-visible {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: 2px;
+}
+
+/* «2 ausgewählt · Abstimmung erstellen» – sticky at the bottom of the list (W09) */
+.pickBar {
+  position: sticky;
+  bottom: 0;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2) var(--ww-space-3);
+  margin-block-start: var(--ww-space-4);
+  margin-inline: calc(-1 * var(--ww-space-2));
+  padding: var(--ww-space-3) var(--ww-space-4) calc(var(--ww-space-3) + env(safe-area-inset-bottom));
+  border: var(--ww-border-forced);
+  border-start-start-radius: var(--ww-radius-sheet);
+  border-start-end-radius: var(--ww-radius-sheet);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-sticky-bottom);
+  font-weight: var(--ww-font-weight-bold);
+}
+
 /* ---------------------------------------------------------------- empty states (W09-11) */
 .empty {
   display: flex;

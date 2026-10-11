@@ -70,6 +70,18 @@ describe("progress and to-dos (F-007, F-044)", () => {
     expect(viewerTodo("vote", member({ submittedAt: "x" }), { done: 1, total: 3 })).toBe("vote");
     expect(viewerTodo("fixed", member(), null)).toBeNull();
   });
+
+  it("organiser who voted: «fixDates» once everybody voted or the deadline passed (F-017)", () => {
+    const orga = member({ role: "organizer", submittedAt: "x", votedAt: "x" });
+    expect(viewerTodo("vote", orga, { done: 2, total: 3 })).toBeNull();
+    expect(viewerTodo("vote", orga, { done: 3, total: 3 })).toBe("fixDates");
+    expect(viewerTodo("vote", orga, { done: 1, total: 3 }, { deadlinePassed: true })).toBe(
+      "fixDates",
+    );
+    // Own vote first, members never get «fixDates».
+    expect(viewerTodo("vote", member({ role: "organizer" }), { done: 2, total: 3 })).toBe("vote");
+    expect(viewerTodo("vote", member({ votedAt: "x" }), { done: 3, total: 3 })).toBeNull();
+  });
 });
 
 describe("defaultTab (sitemap §2)", () => {
@@ -84,10 +96,11 @@ describe("defaultTab (sitemap §2)", () => {
   it("Increment 4: «Meine Tage» and «Gruppe» are built – missing dates open «Meine Tage»", () => {
     expect(BUILT_TABS.has("days")).toBe(true);
     expect(BUILT_TABS.has("group")).toBe(true);
-    expect(BUILT_TABS.has("poll")).toBe(false);
+    expect(BUILT_TABS.has("poll")).toBe(true);
     expect(defaultTab("collect", member())).toBe("days");
     expect(defaultTab("collect", member({ submittedAt: "x" }))).toBe("overview");
-    expect(defaultTab("vote", member())).toBe("overview");
+    expect(defaultTab("vote", member())).toBe("poll");
+    expect(defaultTab("vote", member({ votedAt: "x" }))).toBe("overview");
     expect(defaultTab("fixed", member())).toBe("overview");
   });
 });

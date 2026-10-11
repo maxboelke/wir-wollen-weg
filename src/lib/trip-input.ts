@@ -50,6 +50,7 @@ export type TripErrorKey =
   | "startInPast"
   | "endRequired"
   | "endBeforeStart"
+  | "endInPast"
   | "rangeTooLong"
   | "rangeTooShort"
   | "nightsRange"
@@ -150,6 +151,14 @@ interface ValidateOptions {
   originalStart?: IsoDate | undefined;
   /** When editing: an unchanged deadline may lie in the past (it has expired, R-040). */
   originalDeadline?: IsoDate | null | undefined;
+  /**
+   * When editing after the vote has started (phase ≠ «collecting»): the end must not be moved
+   * before this date (the real today) – otherwise the trip would tip into «Vergangen» and end
+   * the running vote (R-055, ux-spec §13.1 b). An unchanged end is kept as it is.
+   */
+  endNotBefore?: IsoDate | undefined;
+  /** When editing: the end before the change (exempt from `endNotBefore`). */
+  originalEnd?: IsoDate | undefined;
 }
 
 /**
@@ -158,7 +167,7 @@ interface ValidateOptions {
  */
 export function validateTrip(
   draft: TripDraft,
-  { today, originalStart, originalDeadline }: ValidateOptions,
+  { today, originalStart, originalDeadline, endNotBefore, originalEnd }: ValidateOptions,
 ): { ok: true; values: TripValues } | { ok: false; errors: TripErrors } {
   const errors: TripErrors = {};
   const name = draft.name.trim();
@@ -187,7 +196,9 @@ export function validateTrip(
   else if (start < today && start !== originalStart) errors.rangeStart = { key: "startInPast" };
 
   if (!isIsoDate(end)) errors.rangeEnd = { key: "endRequired" };
-  else if (startValid) {
+  else if (endNotBefore !== undefined && end < endNotBefore && end !== originalEnd) {
+    errors.rangeEnd = { key: "endInPast" };
+  } else if (startValid) {
     if (end <= start) errors.rangeEnd = { key: "endBeforeStart" };
     else if (end > addDays(addMonths(start, RANGE_MAX_MONTHS), -1)) {
       errors.rangeEnd = { key: "rangeTooLong" };

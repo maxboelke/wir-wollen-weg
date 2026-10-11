@@ -13,6 +13,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/toast";
 import { formatDate } from "@/lib/dates";
 import { DISPLAY_NAME_MAX } from "@/lib/display-name";
+import { unfixDatesAction } from "../../poll/actions";
 import {
   deleteTripAction,
   leaveTripAction,
@@ -37,6 +38,7 @@ export type SheetStep =
   | { kind: "leave" }
   | { kind: "transfer"; preselect?: string | undefined }
   | { kind: "delete" }
+  | { kind: "unfix" }
   | { kind: "member"; member: SheetMember }
   | { kind: "remove"; member: SheetMember };
 
@@ -50,6 +52,8 @@ export interface TripSheetContext {
   members: SheetMember[];
   intl: string;
   helpHref: string;
+  /** Organiser in phase 3: «Festlegung aufheben» (F-012, W11-07). */
+  canUnfix: boolean;
 }
 
 interface TripSheetProps extends TripSheetContext {
@@ -103,6 +107,8 @@ function sheetTitle(
       return t("dialogs.transferTitle");
     case "delete":
       return t("dialogs.deleteTitle");
+    case "unfix":
+      return t("dialogs.unfixTitle");
     case "member":
       return step.member.displayName;
     case "remove":
@@ -127,6 +133,8 @@ function SheetBody({
       return <TransferStep onClose={onClose} preselect={step.preselect} {...context} />;
     case "delete":
       return <DeleteStep onClose={onClose} {...context} />;
+    case "unfix":
+      return <UnfixStep onClose={onClose} {...context} />;
     case "member":
       return <MemberStep member={step.member} onStep={onStep} {...context} />;
     case "remove":
@@ -174,11 +182,22 @@ function MenuStep({
   publicId,
   isOrganizer,
   canInvite,
+  canUnfix,
   helpHref,
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.menuItems");
   return (
     <ul className={styles.menu}>
+      {canUnfix ? (
+        <MenuItem
+          icon="undo"
+          onClick={() => {
+            onStep({ kind: "unfix" });
+          }}
+        >
+          {t("unfix")}
+        </MenuItem>
+      ) : null}
       {canInvite ? (
         <MenuItem icon="share" href={tripPath(publicId, "invite")}>
           {t("invite")}
@@ -518,6 +537,41 @@ function DeleteStep({ onClose, publicId, tripName }: { onClose: () => void } & T
         </Button>
       </Actions>
     </form>
+  );
+}
+
+/**
+ * «Festlegung aufheben» (F-012, W11-07): calm – no animation, the vote opens again with all
+ * votes kept; the organiser lands in the tab «Abstimmen».
+ */
+function UnfixStep({ onClose, publicId }: { onClose: () => void } & TripSheetContext) {
+  const t = useTranslations("trip.dialogs");
+  const router = useRouter();
+  const { run, pending, error, toast } = useResult();
+  return (
+    <div className={styles.body}>
+      <p>{t("unfixText")}</p>
+      <ErrorLine error={error} />
+      <Actions onCancel={onClose}>
+        <Button
+          variant="danger"
+          size="md"
+          loading={pending}
+          onClick={() => {
+            run(
+              () => unfixDatesAction(publicId),
+              () => {
+                toast({ message: t("unfixDone") });
+                onClose();
+                router.push(tripPath(publicId, "poll"));
+              },
+            );
+          }}
+        >
+          {t("unfixConfirm")}
+        </Button>
+      </Actions>
+    </div>
   );
 }
 

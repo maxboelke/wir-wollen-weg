@@ -22,7 +22,12 @@ function draft(patch: Partial<TripDraft> = {}): TripDraft {
 
 function errorOf(
   patch: Partial<TripDraft>,
-  options: { originalStart?: string; originalDeadline?: string | null } = {},
+  options: {
+    originalStart?: string;
+    originalDeadline?: string | null;
+    originalEnd?: string;
+    endNotBefore?: string | undefined;
+  } = {},
 ) {
   const result = validateTrip(draft(patch), { today: TODAY, ...options });
   return result.ok ? {} : result.errors;
@@ -109,6 +114,27 @@ describe("validateTrip (F-001, ux-spec §5.2)", () => {
     ).toEqual({ key: "deadlineInPast" });
     expect(errorOf({ holidayRegion: "FR" }).holidayRegion).toEqual({ key: "regionInvalid" });
     expect(errorOf({ holidayRegion: "DE-XX" }).holidayRegion).toEqual({ key: "regionInvalid" });
+  });
+
+  it("R-055: after the vote has started the end cannot move into the past", () => {
+    // Running trip: started 2027-01-01, the organiser shortens the range on 2027-01-10.
+    const running = { originalStart: "2027-01-01", originalEnd: "2027-06-30" };
+    const edit = (rangeEnd: string, endNotBefore?: string) =>
+      errorOf({ rangeStart: "2027-01-01", rangeEnd, minNights: "2" }, { ...running, endNotBefore })
+        .rangeEnd;
+    // Phase «collecting» (no floor): any end after the start is fine, even a past one.
+    expect(edit("2027-01-08")).toBeUndefined();
+    // Phase ≠ «collecting»: yesterday is refused, today and later are accepted.
+    expect(edit("2027-01-09", TODAY)).toEqual({ key: "endInPast" });
+    expect(edit("2027-01-10", TODAY)).toBeUndefined();
+    expect(edit("2027-03-01", TODAY)).toBeUndefined();
+    // An unchanged end that has already passed (time ran out) does not block other edits.
+    expect(
+      errorOf(
+        { name: "Neu", rangeStart: "2026-11-01", rangeEnd: "2026-12-31" },
+        { originalStart: "2026-11-01", originalEnd: "2026-12-31", endNotBefore: TODAY },
+      ).rangeEnd,
+    ).toBeUndefined();
   });
 
   it("first faulty field follows the form order", () => {

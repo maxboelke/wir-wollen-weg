@@ -1,0 +1,206 @@
+/* W11 «Es geht los!» – Vorfreude ring (design-system §9.12) and result card (§9.6) */
+
+.ring {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  margin-inline: auto;
+  aspect-ratio: 390 / 192;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ringSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* Countdown in the ring centre: number at once, never counts up (G-16), decorative. */
+.countdown {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: 0;
+  color: var(--ww-cockpit-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: 1.2;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  max-width: 7.5rem;
+}
+
+.countdown b {
+  display: block;
+  margin-block: var(--ww-space-0-5);
+  color: var(--ww-cockpit-text);
+  font-family: var(--ww-font-display);
+  font-size: clamp(2.25rem, 1.8rem + 2vw, 2.875rem);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-tight);
+  line-height: 1;
+}
+
+/* Confetti puff layer from the sun dot (W11-02) – never catches input */
+.ring [data-burst] {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.ring [data-burst] i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+/*
+ * R-017: when the celebration will play, the moving layers are hidden BEFORE the first paint
+ * (only with JavaScript and full motion), so it never hides something already visible.
+ * Failsafe: shown after 2.4 s if the script never runs.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :global(:root[data-js]:not([data-motion="reduce"])) .ring[data-celebrate="pending"] [data-anim] {
+    opacity: 0;
+    animation: ring-failsafe 0s linear 2.4s forwards;
+  }
+}
+
+@keyframes ring-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+/* Result card: surface, radius 28, shadow-3, reaches 32 px into the cockpit */
+.card {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  /* reaches 24 px into the cockpit tail (main has 24 px top padding) */
+  margin-top: calc(-2 * var(--ww-space-6));
+  padding: var(--ww-space-5) calc(var(--ww-space-4) + var(--ww-space-0-5));
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-result);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-3);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-accent-text);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.title {
+  font-size: var(--ww-text-display);
+  line-height: 1.08;
+}
+
+.title:focus {
+  outline: none;
+}
+
+.title:focus-visible {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: 2px;
+}
+
+.date {
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-2xl);
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-tight);
+  line-height: var(--ww-leading-tight);
+  text-wrap: balance;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-1) var(--ww-space-3);
+  margin-bottom: var(--ww-space-2);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.metaItem {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.menu {
+  position: relative;
+}
+
+.menuList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  margin: var(--ww-space-1-5) 0 0;
+  padding: var(--ww-space-1-5);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface-raised, var(--ww-color-surface));
+  box-shadow: var(--ww-shadow-3);
+  list-style: none;
+  transform-origin: top center;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  min-height: 44px;
+  padding: 0 var(--ww-space-3);
+  border-radius: var(--ww-radius-md);
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-semibold);
+  text-decoration: none;
+}
+
+.menuItem:hover {
+  background: var(--ww-color-surface-sunken);
+}
+
+.menuItem:focus-visible {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: 2px;
+}
+
+.hint {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.banner {
+  margin-bottom: var(--ww-space-4);
+}
+
+@media (min-width: 600px) {
+  .actions {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .actions > * {
+    flex: 1 1 14rem;
+  }
+}

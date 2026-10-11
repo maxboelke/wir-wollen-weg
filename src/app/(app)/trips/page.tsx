@@ -41,7 +41,9 @@ function toCard(
     votedAt: i < votedCount ? "x" : null,
   }));
   const progress = phaseProgress(phase, members, placeholderCount);
-  const todo = viewerTodo(phase, me, progress);
+  const todo = viewerTodo(phase, me, progress, {
+    deadlinePassed: trip.pollDeadline !== null && trip.pollDeadline < today,
+  });
   return {
     publicId: trip.publicId,
     name: trip.name,
@@ -49,7 +51,8 @@ function toCard(
     organizer: me.role === "organizer",
     progress,
     todo,
-    deadline: trip.deadline,
+    deadline: phase === "vote" ? trip.pollDeadline : trip.deadline,
+    pollDeadline: trip.pollDeadline,
     fixedStart: trip.fixedStart,
     fixedEnd: trip.fixedEnd,
     daysToGo: trip.fixedStart ? daysUntil(trip.fixedStart, today) : null,

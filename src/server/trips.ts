@@ -205,8 +205,26 @@ export async function createTrip(
 }
 
 /** F-001: edit trip data (organiser only – checked by the caller). */
-export async function updateTrip(tripId: string, values: TripValues): Promise<void> {
-  await db().update(trip).set(values).where(eq(trip.id, tripId));
+/**
+ * Saves the trip data. `onlyWhileCollecting`: the new range end lies in the past – allowed only
+ * while no vote has started; checked in the same statement, so a vote started meanwhile cannot
+ * be tipped into «Vergangen» (R-055). Returns false when nothing was saved.
+ */
+export async function updateTrip(
+  tripId: string,
+  values: TripValues,
+  { onlyWhileCollecting = false }: { onlyWhileCollecting?: boolean } = {},
+): Promise<boolean> {
+  const rows = await db()
+    .update(trip)
+    .set(values)
+    .where(
+      onlyWhileCollecting
+        ? and(eq(trip.id, tripId), eq(trip.phase, "collecting"))
+        : eq(trip.id, tripId),
+    )
+    .returning({ id: trip.id });
+  return rows.length > 0;
 }
 
 /**

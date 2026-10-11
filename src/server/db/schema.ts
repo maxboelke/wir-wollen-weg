@@ -178,6 +178,12 @@ export const trip = pgTable(
     /** Fixed dates (F-012, Increment 5) – set together with phase "fixed". */
     fixedStart: date("fixed_start", { mode: "string" }),
     fixedEnd: date("fixed_end", { mode: "string" }),
+    /** When the dates were fixed – start of the «Vorfreude» ring (design-system §9.12). */
+    fixedAt: timestamp("fixed_at", { withTimezone: true }),
+    /** Optional voting deadline (F-017, Flow D.1 #3) – never decides automatically. */
+    pollDeadline: date("poll_deadline", { mode: "string" }),
+    /** When the vote was started (F-010) – phase «voting» since then. */
+    pollStartedAt: timestamp("poll_started_at", { withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -185,6 +191,10 @@ export const trip = pgTable(
     check("trip_phase_check", sql`${table.phase} in ('collecting', 'voting', 'fixed')`),
     check("trip_range_check", sql`${table.rangeEnd} > ${table.rangeStart}`),
     check("trip_nights_check", sql`${table.minNights} between 1 and 30`),
+    check(
+      "trip_fixed_check",
+      sql`(${table.phase} = 'fixed') = (${table.fixedStart} is not null and ${table.fixedEnd} is not null)`,
+    ),
   ],
 );
 
@@ -214,6 +224,12 @@ export const tripMember = pgTable(
      * have helped – "apple" | "google" | "outlook" | "other" | "none" | "skipped".
      */
     importFeedback: text("import_feedback"),
+    /**
+     * Fixed range («2027-05-05/2027-05-10») for which this member has seen the celebration
+     * «Es geht los!» (F-012, Q17 b): once per person and fixing, across devices. A different
+     * range fixed later celebrates again; the same range does not.
+     */
+    celebratedFor: text("celebrated_for"),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
@@ -305,4 +321,68 @@ export const rateLimitEvent = pgTable(
     createdAt: createdAt(),
   },
   (table) => [index("rate_limit_event_key_kind_idx").on(table.key, table.kind, table.createdAt)],
+);
+
+// ---------------------------------------------------------------------------
+// Vote (F-010, F-011, F-012 – Increment 5)
+// ---------------------------------------------------------------------------
+
+/** Answers per option (F-011). */
+export const VOTE_CHOICES = ["yes", "maybe", "no"] as const;
+export type VoteChoice = (typeof VOTE_CHOICES)[number];
+
+/**
+ * Options of the trip's vote (F-010): concrete periods (arrival and departure day). One vote
+ * per trip in the MVP – it is «open» while the trip is in phase «voting»; options can only be
+ * added after the start, never changed (existing votes stay valid). Duplicates are prevented
+ * by the unique index.
+ */
+export const pollOption = pgTable(
+  "poll_option",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    startDate: date("start_date", { mode: "string" }).notNull(),
+    endDate: date("end_date", { mode: "string" }).notNull(),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("poll_option_trip_range_idx").on(table.tripId, table.startDate, table.endDate),
+    // Target of the composite foreign key of poll_vote (a vote and its option share the trip).
+    uniqueIndex("poll_option_id_trip_idx").on(table.id, table.tripId),
+    check("poll_option_range_check", sql`${table.endDate} > ${table.startDate}`),
+  ],
+);
+
+/**
+ * One answer per member and option (F-011: «genau eine Stimme») – the primary key makes a
+ * double vote impossible, also under parallel requests. Removal/leaving deletes the votes
+ * through the membership (F-004); deleting an option or trip cascades too.
+ */
+export const pollVote = pgTable(
+  "poll_vote",
+  {
+    optionId: uuid("option_id").notNull(),
+    tripId: uuid("trip_id").notNull(),
+    userId: uuid("user_id").notNull(),
+    choice: text("choice", { enum: VOTE_CHOICES }).notNull(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.optionId, table.userId] }),
+    index("poll_vote_trip_user_idx").on(table.tripId, table.userId),
+    foreignKey({
+      name: "poll_vote_option_fk",
+      columns: [table.optionId, table.tripId],
+      foreignColumns: [pollOption.id, pollOption.tripId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "poll_vote_member_fk",
+      columns: [table.tripId, table.userId],
+      foreignColumns: [tripMember.tripId, tripMember.userId],
+    }).onDelete("cascade"),
+    check("poll_vote_choice_check", sql`${table.choice} in ('yes', 'maybe', 'no')`),
+  ],
 );

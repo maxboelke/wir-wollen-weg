@@ -2,6 +2,7 @@ import "server-only";
 import { notFound, redirect } from "next/navigation";
 import { cache } from "react";
 import { todayIso } from "@/lib/dates";
+import { celebrationDue } from "@/lib/poll";
 import { phaseProgress, uiPhase, type Progress, type UiPhase } from "@/lib/trip-status";
 import { MAX_TRIP_MEMBERS } from "@/server/db/schema";
 import { getSession, type Session } from "@/server/session";
@@ -29,6 +30,11 @@ export interface TripView {
   full: boolean;
   today: string;
   format: ViewerFormat;
+  /**
+   * The dates are fixed and this member has not seen «Es geht los!» for them yet (F-012,
+   * Q17 b) – the overview celebrates, other tabs show «Der Termin steht fest! [Ansehen]».
+   */
+  celebrate: boolean;
 }
 
 /**
@@ -61,6 +67,14 @@ export const loadTripView = cache(async (publicId: string, path: string): Promis
     full: members.length + placeholders.length >= MAX_TRIP_MEMBERS,
     today,
     format,
+    celebrate:
+      phase === "fixed" &&
+      celebrationDue(
+        found.trip.fixedStart && found.trip.fixedEnd
+          ? { start: found.trip.fixedStart, end: found.trip.fixedEnd }
+          : null,
+        found.member.celebratedFor,
+      ),
   };
 });
 
