@@ -1,6 +1,6 @@
 # Status-Board – Wir wollen weg
 
-Stand: 2026-10-09 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
+Stand: 2026-10-16 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
 
 Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer ✅ bzw. CEO-Abnahme bei Konzeptdokumenten) · **blockiert** · **zurückgestellt** (bewusst bis Go-Live verschoben, nicht blockierend)
 
@@ -8,7 +8,7 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 
 ## Aktuelle Phase
 
-**Phase 1 – MVP, Inkrement 1 im Review** (M0 abgenommen 2026-10-08; Schritt 0a „UI-Fundament“ fertig, PR #5 gemergt; Review-Fixes R-021–R-031 in Nachprüfung). Entwicklung und Abnahme laufen lokal als Offline-Demo.
+**Phase 1 – MVP, Demo-Abnahme M0.5 vorbereitet** (Inkremente 1–6 gemergt, zuletzt PR #11 am 2026-10-16; Entscheidungen Q23/Q24 getroffen). Demo-Paket für den Auftraggeber liegt bereit: Ein-Befehl-Start `bash scripts/demo.sh start` (nur Docker nötig, Handy im WLAN), [demo-anleitung.md](demo-anleitung.md), [demo-drehbuch.md](demo-drehbuch.md) mit Feedback-Checkliste. **Nächster Schritt:** Demo-Termin mit dem Auftraggeber (OPS-11), danach Go-Live-Gate G1 besprechen bzw. Inkrement 7.
 
 ## Übersicht
 
@@ -29,14 +29,14 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | P1-0 | Projekt-Scaffold nach `docs/ops/tech-stack.md` (Next.js, pnpm, Drizzle, next-intl, ESLint/Prettier, Vitest, Playwright, Docker-Compose dev mit PostgreSQL + Mailpit, `compose.demo.yml` + Platzhalter-Startschutz (deployment.md §0), Skript-Vertrag für CI) | developer → reviewer | – | **fertig** (PR #4 gemergt 2026-10-08; T2-Gerätetest offen → OPS-10) | M0 ✅ |
 | P1-0a | Spike Auth: Kombi-Mail Code + Magic-Link, „angemeldet bleiben“ bei OTP (tech-stack.md §11, T1) – **lokal mit Mailpit, ohne In-App-Browser-Gerätetest**; T2 (WhatsApp/Instagram) später per Tunnel oder Staging | developer → reviewer | F-040, F-041 | **fertig** (PR #4 gemergt 2026-10-08; T2-Gerätetest offen → OPS-10) | P1-0 |
 | P1-0c | Schritt 0a „UI-Fundament“ (Look & Feel 2.0: Design-System v1.0 „Reise-Cockpit“, Indigo & Minze, Motion-System) | designer, motion-designer, developer → reviewer | F-046 (Basis) | **fertig** (PR #5 gemergt; Reviewer ⚠️ mit Anmerkungen, R-016–R-019 → Inkrement 1) | P1-0 |
-| P1-0b | Demo-Seed `db:seed:demo` (synthetische Personen `@demo.test`, Reisen in allen Phasen, relative Daten) – wächst mit jedem Inkrement | developer | – | **geplant** | P1-0; Ausbau mit P1-2 … P1-5 |
-| P1-1 | Inkrement 1: i18n-Gerüst (DE/EN) + Konto-Basis: Registrierung, Login/Logout, Zugangswiederherstellung, Konto (E-Mail/Passwort mit Re-Auth, „Bewegung reduzieren“), Hilfelinks F-051, Limits pro E-Mail | developer → reviewer | F-046, F-040, F-041, F-042, F-051 | **im Review** – Fixes R-021–R-031 in Nachprüfung durch den Reviewer (`docs/review/findings.md`); tech-stack.md §3.2 auf Ist-Stand (v1.2) | P1-0, P1-0a, P1-0c |
-| P1-2 | Reise anlegen, einladen, Beitritt im Einladungsflow, Rollen, „Meine Reisen“ | developer → reviewer | F-001, F-002, F-003, F-004, F-044 | **geplant** | P1-1 |
-| P1-3 | Verfügbarkeit manuell + Status + Feiertage/Wochenenden | developer → reviewer | F-005, F-007, F-016 | **geplant** | P1-2 |
-| P1-4 | Heatmap + Kandidaten-Berechnung | developer → reviewer | F-008, F-009 | **geplant** | P1-3 |
-| P1-5 | Abstimmung & Festlegung (inkl. ICS) | developer → reviewer | F-010, F-011, F-012 | **geplant** | P1-4 |
-| P1-6 | Datenschutz-Funktionen & Konto löschen (inkl. Retention-Job) | developer → reviewer | F-013, F-043 | **geplant** – **Notiz (Review Inkrement 2):** `trip_member.user_id` kaskadiert; löscht eine Orga ihr Konto, bliebe eine Reise ohne Orga → beim Konto-Löschen (F-043) **vorher Übergabe der Orga-Rolle oder Löschen der Reise erzwingen** (Retention-Job bei Inaktivität ebenso) | P1-2 (Konto/Reise), vor M2 Pflicht |
-| P1-7 | Should-Features nach Kapazität | developer → reviewer | F-015, F-017 | **geplant** | P1-5 |
+| P1-0b | Demo-Seed `db:seed:demo` (synthetische Personen `@demo.test`, Reisen in allen Phasen, relative Daten) – wächst mit jedem Inkrement | developer | – | **fertig** (wächst mit jedem Inkrement; Stand Inkrement 6: 9 Personen, 9 Reisen in allen Phasen) | P1-0; Ausbau mit P1-2 … P1-5 |
+| P1-1 | Inkrement 1: i18n-Gerüst (DE/EN) + Konto-Basis: Registrierung, Login/Logout, Zugangswiederherstellung, Konto (E-Mail/Passwort mit Re-Auth, „Bewegung reduzieren“), Hilfelinks F-051, Limits pro E-Mail | developer → reviewer | F-046, F-040, F-041, F-042, F-051 | **fertig** (PR #6 gemergt 2026-10-09; Reviewer ⚠️; offen vor Go-Live: R-035) | P1-0, P1-0a, P1-0c |
+| P1-2 | Reise anlegen, einladen, Beitritt im Einladungsflow, Rollen, „Meine Reisen“ | developer → reviewer | F-001, F-002, F-003, F-004, F-044 | **fertig** (PR #7 gemergt 2026-10-09; vor Go-Live: R-037, Proxy-Rate-Limit `/i/*`) | P1-1 |
+| P1-3 | Verfügbarkeit manuell + Status + Feiertage/Wochenenden | developer → reviewer | F-005, F-007, F-016 | **fertig** (PR #8 gemergt 2026-10-10) | P1-2 |
+| P1-4 | Heatmap + Kandidaten-Berechnung | developer → reviewer | F-008, F-009 | **fertig** (PR #9 gemergt 2026-10-10) | P1-3 |
+| P1-5 | Abstimmung & Festlegung (inkl. ICS) | developer → reviewer | F-010, F-011, F-012 | **fertig** (PR #10 gemergt 2026-10-11) – M0.5 inhaltlich erreicht | P1-4 |
+| P1-6 | Datenschutz-Funktionen & Konto löschen (inkl. Retention-Job), Hilfe/Lizenzhinweise, Abstimmung abbrechen (Q21) | developer → reviewer | F-013, F-043, F-051 | **fertig** (PR #11 gemergt 2026-10-16; Q23 Datenexport bleibt, Q24 Lösch-Hinweis nur an Orga). Vor Go-Live: täglicher Timer für `POST /api/internal/retention` (Operations, mit OPS-1) | P1-2 |
+| P1-7 | Should-Features nach Kapazität | developer → reviewer | F-015, F-017, F-052 (MVP+ inkl. Haptik) | **geplant** (Inkrement 7, nach Demo-Abnahme) | P1-5 |
 
 ### Betrieb & Recht (Operations, parallel zu Phase 1)
 
@@ -48,9 +48,10 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | OPS-4 | Backups + Restore-Test, Uptime- und Fehler-Monitoring (Bugsink) | operations-manager | – | **zurückgestellt bis Go-Live** | OPS-1 | vor M1 |
 | OPS-5 | Impressum + Datenschutzerklärung DE (M1), EN + Nutzungsbedingungen (M2) | operations-manager (Entwurf) → Rechtsprüfung | F-013, F-046 | **zurückgestellt bis Go-Live** (Auftraggeber 2026-10-08); für die Demo nur Platzhalterseiten nach compliance-checklist.md §0a (Developer) | Go-Live-Gate Stufe 2a (Betreiber, Rechtstexte-Weg) | M1 / M2 |
 | OPS-6 | VVT, AVV-Liste, Löschkonzept final, Datenpannen-Prozess | operations-manager | F-013, F-043 | **geplant** (Vorarbeit ohne Betreiberangaben möglich; Abschluss mit Go-Live-Gate) | Go-Live-Gate Stufe 2a | M1 / M2 |
-| OPS-7 | Claude-Code-SessionStart-Hook (`pnpm install`) in `.claude/settings.json` | CEO / developer | – | **geplant** | P1-0 | mit Scaffold |
+| OPS-7 | Claude-Code-SessionStart-Hook (`pnpm install`) in `.claude/settings.json` | CEO / developer | – | **fertig** (`scripts/claude-session-start.sh`) | P1-0 | mit Scaffold |
 | OPS-9 | Go-Live-Gate vorbereiten: Markenrecherche „Wir wollen weg“ + „When do we go?“, Domain-Verfügbarkeit, Angebotscheck Hetzner/Lettermint – **Erinnerung an Auftraggeber durch CEO** | operations-manager → CEO | Q11, Q14–Q16 | **geplant** | Auslöser lt. [go-live.md](go-live.md) | ≥ 6 Wochen vor Beta |
 | OPS-10 | Optional: In-App-Browser-Test T2 per temporärem Tunnel (ohne Konto, nur Demo-Daten, deployment.md §0.5) | developer + reviewer | F-040, F-041, F-003 | **geplant** (optional) | P1-1 | vor Ende Inkrement 1, falls gewünscht |
+| OPS-11 | **Demo-Abnahme M0.5 vorbereiten:** Ein-Befehl-Start `scripts/demo.sh` (nur Docker, `.env.demo` mit lokalen Zufalls-Secrets, LAN-IP für Handy, `seed`/`unlock`/`reset`), Laien-Anleitung, 20-Minuten-Drehbuch mit Feedback-Checkliste; selbst getestet (Build, Migration, Seed, Code-Login über `localhost` und LAN-IP, kompletter Ablauf bis ICS) | operations-manager | M0.5 | **fertig** (2026-10-16) – Demo-Termin mit dem Auftraggeber: **CEO** | Inkremente 1–6 | jetzt |
 | OPS-8 | Node 26 LTS evaluieren und umstellen | operations-manager | – | **geplant** | LTS-Start 28.10.2026 | Q1 2027 |
 
 ## Abhängigkeiten (Kurzfassung)
@@ -64,6 +65,7 @@ M0 ─> P1-0 Scaffold ─> P1-0a Auth-Spike ─> P1-0c UI-Fundament ─> P1-1 �
                                                      └──────────> P1-6 (vor M2)
 Offline-Demo (lokal) ─> … ─> Go-Live-Gate (go-live.md, Auftraggeber) ─> OPS-1/OPS-2 (Staging + Mail) ─> OPS-3/OPS-4 ─> Beta M1
 P1-1 ─> optional OPS-10 (Tunnel-Gerätetest T2)
+P1-5 + P1-6 ─> OPS-11 Demo-Paket ─> Demo-Abnahme M0.5 (Auftraggeber) ─> Go-Live-Gate G1 besprechen / P1-7
 ```
 
 ## Blocker & offene Entscheidungen
@@ -93,3 +95,4 @@ Offene Produktfragen: siehe PRD §12 (Q11–Q16 am 2026-10-08 entschieden bzw. b
 - 2026-10-08 (Operations, nach Review P1-0/P1-0a): P1-0 und P1-0a **im Review** (Reviewer ⚠️ mit Anmerkungen; R-001–R-004 behoben, R-005/R-009 in Arbeit, R-006/R-007 → Inkrement 1). R-008 erledigt: deployment.md §0.2/§5 – Migration/Seed über Service `tools` statt `app` (Standalone-Image ohne Skripte), `pnpm demo:*`-Kurzbefehle dokumentiert. tech-stack.md v1.1: Routing nach sitemap.md §4 (App-Routen ohne Präfix, `/de`/`/en` öffentlich, Cookie `lang`, zwei Root-Layouts, kein `proxy.ts`), ESLint 9.39 / TypeScript 6.0.x, T3 gelöst, `standalone` nur mit `NEXT_OUTPUT_STANDALONE=1`, `Referrer-Policy: same-origin` auf `/i/*` + `/auth/*`. compliance-checklist.md §4: Sprach-Cookie `lang` statt `NEXT_LOCALE`.
 - 2026-10-09 (Operations, nach Review Inkrement 2): **R-037** dokumentiert – deployment.md v0.3 §5.4 (Caddy-Log-Filter für `/i/*`, `/auth/*`, Query, `Referer`; Demo-Hinweis zu `docker/Caddyfile.demo` für den Developer), §6.2 Bugsink-Scrubbing; compliance-checklist.md v0.3 §7a (Ausnahme Einladungs-Token im Klartext); go-live.md v1.2 (R-037 als Pflichtpunkt Stufe 1 + 2b). Notiz zu F-043 bei P1-6 (Orga-Übergabe/Löschung vor Konto-Löschung).
 - 2026-10-09 (Operations): P1-0c Schritt 0a „UI-Fundament“ **fertig** (PR #5 gemergt). P1-1 (Inkrement 1) **im Review** – Fixes R-021–R-031 in Nachprüfung. tech-stack.md v1.2 (§3.2 Ist-Stand: Mail-Budget pro Adresse/Postfach, Fehlversuche nur bei ausstehendem Code, Sperre ohne Mail-Sperre, HKDF-Schlüssel, Re-Auth, Argon2id, `PASSWORD_BREACH_CHECK`); go-live.md v1.1: Entscheidungspunkt „HIBP-Check einschalten?“ (Stufe 2a).
+- 2026-10-16 (Operations): Board auf Ist-Stand gebracht – P1-0b, P1-1 … P1-6 und OPS-7 **fertig** (PR #6–#11). **OPS-11 Demo-Abnahme M0.5 vorbereitet:** `scripts/demo.sh` (Ein-Befehl-Start nur mit Docker, LAN-IP-Erkennung für den Handy-Test, `unlock` gegen das 5-Codes-pro-Stunde-Limit in der Demo), [demo-anleitung.md](demo-anleitung.md), [demo-drehbuch.md](demo-drehbuch.md); deployment.md §0.2/§0.3 und README verweisen darauf. Selbsttest in der Cloud-Umgebung bestanden.

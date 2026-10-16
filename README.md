@@ -32,7 +32,9 @@ pnpm dev                                   # http://localhost:3000
 
 ## Offline-Demo (ohne Node, nur Docker)
 
-App als Produktions-Build + PostgreSQL + Mailpit ([deployment.md §0](docs/ops/deployment.md)):
+**Ein Befehl:** `bash scripts/demo.sh start` (legt `.env.demo` mit lokalen Zufalls-Secrets an, baut, migriert, seedet, zeigt Laptop- und Handy-Adresse). Weitere: `stop`, `seed`, `unlock`, `reset`, `status`, `logs`. Für den Auftraggeber: [docs/ops/demo-anleitung.md](docs/ops/demo-anleitung.md) · Klick-Drehbuch: [docs/ops/demo-drehbuch.md](docs/ops/demo-drehbuch.md).
+
+Manuell – App als Produktions-Build + PostgreSQL + Mailpit ([deployment.md §0](docs/ops/deployment.md)):
 
 ```bash
 cp .env.example .env.demo   # dort setzen: APP_ENV=demo, BETTER_AUTH_SECRET, POSTGRES_PASSWORD
