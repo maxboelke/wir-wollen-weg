@@ -80,7 +80,7 @@ Was beim **ersten Start** passiert (5–10 Minuten, Internet nötig):
   Codes am Handy: http://192.168.178.20:8025
 
   Demo-Login:     anna@demo.test (Code aus Mailpit)
-  Stoppen:        ./scripts/demo.sh stop
+  Stoppen:        bash scripts/demo.sh stop
 ------------------------------------------------------------------
 ```
 

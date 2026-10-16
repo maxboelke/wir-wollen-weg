@@ -188,10 +188,12 @@ cmd_start() {
     fi
   done
   say "Baue und starte die Demo (beim ersten Mal 5–10 Minuten)"
-  "${COMPOSE[@]}" up -d --build
+  "${COMPOSE[@]}" up -d --build ||
+    fail "Bauen/Starten hat nicht geklappt (Meldungen oben). Internet und Docker prüfen und den Befehl wiederholen – Anleitung, Abschnitt 4.7."
   say "Datenbank vorbereiten"
   sync_db_password
-  "${COMPOSE[@]}" run --rm tools pnpm db:migrate
+  "${COMPOSE[@]}" run --rm tools pnpm db:migrate ||
+    fail "Die Datenbank konnte nicht eingerichtet werden (Meldungen oben). Befehl wiederholen – sonst die letzten Zeilen ans Team schicken."
   echo
   if [ "$(demo_people_count)" = "0" ]; then
     say "Demo-Daten einspielen (Anna, Ben, Carla … und ihre Reisen)"
@@ -255,6 +257,7 @@ cmd_status() {
 
 cmd_logs() {
   check_docker
+  [ -f "$ENV_FILE" ] || fail "Die Demo wurde noch nie gestartet. Erst: bash scripts/demo.sh start"
   configure_urls
   "${COMPOSE[@]}" logs -f --tail 100 app
 }
@@ -267,6 +270,6 @@ case "${1:-start}" in
   reset) cmd_reset ;;
   status) cmd_status ;;
   logs) cmd_logs ;;
-  -h | --help | help) sed -n '2,16p' "$0" | sed 's/^# \{0,1\}//' ;;
+  -h | --help | help) sed -n '2,15p' "$0" | sed 's/^# \{0,1\}//' ;;
   *) fail "Unbekannter Befehl '$1'. Möglich: start, stop, seed, unlock, reset, status, logs" ;;
 esac
