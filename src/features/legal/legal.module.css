@@ -1,0 +1,54 @@
+/* Legal pages (F-013): one column, max. 640 px like the help page, readable line length */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-6);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.intro h1 {
+  font-size: var(--ww-text-3xl);
+}
+
+.section,
+.summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  overflow-wrap: anywhere;
+}
+
+.section h2,
+.summary h2 {
+  font-size: var(--ww-text-xl);
+}
+
+.summary {
+  padding: var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.link {
+  border-radius: var(--ww-radius-sm);
+  color: var(--ww-color-link);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.link:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}

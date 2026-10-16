@@ -76,7 +76,7 @@ export async function TripCockpit({ view, tab, subtitle, kpi }: TripCockpitProps
               <span>{subtitle ?? phaseLine}</span>
             </p>
           </div>
-          <TripMenu label={t("menu")} {...sheetContext(view)} />
+          <TripMenu label={t("menu")} {...sheetContext(view, tab)} />
         </div>
         {tab ? <TabNav tabs={tabs} current={tab} label={t("tabsLabel")} /> : null}
       </StickyHead>

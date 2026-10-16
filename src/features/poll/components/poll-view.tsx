@@ -8,6 +8,7 @@ import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Icon } from "@/components/ui/icon";
+import { useToast } from "@/components/ui/toast";
 import type { Locale } from "@/i18n/config";
 import type { IsoDate } from "@/lib/dates";
 import { toParticipant } from "@/lib/heatmap";
@@ -79,6 +80,7 @@ export function PollView(props: PollViewProps) {
   const t = useTranslations("poll");
   const tCommon = useTranslations("common");
   const router = useRouter();
+  const toast = useToast();
   const [options, setOptions] = useState<ViewerOption[]>(props.poll.options);
   const [top, setTop] = useState<string[]>(props.poll.top);
   const [progress, setProgress] = useState(props.progress);
@@ -607,7 +609,16 @@ export function PollView(props: PollViewProps) {
                 setAddBusy(false);
                 if (result.ok) {
                   setAddOpen(false);
-                  setAnnouncement(t("addOptionDone"));
+                  // ux-spec §13 B9: tell the group, everyone has to rate the new option.
+                  toast({
+                    message: t("addOptionDone"),
+                    action: {
+                      label: t("addOptionShare"),
+                      onAction: () => {
+                        setShareOpen(true);
+                      },
+                    },
+                  });
                   router.refresh();
                   return;
                 }

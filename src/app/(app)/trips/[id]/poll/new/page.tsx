@@ -26,18 +26,23 @@ function picksFrom(
   value: string | string[] | undefined,
   range: Period,
   minNights: number,
-): Period[] {
+): { picks: Period[]; tooShort: number } {
   const raw = Array.isArray(value) ? value.join(",") : (value ?? "");
   const out: Period[] = [];
+  let tooShort = 0;
   for (const part of raw.split(",").slice(0, MAX_OPTIONS)) {
     const [start, end] = part.split("~");
     if (!isIsoDate(start) || !isIsoDate(end) || end <= start) continue;
     if (start < range.start || end > range.end) continue;
-    // Spans shorter than the trip minimum (local «Dauer» filter, A3) cannot become options.
-    if (nightsOf({ start, end }) < minNights) continue;
+    // Spans shorter than the trip minimum (local «Dauer» filter, A3) cannot become options –
+    // never silently: the page says how many were left out (ux-spec §13 B5).
+    if (nightsOf({ start, end }) < minNights) {
+      tooShort++;
+      continue;
+    }
     out.push({ start, end });
   }
-  return out;
+  return { picks: out, tooShort };
 }
 
 /**
@@ -55,7 +60,11 @@ export default async function CreatePollPage({ params, searchParams }: Params) {
   const people = await pollPeople(view);
   const wished = trip.preferredNights ?? trip.minNights;
   const from = trip.rangeStart > today ? trip.rangeStart : today;
-  const picked = picksFrom(query.pick, { start: from, end: trip.rangeEnd }, trip.minNights);
+  const { picks: picked, tooShort } = picksFrom(
+    query.pick,
+    { start: from, end: trip.rangeEnd },
+    trip.minNights,
+  );
   let spans: Period[] = picked;
   if (spans.length === 0 && people.participants.length > 0 && from < trip.rangeEnd) {
     const result = computeSuggestions({
@@ -92,6 +101,7 @@ export default async function CreatePollPage({ params, searchParams }: Params) {
         cancelHref={tripPath(trip.publicId, "poll")}
         pollHref={tripPath(trip.publicId, "poll")}
         intl={format.intl}
+        skippedShort={tooShort}
       />
     </TripShell>
   );

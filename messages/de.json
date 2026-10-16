@@ -32,7 +32,9 @@
     "tripDeleted": "„{trip}“ wurde gelöscht.",
     "comingSoon": "Kommt bald",
     "genericError": "Das hat nicht geklappt. Bitte versuch es nochmal.",
-    "notAllowed": "Das darf nur die Orga."
+    "notAllowed": "Das darf nur die Orga.",
+    "privacy": "Datenschutz",
+    "imprint": "Impressum"
   },
   "landing": {
     "titleLead": "Vom Gruppenchat zum",
@@ -125,7 +127,8 @@
     "noPasswordHint": "Kein Passwort gesetzt? Melde dich einfach mit einem Code an.",
     "optionalPassword": "Passwort festlegen (optional)",
     "optionalPasswordHint": "Mindestens 10 Zeichen. Mit einem Code anmelden kannst du dich trotzdem immer.",
-    "sessionExpired": "Bitte melde dich an – danach geht es dort weiter, wo du warst."
+    "sessionExpired": "Bitte melde dich an – danach geht es dort weiter, wo du warst.",
+    "privacyNote": "Mit dem Fortfahren bestätigst du, dass du den <link>Datenschutzhinweis</link> gelesen hast."
   },
   "magic": {
     "title": "Anmelden",
@@ -216,7 +219,11 @@
       "fixDates": "Termin festlegen"
     },
     "actionFor": "{action}: {trip}",
-    "voteDeadline": "Abstimmen bis {date}"
+    "voteDeadline": "Abstimmen bis {date}",
+    "deletion": {
+      "afterTrip": "Wird am {date} gelöscht (90 Tage nach Reiseende).",
+      "inactive": "Wird am {date} gelöscht (12 Monate ohne Aktivität)."
+    }
   },
   "settings": {
     "motion": {
@@ -296,7 +303,11 @@
     },
     "privacy": {
       "title": "Daten & Datenschutz",
-      "request": "Deine Daten anfordern oder dein Konto löschen lassen: schreib an <link>{contact}</link>."
+      "request": "Fragen zu deinen Daten? Schreib an <link>{contact}</link>.",
+      "policy": "Datenschutzerklärung",
+      "export": "Meine Daten herunterladen (JSON)",
+      "exportHint": "Alles, was wir über dich gespeichert haben – nur deine eigenen Angaben.",
+      "delete": "Konto löschen"
     },
     "back": "Zurück zum Konto",
     "email": {
@@ -328,6 +339,28 @@
       "removeText": "Du meldest dich dann nur noch mit Code an.",
       "remove": "Passwort entfernen",
       "removed": "Passwort entfernt"
+    },
+    "delete": {
+      "title": "Konto löschen",
+      "whatTitle": "Was wird gelöscht?",
+      "whatText": "Dein Name, deine E-Mail, deine Tage und Stimmen in allen Reisen. Das kann nicht rückgängig gemacht werden.",
+      "memberOf": "{count, plural, one {In # Reise, in der du Mitglied bist, verschwinden dein Name, deine Tage und Stimmen.} other {In # Reisen, in denen du Mitglied bist, verschwinden dein Name, deine Tage und Stimmen.}}",
+      "organizedTitle": "Du organisierst diese Reisen",
+      "organizedLead": "Entscheide für jede Reise: Wer übernimmt die Orga – oder soll die Reise für alle gelöscht werden?",
+      "tripMembers": "{trip} ({count, plural, one {# Mitglied} other {# Mitglieder}})",
+      "transfer": "Orga übergeben",
+      "newOrga": "Neue Orga",
+      "successor": "{name} (seit {date} dabei)",
+      "deleteTrip": "Reise für alle löschen",
+      "deleteTripHint": "Alle Tage, Stimmen und Mitglieder werden gelöscht.",
+      "soloTitle": "Diese Reisen werden mitgelöscht (nur du bist Mitglied)",
+      "confirmedYou": "Bestätigt – du kannst dein Konto jetzt löschen.",
+      "confirmFirst": "Bestätige zuerst, dass du es bist.",
+      "submit": "Konto endgültig löschen",
+      "dialogTitle": "Konto endgültig löschen?",
+      "dialogText": "Dein Konto und deine Daten werden sofort gelöscht. Das kann nicht rückgängig gemacht werden.",
+      "dialogConfirm": "Konto löschen",
+      "planOutdated": "Bei deinen Reisen hat sich inzwischen etwas geändert. Bitte prüf deine Auswahl und versuch es nochmal – es wurde nichts gelöscht."
     }
   },
   "regions": {
@@ -427,7 +460,7 @@
       },
       "delete": {
         "q": "Wie lösche ich meine Daten?",
-        "a": "Verlässt du eine Reise, löschen wir deine Tage und Stimmen in dieser Reise. Soll dein ganzes Konto weg, schreib uns an {contact} – bald geht das auch direkt im Konto."
+        "a": "Verlässt du eine Reise (Reisemenü ⋯ → „Reise verlassen“), löschen wir deinen Namen, deine Tage, Stimmen und deinen Kommentar in dieser Reise. Bist du Orga, übergibst du die Orga vorher oder löschst die Reise. Unter Konto → Daten & Datenschutz kannst du außerdem alle deine Daten herunterladen."
       },
       "motion": {
         "q": "Mir ist das zu viel Bewegung.",
@@ -437,10 +470,33 @@
       "noEmail": {
         "q": "Kein Zugriff mehr auf deine E-Mail?",
         "a": "Schreib uns an {contact}. Alternativ kannst du ein neues Konto anlegen und der Reise mit dem Einladungslink erneut beitreten."
+      },
+      "group": {
+        "q": "Was zeigt der Tab „Gruppe“?",
+        "a": "Wie viele an jedem Tag können. Je kräftiger die Farbe, desto mehr sind dabei; ✓ heißt: alle, die schon abgegeben haben, können. Tippe auf einen Tag, um zu sehen, wer kann und wer nicht. Es zählen nur abgegebene Tage – Entwürfe sieht niemand."
+      },
+      "suggestions": {
+        "q": "Wie entstehen die Vorschläge?",
+        "a": "Wir suchen Zeiträume, die mindestens so lang sind, wie die Orga es festgelegt hat. Oben stehen die, bei denen alle können, darunter die, bei denen fast alle können. Mit den Filtern (nur für dich) kannst du die Dauer ändern oder Personen ausblenden – die Gruppe sieht weiter die Standardansicht."
+      },
+      "fix": {
+        "q": "Wer legt den Termin fest – und kann man das ändern?",
+        "a": "Die Orga legt den Termin fest, meist nach der Abstimmung. Danach sind „Meine Tage“ gesperrt und alle können den Termin in ihren Kalender übernehmen. Die Orga kann die Festlegung wieder aufheben; die Stimmen bleiben dann erhalten. Eine laufende Abstimmung kann die Orga auch abbrechen – eure Tage bleiben, eine neue Abstimmung folgt."
+      },
+      "account": {
+        "q": "Wie lösche ich mein Konto?",
+        "a": "Unter Konto → Daten & Datenschutz → „Konto löschen“. Du bestätigst mit einem Code (oder Passwort), dann löschen wir sofort deinen Namen, deine E-Mail, deine Tage und Stimmen in allen Reisen. Organisierst du Reisen mit anderen, bestimmst du vorher je Reise eine neue Orga oder löschst die Reise für alle.",
+        "action": "Konto löschen"
+      },
+      "retention": {
+        "q": "Wie lange speichert ihr meine Daten?",
+        "a": "Nicht ewig: Eine Reise löschen wir 90 Tage nach ihrem Ende, ohne festen Termin 12 Monate nach der letzten Änderung – die Orga bekommt 14 Tage vorher Bescheid. Konten, die 24 Monate nicht genutzt wurden, löschen wir nach einer Erinnerung. Wir setzen keine Tracker und keine Werbe-Cookies ein.",
+        "action": "Zur Datenschutzerklärung"
       }
     },
     "contactTitle": "Noch Fragen?",
-    "contact": "Schreib uns: <link>{email}</link>"
+    "contact": "Schreib uns: <link>{email}</link>",
+    "credits": "Feiertagsdaten: date-holidays (CC BY 3.0). Mehr unter <link>Lizenzen</link>."
   },
   "mail": {
     "fromName": "Wir wollen weg",
@@ -478,6 +534,33 @@
       "heading": "Deine E-Mail-Adresse wurde geändert",
       "text": "Dein Konto nutzt ab jetzt die Adresse {email}. An diese Adresse schicken wir keine Mails mehr.",
       "notYou": "Warst du das nicht? Schreib uns bitte sofort an {contact}."
+    },
+    "imprint": "Impressum",
+    "accountDeleted": {
+      "subject": "Dein Konto wurde gelöscht",
+      "heading": "Dein Konto wurde gelöscht",
+      "text": "Dein Konto und alle deine Daten – Name, E-Mail, Tage und Stimmen in allen Reisen – sind gelöscht.",
+      "inactive": "Dein Konto war 24 Monate nicht in Gebrauch. Wie angekündigt haben wir es mit allen deinen Daten gelöscht.",
+      "trips": "Für alle gelöscht wurden auch: {trips}.",
+      "noMore": "Das ist unsere letzte Mail an dich. Danke, dass du dabei warst."
+    },
+    "tripNotice": {
+      "subject": "„{trip}“ wird bald gelöscht",
+      "heading": "Deine Reise wird bald gelöscht",
+      "text": "Wir löschen „{trip}“ am {date} mit allen Tagen, Stimmen und Mitgliedern.",
+      "afterTrip": "Grund: Die Reise ist seit fast 90 Tagen vorbei – so lange heben wir sie auf.",
+      "inactive": "Grund: In der Reise ist seit fast 12 Monaten nichts passiert. Plant ihr noch? Dann reicht eine Änderung, zum Beispiel an euren Tagen.",
+      "linkIntro": "Zur Reise:",
+      "link": "Reise öffnen",
+      "service": "Dies ist ein Servicehinweis zu deiner Reise, keine Werbung."
+    },
+    "inactiveNotice": {
+      "subject": "Dein Konto wird bald gelöscht",
+      "heading": "Dein Konto wird bald gelöscht",
+      "text": "Du hast die App seit fast 24 Monaten nicht genutzt. Wir löschen dein Konto mit allen Daten am {date}.",
+      "keepIntro": "Du willst es behalten? Melde dich einfach einmal an:",
+      "keep": "Anmelden",
+      "service": "Dies ist ein Servicehinweis, keine Werbung."
     }
   },
   "tripForm": {
@@ -632,7 +715,8 @@
       "leave": "Reise verlassen",
       "delete": "Reise löschen",
       "help": "Hilfe",
-      "unfix": "Festlegung aufheben"
+      "unfix": "Festlegung aufheben",
+      "cancelPoll": "Abstimmung abbrechen"
     },
     "dialogs": {
       "leaveTitle": "„{trip}“ verlassen?",
@@ -668,7 +752,12 @@
       "unfixTitle": "Termin wieder offen machen?",
       "unfixText": "Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.",
       "unfixConfirm": "Termin aufheben",
-      "unfixDone": "Die Abstimmung ist wieder offen."
+      "unfixDone": "Die Abstimmung ist wieder offen.",
+      "cancelPollTitle": "Abstimmung abbrechen?",
+      "cancelPollText": "Alle Optionen und Stimmen werden gelöscht. Eingetragene Tage bleiben erhalten; die Reise geht zurück zu ‚Tage sammeln‘.",
+      "cancelPollKeep": "Abstimmung behalten",
+      "cancelPollConfirm": "Abstimmung abbrechen",
+      "cancelPollDone": "Abstimmung abgebrochen"
     },
     "notFoundTitle": "Reise nicht gefunden",
     "notFoundText": "Diese Reise gibt es nicht oder du bist nicht dabei. Wenn du eingeladen wurdest, öffne den Einladungslink aus dem Gruppenchat.",
@@ -734,7 +823,8 @@
     "dangerTitle": "Gefahrenbereich",
     "deleteTitle": "Reise für alle löschen",
     "deleteText": "Alle Tage, Stimmen und Mitglieder werden sofort gelöscht.",
-    "unsaved": "Du hast ungespeicherte Änderungen."
+    "unsaved": "Du hast ungespeicherte Änderungen.",
+    "fixedNote": "Der Termin steht schon fest – der Suchzeitraum betrifft nur ‚Meine Tage‘ und die Vorschläge."
   },
   "days": {
     "title": "Meine Tage",
@@ -901,7 +991,8 @@
       "reset": "Filter zurücksetzen",
       "hideTitle": "Wen ausblenden?",
       "hideHint": "Nur für dich: Wir rechnen, als wären diese Personen nicht dabei.",
-      "done": "Fertig"
+      "done": "Fertig",
+      "belowMin": "Kürzer als die Orga-Vorgabe (mind. {count, plural, one {# Nacht} other {# Nächte}})."
     },
     "groups": {
       "all": "Alle dabei ({count})",
@@ -1066,8 +1157,8 @@
     "retry": "Erneut versuchen",
     "votedFor": "{range}: {choice}",
     "addOption": "Option hinzufügen",
-    "addOptionNote": "Bestehende Optionen bleiben unverändert, damit abgegebene Stimmen gültig bleiben.",
-    "addOptionDone": "Option hinzugefügt",
+    "addOptionNote": "Bestehende Optionen bleiben unverändert, damit abgegebene Stimmen gültig bleiben. Alle müssen die neue Option noch bewerten – wer schon fertig war, steht wieder auf ‚offen‘.",
+    "addOptionDone": "Option hinzugefügt. Teil es der Gruppe, damit alle sie bewerten.",
     "remind": "Gruppe erinnern",
     "fixButton": "Abstimmung beenden & festlegen",
     "fixOrgaOnly": "Nur für die Orga.",
@@ -1145,7 +1236,8 @@
       "deadlineLabel": "Datum",
       "shifted": "Option {n}: {range}",
       "removed": "Option entfernt",
-      "added": "Option hinzugefügt"
+      "added": "Option hinzugefügt",
+      "skippedShort": "{count, plural, one {# gewählter Vorschlag ist kürzer als {min} Nächte und wurde nicht übernommen.} other {# gewählte Vorschläge sind kürzer als {min} Nächte und wurden nicht übernommen.}}"
     },
     "period": {
       "title": "Eigener Zeitraum",
@@ -1178,6 +1270,78 @@
       "ringLabel": "noch <n>{count}</n> {count, plural, one {Tag} other {Tage}}",
       "going": "{count} dabei"
     },
-    "sharePoll": "Abstimmung teilen"
+    "sharePoll": "Abstimmung teilen",
+    "canceledNotice": "{name} hat die Abstimmung abgebrochen. Eine neue folgt.",
+    "canceledNoticeUnknown": "Die Abstimmung wurde abgebrochen. Eine neue folgt.",
+    "addOptionShare": "Teilen"
+  },
+  "goodbye": {
+    "title": "Dein Konto ist gelöscht",
+    "text": "Wir haben dir eine Bestätigung geschickt. Danke, dass du dabei warst.",
+    "home": "Zur Startseite"
+  },
+  "legal": {
+    "demoNotice": "Demo-Version – Platzhaltertext, keine gültigen Rechtsangaben.",
+    "bindingNote": "Diese deutsche Fassung ist verbindlich.",
+    "privacy": {
+      "title": "Datenschutzerklärung",
+      "updated": "Stand: [PLATZHALTER: Datum der Fassung]",
+      "summaryTitle": "Datenschutz auf einen Blick",
+      "summary": "Wir speichern nur, was die App braucht: dein Konto (Name, E-Mail, Sprache, Region), deine Reisen mit deinen Tagen, Stimmen und deinem Kommentar sowie technische Anmeldedaten. Deine Angaben in einer Reise sehen nur die Mitglieder dieser Reise.\n\nKeine Tracker, keine Werbung, keine Werbe-Cookies. Du kannst deine Daten jederzeit herunterladen, eine Reise verlassen oder dein Konto löschen. Alte Reisen und lange ungenutzte Konten löschen wir automatisch.",
+      "sections": {
+        "controller": {
+          "title": "Verantwortlich",
+          "body": "[PLATZHALTER: Name Betreiber (Privatperson)]\n\n[PLATZHALTER: ladungsfähige Anschrift]\n\nE-Mail: [PLATZHALTER: Kontakt-E-Mail]"
+        },
+        "account": {
+          "title": "Dein Konto",
+          "body": "Für dein Konto speichern wir Anzeigename, E-Mail-Adresse, Sprache, Region (Datumsformat, Wochenstart, Feiertage), die Einstellung „Bewegung reduzieren“ und – falls du eines festlegst – einen Passwort-Hash. Zweck: Bereitstellung der App; Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Vertrag). Ohne E-Mail-Adresse ist keine Teilnahme möglich."
+        },
+        "trips": {
+          "title": "Reisen",
+          "body": "Zu jeder Reise speichern wir Mitgliedschaft, Rolle, Namen in der Reise, deine Tage („zur Not“, „geht nicht“), deinen freiwilligen Kommentar und deine Stimmen. Diese Angaben sind für die anderen Mitglieder derselben Reise mit deinem Namen sichtbar. Platzhalter-Namen legt die Orga an – bitte nur Vornamen oder Spitznamen verwenden. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO. Die Vorschläge sind unverbindlich; es gibt keine automatisierte Entscheidung (Art. 22 DSGVO)."
+        },
+        "signIn": {
+          "title": "Anmeldung und Sicherheit",
+          "body": "Du meldest dich mit einem Code oder Link per E-Mail an, optional mit Passwort (gespeichert nur als Argon2id-Hash). Wir speichern Sitzungen mit IP-Adresse und Browser-Kennung, um dein Konto zu schützen, und zählen Anmeldeversuche, um Missbrauch zu begrenzen – Adressen dafür nur als nicht umkehrbarer Schlüssel. Server-Logs mit IP-Adressen löschen wir nach 7 Tagen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse an einem sicheren Dienst)."
+        },
+        "mails": {
+          "title": "E-Mails",
+          "body": "Wir schicken nur Mails, die für dein Konto nötig sind: Codes, Passwort-Zurücksetzen, E-Mail-Änderung, Hinweise vor automatischer Löschung und die Bestätigung einer Kontolöschung. Keine Werbung, kein Newsletter, keine Zählpixel."
+        },
+        "recipients": {
+          "title": "Empfänger und Hosting",
+          "body": "Hosting: [PLATZHALTER: Hosting-Anbieter, Serverstandort Deutschland]. E-Mail-Versand: [PLATZHALTER: Mail-Anbieter]. Beide verarbeiten Daten nur in unserem Auftrag (Art. 28 DSGVO). Eine Übermittlung in Drittländer findet nicht statt."
+        },
+        "device": {
+          "title": "Cookies und Speicher auf deinem Gerät",
+          "body": "Wir nutzen nur technisch notwendige Speicher: das Anmelde-Cookie, die gewählte Sprache, die Wahl „Bewegung reduzieren“, den Zustand der Legende im Gruppenkalender, eine Einladung während der Anmeldung und einen Reise-Entwurf im Browser. Rechtsgrundlage: § 25 Abs. 2 Nr. 2 TDDDG. Deshalb gibt es kein Cookie-Banner."
+        },
+        "retention": {
+          "title": "Speicherdauer",
+          "body": "Konto: bis du es löschst, spätestens nach 24 Monaten ohne Nutzung (Hinweis 30 Tage vorher). Reisen: bis die Orga sie löscht, spätestens 90 Tage nach dem festgelegten Reiseende bzw. 12 Monate nach der letzten Änderung (Hinweis an die Orga 14 Tage vorher). Verlässt du eine Reise, löschen wir deine Angaben darin sofort. Codes gelten 15 Minuten, Zähler gegen Missbrauch höchstens 24 Stunden. Sicherungskopien werden nach höchstens 30 Tagen überschrieben."
+        },
+        "rights": {
+          "title": "Deine Rechte",
+          "body": "Du hast das Recht auf Auskunft, Berichtigung, Löschung, Einschränkung, Datenübertragbarkeit und Widerspruch (Art. 15–21 DSGVO). Vieles geht direkt in der App: Daten herunterladen und Konto löschen unter Konto → Daten & Datenschutz, Reise verlassen im Reisemenü. Sonst schreib an [PLATZHALTER: Kontakt-E-Mail]. Du kannst dich bei einer Aufsichtsbehörde beschweren: [PLATZHALTER: zuständige Aufsichtsbehörde]."
+        },
+        "automated": {
+          "title": "Statistik",
+          "body": "Wir zählen Nutzung nur zusammengefasst auf dem Server, ohne Cookies und ohne Bezug zu einzelnen Personen."
+        }
+      }
+    },
+    "imprint": {
+      "title": "Impressum",
+      "providerTitle": "Angaben gemäß § 5 DDG",
+      "provider": "[PLATZHALTER: Name Betreiber (Privatperson)]\n\n[PLATZHALTER: ladungsfähige Anschrift]",
+      "contactTitle": "Kontakt",
+      "contact": "E-Mail: [PLATZHALTER: Kontakt-E-Mail]\n\n[PLATZHALTER: zweiter schneller Kontaktweg, z. B. Telefon]",
+      "serviceTitle": "Dienst",
+      "service": "Wir wollen weg (englisch: „When do we go?“) – ein kostenloser Dienst, um mit Freunden einen gemeinsamen Reisezeitraum zu finden.",
+      "licensesTitle": "Lizenzen und Quellen",
+      "holidays": "Feiertagsdaten: <lib>date-holidays</lib> von Christoph Lorenz – Programmcode unter ISC-Lizenz, Feiertagsdaten unter <cc>Creative Commons BY 3.0</cc>. Angaben ohne Gewähr.",
+      "fonts": "Schriften: Figtree und Plus Jakarta Sans, selbst gehostet, unter der <ofl>SIL Open Font License 1.1</ofl>."
+    }
   }
 }

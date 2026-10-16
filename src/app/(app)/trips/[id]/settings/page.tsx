@@ -68,7 +68,12 @@ export default async function TripSettingsPage({ params }: Params) {
           action={updateTripAction.bind(null, trip.publicId)}
           notice={
             <Banner tone="info">
-              {view.phase === "vote" ? `${t("recalcNote")} ${t("votingNote")}` : t("recalcNote")}
+              {view.phase === "vote"
+                ? `${t("recalcNote")} ${t("votingNote")}`
+                : trip.phase === "fixed"
+                  ? // Q22 (ux-spec §13.1 b): the fixed dates are never touched by these edits.
+                    t("fixedNote")
+                  : t("recalcNote")}
             </Banner>
           }
         />

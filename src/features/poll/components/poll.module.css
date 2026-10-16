@@ -651,3 +651,9 @@ button.kpi:focus-visible {
     min-height: 56px;
   }
 }
+
+/* Q21: one-off notice after a cancelled vote – full width, text aligned to the start */
+.cancelNotice {
+  align-self: stretch;
+  text-align: start;
+}

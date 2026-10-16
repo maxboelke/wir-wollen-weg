@@ -17,11 +17,13 @@ import {
 import { uiPhase } from "@/lib/trip-status";
 import {
   addOption,
+  cancelPoll,
   castVotes,
   fixDates,
   listOptions,
   listVotes,
   markCelebrated,
+  markPollCancelSeen,
   startPoll,
   unfixDates,
 } from "@/server/poll";
@@ -204,5 +206,25 @@ export async function celebratedAction(publicId: string): Promise<PollActionResu
     return { ok: false, error: "phase" };
   }
   await markCelebrated(found.trip.id, found.member.userId, { start: fixedStart, end: fixedEnd });
+  return { ok: true };
+}
+
+/**
+ * «Abstimmung abbrechen» (Q21, organiser, phase 2 only): options and votes go, the days stay,
+ * back to «Tage sammeln». The role is checked here AND again under the trip lock.
+ */
+export async function cancelPollAction(publicId: string): Promise<PollActionResult> {
+  const found = await organizer(publicId);
+  if ("error" in found) return { ok: false, error: found.error };
+  if (uiPhase(found.trip, todayIso()) !== "vote") return { ok: false, error: "phase" };
+  const result = await cancelPoll(found.trip.id, found.member.userId);
+  return result.ok ? { ok: true } : { ok: false, error: result.reason };
+}
+
+/** The one-off notice about a cancelled vote was shown (Q21) – remembered per membership. */
+export async function pollCancelSeenAction(publicId: string): Promise<PollActionResult> {
+  const found = await membership(publicId);
+  if ("error" in found) return { ok: false, error: found.error };
+  await markPollCancelSeen(found.trip.id, found.member.userId);
   return { ok: true };
 }

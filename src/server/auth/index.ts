@@ -169,6 +169,11 @@ function createAuth() {
             if (context?.path && MAILBOX_SIGN_IN_PATHS.has(context.path)) {
               await markReauthenticatedIn(context.context.internalAdapter, session.id);
             }
+            // Signing in counts as activity (inactivity deletion, F-043).
+            await db()
+              .update(schema.user)
+              .set({ lastActiveAt: new Date(), inactivityNoticeSentAt: null })
+              .where(eq(schema.user.id, session.userId));
             const choice = browserLanguageChoice(context?.headers);
             if (!choice) return;
             const [account] = await db()

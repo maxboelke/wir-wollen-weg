@@ -13,6 +13,7 @@ import {
   optionAvailability,
   periodInRange,
   periodKey,
+  pollCancelNoticeDue,
   pollForViewer,
   preselectWinner,
   rankOptions,
@@ -262,5 +263,36 @@ describe("result: countdown, ring, celebration (F-012, W11)", () => {
     expect(celebrationDue(period, periodKey(period))).toBe(false);
     expect(celebrationDue({ ...period, end: "2027-05-11" }, periodKey(period))).toBe(true);
     expect(celebrationDue(null, null)).toBe(false);
+  });
+});
+
+describe("pollCancelNoticeDue (Q21)", () => {
+  const canceledAt = new Date("2026-10-10T12:00:00Z");
+  const trip = { phase: "collecting", pollCanceledAt: canceledAt, pollCanceledBy: "orga" };
+  const member = {
+    userId: "m1",
+    joinedAt: new Date("2026-10-01T00:00:00Z"),
+    pollCancelSeenAt: null as Date | null,
+  };
+
+  it("shows the notice once to members who were there", () => {
+    expect(pollCancelNoticeDue(trip, member)).toBe(true);
+    expect(
+      pollCancelNoticeDue(trip, { ...member, pollCancelSeenAt: new Date("2026-10-10T13:00:00Z") }),
+    ).toBe(false);
+  });
+
+  it("not for the organiser who cancelled, not for later joiners", () => {
+    expect(pollCancelNoticeDue(trip, { ...member, userId: "orga" })).toBe(false);
+    expect(
+      pollCancelNoticeDue(trip, { ...member, joinedAt: new Date("2026-10-11T00:00:00Z") }),
+    ).toBe(false);
+  });
+
+  it("again after a second cancel; never while a new vote runs", () => {
+    const seenBefore = { ...member, pollCancelSeenAt: new Date("2026-10-09T00:00:00Z") };
+    expect(pollCancelNoticeDue(trip, seenBefore)).toBe(true);
+    expect(pollCancelNoticeDue({ ...trip, phase: "voting" }, member)).toBe(false);
+    expect(pollCancelNoticeDue({ ...trip, pollCanceledAt: null }, member)).toBe(false);
   });
 });

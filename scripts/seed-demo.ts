@@ -7,6 +7,9 @@
 // Increment 5: «JGA Tim» has a running vote (F-010/F-011: 3 options, deadline, some votes, Anna
 // has answered one option only – so Q13 a is visible: results only where she voted), «Familien-
 // treffen Harz» has fixed dates (F-012) – everyone but Anna still gets the celebration once.
+// Increment 6: Ben cancelled the vote of «Skiurlaub Arlberg» (Q21 – the others see the notice
+// once in «Abstimmen»), «Kroatien Segeln» is deleted automatically in 10 days (F-013 banner for
+// Anna), ida@demo.test organises «Städtetrip Wien» (with others) and a solo trip (F-043).
 // Usage: pnpm db:seed:demo   (dev: reads .env.local) · demo container: pnpm demo:seed
 import { randomBytes, randomInt } from "node:crypto";
 import pg from "pg";
@@ -89,6 +92,9 @@ const PEOPLE: Person[] = [
   { key: "felix", name: "Felix Meier", locale: "de", country: "CH" },
   { key: "greta", name: "Greta Lind", locale: "de", country: "DE" },
   { key: "hanna", name: "Hanna Koch", locale: "de", country: "DE", subdivision: "DE-NW" },
+  // Increment 6: account to play through «Konto löschen» (F-043) – organises a trip with
+  // others (hand-over or delete) and a solo trip (deleted with the account).
+  { key: "ida", name: "Ida Vogel", locale: "de", country: "DE", subdivision: "DE-HH" },
 ];
 
 interface MemberSeed {
@@ -132,6 +138,8 @@ interface TripSeed {
   pollDeadline?: string;
   /** Days ago the dates were fixed (start of the «Vorfreude» ring). */
   fixedDaysAgo?: number;
+  /** Q21: the vote was cancelled a day ago by this person – the others see the notice once. */
+  pollCanceledBy?: string;
 }
 
 const TRIPS: TripSeed[] = [
@@ -221,6 +229,7 @@ const TRIPS: TripSeed[] = [
     country: "AT",
     locale: "de",
     phase: "collecting",
+    pollCanceledBy: "ben",
     members: [
       { person: "ben", organizer: true, submitted: true },
       { person: "anna", submitted: true },
@@ -330,6 +339,48 @@ const TRIPS: TripSeed[] = [
       { person: "ben", submitted: true, voted: true },
     ],
   },
+  // Increment 6 (F-013): fixed trip that ended 80 days ago → automatic deletion in 10 days,
+  // Anna (Orga) sees the banner «Wird am … gelöscht» in «Meine Reisen».
+  {
+    name: "Kroatien Segeln",
+    rangeStart: day(-160),
+    rangeEnd: day(-70),
+    minNights: 5,
+    country: "DE",
+    locale: "de",
+    phase: "fixed",
+    fixedStart: day(-87),
+    fixedEnd: day(-80),
+    members: [
+      { person: "anna", organizer: true, submitted: true, voted: true, celebrated: true },
+      { person: "hanna", submitted: true, voted: true, celebrated: true },
+    ],
+  },
+  // Increment 6 (F-043): Ida organises a trip with others and a solo trip.
+  {
+    name: "Städtetrip Wien",
+    rangeStart: day(40),
+    rangeEnd: day(100),
+    minNights: 3,
+    country: "AT",
+    locale: "de",
+    phase: "collecting",
+    members: [
+      { person: "ida", organizer: true, submitted: true },
+      { person: "carla", submitted: true },
+      { person: "ben" },
+    ],
+  },
+  {
+    name: "Idas Testreise",
+    rangeStart: day(30),
+    rangeEnd: day(60),
+    minNights: 2,
+    country: "DE",
+    locale: "de",
+    phase: "collecting",
+    members: [{ person: "ida", organizer: true }],
+  },
 ];
 
 const client = new pg.Client({ connectionString: databaseUrl });
@@ -371,10 +422,11 @@ try {
       `insert into trip (public_id, name, description, range_start, range_end, min_nights,
          preferred_nights, deadline, holiday_country, holiday_subdivision, locale, invite_token,
          join_open, phase, fixed_start, fixed_end, updated_at, poll_deadline, poll_started_at,
-         fixed_at)
+         fixed_at, poll_canceled_at, poll_canceled_by)
        values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16, now() - make_interval(hours => $17),
          $18, case when $19::boolean then now() - interval '2 days' end,
-         case when $20::int is not null then now() - make_interval(days => $20::int) end)
+         case when $20::int is not null then now() - make_interval(days => $20::int) end,
+         case when $21::uuid is not null then now() - interval '1 day' end, $21::uuid)
        returning id`,
       [
         id,
@@ -397,6 +449,7 @@ try {
         seed.pollDeadline ?? null,
         seed.phase !== "collecting",
         seed.fixedDaysAgo ?? null,
+        seed.pollCanceledBy ? (ids.get(seed.pollCanceledBy) ?? null) : null,
       ],
     );
     const tripId = row.rows[0]?.id;

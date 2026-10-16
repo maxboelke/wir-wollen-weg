@@ -1,9 +1,10 @@
 import { helpHref } from "@/lib/help";
+import type { TripTab } from "@/lib/trip-status";
 import type { TripSheetContext } from "./components/trip-sheet";
 import type { TripView } from "./load";
 
 /** Data the trip menu / management dialogs need (serialisable for client components). */
-export function sheetContext(view: TripView): TripSheetContext {
+export function sheetContext(view: TripView, tab?: TripTab | null): TripSheetContext {
   return {
     publicId: view.trip.publicId,
     tripName: view.trip.name,
@@ -20,5 +21,7 @@ export function sheetContext(view: TripView): TripSheetContext {
     intl: view.format.intl,
     helpHref: helpHref(view.format.locale),
     canUnfix: view.isOrganizer && view.phase === "fixed",
+    // Q21: only in the tab «Abstimmen» (ux-spec §13.1 a) and only while the vote runs.
+    canCancelPoll: view.isOrganizer && view.phase === "vote" && tab === "poll",
   };
 }

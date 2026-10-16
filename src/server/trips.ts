@@ -9,7 +9,14 @@ import {
   isPublicIdShape,
 } from "@/lib/tokens";
 import { db } from "./db/client";
-import { MAX_TRIP_MEMBERS, trip, tripMember, tripPlaceholder, type MemberRole } from "./db/schema";
+import {
+  MAX_TRIP_MEMBERS,
+  pollVote,
+  trip,
+  tripMember,
+  tripPlaceholder,
+  type MemberRole,
+} from "./db/schema";
 
 /**
  * Trip data access (F-001 ff.). Every read or write by trip id goes through a membership
@@ -89,8 +96,21 @@ export async function listPlaceholders(tripId: string): Promise<PlaceholderView[
     .orderBy(asc(tripPlaceholder.createdAt), asc(tripPlaceholder.displayName));
 }
 
+/**
+ * Last activity in a trip (retention F-013): edits/joins/hand-overs (trip.updated_at), days,
+ * comments and submissions of the members, and votes.
+ */
+export const tripLastActivity = sql<Date>`greatest(
+  ${trip.updatedAt},
+  (select max(greatest(${tripMember.joinedAt}, coalesce(${tripMember.availabilityUpdatedAt}, ${tripMember.joinedAt}), coalesce(${tripMember.votedAt}, ${tripMember.joinedAt})))
+     from ${tripMember} where ${tripMember.tripId} = ${trip.id}),
+  (select max(${pollVote.updatedAt}) from ${pollVote} where ${pollVote.tripId} = ${trip.id})
+)`.mapWith((value: unknown) => new Date(value as string));
+
 export interface TripListItem {
   trip: TripRow;
+  /** Last activity – for the deletion banner «Wird am … gelöscht» (F-013). */
+  lastActivity: Date;
   me: MemberRow;
   memberCount: number;
   submittedCount: number;
@@ -102,7 +122,7 @@ export interface TripListItem {
 /** «Meine Reisen» (F-044): every trip the user is a member of, with progress counters. */
 export async function listTripsForUser(userId: string): Promise<TripListItem[]> {
   const mine = await db()
-    .select({ trip, me: tripMember })
+    .select({ trip, me: tripMember, lastActivity: tripLastActivity })
     .from(tripMember)
     .innerJoin(trip, eq(trip.id, tripMember.tripId))
     .where(eq(tripMember.userId, userId));
@@ -142,6 +162,7 @@ export async function listTripsForUser(userId: string): Promise<TripListItem[]> 
     return {
       trip: row.trip,
       me: row.me,
+      lastActivity: row.lastActivity,
       memberCount: c?.members ?? 1,
       submittedCount: c?.submitted ?? 0,
       votedCount: c?.voted ?? 0,
@@ -258,20 +279,32 @@ export async function deleteTrip(tripId: string): Promise<void> {
   await db().delete(trip).where(eq(trip.id, tripId));
 }
 
-/** Leaves a trip (F-013) – never for the organiser (caller checks). */
+/**
+ * Leaving or removal (F-004, F-013) – never the organiser (the role is part of the condition).
+ * Days, votes and the comment cascade with the membership; a placeholder this person took
+ * over still carries the name, so it goes too («meine Daten in dieser Reise löschen»).
+ * Runs with the trip row locked like the other membership changes (hand-over, deletion).
+ */
 export async function removeMember(tripId: string, userId: string): Promise<boolean> {
-  const removed = await db()
-    .delete(tripMember)
-    .where(
-      and(
-        eq(tripMember.tripId, tripId),
-        eq(tripMember.userId, userId),
-        eq(tripMember.role, "member"),
-      ),
-    )
-    .returning({ userId: tripMember.userId });
-  if (removed.length > 0) await touch(tripId);
-  return removed.length > 0;
+  return db().transaction(async (tx) => {
+    await lockTrip(tx, tripId);
+    const removed = await tx
+      .delete(tripMember)
+      .where(
+        and(
+          eq(tripMember.tripId, tripId),
+          eq(tripMember.userId, userId),
+          eq(tripMember.role, "member"),
+        ),
+      )
+      .returning({ userId: tripMember.userId });
+    if (removed.length === 0) return false;
+    await tx
+      .delete(tripPlaceholder)
+      .where(and(eq(tripPlaceholder.tripId, tripId), eq(tripPlaceholder.claimedBy, userId)));
+    await tx.update(trip).set({ updatedAt: new Date() }).where(eq(trip.id, tripId));
+    return true;
+  });
 }
 
 /** Hands the organiser role to another member; the previous organiser stays a member. */
@@ -281,6 +314,9 @@ export async function transferOrganizer(
   toUserId: string,
 ): Promise<boolean> {
   return db().transaction(async (tx) => {
+    // Same lock as joins, removals and account deletion: a hand-over can never race the
+    // deletion of the new organiser's account (F-043) and leave the trip without «Orga».
+    await lockTrip(tx, tripId);
     const [target] = await tx
       .select({ userId: tripMember.userId })
       .from(tripMember)

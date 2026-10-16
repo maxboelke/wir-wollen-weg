@@ -33,10 +33,16 @@ import {
   reserveVerificationAttempt,
   takeCodeRequest,
 } from "@/server/auth/email-limit-store";
+import { parseDeletionChoices } from "@/lib/account-deletion";
+import { deleteAccount } from "@/server/account-deletion";
 import { db } from "@/server/db/client";
 import { user } from "@/server/db/schema";
 import { serverEnv } from "@/server/env";
-import { renderEmailChangedEmail, renderReauthEmail } from "@/server/mail/templates";
+import {
+  renderAccountDeletedEmail,
+  renderEmailChangedEmail,
+  renderReauthEmail,
+} from "@/server/mail/templates";
 import { sendLocalizedMail } from "@/server/mail/transport";
 import { getSession, type Session } from "@/server/session";
 
@@ -380,4 +386,64 @@ export async function confirmEmailChange(newEmail: string, code: string): Promis
     );
   });
   return { ok: true };
+}
+
+// ---------------------------------------------------------------------------
+// Delete the account (F-043, Flow I.3, W13 /account/delete)
+// ---------------------------------------------------------------------------
+
+export interface DeleteAccountResult {
+  /** reauthExpired: confirm again · planOutdated: the trips changed – reload the page. */
+  error?: "reauthExpired" | "planOutdated" | "invalid" | "generic";
+}
+
+/** Better Auth cookies («ww.session_token», «__Secure-ww.session_token», …). */
+const AUTH_COOKIE = /^(__Secure-|__Host-)?ww\./;
+
+/**
+ * «Konto endgültig löschen»: needs a fresh confirmation (code or password, ≤ 10 min, like the
+ * e-mail change – R-023), then deletes everything in one transaction (src/server/
+ * account-deletion.ts). The choices per organised trip come from the page and are checked
+ * again under the trip locks. Afterwards: confirmation mail, cookies gone, → /goodbye.
+ */
+export async function deleteAccountAction(choices: unknown): Promise<DeleteAccountResult> {
+  const session = await requireSession();
+  if (!(await isReauthenticated(session.session.id))) return { error: "reauthExpired" };
+  const parsed = parseDeletionChoices(choices);
+  if (!parsed) return { error: "invalid" };
+  let result: Awaited<ReturnType<typeof deleteAccount>>;
+  try {
+    result = await deleteAccount(session.user.id, parsed);
+  } catch (error) {
+    console.error("account: deletion failed", error instanceof Error ? error.message : "");
+    return { error: "generic" };
+  }
+  if (!result.ok) return { error: result.reason === "planOutdated" ? "planOutdated" : "generic" };
+
+  const locale = localeOf(session);
+  await sendLocalizedMail(
+    result.email,
+    locale,
+    renderAccountDeletedEmail({ locale, deletedTrips: result.deletedTrips }),
+  ).catch((error: unknown) => {
+    console.error(
+      "account: deletion confirmation failed",
+      error instanceof Error ? error.message : "",
+    );
+  });
+
+  const store = await cookies();
+  for (const cookie of store.getAll()) {
+    if (!AUTH_COOKIE.test(cookie.name)) continue;
+    // Prefixed cookies are only replaced with the Secure attribute.
+    store.set(cookie.name, "", { maxAge: 0, path: "/", secure: cookie.name.startsWith("__") });
+  }
+  // /goodbye is shown in the account's language (signed out, Flow I.3 #5).
+  store.set(LOCALE_COOKIE, locale, {
+    maxAge: LOCALE_COOKIE_MAX_AGE,
+    sameSite: "lax",
+    httpOnly: true,
+    path: "/",
+  });
+  redirect("/goodbye");
 }

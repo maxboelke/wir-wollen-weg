@@ -90,7 +90,18 @@ function render({ locale, subject, preheader, heading, blocks }: Layout): Render
   const lead = t("wordmarkLead");
   const accent = t("wordmarkAccent");
   const signature = t("signature");
-  const text = [heading, "", ...blocks.flatMap(blockText), signature].join("\n");
+  // Mail footer links to the imprint (compliance-checklist §0a, §11) – placeholder page in the
+  // offline demo. Absolute URL from APP_URL (templates stay free of the env module).
+  const base = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const imprintUrl = `${base}${locale === "de" ? "/de/impressum" : "/en/imprint"}`;
+  const imprint = t("imprint");
+  const text = [
+    heading,
+    "",
+    ...blocks.flatMap(blockText),
+    signature,
+    `${imprint}: ${imprintUrl}`,
+  ].join("\n");
 
   const html = `<!doctype html>
 <html lang="${locale}">
@@ -113,7 +124,7 @@ function render({ locale, subject, preheader, heading, blocks }: Layout): Render
 <h1 style="margin:0 0 16px;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:800;color:${C.text}">${escapeHtml(heading)}</h1>
 ${blocks.map(renderBlock).join("\n")}
 </td></tr>
-<tr><td style="padding:16px 24px;font-size:13px;line-height:1.5;color:${C.muted}">${escapeHtml(signature)}</td></tr>
+<tr><td style="padding:16px 24px;font-size:13px;line-height:1.5;color:${C.muted}">${escapeHtml(signature)} · <a href="${escapeHtml(imprintUrl)}" style="color:${C.muted}">${escapeHtml(imprint)}</a></td></tr>
 </table>
 </td></tr>
 </table>
@@ -253,6 +264,116 @@ export function renderEmailChangedEmail({
     blocks: [
       { kind: "text", text: t("emailChanged.text", { email: maskEmail(newEmail) }) },
       { kind: "text", text: t("emailChanged.notYou", { contact }) },
+    ],
+  });
+}
+
+function longDate(date: Date, locale: Locale): string {
+  return new Intl.DateTimeFormat(locale === "de" ? "de-DE" : "en-GB", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  }).format(date);
+}
+
+/**
+ * «Dein Konto wurde gelöscht» (F-043) – the last mail to this address. Names the trips that
+ * were deleted for everybody, nothing else (no further mails afterwards).
+ */
+export function renderAccountDeletedEmail({
+  locale,
+  deletedTrips,
+  inactive = false,
+}: {
+  locale: Locale;
+  deletedTrips: readonly string[];
+  /** Deleted by the inactivity rule (24 months), not by the person. */
+  inactive?: boolean;
+}): RenderedEmail {
+  const t = translator(locale);
+  const blocks: Block[] = [
+    { kind: "text", text: inactive ? t("accountDeleted.inactive") : t("accountDeleted.text") },
+  ];
+  if (deletedTrips.length > 0) {
+    blocks.push({
+      kind: "text",
+      text: t("accountDeleted.trips", {
+        trips: deletedTrips.map((n) => (locale === "de" ? `„${n}“` : `“${n}”`)).join(", "),
+      }),
+    });
+  }
+  blocks.push({ kind: "text", text: t("accountDeleted.noMore"), muted: true });
+  return render({
+    locale,
+    subject: t("accountDeleted.subject"),
+    preheader: t("accountDeleted.text"),
+    heading: t("accountDeleted.heading"),
+    blocks,
+  });
+}
+
+/** Notice to the organiser 14 days before a trip is deleted automatically (F-013). */
+export function renderTripDeletionNoticeEmail({
+  locale,
+  tripName,
+  date,
+  reason,
+  tripUrl,
+}: {
+  locale: Locale;
+  tripName: string;
+  date: Date;
+  reason: "afterTrip" | "inactive";
+  tripUrl: string;
+}): RenderedEmail {
+  const t = translator(locale);
+  const when = longDate(date, locale);
+  return render({
+    locale,
+    subject: t("tripNotice.subject", { trip: tripName }),
+    preheader: t("tripNotice.text", { trip: tripName, date: when }),
+    heading: t("tripNotice.heading"),
+    blocks: [
+      { kind: "text", text: t("tripNotice.text", { trip: tripName, date: when }) },
+      { kind: "text", text: t(`tripNotice.${reason}`) },
+      {
+        kind: "button",
+        intro: t("tripNotice.linkIntro"),
+        label: t("tripNotice.link"),
+        href: tripUrl,
+      },
+      { kind: "text", text: t("tripNotice.service"), muted: true },
+    ],
+  });
+}
+
+/** Notice 30 days before an inactive account is deleted (F-043). */
+export function renderAccountInactiveNoticeEmail({
+  locale,
+  date,
+  loginUrl,
+}: {
+  locale: Locale;
+  date: Date;
+  loginUrl: string;
+}): RenderedEmail {
+  const t = translator(locale);
+  const when = longDate(date, locale);
+  return render({
+    locale,
+    subject: t("inactiveNotice.subject"),
+    preheader: t("inactiveNotice.text", { date: when }),
+    heading: t("inactiveNotice.heading"),
+    blocks: [
+      { kind: "text", text: t("inactiveNotice.text", { date: when }) },
+      {
+        kind: "button",
+        intro: t("inactiveNotice.keepIntro"),
+        label: t("inactiveNotice.keep"),
+        href: loginUrl,
+      },
+      { kind: "text", text: t("inactiveNotice.service"), muted: true },
     ],
   });
 }

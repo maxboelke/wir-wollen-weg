@@ -527,3 +527,135 @@ export async function setTripRange(tripId: string, start: string, end: string): 
     ]);
   });
 }
+
+// ---------------------------------------------------------------------------
+// Increment 6: privacy (F-013, F-043, Q21)
+// ---------------------------------------------------------------------------
+
+/** What is left of an account after deletion (all 0 = gone). */
+export async function accountTraces(email: string, userId?: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      users: number;
+      sessions: number;
+      accounts: number;
+      codes: number;
+      memberships: number;
+      days: number;
+      votes: number;
+    }>(
+      `select
+         (select count(*)::int from "user" where email = $1) as users,
+         (select count(*)::int from session where user_id = $2::uuid) as sessions,
+         (select count(*)::int from account where user_id = $2::uuid) as accounts,
+         (select count(*)::int from verification where strpos(identifier, $1) > 0 or strpos(value, $1) > 0) as codes,
+         (select count(*)::int from trip_member where user_id = $2::uuid) as memberships,
+         (select count(*)::int from availability where user_id = $2::uuid) as days,
+         (select count(*)::int from poll_vote where user_id = $2::uuid) as votes`,
+      [email, userId ?? "00000000-0000-0000-0000-000000000000"],
+    );
+    return rows.rows[0];
+  });
+}
+
+export async function userIdOf(email: string): Promise<string> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ id: string }>(`select id from "user" where email = $1`, [
+      email,
+    ]);
+    return rows.rows[0]?.id ?? "";
+  });
+}
+
+export async function tripExists(publicIdValue: string): Promise<boolean> {
+  return withClient(async (client) => {
+    const rows = await client.query("select 1 from trip where public_id = $1", [publicIdValue]);
+    return (rows.rowCount ?? 0) > 0;
+  });
+}
+
+/** Number of stored days of a trip (all members). */
+export async function tripDayCount(tripId: string): Promise<number> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ n: number }>(
+      "select count(*)::int as n from availability where trip_id = $1",
+      [tripId],
+    );
+    return rows.rows[0]?.n ?? 0;
+  });
+}
+
+/** Vote state incl. the Q21 cancel marker. */
+export async function cancelState(publicIdValue: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      phase: string;
+      options: number;
+      votes: number;
+      canceled: boolean;
+      voted: number;
+    }>(
+      `select t.phase,
+         (select count(*)::int from poll_option o where o.trip_id = t.id) as options,
+         (select count(*)::int from poll_vote v where v.trip_id = t.id) as votes,
+         t.poll_canceled_at is not null as canceled,
+         (select count(*)::int from trip_member m where m.trip_id = t.id and m.voted_at is not null) as voted
+         from trip t where public_id = $1`,
+      [publicIdValue],
+    );
+    return rows.rows[0];
+  });
+}
+
+/** Retention (F-013): move a fixed trip's dates and its notice into the past. */
+export async function setTripRetention(
+  tripId: string,
+  values: { fixedStart: string; fixedEnd: string; noticeDaysAgo?: number | null },
+): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip set phase = 'fixed', fixed_start = $2, fixed_end = $3, fixed_at = now(),
+         deletion_notice_sent_at = case when $4::int is null then null
+           else now() - make_interval(days => $4::int) end
+       where id = $1`,
+      [tripId, values.fixedStart, values.fixedEnd, values.noticeDaysAgo ?? null],
+    );
+  });
+}
+
+export async function tripNoticeSent(publicIdValue: string): Promise<boolean> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ sent: boolean }>(
+      "select deletion_notice_sent_at is not null as sent from trip where public_id = $1",
+      [publicIdValue],
+    );
+    return rows.rows[0]?.sent ?? false;
+  });
+}
+
+/** Inactivity (F-043): last use `monthsAgo` months (+ extra days) ago, notice `noticeDaysAgo`. */
+export async function setAccountInactivity(
+  email: string,
+  values: { monthsAgo: number; plusDays?: number; noticeDaysAgo?: number | null },
+): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update "user" set
+         last_active_at = now() - make_interval(months => $2::int, days => $3::int),
+         inactivity_notice_sent_at = case when $4::int is null then null
+           else now() - make_interval(days => $4::int) end
+       where email = $1`,
+      [email, values.monthsAgo, values.plusDays ?? 0, values.noticeDaysAgo ?? null],
+    );
+  });
+}
+
+export async function inactivityNoticeSent(email: string): Promise<boolean> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ sent: boolean }>(
+      `select inactivity_notice_sent_at is not null as sent from "user" where email = $1`,
+      [email],
+    );
+    return rows.rows[0]?.sent ?? false;
+  });
+}
