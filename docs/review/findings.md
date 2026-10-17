@@ -684,3 +684,27 @@ Geprüft: F-043 Konto löschen (W13 /account/delete, /goodbye, Orga-Pflicht, Re-
 - **cancelPoll (Q21):** Phase + Rolle unter `FOR UPDATE` neu geprüft, Replay → `phase`; Hinweis einmal je Mitgliedschaft (nicht für Abbrechende, nicht für später Beigetretene, neuer Start löscht den Marker); Dialog-Fokus auf „Abstimmung behalten“, Esc schließt (E2E).
 - **Destruktiver Konto-Dialog:** Fokus auf „Abbrechen“, „Endgültig löschen“ vor Bestätigung `aria-disabled` (Klick öffnet nichts), axe hell/dunkel ohne serious/critical; Layout 393 × 659 geprüft (Screenshot, lange Reisenamen umbrechen).
 - **Kosmetik:** In „Daten & Datenschutz“ (Konto) steht zwischen „Datenschutzerklärung“ und „Meine Daten herunterladen“ ein auffallend großer Abstand.
+
+## Review Demo-Paket M0.5 (Reviewer 2026-10-16, Commit a2d3364 gegen 330ccf9)
+
+Selbst ausgeführt (Linux, Docker; Build-Schritt wegen fehlendem Proxy-Zertifikat dieser Umgebung mit den vorhandenen Images – betrifft das Repo nicht): `start` (Erststart: `.env.demo` mit Rechten 600, gitignored, Migration, Seed, URL-Kasten), zweiter `start` (kein Re-Seed), `status`, `seed`, `unlock`, `stop`, `start` nach gelöschter `.env.demo` (DB-Passwort-Abgleich greift, Login danach ok), `DEMO_BIND_ADDRESS=127.0.0.1` (Ports nur an 127.0.0.1, LAN-IP nicht erreichbar, `APP_URL=localhost`), belegter Port 3000 (verständlicher Abbruch), `unlock` mit `APP_ENV≠demo` (Abbruch), `reset`. Code-Login per Playwright über `http://localhost:3000` und `http://<LAN-IP>:3000` (iPhone-Profil): Cookie `ww.session_token` `secure=false`, `httpOnly`, `SameSite=Lax`; Magic-Link und Einladungslinks zeigen auf die LAN-IP. Secrets erscheinen weder in der Skript-Ausgabe noch im App-Log. Syntax unter bash 3.2 (macOS-Version) geprüft. Seed-Abgleich mit Anleitung/Drehbuch: Personen, Rollen, Reisen, „5 von 9“, „Zu tun (3)“, „Vergangene Reisen (2)“, „Wird am … gelöscht“, „Fast alle dabei“ ohne Ben/David/Greta, Abbruch-Hinweis Skiurlaub, UI-Texte stimmen.
+
+### R-063: Demo-Skript – Hilfe, `logs` und Fehlermeldungen; Befehl im Anleitungs-Kasten
+- Schwere: niedrig
+- Datei: scripts/demo.sh:270, scripts/demo.sh:256, scripts/demo.sh:191/194; docs/ops/demo-anleitung.md:83
+- Problem / Reproduktion: (a) `bash scripts/demo.sh help` gibt als letzte Zeile `set -euo pipefail` aus (Zeilenbereich `2,16p` eine Zeile zu lang). (b) `bash scripts/demo.sh logs` ohne `.env.demo` → rohe Compose-Meldung `couldn't find env file: …/.env.demo` statt deutschem Hinweis (bei `status` vorhanden). (c) Schlägt Bauen/Starten oder die Migration fehl (z. B. kein Internet), endet das Skript ohne deutschen Hinweis nur mit der Docker-Ausgabe. (d) Beispiel-Kasten in der Anleitung zeigt `./scripts/demo.sh stop`, das Skript gibt `bash scripts/demo.sh stop` aus (ZIP-Download hat kein Ausführungsrecht – `./` würde scheitern).
+- Umsetzung (Reviewer): (a) `2,15p`; (b) gleiche Prüfung wie bei `status`; (c) `|| fail "…"` mit Verweis auf Anleitung 4.7; (d) Kasten auf `bash scripts/demo.sh stop`.
+- Status: verifiziert (vom Reviewer behoben)
+
+### R-064: Kein Startschutz gegen `http://`-Basis-URL in production (Cookies ohne `Secure`)
+- Schwere: niedrig (vor Go-Live)
+- Datei: src/instrumentation.ts:15
+- Problem / Reproduktion: Better Auth leitet `Secure` aus `BETTER_AUTH_URL`/`APP_URL` ab (`node_modules/better-auth/dist/cookies/index.mjs`: `baseURL.startsWith("https://")`). Das Demo-Paket nutzt das bewusst (HTTP im LAN) und ändert keinen Code – production ist mit `https://`-URL nicht aufgeweicht. Wird in production aber versehentlich `APP_URL=http://…` gesetzt (Tippfehler, Kopie aus `.env.demo`), startet die App ohne Warnung mit Session-Cookies ohne `Secure`.
+- Erwartetes Verhalten: `APP_ENV=production` (und `staging`) startet nur mit `https://`-Basis-URL.
+- Vorschlag: im Startschutz von `instrumentation.ts` neben dem Platzhalter-Check `BETTER_AUTH_URL ?? APP_URL` auf `https://` prüfen und sonst mit Verweis auf deployment.md abbrechen; Unit-Test.
+- Status: offen
+
+#### Hinweise ohne Finding (Demo-Paket)
+- **Sicherheit:** `unlock`/`seed` wirken nur über `docker/compose.demo.yml` (Projekt `wir-wollen-weg-demo`, eigene DB) und prüfen zusätzlich `APP_ENV=demo` in `.env.demo`; die Demo-Compose-Datei setzt `APP_ENV: demo` ohnehin fest. WLAN-Risiko (App **und** Mailpit mit Login-Codes für alle Geräte im WLAN) ist in Anleitung §3.4 benannt, Abschalten per `DEMO_BIND_ADDRESS=127.0.0.1` dokumentiert und getestet.
+- **ZIP-Download:** „Download ZIP“ liefert den Standard-Branch – das Demo-Paket muss vor dem Termin auf `main` gemergt sein.
+- **macOS:** keine GNU-Spezialitäten (kein `sed -i`, `ipconfig getifaddr`/`route -n get default`, `openssl rand`, `seq`, `lsof` vorhanden); `hostname -I` (Linux-Fallback) scheitert auf macOS still. Auf echtem Mac nicht ausgeführt.

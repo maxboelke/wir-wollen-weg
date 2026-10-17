@@ -29,7 +29,11 @@ Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-ch
 
 ### 0.2 Demo starten (Laptop)
 
-Voraussetzungen: Docker (Desktop oder Engine + Compose-Plugin), Git. Kein Node/pnpm nötig für die reine Demo.
+Voraussetzungen: Docker (Desktop oder Engine + Compose-Plugin), Git oder ZIP-Download. Kein Node/pnpm nötig für die reine Demo.
+
+**Empfohlen (seit 2026-10-16, Demo-Abnahme M0.5): ein Befehl** – `bash scripts/demo.sh start` erzeugt beim ersten Lauf `.env.demo` mit zufälligen lokalen Secrets, baut, startet, migriert, spielt einmalig den Seed ein, ermittelt die LAN-IP für den Handy-Test (§0.3) und zeigt die Adressen. Weitere Befehle: `stop`, `seed`, `unlock` (Anmelde-Limits leeren, nur `APP_ENV=demo`), `reset`, `status`, `logs`. Laien-Anleitung: [demo-anleitung.md](demo-anleitung.md), Klick-Drehbuch: [demo-drehbuch.md](demo-drehbuch.md).
+
+Manuell (gleiches Ergebnis ohne Skript):
 
 ```bash
 cp .env.example .env.demo
@@ -55,6 +59,8 @@ Kurzform mit Node/pnpm auf dem Laptop: `pnpm demo:up` (Build + Start + Migration
 Für die tägliche Entwicklung bleibt `compose.dev.yml` (nur PostgreSQL + Mailpit) + `pnpm dev` (§3, Umgebung **dev**).
 
 ### 0.3 Auf dem eigenen Handy im WLAN testen
+
+> Mit `scripts/demo.sh` entfallen die Schritte 1–2: Das Skript setzt bei jedem Start `APP_URL`/`BETTER_AUTH_URL` auf `http://<LAN-IP>:3000` (fest vorgebbar mit `DEMO_HOST` in `.env.demo`) und `AUTH_TRUSTED_ORIGINS=http://localhost:3000,http://127.0.0.1:3000`, damit der Laptop weiter über `localhost` anmelden kann. Login über `http://<LAN-IP>` am 2026-10-16 geprüft (Cookies ohne `Secure`, da `BETTER_AUTH_URL` mit `http://` beginnt).
 
 1. LAN-IP des Laptops ermitteln (macOS: `ipconfig getifaddr en0`, Linux: `hostname -I`, Windows: `ipconfig`), z. B. `192.168.178.20`.
 2. In `.env.demo` `APP_URL=http://192.168.178.20:3000` und `BETTER_AUTH_URL` gleich setzen, dann `up -d` erneut (kein Neubau nötig – keine `NEXT_PUBLIC_*`-Werte, tech-stack.md §1). **Wichtig:** Magic-Links und Einladungslinks werden mit `APP_URL` gebaut; mit `localhost` funktionieren sie auf dem Handy nicht.
