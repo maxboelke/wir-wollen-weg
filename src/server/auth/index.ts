@@ -18,6 +18,7 @@ import {
   renderPasswordResetEmail,
 } from "../mail/templates";
 import { sendLocalizedMail } from "../mail/transport";
+import { runAfterResponse } from "../background";
 import { findTripByInviteToken } from "../trips";
 import { validateNewPassword } from "./breach-check";
 import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client-ip";
@@ -208,6 +209,9 @@ function createAuth() {
     },
     advanced: {
       cookiePrefix: "ww",
+      // Mails sent "in the background" (email-access-plugin) must survive the response on
+      // serverless hosts – Vercel freezes the function otherwise (live preview, PRD Q25).
+      backgroundTasks: { handler: runAfterResponse },
       // Only the header written by handleAuthRequest – never a client-supplied one (R-005).
       // IPv6 limits per /64 network, like the app limits (R-036; also Better Auth's default).
       ipAddress: { ipAddressHeaders: [CLIENT_IP_HEADER], ipv6Subnet: 64 },
