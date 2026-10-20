@@ -47,3 +47,39 @@ describe("invite share texts (ux-spec §10.3, §10.6)", () => {
     expect(links.email.startsWith("mailto:?subject=Einladung&body=")).toBe(true);
   });
 });
+
+describe("remind texts (ux-spec §14.1, §14.2)", () => {
+  const catalogs = { de, en } as const;
+  const TRIP = "Lissabon 2027";
+  const values = {
+    name: "Kemal",
+    names: "Kemal, Sara und Jonas",
+    orga: "Lena",
+    trip: TRIP,
+    link: LINK,
+    deadline: "Fr., 14. Mai",
+  };
+
+  it("name the person, carry the link and stay ≤ 300 characters (typical trip name)", () => {
+    for (const locale of ["de", "en"] as const) {
+      const messages = catalogs[locale];
+      const t = createTranslator({ locale, messages, namespace: "share.remind" });
+      for (const key of Object.keys(messages.share.remind) as (keyof typeof en.share.remind)[]) {
+        const text = t(key, values);
+        expect(text).toContain(LINK);
+        expect(text).not.toContain("@");
+        expect(text.length, `${locale}.${key}`).toBeLessThanOrEqual(300);
+      }
+    }
+  });
+
+  it("use «Hey {name}» for single reminders (no @, F-015)", () => {
+    const t = createTranslator({ locale: "de", messages: de, namespace: "share.remind" });
+    expect(t("p1", values)).toBe(
+      `Hey Kemal, du fehlst noch bei ${TRIP}! Trag kurz ein, wann du kannst – dauert 2 Minuten: ${LINK}`,
+    );
+    expect(t("nudgeP1All", values)).toBe(
+      `Hey Lena, alle haben ihre Tage für ${TRIP} eingetragen – du kannst jetzt die Abstimmung starten: ${LINK}`,
+    );
+  });
+});

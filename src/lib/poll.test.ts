@@ -14,6 +14,8 @@ import {
   periodInRange,
   periodKey,
   pollCancelNoticeDue,
+  REOPEN_SEEN_PREFIX,
+  reopenNoticeDue,
   pollForViewer,
   preselectWinner,
   rankOptions,
@@ -263,6 +265,11 @@ describe("result: countdown, ring, celebration (F-012, W11)", () => {
     expect(celebrationDue(period, periodKey(period))).toBe(false);
     expect(celebrationDue({ ...period, end: "2027-05-11" }, periodKey(period))).toBe(true);
     expect(celebrationDue(null, null)).toBe(false);
+    // After the reopen notice the range stays behind the marker: same range → no new party.
+    expect(celebrationDue(period, `${REOPEN_SEEN_PREFIX}${periodKey(period)}`)).toBe(false);
+    expect(
+      celebrationDue({ ...period, end: "2027-05-11" }, `${REOPEN_SEEN_PREFIX}${periodKey(period)}`),
+    ).toBe(true);
   });
 });
 
@@ -294,5 +301,24 @@ describe("pollCancelNoticeDue (Q21)", () => {
     expect(pollCancelNoticeDue(trip, seenBefore)).toBe(true);
     expect(pollCancelNoticeDue({ ...trip, phase: "voting" }, member)).toBe(false);
     expect(pollCancelNoticeDue({ ...trip, pollCanceledAt: null }, member)).toBe(false);
+  });
+});
+
+describe("reopenNoticeDue (ux-spec §14.4)", () => {
+  const member = { role: "member", celebratedFor: "2027-05-05~2027-05-10" };
+  it("members who had celebrated see it once while the vote runs again", () => {
+    expect(reopenNoticeDue({ phase: "voting" }, member)).toBe(true);
+    expect(
+      reopenNoticeDue(
+        { phase: "voting" },
+        { ...member, celebratedFor: `${REOPEN_SEEN_PREFIX}2027-05-05~2027-05-10` },
+      ),
+    ).toBe(false);
+  });
+  it("not for the organiser, not without a celebration, not in other phases", () => {
+    expect(reopenNoticeDue({ phase: "voting" }, { ...member, role: "organizer" })).toBe(false);
+    expect(reopenNoticeDue({ phase: "voting" }, { ...member, celebratedFor: null })).toBe(false);
+    expect(reopenNoticeDue({ phase: "fixed" }, member)).toBe(false);
+    expect(reopenNoticeDue({ phase: "collecting" }, member)).toBe(false);
   });
 });

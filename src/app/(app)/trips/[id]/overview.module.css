@@ -103,6 +103,47 @@
   font-size: var(--ww-text-lg);
 }
 
+/* Actions stacked under 400 px, side by side above (§14.1); primary → secondary → text. */
+.nextActions {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--ww-space-2);
+  align-self: stretch;
+}
+
+@media (min-width: 400px) {
+  .nextActions {
+    flex-flow: row wrap;
+    align-items: center;
+  }
+}
+
+/* Phase 3: description as a quote line under the result card (§14.4). */
+.quote {
+  padding-inline-start: var(--ww-space-3);
+  border-inline-start: var(--ww-space-1) solid var(--ww-color-primary-tint-strong);
+  color: var(--ww-color-text-muted);
+  font-style: italic;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.hub {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.hubTitle {
+  font-size: var(--ww-text-xl);
+}
+
+.searched {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
 .members {
   display: flex;
   flex-direction: column;

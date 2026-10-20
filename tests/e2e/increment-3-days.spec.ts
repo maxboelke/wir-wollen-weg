@@ -201,7 +201,7 @@ test.describe("F-005/F-007 submit and status", () => {
     expect((await memberStatus(publicId, email))?.submitted).toBe(true);
     await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
     await page.goto(`/trips/${publicId}`);
-    await expect(page.getByText(/^submitted · /)).toBeVisible();
+    await expect(page.getByText(/^dates added · /)).toBeVisible();
     await expect(page.getByText("Collecting dates · 1/1 done")).toHaveCount(0); // sr text differs
     await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
 
@@ -356,12 +356,14 @@ test.describe("security and phases", () => {
     expect(posts).toEqual([]);
   });
 
-  test("fixed dates: «My dates» is read-only, states stay visible", async ({ page }) => {
+  test("fixed dates: «My dates» is gone – old links land on the overview (ux-spec §14.4)", async ({
+    page,
+  }) => {
     const email = await signUp(page, "Lia", uniqueEmail("lia"));
     const trip = await seedTrip(`Fixed ${String(Date.now())}`, { phase: "fixed" });
     await addAccountToTrip(trip.tripId, email, "Lia");
     await page.goto(`/trips/${trip.publicId}/days`);
-    await expect(page.getByText(days.banner.locked)).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
     await expect(cells(page)).toHaveCount(0);
     await expect(page.getByRole("button", { name: days.submit })).toHaveCount(0);
   });

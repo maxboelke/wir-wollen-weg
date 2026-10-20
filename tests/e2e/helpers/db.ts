@@ -659,3 +659,45 @@ export async function inactivityNoticeSent(email: string): Promise<boolean> {
     return rows.rows[0]?.sent ?? false;
   });
 }
+
+// ---------------------------------------------------------------------------
+// Feedback-Runde 1 (ux-spec §14)
+// ---------------------------------------------------------------------------
+
+/** Marks the dates of a member as added («eingetragen», F-007). */
+export async function markSubmitted(tripId: string, email: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip_member set submitted_at = now(), availability_updated_at = now()
+        where trip_id = $1 and user_id = (select id from "user" where email = $2)`,
+      [tripId, email],
+    );
+  });
+}
+
+/** Marks every member of a trip (except `exceptEmail`) as having added their dates. */
+export async function markAllSubmitted(tripId: string, exceptEmail?: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip_member set submitted_at = now(), availability_updated_at = now()
+        where trip_id = $1
+          and user_id not in (select id from "user" where email = coalesce($2, ''))`,
+      [tripId, exceptEmail ?? null],
+    );
+  });
+}
+
+/** Sets `celebrated_for` of a member (F-012 celebration seen, ux-spec §14.4 reopen notice). */
+export async function setCelebratedFor(
+  tripId: string,
+  email: string,
+  value: string | null,
+): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip_member set celebrated_for = $3
+        where trip_id = $1 and user_id = (select id from "user" where email = $2)`,
+      [tripId, email, value],
+    );
+  });
+}

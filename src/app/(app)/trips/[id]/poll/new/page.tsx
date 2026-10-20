@@ -56,6 +56,8 @@ export default async function CreatePollPage({ params, searchParams }: Params) {
   const query = await searchParams;
   const view = await loadTripView(id, `/trips/${id}/poll/new`);
   const { trip, today, format, isOrganizer, phase } = view;
+  // Phase 3 (ux-spec §14.4): always the overview; otherwise members or a running vote → «Abstimmen».
+  if (trip.phase === "fixed") redirect(tripPath(trip.publicId));
   if (!isOrganizer || phase !== "collect") redirect(tripPath(trip.publicId, "poll"));
   const people = await pollPeople(view);
   const wished = trip.preferredNights ?? trip.minNights;

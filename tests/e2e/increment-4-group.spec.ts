@@ -56,7 +56,7 @@ test.describe("F-008/F-009 group tab", () => {
     await hydrated(page);
     // Q20: placeholders count in the denominator and in «still open».
     await expect(page.getByText(fill(en.trip.kpiSubmitted, { done: 2, total: 6 }))).toBeVisible();
-    await expect(page.getByText(/Still open: .*Lena Berg.*Dora.*Kemal.*Mia/)).toBeVisible();
+    await expect(page.getByText(/Still missing: .*Lena Berg.*Dora.*Kemal.*Mia/)).toBeVisible();
 
     await expect(
       page.getByRole("heading", { name: fill(g.groups.all, { count: 1 }) }),

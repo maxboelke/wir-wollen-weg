@@ -21,6 +21,7 @@ import {
   type ViewerPoll,
   type VoteChoice,
 } from "@/lib/poll";
+import { useRemind } from "../../trips/components/remind-sheet";
 import { SharePanel } from "../../trips/components/share-panel";
 import {
   addOptionAction,
@@ -54,6 +55,10 @@ export interface PollViewProps {
   /** The cockpit banner «Der Termin steht fest! [Ansehen]» is already shown (not celebrated). */
   celebrationPending: boolean;
   started: boolean;
+  /** `?fix=1` (organiser, phase 2): open «Termin festlegen» at once (ux-spec §14.1). */
+  openFix?: boolean | undefined;
+  /** Phase 3 sub-page has its own (hidden) h1. */
+  heading?: "h1" | "h2" | undefined;
   share: { link: string; texts: Record<Locale, string>; defaultLocale: Locale; tripName: string };
   add: {
     rangeStart: IsoDate;
@@ -89,7 +94,8 @@ export function PollView(props: PollViewProps) {
   const [save, setSave] = useState<SaveState>("idle");
   const [conflict, setConflict] = useState(false);
   const [votersOpen, setVotersOpen] = useState(false);
-  const [fixOpen, setFixOpen] = useState(false);
+  const [fixOpen, setFixOpen] = useState(Boolean(props.openFix));
+  const remind = useRemind();
   const [fixBusy, setFixBusy] = useState(false);
   const [fixError, setFixError] = useState<string | null>(null);
   const [addOpen, setAddOpen] = useState(false);
@@ -132,10 +138,19 @@ export function PollView(props: PollViewProps) {
   const allVoted = progress.total > 0 && progress.done === progress.total;
   const fixedKey = props.fixed ? periodKey(props.fixed) : null;
 
+  // `?fix=1` only once: drop it from the URL so a reload does not open the sheet again.
+  useEffect(() => {
+    if (!props.openFix) return;
+    const url = new URL(window.location.href);
+    url.searchParams.delete("fix");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, [props.openFix]);
+
   function applyResult(result: VoteActionResult) {
     if (!result.ok) return;
     setProgress({ done: result.done, total: result.total });
     setVoters({ voted: result.voted, open: result.open });
+    remind?.syncVoted(result.voted);
     setTop(result.poll.top);
     setOptions((current) =>
       result.poll.options.map((option) => {
@@ -302,7 +317,11 @@ export function PollView(props: PollViewProps) {
   return (
     <div className={styles.page}>
       <div className={styles.head}>
-        <h1>{voting ? t("open") : t("closed")}</h1>
+        {props.heading === "h2" ? (
+          <h2 className={styles.pageTitle}>{voting ? t("open") : t("closed")}</h2>
+        ) : (
+          <h1>{voting ? t("open") : t("closed")}</h1>
+        )}
         <div className={styles.kpis}>
           {deadlineTile}
           <button
@@ -310,7 +329,9 @@ export function PollView(props: PollViewProps) {
             className={styles.kpi}
             aria-haspopup="dialog"
             onClick={() => {
-              setVotersOpen(true);
+              // Phase 2: the shared remind sheet with [Erinnern] (ux-spec §14.2).
+              if (remind && voting) remind.open({ step: "status" });
+              else setVotersOpen(true);
             }}
           >
             <span aria-hidden="true">

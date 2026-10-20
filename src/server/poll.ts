@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import type { Period, PollOptionData, VoteChoice, VoteRow } from "@/lib/poll";
-import { MAX_OPTIONS, periodKey } from "@/lib/poll";
+import { MAX_OPTIONS, periodKey, REOPEN_SEEN_PREFIX } from "@/lib/poll";
 import { db } from "./db/client";
 import { pollOption, pollVote, trip, tripMember } from "./db/schema";
 
@@ -304,6 +304,24 @@ export async function cancelPoll(tripId: string, userId: string): Promise<Cancel
 }
 
 /** The member has seen the one-off notice about the cancelled vote (Q21). */
+/**
+ * «{orga} hat den Termin wieder geöffnet» was shown (ux-spec §14.4): prefix the celebrated
+ * range with REOPEN_SEEN_PREFIX (keeps it for «same range → no second celebration»).
+ */
+export async function markReopenSeen(tripId: string, userId: string): Promise<void> {
+  await db()
+    .update(tripMember)
+    .set({ celebratedFor: sql`${REOPEN_SEEN_PREFIX} || ${tripMember.celebratedFor}` })
+    .where(
+      and(
+        eq(tripMember.tripId, tripId),
+        eq(tripMember.userId, userId),
+        sql`${tripMember.celebratedFor} is not null`,
+        sql`left(${tripMember.celebratedFor}, ${REOPEN_SEEN_PREFIX.length}) <> ${REOPEN_SEEN_PREFIX}`,
+      ),
+    );
+}
+
 export async function markPollCancelSeen(tripId: string, userId: string): Promise<void> {
   await db()
     .update(tripMember)

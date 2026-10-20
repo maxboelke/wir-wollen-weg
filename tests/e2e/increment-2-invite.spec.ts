@@ -61,7 +61,7 @@ test.describe("F-003 preview and join", () => {
     await page.goto(`/trips/${trip.publicId}`);
     const members = page.getByRole("region", { name: /Who's in\? \(2\)/ });
     await expect(members.getByText("Kemal")).toBeVisible();
-    await expect(members.getByText(en.trip.status.open).first()).toBeVisible();
+    await expect(members.getByText(en.trip.status.openCollect).first()).toBeVisible();
     expect(await memberNames(trip.publicId)).toEqual(["Lena Berg", "Kemal"]);
 
     // Opening the link again: straight to the trip (default tab «Meine Tage»), no preview.

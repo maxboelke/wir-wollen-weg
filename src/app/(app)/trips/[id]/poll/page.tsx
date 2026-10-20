@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Illustration } from "@/components/illustrations/illustration";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -22,7 +23,8 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     getTranslations("trip"),
     loadTripView(id, `/trips/${id}/poll`),
   ]);
-  return { title: `${t("tabs.poll")} · ${view.trip.name}` };
+  const title = view.trip.phase === "fixed" ? t("hub.pollTitle") : t("tabs.poll");
+  return { title: `${title} · ${view.trip.name}` };
 }
 
 /** Phase 1: nothing to vote on yet (W10 «Leerzustände Tab Abstimmen»). */
@@ -81,6 +83,10 @@ export default async function PollPage({ params, searchParams }: Params) {
   const query = await searchParams;
   const view = await loadTripView(id, `/trips/${id}/poll`);
   const { trip, phase, members, format, today, isOrganizer, progress, me } = view;
+  // Phase 3 (ux-spec §14.4): read-only sub-page «Abstimmungsergebnis»; the celebration comes
+  // first when it is still due for this person.
+  const settled = trip.phase === "fixed";
+  if (settled && view.celebrate) redirect(tripPath(trip.publicId));
   if (phase === "collect" || (phase === "past" && trip.phase === "collecting")) {
     return (
       <TripShell view={view} tab="poll">
@@ -121,8 +127,16 @@ export default async function PollPage({ params, searchParams }: Params) {
     total: members.length,
   };
 
+  const tTrip = await getTranslations("trip");
   return (
-    <TripShell view={view} tab="poll">
+    <TripShell
+      view={view}
+      tab={settled ? null : "poll"}
+      subtitle={settled ? tTrip("hub.pollTitle") : undefined}
+    >
+      {settled ? (
+        <h1 className="visually-hidden">{`${tTrip("hub.pollTitle")} · ${trip.name}`}</h1>
+      ) : null}
       <PollView
         publicId={trip.publicId}
         isOrganizer={isOrganizer}
@@ -141,6 +155,9 @@ export default async function PollPage({ params, searchParams }: Params) {
         overviewHref={tripPath(trip.publicId)}
         celebrationPending={view.celebrate}
         started={query.started === "1"}
+        // ux-spec §14.1: «Termin festlegen» from «Nächster Schritt» opens the sheet directly.
+        openFix={query.fix === "1" && isOrganizer && voting}
+        heading={settled ? "h2" : "h1"}
         share={{ link: pollLink, texts, defaultLocale: format.locale, tripName: trip.name }}
         add={
           isOrganizer && voting

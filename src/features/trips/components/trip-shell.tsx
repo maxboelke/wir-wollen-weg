@@ -7,7 +7,9 @@ import { SiteFooter } from "@/components/shell/site-footer";
 import type { TripTab } from "@/lib/trip-status";
 import type { TripView } from "../load";
 import { tripPath } from "../paths";
+import { remindSheetData } from "../remind";
 import { TabContent } from "./cockpit-client";
+import { RemindProvider } from "./remind-sheet";
 import { TAB_ORDER, TripCockpit } from "./trip-cockpit";
 import styles from "./trip-shell.module.css";
 
@@ -26,7 +28,11 @@ interface TripShellProps {
  * celebration plays (ux-spec §7.5, W11).
  */
 export async function TripShell({ view, tab, subtitle, kpi, children }: TripShellProps) {
-  const t = await getTranslations("poll.result");
+  const [t, remind] = await Promise.all([
+    getTranslations("poll.result"),
+    // One remind sheet per page (phase 1/2) – every entry point opens it (ux-spec §14.2).
+    remindSheetData(view),
+  ]);
   const banner =
     view.celebrate && tab !== "overview" ? (
       <Banner
@@ -42,7 +48,7 @@ export async function TripShell({ view, tab, subtitle, kpi, children }: TripShel
       </Banner>
     ) : null;
   return (
-    <>
+    <RemindProvider data={remind}>
       <SkipLink />
       <DemoBanner />
       <TripCockpit view={view} tab={tab} subtitle={subtitle} kpi={kpi} />
@@ -53,6 +59,6 @@ export async function TripShell({ view, tab, subtitle, kpi, children }: TripShel
         </TabContent>
       </main>
       <SiteFooter />
-    </>
+    </RemindProvider>
   );
 }

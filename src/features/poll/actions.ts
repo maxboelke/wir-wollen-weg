@@ -24,6 +24,7 @@ import {
   listVotes,
   markCelebrated,
   markPollCancelSeen,
+  markReopenSeen,
   startPoll,
   unfixDates,
 } from "@/server/poll";
@@ -219,6 +220,14 @@ export async function cancelPollAction(publicId: string): Promise<PollActionResu
   if (uiPhase(found.trip, todayIso()) !== "vote") return { ok: false, error: "phase" };
   const result = await cancelPoll(found.trip.id, found.member.userId);
   return result.ok ? { ok: true } : { ok: false, error: result.reason };
+}
+
+/** «{orga} hat den Termin wieder geöffnet» was shown (ux-spec §14.4) – once per membership. */
+export async function reopenSeenAction(publicId: string): Promise<PollActionResult> {
+  const found = await membership(publicId);
+  if ("error" in found) return { ok: false, error: found.error };
+  await markReopenSeen(found.trip.id, found.member.userId);
+  return { ok: true };
 }
 
 /** The one-off notice about a cancelled vote was shown (Q21) – remembered per membership. */

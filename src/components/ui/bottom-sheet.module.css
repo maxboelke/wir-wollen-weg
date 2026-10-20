@@ -44,7 +44,10 @@
 }
 
 .title {
+  flex: 1;
+  min-width: 0;
   font-size: var(--ww-text-xl);
+  overflow-wrap: anywhere;
 }
 
 .title:focus {
@@ -67,6 +70,23 @@
 .body {
   margin-top: var(--ww-space-3);
   overflow-y: auto;
+}
+
+/* With a footer the body scrolls inside and the footer stays visible (remind sheet). */
+.bounded {
+  max-height: inherit;
+}
+
+.bounded .body {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.footer {
+  flex: none;
+  padding-top: var(--ww-space-3);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+  margin-top: var(--ww-space-3);
 }
 
 @media (min-width: 960px) {

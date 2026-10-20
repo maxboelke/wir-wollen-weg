@@ -163,11 +163,32 @@
   background: var(--ww-cockpit-kpi-bg);
 }
 
+.kpiWithChevron {
+  grid-template-columns: auto 1fr auto;
+}
+
 .kpiRing {
   grid-row: span 2;
 }
 
+.kpiText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+}
+
+/* U-18: 20 px, white 70 % */
+.kpiChevron {
+  display: inline-grid;
+  grid-row: span 2;
+  place-items: center;
+  color: var(--ww-cockpit-text);
+  opacity: 0.7;
+}
+
 .kpiTitle {
+  display: block;
   font-family: var(--ww-font-display);
   font-size: var(--ww-text-kpi);
   font-weight: var(--ww-font-weight-extrabold);
@@ -176,6 +197,7 @@
 }
 
 .kpiDetail {
+  display: block;
   color: var(--ww-cockpit-text-muted);
   font-size: var(--ww-text-meta);
   font-weight: var(--ww-font-weight-medium);

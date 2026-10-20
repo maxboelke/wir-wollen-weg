@@ -383,7 +383,34 @@ export function celebrationDue(
   fixed: Period | null,
   celebratedFor: string | null | undefined,
 ): boolean {
-  return fixed !== null && celebratedFor !== periodKey(fixed);
+  return fixed !== null && celebratedRange(celebratedFor) !== periodKey(fixed);
+}
+
+/**
+ * Marker in `trip_member.celebrated_for` once a member has seen «{orga} hat den Termin wieder
+ * geöffnet» (ux-spec §14.4) – no extra column: the celebrated range stays readable behind it,
+ * so fixing the SAME range again still does not celebrate twice.
+ */
+export const REOPEN_SEEN_PREFIX = "~seen:";
+
+function celebratedRange(celebratedFor: string | null | undefined): string | null {
+  if (!celebratedFor) return null;
+  return celebratedFor.startsWith(REOPEN_SEEN_PREFIX)
+    ? celebratedFor.slice(REOPEN_SEEN_PREFIX.length)
+    : celebratedFor;
+}
+
+/**
+ * One-off notice for members after «Festlegung aufheben» (ux-spec §14.4, same mechanism as
+ * Q21): the vote runs again and this member had already celebrated fixed dates (so they may
+ * have them in their calendar). Not for the organiser, who reopened the dates.
+ */
+export function reopenNoticeDue(
+  trip: { phase: string },
+  member: { role: string; celebratedFor: string | null },
+): boolean {
+  if (trip.phase !== "voting" || member.role === "organizer") return false;
+  return Boolean(member.celebratedFor) && !member.celebratedFor?.startsWith(REOPEN_SEEN_PREFIX);
 }
 
 /**
