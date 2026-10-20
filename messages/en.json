@@ -1369,7 +1369,7 @@
     "showMail": "Show full mail",
     "reset": {
       "title": "Reset demo",
-      "text": "Creates Anna, Ben & co. with all demo trips anew. Changes to these trips are lost, accounts with other addresses stay. Anyone signed in as a demo person is signed out.",
+      "text": "Creates Anna, Ben & co. with all demo trips anew. All accounts with an @demo.test address (including ones you created) are deleted, along with every trip any of them belongs to. Accounts with other addresses stay. Anyone signed in as a demo person is signed out.",
       "confirm": "Yes, reset the demo data",
       "submit": "Reset demo",
       "submitting": "Resetting …",

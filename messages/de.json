@@ -1369,7 +1369,7 @@
     "showMail": "Ganze Mail anzeigen",
     "reset": {
       "title": "Demo zurücksetzen",
-      "text": "Legt Anna, Ben & Co. mit allen Demo-Reisen neu an. Änderungen an diesen Reisen gehen verloren, Konten mit anderen Adressen bleiben. Wer als Demo-Person angemeldet ist, wird abgemeldet.",
+      "text": "Legt Anna, Ben & Co. mit allen Demo-Reisen neu an. Gelöscht werden alle Konten mit einer Adresse auf @demo.test (auch selbst angelegte) und jede Reise, in der eines davon Mitglied ist. Konten mit anderen Adressen bleiben. Wer als Demo-Person angemeldet ist, wird abgemeldet.",
       "confirm": "Ja, Demo-Daten zurücksetzen",
       "submit": "Demo zurücksetzen",
       "submitting": "Wird zurückgesetzt …",

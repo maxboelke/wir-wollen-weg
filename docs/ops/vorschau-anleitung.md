@@ -57,7 +57,7 @@ Die App braucht zwei Adressen deiner Neon-Datenbank: eine „gebündelte“ (**p
    3. Kontrolle: Diesmal steht **kein** `-pooler` im Hostnamen, `sslmode=require` ist enthalten.
 8. Fenster schließen. Die Notiz **nicht speichern**, sondern nach Kapitel 3 wieder schließen (oder im Passwort-Manager ablegen).
 
-> **Hinweis:** Steht in der Adresse zusätzlich `&channel_binding=require`, lass es zunächst stehen. Nur wenn der Aufbau später mit einem Datenbank-Fehler scheitert, siehe Kapitel 8, Fall F.
+> **Hinweis:** Steht in der Adresse zusätzlich `&channel_binding=require`, lass es einfach stehen – das funktioniert (vom Team geprüft).
 
 **Alternative (nur zur Info, nicht empfohlen):** Vercel bietet unter **„Storage“** bzw. **„Integrations“** eine Neon-Integration an, die die Adressen automatisch einträgt. Sie legt dabei aber möglicherweise ein **neues** Neon-Projekt an (dann Region Frankfurt und **Postgres 18** prüfen). Da dein Projekt schon fertig ist, ist das Kopieren von Hand hier einfacher.
 
@@ -207,7 +207,7 @@ Das Demo-Postfach erreichst du jederzeit auch über den Link im gelben Demo-Balk
 ## 6. Mit Freundinnen und Freunden teilen
 
 1. Gib **zwei Dinge** weiter: die **Haupt-Adresse** und das **Zugangspasswort** (Benutzername beliebig). Am besten getrennt, z. B. Adresse per Nachricht, Passwort mündlich.
-2. Sag dazu: **„Bitte nur ausgedachte Daten eingeben.“** Zum Anmelden die Demo-Personen nutzen (z. B. `ben@demo.test`) oder ein neues Konto mit einer ausgedachten Adresse wie `lisa@demo.test` anlegen.
+2. Sag dazu: **„Bitte nur ausgedachte Daten eingeben.“** Zum Anmelden die Demo-Personen nutzen (z. B. `ben@demo.test`) oder ein neues Konto mit einer ausgedachten Adresse wie `lisa@freunde.test` anlegen. **Nicht** `@demo.test` für eigene Konten verwenden: „Demo zurücksetzen“ löscht alle `@demo.test`-Konten und jede Reise, in der eines davon Mitglied ist.
 3. **Warum keine echten Daten:**
    - Wer das Zugangspasswort hat, sieht **das ganze Demo-Postfach** – also alle Codes – und kann sich damit **als jede Adresse** anmelden. Für eine Demo ist das gewollt, für echte Daten nicht.
    - Es gibt noch kein echtes Impressum und keinen echten Datenschutztext; Vercel ist ein US-Anbieter. Echte Nutzung ist erst nach dem Go-Live (Gate G1) erlaubt.
