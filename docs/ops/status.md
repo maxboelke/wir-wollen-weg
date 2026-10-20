@@ -1,6 +1,6 @@
 # Status-Board – Wir wollen weg
 
-Stand: 2026-10-16 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
+Stand: 2026-10-20 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
 
 Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer ✅ bzw. CEO-Abnahme bei Konzeptdokumenten) · **blockiert** · **zurückgestellt** (bewusst bis Go-Live verschoben, nicht blockierend)
 
@@ -52,6 +52,7 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | OPS-9 | Go-Live-Gate vorbereiten: Markenrecherche „Wir wollen weg“ + „When do we go?“, Domain-Verfügbarkeit, Angebotscheck Hetzner/Lettermint – **Erinnerung an Auftraggeber durch CEO** | operations-manager → CEO | Q11, Q14–Q16 | **geplant** | Auslöser lt. [go-live.md](go-live.md) | ≥ 6 Wochen vor Beta |
 | OPS-10 | Optional: In-App-Browser-Test T2 per temporärem Tunnel (ohne Konto, nur Demo-Daten, deployment.md §0.5) | developer + reviewer | F-040, F-041, F-003 | **geplant** (optional) | P1-1 | vor Ende Inkrement 1, falls gewünscht |
 | OPS-11 | **Demo-Abnahme M0.5 vorbereiten:** Ein-Befehl-Start `scripts/demo.sh` (nur Docker, `.env.demo` mit lokalen Zufalls-Secrets, LAN-IP für Handy, `seed`/`unlock`/`reset`), Laien-Anleitung, 20-Minuten-Drehbuch mit Feedback-Checkliste; selbst getestet (Build, Migration, Seed, Code-Login über `localhost` und LAN-IP, kompletter Ablauf bis ICS) | operations-manager | M0.5 | **fertig** (2026-10-16) – Demo-Termin mit dem Auftraggeber: **CEO** | Inkremente 1–6 | jetzt |
+| OPS-12 | **Private Live-Vorschau (PRD Q25):** Vercel Hobby + Neon Free, Zugangspasswort, Demo-Postfach; Klick-Anleitung für den Auftraggeber [vorschau-anleitung.md](vorschau-anleitung.md) (bestehendes Neon-Projekt, Variablen vor dem ersten Deploy) | developer (Technik, deployment.md §0.7) + operations-manager (Anleitung) → Auftraggeber (Einrichtung) | Q25 | **in Arbeit** (Code im Review; Anleitung fertig, ungetestet gegen die echte Vercel-/Neon-Oberfläche) | Vorschau-PR auf `main` gemergt | nach Merge |
 | OPS-8 | Node 26 LTS evaluieren und umstellen | operations-manager | – | **geplant** | LTS-Start 28.10.2026 | Q1 2027 |
 
 ## Abhängigkeiten (Kurzfassung)
@@ -96,3 +97,4 @@ Offene Produktfragen: siehe PRD §12 (Q11–Q16 am 2026-10-08 entschieden bzw. b
 - 2026-10-09 (Operations, nach Review Inkrement 2): **R-037** dokumentiert – deployment.md v0.3 §5.4 (Caddy-Log-Filter für `/i/*`, `/auth/*`, Query, `Referer`; Demo-Hinweis zu `docker/Caddyfile.demo` für den Developer), §6.2 Bugsink-Scrubbing; compliance-checklist.md v0.3 §7a (Ausnahme Einladungs-Token im Klartext); go-live.md v1.2 (R-037 als Pflichtpunkt Stufe 1 + 2b). Notiz zu F-043 bei P1-6 (Orga-Übergabe/Löschung vor Konto-Löschung).
 - 2026-10-09 (Operations): P1-0c Schritt 0a „UI-Fundament“ **fertig** (PR #5 gemergt). P1-1 (Inkrement 1) **im Review** – Fixes R-021–R-031 in Nachprüfung. tech-stack.md v1.2 (§3.2 Ist-Stand: Mail-Budget pro Adresse/Postfach, Fehlversuche nur bei ausstehendem Code, Sperre ohne Mail-Sperre, HKDF-Schlüssel, Re-Auth, Argon2id, `PASSWORD_BREACH_CHECK`); go-live.md v1.1: Entscheidungspunkt „HIBP-Check einschalten?“ (Stufe 2a).
 - 2026-10-16 (Operations): Board auf Ist-Stand gebracht – P1-0b, P1-1 … P1-6 und OPS-7 **fertig** (PR #6–#11). **OPS-11 Demo-Abnahme M0.5 vorbereitet:** `scripts/demo.sh` (Ein-Befehl-Start nur mit Docker, LAN-IP-Erkennung für den Handy-Test, `unlock` gegen das 5-Codes-pro-Stunde-Limit in der Demo), [demo-anleitung.md](demo-anleitung.md), [demo-drehbuch.md](demo-drehbuch.md); deployment.md §0.2/§0.3 und README verweisen darauf. Selbsttest in der Cloud-Umgebung bestanden.
+- 2026-10-20 (Operations): **OPS-12** private Live-Vorschau (Q25) – Klick-Anleitung [vorschau-anleitung.md](vorschau-anleitung.md) für Windows-PC + Handy (Neon-Adressen kopieren, Zufallswerte per PowerShell, Import in Vercel, Fehlerbehebung). Einrichtung erst nach Merge des Vorschau-PRs auf `main`.
