@@ -303,7 +303,6 @@ export async function cancelPoll(tripId: string, userId: string): Promise<Cancel
   });
 }
 
-/** The member has seen the one-off notice about the cancelled vote (Q21). */
 /**
  * «{orga} hat den Termin wieder geöffnet» was shown (ux-spec §14.4): prefix the celebrated
  * range with REOPEN_SEEN_PREFIX (keeps it for «same range → no second celebration»).
@@ -322,6 +321,7 @@ export async function markReopenSeen(tripId: string, userId: string): Promise<vo
     );
 }
 
+/** The member has seen the one-off notice about the cancelled vote (Q21). */
 export async function markPollCancelSeen(tripId: string, userId: string): Promise<void> {
   await db()
     .update(tripMember)

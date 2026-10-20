@@ -40,10 +40,6 @@
   list-style: none;
 }
 
-.context {
-  display: contents;
-}
-
 .message {
   display: flex;
   flex-direction: column;

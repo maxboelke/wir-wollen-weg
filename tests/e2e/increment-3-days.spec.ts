@@ -328,7 +328,7 @@ test.describe("security and phases", () => {
       .toEqual({ [isoDay(-3)]: "no", [isoDay(-1)]: "maybe", [day ?? ""]: "no" });
   });
 
-  test("R-047: dates fixed while the page is open – the save is refused with the lock notice", async ({
+  test("R-047: dates fixed while the page is open – the save is refused, the page moves to the overview", async ({
     page,
   }) => {
     const email = await signUp(page, "Tom", uniqueEmail("tom"));
@@ -338,7 +338,8 @@ test.describe("security and phases", () => {
     const [day] = await firstDates(page, 1);
     await fixTripDates(trip.tripId);
     await cell(page, day ?? "").click();
-    await expect(page.getByText(days.banner.locked).first()).toBeVisible();
+    // The refused save refreshes the page; phase 3 has no «My dates» (ux-spec §14.4) → overview.
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
     await expect(page.getByText(days.banner.rangeChanged)).toHaveCount(0);
     expect(await availabilityOf(trip.publicId, email)).toEqual({});
   });

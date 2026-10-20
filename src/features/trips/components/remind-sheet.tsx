@@ -320,7 +320,7 @@ function StatusStep({
 
 function Context({ person, text }: { person: RemindPersonView; text: string }) {
   return (
-    <div className={styles.context}>
+    <ul className={styles.list}>
       <PersonRow
         avatarId={person.key}
         name={person.name}
@@ -328,7 +328,7 @@ function Context({ person, text }: { person: RemindPersonView; text: string }) {
         status={text}
         orgaLabel={null}
       />
-    </div>
+    </ul>
   );
 }
 
@@ -341,9 +341,7 @@ function SingleStep({ data, person }: { data: RemindSheetData; person: RemindPer
       : t(data.phase === "vote" ? "contextVote" : "contextCollect", { name: person.name });
   return (
     <>
-      <ul className={styles.list}>
-        <Context person={person} text={context} />
-      </ul>
+      <Context person={person} text={context} />
       <RemindMessage
         texts={person.texts}
         defaultLocale={data.defaultLocale}

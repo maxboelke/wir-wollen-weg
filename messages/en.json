@@ -790,7 +790,7 @@
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
     "notFoundAction": "My trips",
     "kpiMore": "{count} more",
-    "membersTitlePlaceholders": "Who's in? ({count} + {placeholders} placeholders)",
+    "membersTitlePlaceholders": "Who's in? ({count} + {placeholders, plural, one {# placeholder} other {# placeholders}})",
     "commentOf": "Comment from {name}",
     "kpiVoteDeadline": "Vote by {date}",
     "kpiAllVoted": "Everyone has voted.",

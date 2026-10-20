@@ -37,33 +37,35 @@ export function PersonRow({
   actions,
 }: PersonRowProps) {
   return (
-    <li className={styles.row}>
-      <Avatar
-        id={avatarId}
-        name={name}
-        organizer={Boolean(orgaLabel)}
-        open={state === "open"}
-        submitted={state === "done"}
-      />
-      <span className={styles.line}>
-        <span className={styles.name}>
-          {name}
-          {youLabel ? <span className={styles.you}>{` (${youLabel})`}</span> : null}
+    <li className={styles.item}>
+      <div className={styles.row}>
+        <Avatar
+          id={avatarId}
+          name={name}
+          organizer={Boolean(orgaLabel)}
+          open={state === "open"}
+          submitted={state === "done"}
+        />
+        <span className={styles.line}>
+          <span className={styles.name}>
+            {name}
+            {youLabel ? <span className={styles.you}>{` (${youLabel})`}</span> : null}
+          </span>
+          {orgaLabel ? <OrgaChip label={orgaLabel} /> : null}
         </span>
-        {orgaLabel ? <OrgaChip label={orgaLabel} /> : null}
-      </span>
-      {actions ? <span className={styles.actions}>{actions}</span> : null}
-      {(state && status) || extra ? (
-        <span className={styles.below}>
-          {state && status ? (
-            <span className={cx(styles.status, state === "done" && styles.done)}>
-              <Icon name={state === "done" ? "check" : "clock"} size={16} />
-              <span>{status}</span>
-            </span>
-          ) : null}
-          {extra}
-        </span>
-      ) : null}
+        {actions ? <span className={styles.actions}>{actions}</span> : null}
+        {(state && status) || extra ? (
+          <span className={styles.below}>
+            {state && status ? (
+              <span className={cx(styles.status, state === "done" && styles.done)}>
+                <Icon name={state === "done" ? "check" : "clock"} size={16} />
+                <span>{status}</span>
+              </span>
+            ) : null}
+            {extra}
+          </span>
+        ) : null}
+      </div>
     </li>
   );
 }

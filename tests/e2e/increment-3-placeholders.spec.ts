@@ -27,9 +27,9 @@ test("organiser adds a placeholder; signing up via its link pre-fills the name a
   await expect(page.getByText(/already has this name/)).toBeVisible();
   await expectNoSeriousAxeViolations(page, "invite page with placeholders");
 
-  // Overview: «Who's in? (1 + 1 placeholders)» with «not joined yet».
+  // Overview: «Who's in? (1 + 1 placeholder)» with «not joined yet».
   await page.goto(`/trips/${publicId}`);
-  await expect(page.getByRole("heading", { name: "Who's in? (1 + 1 placeholders)" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Who's in? (1 + 1 placeholder)" })).toBeVisible();
   await expect(page.getByText(en.trip.status.placeholder)).toBeVisible();
 
   const token = await placeholderToken(publicId, "Kemal");
