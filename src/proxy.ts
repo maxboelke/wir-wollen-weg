@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { previewPasswordOk, resolveAppEnv } from "@/lib/app-env";
+import { APP_ENVS, previewPasswordOk, resolveAppEnv } from "@/lib/app-env";
 import { BASIC_AUTH_REALM, basicAuthMatches, isOpenPath } from "@/lib/basic-auth";
 
 /**
@@ -24,7 +24,12 @@ function plain(status: number, body: string, headers: Record<string, string> = {
 }
 
 export async function proxy(request: NextRequest): Promise<NextResponse> {
-  if (resolveAppEnv() !== "preview") return NextResponse.next();
+  const appEnv = resolveAppEnv();
+  // Unknown/misspelt APP_ENV (e.g. «Preview») is treated like preview: protected, and closed
+  // without password – the start guard refuses it too, but must not be the only barrier.
+  if (appEnv !== "preview" && (APP_ENVS as readonly string[]).includes(appEnv)) {
+    return NextResponse.next();
+  }
   if (isOpenPath(request.nextUrl.pathname)) {
     const open = NextResponse.next();
     open.headers.set("x-robots-tag", NOINDEX);

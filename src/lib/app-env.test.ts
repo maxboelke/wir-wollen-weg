@@ -109,6 +109,15 @@ describe("startupProblems", () => {
         mailTransport: "inbox",
       }),
     ).toEqual([expect.stringMatching(/MAIL_TRANSPORT=inbox/)]);
+    // staging faces the internet without Basic Auth – the inbox would publish login codes.
+    expect(
+      startupProblems({
+        ...base,
+        appEnv: "staging",
+        authUrl: "https://x.org",
+        mailTransport: "inbox",
+      }),
+    ).toEqual([expect.stringMatching(/MAIL_TRANSPORT=inbox/)]);
   });
 
   it("local-only modes are refused on Vercel", () => {
@@ -129,6 +138,8 @@ describe("inboxEnabled / showsDemoBanner", () => {
     expect(inboxEnabled({ MAIL_TRANSPORT: "inbox", APP_ENV: "preview" })).toBe(true);
     expect(inboxEnabled({ MAIL_TRANSPORT: "inbox" })).toBe(true);
     expect(inboxEnabled({ MAIL_TRANSPORT: "inbox", APP_ENV: "production" })).toBe(false);
+    expect(inboxEnabled({ MAIL_TRANSPORT: "inbox", APP_ENV: "staging" })).toBe(false);
+    expect(inboxEnabled({ MAIL_TRANSPORT: "inbox", APP_ENV: "Preview" })).toBe(false);
     expect(inboxEnabled({ MAIL_TRANSPORT: "smtp", APP_ENV: "preview" })).toBe(false);
     expect(inboxEnabled({})).toBe(false);
   });

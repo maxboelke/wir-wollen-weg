@@ -46,6 +46,12 @@ export function resolveAuthUrl(env: Env = process.env): string {
 const HTTPS_ENVS = new Set(["staging", "preview", "production"]);
 /** Modes that must never run on Vercel (no password protection, local shortcuts). */
 const LOCAL_ONLY_ENVS = new Set(["development", "ci", "demo"]);
+/**
+ * Modes in which the demo inbox may exist: local modes and the password-protected preview.
+ * Never `production` and never `staging` (internet-facing without Basic Auth – the inbox would
+ * publish every login code), nor an unknown/misspelt APP_ENV (allowlist, fail closed).
+ */
+const INBOX_ENVS = new Set(["development", "ci", "demo", "preview"]);
 
 /** Minimum length of the preview password (HTTP Basic Auth, deployment.md §0.7). */
 export const PREVIEW_PASSWORD_MIN_LENGTH = 10;
@@ -86,8 +92,10 @@ export function startupProblems(input: StartupInput): string[] {
       `APP_ENV=preview needs PREVIEW_ACCESS_PASSWORD with at least ${String(PREVIEW_PASSWORD_MIN_LENGTH)} characters (deployment.md §0.7)`,
     );
   }
-  if (appEnv === "production" && input.mailTransport === "inbox") {
-    problems.push("APP_ENV=production must send real mails – MAIL_TRANSPORT=inbox is demo only");
+  if (input.mailTransport === "inbox" && !INBOX_ENVS.has(appEnv)) {
+    problems.push(
+      `APP_ENV=${appEnv} must send real mails – MAIL_TRANSPORT=inbox is only for the local demo and the password-protected preview`,
+    );
   }
   if (appEnv === "production" && input.placeholders.length > 0) {
     const shown = input.placeholders.slice(0, 5).join(", ");
@@ -102,9 +110,9 @@ export function previewPasswordOk(password: string | undefined): password is str
   return typeof password === "string" && password.length >= PREVIEW_PASSWORD_MIN_LENGTH;
 }
 
-/** The demo inbox (`MAIL_TRANSPORT=inbox`, /demo/postfach) – never in production. */
+/** The demo inbox (`MAIL_TRANSPORT=inbox`, /demo/postfach) – never in production or staging. */
 export function inboxEnabled(env: Env = process.env): boolean {
-  return value(env, "MAIL_TRANSPORT") === "inbox" && resolveAppEnv(env) !== "production";
+  return value(env, "MAIL_TRANSPORT") === "inbox" && INBOX_ENVS.has(resolveAppEnv(env));
 }
 
 /** Demo banner «keine echten Daten» (deployment.md §0.1): local demo and online preview. */

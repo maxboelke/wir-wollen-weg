@@ -125,6 +125,15 @@ test.describe("demo inbox (MAIL_TRANSPORT=inbox)", () => {
     await expect(page.getByLabel(de.demoInbox.filterLabel)).toHaveValue("");
   });
 
+  test("inbox with mails passes axe in dark mode too", async ({ context, page }) => {
+    await signUpViaInbox(context, uniqueEmail("preview-dark"));
+    await page.emulateMedia({ colorScheme: "dark" });
+    await page.goto("/demo/postfach");
+    await expect(page.getByRole("main").getByRole("article").first()).toBeVisible();
+    await page.getByText(de.demoInbox.reset.title, { exact: true }).first().click();
+    await expectNoSeriousAxeViolations(page, "demo inbox (dark)");
+  });
+
   test("«Demo zurücksetzen» needs the confirmation and re-creates the demo data", async ({
     page,
   }) => {
