@@ -1,13 +1,13 @@
 # Sitemap & Informationsarchitektur – Wir wollen weg / When do we go? (MVP)
 
-Stand: 2026-10-08 (Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-20 (Feedback-Runde 1: Phase 3 ohne Tabs, Erinnern für alle; davor Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ---
 
 ## 1. Grundprinzipien der Informationsarchitektur
 
 1. **Die Reise ist der Mittelpunkt.** Alles Wesentliche passiert innerhalb einer Reise; außerhalb gibt es nur Einstieg (Landing, Einladung, Login), „Meine Reisen“ (F-044) und das Konto (F-043).
-2. **Eine Reise = vier feste Bereiche (Tabs).** Übersicht · Meine Tage · Gruppe · Abstimmen. Die Tabs sind in jeder Phase gleich (stabile Orientierung); was sich je Phase ändert, ist der Inhalt und der Standard-Tab beim Öffnen.
+2. **Eine Reise = vier feste Bereiche (Tabs).** Übersicht · Meine Tage · Gruppe · Abstimmen. Die Tabs sind in Phase 1 und 2 gleich (stabile Orientierung); was sich je Phase ändert, ist der Inhalt und der Standard-Tab beim Öffnen. **Ausnahme ab 2026-10-20 (Feedback-Runde 1, ux-spec §14.4): In Phase 3 „Steht fest“ gibt es keine Tabs mehr** – die Übersicht ist der Reise-Hub. Abstimmungsergebnis und Kalender der Gruppe sind dort schreibgeschützte Unterseiten; spätere Module (Unterkünfte, Kosten, Reisedaten, Dokumente) docken als Kacheln + Unterseiten `/trips/{id}/<modul>` an.
 3. **Verwaltung ist Nebensache.** Organisator-Funktionen (F-004, F-013) liegen im „⋯“-Menü der Reise und auf einer Einstellungsseite – nicht im Hauptweg der Mitglieder.
 4. **Flach und kurz.** Maximale Tiefe: Meine Reisen → Reise → Tab → (Bottom-Sheet/Dialog). Keine dritte Navigationsebene.
 
@@ -28,7 +28,7 @@ Stand: 2026-10-08 (Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortli
 | Phase 2, eigene Stimme fehlt | **Abstimmen** |
 | sonst (inkl. Phase 3) | **Übersicht** |
 
-Direkte URLs auf einen Tab werden immer respektiert (kein Umleiten).
+Direkte URLs auf einen Tab werden in Phase 1/2 immer respektiert (kein Umleiten). **Phase 3:** `/days` und `/poll/new` → Übersicht; `/poll` und `/group` → schreibgeschützte Unterseite (solange die Feier für die Person fällig ist → Übersicht), ux-spec §14.4.
 
 ## 3. Sitemap (MVP)
 
@@ -109,7 +109,7 @@ Systemseiten
 
 **In der Reise – Cockpit-Kopf (Richtung B, Q18):** Reise-Ansichten haben **keinen globalen Header**; der Indigo-Kopf ersetzt ihn (ux-spec §3, §4.10). Sticky ist nur der kompakte Teil:
 - Zeile 1: „← Meine Reisen“ (runde Icon-Taste; Desktop mit Text) · Reisename (1 Zeile, gekürzt) + Phasenzeile («Tage sammeln · 5/7 fertig») · „⋯“ (Reisemenü)
-- Zeile 2: Tabs `Übersicht | Meine Tage | Gruppe | Abstimmen` als Pillen (auf Mobil < 375 px horizontal scrollbar mit Verlaufskante; aktiver Tab immer sichtbar).
+- Zeile 2: Tabs `Übersicht | Meine Tage | Gruppe | Abstimmen` als Pillen (auf Mobil < 375 px horizontal scrollbar mit Verlaufskante; aktiver Tab immer sichtbar). **Nicht in Phase 3** (ux-spec §14.4).
 - Darunter, nicht sticky: höchstens eine Kennzahl je Tab (Übersicht: Phase-Kennzahl · Gruppe: Kennzahl-Box · Meine Tage, Abstimmen: keine).
 - Konto, Sprache, Abmelden erreicht man über „Meine Reisen“ (Avatar-Menü); „Hilfe“ steht zusätzlich im Reisemenü und im Footer.
 
@@ -122,7 +122,7 @@ Systemseiten
 | Freunde einladen (→ /invite) | ✔ | ✔ (solange Beitritt offen; *bestätigt (Auftraggeber 2026-10-08)*) |
 | Mein Name in dieser Reise | ✔ | ✔ |
 | Reise bearbeiten (→ /settings) | ✔ | – |
-| Gruppe erinnern (F-015) | ✔ | – |
+| Gruppe erinnern (F-015) – Phase 1/2, wenn jemand anderes offen ist | ✔ | ✔ (ab 2026-10-20, ux-spec §14.2) |
 | Festlegung aufheben (Phase 3) | ✔ | – |
 | Reise verlassen | ✔ (erst nach Rollenübergabe) | ✔ |
 | Reise löschen | ✔ | – |

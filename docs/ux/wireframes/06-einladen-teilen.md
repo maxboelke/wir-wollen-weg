@@ -45,7 +45,7 @@ Features: F-002, F-007 (Platzhalter), F-004 (Link erneuern, Beitritt sperren), F
 
 ## Komponente Teilen-Sheet (Bottom-Sheet mobil / Dialog Desktop)
 
-Wird geöffnet für: Abstimmung gestartet (F-010), Ergebnis (F-012), Erinnern (F-015), Platzhalter-Link.
+Wird geöffnet für: Abstimmung gestartet (F-010), Ergebnis (F-012), Platzhalter-Link. Erinnern (F-015): ab 2026-10-20 eigenes Erinnern-Sheet (unten).
 
 ```
 ┌────────────────────────────────────┐
@@ -68,6 +68,48 @@ Wird geöffnet für: Abstimmung gestartet (F-010), Ergebnis (F-012), Erinnern (F
 │  Zuletzt erinnert: heute, 14:20    │  nur Orga, nur Erinnern
 └────────────────────────────────────┘
 ```
+
+## Erinnern-Sheet (Feedback-Runde 1, 2026-10-20)
+
+Komponente `RemindSheet` – Regeln, Einstiege und alle Texte DE/EN: [ux-spec §14.2](../ux-spec.md). Ersetzt für das Erinnern die Variante „Gruppe erinnern“ des Teilen-Sheets oben. **Alle Mitglieder** dürfen erinnern. **WhatsApp ist hier primär.**
+
+```
+Schritt „status“                       Schritt „single“
+┌──────────────────────────────┐       ┌──────────────────────────────┐
+│ ─────                        │       │ ─────                        │
+│ Wer hat eingetragen?    [×]  │       │ [‹] Kemal erinnern      [×]  │
+│ 5 von 9 haben eingetragen    │       │ (┄KE┄) Kemal hat noch keine  │
+│ Fehlt noch (4)               │  ──▶  │ Tage eingetragen.            │
+│ (┄KE┄) Kemal     [Erinnern]  │       │ Nachricht   (•)DE ( )EN      │
+│  ◷ noch nicht eingetragen    │       │ ┌──────────────────────────┐ │
+│ (┄SA┄) Sara      [Erinnern]  │       │ │Hey Kemal, du fehlst noch │ │
+│ (┄MI┄) Mia       [Erinnern]  │       │ │bei Lissabon 2027! Trag   │ │
+│  ◷ noch nicht beigetreten    │       │ │kurz ein, wann du kannst –│ │
+│ (┄KM┄) Kai (du) [Tage eintr.]│       │ │dauert 2 Minuten: https://│ │
+│ Eingetragen (5)              │       │ └──────────────────────────┘ │
+│ (LE)✓ Lena [Orga]            │       │ [   Per WhatsApp senden   ]  │ primär
+│  ✓ eingetragen · 12. Mai     │       │ [Teilen …] [Text kopieren]   │ sekundär
+│ …                            │       │ Schick es Kemal direkt oder  │
+│ [ Alle erinnern (2) ]        │       │ in euren Gruppenchat.        │
+└──────────────────────────────┘       └──────────────────────────────┘
+
+Schritt „orga“ (Nicht-Orga, Platzhalter)   Schritt „orga“ (Nicht-Orga, Orga ist dran)
+┌──────────────────────────────┐       ┌──────────────────────────────┐
+│ [‹] Mia ist noch nicht dabei │       │ Lena Bescheid geben     [×]  │
+│ Den persönlichen Link für Mia│       │ ┌──────────────────────────┐ │
+│ hat nur Lena. Sag kurz Be-   │       │ │Hey Lena, alle haben ihre │ │
+│ scheid – dann kann Lena ihn  │       │ │Tage für Lissabon 2027    │ │
+│ weiterschicken.              │       │ │eingetragen – du kannst   │ │
+│ ┌──────────────────────────┐ │       │ │jetzt die Abstimmung      │ │
+│ │Hey Lena, Mia fehlt noch  │ │       │ │starten: https://…        │ │
+│ │bei Lissabon 2027 – …     │ │       │ └──────────────────────────┘ │
+│ └──────────────────────────┘ │       │ [   Per WhatsApp senden   ]  │
+│ [   Per WhatsApp senden   ]  │       │ [Teilen …] [Text kopieren]   │
+└──────────────────────────────┘       └──────────────────────────────┘
+```
+- Schritt „all“ = Teilen-Sheet „Gruppe erinnern“ oben (Checkboxen, Sammel-Text), aber nur mit beigetretenen Mitgliedern, mit [Per WhatsApp senden] als Primärtaste und dem Hinweis zu offenen Platzhaltern (§14.2).
+- Phase 2: Titel «Wer hat abgestimmt?», Gruppen «Fehlt noch» / «Abgestimmt», nur Mitglieder, Texte „Stimme fehlt noch“.
+- Orga, Platzhalter-Zeile → „single“ mit **persönlichem Link** (wie [Link] in der Platzhalter-Liste der Einladen-Seite).
 
 ## Desktop
 Seite „Einladen“: zweispaltig – links Text + Aktionen, rechts Platzhalter-Liste und Orga-Einstellungen. Teilen-Sheet als Dialog (max. 480 px). Web Share ist auf Desktop meist nicht verfügbar → primär „Text kopieren“.

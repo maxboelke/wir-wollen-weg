@@ -1,10 +1,72 @@
 # W09 – Reise: Tab „Gruppe“ – Vorschläge & Kalender (`/trips/{id}/group`)
 
-Features: F-008, F-009, F-016, F-010 (Einstieg), F-015 (Erinnern) · Flow: [C](../user-flows.md#c-heatmap--vorschläge-f-008-f-009-f-016) · Regeln: [ux-spec §4.9](../ux-spec.md) (Zelle, Legende, Feiertagsliste), §7.3 (Grid/Tastatur) · Optik: design-system §6, §9.3, §9.7 · **Maßgebliche Skizze: [09-gruppe-heatmap.html](09-gruppe-heatmap.html)** (v2, Abstimmungsrunde 2)
+Features: F-008, F-009, F-016, F-010 (Einstieg), F-015 (Erinnern) · Stand: 2026-10-20 (Feedback-Runde 1) · Flow: [C](../user-flows.md#c-heatmap--vorschläge-f-008-f-009-f-016) · Regeln: [ux-spec §4.9](../ux-spec.md) (Zelle, Legende, Feiertagsliste), §7.3 (Grid/Tastatur) · Optik: design-system §6, §9.3, §9.7 · **Maßgebliche Skizze: [09-gruppe-heatmap.html](09-gruppe-heatmap.html)** (v2, Abstimmungsrunde 2)
 
 Beispiel: 5 von 7 haben abgegeben (Lena, Jonas, Tim, Anna, Paul; offen: Kemal, Sara). Mindestdauer 4, Wunsch 5 Nächte, Toleranz 1, heute = Mo., 3. Mai 2027. Heatmap und Vorschläge in der HTML-Skizze stammen aus denselben Beispieldaten.
 
 **Begriffe (verbindlich, ux-spec §10.2):** Zahl in der Zelle = Anzahl „Geht“ / abgegeben · ✓ = „Alle: Geht“ (x = n) · ◐ = mind. eine Person „Zur Not“ · Vorschlagsgruppe „Alle dabei“ = niemand hat „Geht nicht“ (F-009), „Fast alle dabei“ = 1 bis k fehlen (CEO-Entscheidungen U-4, U-14).
+
+## Feedback-Runde 1 (2026-10-20) – maßgeblich
+
+Regeln und Texte DE/EN: [ux-spec §14.2–§14.4](../ux-spec.md). Beispiel: 5 von 9 eingetragen (offen: Kemal, Sara, Platzhalter Mia und Tom).
+
+**Wo sitzt die Personenliste?** Nicht als zusätzlicher Block über den Vorschlägen (der Kernnutzen bleibt oben), sondern:
+1. **Kennzahl-Box** (über beiden Ansichten) – antippbar → Sheet „Wer hat eingetragen?“ mit den Gruppen «Fehlt noch» / «Eingetragen» und [Erinnern] je fehlender Person.
+2. **Hinweis unter „Alle dabei“** (Vorschläge) – nennt die Fehlenden und hat die Text-Taste [Erinnern] → dasselbe Sheet.
+3. **Kalender:** Zeile «Wer hat eingetragen? (5/9) ›» unter der Heatmap (Button statt `<details>`) → dasselbe Sheet.
+4. **Tagesdetail:** Gruppe «Noch offen (n)» unverändert (nur Anzeige).
+
+### Kopf + Vorschläge (mobil)
+```
+│▓ ┌──────────────────────────────┐ ▓│  ganze Box = Button → Sheet (Schritt „status“)
+│▓ │ (◔) 5 von 9 haben eingetragen│ ▓│
+│▓ │     Noch offen: Kemal, Sara, │ ▓│  „– das Ergebnis kann sich noch ändern“ entfällt
+│▓ │     Mia und Tom            › │ ▓│  (steht jetzt im Hinweis unten)
+│▓ └──────────────────────────────┘ ▓│  alle fertig: kein Button, Orga [Abstimmung starten]
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ [▐Vorschläge▌| Kalender ]          │
+│ (Dauer: 5 Nächte ▾)(Darf fehlen: 1▾)│
+│                                    │
+│ ✓ Alle dabei (2)                   │  h2
+│ ┌────────────────────────────────┐ │  Info-Hinweis (Lavendel/info, nicht Amber)
+│ │ ⚇ Basiert auf 5 von 9 – noch   │ │
+│ │   offen: Kemal, Sara, Mia und  │ │
+│ │   Tom.               Erinnern  │ │  Text-Taste ≥ 44 px → Sheet „status“
+│ └────────────────────────────────┘ │  (ich selbst offen: «Deine Tage eintragen»)
+│ ┌────────────────────────────────┐ │
+│ │ Mi., 5. Mai – Mo., 10. Mai     │ │  Vorschlagskarten unverändert
+│ │ …                              │ │
+│ └────────────────────────────────┘ │
+│ ⚇ Fast alle dabei (3)              │  kein zweiter Hinweis
+```
+- Alle haben eingetragen → Hinweis entfällt ersatzlos.
+- Selbst noch offen: «Basiert auf 5 von 9 – noch offen: du, Kemal und Sara.» + [Deine Tage eintragen].
+
+### Kalender – Vorschlag-Leiste und Personenzeile
+```
+│ … Heatmap …                        │
+│ Wer hat eingetragen? (5/9)       › │  Button, ≥ 44 px → Sheet „status“
+├────────────────────────────────────┤
+│ [‹] 1 · ✓ Alle dabei · 1 von 5 [›] │
+│     Mi., 5. Mai – Mo., 10. Mai     │
+│     bis zu 5 Nächte · ca. 3 Url.-T.│
+│     (⚇ Bisher 5 von 9)(◐ 2× zur… +1)│  erster Chip nur bei „Alle dabei“ und offenen Personen
+└────────────────────────────────────┘
+```
+
+### Sheet „Wer hat eingetragen?“ → „Kemal erinnern“
+Skizzen der Schritte `status` und `single`: [ux-spec §14.2](../ux-spec.md) und [W06](06-einladen-teilen.md#erinnern-sheet-feedback-runde-1-2026-10-20).
+
+### Phase 3 – Unterseite „Kalender der Gruppe“ (ux-spec §14.4)
+```
+│▓(←)  Lissabon 2027             (⋯)▓│  ← = zurück zur Übersicht; keine Tabs
+│▓     Kalender der Gruppe          ▓│  Untertitel statt Phasenzeile
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ [ Vorschläge |▐Kalender▌ ]         │  schreibgeschützt: keine Kennzahl-Box, kein Hinweis,
+│ (Filter …)  ▸ Legende              │  keine Orga-Auswahl, kein „Abstimmung erstellen“,
+│ … Heatmap, Tagesdetail wie oben …  │  kein „Ab hier als Option vorschlagen“
+```
+Aufruf in Phase 3, solange die Feier für die Person noch fällig ist → Weiterleitung auf die Übersicht.
 
 ## Richtung B „Reise-Cockpit“ (Q18) – maßgeblich ab Look & Feel 2.0
 
@@ -150,7 +212,7 @@ Zell-Anatomie (mobil 45,7 × 52 px, Kalender-Seitenrand 8 px, Fuge 4 px – U-1,
 │ ◥ 1.5. Tag der Arbeit  ◥ 6.5. Chri-│  Feiertagsliste je Monat (U-11)
 │   sti Himmelfahrt  ◥ 17.5. Pfingst-│
 │   montag  ◥ 27.5. Fronleichnam     │
-│ ▸ Wer hat abgegeben? (5/7)         │
+│ ▸ Wer hat abgegeben? (5/7)         │  ab 2026-10-20: Button «Wer hat eingetragen? (5/7) ›» → Sheet (§14.2)
 ```
 (ASCII deutet Zellen nur an; maßgeblich sind HTML-Skizze und design-system §6.1.)
 

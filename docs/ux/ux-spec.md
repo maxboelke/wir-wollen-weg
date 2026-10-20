@@ -1,6 +1,6 @@
 # UX-Spezifikation – Wir wollen weg (MVP)
 
-Stand: 2026-10-08 (Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17 Motion/Haptik) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
+Stand: 2026-10-20 (Feedback-Runde 1, §14; davor Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17 Motion/Haptik) · Verantwortlich: UI/UX · Bezug: [sitemap.md](sitemap.md), [user-flows.md](user-flows.md), [Wireframes](wireframes/README.md), [abstimmung-design.md](abstimmung-design.md), [PRD](../product/PRD.md) §8
 
 Dieses Dokument legt verbindliche Interaktionsregeln fest. Optik (Farben, Typo, Abstände, Radien, Icons) kommt vom Designer (`docs/design/`). Bei Widersprüchen gilt: Struktur/Verhalten → dieses Dokument; Aussehen → Design-System; Konflikte klärt der CEO.
 
@@ -76,6 +76,7 @@ In den Wireframes steht „Desktop“ für `lg`/`xl` (≥ 960 px).
 - Inhalt: Vorschau-Textfeld (editierbar, mehrzeilig, Auto-Höhe), Sprachumschalter `DE | EN` (Radiogruppe; Wechsel ersetzt den Text – wenn bearbeitet, vorher Rückfrage «Deine Änderungen am Text gehen verloren»), Link als eigene Zeile mit `[Kopieren]`. Der Produktname im Text folgt der **Textsprache** (DE-Text „Wir wollen weg“, EN-Text „When do we go?“; §9, §10.6).
 - Aktionen: primär `[Teilen …]` (Web Share API, `navigator.share({text})` – Link ist im Text enthalten, nicht doppelt als `url`); wenn nicht verfügbar (häufig in In-App-Browsern, Desktop): primär `[Text kopieren]` + Zeile Direkt-Links «WhatsApp · Signal · Telegram · E-Mail» (`wa.me/?text=`, `sgnl://` nicht zuverlässig → Signal nur auf Mobil zeigen, `t.me/share/url`, `mailto:`).
 - Kopieren-Bestätigung: Button-Text wechselt 2 s zu «Kopiert ✓» + `role="status"`-Ansage.
+- **Ausnahme Erinnern (§14.2):** Im Erinnern-Sheet (`RemindSheet`) ist «Per WhatsApp senden» (`wa.me/?text=`) primär; [Teilen …] und [Text kopieren] sind sekundär.
 
 ### 4.6 Stepper (Nächte, Toleranz)
 - `−` Wert `+`, Wert als `<input type="number">` direkt editierbar; Buttons ≥ 44 px; Grenzen deaktivieren den jeweiligen Button; Ansage des neuen Werts (`aria-live="polite"` am Wert bzw. natives Number-Input).
@@ -110,6 +111,7 @@ Optik: Design-System v1.0 / `richtungen/b`. Verhalten verbindlich hier (abstimmu
   | Meine Tage (W08) | keine (Platz für den Kalender) |
   | Gruppe (W09) | **Kennzahl-Box** (ersetzt das Statusband): Ring + «5 von 7 haben abgegeben» + «Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» + Orga `[Erinnern]` (Minze-Taste, ≥ 44 px). Alle abgegeben: «Alle haben abgegeben.» + Orga `[Abstimmung starten]`. |
   | Abstimmen (W10) | keine im Kopf; **Kennzahl-Kacheln** im Inhalt (s. u.) |
+- **Geändert durch §14.2 (2026-10-20):** In Übersicht und Gruppe ist die Kennzahl-Box in Phase 1/2 ein Button (Chevron) → Sheet „Wer hat eingetragen?/abgestimmt?“ mit Erinnern. Die Minze-Taste [Erinnern] in der Box entfällt. Begriff „eingetragen“ statt „abgegeben“. In Phase 3 hat der Kopf keine Tabs (§14.4).
 - **Ringe und Balken sind `aria-hidden`**, die Werte stehen als Text daneben. Zahlen wechseln **sofort** (kein Hochzählen, G-16); nur Ring/Balken dürfen wachsen (§7.5).
 - **Kennzahl-Kacheln (W10):** zwei Karten nebeneinander (je halbe Breite, Text zweizeilig erlaubt; bei großer Schrift untereinander per `minmax(9.5em, 1fr)`): Frist «noch 3 Tage / bis Do., 15. April» und Beteiligung «4 von 7 / haben abgestimmt». Ohne Frist nur die Beteiligungs-Kachel (volle Breite). Frist abgelaufen: «Frist abgelaufen» + Warn-Icon (Amber). Die **Beteiligungs-Kachel ist ein Button** → Bottom-Sheet «Wer hat abgestimmt?» mit «Abgestimmt (4)» / «Noch offen (3)» (nur Status, keine Stimmen) und für die Orga `[Erinnern]`. Die Avatar-Reihe im Kopf entfällt.
 
@@ -338,7 +340,8 @@ Motion-Details: `docs/motion/interaktionen.md`. UX-Regeln:
 | Organisator (Rolle) | Orga | Organizer – *bestätigt (Auftraggeber 2026-10-08)* |
 | Rang-Abzeichen Abstimmung | Platz 1 | Top choice |
 | Phasenzeile im Reise-Kopf (B) | Tage sammeln · 5/7 fertig · Abstimmung läuft · 4/7 fertig · Steht fest · 7 dabei | Collecting dates · 5/7 done · Voting open · 4/7 done · It's on · 7 going |
-| Kennzahl-Box Gruppe (B) | 5 von 7 haben abgegeben · Alle haben abgegeben. | 5 of 7 have submitted · Everyone has submitted. |
+| Kennzahl-Box Gruppe (B) | 5 von 7 haben eingetragen · Alle haben eingetragen. (bis 2026-10-20: „abgegeben“, §14) | 5 of 7 have added their dates · Everyone has added their dates. |
+| Personen-Status (§14.2) | Fehlt noch · Eingetragen · Abgestimmt · noch nicht eingetragen · noch nicht beigetreten · Erinnern · Alle erinnern | Still missing · Dates added · Voted · no dates yet · hasn't joined yet · Remind · Remind all |
 | Kennzahl-Kacheln Abstimmen (B) | noch 3 Tage / bis Do., 15. April · 4 von 7 / haben abgestimmt · Frist abgelaufen | 3 days left / until Thu, 15 April · 4 of 7 / have voted · Deadline passed |
 | Countdown Ergebnis | noch 23 Tage · noch 1 Tag · Heute geht's los! · Gute Reise! | 23 days to go · 1 day to go · It's today! · Have a great trip! |
 | Konto-Abschnitt / Schalter | Darstellung · Bewegung reduzieren | Appearance · Reduce motion |
@@ -372,6 +375,8 @@ Platzhalter: `{trip}` Reisename, `{orga}` Vorname Orga, `{link}`, `{deadline}` F
 **Erinnerung Abstimmung (F-015, Phase 2)**
 - DE: «{names}, eure Stimme fehlt noch bei {trip}: {link}»
 - EN: «{names}, we still need your vote for {trip}: {link}»
+
+**Erinnerung einzelner Personen, „{Orga} Bescheid geben“, Platzhalter-Hinweis (§14.1, §14.2)** – die verbindlichen Fassungen stehen in §14; die Sammel-Texte oben gelten für den Schritt „Alle erinnern“. Link bei Mitgliedern: Phase 1 `/trips/{id}/days`, Phase 2 `/trips/{id}/poll`.
 
 **Ergebnis (F-012)**
 - DE: «Fix! {trip}: {range} ({nights} Nächte). Termin in den Kalender: {link}»
@@ -500,9 +505,300 @@ Bewertung der vom Developer gemeldeten Abweichungen (Commit e8f645f, F-010/F-011
 - Neue Optionen („Option hinzufügen“) nur innerhalb des neuen Zeitraums und ≥ neue Mindestdauer.
 - Phase 3: Änderung wirkt nicht auf den festgelegten Termin; Hinweis in den Einstellungen «Der Termin steht schon fest – der Suchzeitraum betrifft nur ‚Meine Tage‘ und die Vorschläge.»
 
+## 14. Feedback-Runde 1 – Test der Live-Vorschau durch den Auftraggeber (2026-10-20)
+
+Vier Verbesserungen aus dem Test der privaten Vorschau. Der Auftraggeber legt besonderen Wert auf eine **ordentliche, intuitive, „richtig schöne“ Übersicht**. Dieser Abschnitt geht älteren Angaben vor: W06, W07, W09, W10, W11, user-flows C.1, C.3, D.3, K, sitemap §1, §2 und §5 sowie §4.10 und §10.3 dieses Dokuments. Optik: Design-System v1.0; offene Optik-Punkte an den Designer: [abstimmung-design §11](abstimmung-design.md) (U-17 bis U-21).
+
+| Nr. | Thema | Features | Wireframes |
+|---|---|---|---|
+| 14.1 | „Nächster Schritt“ für alle Phasen und Rollen, Aktion „{Orga} Bescheid geben“ | F-007, F-044 | W07 |
+| 14.2 | Personen-Status und Erinnern einzelner Personen (F-015 vorgezogen, für alle Mitglieder) | F-007, F-015 | W06, W07, W09, W10 |
+| 14.3 | Hinweis „Basiert auf x von n“ bei „Alle dabei“ | F-008, F-009 | W09 |
+| 14.4 | Phase 3: nur noch die Übersicht als Reise-Hub, Deep-Links, Festlegung aufheben | F-012 | W07, W09, W10, W11 |
+
+**Begriff (gilt ab jetzt in allen neuen und geänderten Texten):** In Phase 1 heißt der Status «eingetragen» statt «abgegeben» – so formuliert es der Auftraggeber, und es ist alltagsnäher. Betroffen sind Kennzahl-Box, Statuszeilen und Listen. Der Button «Fertig – abgeben» in Meine Tage bleibt (Verb der Handlung). Die Phasenzeile «Tage sammeln · 5/7 fertig» bleibt.
+
+| Schlüssel heute | DE neu | EN neu |
+|---|---|---|
+| `trip.kpiSubmitted` | {done} von {total} haben eingetragen | {done} of {total} have added their dates |
+| `trip.kpiAllDone` | Alle haben eingetragen. | Everyone has added their dates. |
+| `trip.status.submitted` / `submittedOn` | eingetragen / eingetragen · {date} | dates added / dates added · {date} |
+| `trip.status.open` (Phase 1) | noch nicht eingetragen | no dates yet |
+| `trip.status.open` (Phase 2) | noch nicht abgestimmt | hasn't voted yet |
+| `trip.status.placeholder` | noch nicht beigetreten | hasn't joined yet |
+
+### 14.1 „Nächster Schritt“ – vollständige Matrix (W07)
+
+**Grundregeln**
+1. Die Karte beantwortet in genau dieser Reihenfolge: **Wo stehen wir? → Wer ist jetzt dran? → Was kann ich tun?** Der „Wer ist dran?“-Teil nennt immer eine Person: «du», «{orga}» oder die Fehlenden.
+2. Die Namen der Fehlenden stehen schon in der Kennzahl-Box darüber. Die Karte wiederholt die Liste nicht. Ausnahme: Es fehlt nur noch eine Person (die Orga oder man selbst).
+3. Es gibt höchstens **eine** Primäraktion. In Warte-Zuständen von Mitgliedern gibt es keine Primäraktion (nur sekundär bzw. Text-Taste) – Mitglieder sollen nicht zu einer Handlung gedrängt werden, die gerade nicht nötig ist.
+4. `{orga}` = Anzeigename der Orga in dieser Reise (wie in der Mitgliederliste). Ist der Betrachter selbst Orga, gilt die Orga-Zeile („du“).
+5. „Fertig“ heißt: Phase 1 eingetragen, Phase 2 abgestimmt. „Andere offen“ zählt in Phase 1 **Mitglieder und offene Platzhalter** (Q20), in Phase 2 nur Mitglieder (Platzhalter können nicht abstimmen). Den Betrachter selbst zählt es nie mit.
+6. Frist: Phase 1 = `trip.deadline` (Eintragen), Phase 2 = `trip.pollDeadline`. „Vorbei“ heißt: Frist < heute. Eine Frist blockiert nichts.
+7. **Auswertung von oben nach unten, die erste passende Zeile gilt.** Umsetzung als reine Funktion `nextStep(phase, viewer, members, placeholders, deadlines, today) → { key, params, actions }` in `src/lib/trip-status.ts`, mit Unit-Tests je Zeile. `viewerTodo` bleibt für „Meine Reisen“ (F-044) unverändert.
+
+**Phase 1 „Tage sammeln“**
+
+| ID | Situation (erste passende) | Text DE | Text EN | Aktionen |
+|---|---|---|---|---|
+| N1-1 | Ich offen · Frist vorbei | Die Frist ist vorbei – trag deine Tage trotzdem schnell ein. | The deadline has passed – add your dates quickly anyway. | primär [Tage eintragen] / [Add your dates] |
+| N1-2 | Ich offen · alle anderen fertig · ich bin Mitglied | Nur deine Tage fehlen noch – dann kann {orga} die Abstimmung starten. | Only your dates are missing – then {orga} can start the vote. | primär [Tage eintragen] |
+| N1-3 | Ich offen · alle anderen fertig · ich bin Orga | Nur deine Tage fehlen noch – danach kannst du die Abstimmung starten. | Only your dates are missing – then you can start the vote. | primär [Tage eintragen] |
+| N1-4 | Ich offen (sonst) | Trag deine Tage ein – dauert 2 Minuten. | Add your dates – it takes 2 minutes. | primär [Tage eintragen] |
+| N1-5 | Orga · alle fertig (inkl. Platzhalter) | Alle haben ihre Tage eingetragen! Zeit für die Abstimmung. | Everyone has added their dates! Time to start the vote. | primär [Abstimmung erstellen] / [Create a vote] |
+| N1-6 | Orga · alle Mitglieder fertig · nur Platzhalter offen | Alle Mitglieder haben eingetragen. {names} {count, plural, one {ist} other {sind}} noch nicht beigetreten – du kannst die Abstimmung trotzdem schon starten. | All members have added their dates. {names} {count, plural, one {hasn't} other {haven't}} joined yet – you can start the vote anyway. | primär [Abstimmung erstellen] · sekundär [Erinnern] / [Remind] |
+| N1-7 | Orga · Frist vorbei · andere offen | Die Frist zum Eintragen ist vorbei, {count, plural, one {# fehlt} other {# fehlen}} noch. Du kannst die Abstimmung schon mit den eingetragenen Tagen starten. | The deadline for adding dates has passed and {count, plural, one {# person is} other {# people are}} still missing. You can start the vote with the dates you have. | primär [Abstimmung erstellen] · sekundär [Erinnern] |
+| N1-8 | Orga · andere offen | Deine Tage sind drin. Sobald alle eingetragen haben, kannst du die Abstimmung starten. | Your dates are in. Once everyone has added theirs, you can start the vote. | primär [Erinnern] · sekundär [Vorschläge ansehen] / [See suggestions] |
+| N1-9 | Mitglied · alle fertig (inkl. Platzhalter) | Alle haben ihre Tage eingetragen. Jetzt ist {orga} dran und startet die Abstimmung. | Everyone has added their dates. Now it's {orga}'s turn to start the vote. | sekundär [Vorschläge ansehen] · Text-Taste [{orga} Bescheid geben] / [Let {orga} know] |
+| N1-10 | Mitglied · Frist vorbei · andere offen | Die Frist zum Eintragen ist vorbei. Jetzt ist {orga} dran und startet die Abstimmung. | The deadline for adding dates has passed. Now it's {orga}'s turn to start the vote. | sekundär [Vorschläge ansehen] · Text-Taste [{orga} Bescheid geben] |
+| N1-11 | Mitglied · nur die Orga ist offen | Danke, deine Tage sind drin! Jetzt fehlen nur noch die Tage von {orga} – danach kann die Abstimmung starten. | Thanks, your dates are in! Only {orga}'s dates are missing – then the vote can start. | sekundär [{orga} erinnern] / [Remind {orga}] · sekundär [Vorschläge ansehen] |
+| N1-12 | Mitglied · andere offen | Danke, deine Tage sind drin! Sobald alle eingetragen haben, startet {orga} die Abstimmung. | Thanks, your dates are in! Once everyone has added theirs, {orga} will start the vote. | sekundär [Erinnern] · sekundär [Vorschläge ansehen] |
+
+N1-9 ist der Wortlaut aus dem Auftraggeber-Feedback. Platzhalter, die noch fehlen, fallen bei Mitgliedern unter N1-12. Mitglieder warten ehrlich auf alle; die Orga sieht in N1-6, dass sie trotzdem starten kann.
+
+**Phase 2 „Abstimmung läuft“**
+
+| ID | Situation (erste passende) | Text DE | Text EN | Aktionen |
+|---|---|---|---|---|
+| N2-1 | Ich nicht abgestimmt · Frist vorbei · Mitglied | Die Frist ist vorbei, aber du kannst noch abstimmen, bis {orga} den Termin festlegt. | The deadline has passed, but you can still vote until {orga} locks in the dates. | primär [Abstimmen] / [Vote] |
+| N2-2 | Ich nicht abgestimmt · Frist vorbei · Orga | Die Frist ist vorbei. Stimm noch ab und leg dann den Termin fest. | The deadline has passed. Cast your vote, then lock in the dates. | primär [Abstimmen] |
+| N2-3 | Ich nicht abgestimmt · alle anderen fertig · Mitglied | Nur deine Stimme fehlt noch – dann kann {orga} den Termin festlegen. | Only your vote is missing – then {orga} can lock in the dates. | primär [Abstimmen] |
+| N2-4 | Ich nicht abgestimmt · alle anderen fertig · Orga | Nur deine Stimme fehlt noch – danach kannst du den Termin festlegen. | Only your vote is missing – then you can lock in the dates. | primär [Abstimmen] |
+| N2-5 | Ich nicht abgestimmt (sonst) | Die Abstimmung läuft – stimm ab. + mit Frist: « Abstimmen bis {date}.» | Voting is open – cast your vote. + « Vote by {date}.» | primär [Abstimmen] |
+| N2-6 | Orga · alle abgestimmt | Alle haben abgestimmt! Zeit, den Termin festzulegen. | Everyone has voted! Time to lock in the dates. | primär [Termin festlegen] / [Lock in dates] → `/poll?fix=1` |
+| N2-7 | Orga · Frist vorbei · andere offen | Die Frist ist abgelaufen – {count, plural, one {# hat} other {# haben}} nicht abgestimmt. Zeit, den Termin festzulegen. | The voting deadline has passed – {count, plural, one {# person hasn't} other {# people haven't}} voted. Time to lock in the dates. | primär [Termin festlegen] · sekundär [Erinnern] |
+| N2-8 | Orga · andere offen | Deine Stimme ist drin. Sobald alle abgestimmt haben, legst du den Termin fest – du kannst es auch schon vorher tun. | Your vote is in. Once everyone has voted, you lock in the dates – or do it earlier if you like. | primär [Erinnern] · sekundär [Zur Abstimmung] / [Go to the vote] |
+| N2-9 | Mitglied · alle abgestimmt | Alle haben abgestimmt. Jetzt ist {orga} dran und legt den Termin fest. | Everyone has voted. Now it's {orga}'s turn to lock in the dates. | sekundär [Ergebnis ansehen] / [See results] · Text-Taste [{orga} Bescheid geben] |
+| N2-10 | Mitglied · Frist vorbei · andere offen | Die Abstimmungsfrist ist vorbei. Jetzt ist {orga} dran und legt den Termin fest. | The voting deadline has passed. Now it's {orga}'s turn to lock in the dates. | sekundär [Ergebnis ansehen] · Text-Taste [{orga} Bescheid geben] |
+| N2-11 | Mitglied · nur die Orga ist offen | Danke fürs Abstimmen! Jetzt fehlt nur noch die Stimme von {orga} – danach wird der Termin festgelegt. | Thanks for voting! Only {orga}'s vote is missing – then the dates get locked in. | sekundär [{orga} erinnern] · sekundär [Zur Abstimmung] |
+| N2-12 | Mitglied · andere offen | Danke fürs Abstimmen! Sobald alle abgestimmt haben, legt {orga} den Termin fest. + mit Frist: «Danke fürs Abstimmen! Sobald alle abgestimmt haben – spätestens nach der Frist am {date} –, legt {orga} den Termin fest.» | Thanks for voting! Once everyone has voted, {orga} will lock in the dates. + «Thanks for voting! Once everyone has voted – or after the deadline on {date} – {orga} will lock in the dates.» | sekundär [Erinnern] · sekundär [Zur Abstimmung] |
+
+- „Ergebnis ansehen“ führt nach `/poll`. Mitglieder sehen dort nur die Ergebnisse der Optionen, zu denen sie abgestimmt haben (Q13 a). Nach eigener vollständiger Stimme sind das alle.
+- `/poll?fix=1` (nur Orga, Phase 2) öffnet das Sheet „Termin festlegen“ direkt. Danach den Parameter per `replaceState` entfernen. Ohne Orga-Rolle oder außerhalb von Phase 2 wird er ignoriert.
+
+**Phase 3 und Vergangen**
+- **Phase 3:** keine Nächster-Schritt-Karte. Ergebnis-Karte und Reise-Hub übernehmen (§14.4).
+- **Vergangen nach Festlegung:** «Diese Reise ist vorbei. Zeit für die nächste?» / «This trip is over. Time for the next one?» · sekundär [Neue Reise planen] (unverändert).
+- **Vergangen ohne Festlegung** (Suchzeitraum abgelaufen): «Der Suchzeitraum ist vorbei, ohne dass ein Termin feststand.» / «The date range has ended without fixed dates.» · Orga: sekundär [Reise bearbeiten] / [Edit trip] (Suchzeitraum verlängern) · alle: sekundär [Neue Reise planen].
+
+**Aktion „{orga} Bescheid geben“ – Entscheidung: ja, aber zurückhaltend.**
+- **Warum:** Im MVP gibt es keine Benachrichtigungen (F-014 kommt mit v1). Die Orga erfährt also nur beim Öffnen der App, dass sie dran ist. Ein Tipp, und die Nachricht geht per WhatsApp an die Orga – das schließt genau die Lücke, die der Auftraggeber beschreibt.
+- **Wo:** nur für Nicht-Orga, nur in N1-9, N1-10, N2-9 und N2-10. Immer als **Text-Taste** (nie primär) – wer weiß, dass die Orga schon Bescheid weiß, ignoriert sie einfach.
+- **Wie:** öffnet das Erinnern-Sheet im Schritt `orga` (§14.2) mit Vorschau-Text, Sprachumschalter DE/EN, [Per WhatsApp senden] (primär), [Teilen …], [Text kopieren]. `{link}` = Übersicht der Reise (`tripLink(tripPath(id))`).
+- **Texte:**
+  | Anlass | DE | EN |
+  |---|---|---|
+  | P1 alle eingetragen | Hey {orga}, alle haben ihre Tage für {trip} eingetragen – du kannst jetzt die Abstimmung starten: {link} | Hey {orga}, everyone has added their dates for {trip} – you can start the vote now: {link} |
+  | P1 Frist vorbei | Hey {orga}, die Frist für {trip} ist vorbei – magst du die Abstimmung starten? {link} | Hey {orga}, the deadline for {trip} has passed – could you start the vote? {link} |
+  | P2 alle abgestimmt | Hey {orga}, alle haben bei {trip} abgestimmt – du kannst jetzt den Termin festlegen: {link} | Hey {orga}, everyone has voted for {trip} – you can lock in the dates now: {link} |
+  | P2 Frist vorbei | Hey {orga}, die Abstimmungsfrist für {trip} ist vorbei – magst du den Termin festlegen? {link} | Hey {orga}, the voting deadline for {trip} has passed – could you lock in the dates? {link} |
+  | Platzhalter fehlt (Nicht-Orga, §14.2) | Hey {orga}, {name} fehlt noch bei {trip} – schickst du {name} den persönlichen Link? {link} | Hey {orga}, {name} still hasn't joined {trip} – could you send them their personal link? {link} |
+
+**Darstellung:** Karte wie bisher (Info-Karte, h2 «Nächster Schritt» / «Next step»). Zeilenwechsel der Situation → Inhalt blendet über (W07-03). Aktionen untereinander unter 400 px, sonst nebeneinander. Reihenfolge: primär → sekundär → Text-Taste.
+
+### 14.2 Personen-Status und Erinnern (F-007, F-015 vorgezogen)
+
+**Entscheidungen**
+1. **Alle Mitglieder dürfen erinnern** – nicht nur die Orga. Das ändert Flow K.6 („Nicht-Orga: kein Erinnern-Button“) auf ausdrücklichen Wunsch des Auftraggebers. Sozial unproblematisch, weil die App nichts selbst verschickt: Die Nachricht geht aus dem eigenen WhatsApp, freundlich formuliert, mit Namen. Sich selbst kann man nicht erinnern.
+2. **Eine Komponente für alles:** `RemindSheet` (Bottom-Sheet, ab 600 px Dialog max. 480 px) mit vier Schritten:
+   - `status` – Liste „Fehlt noch / Eingetragen“ (Phase 2: „Fehlt noch / Abgestimmt“)
+   - `single` – „{Name} erinnern“
+   - `all` – „Alle erinnern“ (Sammel-Text, Flow K)
+   - `orga` – „{Orga} Bescheid geben“ bzw. Platzhalter-Hinweis für Nicht-Orga
+   Die W10-Kachel „Wer hat abgestimmt?“ nutzt dieselbe Komponente (Phase 2). Das heutige „Wer hat abgegeben?“-`<details>` unter der Heatmap entfällt.
+3. **Kein „@“ vor Namen** (F-015, unverändert). Begrüßung «Hey {name}» und der Name im Satz erfüllen „namentlich erwähnt“.
+4. **WhatsApp ist in diesem Sheet der primäre Kanal** (Auftraggeber-Wunsch, Zielgruppe). Link `https://wa.me/?text=<encodeURIComponent(text)>`, `target="_blank" rel="noopener noreferrer"`. Ohne Telefonnummer öffnet WhatsApp die Chat-Auswahl – man wählt die Person direkt oder den Gruppenchat. Funktioniert auf iOS/Android (App), am Desktop (WhatsApp Web/Desktop) und im WhatsApp-In-App-Browser. Sekundär: [Teilen …] (nur wenn `navigator.share` vorhanden) und [Text kopieren] (immer). Andere Teilen-Sheets (Einladung, Abstimmung, Ergebnis) bleiben vorerst bei §4.5.
+
+**Einstiege**
+
+| Ort | Element | öffnet Schritt |
+|---|---|---|
+| Übersicht + Gruppe, Phase 1/2 | **Kennzahl-Box** – ganze Box als Button mit Chevron ›, solange jemand offen ist (s. u.) | `status` |
+| Übersicht, Liste „Wer ist dabei?“ | Zeile unter „Fehlt noch“ → [Erinnern] | `single` (direkt) bzw. `orga` (Platzhalter, Nicht-Orga) |
+| Übersicht, Nächster Schritt | [Erinnern] | genau 1 andere Person offen → `single`, sonst `status` |
+| Übersicht, Nächster Schritt | [{orga} erinnern] (N1-11, N2-11) | `single` für die Orga |
+| Übersicht, Nächster Schritt | [{orga} Bescheid geben] | `orga` |
+| Gruppe, Vorschläge | Hinweis „Basiert auf …“ → Text-Taste [Erinnern] (§14.3) | `status` |
+| Gruppe, Kalender | Zeile unter der Heatmap «Wer hat eingetragen? (5/9) ›» (Button, ersetzt `<details>`) | `status` |
+| Abstimmen, Phase 2 | Beteiligungs-Kachel «4 von 7 haben abgestimmt ›» | `status` |
+| Reisemenü „⋯“ | «Gruppe erinnern» / «Remind the group» – jetzt **für alle Mitglieder**, Phase 1/2, nur wenn mind. 1 andere Person offen ist | `status` |
+
+**Kennzahl-Box (§4.10, geändert):** Ist mind. eine Person offen, ist die ganze Box ein `<button aria-haspopup="dialog">` (Ring + Satz + Zeile «Noch offen: Kemal, Sara, Mia und Tom» + Chevron rechts). Zugänglicher Name: «5 von 9 haben eingetragen. Noch offen: Kemal, Sara, Mia und Tom. Liste öffnen» / «5 of 9 have added their dates. Still missing: … Open list». Die Minze-Taste [Erinnern] in der Box **entfällt** – Erinnern geschieht im Sheet. So gibt es nur ein Ziel und keinen Button im Button. In Gruppe entfällt der Zusatz «– das Ergebnis kann sich noch ändern.»; er geht im Hinweis §14.3 auf. Sind alle fertig, ist die Box kein Button, und die Orga behält in Gruppe [Abstimmung starten].
+
+**Schritt `status` (mobil)**
+```
+│              ─────                 │
+│ Wer hat eingetragen?          [×]  │  h2; Phase 2: «Wer hat abgestimmt?»
+│ 5 von 9 haben eingetragen          │  14 text-muted
+│                                    │
+│ FEHLT NOCH (4)                     │  h3
+│ (┄KE┄) Kemal                       │  Avatar 40 gestrichelt + Uhr-Icon in der Statuszeile
+│   ◷ noch nicht eingetragen [Erinnern]│  btn-sm sekundär, Icon ww-icon-remind, 44 px
+│ (┄SA┄) Sara                        │
+│   ◷ noch nicht eingetragen [Erinnern]│
+│ (┄MI┄) Mia                         │  Platzhalter
+│   ◷ noch nicht beigetreten [Erinnern]│
+│ (┄KM┄) Kai (du)                    │  man selbst: Link statt Erinnern
+│   ◷ noch nicht eingetragen [Tage eintragen]│
+│                                    │
+│ EINGETRAGEN (5)                    │  h3
+│ (LE)✓ Lena  [Orga]                 │  Avatar gefüllt + Minze-Siegel; nicht interaktiv
+│   ✓ eingetragen · 12. Mai          │
+│ (JO)✓ Jonas  ✓ eingetragen · 10. Mai│
+│ …                                  │
+├────────────────────────────────────┤
+│ [ Alle erinnern (3) ]              │  sekundär, volle Breite; nur bei ≥ 2 offenen
+└────────────────────────────────────┘  beigetretenen anderen Mitgliedern
+```
+- Reihenfolge in „Fehlt noch“: Mitglieder nach Beitritt, dann Platzhalter, **man selbst zuletzt**. In „Eingetragen“ nach Beitritt. Die Orga-Zeile trägt das Abzeichen «Orga».
+- Statuszeilen (Symbol + Text, nie nur Farbe): Phase 1 «noch nicht eingetragen» / «no dates yet» · «eingetragen · {date}» / «dates added · {date}» · Platzhalter «noch nicht beigetreten» / «hasn't joined yet». Phase 2 «noch nicht abgestimmt» / «hasn't voted yet» · «abgestimmt» / «voted». Phase 2 listet nur Mitglieder.
+- Überschriften: «Fehlt noch ({count})» / «Still missing ({count})» · «Eingetragen ({count})» / «Dates added ({count})» · Phase 2 «Abgestimmt ({count})» / «Voted ({count})». Leere Gruppe → ganz weglassen.
+- Zeilen-Buttons: «Erinnern» / «Remind» mit zugänglichem Namen «{name} erinnern» / «Remind {name}». Eigene Zeile: «Tage eintragen» / «Add your dates» (Phase 2 «Abstimmen» / «Vote») als Link. Fußleiste: «Alle erinnern ({count})» / «Remind all ({count})».
+- Viele Personen: Das Sheet rastet bei mehr als 8 Zeilen auf „fast voll“ ein und scrollt innen. Die Fußleiste bleibt sichtbar.
+
+**Schritt `single` – „{Name} erinnern“**
+```
+│ [‹]  Kemal erinnern           [×]  │  ‹ nur, wenn aus `status` geöffnet
+│ (┄KE┄) Kemal hat noch keine Tage   │  Kontextzeile (Phase 2: «… hat noch nicht abgestimmt.»)
+│        eingetragen.                │
+│ Nachricht      Sprache: (•)DE ( )EN│  §4.5
+│ ┌──────────────────────────────┐   │
+│ │ Hey Kemal, du fehlst noch bei│   │  editierbar, Auto-Höhe
+│ │ Lissabon 2027! Trag kurz ein,│   │
+│ │ wann du kannst – dauert 2    │   │
+│ │ Minuten: https://…/days      │   │
+│ └──────────────────────────────┘   │
+│ [   Per WhatsApp senden        ]   │  primär
+│ [ Teilen … ]   [ Text kopieren ]   │  sekundär; „Teilen …“ nur mit Web Share
+│ Schick es Kemal direkt oder in     │  13 text-muted
+│ euren Gruppenchat.                 │
+```
+- Kontextzeile: «{name} hat noch keine Tage eingetragen.» / «{name} hasn't added any dates yet.» · Phase 2: «{name} hat noch nicht abgestimmt.» / «{name} hasn't voted yet.» · Platzhalter (Orga): «{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link.» / «{name} hasn't joined yet – the message includes their personal link.»
+- Fußzeile: «Schick es {name} direkt oder in euren Gruppenchat.» / «Send it to {name} directly or to your group chat.»
+- Buttons: «Per WhatsApp senden» / «Send via WhatsApp» · «Teilen …» / «Share …» · «Text kopieren» / «Copy text» → 2 s «Kopiert ✓» / «Copied ✓» (G-11).
+- **Texte** (≤ 300 Zeichen inkl. Link). „Letzte Person“ = alle anderen sind fertig. „Frist“ nur, wenn sie noch nicht vorbei ist.
+
+  | Fall | Link | DE | EN |
+  |---|---|---|---|
+  | P1 Mitglied | `/trips/{id}/days` | Hey {name}, du fehlst noch bei {trip}! Trag kurz ein, wann du kannst – dauert 2 Minuten: {link} | Hey {name}, we're still missing your dates for {trip}! Add them quickly – it takes 2 minutes: {link} |
+  | P1 Mitglied mit Frist | dto. | Hey {name}, du fehlst noch bei {trip}! Trag bis {deadline} ein, wann du kannst – dauert 2 Minuten: {link} | Hey {name}, we're still missing your dates for {trip}! Add them by {deadline} – it takes 2 minutes: {link} |
+  | P1 letzte Person | dto. | Hey {name}, bei {trip} fehlen nur noch deine Tage! Trag sie kurz ein, dann kann's mit der Abstimmung losgehen: {link} | Hey {name}, yours are the last dates we need for {trip}! Add them quickly so we can start the vote: {link} |
+  | P1 Platzhalter (nur Orga) | persönlicher Link `/i/{token}` | Hey {name}, du fehlst noch bei {trip}! Hier ist dein persönlicher Link – trag ein, wann du kannst: {link} | Hey {name}, we're still missing you for {trip}! Here's your personal link to add your dates: {link} |
+  | P2 Mitglied | `/trips/{id}/poll` | Hey {name}, deine Stimme fehlt noch bei {trip}! Stimm kurz ab: {link} | Hey {name}, we still need your vote for {trip}! Vote here: {link} |
+  | P2 mit Frist | dto. | Hey {name}, deine Stimme fehlt noch bei {trip}! Stimm bis {deadline} ab: {link} | Hey {name}, we still need your vote for {trip}! Vote by {deadline}: {link} |
+  | P2 letzte Person | dto. | Hey {name}, bei {trip} fehlt nur noch deine Stimme! Stimm kurz ab, dann können wir den Termin festlegen: {link} | Hey {name}, yours is the last vote we need for {trip}! Vote now so we can lock in the dates: {link} |
+
+  `{name}` = Anzeigename der Person in der Reise. `{deadline}` und Datum im Format der Textsprache (§9).
+
+**Platzhalter – wer sieht was**
+- **Orga:** Platzhalter-Zeile → `single` mit dem **persönlichen Link** (wer darüber beitritt, übernimmt den Platzhalter, F-007). Der Link „Platzhalter verwalten“ (A4) steht weiter unter der Liste in der Übersicht.
+- **Nicht-Orga:** Die Zeile ist sichtbar («noch nicht beigetreten»), [Erinnern] öffnet `orga`. Inhalt: Überschrift «{name} ist noch nicht dabei» / «{name} hasn't joined yet». Text: «Den persönlichen Link für {name} hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken.» / «Only {orga} has {name}'s personal link. Give them a nudge so they can pass it on.» Teilen-Text an die Orga: s. Tabelle in §14.1 („Platzhalter fehlt“).
+- **Warum nicht der allgemeine Einladungslink?** Namen sind in einer Reise eindeutig (Mitglieder und Platzhalter). Mia käme als „Mia 2“ in die Reise, und der Platzhalter „Mia“ bliebe offen – doppelte Personen, falscher Fortschritt. Persönliche Links bleiben bewusst nur in Orga-Ansichten (Sicherheitsregel, `load.ts`). Server: Texte mit persönlichem Link nur für die Orga rendern, nie im Payload für Mitglieder.
+
+**Schritt `all` – „Alle erinnern“** (Flow K, W06): Checkboxen der offenen **beigetretenen** Mitglieder (ohne man selbst), alle vorausgewählt. Der Text aktualisiert sich (§10.3 „Erinnerung Tage“ bzw. „Erinnerung Abstimmung“, Link wie `single`). Platzhalter sind nicht dabei, weil jeder einen eigenen Link braucht. Hinweiszeile, wenn welche offen sind: Orga «{names} {count, plural, one {ist} other {sind}} noch nicht beigetreten – erinnere sie einzeln mit ihrem persönlichen Link.» / «{names} {count, plural, one {hasn't} other {haven't}} joined yet – remind them one by one with their personal link.» · Nicht-Orga «… – das übernimmt {orga}.» / «… – {orga} will take care of that.» Knöpfe wie `single`.
+
+**Übersicht – Liste „Wer ist dabei?“ in Phase 1/2 (W07)**
+- Gruppiert wie `status`: «Fehlt noch (n)» zuerst, dann «Eingetragen (n)» bzw. «Abgestimmt (n)». Gleiche Zeilen (Avatar gestrichelt + Uhr bzw. gefüllt + Minze-Siegel, Statuszeile, Orga-Abzeichen, «(du)»).
+- Zeilen unter „Fehlt noch“ haben rechts [Erinnern] (btn-sm sekundär, 44 px, `aria-label` «{name} erinnern»). Bei der Orga folgt daneben weiterhin [⋯] (Entfernen, Orga übergeben). Bei 360 px passen Name (gekürzt mit „…“) + [Erinnern] + [⋯]. Wird es zu eng (große Schrift), bricht die Statuszeile mit dem Button unter den Namen um.
+- Einklappen: „Fehlt noch“ immer vollständig. „Eingetragen“ ab 6 Personen auf 5 + «Alle {count} anzeigen».
+- Phase 3 und Vergangen: keine Gruppen und keine Statuszeilen (wie heute).
+
+**Optional (MVP+, Entscheidung CEO): „zuletzt erinnert“.** Wer auf WhatsApp/Teilen/Kopieren tippt, speichert serverseitig den Zeitpunkt je Person (`reminded_at` an Mitgliedschaft bzw. Platzhalter). Die Zeile zeigt dann für alle «◷ noch nicht eingetragen · erinnert heute, 14:20» / «… · reminded today, 14:20». Das verhindert, dass fünf Leute dieselbe Person anschreiben. Braucht eine Migration, daher nicht Pflicht für diese Runde.
+
+**Barrierefreiheit:** Sheet nach §4.2 (`role="dialog"`, `aria-labelledby`). Gruppen als `<section>` mit h3 und `<ul>`. Avatare `aria-hidden` (Name steht als Text). Schrittwechsel: Fokus auf die h2 des neuen Schritts (`tabindex="-1"`). [‹] hat `aria-label` «Zurück zur Liste» / «Back to the list» und setzt den Fokus wieder auf den auslösenden Zeilen-Button. Schließen → Fokus auf den ursprünglichen Auslöser (Box, Zeile, Menü). WhatsApp-Link mit sr-Zusatz «(öffnet WhatsApp)» / «(opens WhatsApp)». Kennzahl-Box-Button im Cockpit: Fokus `--ww-focus-ring-on-brand`.
+
+**Bewegung:** Sheet G-05/G-05b. Schrittwechsel: Inhalt gleitet `distance-lg` in Leserichtung (vor = von rechts, zurück = von links) + Fade, `base` · `standard` (wie W09-08); reduziert: Fade. Kopieren G-11, Checkboxen G-12. Kein Siegel und keine Feier beim Erinnern.
+
+**Randfälle:** Jemand trägt ein, während das Sheet offen ist → keine Live-Aktualisierung; beim nächsten Öffnen stimmt die Liste. Person wurde inzwischen entfernt → Teilen klappt trotzdem, keine Fehlermeldung. Lange Namen: in Zeilen einzeilig mit „…“, im Sheet-Titel umbrechen. Beitritt geschlossen: ändert nichts (Mitglieder-Links brauchen keinen Beitritt). Persönliche Platzhalter-Links funktionieren wie bisher (F-007).
+
+### 14.3 Hinweis „Basiert auf x von n“ bei „Alle dabei“ (W09)
+
+- **Zweck:** „Alle dabei“ heißt fachlich „alle, die eingetragen haben“ (F-009). Solange Personen fehlen, muss das sichtbar sein, sonst wirkt der Vorschlag verbindlicher, als er ist.
+- **Platz:** Ansicht Vorschläge, **direkt unter der Überschrift «✓ Alle dabei (n)»**, vor der ersten Karte. Auch wenn die Gruppe leer ist (dann über «Gerade kein Zeitraum, in dem alle können.»). Desktop: gleich in der Vorschlagsspalte. Die Gruppe „Fast alle dabei“ bekommt keinen eigenen Hinweis (keine Wiederholung). Ihre Chips «✕ ohne Jonas» beziehen sich wie bisher auf Eingetragene.
+- **Optik:** kompakter Info-Hinweis (design-system §9.18 Info, Polster 8/12, Icon `users` 16) – nicht Amber, denn es ist eine Information, keine Warnung. Darin am Ende eine Text-Taste (Trefferfläche ≥ 44 px).
+- **Text** (Namen nach §10.3: „und“, ab 5 Namen «und 3 weitere»; Platzhalter zählen mit, Q20):
+  - DE «Basiert auf 5 von 9 – noch offen: Kemal, Sara, Mia und Tom.» · EN «Based on 5 of 9 – still waiting for Kemal, Sara, Mia and Tom.»
+  - Betrachter selbst offen (steht vorn): DE «Basiert auf 5 von 9 – noch offen: du, Kemal und Sara.» · EN «Based on 5 of 9 – still waiting for you, Kemal and Sara.»
+  - Text-Taste: Betrachter fertig → «Erinnern» / «Remind» (→ `status`, §14.2). Betrachter offen → «Deine Tage eintragen» / «Add your dates» (→ Meine Tage).
+- **Vorschlag-Leiste (Kalender, < 960 px):** Ist der gewählte Vorschlag aus „Alle dabei“ und fehlt noch jemand, steht als **erster Chip** «Bisher 5 von 9» / «So far 5 of 9» (Info-Ton, Icon `users`; sr: «Basiert auf 5 von 9 Personen» / «Based on 5 of 9 people»). Weitere Chips laufen wie bisher in «+1» über.
+- **Wenn alle eingetragen haben:** Hinweis und Chip entfallen ersatzlos. Die Überschrift „Alle dabei“ stimmt dann wörtlich, und die Kennzahl-Box sagt «Alle haben eingetragen.»
+- **Sonderfälle:** Niemand hat eingetragen → Leerzustand, kein Hinweis. Nur eine Person eingetragen → der bestehende Hinweis «Bisher nur deine Angaben …» bleibt, der Hinweis hier erscheint zusätzlich. Lokaler Filter „Personen ausblenden“ ändert den Hinweis nicht (er beschreibt die Gruppe, nicht die eigene Sicht). Phase 2: gleiche Regel. Phase 3 (Unterseite, §14.4): kein Hinweis.
+- **Barrierefreiheit:** Hinweis als `<p id=…>`, die Gruppe „Alle dabei“ (`<section>`) verweist per `aria-describedby` darauf. Keine Live-Region (ändert sich nur beim Laden).
+
+### 14.4 Phase 3 „Steht fest“: nur noch die Übersicht als Reise-Hub
+
+**Regeln**
+1. **Keine Tab-Leiste, sobald der Termin festgelegt ist** (gespeicherte Phase `fixed`, auch wenn die Reise schon vorbei ist). Der Cockpit-Kopf besteht nur aus Zeile 1 (← · Reisename + Phasenzeile «Steht fest · 7 dabei» · ⋯). Die Tab-Spur fällt weg. Eine Leiste mit nur „Übersicht“ wäre leere Navigation. Sticky bleibt Zeile 1. Der Vorfreude-Ring scrollt wie bisher mit. Höhe des kompakten Kopfs ohne Tabs: Designer (U-21).
+2. **Vergangen ohne Festlegung** (Suchzeitraum abgelaufen) behält die Tabs (unverändert).
+3. **Standard-Ziel** in Phase 3 ist immer die Übersicht (wie bisher, sitemap §2).
+
+**Aufbau Übersicht Phase 3 (mobil, von oben)**
+1. Cockpit (Zeile 1, keine Tabs) + Vorfreude-Ring mit Countdown (W11, unverändert, Feier unverändert).
+2. Ergebnis-Karte «Es geht los!» mit Datum, Meta-Zeile, [Zum Kalender hinzufügen ▾], [Allen Bescheid geben] und Drei-Schritte-Fortschritt (W11, design-system §9.6). Die separate Phasen-Leiste der Seite entfällt in Phase 3 (keine Doppelung).
+3. Beschreibung der Reise (falls vorhanden) als Zitatzeile unter der Karte. Die Fakten „Suchzeitraum“ und „Nächte“ wandern nach 5.
+4. **Andockfläche «Als Nächstes» / «Up next»** (h2): Liste von Modul-Kacheln für spätere Bereiche (Unterkünfte per Swipe F-031, Kosten teilen, Reisedaten, Dokumente). **Im MVP gibt es keine Module → die Fläche wird nicht gerendert** (keine „Bald verfügbar“-Teaser, keine leeren Versprechen).
+5. **«So habt ihr entschieden» / «How you decided»** (h2): zwei Kacheln (klickbare Karten, Icon-Kachel 40 + Titel + Meta + Chevron):
+   - «Abstimmungsergebnis» / «Vote results» · Meta «{voted} von {total} haben abgestimmt» / «{voted} of {total} voted» · Icon `vote` (Lavendel) → `/trips/{id}/poll`
+   - «Kalender der Gruppe» / «Group calendar» · Meta «Wer wann konnte» / «Who could make it when» · Icon `calendar` (Minze) → `/trips/{id}/group?view=calendar`
+   - darunter 13 px `text-muted`: «Gesucht wurde: {range} · {nights}» / «Searched: {range} · {nights}» (z. B. «Gesucht wurde: 1. Mai – 30. Juni 2027 · 4–5 Nächte»).
+   - Kacheln nebeneinander, wenn der Container ≥ 21,5 em breit ist, sonst untereinander (gleiche Regel wie W01 „So geht's“).
+6. «Wer ist dabei? ({count})» – Liste ohne Status (wie heute) + [Freunde einladen] (solange Beitritt offen).
+
+Desktop (≥ 960 px): Hauptspalte 1–5, Seitenspalte 6 (wie W07).
+
+**Vertrag für die Andockfläche (für spätere Module, jetzt als leerer Slot bauen)**
+- `TripModule { id; icon; tone ('lavender'|'mint'|'sun'|'coral'); title; status (eine Zeile, z. B. «3 von 7 haben bewertet»); todo?: boolean; href }`. Die Übersicht rendert `modules.filter(visible)`. Bei leerem Array gibt es keine Überschrift und keinen Abstand.
+- Kachel = klickbare Karte (§4.8, design-system §9.6), ein Fokusziel, ≥ 64 px hoch. `todo` = To-do-Kante links (wie F-044) + Sortierung nach vorn, sonst Reihenfolge des Moduls. Mobil eine Spalte, ab 600 px zwei.
+- Jedes Modul bekommt eine **Unterseite** `/trips/{id}/<modul>` mit Cockpit ohne Tabs (← zur Übersicht, Untertitel = Modulname) – genau wie die Unterseiten unten. Sollten später mehrere Module dauerhaft genutzt werden, kann Phase 3 wieder Tabs bekommen (z. B. Übersicht · Unterkünfte · Kosten). Die URLs bleiben dann gleich, es ändert sich nur die Navigation. Entscheidung bei der Planung der Module (PM/UX).
+
+**Deep-Links in Phase 3** (alte WhatsApp-Links wie „stimm ab: …/poll“ bleiben im Umlauf)
+
+| URL | Verhalten in Phase 3 |
+|---|---|
+| `/trips/{id}/days` | Weiterleitung (307) → `/trips/{id}` |
+| `/trips/{id}/poll/new` | Weiterleitung → `/trips/{id}` |
+| `/trips/{id}/poll` | Feier für diese Person noch fällig → Weiterleitung `/trips/{id}` (die Feier ist der erste Kontakt). Sonst **Unterseite „Abstimmungsergebnis“** (schreibgeschützt, wie heute `phase="fixed"`). |
+| `/trips/{id}/group` (inkl. `?view=`) | Feier fällig → `/trips/{id}`. Sonst **Unterseite „Kalender der Gruppe“**: schreibgeschützt – keine Orga-Auswahl „Zur Abstimmung“, kein „Abstimmung erstellen“, kein „Ab hier als Option vorschlagen“, kein Hinweis §14.3, keine Kennzahl-Box. Filter und Tagesdetail bleiben. Band = festgelegter Zeitraum statt Vorschlag 1 (falls einfach umsetzbar, sonst Vorschläge wie bisher). |
+| `/trips/{id}/invite`, `/settings` | unverändert |
+
+- Unterseiten nutzen den vorhandenen Cockpit-Modus ohne Tabs (`tab = null`): Zurück-Taste → Übersicht (`aria-label` «Zurück zur Reise»), Untertitel statt Phasenzeile: «Abstimmungsergebnis» / «Vote results» bzw. «Kalender der Gruppe» / «Group calendar». Seitentitel: «Abstimmungsergebnis · Lissabon 2027 · Wir wollen weg» / «Vote results · Lisbon 2027 · When do we go?», «Kalender der Gruppe · …» / «Group calendar · …». Visuell versteckte h1 gleichen Inhalts.
+- Durch die Weiterleitungen wird das Banner «Der Termin steht fest! [Ansehen]» in Phase 3 nicht mehr gebraucht (darf im Code bleiben).
+
+**Festlegung aufheben (Orga, Reisemenü)**
+- Dialog unverändert (W11). Nach `[Termin aufheben]`: bleibt auf der Übersicht (Neuladen der Daten). Phase 2 → **Tab-Leiste ist wieder da**. Ergebnis-Karte und Ring blenden aus, die Tab-Spur blendet ein (`base`, nur Fade, keine Höhen-Animation, Layout springt; reduziert: sofort) – ruhig, W11-07.
+- Fokus auf die h1 der Übersicht (Reisename). Snackbar «Termin aufgehoben – die Abstimmung läuft wieder.» / «Dates unlocked – voting is open again.» Die Nächster-Schritt-Karte zeigt die passende N2-Zeile.
+- **Mitglieder (SOLL):** einmaliger Hinweis oben in der Übersicht – gleicher Mechanismus wie beim Abbruch-Hinweis Q21: «{orga} hat den Termin wieder geöffnet. Die Abstimmung läuft wieder.» / «{orga} has reopened the dates. Voting is open again.» [OK]. Wichtig, weil manche den Termin schon im Kalender haben.
+- Wird später erneut festgelegt: Tabs verschwinden wieder, Feier nach F-012 (nur bei anderem Zeitraum).
+
+**Reisemenü in Phase 3:** unverändert (Freunde einladen, Mein Name, Orga: Reise bearbeiten, Festlegung aufheben, Reise löschen; Reise verlassen; Hilfe). „Gruppe erinnern“ gibt es in Phase 3 nicht.
+
+**Barrierefreiheit:** Ohne Tabs entfällt die Landmark `nav` „Reise-Bereiche“. Die Seite hat weiterhin Skip-Link, h1 «Es geht los!» (Ergebnis-Karte) bzw. Reisename und eine logische Überschriften-Reihenfolge (h2 Als Nächstes · So habt ihr entschieden · Wer ist dabei?). Kacheln sind Links mit vollständigem Namen («Abstimmungsergebnis – 7 von 7 haben abgestimmt»).
+
+### 14.5 Übergabe an Entwicklung – betroffene Stellen
+
+| Bereich | Datei / Komponente | Änderung |
+|---|---|---|
+| Logik | `src/lib/trip-status.ts` | neue reine Funktion `nextStep()` (Matrix §14.1) + Tests je ID. Optional Helfer `showTabs(trip)` = `trip.phase !== "fixed"`. |
+| Übersicht | `src/app/(app)/trips/[id]/page.tsx` | `NextStep` auf `nextStep()` umstellen. `OverviewKpi` als Button → `RemindSheet`. Aufbau Phase 3 (§14.4): Andock-Slot, „So habt ihr entschieden“, Fakten verschieben, Phasen-Leiste nur außerhalb Phase 3. |
+| Liste | `src/features/trips/components/member-list.tsx` | Gruppierung „Fehlt noch / Eingetragen bzw. Abgestimmt“, [Erinnern] je offener Zeile, Platzhalter in „Fehlt noch“. |
+| Neu | `src/features/trips/components/remind-sheet.tsx` (Client) | Schritte `status` / `single` / `all` / `orga`, WhatsApp-Link, Teilen, Kopieren; Texte kommen fertig vom Server (beide Sprachen, wie `share-panel`). |
+| Texte | `src/features/trips/share-texts.ts`, `messages/de.json`, `messages/en.json` | `remindShareTexts` (P1/P2, Frist, letzte Person, Platzhalter), `orgaNudgeShareTexts`, neue `trip.next.*`-Schlüssel je ID, `remind.*`, Begriff „eingetragen“. |
+| Kennzahl-Box | `src/components/ui/cockpit` (`KpiBox`) | Variante als Button mit Chevron; keine Aktions-Taste, solange die Box Button ist. |
+| Cockpit | `trip-cockpit.tsx`, `trip-shell.tsx` | Phase `fixed` → keine `TabNav`; Unterseiten-Untertitel. |
+| Menü | `src/features/trips/sheet-context.ts`, `trip-sheet.tsx` | «Gruppe erinnern» für alle Mitglieder (Phase 1/2, ≥ 1 anderer offen) → `RemindSheet`. |
+| Gruppe | `group/page.tsx`, `group-view.tsx`, `suggestion-card` / Leiste | Kennzahl-Box-Button, Hinweis §14.3, Chip in der Leiste, `<details>` „Wer hat abgegeben?“ → Button. Schreibgeschützter Modus Phase 3. |
+| Abstimmen | `poll/page.tsx`, `poll-view.tsx` | Kachel „Wer hat abgestimmt?“ → `RemindSheet` (Phase 2, mit Erinnern). `?fix=1`. Phase 3 als Unterseite. |
+| Weiterleitungen | `days/page.tsx`, `poll/new/page.tsx`, `poll/page.tsx`, `group/page.tsx` | Phase-3-Regeln §14.4 (inkl. „Feier fällig → Übersicht“). |
+| Sicherheit | `load.ts`, Server-Texte | Persönliche Platzhalter-Links nur in Orga-Ansichten rendern (unverändert gültig). |
+
+**Abnahme durch UX (nach Umsetzung):** 360 × 640 und 200 % Text – Übersicht Phase 1 (Orga, Mitglied, „alle fertig“), Sheet `status` mit 9 Personen inkl. Platzhalter, `single` (WhatsApp öffnet mit Text), Gruppe mit Hinweis, Phase 3 ohne Tabs, Deep-Link `/poll` nach Festlegung, Festlegung aufheben.
+
+
 ## Änderungen
 - 2026-10-08 (Runde 3, Richtung B + Q17): §2 Höhenbudget mit Cockpit-Kopf; §3 kompakter sticky Kopf, kein globaler Header in Reisen; §4.2 Fokus nach Festlegen (M-U10); neu §4.10 Cockpit-Kopf & Kennzahlen (Kennzahl-Box W09, Kacheln W10), §4.11 Vorschlag-Leiste W09, §4.12 Werkzeugleiste W08; §6 Erfolgsmomente ≤ 1 s / Feier ≤ 2,6 s (M-U2); §7.1 Bewegung; neu §7.5 Schalter „Bewegung reduzieren“, Feier für alle, Vibration (Q17); §10.2/§10.4 Glossar und Budgets für B. Entscheidungen: abstimmung-design §8–§9.
 - 2026-10-08 (Auftraggeber-Entscheidungen): EN-Produktname „When do we go?“ (§3 Seitentitel, §4.5, §9, §10.2, EN-Teilen-Text Einladung §10.3, Mail-Betreff/Absender §10.5, neue Schreibregeln §10.6); Vermerke „vorbehaltlich Auftraggeber“ → „bestätigt (Auftraggeber 2026-10-08)“.
 - 2026-10-08 (Abstimmungsrunde 2): Kalender-Maße 8 px / 4 px / 45,7 × 52 px (U-1), Zell-Anatomie und ✓/◐-Semantik (U-2, U-4, §4.9), Begriff „Alle dabei“ (U-14), Legende/Feiertagsliste (U-6, U-11), Snackbar-Variable `--ww-sticky-bar-h` (U-7), Tagesliste bei großer Schrift (U-5), Abstimmen-Segmente < 400 px und „Platz 1 / Top choice“ (U-8, U-9), Dark Mode nur System, Glossar ergänzt (zugängliche Namen „x von n Geht, k Zur Not“). CEO-Entscheidungen vorbehaltlich Auftraggeber sind markiert.
 - 2026-10-10 (Inkrement 4): neu §12 – Bewertung der Abweichungen R-049, W09, Filter „Dauer“, Q20; §7.1 U-5 Tagesliste auf „vor Go-Live“ verschoben, Mindest-Fallback definiert.
 - 2026-10-10 (Inkrement 5): neu §13 – Bewertung der Abweichungen B1–B9 (Datumsfelder statt Mini-Kalender, Fokus nach Festlegen per Weiterleitung, Stimmenliste, Frist/Erinnern, Mindestnächte, „Platz 1“, Teilen-Text, Vorfreude-Ring, Status-Reset) und Empfehlungen zu „Abstimmung abbrechen“ und Suchzeitraum in Phase 2/3; §10.3 Teilen-Text „Abstimmung“ ohne Frist ergänzt.
+- 2026-10-20 (Feedback-Runde 1, Auftraggeber-Test der Live-Vorschau): neu §14 – Nächster-Schritt-Matrix N1/N2 inkl. „{Orga} Bescheid geben“ (14.1), Personen-Status + Erinnern für alle Mitglieder mit `RemindSheet` und WhatsApp als primärem Kanal (14.2, F-015 vorgezogen), Hinweis „Basiert auf x von n“ bei „Alle dabei“ (14.3), Phase 3 ohne Tabs als Reise-Hub mit Andockfläche, Deep-Links, Festlegung aufheben (14.4), Übergabeliste (14.5); Begriff „eingetragen“ statt „abgegeben“; Querverweise in §4.5, §4.10, §10.2, §10.3.

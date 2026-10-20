@@ -294,7 +294,22 @@ Ohne Befund: Minze nie als Text auf Hell, Indigo-Tasten 12,4 : 1 gegen Nebel, St
 | M-U1 – M-U11 | Motion-Punkte | beantwortet | Motion (Zeitleiste Feier an B anpassen) |
 | Q17 | Schalter, Feier, Vibration | eingearbeitet | – |
 
+## 11. Feedback-Runde 1 (Auftraggeber, 2026-10-20) – Punkte an den Designer
+
+Struktur und Texte sind in [ux-spec §14](ux-spec.md) festgelegt und können ohne diese Punkte gebaut werden – mit vorhandenen Tokens und Komponenten. Die Punkte betreffen nur den Feinschliff der Optik. Der Auftraggeber wünscht sich eine „richtig schöne“, aufgeräumte Übersicht.
+
+| ID | Thema | Bitte |
+|---|---|---|
+| U-17 | **WhatsApp-Taste** im Erinnern-Sheet (primär) | Darf die WhatsApp-Glyphe (Markenrichtlinie „Share on WhatsApp“) neben dem Text stehen, oder bleibt es bei `share` + Text «Per WhatsApp senden»? Farbe: unsere Primär-Taste (Indigo), **kein** WhatsApp-Grün (Markenbruch, Kontrast). Bis zur Antwort: `share`-Icon + Text. |
+| U-18 | **Kennzahl-Box als Button** (W07, W09) | Chevron rechts (20 px, Weiß 70 %), Gedrückt-Zustand (`scale-press`, Fläche Weiß 12 %), Fokus `--ww-focus-ring-on-brand`. Die Minze-Taste [Erinnern] entfällt in der Box. |
+| U-19 | **Personen-Zeilen** „Fehlt noch / Eingetragen“ (Sheet + Übersicht) | Avatar 40: offen gestrichelt + Uhr-Icon in der Statuszeile, eingetragen gefüllt + Minze-Siegel (§9.17). Zwischenüberschriften (Stil? Vorschlag 13/800 Versalien `text-muted`), Trennlinie zwischen den Gruppen, [Erinnern] als `btn-sm` sekundär mit `remind`-Icon. Bitte prüfen, dass Name + [Erinnern] + [⋯] bei 360 px in eine Zeile passen. |
+| U-20 | **Hinweis „Basiert auf 5 von 9 …“** unter „Alle dabei“ + Chip «Bisher 5 von 9» in der Vorschlag-Leiste | Kompakte Info-Variante von §9.18 (Polster 8/12, Icon `users` 16) mit Text-Taste rechts unten. Chip in `info-*`. Bewusst nicht Amber. |
+| U-21 | **Phase 3 ohne Tabs** + Reise-Hub | (a) Höhe/Unterkante des kompakten Cockpits ohne Tab-Spur (Zeile 1 + Polster; Radius 30 bleibt?). (b) Kacheln «So habt ihr entschieden» (Icon-Kachel 40 + Titel + Meta + Chevron, zwei nebeneinander). (c) Modul-Kachel für die Andockfläche «Als Nächstes» (später Unterkünfte, Kosten, Reisedaten, Dokumente; To-do-Kante wie F-044) – jetzt schon als Muster festlegen, damit spätere Module einheitlich andocken. |
+
+Motion (zur Info an den Motion Designer über den CEO): Schrittwechsel im Erinnern-Sheet wie W09-08. Tab-Spur nach „Festlegung aufheben“ nur Fade (W11-07). Keine neuen Feier-Momente.
+
 ## Changelog
+- 2026-10-20 (Feedback-Runde 1): §11 Punkte U-17–U-21 (WhatsApp-Taste, Kennzahl-Box als Button, Personen-Zeilen, Hinweis „Basiert auf x von n“, Phase 3 ohne Tabs + Reise-Hub).
 - 2026-10-08 (Runde 3, Richtung B): §8 Entscheidungen zu den offenen Punkten aus richtung-b §14 und Q17, Usability-Befunde D-20–D-35; §9 Antworten an Motion M-U1–M-U11; §10 Abstimmungsstand.
 - 2026-10-08 (Runde 2): §0 aktualisiert; §3 Prüfung D-1–D-13; §4 Antworten U-1–U-14; §5 CEO-Entscheidungen; §6 neue Punkte D-14–D-18; §7 Abstimmungsstand.
 - 2026-10-08 (Runde 1): Erstfassung D-1–D-13.

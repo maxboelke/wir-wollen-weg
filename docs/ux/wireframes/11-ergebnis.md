@@ -2,6 +2,14 @@
 
 Features: F-012, F-002 (Teilen), F-046 (Datumsformat des Betrachters) · Flow: [D.3](../user-flows.md#d3-ergebnis-festlegen-nur-orga-f-012-w11)
 
+## Feedback-Runde 1 (2026-10-20) – Phase 3 ohne Tabs (maßgeblich)
+
+Regeln: [ux-spec §14.4](../ux-spec.md), Gesamtskizze der Übersicht Phase 3 (Reise-Hub): [W07](07-reise-uebersicht.md#phase-3--reise-hub-ohne-tabs-ux-spec-144).
+- Sobald der Termin feststeht, zeigt der Cockpit-Kopf **keine Tab-Leiste** mehr. Nur noch Zeile 1 (← · Reisename + «Steht fest · 7 dabei» · ⋯), darunter der Vorfreude-Ring. In den Skizzen unten ist die Zeile `(Übersicht)(Meine Tage)(Gruppe)(Ab…` in Phase 3 zu streichen.
+- Abstimmungsergebnis und Kalender der Gruppe erreicht man über den Abschnitt «So habt ihr entschieden» (zwei Kacheln) als schreibgeschützte Unterseiten.
+- Deep-Links `/days` und `/poll/new` → Übersicht. `/poll` und `/group` → Unterseite, bzw. Übersicht, solange die Feier für die Person noch fällig ist. Das Banner «Der Termin steht fest! [Ansehen]» wird dadurch in Phase 3 nicht mehr gebraucht.
+- **Festlegung aufheben:** Dialog unverändert. Danach Phase 2 – die Tab-Leiste blendet wieder ein (nur Fade), Fokus auf die h1, Snackbar «Termin aufgehoben – die Abstimmung läuft wieder.» / «Dates unlocked – voting is open again.» Mitglieder (SOLL) sehen einmal: «{orga} hat den Termin wieder geöffnet. Die Abstimmung läuft wieder.» / «{orga} has reopened the dates. Voting is open again.»
+
 ## Dialog „Termin festlegen“ (mobil Bottom-Sheet)
 
 ```

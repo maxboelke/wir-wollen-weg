@@ -9,6 +9,7 @@ Stand: 2026-10-08 (Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17)
 - **Produktname:** Wo „Wir wollen weg“ in einer Skizze steht (Wortmarke W01, W03, W04, W15), steht auf EN **„When do we go?“** (bestätigt (Auftraggeber 2026-10-08); Regeln [ux-spec §10.6](../ux-spec.md)). Gleiche Länge, kein Layout-Sonderfall.
 - **Richtung B (Q18):** Wireframes mit Abschnitt „Richtung B“ (W01, W03, W07, W08, W09, W10, W11, W13) – dieser Abschnitt ist **maßgeblich**, wo er von älteren Skizzen derselben Datei abweicht (Cockpit-Kopf, Kennzahl-Box/-Kacheln, Vorschlag-Leiste, Werkzeugleiste, Vorfreude-Ring). Optik: `docs/design/richtungen/b/` bzw. Design-System v1.0. Entscheidungen: [abstimmung-design §8–§9](../abstimmung-design.md). Die HTML-Skizzen 08/09 sind noch Stand Runde 2 (Grid, Zelle, Tastatur, ARIA weiter gültig; Leisten/Kopf siehe md).
 - Verhalten, Fehlerfälle und Leerzustände stehen ausführlich in [user-flows.md](../user-flows.md); die Wireframes verweisen darauf.
+- **Feedback-Runde 1 (2026-10-20):** Abschnitte „Feedback-Runde 1“ in W06, W07, W09, W10, W11 sind maßgeblich (Nächster Schritt, Erinnern für alle, Hinweis „Basiert auf x von n“, Phase 3 ohne Tabs). Regeln: [ux-spec §14](../ux-spec.md).
 - Beispieldaten durchgehend: Reise „Lissabon 2027“, Suchzeitraum 1. Mai – 30. Juni 2027, 4–5 Nächte, Region Bayern, Orga Lena.
 
 | Nr. | Datei | Ansicht / Route | Features | Flow | Status |
@@ -39,6 +40,8 @@ Stand: 2026-10-08 (Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17)
 |---|---|---|
 | Code-Eingabe | W02, ux-spec §4.4 | W02, W03, W05, W13 |
 | Teilen-Sheet | W06, ux-spec §4.5 | W06, W07, W09, W10, W11 |
+| Erinnern-Sheet `RemindSheet` (Status-Liste, Einzel-/Sammel-Erinnerung, „{Orga} Bescheid geben“) | W06, ux-spec §14.2 | W07, W09, W10, Reisemenü |
+| Reise-Hub Phase 3 (Andockfläche „Als Nächstes“, „So habt ihr entschieden“) | W07, ux-spec §14.4 | W07, W11 |
 | Kalender-Grid (3 Modi: eingeben / Heatmap / Zeitraum wählen) | W08, W09, ux-spec §7.3 | W08, W09, W10 (eigener Zeitraum) |
 | Reise-Rahmen (Cockpit-Kopf, Phasenzeile, Tabs, Reisemenü) | W07, ux-spec §4.10 | W07–W12 |
 | Kennzahl-Box / Kennzahl-Kacheln | ux-spec §4.10 | W07, W09, W10 |
