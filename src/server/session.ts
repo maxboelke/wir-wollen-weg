@@ -6,6 +6,7 @@ import { cache } from "react";
 import { auth } from "./auth";
 import { db } from "./db/client";
 import { user } from "./db/schema";
+import { runAfterResponse } from "./background";
 
 /**
  * Current session or null (Server Components / Actions). Cached per request: layout,
@@ -23,12 +24,15 @@ export type Session = NonNullable<Awaited<ReturnType<typeof getSession>>>;
 
 /**
  * Remembers that the account is in use (inactivity deletion after 24 months, F-043) – at most
- * once a day, and clears a pending inactivity notice. Fire-and-forget: never delays a page.
+ * once a day, and clears a pending inactivity notice. Fire-and-forget: never delays a page,
+ * but runs via after() so serverless hosts (Vercel preview) don't freeze it mid-write.
  */
 export function touchActivity(userId: string): void {
-  db()
-    .update(user)
-    .set({ lastActiveAt: new Date(), inactivityNoticeSentAt: null })
-    .where(and(eq(user.id, userId), lt(user.lastActiveAt, sql`now() - interval '1 day'`)))
-    .catch(() => undefined);
+  runAfterResponse(
+    db()
+      .update(user)
+      .set({ lastActiveAt: new Date(), inactivityNoticeSentAt: null })
+      .where(and(eq(user.id, userId), lt(user.lastActiveAt, sql`now() - interval '1 day'`)))
+      .then(() => undefined),
+  );
 }

@@ -740,3 +740,17 @@ Proxy manuell gegen `next start` mit `APP_ENV=preview` geprüft (`curl --path-as
 - **Startschutz-Verhalten:** Ein Fehler in `register()` beendet `next start` nicht, sondern jede Anfrage antwortet 500 (auch statische Seiten) – fail closed; auf Vercel entsprechend pro Instanz.
 - **Postfach:** nur Textteil (React-escaped `<pre>`), HTML wird gespeichert, aber nie gerendert; `?to=` normalisiert und parametrisiert; Löschung > 24 h beim Schreiben/Lesen/Löschjob. Reset nur `preview` + Häkchen serverseitig; CSRF über Server Actions (Origin-Prüfung von Next).
 - **axe dunkel:** neuer E2E-Test „inbox with mails passes axe in dark mode too“ (Reviewer) – grün.
+
+### Hintergrund-Aufgaben auf Vercel (Commit 8705e86, 2026-10-20)
+
+### R-067: Aktivitäts-Stempel (`touchActivity`) ging auf Vercel verloren
+- Schwere: niedrig
+- Datei: src/server/session.ts:28
+- Problem / Reproduktion: `touchActivity` schrieb `lastActiveAt` fire-and-forget ohne `after()`. Auf Vercel (APP_ENV=preview) wird die Function nach der Antwort eingefroren → das Update kann unterbleiben; `lastActiveAt` veraltet, Inaktivitäts-Hinweis/-Löschung (F-043) rechnet mit falschem Datum. Gleiche Ursache wie die verlorenen Login-Codes.
+- Erwartetes Verhalten: Schreibvorgang läuft nach der Antwort zuverlässig zu Ende, ohne die Seite zu verzögern.
+- Umsetzung (Reviewer): über `runAfterResponse` (`after()`) geführt; Unit-Test `src/server/background.test.ts` (Übergabe an `after()`, Fehler nie als Rejection, kein Wurf außerhalb Request-Scope).
+- Status: verifiziert (vom Reviewer behoben)
+
+#### Hinweise ohne Finding
+- `advanced.backgroundTasks.handler` ändert auch `runInBackgroundOrAwait` in Better Auth: bisher awaited, jetzt per `after()` (betrifft Rate-Limiter-Aufräumen `deleteMany` und `sendVerificationOTP`). Unkritisch: der Collector im kombinierten Flow setzt `otp` synchron, bevor das Promise zurückkommt; Fehler unbekannter OTP-Typen werden nun geloggt statt als 500 geworfen (HTTP-Allow-List lässt diese Pfade ohnehin nicht zu).
+- Weitere Sends geprüft: Konto-Mails (`features/account/actions.ts`) und Löschjob (`retention.ts`) werden awaited – nicht betroffen.
