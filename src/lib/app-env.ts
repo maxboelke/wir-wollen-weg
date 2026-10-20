@@ -125,3 +125,27 @@ export function showsDemoBanner(env: Env = process.env): boolean {
 export function demoResetAvailable(env: Env = process.env): boolean {
   return resolveAppEnv(env) === "preview" && inboxEnabled(env);
 }
+
+/**
+ * Extra origins Better Auth trusts for the online preview on Vercel (PRD Q25). One project has
+ * several hosts there – production alias, branch alias and one per deployment – and the
+ * configured base URL names only one of them, so sign-in from any other failed with "Invalid
+ * origin" (403). Trusted are the Vercel-provided hosts of this deployment and, for the request
+ * at hand, its own host if it is a `*.vercel.app` host: the origin check only has to keep
+ * other sites out, and a cross-site attacker's Origin never equals the host it posts to.
+ * Everywhere else (local, staging, production) nothing is added.
+ */
+export function previewTrustedOrigins(
+  env: Env = process.env,
+  requestHost?: string | null,
+): string[] {
+  if (!onVercel(env) || resolveAppEnv(env) !== "preview") return [];
+  const hosts = [
+    value(env, "VERCEL_PROJECT_PRODUCTION_URL"),
+    value(env, "VERCEL_BRANCH_URL"),
+    value(env, "VERCEL_URL"),
+  ];
+  const own = requestHost?.trim().toLowerCase();
+  if (own && /^[a-z0-9-]+(\.[a-z0-9-]+)*\.vercel\.app$/.test(own)) hosts.push(own);
+  return [...new Set(hosts.filter((h): h is string => Boolean(h)).map((h) => `https://${h}`))];
+}

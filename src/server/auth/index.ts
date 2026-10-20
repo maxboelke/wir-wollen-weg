@@ -8,6 +8,7 @@ import { negotiateLocale } from "@/i18n/negotiate";
 import { PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH } from "@/lib/password-policy";
 import { regionFromAcceptLanguage } from "@/lib/region";
 import { readCookie } from "@/lib/cookies";
+import { previewTrustedOrigins } from "@/lib/app-env";
 import { inviteTokenFromPath } from "@/lib/safe-path";
 import { db } from "../db/client";
 import * as schema from "../db/schema";
@@ -98,11 +99,13 @@ function createAuth() {
     baseURL,
     // Build without real secret (CI build job sets a random one); runtime requires it.
     ...(env.BETTER_AUTH_SECRET ? { secret: env.BETTER_AUTH_SECRET } : {}),
-    trustedOrigins: [
+    trustedOrigins: (request?: Request) => [
       baseURL,
       ...(env.AUTH_TRUSTED_ORIGINS?.split(",")
         .map((o) => o.trim())
         .filter(Boolean) ?? []),
+      // Live preview on Vercel: the project's own *.vercel.app hosts (PRD Q25).
+      ...previewTrustedOrigins(process.env, request?.headers.get("host")),
     ],
     database: drizzleAdapter(db(), {
       provider: "pg",

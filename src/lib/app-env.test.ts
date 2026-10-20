@@ -8,6 +8,7 @@ import {
   showsDemoBanner,
   startupProblems,
   type StartupInput,
+  previewTrustedOrigins,
 } from "./app-env";
 
 const base: StartupInput = {
@@ -159,5 +160,36 @@ describe("demoResetAvailable", () => {
     expect(demoResetAvailable({ APP_ENV: "demo", MAIL_TRANSPORT: "inbox" })).toBe(false);
     expect(demoResetAvailable({ APP_ENV: "preview", MAIL_TRANSPORT: "smtp" })).toBe(false);
     expect(demoResetAvailable({ APP_ENV: "production", MAIL_TRANSPORT: "inbox" })).toBe(false);
+  });
+});
+
+describe("previewTrustedOrigins", () => {
+  const vercel = {
+    VERCEL: "1",
+    APP_ENV: "preview",
+    VERCEL_PROJECT_PRODUCTION_URL: "wir-wollen-weg.vercel.app",
+    VERCEL_BRANCH_URL: "wir-wollen-weg-git-main-max.vercel.app",
+    VERCEL_URL: "wir-wollen-weg-abc123-max.vercel.app",
+  };
+
+  it("trusts the Vercel hosts and the request's own *.vercel.app host in the preview", () => {
+    expect(previewTrustedOrigins(vercel, "wir-wollen-dzdp-max.vercel.app")).toEqual([
+      "https://wir-wollen-weg.vercel.app",
+      "https://wir-wollen-weg-git-main-max.vercel.app",
+      "https://wir-wollen-weg-abc123-max.vercel.app",
+      "https://wir-wollen-dzdp-max.vercel.app",
+    ]);
+  });
+
+  it("ignores request hosts outside vercel.app", () => {
+    expect(previewTrustedOrigins(vercel, "evil.example")).not.toContain("https://evil.example");
+    expect(previewTrustedOrigins(vercel, "vercel.app.evil.example")).toHaveLength(3);
+    expect(previewTrustedOrigins(vercel, "x.vercel.app:443")).toHaveLength(3);
+  });
+
+  it("adds nothing outside the Vercel preview", () => {
+    expect(previewTrustedOrigins({ ...vercel, APP_ENV: "production" }, "a.vercel.app")).toEqual([]);
+    expect(previewTrustedOrigins({ APP_ENV: "preview" }, "a.vercel.app")).toEqual([]);
+    expect(previewTrustedOrigins({ APP_ENV: "development" }, "a.vercel.app")).toEqual([]);
   });
 });
