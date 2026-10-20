@@ -106,6 +106,21 @@ Docker Desktop muss laufen, solange du die Demo benutzt. Nach einem Neustart des
 
 ---
 
+### 2.2 Windows (PowerShell)
+
+Unter Windows gibt es den Befehl `bash` nicht. Dafür gibt es dieselben Befehle als PowerShell-Skript:
+
+```
+powershell -ExecutionPolicy Bypass -File scripts\demo.ps1 start
+```
+
+Statt `start` gehen auch hier `stop`, `seed`, `unlock`, `reset`, `status` und `logs`. Überall, wo in dieser Anleitung `bash scripts/demo.sh …` steht, unter Windows `powershell -ExecutionPolicy Bypass -File scripts\demo.ps1 …` verwenden.
+
+- PowerShell öffnen: Startmenü → „PowerShell“ eintippen → „Windows PowerShell“.
+- In den Ordner wechseln: `cd ` eintippen, den entpackten Ordner ins Fenster ziehen, Enter.
+- `-ExecutionPolicy Bypass` erlaubt nur diesem einen Aufruf, das Skript auszuführen; die Windows-Einstellungen bleiben unverändert.
+- Beim ersten Start fragt die Windows-Firewall eventuell, ob Docker im Netzwerk erreichbar sein darf: **„Private Netzwerke“ erlauben**, sonst klappt der Handy-Test nicht.
+
 ## 3. Benutzen
 
 ### 3.1 Am Laptop
