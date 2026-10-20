@@ -1,13 +1,16 @@
 import "server-only";
 import { z } from "zod";
+import { APP_ENVS, resolveAppEnv, resolveAppUrl, showsDemoBanner } from "@/lib/app-env";
 
 /**
  * Server environment (names: docs/ops/deployment.md §4). Parsed lazily so that
  * `next build` works with the dummy values used in CI.
  */
 const schema = z.object({
-  APP_ENV: z.enum(["development", "demo", "ci", "staging", "production"]).default("development"),
+  APP_ENV: z.enum(APP_ENVS).default("development"),
   APP_URL: z.url().default("http://localhost:3000"),
+  // Online preview (APP_ENV=preview, PRD Q25): password of the HTTP Basic Auth in proxy.ts.
+  PREVIEW_ACCESS_PASSWORD: z.string().optional(),
   DATABASE_URL: z.string().min(1).default("postgres://app:app@localhost:5432/wirwollenweg"),
   BETTER_AUTH_SECRET: z.string().min(32).optional(),
   BETTER_AUTH_URL: z.url().optional(),
@@ -20,6 +23,8 @@ const schema = z.object({
     .transform((h) => h.toLowerCase())
     .default("x-forwarded-for"),
   AUTH_TRUSTED_PROXIES: z.string().optional(),
+  // smtp = real SMTP (Mailpit locally); inbox = demo inbox in the database (/demo/postfach).
+  MAIL_TRANSPORT: z.enum(["smtp", "inbox"]).default("smtp"),
   SMTP_HOST: z.string().default("localhost"),
   SMTP_PORT: z.coerce.number().int().positive().default(1025),
   SMTP_SECURE: z.stringbool().default(false),
@@ -37,6 +42,10 @@ const schema = z.object({
   // Retention job (F-013/F-043): POST /api/internal/retention with «Authorization: Bearer
   // <token>», scheduled daily by Operations. Unset = endpoint disabled (404).
   RETENTION_TOKEN: z.string().min(32).optional(),
+  // Vercel Cron sends «Authorization: Bearer $CRON_SECRET» (GET) – accepted like RETENTION_TOKEN.
+  CRON_SECRET: z.string().min(32).optional(),
+  // Connections per server instance (serverless: small, deployment.md §0.7).
+  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(50).optional(),
 });
 
 export type ServerEnv = z.infer<typeof schema>;
@@ -48,10 +57,17 @@ const DEMO_SMTP_HOSTS = new Set(["mailpit", "localhost", "127.0.0.1"]);
 
 export function serverEnv(): ServerEnv {
   if (!cached) {
-    const parsed = schema.parse(
-      Object.fromEntries(Object.entries(process.env).filter(([, value]) => value !== "")),
-    );
-    if (parsed.APP_ENV === "demo" && !DEMO_SMTP_HOSTS.has(parsed.SMTP_HOST)) {
+    const parsed = schema.parse({
+      ...Object.fromEntries(Object.entries(process.env).filter(([, value]) => value !== "")),
+      // Defaults that depend on the platform (Vercel: preview + production domain).
+      APP_ENV: resolveAppEnv(),
+      APP_URL: resolveAppUrl(),
+    });
+    if (
+      parsed.APP_ENV === "demo" &&
+      parsed.MAIL_TRANSPORT === "smtp" &&
+      !DEMO_SMTP_HOSTS.has(parsed.SMTP_HOST)
+    ) {
       throw new Error("APP_ENV=demo only allows Mailpit as SMTP host (deployment.md §0.1)");
     }
     cached = parsed;
@@ -59,7 +75,10 @@ export function serverEnv(): ServerEnv {
   return cached;
 }
 
-/** Demo banner flag (deployment.md §0.1). Read at render time; static pages use the build env. */
+/**
+ * Demo banner flag (deployment.md §0.1): local demo and online preview. Read at render time;
+ * static pages use the build env.
+ */
 export function isDemo(): boolean {
-  return process.env.APP_ENV === "demo";
+  return showsDemoBanner();
 }

@@ -404,3 +404,32 @@ export const pollVote = pgTable(
     check("poll_vote_choice_check", sql`${table.choice} in ('yes', 'maybe', 'no')`),
   ],
 );
+
+// ---------------------------------------------------------------------------
+// Demo inbox (online preview, PRD Q25 – MAIL_TRANSPORT=inbox)
+// ---------------------------------------------------------------------------
+
+/**
+ * Outgoing mails of the password-protected preview, shown on /demo/postfach instead of being
+ * sent (no mail provider in the free preview). Demo data only; rows older than 24 hours are
+ * removed on every read/write and by the retention job. Never used in production.
+ */
+export const demoMail = pgTable(
+  "demo_mail",
+  {
+    id: id(),
+    toAddress: text("to_address").notNull(),
+    subject: text("subject").notNull(),
+    text: text("text").notNull(),
+    html: text("html").notNull(),
+    /** One-time code of the mail (sign-in, reset, …) for the big «copy» display. */
+    code: text("code"),
+    /** Magic link (sign-in mail) – opens in the same browser. */
+    link: text("link"),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    index("demo_mail_created_idx").on(table.createdAt),
+    index("demo_mail_to_idx").on(table.toAddress, table.createdAt),
+  ],
+);

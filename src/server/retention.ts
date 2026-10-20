@@ -1,6 +1,7 @@
 import "server-only";
 import { and, eq, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
 import { isLocale, type Locale } from "@/i18n/config";
+import { inboxEnabled } from "@/lib/app-env";
 import {
   ACCOUNT_NOTICE_DAYS,
   ACCOUNT_INACTIVE_MONTHS,
@@ -20,6 +21,7 @@ import {
   renderAccountInactiveNoticeEmail,
   renderTripDeletionNoticeEmail,
 } from "./mail/templates";
+import { purgeDemoInbox } from "./mail/demo-inbox";
 import { sendLocalizedMail } from "./mail/transport";
 import { tripLastActivity } from "./trips";
 
@@ -39,6 +41,8 @@ export interface RetentionReport {
   accountsDeleted: number;
   noticesReset: number;
   mailErrors: number;
+  /** Demo inbox (online preview only): mails older than 24 hours. */
+  demoMailsDeleted: number;
 }
 
 const appUrl = () => serverEnv().APP_URL.replace(/\/$/, "");
@@ -185,9 +189,11 @@ export async function runRetention(now = new Date()): Promise<RetentionReport> {
     accountsDeleted: 0,
     noticesReset: 0,
     mailErrors: 0,
+    demoMailsDeleted: 0,
   };
   await tripPass(now, report);
   await accountPass(now, report);
+  if (inboxEnabled()) report.demoMailsDeleted = await purgeDemoInbox(now);
   console.info("retention: run finished", JSON.stringify(report));
   return report;
 }

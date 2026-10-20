@@ -34,7 +34,8 @@
     "genericError": "Das hat nicht geklappt. Bitte versuch es nochmal.",
     "notAllowed": "Das darf nur die Orga.",
     "privacy": "Datenschutz",
-    "imprint": "Impressum"
+    "imprint": "Impressum",
+    "demoInboxLink": "Demo-Postfach öffnen"
   },
   "landing": {
     "titleLead": "Vom Gruppenchat zum",
@@ -128,7 +129,9 @@
     "optionalPassword": "Passwort festlegen (optional)",
     "optionalPasswordHint": "Mindestens 10 Zeichen. Mit einem Code anmelden kannst du dich trotzdem immer.",
     "sessionExpired": "Bitte melde dich an – danach geht es dort weiter, wo du warst.",
-    "privacyNote": "Mit dem Fortfahren bestätigst du, dass du den <link>Datenschutzhinweis</link> gelesen hast."
+    "privacyNote": "Mit dem Fortfahren bestätigst du, dass du den <link>Datenschutzhinweis</link> gelesen hast.",
+    "demoInboxHint": "Vorschau: Es werden keine echten Mails verschickt. Deinen Code findest du im Demo-Postfach.",
+    "demoInboxOpen": "Demo-Postfach öffnen"
   },
   "magic": {
     "title": "Anmelden",
@@ -1342,6 +1345,37 @@
       "licensesTitle": "Lizenzen und Quellen",
       "holidays": "Feiertagsdaten: <lib>date-holidays</lib> von Christoph Lorenz – Programmcode unter ISC-Lizenz, Feiertagsdaten unter <cc>Creative Commons BY 3.0</cc>. Angaben ohne Gewähr.",
       "fonts": "Schriften: Figtree und Plus Jakarta Sans, selbst gehostet, unter der <ofl>SIL Open Font License 1.1</ofl>."
+    }
+  },
+  "demoInbox": {
+    "title": "Demo-Postfach",
+    "lead": "Hier landen alle Mails dieser Vorschau – Anmelde-Codes, Links und Hinweise. Nichts wird wirklich verschickt. Mails werden nach 24 Stunden gelöscht.",
+    "sharedNote": "Alle mit dem Zugangspasswort sehen dieses Postfach. Verwende darum nur ausgedachte Adressen wie anna@demo.test.",
+    "filterLabel": "Nur Mails an",
+    "filterHint": "E-Mail-Adresse, z. B. anna@demo.test",
+    "filterSubmit": "Anzeigen",
+    "showAll": "Alle Mails zeigen",
+    "refresh": "Aktualisieren",
+    "count": "{count, plural, =0 {Keine Mails} =1 {1 Mail} other {# Mails}} in den letzten 24 Stunden",
+    "countFiltered": "{count, plural, =0 {Keine Mails} =1 {1 Mail} other {# Mails}} an {email}",
+    "empty": "Noch keine Mails. Fordere auf der Anmeldeseite einen Code an und tippe dann auf „Aktualisieren“.",
+    "emptyFiltered": "Keine Mails an {email} in den letzten 24 Stunden. Tippe nach dem Anfordern auf „Aktualisieren“.",
+    "to": "An {email}",
+    "codeLabel": "Code {code}",
+    "copyCode": "Code kopieren",
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren ging nicht – bitte den Code abtippen.",
+    "openLink": "Link aus der Mail öffnen",
+    "showMail": "Ganze Mail anzeigen",
+    "reset": {
+      "title": "Demo zurücksetzen",
+      "text": "Legt Anna, Ben & Co. mit allen Demo-Reisen neu an. Gelöscht werden alle Konten mit einer Adresse auf @demo.test (auch selbst angelegte) und jede Reise, in der eines davon Mitglied ist. Konten mit anderen Adressen bleiben. Wer als Demo-Person angemeldet ist, wird abgemeldet.",
+      "confirm": "Ja, Demo-Daten zurücksetzen",
+      "submit": "Demo zurücksetzen",
+      "submitting": "Wird zurückgesetzt …",
+      "done": "Fertig – die Demo-Daten sind frisch angelegt.",
+      "confirmRequired": "Bitte zuerst das Häkchen setzen.",
+      "generic": "Das hat nicht geklappt. Bitte versuch es nochmal."
     }
   }
 }

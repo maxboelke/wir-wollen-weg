@@ -34,7 +34,8 @@
     "genericError": "That didn't work. Please try again.",
     "notAllowed": "Only the organizer can do that.",
     "privacy": "Privacy",
-    "imprint": "Legal notice"
+    "imprint": "Legal notice",
+    "demoInboxLink": "Open demo inbox"
   },
   "landing": {
     "titleLead": "From the group chat to",
@@ -128,7 +129,9 @@
     "optionalPassword": "Set a password (optional)",
     "optionalPasswordHint": "At least 10 characters. You can always sign in with a code too.",
     "sessionExpired": "Please sign in – you’ll continue right where you were.",
-    "privacyNote": "By continuing, you confirm that you have read the <link>privacy notice</link>."
+    "privacyNote": "By continuing, you confirm that you have read the <link>privacy notice</link>.",
+    "demoInboxHint": "Preview: no real mails are sent. Your code is waiting in the demo inbox.",
+    "demoInboxOpen": "Open demo inbox"
   },
   "magic": {
     "title": "Sign in",
@@ -1342,6 +1345,37 @@
       "licensesTitle": "Licences and sources",
       "holidays": "Holiday data: <lib>date-holidays</lib> by Christoph Lorenz – code under the ISC licence, holiday data under <cc>Creative Commons BY 3.0</cc>. No guarantee of accuracy.",
       "fonts": "Fonts: Figtree and Plus Jakarta Sans, self-hosted, under the <ofl>SIL Open Font License 1.1</ofl>."
+    }
+  },
+  "demoInbox": {
+    "title": "Demo inbox",
+    "lead": "Every mail of this preview lands here – sign-in codes, links and notices. Nothing is really sent. Mails are deleted after 24 hours.",
+    "sharedNote": "Everyone with the access password sees this inbox. So only use made-up addresses like anna@demo.test.",
+    "filterLabel": "Only mails to",
+    "filterHint": "E-mail address, e.g. anna@demo.test",
+    "filterSubmit": "Show",
+    "showAll": "Show all mails",
+    "refresh": "Refresh",
+    "count": "{count, plural, =0 {No mails} =1 {1 mail} other {# mails}} in the last 24 hours",
+    "countFiltered": "{count, plural, =0 {No mails} =1 {1 mail} other {# mails}} to {email}",
+    "empty": "No mails yet. Request a code on the sign-in page, then tap “Refresh”.",
+    "emptyFiltered": "No mails to {email} in the last 24 hours. After requesting a code, tap “Refresh”.",
+    "to": "To {email}",
+    "codeLabel": "Code {code}",
+    "copyCode": "Copy code",
+    "copied": "Copied",
+    "copyFailed": "Copying did not work – please type the code.",
+    "openLink": "Open the link from the mail",
+    "showMail": "Show full mail",
+    "reset": {
+      "title": "Reset demo",
+      "text": "Creates Anna, Ben & co. with all demo trips anew. All accounts with an @demo.test address (including ones you created) are deleted, along with every trip any of them belongs to. Accounts with other addresses stay. Anyone signed in as a demo person is signed out.",
+      "confirm": "Yes, reset the demo data",
+      "submit": "Reset demo",
+      "submitting": "Resetting …",
+      "done": "Done – the demo data is fresh.",
+      "confirmRequired": "Please tick the box first.",
+      "generic": "That did not work. Please try again."
     }
   }
 }

@@ -1,6 +1,7 @@
 import "server-only";
 import nodemailer, { type Transporter } from "nodemailer";
 import { serverEnv } from "../env";
+import { storeDemoMail } from "./demo-inbox";
 import de from "../../../messages/de.json";
 import en from "../../../messages/en.json";
 import type { RenderedEmail } from "./templates";
@@ -20,13 +21,17 @@ function getTransporter(): Transporter {
   return transporter;
 }
 
-/** Sends a transactional mail via SMTP (Mailpit locally, EU provider later). */
-export async function sendMail(
-  to: string,
-  fromName: string,
-  { subject, text, html }: RenderedEmail,
-): Promise<void> {
+/**
+ * Sends a transactional mail via SMTP (Mailpit locally, EU provider later) – or, with
+ * MAIL_TRANSPORT=inbox (online preview, PRD Q25), stores it in the demo inbox instead.
+ */
+export async function sendMail(to: string, fromName: string, mail: RenderedEmail): Promise<void> {
   const env = serverEnv();
+  if (env.MAIL_TRANSPORT === "inbox") {
+    await storeDemoMail(to, mail);
+    return;
+  }
+  const { subject, text, html } = mail;
   await getTransporter().sendMail({
     from: { name: fromName, address: env.MAIL_FROM },
     ...(env.MAIL_REPLY_TO ? { replyTo: env.MAIL_REPLY_TO } : {}),

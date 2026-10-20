@@ -5,12 +5,13 @@
   "type": "module",
   "packageManager": "pnpm@12.10.1",
   "engines": {
-    "node": ">=24 <25"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "next dev",
     "dev:services": "docker compose -f docker/compose.dev.yml up -d",
     "build": "next build",
+    "vercel-build": "node scripts/vercel-build.ts",
     "start": "next start",
     "lint": "next typegen && eslint .",
     "format": "prettier --write .",

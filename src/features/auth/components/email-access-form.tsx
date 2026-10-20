@@ -20,6 +20,8 @@ import { PRIVACY_PATHS } from "@/lib/legal";
 import { Icon } from "@/components/ui/icon";
 import { PasswordField } from "@/components/ui/password-field";
 import { savePassword } from "@/features/account/actions";
+import { useDemoInbox } from "@/features/demo/demo-inbox-context";
+import { demoInboxHref } from "@/lib/demo-inbox";
 import { isLocale } from "@/i18n/config";
 import { CODE_LENGTH, normalizeCode } from "@/lib/code";
 import { helpHref } from "@/lib/help";
@@ -118,6 +120,7 @@ export function EmailAccessForm({
   const rawLocale = useLocale();
   const locale = isLocale(rawLocale) ? rawLocale : "en";
   const router = useRouter();
+  const demoInbox = useDemoInbox();
   const ids = useId();
   const rootRef = useRef<HTMLDivElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
@@ -581,6 +584,21 @@ export function EmailAccessForm({
               {t("otherEmail")}
             </button>
           </p>
+          {demoInbox ? (
+            // Online preview (PRD Q25): no real mails – the code is in the demo inbox. New tab, so
+            // this step stays open (pendingAuth would restore it anyway, A.4).
+            <p className={styles.demoInbox} role="note">
+              {t("demoInboxHint")}{" "}
+              <a
+                className={styles.inlineLink}
+                href={demoInboxHref(email)}
+                target="_blank"
+                rel="noopener"
+              >
+                {t("demoInboxOpen")}
+              </a>
+            </p>
+          ) : null}
           {/* Visible while sending and after a resend; «sent» is only announced (the lead says it). */}
           <p className={sending || resent ? styles.status : "visually-hidden"} role="status">
             {sending ? t("statusSending") : resent ? t("resent") : t("statusSent", { email })}
