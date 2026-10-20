@@ -13,6 +13,7 @@ import { emailOTP } from "better-auth/plugins/email-otp";
 import { magicLink } from "better-auth/plugins/magic-link";
 import { z } from "zod";
 import { toSafeInternalPath } from "@/lib/safe-path";
+import { runAfterResponse } from "../background";
 
 /**
  * "email-access" – one request, ONE mail with a 6-digit code AND a magic link
@@ -202,13 +203,15 @@ export function emailAccess(options: EmailAccessOptions) {
           type === "forget-password"
             ? options.sendPasswordResetEmail({ email, code: otp, userId })
             : options.sendChangeEmailEmail({ email, code: otp, userId });
-        send.catch((error: unknown) => {
-          // Never log address or code.
-          console.error(
-            `email-otp: sending ${type} mail failed`,
-            error instanceof Error ? error.message : "unknown",
-          );
-        });
+        runAfterResponse(
+          send.catch((error: unknown) => {
+            // Never log address or code.
+            console.error(
+              `email-otp: sending ${type} mail failed`,
+              error instanceof Error ? error.message : "unknown",
+            );
+          }),
+        );
         return Promise.resolve();
       }
       // Sign-in codes only through the combined flow (/email-access/request).
