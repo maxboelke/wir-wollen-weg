@@ -1,6 +1,8 @@
 # Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 (v0.4, Entscheidungen Q1–Q6 und Q11–Q18 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-20 (v0.5, Planung Ausbaustufe „Reise managen“; Entscheidungen Q1–Q6, Q11–Q18, Q20–Q25 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+
+**Änderungen v0.5 (2026-10-20, Planung – Entscheidung Q26/Q27 offen):** Neue **Ausbaustufe R „Reise managen“** (Inkremente 8–12: F-053 Cockpit, F-033 Infoseite, F-031 Unterkünfte, F-035/F-036 Kosten, F-056 + F-054 Reisedaten, F-055 Unterlagen) – empfohlen **nach Inkrement 7 und vor Phase 2 (Kalender-Import)**; neues Sicherheits-/Datenschutz-Gate **G1b** vor echter Nutzung von F-054/F-055. Phase 3a/3b entsprechend verkleinert. Stand Phase 1: Inkremente 0–6 erledigt (CLAUDE.md „Projektstand“), M0.5 inhaltlich erreicht, Demo-Abnahme über die Vorschau offen.
 
 Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilenstein, der vom Reviewer freigegeben wird; ab M1 testen echte Gruppen.
 
@@ -16,8 +18,9 @@ Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilens
 |---|---|---|---|
 | 0 – Konzept & Setup ✅ | Wireframes, Stack, Design, Ops-Konzept (M0 abgenommen 2026-10-08) | – | – |
 | 1 – MVP | Gruppe kommt mit Konto vom Link zum festen Zeitraum, DE/EN, manuelle Verfügbarkeit; **zuerst als lokale Offline-Demo (M0.5), nach Go-Live-Gate G1 als Beta (M1)** | F-040–F-044, F-046, F-001–F-005, F-007–F-013, F-016, F-051, F-052 (+ F-015, F-017) | komplett kostenlos |
+| **R – Reise managen (neu, Einordnung Q26)** | Nach der Festlegung: Reise-Cockpit, Unterkünfte per Swipe, Kosten teilen, Reisedaten, Reiseunterlagen | F-053, F-033, F-031, F-035, F-036, F-056, F-054, F-055 | kostenlos; Premium-Kandidaten markiert (features.md R.3) |
 | 2 – v1 | Kalender-Import inkl. **Apple-/iOS-Kalender**, E-Mail-Benachrichtigungen, Social Login, Monetarisierung vorbereitet | F-006, **F-047, F-048**, F-019–F-021, F-014, F-045, F-022–F-024, Spike F-049 | kostenlos; Premium-Kandidaten markiert |
-| 3 – später | Die ganze Reise, Premium-Tarif | F-030–F-038, **F-049**, F-050 | Freemium aktiv |
+| 3 – später | Rest der Reiseplanung, Premium-Tarif | F-030, F-032, F-034, F-037, F-038, **F-049**, F-050 | Freemium aktiv |
 
 ---
 
@@ -103,6 +106,33 @@ Entscheidungen dazu holt der CEO beim Auftraggeber ein, sobald M0.5 erreicht ist
 
 *Falls* der Auftraggeber die Beta ausschließlich im eigenen engen Umfeld ohne öffentliche Erreichbarkeit fahren will, kann G1 nicht entfallen, nur schlanker ausfallen (Impressum/Datenschutz sind bei jeder Verarbeitung personenbezogener Daten Dritter nötig) – Bewertung durch Operations.
 
+## Ausbaustufe R – „Reise managen“ (neu 2026-10-20, Planung; Einordnung Q26)
+**Ziel:** Nach der Festlegung wird die Übersicht zum **Reise-Cockpit**, aus dem die Gruppe die ganze Reise managt – Unterkunft, Kosten, Reisedaten, Unterlagen. Auftraggeber-Wunsch vom 2026-10-20; beantwortet zugleich Q19 (Unterkünfte) und Q7 (Kosten) – vorbehaltlich Q26/Q27.
+
+**Empfohlene Einordnung (Q26):** nach Inkrement 7 (F-015, F-017, Motion MVP+) und **vor** Phase 2 (Kalender-Import). Begründung: Der Auftraggeber wünscht die Reiseorganisation ausdrücklich als nächste Stufe; sie ist das stärkste Unterscheidungsmerkmal gegenüber Doodle/Rallly/When2meet („von der Terminfindung bis zur Abrechnung“) und schafft Bindung über das Festlegen hinaus. Der Kalender-Import senkt dagegen Aufwand in einem Schritt, der bereits funktioniert. Entwickelt wird weiter im Arbeitsmodus Offline-Demo + private Vorschau (Q25); Go-Live G1 kann parallel vorbereitet werden.
+
+| Inkrement | Inhalt | Feature-IDs | Aufwand | Echte Daten ab |
+|---|---|---|---|---|
+| 8 | Reise-Cockpit Phase 3 (Teilphasen Vorbereitung/Unterwegs/Danach, „Für dich zu tun“, Kacheln), Phase-3-Navigation, Infoseite (Text/Links) | F-053, F-033 | S–M (≈ 1) | G1 |
+| 9 | Unterkünfte Stufe 1: Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (+ Motion Swipe) | F-031 | M–L (≈ 1–1,5) | G1 |
+| 10 | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Abschluss | F-035, F-036 | M–L (≈ 1,5) | G1 |
+| 11 | Zuständigkeit „Bucht“ + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung) + Security-Review | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
+| 12 | Datei-Infrastruktur (EU-Objektspeicher, Virenscan, Header-Härtung) + Reiseunterlagen Stufe 1 + Screenshots für Unterkünfte | F-055, F-031 (Stufe 2) | L (≈ 1,5–2) | **G1 + G1b** |
+
+**Summe ≈ 6–7 Inkremente.** Reihenfolge-Begründung (Details features.md R.2): erst der Rahmen (Cockpit), dann die chronologisch erste und spaßigste Aufgabe nach dem Termin (Unterkunft), dann der größte Dauernutzen ohne sensible Daten (Kosten), zuletzt die beiden Bereiche mit hohem Datenschutz-/Infrastruktur-Aufwand (Reisedaten, Dateien), die mit echten Daten ohnehin erst nach G1b laufen dürfen. Alternative Q27: Inkrement 11 vor 10 ziehen (keine technische Abhängigkeit).
+
+**Je Inkrement:** UI/UX + Designer liefern vorab Mockups (Briefing siehe Bericht PM 2026-10-20), Motion Designer die Bewegungen (Swipe, Kachel-Eintritt, Saldo-Ausgleich), Reviewer prüft DE/EN, 360 px, Dark Mode, reduzierte Bewegung, WCAG 2.2 AA.
+
+**Gate G1b – Sicherheit & Datenschutz für sensible Reisedaten und Dateien (neu, vor echter Nutzung von F-054/F-055, zusätzlich zu G1):**
+- Feldverschlüsselung für Reisedaten mit Schlüssel außerhalb der DB, Rotationskonzept, Runbook bei Schlüsselverlust/-leck;
+- EU-Objektspeicher (privat, verschlüsselt) mit AVV, Backups/Löschung nach Löschkonzept; Virenscan in Betrieb; Upload-Härtung (Typen, Größen, EXIF, Header);
+- DSFA-Schwellwertanalyse (voraussichtlich schlanke DSFA) für F-054/F-055; VVT, TOMs, Löschkonzept (Reisedaten 7 Tage, Unterlagen 30 Tage nach Reiseende – Q31) in `docs/ops/compliance-checklist.md` ergänzt;
+- Datenschutzerklärung (Einwilligung F-054, Empfänger, Fristen) und Nutzungsbedingungen (Upload-Regeln, Verantwortung der „Bucht“-Person) ergänzt; Meldeweg für rechtswidrige Inhalte (DSA-Pflichten Hosting-Dienst prüfen);
+- rechtliche Kurzprüfung zur Speicherung von Ausweis-/Passnummern (Verwendungsbeschränkungen der Seriennummer);
+- Security-Review durch den Reviewer bestanden (Rechteprüfung, keine sensiblen Daten in Logs/Mails/URLs).
+
+**Meilenstein M-R „Reise managen“:** Inkremente 8–12 in Demo/Vorschau durchgängig vorführbar (Fantasiedaten), vom Reviewer freigegeben; Demo beim Auftraggeber. Echte Nutzung von 8–10 ab G1, von 11–12 ab G1b.
+
 ## Phase 2 – v1 „Kalender rein, Aufwand raus“
 **Ziel:** Kalender-Import für alle großen Anbieter – **Apple zuerst gleichberechtigt** –, E-Mail-Benachrichtigungen, leichtere Anmeldung; Monetarisierung vorbereitet.
 
@@ -124,14 +154,14 @@ Voraussetzungen: Google-App-Verifizierung frühzeitig beantragen (Vorlauf mehrer
 
 ## Phase 3 – später „Die ganze Reise“ & Premium
 
-> **Auftraggeber-Idee (2026-10-08): F-031 Unterkünfte per Swipe bewerten** – jede/r steuert Unterkünfte bei (Link + Screenshots, besser automatische Link-Vorschau), alle swipen/liken, die Unterkunft mit den meisten Likes gewinnt. Gewünscht als **nächste Ausbaustufe, sobald „Termin finden“ steht**; genaue Einordnung vor oder nach v1 (Kalender-Import) ist offen (PRD Q19).
+> **Seit 2026-10-20:** F-031 (Unterkünfte), F-033 (Infoseite), F-035/F-036 (Kosten) sind in die **Ausbaustufe R „Reise managen“** vorgezogen (oben); hier bleiben die späteren Erweiterungen.
 **Ziel:** Von der Terminfindung bis zur Abrechnung in einer App; nachhaltiger Betrieb über Freemium.
 
 | Stufe | Inhalt | Feature-IDs |
 |---|---|---|
-| 3a Planung | Zielfindung, Unterkünfte, Aufgaben, Infoseite, Budget | F-030, F-031, F-032, F-033, F-034 |
-| 3b Kosten | Ausgaben, Verrechnung, Währungen (Tricount-ähnlich) | F-035, F-036, F-037 |
+| 3a Planung | Zielfindung, Aufgaben/Packliste, Budget; Erweiterungen von Unterkünften/Infoseite (features.md „später“) | F-030, F-032, F-034 |
+| 3b Kosten | Fremdwährungen, Belegfotos, Export (Erweiterung von F-035/F-036) | F-037 |
 | 3c Plattform | PWA/Push; **Apple-Weg Stufe 3** (On-Device, gemäß Spike-Ergebnis) | F-038, **F-049** |
 | 3d Premium | Premium-Tarif & Bezahlung starten (Kern bleibt kostenlos) | F-050 |
 
-Reihenfolge 3a vs. 3b: **offen (Q7)** – Auftraggeber hat die Priorität der Ausgabenverrechnung noch nicht entschieden; bis dahin „später“. PM-Hinweis: 3b ist ein eigenständiger Markt mit starken Wettbewerbern (Tricount, Splitwise). Lohnend nur als nahtlose Fortsetzung der geplanten Reise (Mitglieder und Konten sind schon da, kein erneutes Einladen) – das ist unser Differenzierungsargument und hat zugleich Premium-Potenzial (F-037, Belegfotos). 3d startet frühestens, wenn genügend Premium-Kandidaten aus 2/3a/3b verfügbar sind und Q8 entschieden ist.
+Reihenfolge 3a vs. 3b: Die Kosten-Basis ist mit der Ausbaustufe R vorgezogen (Q7 → Q26/Q27). Historischer PM-Hinweis: 3b ist ein eigenständiger Markt mit starken Wettbewerbern (Tricount, Splitwise). Lohnend nur als nahtlose Fortsetzung der geplanten Reise (Mitglieder und Konten sind schon da, kein erneutes Einladen) – das ist unser Differenzierungsargument und hat zugleich Premium-Potenzial (F-037, Belegfotos). 3d startet frühestens, wenn genügend Premium-Kandidaten aus 2/3a/3b verfügbar sind und Q8 entschieden ist.
