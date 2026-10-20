@@ -5,7 +5,7 @@ Web-App, mit der Freundesgruppen einen gemeinsamen Urlaubszeitraum finden. Entwi
 - Team und Ablauf: [CLAUDE.md](CLAUDE.md) · Agent-Definitionen: [.claude/agents/](.claude/agents/)
 - Planung, Design, UX, Review, Ops: [docs/](docs/) – Stack & Konventionen: [docs/ops/tech-stack.md](docs/ops/tech-stack.md)
 
-**Aktueller Stand:** Inkrement 2 – Konto, Reise anlegen, einladen, beitreten, Rollen, „Meine Reisen“ (Tabs „Meine Tage“, „Gruppe“, „Abstimmen“ folgen in Inkrement 3–5). Betriebsmodus **Offline-Demo** – kein Hosting, alle Mails landen lokal in Mailpit.
+**Aktueller Stand:** Inkremente 1–6 fertig (Konto, Reisen, Meine Tage, Heatmap/Vorschläge, Abstimmung/Festlegung, Datenschutz) – Demo-Abnahme M0.5 läuft. **Einstieg für neue Entwickler: [docs/UEBERGABE.md](docs/UEBERGABE.md).** Betriebsmodus **Offline-Demo** – kein Hosting, alle Mails landen lokal in Mailpit.
 
 ## Voraussetzungen
 
