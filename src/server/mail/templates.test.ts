@@ -37,6 +37,15 @@ describe("renderAccessEmail", () => {
     expect(mail.html).toContain(`href="${escapeHtml(base.magicLinkUrl)}"`);
   });
 
+  it("exposes code and magic link for the demo inbox (PRD Q25)", () => {
+    const mail = renderAccessEmail({ ...base, locale: "de" });
+    expect(mail.code).toBe("482913");
+    expect(mail.link).toBe(base.magicLinkUrl);
+    const reset = renderPasswordResetEmail({ locale: "en", code: "111222" });
+    expect(reset.code).toBe("111222");
+    expect(reset.link).toBeUndefined();
+  });
+
   it("mentions the trip in the invite context and escapes it in HTML", () => {
     const mail = renderAccessEmail({ ...base, locale: "de", tripName: "<Lissabon> 2027" });
     expect(mail.text.startsWith("Du trittst „<Lissabon> 2027“ bei.")).toBe(true);

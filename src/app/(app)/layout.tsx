@@ -6,6 +6,8 @@ import { brandMetadata, brandViewport, DocumentHead } from "@/components/documen
 import { MotionPreferenceSync } from "@/components/motion-preference-sync";
 import { FlashToast } from "@/components/shell/flash-toast";
 import { ToastProvider } from "@/components/ui/toast";
+import { DemoInboxProvider } from "@/features/demo/demo-inbox-context";
+import { inboxEnabled } from "@/lib/app-env";
 import { getSession } from "@/server/session";
 import "@/styles/globals.css";
 
@@ -38,10 +40,12 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
       </head>
       <body>
         <NextIntlClientProvider>
-          <ToastProvider>
-            {children}
-            <FlashToast />
-          </ToastProvider>
+          <DemoInboxProvider enabled={inboxEnabled()}>
+            <ToastProvider>
+              {children}
+              <FlashToast />
+            </ToastProvider>
+          </DemoInboxProvider>
         </NextIntlClientProvider>
         <MotionPreferenceSync account={accountReduces} />
       </body>

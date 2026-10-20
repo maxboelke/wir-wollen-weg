@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v0.3 (v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-20 · Verantwortlich: Operations Manager · Status: v0.4 (v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -111,6 +111,68 @@ Dauerhafte Staging-URL → erst mit Go-Live-Gate Stufe 1 ([go-live.md](go-live.m
 
 Damit Platzhalter nie versehentlich live gehen: Die App prüft beim Start, ob `APP_ENV=production` **und** Rechtstexte/Betreiberangaben noch den Marker `[PLATZHALTER` enthalten → Start abbrechen (Developer, P1-0/OPS-5). Zusätzlich Punkt in der [Go-Live-Checkliste](go-live.md).
 
+Seit 2026-10-20 prüft derselbe Startschutz (`src/instrumentation.ts`, Regeln in `src/lib/app-env.ts`) außerdem (R-064):
+
+- `APP_ENV` `preview`, `staging` und `production` starten nur mit einer `https://`-Basis-URL (`BETTER_AUTH_URL`, sonst `APP_URL`) – sonst fehlte den Session-Cookies `Secure`.
+- `APP_ENV=preview` startet nur mit `PREVIEW_ACCESS_PASSWORD` (≥ 10 Zeichen); Platzhalter in den Rechtstexten blockieren dort **nicht** (Demo-Banner bleibt sichtbar).
+- `APP_ENV=production` startet nie mit `MAIL_TRANSPORT=inbox` (Demo-Postfach).
+- Auf Vercel (`VERCEL=1`) starten `development`, `ci` und `demo` nicht; fehlt `APP_ENV` dort, gilt `preview` (also: ohne Passwort zu).
+
+### 0.7 Private Live-Vorschau: Vercel (Hobby) + Neon (Free) – PRD Q25
+
+**Entscheidung Auftraggeber (2026-10-20):** zusätzlich zur Offline-Demo eine **private Vorschau unter einer festen https-URL**, ohne Download, auf kostenlosen Tarifen. **Nur Demo-Daten**, kein Go-Live (echte Nutzung = Gate G1). Konten (Vercel per GitHub-Login, Neon über die Vercel-Integration) legt der Auftraggeber an. Klick-Anleitung für Laien: [vorschau-anleitung.md](vorschau-anleitung.md) (Operations). Dieser Abschnitt ist die technische Referenz.
+
+**Was die App im Modus `APP_ENV=preview` tut**
+
+| Thema | Umsetzung | Datei |
+|---|---|---|
+| Zugangsschutz | HTTP Basic Auth vor **allen** Seiten, Server Actions und API-Routen; Benutzername beliebig (z. B. `demo`), nur das Passwort `PREVIEW_ACCESS_PASSWORD` zählt; Vergleich zeitkonstant (SHA-256 + XOR). Ohne gültiges Passwort in der Konfiguration: 503 (fail closed). Offen bleiben nur `/api/health` (nur „ok/error“), `/api/internal/retention` (eigener Token), `/robots.txt`, die Web-App-Manifeste und statische Assets (`/_next/static`, Fonts, Icons). | `src/proxy.ts` (Next.js 16 „Proxy“, früher Middleware, Node.js-Runtime), `src/lib/basic-auth.ts` |
+| Nicht indexieren | `X-Robots-Tag: noindex, nofollow` auf jeder Antwort (auch 401), `robots.txt` = `Disallow: /` in allen Modi außer `production` | `src/proxy.ts`, `src/app/robots.ts`, `next.config.ts` |
+| https / Cookies | Startschutz verlangt `https://`-Basis-URL → Cookies `__Secure-ww.*` mit `Secure` (R-064) | `src/instrumentation.ts`, `src/lib/app-env.ts` |
+| Basis-URL | `APP_URL` optional: ohne Wert gilt `https://$VERCEL_PROJECT_PRODUCTION_URL` (Produktions-Domain des Vercel-Projekts, z. B. `wir-wollen-weg.vercel.app`) | `src/lib/app-env.ts` |
+| Mails | `MAIL_TRANSPORT=inbox`: keine echte Mail; jede Mail (An, Betreff, Text, HTML, Code, Link, Zeit) landet in Tabelle `demo_mail` (Migration `0007_demo_inbox`) und auf **`/demo/postfach`** (neueste oben, Filter `?to=<adresse>`, großer Code mit „Code kopieren“, Link-Taste, DE/EN). Mails > 24 h werden beim Schreiben/Lesen und im Löschjob entfernt. Ohne `inbox` und in `production` immer 404. Auf der Code-Seite Hinweis „Demo-Postfach öffnen“ (neuer Tab, nach Adresse gefiltert), im Demo-Banner jeder Seite ein Link. | `src/server/mail/demo-inbox.ts`, `src/server/mail/transport.ts`, `src/app/(app)/demo/postfach/page.tsx` |
+| Demo-Banner | wie `APP_ENV=demo`: „Demo – bitte keine echten Daten eingeben.“ | `src/components/page-shell.tsx` |
+| Demo zurücksetzen | auf `/demo/postfach` unten „Demo zurücksetzen“ (aufklappen, Häkchen, Taste): legt Anna & Co. mit allen Demo-Reisen neu an (Daten relativ zu heute); andere Konten bleiben; nur `APP_ENV=preview` | `src/features/demo/actions.ts`, `src/server/demo/seed.ts` |
+| Löschjob | Vercel Cron ruft täglich (03:17 UTC, Hobby: Ausführung irgendwann in dieser Stunde) `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET`; der Endpunkt akzeptiert `CRON_SECRET` und `RETENTION_TOKEN` mit GET und POST, sonst 404 | `vercel.json`, `src/app/api/internal/retention/route.ts` |
+| Datenbank | `pg`-Pool pro Instanz klein (Vercel: `max` 3, Leerlauf 5 s, Verbindungsaufbau bis 15 s), Neon-Pooled-Endpunkt (`…-pooler…`, `sslmode=require`); die App nutzt nur transaktionsgebundene Advisory-Locks (`pg_advisory_xact_lock`) → mit PgBouncer im Transaction-Mode verträglich. Migrationen/Seed nehmen `DATABASE_URL_UNPOOLED` (direkt), wenn vorhanden | `src/server/db/client.ts`, `drizzle.config.ts`, `scripts/seed-demo.ts` |
+| Client-IP (Rate-Limits, R-005) | Vercel setzt `x-forwarded-for` am Edge selbst und **überschreibt** vom Client gesendete Werte (eigene XFF-Werte nur mit Enterprise-„Trusted Proxy“) → Standard `AUTH_IP_HEADER=x-forwarded-for`, `AUTH_TRUSTED_PROXIES` leer; nichts zu setzen. (Alternative bei einem weiteren Proxy vor Vercel: `x-vercel-forwarded-for`.) | `src/server/auth/client-ip.ts` |
+
+**Build auf Vercel** (`vercel.json` → `buildCommand: pnpm vercel-build` → `scripts/vercel-build.ts`):
+
+1. Schutz: baut nur das Production-Deployment von `main` (`VERCEL_ENV=production`) und nur mit `APP_ENV=preview`; Branch-/PR-Deployments sind zusätzlich in `vercel.json` (`git.deploymentEnabled`: `"**": false`, `"main": true`) abgeschaltet – sie würden sonst ungeprüfte Migrationen auf die gemeinsame Demo-Datenbank anwenden.
+2. `drizzle-kit migrate` (alle Migrationen inkl. `0007_demo_inbox`).
+3. `node scripts/seed-demo.ts --if-empty`: Demo-Daten **nur**, wenn noch keine `@demo.test`-Person existiert (Daten überleben weitere Deployments).
+4. `next build`.
+
+Schlägt ein Schritt fehl, bleibt das vorige Deployment online. Region der Functions: `fra1` (Frankfurt), Neon-Projekt ebenfalls in Frankfurt (`aws-eu-central-1`) und **Postgres 18** (die Tabellen nutzen `uuidv7()`; bei Neon seit 2026 Standard für neue Projekte – beim Anlegen prüfen). Node: `engines.node = 24.x`; pnpm: `packageManager` (`pnpm@12.10.1`, pnpm schaltet selbst auf diese Version um; zeigt das Build-Log eine andere pnpm-Version, `ENABLE_EXPERIMENTAL_COREPACK=1` als Umgebungsvariable setzen).
+
+**Umgebungsvariablen in Vercel** (Project → Settings → Environment Variables, Umgebung **Production**; Werte nie ins Repo):
+
+| Variable | Wert / Beispiel | Zweck | geheim |
+|---|---|---|---|
+| `APP_ENV` | `preview` | Modus (auf Vercel ohnehin Standard, trotzdem setzen) | nein |
+| `PREVIEW_ACCESS_PASSWORD` | ≥ 10 Zeichen, z. B. vier zufällige Wörter `Koffer-Mango-Wolke-17` | Zugangspasswort (Basic Auth); Benutzername beliebig | **ja** |
+| `BETTER_AUTH_SECRET` | ≥ 32 Zeichen Zufall (`openssl rand -base64 32` oder Passwort-Generator, 40 Zeichen) | Signatur von Sessions/Tokens, HMAC-Schlüssel der Limits | **ja** |
+| `MAIL_TRANSPORT` | `inbox` | Mails ins Demo-Postfach statt Versand | nein |
+| `CRON_SECRET` | ≥ 32 Zeichen Zufall | Token des täglichen Löschjobs (Vercel Cron) | **ja** |
+| `DATABASE_URL` | von der Neon-Integration gesetzt: `postgresql://…@ep-…-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require…` | Datenbank (Pooled) | **ja** |
+| `DATABASE_URL_UNPOOLED` | von der Neon-Integration gesetzt (ohne `-pooler`) | Migrationen + Seed beim Build | **ja** |
+| `APP_URL` | optional, leer lassen; nur bei eigener Domain `https://…` | Basis-URL für Links in Mails/Einladungen | nein |
+| `CONTACT_EMAIL` | optional, Platzhalter `hallo@example.org` | Kontakt auf der Hilfe-Seite | nein |
+| `ENABLE_EXPERIMENTAL_COREPACK` | nur falls nötig: `1` | pnpm-Version aus `packageManager` erzwingen | nein |
+
+Nicht setzen: `BETTER_AUTH_URL` (= `APP_URL`), `AUTH_IP_HEADER`/`AUTH_TRUSTED_PROXIES` (Standard passt), `RETENTION_TOKEN`, `SMTP_*`, `RATE_LIMIT_ENABLED` (Standard `true`). Wird eine Variable geändert, wirkt sie erst nach einem neuen Deployment (Vercel → Deployments → „Redeploy“).
+
+**Lokal nachgestellt** (ohne Vercel): Produktions-Build mit `APP_ENV=preview` gegen die lokale DB; E2E-Projekt `preview-chromium` (`tests/e2e/preview.spec.ts`) startet einen zweiten `next start` auf Port 3100 mit `APP_ENV=preview`, `MAIL_TRANSPORT=inbox`, `https://`-Basis-URL und Basic Auth (in der CI automatisch, lokal `E2E_PREVIEW=1` nach `pnpm build`).
+
+**Grenzen / Risiken der Vorschau**
+
+- **Nur Demo-Daten:** Vercel ist ein US-Anbieter, es gibt kein echtes Impressum/keinen echten Datenschutz (Platzhalter) – Testpersonen nutzen ausgedachte Adressen (`…@demo.test`). Alle mit dem Zugangspasswort sehen das ganze Demo-Postfach und können sich damit als jede Adresse anmelden – gewollt für eine Demo, aber ein weiterer Grund für „keine echten Daten“.
+- **Kaltstart:** Neon Free schläft nach 5 Min. ohne Zugriffe ein; der erste Aufruf danach dauert 1–3 s länger. Vercel-Functions starten ebenfalls kalt.
+- **Kontingente (kostenlos):** Vercel Hobby nur für private, nicht-kommerzielle Nutzung, begrenzte Function-Aufrufe/CPU-Zeit und Bandbreite pro Monat; Cron höchstens täglich. Neon Free: begrenzter Speicher (0,5 GB) und Rechenzeit pro Monat. Für eine Freundes-Vorschau weit ausreichend; Stand der Grenzen vor dem Einrichten in den Tarif-Seiten prüfen.
+- **Basic Auth:** In-App-Browser (WhatsApp, Instagram) und Link-Vorschauen fragen ebenfalls nach dem Passwort bzw. zeigen keine Vorschau; eine zum Home-Bildschirm hinzugefügte Web-App kann erneut fragen.
+- **Nur die Haupt-URL benutzen:** Deployment-eigene URLs (`…-git-main-….vercel.app`) sind durch Vercels Deployment Protection gesperrt bzw. nicht als Origin vertraut (Anmelden scheitert).
+
 ---
 
 > **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
@@ -162,6 +224,7 @@ Skalierung: Bei > 70 % CPU/RAM-Auslastung über Tage → größere VM (Hetzner: 
 
 | Umgebung | Zweck | Wo | Daten | Mails | Zugriff |
 |---|---|---|---|---|---|
+| **preview** (seit 2026-10-20, PRD Q25) | private Online-Vorschau ohne Download | Vercel Hobby (`fra1`) + Neon Free (Frankfurt), §0.7 | synthetisch (Seed beim ersten Build, „Demo zurücksetzen“) | Demo-Postfach `/demo/postfach` (`MAIL_TRANSPORT=inbox`) | HTTP-Basic-Auth vor allem (`PREVIEW_ACCESS_PASSWORD`), `noindex` |
 | **demo** (aktuell) | Vorführung, Handy-Test im WLAN | Laptop: `docker compose -f docker/compose.demo.yml` (App-Prod-Build + PostgreSQL + Mailpit), §0 | synthetisch (`db:seed:demo`) | Mailpit (`:8025`) | lokal/WLAN; optional kurzzeitig per Tunnel (§0.5) |
 | **dev** | lokale Entwicklung | Laptop/Cloud-Session: `docker compose -f docker/compose.dev.yml up` (PostgreSQL 18 + Mailpit), App per `pnpm dev` | synthetisch (Seed-Skript) | Mailpit (`localhost:8025`) | lokal |
 | **ci** | automatische Prüfung | GitHub Actions, Service-Container | synthetisch, flüchtig | Mailpit | – |
@@ -177,9 +240,12 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | Variable | Pflicht | Beschreibung | Beispiel/Platzhalter in `.env.example` |
 |---|---|---|---|
 | `NODE_ENV` | ja | `production` in demo/staging/prod | `development` |
-| `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Platzhalter-Schutz §0.6) | `development` |
-| `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende | `http://localhost:3000` |
-| `DATABASE_URL` | ja | PostgreSQL-Verbindung | `postgres://app:app@localhost:5432/wirwollenweg` |
+| `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `preview` \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Zugangsschutz, Startschutz §0.6). Auf Vercel ohne Wert: `preview` | `development` |
+| `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende; `preview`/`staging`/`production` nur mit `https://` (R-064). Auf Vercel ohne Wert: `https://$VERCEL_PROJECT_PRODUCTION_URL` | `http://localhost:3000` |
+| `PREVIEW_ACCESS_PASSWORD` | nur preview | Passwort der HTTP-Basic-Auth (≥ 10 Zeichen, Benutzername beliebig); fehlt es, startet die Vorschau nicht bzw. antwortet 503 (§0.7) | leer |
+| `DATABASE_URL` | ja | PostgreSQL-Verbindung (Neon: Pooled-Endpunkt `…-pooler…`) | `postgres://app:app@localhost:5432/wirwollenweg` |
+| `DATABASE_URL_UNPOOLED` | nein | Neon (preview): direkte Verbindung – Migrationen und Seed nutzen sie, wenn gesetzt | – |
+| `DATABASE_POOL_MAX` | nein | Verbindungen pro Server-Instanz (Standard 10, auf Vercel 3) | leer |
 | `POSTGRES_PASSWORD` | ja (Compose) | Passwort des DB-Containers | `change-me` |
 | `BETTER_AUTH_SECRET` | ja | ≥ 32 Byte Zufall (Signatur/Verschlüsselung von Cookies/Tokens; per HKDF abgeleitet auch HMAC-Schlüssel der Limits pro E-Mail, tech-stack.md §3.2); je Umgebung verschieden. **Fehlt es außerhalb von `APP_ENV` `development`/`ci`, bricht der Start ab** (R-028) | `generate-with-openssl-rand-base64-32` |
 | `BETTER_AUTH_URL` | ja | = `APP_URL` | `http://localhost:3000` |
@@ -187,7 +253,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `AUTH_IP_HEADER` | nein | Header mit der Client-IP für Rate-Limits; muss vom vorgeschalteten Proxy **überschrieben** werden (R-005, §0.1). Caddy (Demo, staging, prod): `x-forwarded-for`; Cloudflare-Tunnel: `cf-connecting-ip` | `x-forwarded-for` |
 | `AUTH_TRUSTED_PROXIES` | nein | IPs/CIDRs vorgelagerter Proxys, deren Einträge im Header von rechts übersprungen werden (nur bei Proxy-Ketten, z. B. CDN → Caddy); ungültige Einträge → Fehler | leer |
 | `DEMO_BIND_ADDRESS` | nur demo | Host-Adresse der Demo-Ports (`0.0.0.0` WLAN-Test, `127.0.0.1` nur Laptop/Tunnel) | `0.0.0.0` |
-| `MAIL_TRANSPORT` | ja | `smtp` (Standard) | `smtp` |
+| `MAIL_TRANSPORT` | ja | `smtp` (Standard) \| `inbox` (nur Vorschau/Demo: Mails in Tabelle `demo_mail`, Anzeige `/demo/postfach`; in `production` verboten, §0.7) | `smtp` |
 | `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASSWORD`, `SMTP_SECURE` | ja | SMTP des Mail-Anbieters bzw. Mailpit | `localhost`, `1025`, leer, leer, `false` |
 | `MAIL_FROM` | ja | Absenderadresse | `login@mail.example.org` |
 | `MAIL_FROM_NAME_DE`, `MAIL_FROM_NAME_EN` | ja | Absendername je Sprache | `Wir wollen weg`, `Wir wollen weg` |
@@ -200,6 +266,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
 | `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
+| `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |
 | `BACKUP_AGE_RECIPIENT` | ja (prod) | öffentlicher `age`-Schlüssel zur Verschlüsselung der Dumps (privater Schlüssel **offline** beim Betreiber) | – |

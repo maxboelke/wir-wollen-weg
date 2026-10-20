@@ -26,6 +26,12 @@
   text-align: center;
 }
 
+.demoBannerLink {
+  color: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+}
+
 .header {
   display: flex;
   width: 100%;

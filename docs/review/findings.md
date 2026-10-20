@@ -702,7 +702,8 @@ Selbst ausgeführt (Linux, Docker; Build-Schritt wegen fehlendem Proxy-Zertifika
 - Problem / Reproduktion: Better Auth leitet `Secure` aus `BETTER_AUTH_URL`/`APP_URL` ab (`node_modules/better-auth/dist/cookies/index.mjs`: `baseURL.startsWith("https://")`). Das Demo-Paket nutzt das bewusst (HTTP im LAN) und ändert keinen Code – production ist mit `https://`-URL nicht aufgeweicht. Wird in production aber versehentlich `APP_URL=http://…` gesetzt (Tippfehler, Kopie aus `.env.demo`), startet die App ohne Warnung mit Session-Cookies ohne `Secure`.
 - Erwartetes Verhalten: `APP_ENV=production` (und `staging`) startet nur mit `https://`-Basis-URL.
 - Vorschlag: im Startschutz von `instrumentation.ts` neben dem Platzhalter-Check `BETTER_AUTH_URL ?? APP_URL` auf `https://` prüfen und sonst mit Verweis auf deployment.md abbrechen; Unit-Test.
-- Status: offen
+- Umsetzung (Developer 2026-10-20, mit der Live-Vorschau PRD Q25): Startregeln in `src/lib/app-env.ts` (`startupProblems`), aufgerufen von `src/instrumentation.ts`: `APP_ENV` `preview`, `staging` und `production` starten nur mit `https://`-Basis-URL (`BETTER_AUTH_URL`, sonst `APP_URL`, auf Vercel ohne Wert `https://$VERCEL_PROJECT_PRODUCTION_URL`); Meldung nennt R-064 und deployment.md §4. Unit `src/lib/app-env.test.ts` („R-064: preview, staging and production need https“); E2E `preview.spec.ts` prüft `__Secure-ww.session_token` mit `Secure`. Doku deployment.md §0.6.
+- Status: behoben – bitte prüfen
 
 #### Hinweise ohne Finding (Demo-Paket)
 - **Sicherheit:** `unlock`/`seed` wirken nur über `docker/compose.demo.yml` (Projekt `wir-wollen-weg-demo`, eigene DB) und prüfen zusätzlich `APP_ENV=demo` in `.env.demo`; die Demo-Compose-Datei setzt `APP_ENV: demo` ohnehin fest. WLAN-Risiko (App **und** Mailpit mit Login-Codes für alle Geräte im WLAN) ist in Anleitung §3.4 benannt, Abschalten per `DEMO_BIND_ADDRESS=127.0.0.1` dokumentiert und getestet.

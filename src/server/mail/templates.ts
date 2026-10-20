@@ -1,5 +1,6 @@
 import { createTranslator } from "next-intl";
 import type { Locale } from "@/i18n/config";
+import { resolveAppUrl } from "@/lib/app-env";
 import de from "../../../messages/de.json";
 import en from "../../../messages/en.json";
 
@@ -16,6 +17,10 @@ export interface RenderedEmail {
   subject: string;
   text: string;
   html: string;
+  /** One-time code of the mail, if any (demo inbox shows it big, never logged). */
+  code?: string | undefined;
+  /** Main button link of the mail, if any (demo inbox). */
+  link?: string | undefined;
 }
 
 const catalogs = { de, en } as const;
@@ -92,7 +97,7 @@ function render({ locale, subject, preheader, heading, blocks }: Layout): Render
   const signature = t("signature");
   // Mail footer links to the imprint (compliance-checklist §0a, §11) – placeholder page in the
   // offline demo. Absolute URL from APP_URL (templates stay free of the env module).
-  const base = (process.env.APP_URL ?? "http://localhost:3000").replace(/\/$/, "");
+  const base = resolveAppUrl();
   const imprintUrl = `${base}${locale === "de" ? "/de/impressum" : "/en/imprint"}`;
   const imprint = t("imprint");
   const text = [
@@ -130,7 +135,9 @@ ${blocks.map(renderBlock).join("\n")}
 </table>
 </body>
 </html>`;
-  return { subject, text, html };
+  const code = blocks.find((block) => block.kind === "code")?.code;
+  const link = blocks.find((block) => block.kind === "button")?.href;
+  return { subject, text, html, code, link };
 }
 
 export interface AccessEmailInput {

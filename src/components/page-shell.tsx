@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { LanguageSwitch, LanguageSwitchLink } from "@/features/locale/language-switch";
 import { isLocale, type Locale } from "@/i18n/config";
+import { inboxEnabled } from "@/lib/app-env";
+import { DEMO_INBOX_PATH } from "@/lib/demo-inbox";
 import { cx } from "@/lib/cx";
 import { helpHref } from "@/lib/help";
 import { isDemo } from "@/server/env";
@@ -24,13 +26,24 @@ export async function SkipLink() {
   );
 }
 
-/** Demo banner (deployment.md §0.1) – only with APP_ENV=demo. */
+/**
+ * Demo banner (deployment.md §0.1) – APP_ENV=demo and the online preview (§0.7); with the demo
+ * inbox (MAIL_TRANSPORT=inbox) it links there, so codes are one tap away on every page.
+ */
 export async function DemoBanner() {
   if (!isDemo()) return null;
   const t = await getTranslations("common");
   return (
     <p className={styles.demoBanner} role="note">
       {t("demoBanner")}
+      {inboxEnabled() ? (
+        <>
+          {" "}
+          <a className={styles.demoBannerLink} href={DEMO_INBOX_PATH}>
+            {t("demoInboxLink")}
+          </a>
+        </>
+      ) : null}
     </p>
   );
 }
