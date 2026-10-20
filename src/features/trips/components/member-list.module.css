@@ -38,6 +38,15 @@
   text-transform: uppercase;
 }
 
+/* Phase 3 / past: open placeholders after the list and its toggle (R-071) */
+.notJoined {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  padding-top: var(--ww-space-3);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
 .more {
   display: inline-grid;
   flex: none;

@@ -173,6 +173,52 @@ test.describe("§14.2 Person status and reminders", () => {
     ).toBeFocused();
   });
 
+  test("R-070: 200 % browser text on 360 × 640 – whole rows of the remind list fit, the sheet scrolls", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName !== "chromium", "browser text size via CDP (Chromium only)");
+    await page.setViewportSize({ width: 360, height: 640 });
+    const cdp = await page.context().newCDPSession(page);
+    // Browser text size 200 % (not page CSS) – `em` in media queries follows it.
+    await cdp.send("Page.setFontSizes", { fontSizes: { standard: 32, fixed: 26 } });
+    const trip = await memberTrip(page);
+    for (const name of ["Ada", "Bo", "Cem", "Dana", "Eli", "Finn", "Gio", "Hana"]) {
+      await addMemberWithDays(trip.tripId, name, {}, false);
+    }
+    await page.goto(`/trips/${trip.publicId}`);
+    await hydrated(page);
+    await page.locator("[data-kpi-button]").click();
+    const sheet = page.getByRole("dialog", { name: en.remind.titleCollect });
+    await expect(sheet).toBeVisible();
+    await waitForAnimations(page);
+    const rows = sheet.getByRole("listitem");
+    await expect.poll(() => rows.count()).toBeGreaterThanOrEqual(2);
+    // Scroll the first row to the top: rows 1–2 are then visible together, nothing clips them.
+    const fits = await rows.first().evaluate((first) => {
+      first.scrollIntoView({ block: "start" });
+      const items = [...(first.parentElement?.children ?? [])].slice(0, 2);
+      const visible = (el: Element) => {
+        const rect = el.getBoundingClientRect();
+        for (let box = el.parentElement; box; box = box.parentElement) {
+          const style = getComputedStyle(box);
+          if (style.overflowY === "visible") continue;
+          const clip = box.getBoundingClientRect();
+          if (rect.top < clip.top - 1 || rect.bottom > clip.bottom + 1) return false;
+        }
+        return rect.top >= -1 && rect.bottom <= window.innerHeight + 1;
+      };
+      return items.map(visible);
+    });
+    // Rows at 200 % are ~200 px high (name, status, button below) – two whole rows fit at once
+    // (before: half a row in an inner scroll box).
+    expect(fits.slice(0, 2)).toEqual([true, true]);
+    // The «Remind all» button scrolls along and stays reachable.
+    const all = sheet.getByRole("button", { name: /^Remind all \(\d+\)$/ });
+    await all.scrollIntoViewIfNeeded();
+    await expect(all).toBeInViewport();
+  });
+
   test("placeholder: members get «Let Lena know» – the personal link never reaches them", async ({
     page,
   }) => {
@@ -293,14 +339,56 @@ test.describe("§14.4 Phase 3: the overview is the trip hub", () => {
     await expectNoSeriousAxeViolations(page, "phase 3 hub");
   });
 
+  test("R-071: open placeholders only at the end under «Not joined (n)», without reminders", async ({
+    page,
+  }) => {
+    const trip = await memberTrip(page);
+    for (const name of ["Ada", "Bo", "Cem", "Dana", "Eli", "Finn", "Gio"]) {
+      await addMemberWithDays(trip.tripId, name, {});
+    }
+    await addPlaceholder(trip.tripId, "Mia");
+    await seedPoll(trip.tripId, [[day(10), day(14)]], { fixed: true });
+    await setCelebratedFor(trip.tripId, trip.email, `${day(10)}/${day(14)}`);
+    await page.goto(`/trips/${trip.publicId}`);
+    await hydrated(page);
+
+    const members = page.getByRole("region", { name: /Who's in\?/ });
+    const toggle = members.getByRole("button", { name: fill(en.trip.showAll, { count: 9 }) });
+    const notJoined = members.getByRole("region", {
+      name: fill(en.trip.groupNotJoined, { count: 1 }),
+    });
+    await expect(toggle).toBeVisible();
+    await expect(notJoined.getByText("Mia", { exact: true })).toBeVisible();
+    await expect(notJoined.getByRole("button")).toHaveCount(0);
+    // The folded list holds 5 members – Mia is not among them, and comes after the toggle.
+    const list = page.locator(`[id="${String(await toggle.getAttribute("aria-controls"))}"]`);
+    await expect(list.getByRole("listitem")).toHaveCount(5);
+    await expect(list.getByText("Mia", { exact: true })).toHaveCount(0);
+    const toggleBox = await toggle.boundingBox();
+    const notJoinedBox = await notJoined.boundingBox();
+    expect(notJoinedBox?.y ?? 0).toBeGreaterThan(toggleBox?.y ?? Infinity);
+
+    await toggle.click();
+    await expect(list.getByRole("listitem")).toHaveCount(9);
+    await expect(list.getByText("Mia", { exact: true })).toHaveCount(0);
+    await waitForAnimations(page);
+    await expectNoSeriousAxeViolations(page, "phase 3 members with placeholder");
+  });
+
   test("members see «Lena Berg has reopened the dates» once after «Undo locked dates»", async ({
     page,
   }) => {
     const trip = await memberTrip(page);
     await seedPoll(trip.tripId, [[day(10), day(14)]]);
-    // Kai had celebrated the earlier fixing.
-    await setCelebratedFor(trip.tripId, trip.email, `${day(10)}/${day(14)}`);
     const notice = fill(en.trip.reopenedNotice, { orga: "Lena Berg" });
+    // R-069 (a): Kai celebrated an earlier fixing, but this is a NEW vote (after a cancel) –
+    // nothing was reopened, no notice.
+    await setCelebratedFor(trip.tripId, trip.email, `${day(10)}/${day(14)}`);
+    await page.goto(`/trips/${trip.publicId}`);
+    await expect(tabs(page)).toBeVisible();
+    await expect(page.getByText(notice)).toHaveCount(0);
+    // Kai had celebrated the fixing Lena just undid.
+    await setCelebratedFor(trip.tripId, trip.email, `${day(10)}/${day(14)}`, true);
     await page.goto(`/trips/${trip.publicId}`);
     await expect(page.getByText(notice)).toBeVisible();
     await expect(tabs(page)).toBeVisible();

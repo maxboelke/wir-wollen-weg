@@ -1,7 +1,7 @@
 import "server-only";
 import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
 import type { Period, PollOptionData, VoteChoice, VoteRow } from "@/lib/poll";
-import { MAX_OPTIONS, periodKey, REOPEN_SEEN_PREFIX } from "@/lib/poll";
+import { MAX_OPTIONS, periodKey, reopenNoticeAfterUnfix } from "@/lib/poll";
 import { db } from "./db/client";
 import { pollOption, pollVote, trip, tripMember } from "./db/schema";
 
@@ -95,7 +95,11 @@ export async function startPoll(
           pollCanceledBy: null,
         })
         .where(eq(trip.id, tripId));
-      await tx.update(tripMember).set({ votedAt: null }).where(eq(tripMember.tripId, tripId));
+      // A new vote is not a reopened one: no «wieder geöffnet» notice from earlier rounds (R-069).
+      await tx
+        .update(tripMember)
+        .set({ votedAt: null, reopenNoticeDue: false })
+        .where(eq(tripMember.tripId, tripId));
       return { ok: true } as const;
     });
   } catch (error) {
@@ -216,6 +220,11 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
         updatedAt: now,
       })
       .where(eq(trip.id, tripId));
+    // The dates are fixed again – an unseen «wieder geöffnet» notice is obsolete (R-069).
+    await tx
+      .update(tripMember)
+      .set({ reopenNoticeDue: false })
+      .where(eq(tripMember.tripId, tripId));
     return { ok: true, period: option } as const;
   });
 }
@@ -223,10 +232,17 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
 /**
  * «Festlegung aufheben» (F-012, W11-07): back to «Abstimmung läuft»; all votes stay. The
  * members' celebration markers stay too – fixing the SAME range again does not celebrate twice.
+ * Members who celebrated exactly this range get the one-off notice «{orga} hat den Termin
+ * wieder geöffnet» (ux-spec §14.4, R-069) – decided here under the lock, once per unfixing.
  */
 export async function unfixDates(tripId: string): Promise<{ ok: boolean }> {
   return db().transaction(async (tx) => {
-    if ((await lockedPhase(tx, tripId, "update")) !== "fixed") return { ok: false };
+    const [row] = await tx
+      .select({ phase: trip.phase, start: trip.fixedStart, end: trip.fixedEnd })
+      .from(trip)
+      .where(eq(trip.id, tripId))
+      .for("update");
+    if (row?.phase !== "fixed") return { ok: false };
     await tx
       .update(trip)
       .set({
@@ -237,6 +253,24 @@ export async function unfixDates(tripId: string): Promise<{ ok: boolean }> {
         updatedAt: new Date(),
       })
       .where(eq(trip.id, tripId));
+    const members = await tx
+      .select({
+        userId: tripMember.userId,
+        role: tripMember.role,
+        celebratedFor: tripMember.celebratedFor,
+      })
+      .from(tripMember)
+      .where(eq(tripMember.tripId, tripId));
+    const fixed = row.start && row.end ? { start: row.start, end: row.end } : null;
+    const due = fixed
+      ? members.filter((m) => reopenNoticeAfterUnfix(m, fixed)).map((m) => m.userId)
+      : [];
+    await tx
+      .update(tripMember)
+      .set({
+        reopenNoticeDue: due.length > 0 ? inArray(tripMember.userId, due) : sql`false`,
+      })
+      .where(eq(tripMember.tripId, tripId));
     return { ok: true };
   });
 }
@@ -298,27 +332,21 @@ export async function cancelPoll(tripId: string, userId: string): Promise<Cancel
         updatedAt: now,
       })
       .where(eq(trip.id, tripId));
-    await tx.update(tripMember).set({ votedAt: null }).where(eq(tripMember.tripId, tripId));
+    // After a cancel nothing is «wieder geöffnet» any more – also not in a later vote (R-069).
+    await tx
+      .update(tripMember)
+      .set({ votedAt: null, reopenNoticeDue: false })
+      .where(eq(tripMember.tripId, tripId));
     return { ok: true } as const;
   });
 }
 
-/**
- * «{orga} hat den Termin wieder geöffnet» was shown (ux-spec §14.4): prefix the celebrated
- * range with REOPEN_SEEN_PREFIX (keeps it for «same range → no second celebration»).
- */
+/** «{orga} hat den Termin wieder geöffnet» was shown (ux-spec §14.4) – once per unfixing. */
 export async function markReopenSeen(tripId: string, userId: string): Promise<void> {
   await db()
     .update(tripMember)
-    .set({ celebratedFor: sql`${REOPEN_SEEN_PREFIX} || ${tripMember.celebratedFor}` })
-    .where(
-      and(
-        eq(tripMember.tripId, tripId),
-        eq(tripMember.userId, userId),
-        sql`${tripMember.celebratedFor} is not null`,
-        sql`left(${tripMember.celebratedFor}, ${REOPEN_SEEN_PREFIX.length}) <> ${REOPEN_SEEN_PREFIX}`,
-      ),
-    );
+    .set({ reopenNoticeDue: false })
+    .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
 }
 
 /** The member has seen the one-off notice about the cancelled vote (Q21). */

@@ -687,17 +687,21 @@ export async function markAllSubmitted(tripId: string, exceptEmail?: string): Pr
   });
 }
 
-/** Sets `celebrated_for` of a member (F-012 celebration seen, ux-spec §14.4 reopen notice). */
+/**
+ * Sets `celebrated_for` of a member (F-012 celebration seen). `reopenNoticeDue` simulates
+ * «Festlegung aufheben» after that celebration (ux-spec §14.4, R-069).
+ */
 export async function setCelebratedFor(
   tripId: string,
   email: string,
   value: string | null,
+  reopenNoticeDue = false,
 ): Promise<void> {
   await withClient(async (client) => {
     await client.query(
-      `update trip_member set celebrated_for = $3
+      `update trip_member set celebrated_for = $3, reopen_notice_due = $4
         where trip_id = $1 and user_id = (select id from "user" where email = $2)`,
-      [tripId, email, value],
+      [tripId, email, value, reopenNoticeDue],
     );
   });
 }

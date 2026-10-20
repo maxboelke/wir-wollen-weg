@@ -799,6 +799,7 @@
     "groupSubmitted": "Eingetragen ({count})",
     "groupVoted": "Abgestimmt ({count})",
     "groupPlaceholders": "Noch nicht beigetreten ({count})",
+    "groupNotJoined": "Nicht beigetreten ({count})",
     "placeholdersManage": "Platzhalter verwalten",
     "hub": {
       "decidedTitle": "So habt ihr entschieden",

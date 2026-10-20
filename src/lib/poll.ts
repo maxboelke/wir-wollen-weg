@@ -383,34 +383,32 @@ export function celebrationDue(
   fixed: Period | null,
   celebratedFor: string | null | undefined,
 ): boolean {
-  return fixed !== null && celebratedRange(celebratedFor) !== periodKey(fixed);
+  return fixed !== null && celebratedFor !== periodKey(fixed);
 }
 
 /**
- * Marker in `trip_member.celebrated_for` once a member has seen «{orga} hat den Termin wieder
- * geöffnet» (ux-spec §14.4) – no extra column: the celebrated range stays readable behind it,
- * so fixing the SAME range again still does not celebrate twice.
+ * «Festlegung aufheben» (ux-spec §14.4, R-069): does this member get the one-off notice
+ * «{orga} hat den Termin wieder geöffnet»? Only members who celebrated exactly the range that
+ * is being reopened (they may have it in their calendar) – not the organiser, not people who
+ * joined or celebrated nothing/another range. Decided once per unfixing; every later phase
+ * change (fix, cancel, new vote) clears the flag again.
  */
-export const REOPEN_SEEN_PREFIX = "~seen:";
-
-function celebratedRange(celebratedFor: string | null | undefined): string | null {
-  if (!celebratedFor) return null;
-  return celebratedFor.startsWith(REOPEN_SEEN_PREFIX)
-    ? celebratedFor.slice(REOPEN_SEEN_PREFIX.length)
-    : celebratedFor;
+export function reopenNoticeAfterUnfix(
+  member: { role: string; celebratedFor: string | null },
+  fixed: Period,
+): boolean {
+  return member.role !== "organizer" && member.celebratedFor === periodKey(fixed);
 }
 
 /**
- * One-off notice for members after «Festlegung aufheben» (ux-spec §14.4, same mechanism as
- * Q21): the vote runs again and this member had already celebrated fixed dates (so they may
- * have them in their calendar). Not for the organiser, who reopened the dates.
+ * Shows the notice while the vote runs again and the flag set by `reopenNoticeAfterUnfix` is
+ * still there (cleared once shown). Never for the (current) organiser.
  */
 export function reopenNoticeDue(
   trip: { phase: string },
-  member: { role: string; celebratedFor: string | null },
+  member: { role: string; reopenNoticeDue: boolean },
 ): boolean {
-  if (trip.phase !== "voting" || member.role === "organizer") return false;
-  return Boolean(member.celebratedFor) && !member.celebratedFor?.startsWith(REOPEN_SEEN_PREFIX);
+  return trip.phase === "voting" && member.role !== "organizer" && member.reopenNoticeDue;
 }
 
 /**

@@ -788,7 +788,7 @@ Geprüft: ux-spec §14.1–14.5, W06/W07/W09/W10/W11, Sicherheit (Platzhalter-To
   (b) Fehlender Hinweis: Kai sieht den Hinweis (`~seen:A`), Orga legt wieder A fest (korrekt keine zweite Feier), hebt erneut auf → `reopenNoticeDue` = false, Kai erfährt nicht, dass der Termin, den er im Kalender hat, wieder offen ist.
 - Erwartetes Verhalten: Hinweis genau einmal je „Festlegung aufheben“, nur für Mitglieder, die den aufgehobenen Termin gefeiert haben; kein Hinweis nach Abbruch/Neustart.
 - Vorschlag: In `unfixDates` (unter dem Lock) für alle Mitglieder das Präfix entfernen (`celebrated_for = regexp_replace(celebrated_for, '^~seen:', '')`), in `cancelPoll` das Präfix für alle setzen, die noch keines haben (nach Abbruch kein Reopen-Hinweis mehr). Alternativ sauberer: Spalte `trip.unfixed_at` + `trip_member.reopen_seen_at`. Unit-/E2E-Test für (a) und (b).
-- Status: offen
+- Status: behoben – bitte prüfen (Entwickler 2026-10-20). Präfix `~seen:` entfernt; eigene Spalte `trip_member.reopen_notice_due` (Migration `drizzle/0008_feedback1_reopen_notice.sql`, übernimmt bestehende Daten und entfernt das Präfix). `unfixDates` setzt das Flag unter dem Lock genau für Nicht-Orga-Mitglieder, deren `celebrated_for` dem aufgehobenen Zeitraum entspricht (`reopenNoticeAfterUnfix`), `startPoll`/`fixDates`/`cancelPoll` löschen es, `markReopenSeen` löscht es für die Person. `celebrated_for` bleibt reiner Zeitraum (keine doppelte Feier). Unit-Tests `src/lib/poll.test.ts` „reopen notice and celebration across rounds (R-069)“ (a), (b), doppeltes Aufheben, anderer Zeitraum, erneutes Festlegen; E2E `feedback-1.spec.ts` prüft (a) (neue Abstimmung ohne Flag → kein Hinweis). Demo-Seed setzt das Flag für „Silvester Prag“/Anna.
 
 ### R-070: RemindSheet bei 200 % Text – Liste praktisch nicht sichtbar
 - Schwere: mittel
@@ -796,7 +796,7 @@ Geprüft: ux-spec §14.1–14.5, W06/W07/W09/W10/W11, Sicherheit (Platzhalter-To
 - Problem / Reproduktion: 360 × 640, Schrift 200 %, Phase 1 mit 10 Personen, Kennzahl-Box antippen → Kopf (3 Zeilen Titel), Fortschrittszeile und die fixierte Fußleiste «Remind all (8)» belegen fast die ganze Höhe; für die Liste bleibt ein Streifen von ca. einer halben Zeile (Name „Lena Berg“ abgeschnitten), der innen scrollt. Bedienbar, aber kaum nutzbar.
 - Erwartetes Verhalten: Bei großer Schrift / niedriger Höhe scrollt das ganze Panel (Fußleiste darf mitscrollen) oder die Fußleiste wird kompakter, sodass mindestens 2–3 Zeilen sichtbar sind.
 - Vorschlag: `.bounded` nur bei ausreichender Höhe anwenden, z. B. `@media (min-height: 36em)` bzw. Fußleiste unter einer Höhen-Schwelle nicht sticky; mit 200 % (Browser-Schriftgröße, nicht nur Seiten-CSS) prüfen.
-- Status: offen
+- Status: behoben – bitte prüfen (Entwickler 2026-10-20). `src/components/ui/bottom-sheet.module.css`: `.bounded` (innen scrollender Körper + fixierte Fußleiste) nur noch bei `@media (min-height: 36em)` – `em` folgt der Browser-Schriftgröße; darunter scrollt das ganze Sheet, die Fußleiste scrollt mit, Kopf kompakter (Titel `--ww-text-lg`, kleinerer Griff-Abstand). E2E `feedback-1.spec.ts` „R-070“ setzt die Browser-Schriftgröße per CDP (`Page.setFontSizes`, 32 px) auf 360 × 640: zwei ganze Zeilen gleichzeitig sichtbar (Zeilen sind bei 200 % ~200 px hoch – drei passen physisch nicht in 589 px), „Alle erinnern“ erreichbar. Hinweis: Seiten-CSS `html { font-size: 200% }` löst die Media-Query nicht aus (keine echte Nutzereinstellung).
 
 ### R-071: Phase 3 „Wer ist dabei?“ – Platzhalter stehen mitten in der eingeklappten Liste
 - Schwere: niedrig
@@ -804,7 +804,7 @@ Geprüft: ux-spec §14.1–14.5, W06/W07/W09/W10/W11, Sicherheit (Platzhalter-To
 - Problem / Reproduktion: Festgelegte Reise mit 9 Mitgliedern + 1 Platzhalter: Liste zeigt 5 Mitglieder, dann «Mia · hasn't joined yet», dann «Show all 9». Nach dem Aufklappen stehen Mitglieder 6–9 hinter Mia; die Zahl «9» passt nicht zur Zeilenzahl. Außerdem ist in Phase 3 fraglich, ob offene Platzhalter überhaupt noch gelistet werden sollen (Kopf sagt «9 going»).
 - Erwartetes Verhalten: Platzhalter nach allen Mitgliedern (auch eingeklappt erst nach dem Umschalter) bzw. in Phase 3 ausgeblendet – UX entscheiden lassen.
 - Vorschlag: Platzhalter-Zeilen außerhalb der eingeklappten `ul` hinter den Umschalter setzen oder in Phase 3 weglassen.
-- Status: offen
+- Status: behoben – bitte prüfen (Entwickler 2026-10-20, CEO-Entscheidung). Phase 3/vergangen: Platzhalter nicht mehr in der Hauptliste, sondern ganz am Ende nach dem Umschalter unter der kleinen Zeile «Nicht beigetreten (n)» / «Not joined (n)» (neuer Key `trip.groupNotJoined`), ohne Status und ohne Erinnern-Taste. `src/features/trips/components/member-list.tsx` (+ `.module.css`). E2E `feedback-1.spec.ts` „R-071“.
 
 #### Hinweise ohne Finding
 - `/group` bei 200 % Text: Segment «Suggestions | Calendar» läuft 70 px über (horizontales Scrollen) – vorbestehend, nicht Teil dieser Runde; mit U-5/D-15 (große Schrift) vor Go-Live erledigen.

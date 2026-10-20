@@ -114,7 +114,7 @@ interface MemberSeed {
   votes?: ("yes" | "maybe" | "no" | null)[];
   /** Has already seen «Es geht los!» for the fixed range (F-012). */
   celebrated?: boolean;
-  /** Celebrated a range that was unfixed again (ux-spec §14.4 reopen notice). */
+  /** Celebrated a range that was unfixed again – reopen notice still due (ux-spec §14.4). */
   celebratedRange?: [string, string];
 }
 
@@ -557,8 +557,8 @@ export async function seedDemo(
           (member.votes ?? []).filter((v) => v !== null).length === optionIds.length;
         await client.query(
           `insert into trip_member (trip_id, user_id, display_name, role, joined_at, submitted_at,
-             voted_at, availability_updated_at, comment, celebrated_for)
-           values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9, $10)`,
+             voted_at, availability_updated_at, comment, celebrated_for, reopen_notice_due)
+           values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9, $10, $11)`,
           [
             tripId,
             ids.get(member.person),
@@ -574,6 +574,8 @@ export async function seedDemo(
               : member.celebratedRange
                 ? member.celebratedRange.join("/")
                 : null,
+            // Celebrated a range that was unfixed since → notice still due (R-069).
+            Boolean(member.celebratedRange) && seed.phase === "voting",
           ],
         );
         for (const [optionIndex, choice] of (member.votes ?? []).entries()) {

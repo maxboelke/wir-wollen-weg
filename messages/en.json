@@ -799,6 +799,7 @@
     "groupSubmitted": "Dates added ({count})",
     "groupVoted": "Voted ({count})",
     "groupPlaceholders": "Not joined yet ({count})",
+    "groupNotJoined": "Not joined ({count})",
     "placeholdersManage": "Manage placeholders",
     "hub": {
       "decidedTitle": "How you decided",

@@ -44,7 +44,8 @@ const COLLAPSED_COUNT = 5;
 /**
  * «Wer ist dabei?» (F-007, W07, ux-spec §14.2). Phase 1/2: grouped «Fehlt noch» (always in
  * full, with [Erinnern] per person – everyone may remind) and «Eingetragen» / «Abgestimmt».
- * Phase 3 / past: plain list without status. The organiser keeps «⋯» per member (Flow J).
+ * Phase 3 / past: plain list without status, open placeholders separately at the end under
+ * «Nicht beigetreten (n)» (R-071). The organiser keeps «⋯» per member (Flow J).
  */
 export function MemberList({
   members,
@@ -227,17 +228,21 @@ export function MemberList({
       <>
         <ul id={`${id}-list`} className={styles.list}>
           {visible.map((p) => row(p, false))}
-          {placeholderPeople.map((p) => (
-            <PersonRow
-              key={p.key}
-              avatarId={p.key}
-              name={p.name}
-              state="open"
-              status={t("status.placeholder")}
-            />
-          ))}
         </ul>
         {collapsible ? toggle(all.length, `${id}-list`) : null}
+        {/* R-071 (CEO): open placeholders only at the very end, below the toggle – no remind. */}
+        {placeholderPeople.length > 0 ? (
+          <section className={styles.notJoined} aria-labelledby={`${id}-not-joined`}>
+            <h3 id={`${id}-not-joined`} className={styles.groupTitle}>
+              {t("groupNotJoined", { count: placeholderPeople.length })}
+            </h3>
+            <ul className={styles.list}>
+              {placeholderPeople.map((p) => (
+                <PersonRow key={p.key} avatarId={p.key} name={p.name} state={null} />
+              ))}
+            </ul>
+          </section>
+        ) : null}
       </>
     );
   }
