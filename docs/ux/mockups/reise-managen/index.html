@@ -1,0 +1,1675 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup „Reise managen“ (W16–W22) · Wir wollen weg</title>
+<!-- Einzige externe Ressource: Schriften (im Produkt selbst gehostet, design-system §5.1). Ohne Netz greift die Systemschrift. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=Plus+Jakarta+Sans:wght@500..800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Klickbarer UX-Prototyp – Ausbaustufe „Reise managen“ (F-053, F-033, F-031,
+   F-035/036, F-056, F-054, F-055). KEIN Produktivcode.
+   Werte aus docs/design/tokens.css v1.0 (Reise-Cockpit, Indigo & Minze),
+   hier als Kurznamen eingekürzt. Struktur/Verhalten: docs/ux/wireframes/w16–w22.
+   ========================================================================== */
+:root{
+  --bg:#F4F2FB; --surface:#FFFFFF; --raised:#FFFFFF; --sunken:#ECE9F7; --line:#E3DFF0;
+  --text:#1E1A3D; --muted:#57527A; --subtle:#6E6992; --border:#8A86A8;
+  --primary:#2B2266; --primary-h:#3A2F86; --primary-a:#221B52; --on-primary:#FFFFFF;
+  --selected:#2B2266; --link:#5A3FD0;
+  --accent:#52E5B8; --on-accent:#2B2266; --accent-text:#00775A; --accent-tint:#D9F8EC;
+  --info-text:#5A3FD0; --info-tint:#ECE6FF;
+  --sun:#FFCF4A; --sun-tint:#FFF3CC; --warn-text:#7A5200;
+  --todo-bg:#FFE4DF; --todo-fg:#A3321F; --todo-bar:#F0503F;
+  --danger:#B42318; --danger-tint:#FDE7E4;
+  --focus:#2B59C3;
+  --ck:#2B2266; --ck-text:#FFFFFF; --ck-muted:#CFC9F2; --ck-ctrl:rgb(255 255 255 / .12);
+  --ck-kpi:rgb(255 255 255 / .08); --ck-ring-track:rgb(255 255 255 / .18);
+  --ck-glow-mint:rgb(82 229 184 / .22); --ck-glow-lav:rgb(167 154 242 / .30);
+  --btn2-border:#2B2266; --btn2-text:#2B2266;
+  --t-lav-bg:#ECE6FF; --t-lav-fg:#5A3FD0; --t-mint-bg:#D9F8EC; --t-mint-fg:#00775A;
+  --t-sun-bg:#FFF3CC; --t-sun-fg:#7A5200; --t-coral-bg:#FFE4DF; --t-coral-fg:#A3321F;
+  --t-brand-bg:#2B2266; --t-brand-fg:#52E5B8;
+  --no-bg:#ECE9F7; --no-fg:#57527A;
+  --progress-track:#ECE9F7; --progress-fill:#2B2266;
+  --inverse-bg:#1E1A3D; --inverse-text:#FFFFFF; --inverse-link:#52E5B8;
+  --scrim:rgb(20 17 46 / .5);
+  --shadow-1:0 1px 2px rgb(30 26 61 / .06), 0 14px 30px -18px rgb(43 34 102 / .38);
+  --shadow-2:0 2px 4px rgb(30 26 61 / .06), 0 18px 36px -16px rgb(43 34 102 / .45);
+  --shadow-3:0 8px 16px rgb(30 26 61 / .10), 0 24px 40px -20px rgb(43 34 102 / .60);
+  --shadow-btn:0 10px 22px -10px rgb(43 34 102 / .60);
+  --shadow-btn-acc:0 12px 26px -12px rgb(82 229 184 / .75);
+  --av1:#FFD3C7; --av2:#C9DBFF; --av3:#D4F2B0; --av4:#DCD3FF; --av5:#FFE7A3; --av6:#BDEFE0; --av7:#FFCFE6; --av8:#EADFCF; --av-ink:#1E1A3D;
+  --font-sans:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display:"Plus Jakarta Sans", var(--font-sans);
+  --d-instant:80ms; --d-fast:140ms; --d-base:220ms; --d-slow:320ms; --d-moderate:480ms; --d-fade:140ms;
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-enter:cubic-bezier(0,0,0,1); --ease-exit:cubic-bezier(.3,0,1,1);
+  --ease-emph:cubic-bezier(.05,.7,.1,1); --spring-soft:cubic-bezier(.34,1.3,.64,1); --spring-bouncy:cubic-bezier(.34,1.56,.64,1);
+  --dist:16px; --dist-lg:24px; --scale-press:.97;
+  --border-forced:1px solid transparent;
+  color-scheme:light;
+}
+@supports (transition-timing-function: linear(0, 1)){
+  :root{
+    --spring-soft:linear(0, 0.052 5%, 0.174 10%, 0.325 15%, 0.478 20%, 0.619 25%, 0.738 30%, 0.833 35%, 0.906 40%, 0.991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1);
+    --spring-bouncy:linear(0, 0.116 5%, 0.372 10%, 0.657 15%, 0.898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, 0.987 60%, 0.974 70%, 0.986 80%, 0.999 90%, 1);
+  }
+}
+[data-theme="dark"]{
+  --bg:#14112E; --surface:#1F1A45; --raised:#2A2458; --sunken:#191538; --line:#2F2963;
+  --text:#F3F1FF; --muted:#B9B4DC; --subtle:#9C97C4; --border:#7D77AD;
+  --primary:#52E5B8; --primary-h:#7DEDCB; --primary-a:#3FD0A5; --on-primary:#14112E;
+  --selected:#52E5B8; --link:#52E5B8;
+  --accent-text:#52E5B8; --accent-tint:#133C3B; --on-accent:#14112E;
+  --info-text:#C3B8FF; --info-tint:#2E2566;
+  --sun-tint:#3A3113; --warn-text:#FFDB73;
+  --todo-bg:#4A1F1A; --todo-fg:#FFB4A8; --todo-bar:#FF8A7A;
+  --danger:#FF8A80; --danger-tint:#431B2A;
+  --focus:#8FB3FF;
+  --ck:#221B52; --ck-glow-mint:rgb(82 229 184 / .18); --ck-glow-lav:rgb(167 154 242 / .22);
+  --btn2-border:#F3F1FF; --btn2-text:#F3F1FF;
+  --t-lav-bg:#2E2566; --t-lav-fg:#C3B8FF; --t-mint-bg:#133C3B; --t-mint-fg:#52E5B8;
+  --t-sun-bg:#3A3113; --t-sun-fg:#FFDB73; --t-coral-bg:#4A1F1A; --t-coral-fg:#FFB4A8;
+  --t-brand-bg:#5B48C9; --t-brand-fg:#FFFFFF;
+  --no-bg:#2E2860; --no-fg:#D9D5F2;
+  --progress-track:#2E2860; --progress-fill:#52E5B8;
+  --inverse-bg:#F3F1FF; --inverse-text:#14112E; --inverse-link:#5A3FD0;
+  --scrim:rgb(0 0 0 / .6);
+  --shadow-1:0 14px 30px -16px rgb(0 0 0 / .70); --shadow-2:0 18px 36px -14px rgb(0 0 0 / .75);
+  --shadow-3:0 24px 48px -16px rgb(0 0 0 / .80);
+  --shadow-btn:0 10px 24px -12px rgb(82 229 184 / .55); --shadow-btn-acc:0 10px 24px -12px rgb(82 229 184 / .55);
+  color-scheme:dark;
+}
+[data-motion="reduce"]{ --d-instant:0ms; --d-fast:0ms; --d-base:0ms; --d-slow:0ms; --d-moderate:0ms; --dist:0px; --dist-lg:0px; --scale-press:1; }
+@media (prefers-reduced-motion: reduce){ :root{ --d-instant:0ms; --d-fast:0ms; --d-base:0ms; --d-slow:0ms; --d-moderate:0ms; --dist:0px; --dist-lg:0px; --scale-press:1; } }
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ font-family:var(--font-sans); color:#1E1A3D; background:#DCD8EE; min-height:100dvh; -webkit-font-smoothing:antialiased; }
+[data-theme="dark"] body, body[data-theme="dark"]{ background:#0B0920; color:#F3F1FF; }
+button,input,select,textarea{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+a{ color:var(--link); }
+.sr-only{ position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.skip{ position:absolute; left:8px; top:-60px; z-index:100; background:#fff; color:#2B2266; padding:10px 14px; border-radius:12px; font-weight:700; }
+.skip:focus{ top:8px; }
+:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+svg.ic{ width:22px; height:22px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+svg.ic.s16{ width:16px; height:16px; } svg.ic.s20{ width:20px; height:20px; } svg.ic.s24{ width:24px; height:24px; } svg.ic.s28{ width:28px; height:28px; }
+
+/* ---------- Bühne: Handy-Rahmen + Steuerpanel ---------- */
+.stage{ min-height:100dvh; display:flex; gap:40px; align-items:flex-start; justify-content:center; padding:32px 24px; }
+.device{ position:relative; width:390px; height:844px; flex:none; border-radius:52px; background:var(--bg); color:var(--text);
+  box-shadow:0 0 0 11px #120F2A, 0 0 0 13px #3A3460, 0 40px 80px -30px rgb(20 17 46 / .7); overflow:hidden; isolation:isolate; }
+.statusbar{ height:44px; padding:14px 30px 0; display:flex; justify-content:space-between; font:700 14px/1 var(--font-sans); color:#fff; background:var(--ck); }
+.statusbar .notch{ width:110px; height:28px; border-radius:20px; background:#000; margin-top:-6px; }
+.view{ position:absolute; inset:44px 0 0 0; overflow-y:auto; overflow-x:hidden; scroll-behavior:auto; overscroll-behavior:contain; background:var(--bg); }
+.view:focus{ outline:none; }
+.panel{ width:330px; flex:none; color:#1E1A3D; background:#FFFFFFE6; border-radius:24px; padding:20px; box-shadow:0 20px 40px -24px rgb(43 34 102 / .5); position:sticky; top:32px; }
+body[data-theme="dark"] .panel{ background:#1F1A45; color:#F3F1FF; }
+.panel h2{ font:800 19px/1.2 var(--font-display); margin:0 0 6px; }
+.panel p{ font-size:14px; line-height:1.45; margin:0 0 14px; color:inherit; opacity:.85; }
+.panel fieldset{ border:0; padding:0; margin:0 0 14px; }
+.panel legend{ font:700 13px/1.3 var(--font-sans); margin-bottom:6px; text-transform:none; }
+.seg-p{ display:flex; gap:4px; background:#ECE9F7; border-radius:14px; padding:4px; }
+body[data-theme="dark"] .seg-p{ background:#191538; }
+.seg-p label{ flex:1; position:relative; }
+.seg-p input{ position:absolute; opacity:0; inset:0; }
+.seg-p span{ display:flex; align-items:center; justify-content:center; text-align:center; min-height:44px; padding:4px 6px; border-radius:11px; font:700 13px/1.2 var(--font-sans); cursor:pointer; }
+.seg-p input:checked + span{ background:#fff; color:#2B2266; box-shadow:0 0 0 2px #2B2266; }
+.seg-p input:focus-visible + span{ outline:3px solid #2B59C3; outline-offset:2px; }
+.chk-p{ display:flex; align-items:center; gap:10px; min-height:44px; font-size:14px; font-weight:600; cursor:pointer; }
+.chk-p input{ width:22px; height:22px; accent-color:#2B2266; }
+.jump{ list-style:none; margin:0 0 14px; padding:0; display:grid; gap:2px; }
+.jump a{ display:flex; gap:8px; align-items:center; min-height:36px; padding:4px 8px; border-radius:10px; color:inherit; text-decoration:none; font-size:14px; font-weight:600; }
+.jump a:hover{ background:#ECE6FF; color:#2B2266; }
+.jump b{ font:800 12px/1 var(--font-display); color:#5A3FD0; min-width:30px; }
+body[data-theme="dark"] .jump b{ color:#52E5B8; }
+.panel .reset{ min-height:44px; width:100%; border-radius:14px; border:2px solid currentColor; background:transparent; font-weight:700; }
+@media (max-width: 760px){
+  .stage{ flex-direction:column; align-items:center; padding:0 0 24px; gap:16px; }
+  .device{ width:100%; height:100dvh; border-radius:0; box-shadow:none; }
+  .statusbar{ display:none; }
+  .view{ inset:0; }
+  .panel{ position:static; width:calc(100% - 32px); }
+}
+
+/* ---------- Bildschirm-Gerüst ---------- */
+.screen{ min-height:100%; display:flex; flex-direction:column; }
+.screen.enter-fwd{ animation:inFwd var(--d-base) var(--ease-enter) both; }
+.screen.enter-back{ animation:inBack var(--d-base) var(--ease-enter) both; }
+.screen.enter-fade{ animation:fade var(--d-fade) linear both; }
+@keyframes inFwd{ from{ opacity:0; transform:translateX(var(--dist-lg)); } }
+@keyframes inBack{ from{ opacity:0; transform:translateX(calc(-1 * var(--dist-lg))); } }
+@keyframes fade{ from{ opacity:0; } }
+.content{ flex:1; padding:16px 16px 28px; display:flex; flex-direction:column; gap:12px; }
+.content > .sec{ margin:16px 2px 0; }
+.sec{ font:800 19px/1.2 var(--font-display); letter-spacing:-.015em; margin:0; }
+.sec-row{ display:flex; align-items:baseline; justify-content:space-between; gap:12px; margin:16px 2px 0; }
+.meta{ font-size:13px; font-weight:600; color:var(--subtle); }
+.muted{ color:var(--muted); }
+.small{ font-size:14px; line-height:1.4; }
+p{ margin:0; }
+
+/* ---------- Cockpit-Kopf ---------- */
+.ck-row{ position:sticky; top:0; z-index:6; display:flex; align-items:center; gap:8px; min-height:60px; padding:8px 12px; background:var(--ck); color:var(--ck-text); }
+.ck-sub{ position:sticky; top:0; z-index:6; }
+.ck-sub .ck-row{ border-radius:0 0 30px 30px; padding-bottom:12px; box-shadow:var(--shadow-2); }
+.ck-btn{ width:44px; height:44px; flex:none; display:grid; place-items:center; border-radius:50%; border:var(--border-forced); background:var(--ck-ctrl); color:#fff; }
+.ck-btn:focus-visible, .ck-act:focus-visible, .btn-acc:focus-visible, .kpi-link:focus-visible{ outline:3px solid #fff; outline-offset:2px; box-shadow:0 0 0 7px var(--ck); }
+.ck-t{ flex:1; min-width:0; }
+.ck-name{ font:800 21px/1.15 var(--font-display); letter-spacing:-.02em; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.ck-name:focus{ outline:none; }
+.ck-eyebrow{ font-size:13px; font-weight:700; color:var(--ck-muted); }
+.ck-phase{ font-size:13px; font-weight:600; color:var(--ck-muted); display:flex; align-items:center; gap:6px; margin-top:2px; }
+.dot{ width:8px; height:8px; border-radius:50%; background:var(--sun); flex:none; }
+.dot.trip{ background:var(--accent); } .dot.after{ background:#9C97C4; }
+.ck-act{ min-height:44px; display:inline-flex; align-items:center; gap:6px; padding:0 14px 0 10px; border-radius:22px; border:var(--border-forced); background:var(--ck-ctrl); color:#fff; font-weight:700; font-size:14px; text-decoration:none; }
+.ck-spacer{ width:44px; flex:none; }
+.ck-hero{ background:radial-gradient(240px 96px at 100% 0, var(--ck-glow-mint), transparent), radial-gradient(220px 96px at 0 0, var(--ck-glow-lav), transparent), var(--ck);
+  color:var(--ck-text); padding:0 16px 16px; border-radius:0 0 30px 30px; margin-top:-1px; }
+.kpi{ display:grid; grid-template-columns:64px 1fr; gap:4px 12px; align-items:center; background:var(--ck-kpi); border-radius:20px; padding:12px; border:var(--border-forced); }
+.kpi .ring{ grid-row:span 2; width:64px; height:64px; position:relative; }
+.kpi .ring svg{ width:64px; height:64px; transform:rotate(-90deg); }
+.kpi .ring b{ position:absolute; inset:0; display:grid; place-items:center; font:800 20px/1 var(--font-display); font-variant-numeric:tabular-nums; }
+.kpi .ring b small{ display:block; font:700 10px/1 var(--font-sans); color:var(--ck-muted); margin-top:2px; text-align:center; }
+.kpi-big{ font:800 17px/1.25 var(--font-display); letter-spacing:-.01em; }
+.kpi-sub{ font-size:13px; font-weight:500; color:var(--ck-muted); line-height:1.4; }
+.kpi-actions{ grid-column:1 / -1; display:flex; gap:8px; margin-top:8px; flex-wrap:wrap; }
+.btn-acc{ min-height:44px; display:inline-flex; align-items:center; justify-content:center; gap:6px; padding:0 16px; border-radius:12px; border:var(--border-forced);
+  background:var(--accent); color:#2B2266; font-weight:800; font-size:14px; text-decoration:none; box-shadow:var(--shadow-btn-acc); }
+.kpi-link{ min-height:44px; display:inline-flex; align-items:center; gap:6px; padding:0 14px; border-radius:12px; color:#fff; background:var(--ck-ctrl); font-weight:700; font-size:14px; text-decoration:none; border:var(--border-forced); }
+.ring-track{ stroke:var(--ck-ring-track); } .ring-fill{ stroke:url(#ringGrad); transition:stroke-dashoffset var(--d-moderate) var(--ease-standard); }
+
+/* ---------- Karten, Kacheln, Zeilen ---------- */
+.card{ background:var(--surface); border-radius:24px; box-shadow:var(--shadow-1); padding:16px; border:var(--border-forced); }
+.card.flush{ padding:0; overflow:hidden; }
+.card h2,.card h3{ margin:0; }
+.card-title{ font:800 17px/1.25 var(--font-display); }
+.todo{ position:relative; padding:14px 14px 8px; }
+.todo::before{ content:""; position:absolute; left:0; top:18px; bottom:18px; width:4px; border-radius:0 4px 4px 0; background:var(--todo-bar); }
+.todo-h{ display:flex; justify-content:space-between; align-items:center; padding:0 4px 4px; }
+.todo-h h2{ font:800 17px/1.2 var(--font-display); }
+.todo-first{ padding:8px 4px 12px; border-bottom:1px solid var(--line); }
+.todo-first p{ font-size:16px; font-weight:700; line-height:1.35; }
+.todo-first p.small{ font-size:14px; font-weight:500; margin-top:2px; }
+.row{ display:flex; align-items:center; gap:12px; min-height:56px; padding:8px 4px; width:100%; text-align:left; background:none; border:0; border-radius:14px; color:inherit; text-decoration:none; }
+.row + .row{ border-top:1px solid var(--line); border-radius:0; }
+a.row:hover, button.row:hover{ background:color-mix(in srgb, var(--sunken) 60%, transparent); }
+.row .grow{ flex:1; min-width:0; }
+.row .t{ font-weight:700; font-size:15px; line-height:1.3; display:block; }
+.row .s{ font-size:14px; color:var(--muted); line-height:1.35; display:block; }
+.row .chev{ color:var(--subtle); }
+.done-msg{ display:flex; gap:12px; align-items:center; padding:6px 4px 10px; }
+.tile-ic{ width:40px; height:40px; border-radius:13px; display:grid; place-items:center; flex:none; }
+.tile-ic.sm{ width:34px; height:34px; border-radius:11px; }
+.t-lav{ background:var(--t-lav-bg); color:var(--t-lav-fg); } .t-mint{ background:var(--t-mint-bg); color:var(--t-mint-fg); }
+.t-sun{ background:var(--t-sun-bg); color:var(--t-sun-fg); } .t-coral{ background:var(--t-coral-bg); color:var(--t-coral-fg); }
+.t-brand{ background:var(--t-brand-bg); color:var(--t-brand-fg); } .t-no{ background:var(--no-bg); color:var(--no-fg); }
+.tiles{ display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 9.5em), 1fr)); gap:12px; }
+.tile{ position:relative; display:flex; flex-direction:column; gap:10px; min-height:140px; padding:14px; background:var(--surface); border-radius:22px; box-shadow:var(--shadow-1);
+  color:inherit; text-decoration:none; border:var(--border-forced); transition:transform var(--d-instant) var(--ease-standard); }
+.tile:active, .hero:active, .press:active{ transform:scale(var(--scale-press)); }
+.tile .chev{ position:absolute; right:12px; top:16px; color:var(--subtle); }
+.tile-title{ font:800 16px/1.2 var(--font-display); }
+.tile-status{ font-size:14px; line-height:1.35; color:var(--muted); font-weight:500; }
+.tile-status strong{ color:var(--text); font-weight:700; }
+.tile.enter{ animation:tileIn var(--d-slow) var(--ease-enter) both; }
+@keyframes tileIn{ from{ opacity:0; transform:translateY(var(--dist)); } }
+.hero{ display:block; background:var(--surface); border-radius:24px; box-shadow:var(--shadow-1); color:inherit; text-decoration:none; overflow:hidden; border:var(--border-forced); transition:transform var(--d-instant) var(--ease-standard); }
+.hero-top{ display:flex; gap:12px; align-items:center; padding:14px 14px 0; }
+.hero-top .grow{ flex:1; }
+.hero-body{ padding:10px 14px 14px; }
+.hero .big{ font:800 22px/1.2 var(--font-display); letter-spacing:-.015em; }
+.thumbs{ display:flex; gap:6px; margin-top:12px; }
+.thumbs span{ flex:1; height:54px; border-radius:12px; }
+.bar{ height:6px; border-radius:6px; background:var(--progress-track); overflow:hidden; margin-top:10px; }
+.bar i{ display:block; height:100%; border-radius:6px; background:var(--progress-fill); transform-origin:left; animation:grow var(--d-moderate) var(--ease-standard) both; }
+@keyframes grow{ from{ transform:scaleX(0); } }
+
+/* ---------- Chips, Avatare ---------- */
+.chip{ display:inline-flex; align-items:center; gap:4px; min-height:26px; padding:3px 10px; border-radius:999px; font-size:13px; font-weight:700; line-height:1.2; border:var(--border-forced); white-space:nowrap; }
+.chip.yes{ background:var(--accent-tint); color:var(--accent-text); } .chip.maybe{ background:var(--sun-tint); color:var(--warn-text); }
+.chip.no{ background:var(--no-bg); color:var(--no-fg); } .chip.info{ background:var(--info-tint); color:var(--info-text); }
+.chip.todo{ background:var(--todo-bg); color:var(--todo-fg); } .chip.rank{ background:var(--sun); color:#1E1A3D; }
+.chip.open{ background:transparent; color:var(--muted); box-shadow:inset 0 0 0 1.5px var(--border); }
+.chips{ display:flex; flex-wrap:wrap; gap:6px; }
+.av{ width:32px; height:32px; border-radius:50%; display:inline-grid; place-items:center; font:800 11.5px/1 var(--font-sans); color:var(--av-ink); flex:none; box-shadow:0 0 0 2px var(--surface); }
+.av.sm{ width:24px; height:24px; font-size:10px; } .av.lg{ width:40px; height:40px; font-size:13.5px; }
+.av.ph{ background:transparent!important; color:var(--muted); box-shadow:inset 0 0 0 1.5px var(--border); border:0; }
+.av-1{ background:var(--av1);} .av-2{ background:var(--av2);} .av-3{ background:var(--av3);} .av-4{ background:var(--av4);} .av-5{ background:var(--av5);} .av-6{ background:var(--av6);}
+.stack{ display:flex; } .stack .av + .av{ margin-left:-8px; }
+
+/* ---------- Tasten ---------- */
+.btn{ min-height:48px; display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 18px; border-radius:16px; border:var(--border-forced); font-weight:700; font-size:16px; text-decoration:none; text-align:center; line-height:1.2;
+  transition:transform var(--d-instant) var(--ease-standard), background-color var(--d-fast) linear; }
+.btn:active{ transform:scale(var(--scale-press)); }
+.btn.primary{ min-height:54px; font-size:17px; background:var(--primary); color:var(--on-primary); box-shadow:var(--shadow-btn); width:100%; }
+.btn.primary:hover{ background:var(--primary-h); }
+.btn.secondary{ background:transparent; color:var(--btn2-text); box-shadow:inset 0 0 0 2px var(--btn2-border); }
+.btn.sm{ min-height:44px; font-size:14px; padding:8px 14px; border-radius:12px; }
+.btn.block{ width:100%; }
+.btn.text{ min-height:44px; padding:8px 4px; color:var(--link); text-decoration:underline; text-underline-offset:3px; background:none; }
+.btn.danger-quiet{ color:var(--danger); background:none; min-height:44px; padding:8px 4px; }
+.btn.danger{ background:var(--danger); color:#fff; }
+[data-theme="dark"] .btn.danger{ color:#14112E; }
+.btn[aria-disabled="true"]{ background:var(--sunken); color:var(--subtle); box-shadow:none; }
+.btn-row{ display:flex; gap:8px; flex-wrap:wrap; }
+.btn-row .btn{ flex:1 1 auto; }
+.actionbar{ position:sticky; bottom:0; z-index:5; padding:12px 16px calc(14px + env(safe-area-inset-bottom)); background:var(--surface); border-radius:28px 28px 0 0;
+  box-shadow:0 -12px 30px -18px rgb(43 34 102 / .45); display:flex; flex-direction:column; gap:6px; border:var(--border-forced); }
+.actionbar .hint{ font-size:13px; color:var(--muted); text-align:center; }
+
+/* ---------- Formulare ---------- */
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field > label, .lbl{ font-size:14px; font-weight:700; }
+.field .help{ font-size:14px; color:var(--muted); line-height:1.4; }
+.input, select.input, textarea.input{ width:100%; min-height:48px; padding:11px 14px; border-radius:16px; border:1.5px solid var(--border); background:var(--surface); font-size:16px; }
+textarea.input{ min-height:110px; resize:vertical; line-height:1.45; }
+.input:focus{ outline:3px solid var(--focus); outline-offset:2px; border-color:var(--selected); }
+.input[aria-invalid="true"]{ border:2px solid var(--danger); }
+.err{ display:flex; gap:6px; align-items:flex-start; font-size:14px; font-weight:600; color:var(--danger); }
+.err[hidden]{ display:none; }
+.amount{ display:flex; align-items:center; gap:8px; border-radius:20px; padding:10px 16px; background:var(--sunken); }
+.amount input{ flex:1; min-width:0; border:0; background:transparent; font:800 34px/1.1 var(--font-display); font-variant-numeric:tabular-nums; padding:6px 0; }
+.amount input:focus{ outline:none; }
+.amount:focus-within{ outline:3px solid var(--focus); outline-offset:2px; }
+.amount .cur{ font:800 28px/1 var(--font-display); color:var(--muted); }
+.suffix{ position:relative; } .suffix .input{ padding-right:44px; } .suffix span{ position:absolute; right:16px; top:50%; transform:translateY(-50%); color:var(--muted); font-weight:700; }
+.counter{ font-size:13px; color:var(--subtle); text-align:right; font-variant-numeric:tabular-nums; }
+.pickchips{ display:flex; flex-wrap:wrap; gap:8px; }
+.pick{ position:relative; }
+.pick input{ position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+.pick > span{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:6px 14px 6px 8px; border-radius:22px; background:var(--surface); box-shadow:inset 0 0 0 1.5px var(--border); font-size:14px; font-weight:700; }
+.pick input:checked + span{ background:var(--info-tint); box-shadow:inset 0 0 0 2px var(--selected); color:var(--text); }
+.pick > input:checked + span::after{ content:"✓"; font-weight:800; margin-left:2px; }
+.pick input:focus-visible + span{ outline:3px solid var(--focus); outline-offset:2px; }
+.seg{ display:flex; background:var(--sunken); border-radius:16px; padding:4px; gap:4px; }
+.seg > *{ flex:1; min-height:44px; border:0; border-radius:12px; background:transparent; font-weight:700; font-size:14px; color:var(--muted); display:flex; align-items:center; justify-content:center; text-decoration:none; position:relative; }
+.seg input{ position:absolute; opacity:0; inset:0; margin:0; cursor:pointer; }
+.seg [aria-current="page"], .seg [aria-selected="true"], .seg label:has(input:checked){ background:var(--surface); color:var(--text); font-weight:800; box-shadow:inset 0 0 0 2px var(--selected), 0 6px 14px -8px rgb(43 34 102 / .5); }
+.seg label:has(input:focus-visible){ outline:3px solid var(--focus); outline-offset:2px; }
+.switch-row{ display:flex; align-items:center; gap:12px; min-height:56px; padding:6px 0; }
+.switch-row + .switch-row{ border-top:1px solid var(--line); }
+.switch-row .grow{ flex:1; }
+.switch{ appearance:none; -webkit-appearance:none; width:52px; height:32px; border-radius:16px; background:var(--sunken); box-shadow:inset 0 0 0 1.5px var(--border); position:relative; flex:none; margin:0; cursor:pointer; transition:background-color var(--d-fast) linear; }
+.switch::after{ content:""; position:absolute; top:3px; left:3px; width:26px; height:26px; border-radius:50%; background:var(--border); transition:transform var(--d-base) var(--spring-soft); }
+.switch:checked{ background:var(--primary); box-shadow:none; }
+.switch:checked::after{ transform:translateX(20px); background:var(--on-primary); }
+.switch:disabled{ opacity:.55; cursor:not-allowed; }
+.check-row{ display:flex; gap:12px; align-items:flex-start; padding:12px; border-radius:16px; background:var(--sunken); cursor:pointer; }
+.check-row input{ width:24px; height:24px; margin:0; flex:none; accent-color:var(--primary); }
+.check-row span{ font-size:15px; line-height:1.45; }
+
+/* ---------- Hinweise ---------- */
+.note{ display:flex; gap:10px; align-items:flex-start; padding:12px 14px; border-radius:16px; font-size:14px; line-height:1.45; border:var(--border-forced); }
+.note.info{ background:var(--info-tint); color:var(--info-text); } .note.warn{ background:var(--sun-tint); color:var(--warn-text); }
+.note.ok{ background:var(--accent-tint); color:var(--accent-text); } .note.demo{ background:var(--sunken); color:var(--muted); }
+.note.todo{ background:var(--todo-bg); color:var(--todo-fg); }
+.note b{ font-weight:800; }
+.empty{ text-align:center; padding:24px 16px; display:flex; flex-direction:column; gap:10px; align-items:center; }
+.empty .illu{ width:96px; height:96px; border-radius:32px; background:var(--t-lav-bg); display:grid; place-items:center; color:var(--t-lav-fg); }
+
+/* ---------- Unterkünfte ---------- */
+.ph-0{ background:radial-gradient(circle at 78% 30%, #FFCF4A 0 16px, rgb(255 207 74 / .35) 17px 26px, transparent 27px), linear-gradient(180deg, #A79AF2 0 46%, #52E5B8 46% 62%, #1FBF94 62%); }
+.ph-1{ background:radial-gradient(circle at 25% 28%, #FFDB73 0 12px, transparent 13px), linear-gradient(180deg, #5B48C9 0 30%, #A79AF2 30% 55%, #FFD3C7 55% 100%); }
+.ph-2{ background:radial-gradient(circle at 70% 70%, #fff 0 10px, transparent 11px), linear-gradient(160deg, #C9DBFF 0 40%, #7DEDCB 40% 70%, #3FD0A5 70%); }
+.ph-3{ background:radial-gradient(circle at 30% 35%, #FFCF4A 0 14px, transparent 15px), linear-gradient(180deg, #FFE7A3 0 50%, #52E5B8 50% 70%, #5B48C9 70%); }
+.ph-x{ background:repeating-linear-gradient(135deg, var(--sunken) 0 10px, var(--bg) 10px 20px); }
+.stay-row{ display:flex; gap:12px; align-items:center; padding:12px 0; }
+.stay-row + .stay-row{ border-top:1px solid var(--line); }
+.stay-thumb{ width:64px; height:64px; border-radius:14px; flex:none; display:grid; place-items:center; color:var(--muted); }
+.stay-row .grow{ flex:1; min-width:0; }
+.stay-name{ font:800 16px/1.25 var(--font-display); overflow-wrap:anywhere; }
+.rate{ display:flex; gap:6px; }
+.rate button{ width:44px; height:44px; border-radius:14px; border:0; display:grid; place-items:center; background:var(--sunken); color:var(--muted); }
+.rate button[aria-pressed="true"].like{ background:var(--accent-tint); color:var(--accent-text); box-shadow:inset 0 0 0 2px var(--accent-text); }
+.rate button[aria-pressed="true"].nope{ background:var(--no-bg); color:var(--text); box-shadow:inset 0 0 0 2px var(--no-fg); }
+.locked{ display:flex; gap:12px; align-items:center; padding:14px; border-radius:20px; background:var(--sunken); color:var(--muted); font-size:14px; line-height:1.4; }
+.rank-item{ padding:14px 0; display:grid; grid-template-columns:auto 1fr; gap:4px 12px; }
+.rank-item + .rank-item{ border-top:1px solid var(--line); }
+.rank-no{ width:32px; height:32px; border-radius:50%; display:grid; place-items:center; font:800 15px/1 var(--font-display); background:var(--sunken); color:var(--text); grid-row:span 3; }
+.rank-no.first{ background:var(--sun); color:#1E1A3D; }
+.likes{ display:flex; gap:12px; font-size:14px; font-weight:800; font-variant-numeric:tabular-nums; }
+.likes span{ display:inline-flex; align-items:center; gap:4px; }
+.chosen-img{ height:150px; position:relative; }
+.chosen-img .chip{ position:absolute; left:12px; top:12px; }
+
+/* Swipe */
+.swipe-wrap{ flex:1; display:flex; flex-direction:column; padding:14px 16px 8px; gap:12px; }
+.swipe-count{ display:flex; justify-content:space-between; align-items:center; font-size:14px; font-weight:700; color:var(--muted); }
+.deck{ position:relative; flex:1; min-height:430px; }
+.scard{ position:absolute; inset:0; background:var(--surface); border-radius:28px; box-shadow:var(--shadow-2); overflow:hidden; display:flex; flex-direction:column; touch-action:pan-y; user-select:none; -webkit-user-select:none; border:var(--border-forced); will-change:transform; }
+.scard.next{ transform:scale(.95) translateY(14px); opacity:.85; box-shadow:var(--shadow-1); pointer-events:none; }
+.scard.top{ cursor:grab; z-index:2; }
+.scard.top.dragging{ cursor:grabbing; }
+.scard .img{ flex:1; min-height:180px; position:relative; }
+.scard .img .src{ position:absolute; left:12px; bottom:12px; background:rgb(20 17 46 / .72); color:#fff; font-size:12.5px; font-weight:700; padding:4px 10px; border-radius:999px; }
+.scard .img .noprev{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; color:var(--muted); font-size:14px; font-weight:600; text-align:center; padding:16px; }
+.scard .info{ padding:14px 16px 16px; display:flex; flex-direction:column; gap:6px; }
+.scard .title{ font:800 21px/1.2 var(--font-display); letter-spacing:-.015em; }
+.scard .price{ font-size:15px; font-weight:700; }
+.stamp{ position:absolute; top:22px; padding:6px 14px; border-radius:14px; font:800 18px/1 var(--font-display); display:flex; align-items:center; gap:6px; opacity:0; pointer-events:none; }
+.stamp.like{ left:18px; background:var(--accent); color:#2B2266; transform:rotate(-8deg); }
+.stamp.nope{ right:18px; background:#fff; color:#1E1A3D; transform:rotate(8deg); box-shadow:inset 0 0 0 2px #1E1A3D; }
+.swipe-btns{ display:flex; justify-content:center; align-items:flex-start; gap:22px; padding:6px 0 4px; }
+.swipe-btns button{ display:flex; flex-direction:column; align-items:center; gap:6px; border:0; background:none; font-size:13px; font-weight:700; color:var(--muted); min-width:64px; }
+.swipe-btns .circle{ width:64px; height:64px; border-radius:50%; display:grid; place-items:center; background:var(--surface); box-shadow:var(--shadow-2); border:var(--border-forced); transition:transform var(--d-instant) var(--ease-standard); }
+.swipe-btns button:active .circle{ transform:scale(.92); }
+.swipe-btns .like .circle{ background:var(--accent); color:#2B2266; }
+.swipe-btns .nope .circle{ color:var(--text); }
+.swipe-btns .undo .circle{ width:48px; height:48px; margin-top:8px; }
+.swipe-btns button[aria-disabled="true"]{ opacity:.45; cursor:not-allowed; }
+.swipe-btns button:focus-visible{ outline:none; } .swipe-btns button:focus-visible .circle{ outline:3px solid var(--focus); outline-offset:3px; }
+.kbd-hint{ text-align:center; font-size:13px; color:var(--subtle); }
+.seal{ width:72px; height:72px; border-radius:50%; background:var(--accent); color:#2B2266; display:grid; place-items:center; box-shadow:0 0 0 8px var(--accent-tint); animation:pop var(--d-moderate) var(--spring-bouncy) both; }
+@keyframes pop{ from{ transform:scale(.6); opacity:0; } }
+
+/* ---------- Kosten ---------- */
+.saldo{ font:800 26px/1.15 var(--font-display); letter-spacing:-.02em; font-variant-numeric:tabular-nums; }
+.saldo.plus{ color:var(--accent-text); }
+.money{ font-variant-numeric:tabular-nums; font-weight:800; white-space:nowrap; }
+.day-h{ font-size:13px; font-weight:800; color:var(--muted); margin:10px 4px 0; }
+.xfer{ display:grid; grid-template-columns:1fr auto; gap:8px 12px; align-items:center; padding:12px 0; }
+.xfer + .xfer{ border-top:1px solid var(--line); }
+.xfer .who{ display:flex; align-items:center; gap:6px; font-weight:700; flex-wrap:wrap; }
+.xfer .acts{ grid-column:1 / -1; display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.pay-info{ display:flex; align-items:center; gap:8px; font-size:14px; color:var(--muted); }
+.split-row{ display:flex; align-items:center; gap:10px; min-height:52px; }
+.split-row + .split-row{ border-top:1px solid var(--line); }
+.split-row .grow{ flex:1; font-weight:700; }
+.split-row .suffix{ width:130px; }
+.remain{ font-size:14px; font-weight:800; font-variant-numeric:tabular-nums; }
+.remain.ok{ color:var(--accent-text); } .remain.bad{ color:var(--warn-text); }
+
+/* ---------- Reisedaten ---------- */
+.dl{ display:grid; grid-template-columns:1fr; gap:0; margin:0; }
+.dl > div{ display:grid; grid-template-columns:1fr auto; column-gap:8px; align-items:center; padding:10px 0; min-height:52px; }
+.dl dt, .dl dd{ grid-column:1; }
+.dl .icon-btn{ grid-column:2; grid-row:1 / span 2; }
+.dl > div + div{ border-top:1px solid var(--line); }
+.dl dt{ font-size:13px; font-weight:700; color:var(--muted); }
+.dl dd{ margin:0; font-weight:700; font-size:16px; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.dl .grow{ flex:1; min-width:0; }
+.icon-btn{ width:44px; height:44px; border-radius:14px; border:0; background:var(--sunken); color:var(--text); display:grid; place-items:center; flex:none; }
+.person-card{ padding:12px 14px; }
+.person-head{ display:flex; align-items:center; gap:10px; min-height:44px; }
+.person-head .grow{ flex:1; font-weight:800; }
+.steps{ display:flex; gap:6px; } .steps i{ flex:1; height:6px; border-radius:6px; background:var(--progress-track); } .steps i.on{ background:var(--progress-fill); }
+.log{ list-style:none; margin:0; padding:0; font-size:14px; color:var(--muted); display:grid; gap:6px; }
+.log li{ display:flex; gap:8px; align-items:flex-start; }
+
+/* ---------- Unterlagen ---------- */
+.doc-row{ display:flex; align-items:center; gap:12px; min-height:64px; padding:10px 4px; width:100%; text-align:left; background:none; border:0; color:inherit; border-radius:14px; }
+.doc-row + .doc-row{ border-top:1px solid var(--line); border-radius:0; }
+.doc-row .grow{ flex:1; min-width:0; }
+.doc-row .t{ font-weight:800; font-size:15px; display:block; overflow-wrap:anywhere; }
+.doc-row .s{ font-size:13.5px; color:var(--muted); display:block; margin-top:2px; }
+.spin{ width:16px; height:16px; border-radius:50%; border:2.5px solid var(--line); border-top-color:var(--primary); animation:spin .8s linear infinite; display:inline-block; vertical-align:-3px; }
+[data-motion="reduce"] .spin{ animation-duration:2.4s; }
+@keyframes spin{ to{ transform:rotate(360deg); } }
+.drop{ display:flex; flex-direction:column; align-items:center; gap:8px; padding:22px 16px; border-radius:20px; border:2px dashed var(--border); text-align:center; cursor:pointer; }
+.drop:focus-within{ outline:3px solid var(--focus); outline-offset:2px; }
+.quota{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:var(--muted); }
+
+/* ---------- Infoseite ---------- */
+.info-item{ display:flex; gap:12px; padding:12px 0; }
+.info-item + .info-item{ border-top:1px solid var(--line); }
+.info-item .grow{ flex:1; min-width:0; }
+.info-item .k{ font-size:13px; font-weight:700; color:var(--muted); display:block; }
+.info-item .v{ font-size:16px; font-weight:600; line-height:1.45; display:block; overflow-wrap:anywhere; white-space:pre-line; }
+
+/* ---------- Sheet, Toast ---------- */
+.scrim{ position:absolute; inset:0; background:var(--scrim); z-index:40; animation:fade var(--d-base) linear both; }
+.sheet{ position:absolute; left:0; right:0; bottom:0; z-index:41; max-height:88%; overflow-y:auto; background:var(--raised); border-radius:28px 28px 0 0; box-shadow:var(--shadow-3);
+  padding:8px 16px 24px; animation:sheetIn var(--d-slow) var(--ease-emph) both; border:var(--border-forced); }
+@keyframes sheetIn{ from{ transform:translateY(40%); opacity:0; } }
+[data-motion="reduce"] .sheet{ animation:fade var(--d-fade) linear both; }
+.sheet .grip{ width:40px; height:5px; border-radius:3px; background:var(--line); margin:4px auto 6px; }
+.sheet-h{ display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.sheet-h h2{ flex:1; font:800 18px/1.25 var(--font-display); margin:0; }
+.sheet-h h2:focus{ outline:none; }
+.sheet .body{ display:flex; flex-direction:column; gap:12px; }
+.menu-item{ display:flex; align-items:center; gap:12px; width:100%; min-height:52px; padding:6px 4px; border:0; background:none; text-align:left; font-weight:700; font-size:16px; color:inherit; border-radius:12px; }
+.menu-item + .menu-item{ border-top:1px solid var(--line); border-radius:0; }
+.toast-root{ position:absolute; left:16px; right:16px; bottom:104px; z-index:60; display:flex; justify-content:center; pointer-events:none; }
+.toast{ pointer-events:auto; display:flex; align-items:center; gap:10px; background:var(--inverse-bg); color:var(--inverse-text); border-radius:16px; padding:10px 10px 10px 14px; box-shadow:var(--shadow-3); font-weight:600; font-size:15px; max-width:100%;
+  animation:toastIn var(--d-base) var(--ease-enter) both; }
+@keyframes toastIn{ from{ opacity:0; transform:translateY(var(--dist)); } }
+.toast .ok{ color:var(--inverse-link); }
+.toast button{ min-height:44px; border:0; background:none; color:var(--inverse-link); font-weight:800; padding:0 8px; text-decoration:underline; }
+.share-prev{ white-space:pre-line; background:var(--sunken); border-radius:16px; padding:12px 14px; font-size:14px; line-height:1.45; }
+
+@media (forced-colors: active){
+  .card,.tile,.hero,.btn,.chip,.kpi,.sheet,.toast,.scard,.note,.ck-btn,.ck-act{ border:1px solid CanvasText; }
+  .bar i, .steps i.on{ background:Highlight; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#view">Zum Inhalt springen</a>
+
+<!-- Icon-Sprite (Stil wie docs/design/assets/icons/icons.svg: 24er Raster, 2-px-Strich, runde Enden) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52E5B8"/><stop offset="1" stop-color="#FFCF4A"/></linearGradient>
+  </defs>
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.7" fill="currentColor"/><circle cx="12" cy="12" r="1.7" fill="currentColor"/><circle cx="19" cy="12" r="1.7" fill="currentColor"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5" stroke-width="2.6"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11" stroke-width="2.6"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.2 4.2 0 0 1 12 7.3a4.2 4.2 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z" fill="currentColor" fill-opacity=".16"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 19V6M3 15h18v4M21 15v-2.5A3.5 3.5 0 0 0 17.5 9H11v6"/><circle cx="7" cy="11.5" r="1.8"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><path d="M5 7.5V7a2.5 2.5 0 0 1 2.5-2.5H17v3"/><rect x="3.5" y="7.5" width="17" height="12.5" rx="3" fill="currentColor" fill-opacity=".16"/><path d="M20.5 11.5h-4a2 2 0 0 0 0 4h4"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3" fill="currentColor" fill-opacity=".16"/><circle cx="8.5" cy="11" r="2"/><path d="M5.5 16c.6-1.4 1.7-2.1 3-2.1s2.4.7 3 2.1M14 10h4M14 13.5h3"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M3 9V7a1.5 1.5 0 0 1 1.5-1.5h15A1.5 1.5 0 0 1 21 7v2a3 3 0 0 0 0 6v2a1.5 1.5 0 0 1-1.5 1.5h-15A1.5 1.5 0 0 1 3 17v-2a3 3 0 0 0 0-6z" fill="currentColor" fill-opacity=".16"/><path d="M14.5 6v12" stroke-dasharray="2 2.6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.3"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19c.7-3 2.9-4.6 5.5-4.6s4.8 1.6 5.5 4.6"/><path d="M15.5 5.6a3 3 0 0 1 0 5.8M17.5 14.6c1.6.6 2.6 2 3 4.4"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l7.5 3v5.5c0 4.6-3.2 8-7.5 9.5-4.3-1.5-7.5-4.9-7.5-9.5V6z"/><path d="M9 12l2.2 2.2L15.5 10"/></symbol>
+  <symbol id="i-download" viewBox="0 0 24 24"><path d="M12 4v11M7 10.5l5 5 5-5M5 20h14"/></symbol>
+  <symbol id="i-upload" viewBox="0 0 24 24"><path d="M12 16V5M7 9.5l5-5 5 5M5 20h14"/></symbol>
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-eyeoff" viewBox="0 0 24 24"><path d="M3 3l18 18M10.6 6a9.6 9.6 0 0 1 1.4-.1c6 0 9.5 6.1 9.5 6.1a17 17 0 0 1-2.7 3.4M6.6 7.6A16 16 0 0 0 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4.4-1.1"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="11" height="11" rx="2.5"/><path d="M15.5 8.5v-2a2 2 0 0 0-2-2h-7a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h2"/></symbol>
+  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"/></symbol>
+  <symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5.5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="18.5" r="2.5"/><path d="M8.2 10.8l7.6-4.1M8.2 13.2l7.6 4.1"/></symbol>
+  <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.8l2.5 5.2 5.7.7-4.2 3.9 1.1 5.6L12 16.4l-5.1 2.8 1.1-5.6-4.2-3.9 5.7-.7z" fill="currentColor" fill-opacity=".16"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M21 15.5l-8-4.5V5a1.5 1.5 0 0 0-3 0v6l-8 4.5V17l8-2.5V19l-2.5 1.8V22l4-1 4 1v-1.2L13 19v-4.5l8 2.5z"/></symbol>
+  <symbol id="i-ship" viewBox="0 0 24 24"><path d="M3 18.5c1.5 1.2 3 1.2 4.5 0s3-1.2 4.5 0 3 1.2 4.5 0 3-1.2 4.5 0"/><path d="M5.2 15.5L4 11h16l-1.2 4.5M7.5 11V7h9v4M12 3.5V7"/></symbol>
+  <symbol id="i-food" viewBox="0 0 24 24"><path d="M7 3v8a2 2 0 0 0 2 2v8M5 3v5a2 2 0 0 0 2 2M9 3v5a2 2 0 0 1-2 2M17 21V3c-2.2 1.4-3.2 4-3.2 7.5H17"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.9 5.6L19.5 10.5l-5.6 1.9L12 18l-1.9-5.6L4.5 10.5l5.6-1.9z" fill="currentColor" fill-opacity=".16"/></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3.5 12.5V5A1.5 1.5 0 0 1 5 3.5h7.5L21 12l-8.5 8.5z"/><circle cx="8" cy="8" r="1.5" fill="currentColor"/></symbol>
+  <symbol id="i-car" viewBox="0 0 24 24"><path d="M5.5 17v2M18.5 17v2M3.5 17h17v-4.5l-2-5.5h-13l-2 5.5z"/><path d="M3.5 12.5h17"/><circle cx="7.5" cy="14.8" r=".9" fill="currentColor"/><circle cx="16.5" cy="14.8" r=".9" fill="currentColor"/></symbol>
+  <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 4l9 16H3z"/><path d="M12 10v4.5M12 17.2v.3"/></symbol>
+  <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4.5h4V7M6.5 7l1 13h9l1-13"/></symbol>
+  <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l5 5v13H6z" fill="currentColor" fill-opacity=".16"/><path d="M14 3v5h5"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 17.5l-1-9.5 5 4 4-6.5 4 6.5 5-4-1 9.5z" fill="currentColor" fill-opacity=".2"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M5 4h3.5l1.5 4-2 1.3a11 11 0 0 0 6.7 6.7L16 14l4 1.5V19a1.5 1.5 0 0 1-1.6 1.5C10.5 20 4 13.5 3.5 5.6A1.5 1.5 0 0 1 5 4z"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 0 0-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 0 0 5.7 5.7l1-1"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-swap" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-vote" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.2l2.4 2.4 4.6-4.8"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6.5 8 6.5V20h-5v-5h-6v5H4z"/></symbol>
+</svg>
+
+<div class="stage">
+  <div class="device" id="device">
+    <div class="statusbar" aria-hidden="true"><span>9:41</span><span class="notch"></span><span>5G ▮</span></div>
+    <main id="view" class="view" tabindex="-1" aria-label="App-Ansicht"></main>
+    <div id="sheet-root"></div>
+    <div class="toast-root" id="toast-root" role="status" aria-live="polite"></div>
+    <div class="sr-only" id="live" aria-live="polite"></div>
+  </div>
+
+  <aside class="panel" aria-labelledby="panel-h">
+    <h2 id="panel-h">Mockup „Reise managen“</h2>
+    <p>Klickbarer UX-Prototyp für W16–W22 (Ausbaustufe R). Nur Fantasiedaten, nichts wird gespeichert. Swipen per Maus/Finger oder Tasten ← / →.</p>
+    <fieldset>
+      <legend>Ansicht als</legend>
+      <div class="seg-p">
+        <label><input type="radio" name="who" value="max" checked><span>Max · Mitglied</span></label>
+        <label><input type="radio" name="who" value="lena"><span>Lena · Orga + bucht</span></label>
+      </div>
+    </fieldset>
+    <fieldset>
+      <legend>Teilphase (F-053)</legend>
+      <div class="seg-p">
+        <label><input type="radio" name="phase" value="prep" checked><span>Vorbereitung</span></label>
+        <label><input type="radio" name="phase" value="trip"><span>Unterwegs</span></label>
+        <label><input type="radio" name="phase" value="after"><span>Danach</span></label>
+      </div>
+    </fieldset>
+    <label class="chk-p"><input type="checkbox" id="opt-dark"> Dunkelmodus</label>
+    <label class="chk-p"><input type="checkbox" id="opt-motion"> Bewegung reduzieren</label>
+    <h3 class="sec" style="font-size:15px;margin:10px 0 6px">Direkt zu</h3>
+    <ul class="jump">
+      <li><a href="#/"><b>W16</b> Reise-Cockpit</a></li>
+      <li><a href="#/stay/new"><b>W17</b> Unterkunft vorschlagen</a></li>
+      <li><a href="#/stay/swipe"><b>W18</b> Unterkünfte swipen</a></li>
+      <li><a href="#/stay"><b>W18</b> Unterkünfte &amp; Rangliste</a></li>
+      <li><a href="#/costs"><b>W19</b> Kosten – Ausgaben</a></li>
+      <li><a href="#/costs/new"><b>W19</b> Ausgabe hinzufügen</a></li>
+      <li><a href="#/costs/balances"><b>W19</b> Salden &amp; Ausgleich</a></li>
+      <li><a href="#/data"><b>W20</b> Reisedaten</a></li>
+      <li><a href="#/data/new" data-as="lena"><b>W20</b> Neue Anfrage (Lena)</a></li>
+      <li><a href="#/docs"><b>W21</b> Reiseunterlagen</a></li>
+      <li><a href="#/docs/upload"><b>W21</b> Unterlage hochladen</a></li>
+      <li><a href="#/info"><b>W22</b> Infos zur Reise</a></li>
+    </ul>
+    <button type="button" class="reset" id="reset">Demo zurücksetzen</button>
+  </aside>
+</div>
+
+<script>
+"use strict";
+/* ======================= Daten (Fantasiedaten) ======================= */
+const TRIP = { name:"Kroatien 2027", start:"2027-06-12", end:"2027-06-19", nights:7, fixedOn:"2027-04-20" };
+const TODAY = { prep:"2027-05-02", trip:"2027-06-14", after:"2027-06-28" };
+const DATA_DELETE = "2027-06-26";   // Reisedaten: 7 Tage nach Reiseende (Q31)
+const DOCS_DELETE = "2027-07-19";   // Unterlagen: 30 Tage nach Reiseende (Q31)
+const PEOPLE = [
+  { id:"lena",  name:"Lena",  av:1 },
+  { id:"max",   name:"Max",   av:2 },
+  { id:"kemal", name:"Kemal", av:3 },
+  { id:"sara",  name:"Sara",  av:4 },
+  { id:"jonas", name:"Jonas", av:5 },
+  { id:"mia",   name:"Mia",   av:6, ph:true }
+];
+const ALL = PEOPLE.map(p => p.id);
+const CATS = { stay:["Unterkunft","i-bed","t-lav"], travel:["Anreise","i-car","t-lav"], food:["Essen","i-food","t-sun"], fun:["Aktivitäten","i-spark","t-mint"], misc:["Sonstiges","i-tag","t-no"] };
+const DOC_CATS = { travel:["Flug/Anreise","i-plane","t-lav"], stay:["Unterkunft","i-bed","t-lav"], fun:["Aktivität","i-spark","t-mint"], misc:["Sonstiges","i-file","t-no"] };
+const FIELDS = {
+  name:{ label:"Name laut Ausweis", always:true },
+  birth:{ label:"Geburtsdatum" },
+  salutation:{ label:"Anrede laut Ausweis" },
+  nationality:{ label:"Staatsangehörigkeit" },
+  doc:{ label:"Dokumentart + Dokumentnummer", warn:true },
+  expiry:{ label:"Ablaufdatum des Dokuments", needs:"doc" },
+  country:{ label:"Ausstellungsland", needs:"doc" }
+};
+
+function freshState(){
+  return {
+    view:"max", phase:"prep",
+    bucht:["lena"],
+    stays:[
+      { id:"villa",   title:"Villa Mare mit Pool",     place:"Stari Grad, Hvar", domain:"booking.com",      total:238000, note:"Pool + Meerblick, 4 Schlafzimmer", by:"lena",  ph:0, preview:true },
+      { id:"lavanda", title:"Apartment Lavanda",       place:"Split, Altstadt",  domain:"fewo-direkt.de",   total:164000, note:"Zentral, aber nur 2 Bäder",        by:"kemal", ph:1, preview:true },
+      { id:"kamena",  title:"Kamena Kuća – Steinhaus", place:"Bol, Brač",        domain:"airbnb.de",        total:205000, note:"5 Min. zum Zlatni Rat",            by:"sara",  ph:-1, preview:false },
+      { id:"azul",    title:"Casa Azul",               place:"Makarska",         domain:"booking.com",      total:192000, note:"",                                 by:"jonas", ph:2, preview:true },
+      { id:"bacvice", title:"Ferienwohnung Bačvice",   place:"Split, Strandnähe",domain:"kroatien-fewo.de", total:115000, note:"Günstig, 1 Schlafsofa",            by:"max",   ph:3, preview:true }
+    ],
+    ratings:{
+      villa:{ lena:1, kemal:0, sara:1, jonas:1, max:1 },
+      lavanda:{ lena:0, kemal:1, sara:0, jonas:0, max:0 },
+      kamena:{ lena:1, kemal:1, sara:1, jonas:1 },
+      azul:{ lena:0, kemal:0, sara:1, jonas:1 },
+      bacvice:{ lena:0, kemal:1, sara:0, jonas:0 }
+    },
+    chosen:null, booked:false, swipeUndo:[],
+    expenses:[
+      { id:"e1", title:"Fähre Split – Stari Grad", cents:18600, payer:"kemal", for:[...ALL], split:"equal", cat:"travel", date:"2027-04-29", by:"kemal" },
+      { id:"e2", title:"Mietwagen-Anzahlung", cents:12000, payer:"sara", for:["lena","max","kemal","sara"], split:"equal", cat:"travel", date:"2027-04-30", by:"sara" },
+      { id:"e3", title:"Bootstour (Reservierung)", cents:15000, payer:"lena", for:[...ALL], split:"equal", cat:"fun", date:"2027-05-01", by:"lena" },
+      { id:"e4", title:"Supermarkt Tommy", cents:8735, payer:"jonas", for:[...ALL], split:"equal", cat:"food", date:"2027-06-12", by:"jonas" },
+      { id:"e5", title:"Mietwagen Rest + Tanken", cents:26000, payer:"sara", for:["lena","max","kemal","sara"], split:"equal", cat:"travel", date:"2027-06-12", by:"sara" },
+      { id:"e6", title:"Abendessen Konoba Hvar", cents:21480, payer:"max", for:[...ALL], split:"custom", custom:{ lena:3580, max:3580, kemal:3580, sara:3580, jonas:3580, mia:3580 }, cat:"food", date:"2027-06-13", by:"max" }
+    ],
+    payments:[], closed:false,
+    payInfo:{ lena:"PayPal: lena.k.demo", kemal:"IBAN DE00 1234 5678 9000 0000 00 (Demo)" },
+    requests:[
+      { id:"r1", purpose:"Flüge München – Split", by:"lena", date:"2027-04-28", fields:["name","birth"], recipients:["max","kemal","sara","jonas","mia"], log:[],
+        entries:{ kemal:{ status:"released", first:"Kemal", last:"Yıldız", birth:"14.03.1996", at:"2027-04-28" },
+                  sara:{ status:"released", first:"Sara Marie", last:"Hoffmann", birth:"02.11.1997", at:"2027-04-29" },
+                  jonas:{ status:"open" }, max:{ status:"open" }, mia:{ status:"placeholder" } } }
+    ],
+    revealed:{},
+    fill:null,
+    docs:[
+      { id:"d1", title:"Flug München → Split (Hinflug)", cat:"travel", date:"2027-06-12", by:"lena", vis:"all", type:"PDF", size:"412 KB", status:"ok" },
+      { id:"d2", title:"Flug Split → München (Rückflug)", cat:"travel", date:"2027-06-19", by:"lena", vis:"all", type:"PDF", size:"398 KB", status:"ok" },
+      { id:"d3", title:"Fähre Split → Stari Grad", cat:"travel", date:"2027-06-14", by:"kemal", vis:"all", type:"PDF", size:"156 KB", status:"ok" },
+      { id:"d4", title:"Bordkarte Max (Hinflug)", cat:"travel", date:"2027-06-12", by:"lena", vis:["max","lena"], type:"PNG", size:"1,2 MB", status:"ok" },
+      { id:"d5", title:"Bootstour Bucht von Hvar", cat:"fun", date:"2027-06-17", by:"sara", vis:"all", type:"PDF", size:"640 KB", status:"ok", isNew:true }
+    ],
+    info:{ stay:"", address:"", checkin:"Sa., 12. Juni · ab 15:00 Uhr", checkout:"Sa., 19. Juni · bis 10:00 Uhr",
+      meet:"Flughafen München, Terminal 1 – Treffen 5:45 Uhr am Schalter, Abflug 7:10 Uhr",
+      emergency:"", notes:"Fähre ab Split um 9:30 Uhr – Tickets liegen unter „Unterlagen“.\nSupermarkt 5 Minuten zu Fuß.\nUnsere Playlist: https://example.com/playlist-kroatien",
+      by:"lena", at:"2027-04-30" },
+    seq:10
+  };
+}
+let S = freshState();
+
+/* ======================= Helfer ======================= */
+const $ = (s, r=document) => r.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]));
+const eurF = new Intl.NumberFormat("de-DE", { style:"currency", currency:"EUR" });
+const eur = c => eurF.format(c/100);
+const eur0 = c => new Intl.NumberFormat("de-DE", { style:"currency", currency:"EUR", maximumFractionDigits:0 }).format(c/100);
+const D = iso => new Date(iso + "T12:00:00");
+const dF = (iso, o) => new Intl.DateTimeFormat("de-DE", o).format(D(iso));
+const dShort = iso => dF(iso, { weekday:"short", day:"numeric", month:"long" });
+const dDay = iso => dF(iso, { day:"numeric", month:"long" });
+const ic = (n, cls="") => `<svg class="ic ${cls}" aria-hidden="true"><use href="#${n}"/></svg>`;
+const me = () => S.view;
+const P = id => PEOPLE.find(p => p.id === id);
+const nm = id => id === me() ? "du" : (P(id)?.name ?? "ehemaliges Mitglied");
+const Nm = id => id === me() ? "Du" : (P(id)?.name ?? "Ehemaliges Mitglied");
+const isOrga = id => id === "lena";
+const isBucht = id => S.bucht.includes(id);
+const av = (id, cls="") => { const p = P(id); const ini = p.name.slice(0,2).toUpperCase(); return `<span class="av av-${p.av} ${p.ph ? "ph" : ""} ${cls}" aria-hidden="true">${ini}</span>`; };
+const today = () => TODAY[S.phase];
+const daysBetween = (a, b) => Math.round((D(b) - D(a)) / 864e5);
+const parseCents = v => { const s = String(v).trim().replace(/\s|€/g, "").replace(/\.(?=\d{3}(\D|$))/g, "").replace(",", "."); if (!/^\d+(\.\d{1,2})?$/.test(s)) return NaN; return Math.round(parseFloat(s) * 100); };
+const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+const travellers = () => PEOPLE.length;
+
+/* ---- Kosten-Logik (Cent, deterministisch) ---- */
+function shares(e){
+  if (e.split === "custom") return { ...e.custom };
+  const ids = PEOPLE.map(p => p.id).filter(id => e.for.includes(id));
+  const base = Math.floor(e.cents / ids.length); let rest = e.cents - base * ids.length;
+  const out = {}; ids.forEach(id => { out[id] = base + (rest > 0 ? 1 : 0); if (rest > 0) rest--; });
+  return out;
+}
+const visExpenses = () => S.expenses.filter(e => S.phase !== "prep" || e.date < TRIP.start || e.userAdded).sort((a,b) => b.date.localeCompare(a.date) || b.id.localeCompare(a.id));
+function balances(){
+  const net = Object.fromEntries(ALL.map(id => [id, 0]));
+  for (const e of visExpenses()){ net[e.payer] += e.cents; const sh = shares(e); for (const id in sh) net[id] -= sh[id]; }
+  for (const p of S.payments){ net[p.from] += p.cents; net[p.to] -= p.cents; }
+  return net;
+}
+function settle(net){
+  const deb = ALL.filter(id => net[id] < 0).map(id => ({ id, c:-net[id] })).sort((a,b) => b.c - a.c || ALL.indexOf(a.id) - ALL.indexOf(b.id));
+  const cre = ALL.filter(id => net[id] > 0).map(id => ({ id, c:net[id] })).sort((a,b) => b.c - a.c || ALL.indexOf(a.id) - ALL.indexOf(b.id));
+  const out = []; let i = 0, j = 0;
+  while (i < deb.length && j < cre.length){
+    const c = Math.min(deb[i].c, cre[j].c);
+    if (c > 0) out.push({ from:deb[i].id, to:cre[j].id, cents:c });
+    deb[i].c -= c; cre[j].c -= c; if (deb[i].c === 0) i++; if (cre[j].c === 0) j++;
+  }
+  return out;
+}
+const total = () => visExpenses().reduce((s, e) => s + e.cents, 0);
+const myShare = () => visExpenses().reduce((s, e) => s + (shares(e)[me()] || 0), 0);
+function saldoText(c, who = me()){
+  if (Math.abs(c) < 1) return "ausgeglichen ✓";
+  if (who === me()) return c > 0 ? `du bekommst ${eur(c)}` : `du schuldest ${eur(-c)}`;
+  return c > 0 ? `bekommt ${eur(c)}` : `schuldet ${eur(-c)}`;
+}
+
+/* ---- Unterkünfte-Logik ---- */
+const myRating = id => S.ratings[id]?.[me()];
+const unrated = () => S.stays.filter(s => myRating(s.id) === undefined);
+const ratedCount = () => S.stays.length - unrated().length;
+const canSeeRanking = () => isOrga(me()) || unrated().length === 0 || !!S.chosen;
+const perPerson = s => s.total ? Math.round(s.total / travellers()) : null;
+function ranking(){
+  return S.stays.map((s, idx) => {
+    const r = S.ratings[s.id] || {};
+    const likes = Object.keys(r).filter(k => r[k] === 1), nopes = Object.keys(r).filter(k => r[k] === 0);
+    return { s, idx, likes, nopes };
+  }).sort((a,b) => b.likes.length - a.likes.length || a.nopes.length - b.nopes.length || (perPerson(a.s) ?? 1e12) - (perPerson(b.s) ?? 1e12) || a.idx - b.idx);
+}
+const stayById = id => S.stays.find(s => s.id === id);
+
+/* ---- Reisedaten-Logik ---- */
+const myRequests = () => S.requests.filter(r => r.recipients.includes(me()) && r.by !== me());
+const entry = (r, id) => r.entries[id] || { status:"open" };
+const dataDeleted = () => S.phase === "after";
+const reqStats = r => { const ids = r.recipients.filter(id => !P(id).ph); return { total:ids.length, released:ids.filter(id => entry(r,id).status === "released").length }; };
+
+/* ---- Unterlagen ---- */
+const canSeeDoc = d => d.vis === "all" || d.vis.includes(me());
+const visDocs = () => S.docs.filter(canSeeDoc).sort((a,b) => (a.date || "9999").localeCompare(b.date || "9999"));
+const visLabel = d => d.vis === "all" ? `${ic("i-users","s16")} Für alle` : `${ic("i-lock","s16")} Nur für ${d.vis.map(nm).join(" und ").replace(/^du und (.*)$/, "dich und $1").replace(/^(.*) und du$/, "$1 und dich")}`;
+
+/* ======================= Kopf ======================= */
+function ring(frac, center, label){
+  const r = 26, c = 2 * Math.PI * r, off = c * (1 - Math.max(.04, Math.min(1, frac)));
+  return `<div class="ring" aria-hidden="true"><svg viewBox="0 0 64 64"><circle class="ring-track" cx="32" cy="32" r="${r}" fill="none" stroke-width="7"/><circle class="ring-fill" cx="32" cy="32" r="${r}" fill="none" stroke-width="7" stroke-linecap="round" stroke-dasharray="${c.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"/></svg><b><span>${center}<small>${label}</small></span></b></div>`;
+}
+function phaseLine(){
+  if (S.phase === "prep") return { dot:"", text:`Steht fest · noch ${daysBetween(today(), TRIP.start)} Tage` };
+  if (S.phase === "trip") { const d = daysBetween(TRIP.start, today()) + 1; return { dot:"trip", text:`Unterwegs · Tag ${d} von ${TRIP.nights + 1}` }; }
+  const open = settle(balances()).length;
+  return { dot:"after", text: open ? "Zurück · Kosten ausgleichen" : "Zurück · alles ausgeglichen" };
+}
+function cockpitHead(){
+  const pl = phaseLine();
+  let kpi = "";
+  if (S.phase === "prep"){
+    const left = daysBetween(today(), TRIP.start), all = daysBetween(TRIP.fixedOn, TRIP.start);
+    kpi = `${ring(1 - left/all, left, "Tage")}
+      <p class="kpi-big">${dF(TRIP.start,{weekday:"short",day:"numeric"})} – ${dShort(TRIP.end)} 2027</p>
+      <p class="kpi-sub">${TRIP.nights} Nächte · ${travellers()} dabei · noch ${left} Tage</p>
+      <div class="kpi-actions"><button class="kpi-link" data-act="toast" data-msg="Kalenderdatei geladen (Demo) – wie W11.">${ic("i-cal","s20")} Zum Kalender</button></div>`;
+  } else if (S.phase === "trip"){
+    const d = daysBetween(TRIP.start, today()) + 1, n = TRIP.nights + 1;
+    kpi = `${ring(d/n, d, "von " + n)}
+      <p class="kpi-big">Heute: ${dShort(today())}</p>
+      <p class="kpi-sub">Fähre nach Stari Grad · 9:30 Uhr</p>
+      <div class="kpi-actions"><a class="btn-acc" href="#/costs/new">${ic("i-plus","s20")} Ausgabe</a><a class="kpi-link" href="#/docs">${ic("i-ticket","s20")} Tickets</a></div>`;
+  } else {
+    const xf = settle(balances());
+    kpi = `${ring(1, "✓", "Reise")}
+      <p class="kpi-big">Schön war's!</p>
+      <p class="kpi-sub">12.–19. Juni 2027 · ${TRIP.nights} Nächte · ${travellers()} dabei</p>
+      ${xf.length ? `<div class="kpi-actions"><a class="btn-acc" href="#/costs/balances">${ic("i-wallet","s20")} Ausgleichen</a></div>` : ""}`;
+  }
+  return `<header class="ck-row">
+      <button class="ck-btn" data-act="toast" data-msg="„Meine Reisen“ ist nicht Teil dieses Mockups." aria-label="Meine Reisen">${ic("i-back")}</button>
+      <div class="ck-t"><h1 class="ck-name" tabindex="-1">${TRIP.name}</h1><p class="ck-phase"><span class="dot ${pl.dot}" aria-hidden="true"></span>${pl.text}</p></div>
+      <button class="ck-btn" data-act="menu" aria-label="Reisemenü">${ic("i-more")}</button>
+    </header>
+    <div class="ck-hero"><div class="kpi">${kpi}</div></div>`;
+}
+function subHead(title, action = ""){
+  return `<header class="ck-sub"><div class="ck-row">
+    <a class="ck-btn" href="#${parentOf(route())}" data-back aria-label="Zurück">${ic("i-back")}</a>
+    <div class="ck-t"><p class="ck-eyebrow">${TRIP.name}</p><h1 class="ck-name" tabindex="-1">${title}</h1></div>
+    ${action || '<span class="ck-spacer"></span>'}</div></header>`;
+}
+
+/* ======================= W16 Cockpit ======================= */
+function todos(){
+  const t = [], m = me();
+  if (S.phase !== "after" && !dataDeleted()){
+    for (const r of myRequests()){
+      if (entry(r, m).status === "open") t.push({ ic:"i-id", tone:"t-coral", text:`${P(r.by).name} bittet um deine Reisedaten`, sub:`Für „${esc(r.purpose)}“ · nur ${P(r.by).name} sieht sie`, go:`#/data/fill/${r.id}`, cta:"Angaben freigeben" });
+    }
+    if (isBucht(m)){
+      for (const r of S.requests.filter(r => r.by === m)){
+        const st = reqStats(r); if (st.released < st.total) t.push({ ic:"i-id", tone:"t-lav", text:`Reisedaten: ${st.released} von ${st.total} freigegeben`, sub:`„${esc(r.purpose)}“ – noch offen: ${r.recipients.filter(id => !P(id).ph && entry(r,id).status === "open").map(nm).join(", ") || "niemand"}`, go:"#/data", cta:"Stand ansehen" });
+      }
+    }
+  }
+  if (S.phase === "prep" && !S.chosen){
+    const n = unrated().length;
+    if (n) t.push({ ic:"i-heart", tone:"t-mint", text:`${plural(n, "Unterkunft", "Unterkünfte")} bewerten`, sub:"Swipe dich durch – danach siehst du das Ranking", go:"#/stay/swipe", cta:"Jetzt swipen" });
+    else if (isOrga(m)){ const top = ranking()[0]; t.push({ ic:"i-star", tone:"t-sun", text:"Unterkunft festlegen", sub:`Favorit: ${esc(top.s.title)} (${top.likes.length} ♥)`, go:"#/stay", cta:"Rangliste ansehen" }); }
+  }
+  if (S.phase === "prep" && S.chosen && !S.booked && (isOrga(m) || isBucht(m))) t.push({ ic:"i-bed", tone:"t-lav", text:`${esc(stayById(S.chosen).title)} buchen`, sub:"Danach als „gebucht“ markieren", go:"#/stay", cta:"Zur Unterkunft" });
+  const mine = settle(balances()).filter(x => x.from === m);
+  for (const x of mine) if (S.phase !== "prep" || x.cents >= 5000) t.push({ ic:"i-wallet", tone:"t-sun", text:`Du schuldest ${P(x.to).name} ${eur(x.cents)}`, sub: S.payInfo[x.to] ? esc(S.payInfo[x.to]) : "Überweisen und als bezahlt markieren", go:"#/costs/balances", cta:"Zum Ausgleich" });
+  if (S.phase === "after"){
+    const owed = settle(balances()).filter(x => x.to === m);
+    if (owed.length) t.push({ ic:"i-wallet", tone:"t-mint", text:`Du bekommst noch ${eur(owed.reduce((s,x) => s + x.cents, 0))}`, sub:`von ${owed.map(x => nm(x.from)).join(", ")}`, go:"#/costs/balances", cta:"Zum Ausgleich" });
+    if (!S.closed && isOrga(m) && !settle(balances()).length) t.push({ ic:"i-check", tone:"t-mint", text:"Abrechnung abschließen", sub:"Alles ist ausgeglichen", go:"#/costs/balances", cta:"Abschließen" });
+  }
+  return t.slice(0, 3);
+}
+function todoCard(){
+  const t = todos();
+  if (!t.length) return `<section class="card todo" aria-labelledby="todo-h"><div class="todo-h"><h2 id="todo-h">Für dich zu tun</h2></div>
+    <div class="done-msg"><span class="tile-ic t-mint">${ic("i-check")}</span><p><strong>Alles erledigt – Vorfreude!</strong><br><span class="small muted">Wir melden uns hier, wenn es etwas Neues gibt.</span></p></div></section>`;
+  const [f, ...rest] = t;
+  return `<section class="card todo" aria-labelledby="todo-h">
+    <div class="todo-h"><h2 id="todo-h">Für dich zu tun</h2><span class="chip todo">${t.length} offen</span></div>
+    <div class="todo-first">
+      <div style="display:flex;gap:12px;align-items:flex-start"><span class="tile-ic ${f.tone}">${ic(f.ic)}</span><div><p>${f.text}</p><p class="small muted">${f.sub}</p></div></div>
+      <a class="btn primary" href="${f.go}" style="margin-top:12px">${f.cta}</a>
+    </div>
+    ${rest.map(x => `<a class="row" href="${x.go}"><span class="tile-ic sm ${x.tone}">${ic(x.ic,"s20")}</span><span class="grow"><span class="t">${x.text}</span><span class="s">${x.sub}</span></span><span class="chev">${ic("i-chev","s20")}</span></a>`).join("")}
+  </section>`;
+}
+function tileStay(hero){
+  const m = me();
+  let status, extra = "";
+  if (S.chosen){
+    const s = stayById(S.chosen);
+    status = `<strong>${esc(s.title)}</strong> · ${S.booked ? "gebucht ✓" : "noch nicht gebucht"}`;
+    extra = hero ? `<div class="thumbs" aria-hidden="true"><span class="${s.ph >= 0 ? "ph-" + s.ph : "ph-x"}" style="height:84px"></span></div>` : "";
+  } else if (!canSeeRanking()){
+    status = `${plural(S.stays.length, "Vorschlag", "Vorschläge")} · du hast <strong>${ratedCount()} von ${S.stays.length}</strong> bewertet`;
+    extra = hero ? `<div class="bar" aria-hidden="true"><i style="width:${ratedCount()/S.stays.length*100}%"></i></div><div class="thumbs" aria-hidden="true">${S.stays.slice(0,4).map(s => `<span class="${s.ph >= 0 ? "ph-" + s.ph : "ph-x"}"></span>`).join("")}</div>` : "";
+  } else {
+    const top = ranking()[0];
+    status = `${plural(S.stays.length, "Vorschlag", "Vorschläge")} · Favorit: <strong>${esc(top.s.title)}</strong> (${top.likes.length} ♥)`;
+    extra = hero ? `<div class="thumbs" aria-hidden="true">${ranking().slice(0,4).map(r => `<span class="${r.s.ph >= 0 ? "ph-" + r.s.ph : "ph-x"}"></span>`).join("")}</div>` : "";
+  }
+  if (S.phase !== "prep" && S.chosen) status = `<strong>${esc(stayById(S.chosen).title)}</strong>${S.booked ? " · gebucht ✓" : ""}`;
+  if (S.phase !== "prep" && !S.chosen) status = "Noch keine festgelegt";
+  return hero
+    ? `<a class="hero tile-enter" href="#/stay"><div class="hero-top"><span class="tile-ic t-lav">${ic("i-bed")}</span><span class="grow"><span class="tile-title">Unterkunft</span></span><span class="chev muted">${ic("i-chev","s20")}</span></div><div class="hero-body"><p class="tile-status">${status}</p>${extra}</div></a>`
+    : tile("#/stay", "i-bed", "t-lav", "Unterkunft", status);
+}
+function tile(href, icn, tone, title, status){
+  return `<a class="tile" href="${href}"><span class="tile-ic ${tone}">${ic(icn)}</span><span class="chev">${ic("i-chev","s20")}</span><span class="tile-title">${title}</span><span class="tile-status">${status}</span></a>`;
+}
+function tileCosts(hero){
+  const net = balances()[me()], n = visExpenses().length;
+  const xf = settle(balances());
+  let status = n ? `Gesamt ${eur(total())} · <strong>${saldoText(net)}</strong>` : "Noch keine Ausgaben";
+  if (S.phase === "after") status = xf.length ? `Noch ${plural(xf.length, "Ausgleich", "Ausgleiche")} offen · <strong>${saldoText(net)}</strong>` : (S.closed ? "Abgeschlossen ✓" : "Alles ausgeglichen ✓");
+  if (!hero) return tile("#/costs", "i-wallet", "t-sun", "Kosten", status);
+  return `<a class="hero" href="#/costs"><div class="hero-top"><span class="tile-ic t-sun">${ic("i-wallet")}</span><span class="grow"><span class="tile-title">Kosten</span></span><span class="chev muted">${ic("i-chev","s20")}</span></div>
+    <div class="hero-body"><p class="saldo ${net > 0 ? "plus" : ""}">${cap(saldoText(net))}</p><p class="tile-status">Gesamt ${eur(total())} · ${plural(n, "Ausgabe", "Ausgaben")}${S.phase === "after" && xf.length ? ` · noch ${plural(xf.length, "Ausgleich", "Ausgleiche")} offen` : ""}</p></div></a>`;
+}
+function tileData(){
+  const m = me();
+  if (dataDeleted()) return tile("#/data", "i-id", "t-no", "Reisedaten", `Gelöscht am ${dDay(DATA_DELETE)}`);
+  if (isBucht(m)){ const r = S.requests.find(r => r.by === m); const st = r ? reqStats(r) : null; return tile("#/data", "i-id", "t-coral", "Reisedaten", st ? `<strong>${st.released} von ${st.total}</strong> haben freigegeben` : "Noch nichts angefragt"); }
+  const reqs = myRequests();
+  if (!reqs.length) return tile("#/data", "i-id", "t-coral", "Reisedaten", `${S.bucht.map(nm).join(", ")} bucht · noch nichts angefragt`);
+  const open = reqs.filter(r => entry(r, m).status === "open");
+  if (open.length) return tile("#/data", "i-id", "t-coral", "Reisedaten", `${P(open[0].by).name} bucht – <strong>deine Daten fehlen noch</strong>`);
+  const st = entry(reqs[0], m).status;
+  return tile("#/data", "i-id", "t-coral", "Reisedaten", st === "released" ? `Freigegeben an ${P(reqs[0].by).name} ✓` : `Du klärst es direkt mit ${P(reqs[0].by).name}`);
+}
+function tileDocs(){
+  const ds = visDocs();
+  if (S.phase === "after") return tile("#/docs", "i-ticket", "t-mint", "Unterlagen", `Werden am <strong>${dDay(DOCS_DELETE)}</strong> gelöscht – jetzt sichern`);
+  if (S.phase === "trip"){ const nx = ds.find(d => d.date && d.date >= today()); return tile("#/docs", "i-ticket", "t-mint", "Unterlagen", nx ? `Nächste: <strong>${esc(nx.title.replace(/ \(.*\)$/,""))}</strong> · ${dShort(nx.date)}` : plural(ds.length, "Unterlage", "Unterlagen")); }
+  const nNew = ds.filter(d => d.isNew).length;
+  return tile("#/docs", "i-ticket", "t-mint", "Unterlagen", `${plural(ds.length, "Unterlage", "Unterlagen")}${nNew ? ` · <strong>${nNew} neu</strong>` : ""}`);
+}
+function tileInfo(){
+  const i = S.info;
+  const has = i.address || i.checkin || i.meet;
+  const st = has ? `${i.address ? "Adresse · " : ""}Check-in 15 Uhr · Treffpunkt` : (isOrga(me()) || isBucht(me()) ? "<strong>Infos ergänzen</strong>" : "Noch keine Infos");
+  return tile("#/info", "i-info", "t-lav", "Infos", st);
+}
+function moreList(){
+  return `<h2 class="sec" style="margin:16px 2px 0">Mehr zur Reise</h2>
+  <div class="card" style="padding:6px 12px">
+    ${`<button class="row" data-act="decided"><span class="tile-ic sm t-lav">${ic("i-vote","s20")}</span><span class="grow"><span class="t">So habt ihr entschieden</span><span class="s">Gruppenkalender &amp; Abstimmung (nur lesen)</span></span><span class="chev">${ic("i-chev","s20")}</span></button>`}
+    <button class="row" data-act="members"><span class="tile-ic sm t-mint">${ic("i-users","s20")}</span><span class="grow"><span class="t">Wer ist dabei? (${travellers()})</span><span class="s">${S.bucht.map(id => P(id).name).join(", ")} bucht · 1 Platzhalter</span></span><span class="stack">${PEOPLE.slice(0,4).map(p => av(p.id,"sm")).join("")}</span><span class="chev">${ic("i-chev","s20")}</span></button>
+  </div>`;
+}
+function scrCockpit(){
+  const m = me(); let body = "";
+  if (S.phase === "prep"){
+    body = `${tileStay(true)}<div class="tiles">${tileData()}${tileDocs()}${tileCosts(false)}${tileInfo()}</div>`;
+  } else if (S.phase === "trip"){
+    body = `${tileCosts(true)}<div class="tiles">${tileDocs()}${tileInfo()}${tileStay(false)}${isBucht(m) ? tileData() : ""}</div>`;
+  } else {
+    body = `${tileCosts(true)}<div class="tiles">${tileDocs()}${tileStay(false)}${tileData()}${tileInfo()}</div>`;
+  }
+  return `<div class="screen">${cockpitHead()}<div class="content">${todoCard()}<h2 class="sec" style="margin:16px 2px 0">Eure Reise</h2>${body}${moreList()}</div></div>`;
+}
+
+/* ======================= W18 Unterkünfte (Liste/Rangliste) ======================= */
+function stayThumb(s, size=64){
+  return s.preview ? `<span class="stay-thumb ph-${s.ph}" style="width:${size}px;height:${size}px" aria-hidden="true"></span>` : `<span class="stay-thumb ph-x" style="width:${size}px;height:${size}px" aria-hidden="true">${ic("i-bed")}</span>`;
+}
+function rateBtns(s){
+  const r = myRating(s.id);
+  if (S.chosen) return "";
+  return `<div class="rate" role="group" aria-label="Deine Bewertung für ${esc(s.title)}">
+    <button class="nope" data-act="rate" data-id="${s.id}" data-v="0" aria-pressed="${r === 0}" aria-label="Eher nicht">${ic("i-x","s20")}</button>
+    <button class="like" data-act="rate" data-id="${s.id}" data-v="1" aria-pressed="${r === 1}" aria-label="Gefällt mir">${ic("i-heart","s20")}</button></div>`;
+}
+function priceLine(s){ return s.total ? `${eur0(s.total)} gesamt · ≈ ${eur0(perPerson(s))} p. P.` : "Preis nicht angegeben"; }
+function scrStay(){
+  const m = me(), canFix = isOrga(m), canBook = isOrga(m) || isBucht(m);
+  const action = S.chosen ? "" : `<a class="ck-act" href="#/stay/new">${ic("i-plus","s20")} Vorschlagen</a>`;
+  let html = "";
+  if (S.chosen){
+    const s = stayById(S.chosen), rk = ranking().find(r => r.s.id === s.id);
+    html += `<section class="card flush" aria-labelledby="chosen-h">
+      <div class="chosen-img ${s.preview ? "ph-" + s.ph : "ph-x"}" aria-hidden="true"><span class="chip ${S.booked ? "yes" : "maybe"}">${S.booked ? ic("i-check","s16") + " gebucht" : ic("i-clock","s16") + " noch nicht gebucht"}</span></div>
+      <div style="padding:14px 16px 16px;display:flex;flex-direction:column;gap:8px">
+        <p class="meta" style="color:var(--accent-text)">${ic("i-check","s16")} Eure Unterkunft</p>
+        <h2 id="chosen-h" class="stay-name" style="font-size:21px">${esc(s.title)}</h2>
+        <p class="small muted">${esc(s.place)} · ${priceLine(s)} · ${rk.likes.length} ♥</p>
+        <div class="btn-row" style="margin-top:4px">
+          ${canBook && !S.booked ? `<button class="btn primary" data-act="book">Als gebucht markieren</button>` : ""}
+          <button class="btn secondary sm" data-act="openlink" data-domain="${esc(s.domain)}">${ic("i-ext","s20")} Ansehen</button>
+          <button class="btn secondary sm" data-act="share" data-kind="stay">${ic("i-share","s20")} Teilen</button>
+        </div>
+        ${canBook && !S.info.address ? `<button class="btn text" data-act="toinfo" style="align-self:flex-start">Adresse in „Infos“ übernehmen</button>` : ""}
+        ${canFix ? `<button class="btn danger-quiet" data-act="unfix" style="align-self:flex-start">Festlegung aufheben</button>` : ""}
+      </div></section>`;
+  } else if (unrated().length){
+    const n = unrated().length;
+    html += `<section class="card" aria-labelledby="sw-h" style="display:flex;flex-direction:column;gap:12px">
+      <div style="display:flex;gap:12px;align-items:center"><span class="tile-ic t-mint">${ic("i-heart")}</span><div><h2 id="sw-h" class="card-title">${plural(n, "Unterkunft wartet", "Unterkünfte warten")} auf dich</h2><p class="small muted">Du hast ${ratedCount()} von ${S.stays.length} bewertet.</p></div></div>
+      <div class="bar" aria-hidden="true"><i style="width:${ratedCount()/S.stays.length*100}%"></i></div>
+      <a class="btn primary" href="#/stay/swipe">Jetzt swipen (${n})</a></section>`;
+  }
+  // Rangliste
+  html += `<div class="sec-row"><h2 class="sec">Rangliste</h2>${canSeeRanking() ? `<span class="meta">${isOrga(m) && unrated().length ? "Orga sieht immer alles" : "nach ♥, dann ✕, dann Preis"}</span>` : ""}</div>`;
+  if (!canSeeRanking()){
+    html += `<div class="locked">${ic("i-lock")}<p><strong style="color:var(--text)">Swipe alle durch, um das Ranking zu sehen.</strong><br>So bewertet jede:r unbeeinflusst. Noch ${unrated().length} offen.</p></div>`;
+  } else {
+    html += `<div class="card" style="padding:4px 16px">${ranking().map((r, i) => `
+      <div class="rank-item">
+        <span class="rank-no ${i === 0 ? "first" : ""}" aria-hidden="true">${i + 1}</span>
+        <div style="display:flex;gap:8px;align-items:flex-start;justify-content:space-between"><div style="min-width:0"><p class="sr-only">Platz ${i + 1}</p><h3 class="stay-name">${esc(r.s.title)}</h3><p class="small muted">${esc(r.s.place)} · ${priceLine(r.s)}</p></div>${i === 0 ? `<span class="chip rank">${ic("i-star","s16")} Platz 1</span>` : ""}</div>
+        <div class="likes"><span style="color:var(--accent-text)">${ic("i-heart","s16")} ${r.likes.length}</span><span class="muted">${ic("i-x","s16")} ${r.nopes.length}</span>${myRating(r.s.id) === undefined ? `<span class="chip open">du: offen</span>` : ""}</div>
+        <p class="small muted">${r.likes.length ? "♥ " + r.likes.map(nm).join(", ") : "Noch keine ♥"}</p>
+        ${canFix && !S.chosen ? `<div style="grid-column:2;display:flex;gap:8px;flex-wrap:wrap;margin-top:6px"><button class="btn secondary sm" data-act="fix" data-id="${r.s.id}">Das wird's</button><button class="btn text" data-act="openlink" data-domain="${esc(r.s.domain)}">Ansehen ↗</button></div>` : ""}
+      </div>`).join("")}</div>`;
+  }
+  // Alle Vorschläge (neutral, ohne Zahlen)
+  if (!S.chosen){
+    html += `<h2 class="sec" style="margin:16px 2px 0">Alle Vorschläge (${S.stays.length})</h2>
+    <div class="card" style="padding:4px 16px">${S.stays.map(s => `
+      <div class="stay-row">${stayThumb(s)}<div class="grow"><h3 class="stay-name">${esc(s.title)}</h3><p class="small muted">${esc(s.domain)} · von ${nm(s.by)}</p><p class="small muted">${s.total ? "≈ " + eur0(perPerson(s)) + " p. P." : "ohne Preis"}</p></div>${rateBtns(s)}</div>`).join("")}</div>
+    <p class="small muted" style="padding:0 4px">Tippe ♥ oder ✕, um deine Bewertung zu ändern. Bilder kommen über unseren Server (keine Drittanbieter). ${isOrga(m) ? "" : ""}</p>`;
+  }
+  return `<div class="screen">${subHead("Unterkünfte", action)}<div class="content">${html}</div></div>`;
+}
+
+/* ======================= W18 Swipen ======================= */
+function swipeCard(s, cls){
+  return `<article class="scard ${cls}" data-id="${s.id}" aria-roledescription="Karte" aria-label="${esc(s.title)}">
+    <div class="img ${s.preview ? "ph-" + s.ph : "ph-x"}">
+      ${s.preview ? `<span class="src">Vorschau · ${esc(s.domain)}</span>` : `<div class="noprev">${ic("i-bed","s28")}<span>Keine Vorschau von ${esc(s.domain)}.<br>Der Link funktioniert trotzdem.</span></div>`}
+      <span class="stamp like" aria-hidden="true">${ic("i-heart","s20")} Gefällt mir</span>
+      <span class="stamp nope" aria-hidden="true">${ic("i-x","s20")} Eher nicht</span>
+    </div>
+    <div class="info">
+      <h2 class="title">${esc(s.title)}</h2>
+      <p class="small muted">${ic("i-pin","s16")} ${esc(s.place)}</p>
+      <p class="price">${s.total ? `${eur0(s.total)} gesamt · ≈ ${eur0(perPerson(s))} pro Person` : "Preis nicht angegeben"}</p>
+      ${s.note ? `<p class="small muted">„${esc(s.note)}“ – ${Nm(s.by)}</p>` : `<p class="small muted">Vorgeschlagen von ${nm(s.by)}</p>`}
+      <button class="btn text" data-act="openlink" data-domain="${esc(s.domain)}" style="align-self:flex-start;min-height:44px">Auf ${esc(s.domain)} ansehen ↗</button>
+    </div></article>`;
+}
+function scrSwipe(){
+  const q = unrated();
+  if (S.chosen) return `<div class="screen">${subHead("Unterkünfte bewerten")}<div class="content"><div class="empty"><span class="seal">${ic("i-check","s28")}</span><h2 class="sec">Die Unterkunft steht schon</h2><p class="muted">${esc(stayById(S.chosen).title)} – Swipen ist beendet.</p><a class="btn primary" href="#/stay">Zur Unterkunft</a></div></div></div>`;
+  if (!q.length){
+    return `<div class="screen">${subHead("Unterkünfte bewerten")}<div class="content"><div class="empty" style="padding-top:48px">
+      <span class="seal">${ic("i-check","s28")}</span><h2 class="sec" tabindex="-1" id="sw-done">Geschafft!</h2><p class="muted">Du hast alle ${S.stays.length} Unterkünfte bewertet. Jetzt siehst du, was der Gruppe gefällt.</p></div>
+      <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px"><a class="btn primary" href="#/stay">Rangliste ansehen</a>${S.swipeUndo.length ? `<button class="btn text" data-act="undo" style="align-self:center">${ic("i-undo","s20")} Letzte rückgängig</button>` : ""}</div></div></div>`;
+  }
+  const pos = ratedCount() + 1;
+  return `<div class="screen">${subHead("Unterkünfte bewerten")}
+    <div class="swipe-wrap">
+      <div class="swipe-count"><span>Unterkunft ${pos} von ${S.stays.length}</span><span>${plural(q.length, "offen", "offen")}</span></div>
+      <div class="deck" id="deck">${q[1] ? swipeCard(q[1], "next") : ""}${swipeCard(q[0], "top")}</div>
+      <div class="swipe-btns" role="group" aria-label="Bewerten">
+        <button class="nope" data-act="swipe" data-v="0"><span class="circle">${ic("i-x","s28")}</span>Eher nicht</button>
+        <button class="undo" data-act="undo" ${S.swipeUndo.length ? "" : 'aria-disabled="true"'}><span class="circle">${ic("i-undo","s20")}</span>Zurück</button>
+        <button class="like" data-act="swipe" data-v="1"><span class="circle">${ic("i-heart","s28")}</span>Gefällt mir</button>
+      </div>
+      <p class="kbd-hint">Wischen oder tippen · Tastatur: ← eher nicht · → gefällt mir</p>
+    </div></div>`;
+}
+let drag = null;
+function bindSwipe(){
+  const card = $("#deck .scard.top"); if (!card) return;
+  card.addEventListener("pointerdown", e => {
+    if (e.target.closest("button")) return;
+    drag = { x0:e.clientX, y0:e.clientY, t0:performance.now(), dx:0, dy:0, moved:false, id:e.pointerId };
+    card.setPointerCapture(e.pointerId); card.style.transition = "none";
+  });
+  card.addEventListener("pointermove", e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    drag.dx = e.clientX - drag.x0; drag.dy = e.clientY - drag.y0;
+    if (!drag.moved && Math.abs(drag.dx) < 8) return;
+    drag.moved = true; card.classList.add("dragging");
+    card.style.transform = `translate(${drag.dx}px, ${drag.dy * .15}px) rotate(${drag.dx / 18}deg)`;
+    const k = Math.min(Math.abs(drag.dx) / 110, 1);
+    card.querySelector(".stamp.like").style.opacity = drag.dx > 0 ? k : 0;
+    card.querySelector(".stamp.nope").style.opacity = drag.dx < 0 ? k : 0;
+  });
+  const end = e => {
+    if (!drag || e.pointerId !== drag.id) return;
+    const d = drag; drag = null; card.classList.remove("dragging");
+    const v = Math.abs(d.dx) / Math.max(1, performance.now() - d.t0);
+    if (d.moved && (Math.abs(d.dx) > card.offsetWidth * .3 || v > .6)) { commitSwipe(d.dx > 0 ? 1 : 0, d.dx); return; }
+    card.style.transition = `transform var(--d-slow) var(--spring-soft)`; card.style.transform = "";
+    card.querySelectorAll(".stamp").forEach(s => { s.style.transition = "opacity var(--d-fast) linear"; s.style.opacity = 0; });
+  };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+}
+function reduced(){ return document.documentElement.dataset.motion === "reduce" || matchMedia("(prefers-reduced-motion: reduce)").matches; }
+function commitSwipe(v, dx = 0){
+  const card = $("#deck .scard.top"); if (!card || card.dataset.leaving) return;
+  card.dataset.leaving = "1";
+  const s = stayById(card.dataset.id);
+  S.ratings[s.id] = S.ratings[s.id] || {}; S.ratings[s.id][me()] = v; S.swipeUndo.push(s.id);
+  const left = unrated().length;
+  announce(`${s.title}: ${v ? "Gefällt mir" : "Eher nicht"}. ${left ? "Noch " + left + " offen." : "Alle bewertet."}`);
+  card.querySelector(`.stamp.${v ? "like" : "nope"}`).style.opacity = 1;
+  if (reduced()){ card.style.transition = "opacity var(--d-fade) linear"; card.style.opacity = 0; }
+  else { const dir = v ? 1 : -1; card.style.transition = `transform var(--d-base) var(--ease-exit), opacity var(--d-base) linear`; card.style.transform = `translate(${dir * 480}px, ${dx ? 20 : 40}px) rotate(${dir * 22}deg)`; card.style.opacity = .2; }
+  setTimeout(() => render("same"), reduced() ? 150 : 230);
+}
+function undoSwipe(){
+  const id = S.swipeUndo.pop(); if (!id) return;
+  delete S.ratings[id][me()];
+  announce(`${stayById(id).title} wieder offen.`);
+  render("same");
+  const c = $("#deck .scard.top"); if (c && !reduced()){ c.animate([{ transform:"translateX(-60px) rotate(-6deg)", opacity:0 }, { transform:"none", opacity:1 }], { duration:220, easing:"cubic-bezier(0,0,0,1)" }); }
+}
+
+/* ======================= W17 Vorschlagen ======================= */
+function scrStayNew(){
+  return `<div class="screen">${subHead("Unterkunft vorschlagen")}
+  <form class="content" id="stay-form" novalidate>
+    <p class="small muted">Füge den Link aus Booking, Airbnb & Co. ein – Titel und Bild holen wir automatisch, wenn das Portal es zulässt.</p>
+    <div class="field"><label for="f-link">Link zur Unterkunft</label>
+      <input class="input" id="f-link" type="url" inputmode="url" autocomplete="off" placeholder="https://…" aria-describedby="f-link-err f-link-help">
+      <p class="help" id="f-link-help">Tipp: Probier einen Link mit „airbnb“ – dann siehst du die Platzhalterkarte.</p>
+      <p class="err" id="f-link-err" hidden>${ic("i-warn","s20")}<span></span></p></div>
+    <div id="preview" aria-live="polite"></div>
+    <div class="field"><label for="f-title">Titel</label><input class="input" id="f-title" maxlength="80" aria-describedby="f-title-err"><p class="err" id="f-title-err" hidden>${ic("i-warn","s20")}<span>Bitte gib einen Titel ein.</span></p></div>
+    <div class="field"><label for="f-price">Gesamtpreis <span class="muted" style="font-weight:500">(optional)</span></label>
+      <div class="suffix"><input class="input" id="f-price" inputmode="decimal" autocomplete="off" placeholder="z. B. 1.840"><span aria-hidden="true">€</span></div>
+      <p class="help" id="f-pp">Für alle ${travellers()} Reisenden (inkl. Platzhalter Mia).</p></div>
+    <div class="field"><label for="f-note">Notiz <span class="muted" style="font-weight:500">(optional)</span></label>
+      <textarea class="input" id="f-note" maxlength="200" rows="3" aria-describedby="f-note-help" style="min-height:88px"></textarea>
+      <div style="display:flex;justify-content:space-between;gap:8px"><p class="help" id="f-note-help">Alle in der Reise können das lesen.</p><span class="counter" id="f-note-c">0/200</span></div></div>
+    <div style="flex:1"></div>
+  </form>
+  <div class="actionbar"><button class="btn primary" form="stay-form" type="submit">Vorschlag hinzufügen</button><p class="hint">Danach landet er bei allen im Swipe-Stapel – auch bei dir.</p></div></div>`;
+}
+let previewTimer = null;
+function bindStayNew(){
+  const f = $("#stay-form"); if (!f) return;
+  const link = $("#f-link"), title = $("#f-title"), price = $("#f-price"), note = $("#f-note");
+  const showErr = (inp, id, msg) => { const e = $("#" + id); if (msg){ e.hidden = false; e.querySelector("span").textContent = msg; inp.setAttribute("aria-invalid", "true"); } else { e.hidden = true; inp.removeAttribute("aria-invalid"); } };
+  const loadPreview = () => {
+    const v = link.value.trim(); const pv = $("#preview");
+    if (!v){ pv.innerHTML = ""; return; }
+    if (!/^https:\/\/[^\s/]+\.[^\s]+/.test(v)){ showErr(link, "f-link-err", "Bitte einen vollständigen Link mit https:// einfügen."); pv.innerHTML = ""; return; }
+    showErr(link, "f-link-err", "");
+    const host = v.replace(/^https:\/\//, "").split("/")[0].replace(/^www\./, "");
+    pv.innerHTML = `<div class="card" style="display:flex;gap:12px;align-items:center"><span class="spin" aria-hidden="true"></span><span class="small muted">Lade Vorschau von ${esc(host)} …</span></div>`;
+    clearTimeout(previewTimer);
+    previewTimer = setTimeout(() => {
+      const blocked = /airbnb/i.test(host);
+      if (blocked){
+        pv.innerHTML = `<div class="card flush"><div class="ph-x" style="height:110px;display:grid;place-items:center;color:var(--muted)">${ic("i-bed","s28")}</div><div style="padding:12px 14px"><p class="stay-name">${esc(host)}</p><p class="small muted">Keine Vorschau – das Portal lässt keinen Abruf zu. Kein Problem: Gib unten einen Titel ein, der Link funktioniert trotzdem.</p></div></div>`;
+        if (!title.value) title.focus();
+      } else {
+        const t = "Haus Galeb – Meerblick & Terrasse";
+        pv.innerHTML = `<div class="card flush"><div class="ph-2" style="height:130px;position:relative"><span class="chip" style="position:absolute;left:12px;bottom:12px;background:rgb(20 17 46 / .72);color:#fff">Vorschau · ${esc(host)}</span></div><div style="padding:12px 14px"><p class="stay-name">${t}</p><p class="small muted">Titel übernommen – du kannst ihn unten ändern.</p></div></div>`;
+        if (!title.value) title.value = t;
+      }
+    }, 900);
+  };
+  link.addEventListener("change", loadPreview); link.addEventListener("paste", () => setTimeout(loadPreview, 0));
+  price.addEventListener("input", () => { const c = parseCents(price.value); $("#f-pp").textContent = c > 0 ? `≈ ${eur0(Math.round(c / travellers()))} pro Person (${travellers()} Reisende inkl. Platzhalter Mia)` : `Für alle ${travellers()} Reisenden (inkl. Platzhalter Mia).`; });
+  note.addEventListener("input", () => $("#f-note-c").textContent = `${note.value.length}/200`);
+  f.addEventListener("submit", e => {
+    e.preventDefault();
+    let first = null; const v = link.value.trim();
+    if (!/^https:\/\/[^\s/]+\.[^\s]+/.test(v)){ showErr(link, "f-link-err", v ? "Bitte einen vollständigen Link mit https:// einfügen." : "Bitte füge einen Link ein."); first = first || link; }
+    if (!title.value.trim()){ showErr(title, "f-title-err", "Bitte gib einen Titel ein."); first = first || title; } else showErr(title, "f-title-err", "");
+    const c = price.value.trim() ? parseCents(price.value) : 0;
+    if (first){ first.focus(); return; }
+    const host = v.replace(/^https:\/\//, "").split("/")[0].replace(/^www\./, "");
+    S.stays.push({ id:"s" + (++S.seq), title:title.value.trim(), place:"Kroatien", domain:host, total:isNaN(c) ? 0 : c, note:note.value.trim(), by:me(), ph:2, preview:!/airbnb/i.test(host) });
+    S.ratings["s" + S.seq] = {};
+    go("#/stay"); toast("Vorschlag hinzugefügt – er liegt jetzt im Swipe-Stapel.");
+  });
+}
+
+/* ======================= W19 Kosten ======================= */
+function costsTabs(active){
+  return `<nav class="seg" aria-label="Kosten-Ansicht"><a href="#/costs" ${active === "list" ? 'aria-current="page"' : ""} data-replace>Ausgaben</a><a href="#/costs/balances" ${active === "bal" ? 'aria-current="page"' : ""} data-replace>Salden &amp; Ausgleich</a></nav>`;
+}
+function costSummary(){
+  const net = balances()[me()];
+  return `<section class="card" aria-label="Dein Stand"><p class="meta">Dein Stand</p><p class="saldo ${net > 0 ? "plus" : ""}">${cap(saldoText(net))}</p>
+    <p class="small muted" style="margin-top:4px">Gesamt ${eur(total())} · dein Anteil ${eur(myShare())}</p>${S.closed ? `<p class="chip yes" style="margin-top:8px">${ic("i-lock","s16")} Abrechnung abgeschlossen</p>` : ""}</section>`;
+}
+function scrCosts(){
+  const ex = visExpenses();
+  let list = "";
+  if (!ex.length) list = `<div class="empty"><span class="illu">${ic("i-wallet","s28")}</span><h2 class="sec">Noch keine Ausgaben</h2><p class="muted">Wer etwas für die Gruppe bezahlt, trägt es hier ein – wir rechnen aus, wer wem was schuldet.</p></div>`;
+  else {
+    const byDay = {}; ex.forEach(e => (byDay[e.date] = byDay[e.date] || []).push(e));
+    list = Object.keys(byDay).sort().reverse().map(d => `<h3 class="day-h">${dShort(d)}</h3><div class="card" style="padding:2px 12px">${byDay[d].map(e => {
+      const c = CATS[e.cat], mine = shares(e)[me()] || 0, forTxt = e.for.length === ALL.length ? `alle ${ALL.length}` : e.for.map(nm).join(", ");
+      return `<button class="row" data-act="expense" data-id="${e.id}"><span class="tile-ic sm ${c[2]}">${ic(c[1],"s20")}</span><span class="grow"><span class="t">${esc(e.title)}</span><span class="s">${Nm(e.payer)} ${e.payer === me() ? "hast" : "hat"} bezahlt · für ${forTxt}</span></span><span style="text-align:right"><span class="money" style="display:block">${eur(e.cents)}</span><span class="s" style="font-size:13px;color:var(--muted)">${mine ? "dein Anteil " + eur(mine) : "nicht beteiligt"}</span></span></button>`;
+    }).join("")}</div>`).join("");
+  }
+  return `<div class="screen">${subHead("Kosten", `<button class="ck-act" data-act="share" data-kind="costs">${ic("i-share","s20")} Teilen</button>`)}
+    <div class="content">${costSummary()}${costsTabs("list")}${list}<p class="small muted" style="padding:0 4px">Eine Währung pro Reise (EUR). Wir überweisen nichts – wir zeigen nur, wer wem was schuldet.</p></div>
+    ${S.closed ? "" : `<div class="actionbar"><a class="btn primary" href="#/costs/new">${ic("i-plus","s20")} Ausgabe hinzufügen</a></div>`}</div>`;
+}
+function scrBalances(){
+  const net = balances(), xf = settle(net), m = me();
+  const rows = PEOPLE.map(p => `<div class="split-row">${av(p.id)}<span class="grow">${p.id === m ? "Du" : p.name}${p.ph ? ` <span class="chip open">Platzhalter</span>` : ""}</span><span class="money ${net[p.id] > 0 ? "" : ""}" style="${net[p.id] > 0 ? "color:var(--accent-text)" : ""}">${saldoText(net[p.id], p.id)}</span></div>`).join("");
+  const xrows = xf.length ? xf.map(x => {
+    const mayMark = (x.from === m || x.to === m) && !S.closed;
+    const info = S.payInfo[x.to];
+    return `<div class="xfer"><div><p class="who">${Nm(x.from)} ${ic("i-swap","s16")} ${nm(x.to)}</p>${info ? `<p class="pay-info">${esc(info)}</p>` : ""}</div><span class="money" style="font-size:17px">${eur(x.cents)}</span>
+      <div class="acts">${mayMark ? `<button class="btn secondary sm" data-act="paid" data-from="${x.from}" data-to="${x.to}" data-c="${x.cents}">${ic("i-check","s20")} Als bezahlt markieren</button>` : `<span class="small muted">Markieren können ${P(x.from).name} oder ${P(x.to).name}.</span>`}${info && x.from === m ? `<button class="btn text" data-act="copy" data-v="${esc(info)}">Kopieren</button>` : ""}</div></div>`;
+  }).join("") : `<div class="done-msg"><span class="tile-ic t-mint">${ic("i-check")}</span><p><strong>Alles ausgeglichen ✓</strong><br><span class="small muted">Niemand schuldet jemandem etwas.</span></p></div>`;
+  const paid = S.payments.length ? `<h3 class="day-h">Bereits bezahlt</h3><div class="card" style="padding:4px 14px">${S.payments.map(p => `<div class="split-row"><span class="tile-ic sm t-mint">${ic("i-check","s20")}</span><span class="grow">${Nm(p.from)} → ${nm(p.to)}</span><span class="money">${eur(p.cents)}</span></div>`).join("")}</div>` : "";
+  return `<div class="screen">${subHead("Kosten", `<button class="ck-act" data-act="share" data-kind="costs">${ic("i-share","s20")} Teilen</button>`)}
+    <div class="content">${costSummary()}${costsTabs("bal")}
+      <h2 class="sec" style="margin-top:8px">So gleicht ihr aus</h2>
+      <p class="small muted" style="margin-top:-6px">${xf.length ? `Mit ${plural(xf.length, "Überweisung", "Überweisungen")} ist alles erledigt.` : ""}</p>
+      <div class="card" style="padding:2px 16px">${xrows}</div>${paid}
+      <h2 class="sec" style="margin-top:8px">Salden</h2>
+      <div class="card" style="padding:4px 14px">${rows}</div>
+      <div class="card" style="display:flex;flex-direction:column;gap:8px"><h3 class="card-title" style="font-size:16px">Deine Zahlungsinfo <span class="muted" style="font-weight:500;font-size:14px">(freiwillig)</span></h3>
+        <p class="small muted">${S.payInfo[m] ? esc(S.payInfo[m]) : "Noch nichts hinterlegt – z. B. PayPal-Name oder IBAN."} Alle in der Reise können das lesen.</p>
+        <button class="btn secondary sm" data-act="payinfo" style="align-self:flex-start">${S.payInfo[m] ? "Ändern" : "Hinterlegen"}</button></div>
+      ${isOrga(m) && S.phase === "after" && !S.closed ? `<button class="btn secondary block" data-act="close">Abrechnung abschließen</button><p class="small muted" style="padding:0 4px;margin-top:-4px">Danach sind die Kosten schreibgeschützt. Du kannst wieder öffnen.</p>` : ""}
+      ${isOrga(m) && S.closed ? `<button class="btn text" data-act="reopen">Abrechnung wieder öffnen</button>` : ""}
+    </div></div>`;
+}
+function scrCostNew(id){
+  const e = id ? S.expenses.find(x => x.id === id) : null;
+  const m = me();
+  const forIds = e ? e.for : [...ALL];
+  return `<div class="screen">${subHead(e ? "Ausgabe bearbeiten" : "Ausgabe hinzufügen")}
+  <form class="content" id="cost-form" novalidate data-id="${e ? e.id : ""}">
+    <div class="field"><label for="c-amount">Betrag</label>
+      <div class="amount"><input id="c-amount" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${e ? (e.cents/100).toFixed(2).replace(".", ",") : ""}" aria-describedby="c-amount-err"><span class="cur" aria-hidden="true">€</span></div>
+      <p class="err" id="c-amount-err" hidden>${ic("i-warn","s20")}<span></span></p></div>
+    <div class="field"><label for="c-title">Wofür?</label><input class="input" id="c-title" maxlength="60" placeholder="z. B. Abendessen am Hafen" value="${e ? esc(e.title) : ""}" aria-describedby="c-title-err"><p class="err" id="c-title-err" hidden>${ic("i-warn","s20")}<span>Bitte gib an, wofür das war.</span></p></div>
+    <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Kategorie <span class="muted" style="font-weight:500">(optional)</span></legend>
+      <div class="pickchips">${Object.entries(CATS).map(([k, c]) => `<label class="pick"><input type="radio" name="c-cat" value="${k}" ${(e ? e.cat : "food") === k ? "checked" : ""}><span><span class="tile-ic sm ${c[2]}" style="width:30px;height:30px;border-radius:10px">${ic(c[1],"s16")}</span>${c[0]}</span></label>`).join("")}</div></fieldset>
+    <div class="field"><label for="c-payer">Bezahlt von</label><select class="input" id="c-payer">${PEOPLE.map(p => `<option value="${p.id}" ${(e ? e.payer : m) === p.id ? "selected" : ""}>${p.id === m ? "Mir (" + p.name + ")" : p.name}${p.ph ? " (Platzhalter)" : ""}</option>`).join("")}</select></div>
+    <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Für wen?</legend>
+      <div class="pickchips" id="c-for">${PEOPLE.map(p => `<label class="pick"><input type="checkbox" value="${p.id}" ${forIds.includes(p.id) ? "checked" : ""}><span>${av(p.id,"sm")}${p.id === m ? "Ich" : p.name}${p.ph ? " · Platzhalter" : ""}</span></label>`).join("")}</div>
+      <p class="err" id="c-for-err" hidden>${ic("i-warn","s20")}<span>Wähle mindestens eine Person.</span></p></fieldset>
+    <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Aufteilung</legend>
+      <div class="seg"><label><input type="radio" name="c-split" value="equal" ${!e || e.split === "equal" ? "checked" : ""}>Gleich</label><label><input type="radio" name="c-split" value="custom" ${e && e.split === "custom" ? "checked" : ""}>Nach Beträgen</label></div>
+      <div id="c-split-box" class="card" style="padding:6px 14px;margin-top:8px"></div></fieldset>
+    <div class="field"><label for="c-date">Datum</label><input class="input" id="c-date" type="date" value="${e ? e.date : (S.phase === "prep" ? today() : today())}"></div>
+    <div style="flex:1"></div>
+  </form>
+  <div class="actionbar"><button class="btn primary" type="submit" form="cost-form">${e ? "Änderungen speichern" : "Ausgabe speichern"}</button></div></div>`;
+}
+function bindCostForm(){
+  const f = $("#cost-form"); if (!f) return;
+  const amt = $("#c-amount"), box = $("#c-split-box");
+  const existing = f.dataset.id ? S.expenses.find(x => x.id === f.dataset.id) : null;
+  const custom = existing?.split === "custom" ? { ...existing.custom } : {};
+  const sel = () => [...f.querySelectorAll("#c-for input:checked")].map(i => i.value);
+  const mode = () => f.querySelector("input[name=c-split]:checked").value;
+  const draw = () => {
+    const c = parseCents(amt.value || "0"), ids = sel();
+    if (!ids.length){ box.innerHTML = `<p class="small muted" style="padding:10px 0">Niemand ausgewählt.</p>`; return; }
+    if (mode() === "equal"){
+      const sh = shares({ cents:isNaN(c) ? 0 : c, for:ids, split:"equal" });
+      box.innerHTML = ids.map(id => `<div class="split-row">${av(id,"sm")}<span class="grow">${id === me() ? "Ich" : P(id).name}</span><span class="money">${eur(sh[id] || 0)}</span></div>`).join("");
+    } else {
+      box.innerHTML = ids.map(id => `<div class="split-row">${av(id,"sm")}<label class="grow" for="cs-${id}">${id === me() ? "Ich" : P(id).name}</label><div class="suffix"><input class="input" id="cs-${id}" data-p="${id}" inputmode="decimal" value="${custom[id] != null ? (custom[id]/100).toFixed(2).replace(".", ",") : ""}" placeholder="0,00"><span aria-hidden="true">€</span></div></div>`).join("") + `<p class="remain" id="c-remain" aria-live="polite" style="padding:10px 0"></p>`;
+      box.querySelectorAll("input[data-p]").forEach(i => i.addEventListener("input", () => { const v = parseCents(i.value || "0"); custom[i.dataset.p] = isNaN(v) ? 0 : v; remain(); }));
+      remain();
+    }
+  };
+  const remain = () => {
+    const el = $("#c-remain"); if (!el) return;
+    const c = parseCents(amt.value || "0"), sum = sel().reduce((s, id) => s + (custom[id] || 0), 0), d = (isNaN(c) ? 0 : c) - sum;
+    el.className = "remain " + (d === 0 ? "ok" : "bad");
+    el.textContent = d === 0 ? "✓ Passt genau" : d > 0 ? `Noch ${eur(d)} zu verteilen` : `${eur(-d)} zu viel verteilt`;
+  };
+  f.addEventListener("input", e => { if (e.target === amt) { mode() === "equal" ? draw() : remain(); } });
+  f.addEventListener("change", e => { if (e.target.closest("#c-for") || e.target.name === "c-split") draw(); });
+  draw();
+  const err = (id, inp, msg) => { const el = $("#" + id); el.hidden = !msg; if (msg) el.querySelector("span").textContent = msg; if (inp) msg ? inp.setAttribute("aria-invalid","true") : inp.removeAttribute("aria-invalid"); };
+  f.addEventListener("submit", ev => {
+    ev.preventDefault();
+    const c = parseCents(amt.value), title = $("#c-title"), ids = sel(); let first = null;
+    if (!(c > 0)){ err("c-amount-err", amt, amt.value.trim() ? "Bitte einen Betrag wie 12,50 eingeben." : "Bitte gib einen Betrag ein."); first = amt; } else err("c-amount-err", amt, "");
+    if (!title.value.trim()){ err("c-title-err", title, "Bitte gib an, wofür das war."); first = first || title; } else err("c-title-err", title, "");
+    if (!ids.length){ err("c-for-err", null, "Wähle mindestens eine Person."); first = first || f.querySelector("#c-for input"); } else err("c-for-err", null, "");
+    if (!first && mode() === "custom"){ const sum = ids.reduce((s, id) => s + (custom[id] || 0), 0); if (sum !== c){ remain(); first = box.querySelector("input"); announce("Die Beträge ergeben noch nicht die Summe."); } }
+    if (first){ first.focus(); return; }
+    const data = { title:title.value.trim(), cents:c, payer:$("#c-payer").value, for:ids, split:mode(), cat:f.querySelector("input[name=c-cat]:checked")?.value || "misc", date:$("#c-date").value || today(), by:me() };
+    if (data.split === "custom") data.custom = Object.fromEntries(ids.map(id => [id, custom[id] || 0]));
+    if (existing){ Object.assign(existing, data); toast("Ausgabe gespeichert"); }
+    else { S.expenses.push({ id:"e" + (++S.seq), ...data, userAdded:true }); toast(`${eur(c)} gespeichert – Salden sind aktualisiert.`); }
+    go("#/costs");
+  });
+}
+
+/* ======================= W20 Reisedaten ======================= */
+function fieldList(r){ return r.fields.map(k => FIELDS[k].label).join(" · "); }
+function scrData(){
+  const m = me();
+  if (dataDeleted()){
+    return `<div class="screen">${subHead("Reisedaten")}<div class="content"><div class="empty"><span class="illu">${ic("i-shield","s28")}</span><h2 class="sec">Reisedaten gelöscht</h2><p class="muted">Am ${dShort(DATA_DELETE)} – 7 Tage nach der Reise, wie angekündigt. Auch das Zugriffsprotokoll ist gelöscht.</p></div></div></div>`;
+  }
+  let html = "";
+  if (isBucht(m)){
+    html += `<div class="note info">${ic("i-shield","s20")}<p>Du bist als <b>„bucht“</b> markiert. Du siehst nur, was dir jemand ausdrücklich freigibt. Was du außerhalb der App damit machst (z. B. in ein Buchungsformular eintragen), liegt in deiner Verantwortung – bitte nicht in Chats weiterleiten.</p></div>`;
+    for (const r of S.requests.filter(r => r.by === m)){
+      const st = reqStats(r);
+      html += `<section class="card" aria-labelledby="rq-${r.id}" style="display:flex;flex-direction:column;gap:10px">
+        <div><p class="meta">Deine Anfrage · ${dDay(r.date)}</p><h2 id="rq-${r.id}" class="card-title">${esc(r.purpose)}</h2><p class="small muted">${fieldList(r)}</p></div>
+        <div><p class="small" style="font-weight:800">${st.released} von ${st.total} haben freigegeben</p><div class="bar" aria-hidden="true"><i style="width:${st.released/st.total*100}%"></i></div></div>
+      </section>`;
+      html += r.recipients.map(id => personData(r, id)).join("");
+      const open = r.recipients.filter(id => !P(id).ph && entry(r,id).status === "open");
+      html += `<div class="btn-row">${open.length ? `<button class="btn secondary sm" data-act="share" data-kind="remind">${ic("i-bell","s20")} ${open.map(id => P(id).name).join(", ")} erinnern</button>` : ""}<button class="btn danger-quiet" data-act="closereq" data-id="${r.id}">Erledigt – Daten löschen</button></div>`;
+    }
+    if (!S.requests.some(r => r.by === m)) html += `<div class="empty"><span class="illu">${ic("i-id","s28")}</span><h2 class="sec">Noch keine Anfrage</h2><p class="muted">Frag nur ab, was die Buchung wirklich braucht – meist reicht der Name laut Ausweis.</p></div>`;
+  }
+  const reqs = myRequests();
+  if (reqs.length){
+    if (isBucht(m)) html += `<h2 class="sec" style="margin-top:16px">Anfragen an dich</h2>`;
+    for (const r of reqs) html += memberRequest(r);
+  } else if (!isBucht(m)){
+    html += `<div class="empty"><span class="illu">${ic("i-id","s28")}</span><h2 class="sec">Gerade nichts zu tun</h2><p class="muted">Wenn ${S.bucht.map(id => P(id).name).join(" oder ")} für eine Buchung deine Daten braucht, fragt sie hier an. Du entscheidest, was du freigibst.</p></div>`;
+  }
+  html += `<details class="card" style="padding:4px 16px"><summary class="row" style="cursor:pointer;list-style:none"><span class="tile-ic sm t-lav">${ic("i-info","s20")}</span><span class="grow"><span class="t">Wer sieht was?</span></span>${ic("i-chev","s20")}</summary>
+    <ul class="small muted" style="margin:0 0 14px;padding-left:20px;line-height:1.55"><li>Nur die Person, die anfragt (Markierung „bucht“), sieht deine Angaben – und nur, wenn du freigibst.</li><li>Alle anderen, auch die Orga, sehen nur den Status („freigegeben“, „offen“).</li><li>Gespeichert wird verschlüsselt, keine Ausweis-Scans, keine Freitexte.</li><li>Gelöscht wird automatisch am ${dShort(DATA_DELETE)} (7 Tage nach der Reise) – oder sofort, wenn du die Freigabe zurückziehst.</li></ul></details>`;
+  const action = isBucht(m) ? `<a class="ck-act" href="#/data/new">${ic("i-plus","s20")} Anfrage</a>` : "";
+  return `<div class="screen">${subHead("Reisedaten", action)}<div class="content">${html}</div></div>`;
+}
+const maskName = s => s.split(" ").map(w => w[0] + "•••").join(" ");
+function personData(r, id){
+  const e = entry(r, id), p = P(id), key = r.id + ":" + id, shown = !!S.revealed[key];
+  let chip, body = "";
+  if (p.ph) chip = `<span class="chip open">noch nicht dabei</span>`;
+  else if (e.status === "released") chip = `<span class="chip yes">${ic("i-check","s16")} freigegeben</span>`;
+  else if (e.status === "declined") chip = `<span class="chip no">klärt es direkt</span>`;
+  else chip = `<span class="chip maybe">${ic("i-clock","s16")} offen</span>`;
+  if (e.status === "released"){
+    const vals = [["Vorname(n)", e.first], ["Nachname(n)", e.last]];
+    if (r.fields.includes("birth")) vals.push(["Geburtsdatum", e.birth]);
+    if (r.fields.includes("doc") && e.docno) vals.push(["Dokumentnummer", e.docno]);
+    body = `<dl class="dl">${vals.map(([k, v]) => `<div><dt>${k}</dt><dd>${shown ? esc(v) : (k === "Geburtsdatum" ? "••.••.••••" : maskName(v))}</dd><button class="icon-btn" data-act="copyfield" data-k="${key}" data-f="${k}" data-v="${esc(v)}" aria-label="${k} von ${p.name} kopieren">${ic("i-copy","s20")}</button></div>`).join("")}</dl>
+      <button class="btn secondary sm" data-act="reveal" data-k="${key}" aria-pressed="${shown}">${ic(shown ? "i-eyeoff" : "i-eye","s20")} ${shown ? "Verbergen" : "Anzeigen"}</button>`;
+  } else if (p.ph) body = `<p class="small muted">Bekommt die Anfrage, sobald Mia der Reise beitritt.</p>`;
+  return `<section class="card person-card" aria-label="${p.name}"><div class="person-head">${av(id)}<span class="grow">${p.name}</span>${chip}</div>${body ? `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px">${body}</div>` : ""}</section>`;
+}
+function memberRequest(r){
+  const e = entry(r, me()), by = P(r.by).name, mineLog = r.log.filter(l => l.pid === me());
+  if (e.status === "released"){
+    const vals = [["Vorname(n)", e.first], ["Nachname(n)", e.last]].concat(r.fields.includes("birth") ? [["Geburtsdatum", e.birth]] : []);
+    return `<section class="card" aria-labelledby="mr-${r.id}" style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;gap:12px;align-items:center"><span class="seal" style="width:44px;height:44px;box-shadow:0 0 0 5px var(--accent-tint)">${ic("i-check","s20")}</span><div><h2 id="mr-${r.id}" class="card-title">Freigegeben an ${by}</h2><p class="small muted">Für „${esc(r.purpose)}“</p></div></div>
+      <dl class="dl">${vals.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+      <p class="small muted">${ic("i-shield","s16")} Wird am ${dShort(DATA_DELETE)} automatisch gelöscht.</p>
+      <div><p class="lbl" style="margin-bottom:4px">Zugriffe</p><ul class="log">${mineLog.length ? mineLog.map(l => `<li>${ic("i-eye","s16")} ${P(l.who).name} hat ${l.what} ${l.when} ${l.verb}.</li>`).join("") : `<li>${by} hat deine Angaben noch nicht angesehen.</li>`}</ul></div>
+      <div class="btn-row"><a class="btn secondary sm" href="#/data/fill/${r.id}">Angaben ändern</a><button class="btn danger-quiet" data-act="revoke" data-id="${r.id}">Freigabe zurückziehen</button></div></section>`;
+  }
+  if (e.status === "declined"){
+    return `<section class="card" style="display:flex;flex-direction:column;gap:8px"><h2 class="card-title">Du klärst das direkt mit ${by}</h2><p class="small muted">„${esc(r.purpose)}“ – ${by} sieht nur „klärt es direkt“, keinen Grund.</p><a class="btn secondary sm" href="#/data/fill/${r.id}" style="align-self:flex-start">Doch freigeben</a></section>`;
+  }
+  return `<section class="card" aria-labelledby="mr-${r.id}" style="display:flex;flex-direction:column;gap:12px">
+    <div style="display:flex;gap:12px;align-items:flex-start">${av(r.by,"lg")}<div><p class="meta"><span class="chip info">bucht</span> · ${dDay(r.date)}</p><h2 id="mr-${r.id}" class="card-title" style="margin-top:4px">${by} bucht „${esc(r.purpose)}“</h2></div></div>
+    <div><p class="lbl">${by} bittet um:</p><ul style="margin:4px 0 0;padding-left:20px;line-height:1.6">${r.fields.map(k => `<li>${FIELDS[k].label}</li>`).join("")}</ul></div>
+    <p class="note info" style="margin:0">${ic("i-shield","s20")}<span>Nur ${by} sieht deine Angaben. Automatisch gelöscht am ${dShort(DATA_DELETE)}.</span></p>
+    <a class="btn primary" href="#/data/fill/${r.id}">Angaben eingeben</a>
+    <button class="btn text" data-act="decline" data-id="${r.id}" style="align-self:center">Ich kläre das direkt mit ${by}</button></section>`;
+}
+function scrDataFill(rid){
+  const r = S.requests.find(x => x.id === rid); if (!r) return scrData();
+  const by = P(r.by).name, e = entry(r, me());
+  if (!S.fill || S.fill.rid !== rid) S.fill = { rid, step:1, first:e.first || "", last:e.last || "", birth:e.birth || "", extra:{} };
+  const F = S.fill;
+  const steps = `<div class="steps" aria-hidden="true"><i class="on"></i><i class="${F.step === 2 ? "on" : ""}"></i></div><p class="meta">Schritt ${F.step} von 2 · ${F.step === 1 ? "Angaben" : "Freigeben"}</p>`;
+  if (F.step === 1){
+    const extra = r.fields.filter(k => !["name","birth"].includes(k));
+    return `<div class="screen">${subHead("Reisedaten für " + by)}
+      <form class="content" id="fill-form" novalidate>${steps}
+        <div class="note demo">${ic("i-warn","s20")}<span><b>Demo</b> – bitte keine echten Ausweisdaten eingeben.</span></div>
+        <p class="small muted">Schreib alles <b>genau wie im Ausweis</b>, inklusive zweiter Vornamen – sonst kann die Airline das Ticket ablehnen.</p>
+        <div class="field"><label for="d-first">Vorname(n) laut Ausweis</label><input class="input" id="d-first" autocomplete="given-name" value="${esc(F.first)}" aria-describedby="d-first-err"><p class="err" id="d-first-err" hidden>${ic("i-warn","s20")}<span>Bitte gib deine Vornamen ein.</span></p></div>
+        <div class="field"><label for="d-last">Nachname(n) laut Ausweis</label><input class="input" id="d-last" autocomplete="family-name" value="${esc(F.last)}" aria-describedby="d-last-err"><p class="err" id="d-last-err" hidden>${ic("i-warn","s20")}<span>Bitte gib deinen Nachnamen ein.</span></p></div>
+        ${r.fields.includes("birth") ? `<div class="field"><label for="d-birth">Geburtsdatum</label><input class="input" id="d-birth" inputmode="numeric" autocomplete="bday" placeholder="TT.MM.JJJJ" value="${esc(F.birth)}" aria-describedby="d-birth-help d-birth-err"><p class="help" id="d-birth-help">Format TT.MM.JJJJ, z. B. 07.04.1995</p><p class="err" id="d-birth-err" hidden>${ic("i-warn","s20")}<span>Bitte im Format TT.MM.JJJJ eingeben.</span></p></div>` : ""}
+        ${extra.map(k => `<div class="field"><label for="d-${k}">${FIELDS[k].label}</label><input class="input" id="d-${k}" data-extra="${k}" value="${esc(F.extra[k] || "")}"></div>`).join("")}
+        <div style="flex:1"></div></form>
+      <div class="actionbar"><button class="btn primary" type="submit" form="fill-form">Weiter</button></div></div>`;
+  }
+  const vals = [["Vorname(n)", F.first], ["Nachname(n)", F.last]].concat(r.fields.includes("birth") ? [["Geburtsdatum", F.birth]] : []).concat(Object.entries(F.extra).map(([k, v]) => [FIELDS[k].label, v]));
+  return `<div class="screen">${subHead("Reisedaten für " + by)}
+    <form class="content" id="consent-form" novalidate>${steps}
+      <section class="card"><h2 class="card-title" style="margin-bottom:4px">Das gibst du frei</h2><dl class="dl">${vals.map(([k, v]) => `<div><dt>${k}</dt><dd>${esc(v)}</dd></div>`).join("")}</dl>
+        <button type="button" class="btn text" data-act="fillback">Angaben ändern</button></section>
+      <label class="check-row" for="d-consent"><input type="checkbox" id="d-consent" aria-describedby="d-consent-err"><span>Ich gebe diese Angaben für „${esc(r.purpose)}“ an <b>${by}</b> frei. Sie werden verschlüsselt gespeichert, nur ${by} sieht sie, und sie werden am <b>${dShort(DATA_DELETE)}</b> automatisch gelöscht. Ich kann die Freigabe jederzeit zurückziehen.</span></label>
+      <p class="err" id="d-consent-err" hidden>${ic("i-warn","s20")}<span>Bitte bestätige die Freigabe – oder kläre es direkt mit ${by}.</span></p>
+      <div style="flex:1"></div></form>
+    <div class="actionbar"><button class="btn primary" type="submit" form="consent-form">${ic("i-shield","s20")} An ${by} freigeben</button><button class="btn text" data-act="decline" data-id="${r.id}" style="align-self:center">Ich kläre das direkt mit ${by}</button></div></div>`;
+}
+function bindFill(){
+  const f1 = $("#fill-form"), f2 = $("#consent-form");
+  if (f1) f1.addEventListener("submit", ev => {
+    ev.preventDefault(); const F = S.fill; let first = null;
+    const chk = (id, ok) => { const i = $("#" + id); if (!i) return; const e = $("#" + id + "-err"); e.hidden = ok; ok ? i.removeAttribute("aria-invalid") : i.setAttribute("aria-invalid","true"); if (!ok) first = first || i; };
+    chk("d-first", !!$("#d-first").value.trim()); chk("d-last", !!$("#d-last").value.trim());
+    if ($("#d-birth")) chk("d-birth", /^\d{2}\.\d{2}\.\d{4}$/.test($("#d-birth").value.trim()));
+    if (first){ first.focus(); return; }
+    F.first = $("#d-first").value.trim(); F.last = $("#d-last").value.trim(); F.birth = $("#d-birth")?.value.trim() || "";
+    f1.querySelectorAll("[data-extra]").forEach(i => F.extra[i.dataset.extra] = i.value.trim());
+    F.step = 2; render("same"); focusH1();
+  });
+  if (f2) f2.addEventListener("submit", ev => {
+    ev.preventDefault();
+    if (!$("#d-consent").checked){ $("#d-consent-err").hidden = false; $("#d-consent").focus(); return; }
+    const F = S.fill, r = S.requests.find(x => x.id === F.rid);
+    r.entries[me()] = { status:"released", first:F.first, last:F.last, birth:F.birth, at:today() };
+    S.fill = null; go("#/data"); toast(`Freigegeben an ${P(r.by).name}`);
+  });
+}
+function scrDataNew(){
+  const sw = (k, on, dis) => `<div class="switch-row"><label class="grow" for="rf-${k}"><span style="font-weight:700;display:block">${FIELDS[k].label}</span>${FIELDS[k].always ? `<span class="small muted">Immer dabei</span>` : ""}${FIELDS[k].needs ? `<span class="small muted">Nur zusammen mit der Dokumentnummer</span>` : ""}</label>${FIELDS[k].always ? ic("i-lock","s20") : ""}<input type="checkbox" role="switch" class="switch" id="rf-${k}" data-f="${k}" ${on ? "checked" : ""} ${dis ? "disabled" : ""}></div>`;
+  return `<div class="screen">${subHead("Reisedaten anfragen")}
+    <form class="content" id="req-form" novalidate>
+      <div class="field"><label for="rq-purpose">Wofür brauchst du die Daten?</label><input class="input" id="rq-purpose" maxlength="60" placeholder="z. B. Fähre Split – Hvar" aria-describedby="rq-p-help rq-p-err"><p class="help" id="rq-p-help">Alle Gefragten sehen diesen Zweck.</p><p class="err" id="rq-p-err" hidden>${ic("i-warn","s20")}<span>Bitte gib einen Zweck an.</span></p></div>
+      <section class="card" style="padding:6px 16px"><h2 class="card-title" style="padding-top:10px;font-size:16px">Welche Angaben?</h2>
+        ${sw("name", true, true)}${sw("birth", true)}${sw("salutation", false)}${sw("nationality", false)}${sw("doc", false)}
+        <div id="doc-warn" class="note warn" hidden style="margin:4px 0 8px">${ic("i-warn","s20")}<span>Nur anfragen, wenn die Buchung sie wirklich verlangt – innerhalb Europas genügt meist der Name. Vor dem ersten Anzeigen fragen wir dich nach einem Code.</span></div>
+        ${sw("expiry", false, true)}${sw("country", false, true)}
+      </section>
+      <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Wen fragst du?</legend>
+        <div class="pickchips">${PEOPLE.filter(p => p.id !== me()).map(p => `<label class="pick"><input type="checkbox" value="${p.id}" checked><span>${av(p.id,"sm")}${p.name}${p.ph ? " · bekommt es nach Beitritt" : ""}</span></label>`).join("")}</div></fieldset>
+      <p class="small muted">Nie abgefragt: Ausweisfotos/-scans, Adresse, Freitext. Gelöscht wird automatisch 7 Tage nach der Reise.</p>
+      <div style="flex:1"></div></form>
+    <div class="actionbar"><button class="btn primary" type="submit" form="req-form">Anfrage senden</button></div></div>`;
+}
+function bindDataNew(){
+  const f = $("#req-form"); if (!f) return;
+  f.addEventListener("change", e => {
+    if (e.target.dataset.f === "doc"){ const on = e.target.checked; $("#doc-warn").hidden = !on; ["expiry","country"].forEach(k => { const s = $("#rf-" + k); s.disabled = !on; if (!on) s.checked = false; }); }
+  });
+  f.addEventListener("submit", ev => {
+    ev.preventDefault(); const p = $("#rq-purpose");
+    if (!p.value.trim()){ $("#rq-p-err").hidden = false; p.setAttribute("aria-invalid","true"); p.focus(); return; }
+    const fields = [...f.querySelectorAll("input[data-f]:checked")].map(i => i.dataset.f);
+    const rec = [...f.querySelectorAll(".pick input:checked")].map(i => i.value);
+    const entries = Object.fromEntries(rec.map(id => [id, { status: P(id).ph ? "placeholder" : "open" }]));
+    S.requests.push({ id:"r" + (++S.seq), purpose:p.value.trim(), by:me(), date:today(), fields, recipients:rec, entries, log:[] });
+    go("#/data"); toast(`Anfrage an ${rec.length} Personen gesendet`);
+  });
+}
+
+/* ======================= W21 Unterlagen ======================= */
+function scrDocs(){
+  const ds = visDocs(), m = me();
+  const upcoming = ds.filter(d => d.date && d.date >= today()), past = ds.filter(d => !d.date || d.date < today());
+  const row = d => { const c = DOC_CATS[d.cat];
+    return `<button class="doc-row" data-act="doc" data-id="${d.id}"><span class="tile-ic sm ${c[2]}">${ic(c[1],"s20")}</span><span class="grow"><span class="t">${esc(d.title)}${d.isNew ? ` <span class="chip todo" style="vertical-align:1px">neu</span>` : ""}</span>
+      <span class="s">${d.status === "scan" ? `<span class="spin" aria-hidden="true"></span> Wird geprüft …` : `${d.date ? dShort(d.date) + " · " : ""}${d.type} · ${d.size}`}</span><span class="s" style="display:flex;align-items:center;gap:4px">${visLabel(d)}</span></span>${ic("i-chev","s20")}</button>`; };
+  const used = 3.1 + S.docs.filter(d => d.id.startsWith("u")).length * .8;
+  let html = "";
+  if (S.phase === "after") html += `<div class="note warn">${ic("i-clock","s20")}<p><b>Am ${dShort(DOCS_DELETE)} werden alle Unterlagen gelöscht</b> (30 Tage nach der Reise). Speichere, was du behalten willst.</p></div>`;
+  if (!ds.length) html += `<div class="empty"><span class="illu">${ic("i-ticket","s28")}</span><h2 class="sec">Noch keine Unterlagen</h2><p class="muted">Lade Tickets und Buchungsbestätigungen hoch – dann hat sie unterwegs jede:r griffbereit.</p></div>`;
+  if (upcoming.length) html += `<h2 class="sec" style="margin-top:4px">${S.phase === "after" ? "Unterlagen" : "Als Nächstes"}</h2><div class="card" style="padding:2px 12px">${upcoming.map(row).join("")}</div>`;
+  if (past.length) html += `<h2 class="sec" style="margin-top:12px">${S.phase === "after" ? "Unterlagen" : "Erledigt / ohne Datum"}</h2><div class="card" style="padding:2px 12px">${past.map(row).join("")}</div>`;
+  html += `<div class="quota"><span>${used.toFixed(1).replace(".", ",")} von 100 MB</span><span>${S.docs.length} von 50 Dateien</span></div>
+    <div class="note demo">${ic("i-info","s20")}<span><b>Demo</b> – bitte keine echten Tickets hochladen. Dateien sind nie öffentlich; Download nur nach Anmeldung.</span></div>`;
+  return `<div class="screen">${subHead("Unterlagen", `<a class="ck-act" href="#/docs/upload">${ic("i-upload","s20")} Hochladen</a>`)}<div class="content">${html}</div></div>`;
+}
+function scrDocUpload(){
+  return `<div class="screen">${subHead("Unterlage hochladen")}
+    <form class="content" id="up-form" novalidate>
+      <label class="drop" for="u-file"><span class="tile-ic t-mint">${ic("i-upload")}</span><span style="font-weight:800">Datei auswählen</span><span class="small muted" id="u-file-name">PDF, JPG, PNG oder HEIC · bis 10 MB</span>
+        <input type="file" id="u-file" accept=".pdf,.jpg,.jpeg,.png,.heic,application/pdf,image/jpeg,image/png,image/heic" class="sr-only" aria-describedby="u-file-err"></label>
+      <button type="button" class="btn text" data-act="samplefile" style="align-self:center;margin-top:-6px">Beispieldatei verwenden (Demo)</button>
+      <p class="err" id="u-file-err" hidden>${ic("i-warn","s20")}<span></span></p>
+      <div class="field"><label for="u-title">Titel</label><input class="input" id="u-title" maxlength="80" aria-describedby="u-title-err"><p class="err" id="u-title-err" hidden>${ic("i-warn","s20")}<span>Bitte gib einen Titel ein.</span></p></div>
+      <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Art</legend>
+        <div class="pickchips">${Object.entries(DOC_CATS).map(([k, c], i) => `<label class="pick"><input type="radio" name="u-cat" value="${k}" ${i === 0 ? "checked" : ""}><span><span class="tile-ic sm ${c[2]}" style="width:30px;height:30px;border-radius:10px">${ic(c[1],"s16")}</span>${c[0]}</span></label>`).join("")}</div></fieldset>
+      <div class="field"><label for="u-date">Datum <span class="muted" style="font-weight:500">(optional – sortiert „Als Nächstes“)</span></label><input class="input" id="u-date" type="date" min="2027-01-01"></div>
+      <fieldset class="field" style="border:0;padding:0;margin:0"><legend class="lbl" style="margin-bottom:6px">Wer darf sie sehen?</legend>
+        <div class="seg"><label><input type="radio" name="u-vis" value="all" checked>Alle in der Reise</label><label><input type="radio" name="u-vis" value="some">Nur ausgewählte</label></div>
+        <div id="u-people" hidden style="margin-top:8px"><div class="pickchips">${PEOPLE.filter(p => !p.ph).map(p => `<label class="pick"><input type="checkbox" value="${p.id}" ${p.id === me() ? "checked disabled" : ""}><span>${av(p.id,"sm")}${p.id === me() ? "Ich" : p.name}</span></label>`).join("")}</div></div>
+        <div class="note warn" style="margin-top:8px">${ic("i-warn","s20")}<span>Tickets enthalten oft Buchungscode + Nachname – damit kann man eine Buchung ändern. Teile persönliche Tickets nur mit der Person.</span></div></fieldset>
+      <div style="flex:1"></div></form>
+    <div class="actionbar"><button class="btn primary" type="submit" form="up-form">${ic("i-upload","s20")} Hochladen</button></div></div>`;
+}
+let upFile = null;
+function bindUpload(){
+  const f = $("#up-form"); if (!f) return; upFile = null;
+  const fileErr = msg => { const e = $("#u-file-err"); e.hidden = !msg; if (msg) e.querySelector("span").textContent = msg; };
+  const setFile = (name, size, type) => {
+    if (!/\.(pdf|jpe?g|png|heic)$/i.test(name)){ fileErr("Diese Dateiart geht nicht. Erlaubt sind PDF, JPG, PNG und HEIC."); upFile = null; return; }
+    if (size > 10 * 1024 * 1024){ fileErr(`Die Datei ist ${(size/1048576).toFixed(1).replace(".", ",")} MB groß – erlaubt sind 10 MB.`); upFile = null; return; }
+    fileErr(""); upFile = { name, size, type:name.split(".").pop().toUpperCase().replace("JPEG","JPG") };
+    $("#u-file-name").textContent = `${name} · ${size > 1048576 ? (size/1048576).toFixed(1).replace(".", ",") + " MB" : Math.max(1, Math.round(size/1024)) + " KB"}`;
+    const t = $("#u-title"); if (!t.value) t.value = name.replace(/\.[^.]+$/, "").replace(/[_-]+/g, " ");
+  };
+  $("#u-file").addEventListener("change", e => { const fl = e.target.files[0]; if (fl) setFile(fl.name, fl.size, fl.type); });
+  f.addEventListener("click", e => { if (e.target.closest("[data-act=samplefile]")) setFile("Mietwagen_Bestaetigung.pdf", 230000, "application/pdf"); });
+  f.addEventListener("change", e => { if (e.target.name === "u-vis") $("#u-people").hidden = e.target.value !== "some"; });
+  f.addEventListener("submit", ev => {
+    ev.preventDefault(); let first = null;
+    if (!upFile){ fileErr($("#u-file-err").hidden ? "Bitte wähle zuerst eine Datei." : $("#u-file-err span").textContent); first = $(".drop"); }
+    const t = $("#u-title"); if (!t.value.trim()){ $("#u-title-err").hidden = false; t.setAttribute("aria-invalid","true"); first = first || t; }
+    if (first){ (first.matches("label") ? $("#u-file") : first).focus(); return; }
+    const vis = f.querySelector("input[name=u-vis]:checked").value === "all" ? "all" : [...f.querySelectorAll("#u-people input:checked")].map(i => i.value);
+    const d = { id:"u" + (++S.seq), title:t.value.trim(), cat:f.querySelector("input[name=u-cat]:checked").value, date:$("#u-date").value || "", by:me(), vis, type:upFile.type, size:upFile.size > 1048576 ? (upFile.size/1048576).toFixed(1).replace(".", ",") + " MB" : Math.round(upFile.size/1024) + " KB", status:"scan", isNew:true };
+    S.docs.push(d); go("#/docs"); toast("Hochgeladen – wird kurz auf Viren geprüft.");
+    setTimeout(() => { d.status = "ok"; if (route().startsWith("/docs")) render("same"); toast(`„${d.title}“ ist bereit.`); }, 2600);
+  });
+}
+
+/* ======================= W22 Infos ======================= */
+function scrInfo(){
+  const i = S.info, m = me(), canEdit = isOrga(m) || isBucht(m);
+  const stay = S.chosen ? stayById(S.chosen).title : "";
+  const item = (icn, k, v) => v ? `<div class="info-item"><span class="tile-ic sm t-lav">${ic(icn,"s20")}</span><div class="grow"><span class="k">${k}</span><span class="v">${v}</span></div></div>` : "";
+  const linkify = s => esc(s).replace(/(https:\/\/[^\s]+)/g, `<a href="$1" target="_blank" rel="noopener noreferrer">$1</a>`);
+  const any = i.address || i.checkin || i.meet || i.notes;
+  if (!any) return `<div class="screen">${subHead("Infos", canEdit ? `<a class="ck-act" href="#/info/edit">${ic("i-edit","s20")} Bearbeiten</a>` : "")}<div class="content"><div class="empty"><span class="illu">${ic("i-info","s28")}</span><h2 class="sec">Noch keine Infos</h2><p class="muted">${canEdit ? "Adresse, Check-in und Treffpunkt an einem Ort – dann muss niemand im Chat suchen." : "Lena trägt hier Adresse, Check-in und Treffpunkt ein."}</p>${canEdit ? `<a class="btn primary" href="#/info/edit">Infos ergänzen</a>` : ""}</div></div></div>`;
+  const map = i.address ? `<a href="https://www.openstreetmap.org/search?query=${encodeURIComponent(i.address)}" target="_blank" rel="noopener noreferrer" class="btn secondary sm" style="margin-top:8px">${ic("i-pin","s20")} In Karten öffnen <span class="sr-only">(öffnet neuen Tab)</span>↗</a>` : "";
+  return `<div class="screen">${subHead("Infos", canEdit ? `<a class="ck-act" href="#/info/edit">${ic("i-edit","s20")} Bearbeiten</a>` : "")}<div class="content">
+    <section class="card" aria-labelledby="inf-stay"><h2 id="inf-stay" class="card-title">Unterkunft</h2>
+      ${i.address || stay ? `<div class="info-item"><span class="tile-ic sm t-lav">${ic("i-bed","s20")}</span><div class="grow"><span class="k">${esc(i.stay || stay || "Unterkunft")}</span><span class="v">${esc(i.address) || "Adresse folgt"}</span>${map}</div></div>` : `<p class="small muted" style="padding:8px 0">Adresse folgt, sobald die Unterkunft gebucht ist.${canEdit && S.chosen ? "" : ""}</p>`}
+      ${item("i-clock", "Check-in", esc(i.checkin))}${item("i-clock", "Check-out", esc(i.checkout))}
+      ${i.emergency ? `<div class="info-item"><span class="tile-ic sm t-coral">${ic("i-phone","s20")}</span><div class="grow"><span class="k">Notfallkontakt der Unterkunft</span><span class="v">${esc(i.emergency)}</span></div></div>` : ""}</section>
+    <section class="card" aria-labelledby="inf-meet"><h2 id="inf-meet" class="card-title">Treffpunkt &amp; Anreise</h2>${item("i-plane", "Hinflug", esc(i.meet))}</section>
+    ${i.notes ? `<section class="card" aria-labelledby="inf-notes"><h2 id="inf-notes" class="card-title">Gut zu wissen</h2><p class="v" style="white-space:pre-line;line-height:1.55;margin-top:8px">${linkify(i.notes)}</p></section>` : ""}
+    <p class="meta" style="padding:0 4px">Zuletzt geändert von ${P(i.by).name}, ${dDay(i.at)}</p></div></div>`;
+}
+function scrInfoEdit(){
+  const i = S.info;
+  const fld = (id, label, val, help = "", ta = false) => `<div class="field"><label for="i-${id}">${label}</label>${ta ? `<textarea class="input" id="i-${id}" maxlength="2000" aria-describedby="i-${id}-help">${esc(val)}</textarea>` : `<input class="input" id="i-${id}" value="${esc(val)}" ${help ? `aria-describedby="i-${id}-help"` : ""}>`}${help ? `<p class="help" id="i-${id}-help">${help}</p>` : ""}</div>`;
+  return `<div class="screen">${subHead("Infos bearbeiten")}
+    <form class="content" id="info-form" novalidate>
+      ${S.chosen && !i.address ? `<button type="button" class="btn secondary sm" data-act="toinfo" style="align-self:flex-start">${ic("i-bed","s20")} Aus „${esc(stayById(S.chosen).title)}“ übernehmen</button>` : ""}
+      ${fld("address", "Adresse der Unterkunft", i.address, "Wird als Link „In Karten öffnen“ gezeigt – ohne eingebettete Karte.")}
+      ${fld("checkin", "Check-in", i.checkin)}${fld("checkout", "Check-out", i.checkout)}
+      ${fld("meet", "Treffpunkt & Anreise", i.meet)}
+      ${fld("emergency", "Notfallkontakt der Unterkunft", i.emergency, "Nur Kontakte der Unterkunft – keine privaten Nummern.")}
+      ${fld("notes", "Gut zu wissen", i.notes, "Keine Ausweis- oder Buchungsnummern hier eintragen – dafür gibt es Reisedaten und Unterlagen. Links werden automatisch erkannt.", true)}
+      <div style="flex:1"></div></form>
+    <div class="actionbar"><button class="btn primary" type="submit" form="info-form">Speichern</button></div></div>`;
+}
+function bindInfoEdit(){
+  const f = $("#info-form"); if (!f) return;
+  f.addEventListener("submit", ev => { ev.preventDefault(); ["address","checkin","checkout","meet","emergency","notes"].forEach(k => S.info[k] = $("#i-" + k).value.trim()); S.info.by = me(); S.info.at = today(); go("#/info"); toast("Infos gespeichert – alle sehen sie jetzt."); });
+}
+
+/* ======================= Sheets ======================= */
+let sheetOpener = null;
+function openSheet(title, body){
+  closeSheet(true);
+  sheetOpener = document.activeElement;
+  $("#sheet-root").innerHTML = `<div class="scrim" data-act="closesheet"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sheet-h"><div class="grip" aria-hidden="true"></div>
+    <div class="sheet-h"><h2 id="sheet-h" tabindex="-1">${title}</h2><button class="icon-btn" data-act="closesheet" aria-label="Schließen">${ic("i-x","s20")}</button></div><div class="body">${body}</div></div>`;
+  $("#view").setAttribute("aria-hidden", "true"); $("#view").inert = true;
+  $("#sheet-h").focus();
+}
+function closeSheet(silent){
+  if (!$("#sheet-root").innerHTML) return;
+  $("#sheet-root").innerHTML = ""; $("#view").removeAttribute("aria-hidden"); $("#view").inert = false;
+  if (!silent && sheetOpener && document.contains(sheetOpener)) sheetOpener.focus();
+}
+function sheetMenu(){
+  const o = isOrga(me());
+  const it = (icn, label, act, msg) => `<button class="menu-item" data-act="${act}" ${msg ? `data-msg="${msg}"` : ""}>${ic(icn,"s20")}${label}</button>`;
+  openSheet("Reisemenü", `<div>${it("i-users","Freunde einladen","toast","Einladen (W06) – nicht Teil dieses Mockups.")}${o ? it("i-id","Wer bucht?","bucht") : ""}${it("i-vote","So habt ihr entschieden","decided")}${o ? it("i-edit","Reise bearbeiten","toast","Reise bearbeiten (W12) – nicht Teil dieses Mockups.") + it("i-cal","Festlegung aufheben …","toast","Festlegung aufheben (W11): Unterkünfte, Kosten, Reisedaten und Unterlagen bleiben erhalten.") : ""}${it("i-info","Hilfe","toast","Hilfe (W15) – nicht Teil dieses Mockups.")}<button class="menu-item" data-act="toast" data-msg="Reise verlassen: Warnung bei offenem Saldo und eigenen Unterlagen (W19/W21)." style="color:var(--danger)">${ic("i-trash","s20")}Reise verlassen …</button></div>`);
+}
+function sheetBucht(){
+  openSheet("Wer bucht?", `<p class="small muted">Wer „bucht“, darf Reisedaten anfragen und freigegebene Daten sehen, Infos bearbeiten und die Unterkunft als gebucht markieren. Höchstens 3 Personen; für alle sichtbar.</p>
+    <div>${PEOPLE.map(p => `<div class="switch-row">${av(p.id)}<label class="grow" for="bu-${p.id}"><span style="font-weight:700;display:block">${p.id === me() ? "Du (" + p.name + ")" : p.name}${isOrga(p.id) ? ` <span class="chip maybe">${ic("i-crown","s16")} Orga</span>` : ""}</span>${p.ph ? `<span class="small muted">Platzhalter können nicht buchen</span>` : ""}</label><input type="checkbox" role="switch" class="switch" id="bu-${p.id}" data-act="togglebucht" data-id="${p.id}" ${isBucht(p.id) ? "checked" : ""} ${p.ph ? "disabled" : ""}></div>`).join("")}</div>
+    <p class="small muted">Entziehst du die Markierung, verliert die Person sofort den Zugriff auf alle Reisedaten.</p>`);
+}
+function sheetMembers(){
+  openSheet(`Wer ist dabei? (${travellers()})`, `<div>${PEOPLE.map(p => `<div class="split-row">${av(p.id)}<span class="grow">${p.id === me() ? "Du (" + p.name + ")" : p.name}</span><span class="chips">${isOrga(p.id) ? `<span class="chip maybe">${ic("i-crown","s16")} Orga</span>` : ""}${isBucht(p.id) ? `<span class="chip info">bucht</span>` : ""}${p.ph ? `<span class="chip open">Platzhalter · noch nicht dabei</span>` : ""}</span></div>`).join("")}</div>`);
+}
+function sheetDecided(){
+  openSheet("So habt ihr entschieden", `<div class="note ok">${ic("i-check","s20")}<span><b>${dF(TRIP.start,{weekday:"short",day:"numeric"})}–${dShort(TRIP.end)} 2027</b> · festgelegt von Lena am ${dDay(TRIP.fixedOn)}</span></div>
+    <div class="card" style="padding:4px 14px"><div class="split-row"><span class="chip rank">${ic("i-star","s16")} Platz 1</span><span class="grow">12.–19. Juni</span><span class="small" style="font-weight:800">✓ 5 · ◐ 1 · ✕ 0</span></div><div class="split-row"><span class="chip no">Platz 2</span><span class="grow">3.–10. Juli</span><span class="small" style="font-weight:800">✓ 3 · ◐ 1 · ✕ 2</span></div></div>
+    <p class="small muted">Gruppenkalender und Abstimmung bleiben schreibgeschützt erreichbar (Ansichten W09/W10 im Modus „nur lesen“).</p>`);
+}
+function sheetExpense(id){
+  const e = S.expenses.find(x => x.id === id), sh = shares(e), m = me(), c = CATS[e.cat];
+  const may = !S.closed && (e.by === m || e.payer === m || isOrga(m));
+  openSheet(esc(e.title), `<p class="saldo">${eur(e.cents)}</p><p class="small muted" style="margin-top:-6px">${c[0]} · ${dShort(e.date)} · ${Nm(e.payer)} ${e.payer === m ? "hast" : "hat"} bezahlt</p>
+    <div class="card" style="padding:4px 14px">${Object.keys(sh).map(pid => `<div class="split-row">${av(pid,"sm")}<span class="grow">${pid === m ? "Du" : P(pid).name}</span><span class="money">${eur(sh[pid])}</span></div>`).join("")}</div>
+    <p class="meta">${e.split === "equal" ? "Gleich aufgeteilt" : "Nach Beträgen aufgeteilt"} · angelegt von ${nm(e.by)}</p>
+    ${may ? `<div class="btn-row"><a class="btn secondary sm" href="#/costs/edit/${e.id}" data-act="closesheet-go">${ic("i-edit","s20")} Bearbeiten</a><button class="btn danger-quiet" data-act="delexp" data-id="${e.id}">${ic("i-trash","s20")} Löschen</button></div>` : `<p class="small muted">Bearbeiten können ${nm(e.by)}, ${nm(e.payer)} und die Orga.</p>`}`);
+}
+function sheetDoc(id){
+  const d = S.docs.find(x => x.id === id), m = me(), c = DOC_CATS[d.cat];
+  d.isNew = false;
+  const mayDel = d.by === m || isOrga(m);
+  openSheet(esc(d.title), `<div style="display:flex;gap:12px;align-items:center"><span class="tile-ic ${c[2]}">${ic(c[1])}</span><div><p style="font-weight:700">${c[0]}${d.date ? " · " + dShort(d.date) : ""}</p><p class="small muted">${d.type} · ${d.size} · hochgeladen von ${nm(d.by)}</p></div></div>
+    <p class="small" style="display:flex;gap:6px;align-items:center">${visLabel(d)}</p>
+    ${d.status === "scan" ? `<div class="note info"><span class="spin" aria-hidden="true"></span><span>Wird auf Viren geprüft – gleich verfügbar.</span></div>` : `<button class="btn primary" data-act="toast" data-msg="„${esc(d.title)}“ heruntergeladen (Demo).">${ic("i-download","s20")} Herunterladen</button><button class="btn secondary block" data-act="toast" data-msg="Vorschau öffnet sich in einem sicheren Fenster (Demo).">${ic("i-eye","s20")} Ansehen</button>`}
+    <p class="small muted">Wird am ${dShort(DOCS_DELETE)} automatisch gelöscht (30 Tage nach der Reise).</p>
+    ${mayDel ? `<button class="btn danger-quiet" data-act="deldoc" data-id="${d.id}" style="align-self:flex-start">${ic("i-trash","s20")} Unterlage löschen</button>` : ""}`);
+}
+function sheetConfirm(title, text, okLabel, act, id, destructive = true){
+  openSheet(title, `<p>${text}</p><div class="btn-row"><button class="btn secondary" data-act="closesheet">Abbrechen</button><button class="btn ${destructive ? "danger" : "primary"}" data-act="${act}" data-id="${id || ""}" style="${destructive ? "" : "width:auto"}">${okLabel}</button></div>`);
+  setTimeout(() => $(".sheet .btn.secondary")?.focus(), 0);
+}
+function sheetShare(kind){
+  let text = "";
+  if (kind === "costs") text = `Abrechnung ${TRIP.name}:\n` + (settle(balances()).map(x => `${P(x.from).name} → ${P(x.to).name}: ${eur(x.cents)}`).join("\n") || "Alles ausgeglichen ✓");
+  if (kind === "stay") text = `Unsere Unterkunft für ${TRIP.name}: ${stayById(S.chosen).title} – https://${stayById(S.chosen).domain}/…`;
+  if (kind === "remind") text = `Hey! Lena bucht die Flüge für ${TRIP.name} und braucht noch deine Reisedaten. Hier geht's direkt hin: https://wir-wollen-weg.example/r/…`;
+  openSheet("Teilen", `<p class="share-prev">${esc(text)}</p><button class="btn primary" data-act="copy" data-v="${esc(text)}">${ic("i-copy","s20")} Text kopieren</button><p class="small muted">Im Produkt: Teilen-Sheet wie W06 (WhatsApp, Signal, Mail …).</p>`);
+}
+function sheetPayInfo(){
+  const v = S.payInfo[me()] || "";
+  openSheet("Deine Zahlungsinfo", `<div class="field"><label for="pi">PayPal-Name, IBAN o. Ä.</label><input class="input" id="pi" maxlength="100" value="${esc(v)}" aria-describedby="pi-h"><p class="help" id="pi-h">Freiwillig. Alle in dieser Reise können das lesen. Wir wickeln keine Zahlungen ab.</p></div><button class="btn primary" data-act="savepayinfo">Speichern</button>`);
+}
+
+/* ======================= Toast / Live ======================= */
+let toastT = null;
+function toast(msg, actionLabel, onAction){
+  const root = $("#toast-root"); clearTimeout(toastT);
+  root.innerHTML = `<div class="toast"><span class="ok">${ic("i-check","s20")}</span><span>${esc(msg)}</span>${actionLabel ? `<button type="button">${actionLabel}</button>` : ""}</div>`;
+  if (actionLabel) root.querySelector("button").onclick = () => { onAction(); root.innerHTML = ""; };
+  toastT = setTimeout(() => root.innerHTML = "", actionLabel ? 6000 : 4000);
+}
+function announce(t){ const l = $("#live"); l.textContent = ""; setTimeout(() => l.textContent = t, 30); }
+
+/* ======================= Router ======================= */
+const route = () => (location.hash.replace(/^#/, "") || "/");
+function parentOf(r){
+  if (r === "/" ) return "/";
+  const seg = r.split("/").filter(Boolean);
+  if (seg[0] === "costs" && seg[1] === "balances") return "/";
+  if (seg.length > 1) return "/" + seg[0];
+  return "/";
+}
+const depth = r => r === "/" ? 0 : (r.startsWith("/costs/balances") ? 1 : r.split("/").filter(Boolean).length);
+const scrollMem = {};
+let lastRoute = null;
+function screenFor(r){
+  const s = r.split("/").filter(Boolean);
+  if (!s.length) return scrCockpit();
+  switch (s[0]){
+    case "stay": return s[1] === "swipe" ? scrSwipe() : s[1] === "new" ? scrStayNew() : scrStay();
+    case "costs": return s[1] === "new" ? scrCostNew() : s[1] === "edit" ? scrCostNew(s[2]) : s[1] === "balances" ? scrBalances() : scrCosts();
+    case "data": return s[1] === "fill" ? scrDataFill(s[2]) : s[1] === "new" ? (isBucht(me()) ? scrDataNew() : scrData()) : scrData();
+    case "docs": return s[1] === "upload" ? scrDocUpload() : scrDocs();
+    case "info": return s[1] === "edit" ? scrInfoEdit() : scrInfo();
+  }
+  return scrCockpit();
+}
+const titles = { "":"Reise-Cockpit", stay:"Unterkünfte", costs:"Kosten", data:"Reisedaten", docs:"Unterlagen", info:"Infos" };
+function render(mode){
+  const r = route(), view = $("#view");
+  if (lastRoute && mode !== "same") scrollMem[lastRoute] = view.scrollTop;
+  const dir = mode === "same" ? "none" : (lastRoute === null ? "fade" : depth(r) > depth(lastRoute) ? "fwd" : depth(r) < depth(lastRoute) ? "back" : "fade");
+  const keep = mode === "same" ? view.scrollTop : 0;
+  view.innerHTML = screenFor(r);
+  const scr = view.firstElementChild;
+  if (dir !== "none") scr.classList.add(reduced() ? "enter-fade" : dir === "fwd" ? "enter-fwd" : dir === "back" ? "enter-back" : "enter-fade");
+  view.scrollTop = mode === "same" ? keep : (dir === "back" && scrollMem[r] != null ? scrollMem[r] : 0);
+  document.title = `${titles[r.split("/").filter(Boolean)[0] || ""]} · ${TRIP.name} · Wir wollen weg (Mockup)`;
+  bindSwipe(); bindStayNew(); bindCostForm(); bindFill(); bindDataNew(); bindUpload(); bindInfoEdit();
+  if (r === "/" && mode !== "same" && !reduced() && !window.__tilesShown && (window.__tilesShown = true)) view.querySelectorAll(".tile").forEach((t, i) => { t.style.animationDelay = Math.min(i * 60, 400) + "ms"; t.classList.add("enter"); });
+  if (mode !== "same" && lastRoute !== null) focusH1();
+  lastRoute = r;
+}
+function focusH1(){ const h = $("#view h1"); if (h) h.focus({ preventScroll:true }); }
+function go(h){ if (location.hash === h) render("same"); else location.hash = h; }
+window.addEventListener("hashchange", () => { closeSheet(true); if (!route().startsWith("/data/fill")) S.fill = null; render(); });
+
+/* ======================= Ereignisse ======================= */
+document.addEventListener("click", e => {
+  const a = e.target.closest("[data-act]");
+  const link = e.target.closest("a[href^='#/']");
+  if (link && link.dataset.as){ setWho(link.dataset.as); }
+  if (link && link.hasAttribute("data-back")){ e.preventDefault(); const p = "#" + parentOf(route()); location.hash = p; return; }
+  if (!a) return;
+  const act = a.dataset.act, id = a.dataset.id, m = me();
+  switch (act){
+    case "toast": toast(a.dataset.msg || "Im Mockup nicht enthalten."); closeSheet(); break;
+    case "menu": sheetMenu(); break;
+    case "bucht": sheetBucht(); break;
+    case "members": sheetMembers(); break;
+    case "decided": sheetDecided(); break;
+    case "closesheet": closeSheet(); break;
+    case "closesheet-go": closeSheet(true); break;
+    case "togglebucht": {
+      if (a.checked && S.bucht.length >= 3){ a.checked = false; toast("Höchstens 3 Personen können buchen."); break; }
+      S.bucht = a.checked ? [...S.bucht, id] : S.bucht.filter(x => x !== id);
+      announce(`${P(id).name} ${a.checked ? "bucht jetzt" : "bucht nicht mehr"}.`); render("same"); break;
+    }
+    case "rate": { const v = +a.dataset.v; S.ratings[id] = S.ratings[id] || {}; if (S.ratings[id][m] === v) delete S.ratings[id][m]; else S.ratings[id][m] = v; render("same"); announce("Bewertung gespeichert"); break; }
+    case "swipe": commitSwipe(+a.dataset.v); break;
+    case "undo": if (a.getAttribute("aria-disabled") !== "true") undoSwipe(); break;
+    case "openlink": toast(`Öffnet ${a.dataset.domain} in einem neuen Tab (Demo).`); break;
+    case "fix": { const s = stayById(id); sheetConfirm(`${esc(s.title)} festlegen?`, "Alle sehen sie dann als eure Unterkunft, das Swipen endet. Du kannst das wieder aufheben.", "Das wird's", "dofix", id, false); break; }
+    case "dofix": S.chosen = id; S.booked = false; closeSheet(true); render("same"); toast(`Eure Unterkunft steht: ${stayById(id).title}`, "Teilen", () => sheetShare("stay")); break;
+    case "unfix": sheetConfirm("Festlegung aufheben?", "Die Rangliste bleibt, alle können wieder bewerten. Geteilte Nachrichten musst du im Chat selbst korrigieren.", "Aufheben", "dounfix"); break;
+    case "dounfix": S.chosen = null; S.booked = false; closeSheet(true); render("same"); toast("Festlegung aufgehoben"); break;
+    case "book": S.booked = true; render("same"); toast("Als gebucht markiert ✓", "Rückgängig", () => { S.booked = false; render("same"); }); break;
+    case "toinfo": { const s = stayById(S.chosen), adr = ({ villa:"Put Rudine 14, 21460 Stari Grad, Kroatien", lavanda:"Ulica Kružićeva 3, 21000 Split, Kroatien", kamena:"Put Zlatnog rata 8, 21420 Bol, Kroatien", azul:"Obala kralja Tomislava 21, 21300 Makarska, Kroatien", bacvice:"Šetalište Ivana Meštrovića 2, 21000 Split, Kroatien" })[s.id] || "Adresse laut Buchung (Demo)", emg = "Gastgeberin Ana · +385 91 000 0000 (Demo)";
+      if ($("#i-address")){ $("#i-address").value = adr; if (!$("#i-emergency").value) $("#i-emergency").value = emg; S.info.stay = s.title; a.remove(); $("#i-address").focus(); toast("Adresse übernommen – noch speichern"); break; }
+      S.info.stay = s.title; S.info.address = adr; S.info.emergency = S.info.emergency || emg; S.info.by = m; S.info.at = today(); render("same"); toast("Adresse in „Infos“ übernommen"); break; }
+    case "share": sheetShare(a.dataset.kind); break;
+    case "copy": navigator.clipboard?.writeText(a.dataset.v).catch(() => {}); closeSheet(); toast("Kopiert"); break;
+    case "expense": sheetExpense(id); break;
+    case "delexp": { const i = S.expenses.findIndex(x => x.id === id), ex = S.expenses[i]; S.expenses.splice(i, 1); closeSheet(true); render("same"); toast(`„${ex.title}“ gelöscht`, "Rückgängig", () => { S.expenses.splice(i, 0, ex); render("same"); }); break; }
+    case "paid": { const p = { from:a.dataset.from, to:a.dataset.to, cents:+a.dataset.c }; S.payments.push(p); render("same"); toast(`${P(p.from).name} → ${P(p.to).name}: als bezahlt markiert`, "Rückgängig", () => { S.payments = S.payments.filter(x => x !== p); render("same"); }); break; }
+    case "payinfo": sheetPayInfo(); break;
+    case "savepayinfo": { const v = $("#pi").value.trim(); if (v) S.payInfo[m] = v; else delete S.payInfo[m]; closeSheet(true); render("same"); toast("Zahlungsinfo gespeichert"); break; }
+    case "close": sheetConfirm("Abrechnung abschließen?", "Danach kann niemand mehr Ausgaben ändern. Du kannst sie wieder öffnen.", "Abschließen", "doclose", "", false); break;
+    case "doclose": S.closed = true; closeSheet(true); render("same"); toast("Abrechnung abgeschlossen ✓"); break;
+    case "reopen": S.closed = false; render("same"); toast("Abrechnung wieder geöffnet"); break;
+    case "reveal": { const k = a.dataset.k; S.revealed[k] = !S.revealed[k]; if (S.revealed[k]) logAccess(k, "angesehen"); render("same"); $(`[data-act=reveal][data-k="${k}"]`)?.focus(); break; }
+    case "copyfield": { navigator.clipboard?.writeText(a.dataset.v).catch(() => {}); logAccess(a.dataset.k, a.dataset.f + " kopiert"); toast("Kopiert – bitte nicht in Chats weiterleiten."); break; }
+    case "decline": { const r = S.requests.find(x => x.id === id); r.entries[m] = { status:"declined" }; S.fill = null; closeSheet(true); go("#/data"); toast(`${P(r.by).name} sieht: „klärt es direkt“`); break; }
+    case "revoke": sheetConfirm("Freigabe zurückziehen?", `${P(S.requests.find(x => x.id === id).by).name} sieht deine Angaben dann nicht mehr – sie werden sofort gelöscht.`, "Zurückziehen", "dorevoke", id); break;
+    case "dorevoke": { const r = S.requests.find(x => x.id === id); r.entries[m] = { status:"open" }; r.log = r.log.filter(l => l.pid !== m); closeSheet(true); render("same"); toast("Freigabe zurückgezogen – Daten gelöscht"); break; }
+    case "closereq": sheetConfirm("Anfrage abschließen?", "Alle freigegebenen Angaben dieser Anfrage werden sofort gelöscht. Hast du alles gebucht?", "Erledigt – löschen", "doclosereq", id); break;
+    case "doclosereq": S.requests = S.requests.filter(r => r.id !== id); closeSheet(true); render("same"); toast("Anfrage abgeschlossen, Daten gelöscht"); break;
+    case "fillback": S.fill.step = 1; render("same"); focusH1(); break;
+    case "doc": sheetDoc(id); break;
+    case "deldoc": sheetConfirm("Unterlage löschen?", "Sie wird sofort für alle gelöscht – auch aus dem Speicher.", "Löschen", "dodeldoc", id); break;
+    case "dodeldoc": S.docs = S.docs.filter(d => d.id !== id); closeSheet(true); render("same"); toast("Unterlage gelöscht"); break;
+  }
+});
+function logAccess(k, what){
+  const [rid, pid] = k.split(":"); const r = S.requests.find(x => x.id === rid); if (!r) return;
+  r.log.push({ who:me(), pid, what:what === "angesehen" ? "deine Angaben" : "„" + what.replace(" kopiert", "") + "“", verb: what === "angesehen" ? "angesehen" : "kopiert", when:"heute" });
+}
+document.addEventListener("keydown", e => {
+  if (e.key === "Escape" && $("#sheet-root").innerHTML){ closeSheet(); return; }
+  if (e.key === "Tab" && $("#sheet-root").innerHTML){
+    const f = [...$(".sheet").querySelectorAll("a[href],button,input,select,textarea,[tabindex='-1']")].filter(x => !x.disabled);
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  }
+  if (route() === "/stay/swipe" && !$("#sheet-root").innerHTML && !e.target.closest("input,textarea,select")){
+    if (e.key === "ArrowRight"){ e.preventDefault(); commitSwipe(1); }
+    if (e.key === "ArrowLeft"){ e.preventDefault(); commitSwipe(0); }
+    if (e.key === "z" && (e.ctrlKey || e.metaKey)){ e.preventDefault(); undoSwipe(); }
+  }
+});
+
+/* ======================= Steuerpanel ======================= */
+function setWho(v){ S.view = v; S.fill = null; S.revealed = {}; S.swipeUndo = []; document.querySelector(`input[name=who][value=${v}]`).checked = true; }
+document.querySelectorAll("input[name=who]").forEach(i => i.addEventListener("change", () => { setWho(i.value); if (!isBucht(me()) && route() === "/data/new") go("#/data"); else render("same"); toast(`Ansicht: ${P(me()).name}`); }));
+document.querySelectorAll("input[name=phase]").forEach(i => i.addEventListener("change", () => { S.phase = i.value; render("same"); toast(`Teilphase: ${i.parentElement.textContent.trim()}`); }));
+const setDark = on => { document.documentElement.dataset.theme = on ? "dark" : "light"; document.body.dataset.theme = on ? "dark" : "light"; };
+$("#opt-dark").addEventListener("change", e => setDark(e.target.checked));
+$("#opt-motion").addEventListener("change", e => { if (e.target.checked) document.documentElement.dataset.motion = "reduce"; else delete document.documentElement.dataset.motion; });
+$("#reset").addEventListener("click", () => { S = freshState(); document.querySelector("input[name=who][value=max]").checked = true; document.querySelector("input[name=phase][value=prep]").checked = true; closeSheet(true); go("#/"); toast("Demo zurückgesetzt"); });
+if (matchMedia("(prefers-color-scheme: dark)").matches){ $("#opt-dark").checked = true; setDark(true); }
+if (matchMedia("(prefers-reduced-motion: reduce)").matches){ $("#opt-motion").checked = true; document.documentElement.dataset.motion = "reduce"; }
+render();
+</script>
+</body>
+</html>
