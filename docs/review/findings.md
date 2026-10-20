@@ -754,3 +754,13 @@ Proxy manuell gegen `next start` mit `APP_ENV=preview` geprüft (`curl --path-as
 #### Hinweise ohne Finding
 - `advanced.backgroundTasks.handler` ändert auch `runInBackgroundOrAwait` in Better Auth: bisher awaited, jetzt per `after()` (betrifft Rate-Limiter-Aufräumen `deleteMany` und `sendVerificationOTP`). Unkritisch: der Collector im kombinierten Flow setzt `otp` synchron, bevor das Promise zurückkommt; Fehler unbekannter OTP-Typen werden nun geloggt statt als 500 geworfen (HTTP-Allow-List lässt diese Pfade ohnehin nicht zu).
 - Weitere Sends geprüft: Konto-Mails (`features/account/actions.ts`) und Löschjob (`retention.ts`) werden awaited – nicht betroffen.
+
+### Vertrauenswürdige Origins in der Vercel-Vorschau (Commit aa94c3d, 2026-10-20)
+
+### R-068: Magic-Link (und Einladungslinks) zeigen in der Vorschau immer auf die Basis-URL, nicht auf den aufgerufenen Host
+- Schwere: niedrig
+- Datei: src/server/auth/email-access-plugin.ts:352
+- Problem / Reproduktion: Server lokal wie Vercel gestartet (`VERCEL=1 APP_ENV=preview APP_URL=https://wir-wollen-weg.vercel.app …`), Code angefordert mit `Host`/`Origin` `wir-wollen-dzdp-max.vercel.app` → 200; Login per Code auf diesem Host funktioniert (Cookie `__Secure-ww.session_token`, host-only, `Secure`, `SameSite=Lax`). Der Magic-Link in derselben Mail lautet aber `https://wir-wollen-weg.vercel.app/auth/magic?token=…` (statische `baseURL`). Wer die App über einen anderen `*.vercel.app`-Host nutzt, landet beim Klick auf dem Produktions-Alias: erneute Basic-Auth-Abfrage, Session nur dort, der ursprüngliche Tab bleibt abgemeldet; bei einem Branch-/Deployment-Host ggf. sogar auf einem anderen Deployment (anderer Code-Stand).
+- Erwartetes Verhalten: In der Vorschau führt der Link auf den Host, über den der Code angefordert wurde – oder die Doku nennt eindeutig eine URL, über die die Vorschau zu öffnen ist.
+- Vorschlag: (a) kurzfristig in `docs/ops/vorschau-anleitung.md` festhalten: Vorschau nur über `https://<VERCEL_PROJECT_PRODUCTION_URL>` öffnen (bzw. `APP_URL` auf genau den genutzten Host setzen); Code-Eingabe funktioniert auf jedem Host. (b) optional: Landing-URL nur in der Vorschau aus dem Request-Host bauen, wenn `previewTrustedOrigins(process.env, host)` ihn enthält – sonst `baseURL`. Keine dynamische `baseURL` mit `allowedHosts: ["*.vercel.app"]` verwenden (würde fremde vercel.app-Origins vertrauen).
+- Status: offen
