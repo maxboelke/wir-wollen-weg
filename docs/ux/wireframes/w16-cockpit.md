@@ -362,8 +362,8 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 
 | Nr. | Frage | Empfehlung UX |
 |---|---|---|
-| **UX-8** | **Kleine Feier am Abreisetag?** Am ersten Tag von *Unterwegs* zeigt die Übersicht einmal je Person eine kleine Konfetti-Runde und den Heute-Satz «Heute geht's los – gute Reise!». | **Ja** – zweiter, kleiner Moment ohne Ehrenrunde (die große Feier bleibt die Festlegung). Macht Spaß, kostet wenig, abschaltbar über „Bewegung reduzieren“. |
-| **UX-9** | **Darf die Orga eine Station „ohne App erledigt“ abhaken?** (V2 «Mia macht ohne App mit», V3 «Unterkunft haben wir schon / brauchen wir nicht», V5 «Jede:r reist selbst an») | **Ja** – sonst zeigt der Weg Wochen lang offene Schritte, die die Gruppe längst außerhalb der App erledigt hat, und verliert an Glaubwürdigkeit. Nur Orga, rückgängig machbar, für alle sichtbar «ohne App erledigt». Kleiner Zusatzaufwand (ein Merker je Station und Reise). |
+| **UX-8** | **Kleine Feier am Abreisetag?** Am ersten Tag von *Unterwegs* zeigt die Übersicht einmal je Person eine kleine Konfetti-Runde und den Heute-Satz «Heute geht's los – gute Reise!». | **Ja** – zweiter, kleiner Moment ohne Ehrenrunde (die große Feier bleibt die Festlegung). Macht Spaß, kostet wenig, abschaltbar über „Bewegung reduzieren“. **Entschieden 2026-10-22 (Auftraggeber): Ja.** |
+| **UX-9** | **Darf die Orga eine Station „ohne App erledigt“ abhaken?** (V2 «Mia macht ohne App mit», V3 «Unterkunft haben wir schon / brauchen wir nicht», V5 «Jede:r reist selbst an») | **Ja** – sonst zeigt der Weg Wochen lang offene Schritte, die die Gruppe längst außerhalb der App erledigt hat, und verliert an Glaubwürdigkeit. Nur Orga, rückgängig machbar, für alle sichtbar «ohne App erledigt». Kleiner Zusatzaufwand (ein Merker je Station und Reise). **Entschieden 2026-10-22 (Auftraggeber): Ja.** |
 
 Optik- und Motion-Punkte: [`../abstimmung-design.md` §12](../abstimmung-design.md) (D-36–D-45, UM-1–UM-7).
 
