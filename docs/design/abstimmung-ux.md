@@ -195,7 +195,22 @@ Bezug: `docs/motion/abstimmung.md` §1. (Ich schreibe nicht in `docs/motion/` �
 ## 8. Offen für UI/UX
 Keine offenen Punkte. Zur Kenntnis: Die Feier-Zeitleiste (Motion W11-02) muss Motion auf den Vorfreude-Ring umstellen (Ebenen siehe assets/README.md, `countdown-ring.svg`).
 
+## 9. Offen für UI/UX – Cockpit-Varianten W16 (Runde 4, 2026-10-22)
+Auftrag des Auftraggebers: Mehrere optische Versionen der Reise-Übersicht nach der Festlegung, der Vorfreude-Ring mit Konfetti bleibt in jeder Version. Klickbares Mockup: [`mockups/cockpit-varianten/index.html`](mockups/cockpit-varianten/index.html) (A Bordkarte · B Bento · C Reiseverlauf · D Wallet · E Bühne; hell/dunkel, „Bewegung reduzieren“, „Feier abspielen“, auf Desktop zwei nebeneinander). Inhalte und Demo-Daten wie W16 (Vorbereitung, Sicht Max).
+
+**UI/UX prüft die Varianten noch auf Usability**, bevor der Auftraggeber auswählt. Konkrete Prüfpunkte aus Design-Sicht:
+
+| Nr. | Variante | Punkt |
+|---|---|---|
+| U-17 | alle | Ring sitzt jetzt **dauerhaft groß** im Cockpit (statt Mini-Ring 64 px aus W16 §2.1); die Feier läuft beim ersten Aufbau je Sitzung bzw. auf Knopfdruck. Passt das zu W16 „Feier nur einmal je Person“? Vorschlag Design: große Feier einmal (W11), danach Ring groß, aber **ohne** Ehrenrunde – nur Konfetti auf Antippen. |
+| U-18 | A | Ticket-Kopf ≈ 470 px hoch – erste To-do-Taste liegt bei 844 px knapp im ersten Bildschirm. Reicht das? |
+| U-19 | B | Reihenfolge im Bento (Unterkunft hoch links, Kosten/Reisedaten rechts) entspricht nicht der Leserichtung der Dringlichkeit; Regeln je Teilphase nötig. Bei 200 % Schrift einspaltig (Raster `auto-fit`). |
+| U-20 | C | Bereiche ohne Zeitbezug (Kosten, Infos) als Stationen; „Als Nächstes“/„Später“ bräuchte eine feste Regel. Seitenlänge ca. 2,5 Bildschirme. |
+| U-21 | D | Aufklappen = zusätzlicher Tipp vor dem Bereich; `aria-expanded` + `inert` umgesetzt. Feste Farbe je Bereich (Koralle To-do, Lavendel Unterkunft, Sonne Kosten, Violett Reisedaten, Minze Unterlagen). |
+| U-22 | E | Schwebendes Dock mit 5 Bereichen ähnelt Tabs → **Konflikt mit UX-1 „keine Tabs“**. Karussell versteckt To-dos 2–3 (Zähler „1 von 3“ + Punkte vorhanden). |
+
 ## Changelog
+- 2026-10-22 (Runde 4): §9 Cockpit-Varianten A–E (Mockup `mockups/cockpit-varianten/`), Prüfpunkte U-17–U-22 für UI/UX.
 - 2026-10-08 (Runde 3, v1.0): §5 Struktur-Abweichungen von Richtung B, §6 Antworten an Motion M-D1–M-D9, §7 Antworten D-20–D-35 mit CEO-Entscheidungen (Hochzählen, Kalender U-1, Werkzeugleiste 150 px, Pflichtpunkte, Feier = Vorfreude-Ring), §8 offen: keine.
 - 2026-10-08 (Auftraggeber-Entscheidungen): alle Vorbehalte zu Marke, Logo A, Dark Mode, Figtree, Ergebnis-Sichtbarkeit → „bestätigt (Auftraggeber 2026-10-08)"; EN-Name „When do we go?" eingearbeitet; §1b Antwort auf D-19; neue Kleinpunkte U-15, U-16 (§2).
 - 2026-10-08 (letzte Runde): §1a Antworten auf D-14–D-18; §2 als erledigt markiert; §3 finaler Status aller D-1–D-18 und U-1–U-14 (D-16 entschieden durch CEO). Abstimmung Design ↔ UI/UX abgeschlossen.
