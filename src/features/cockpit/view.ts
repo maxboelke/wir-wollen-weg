@@ -26,6 +26,11 @@ import type {
 } from "./types";
 
 type Values = Record<string, string | number>;
+
+/** «Titel. Status» for accessible names – no extra full stop after «Es geht los!». */
+function sentence(title: string, status: string): string {
+  return /[.!?…]$/.test(title) ? `${title} ${status}` : `${title}. ${status}`;
+}
 type Translate = (key: string, values?: Values) => string;
 
 interface Ctx {
@@ -132,7 +137,7 @@ function station(ctx: Ctx, view: TripView, value: TripStation): StationView {
     label,
     title,
     status,
-    ariaLabel: `${label}: ${title}. ${status}`,
+    ariaLabel: `${label}: ${sentence(title, status)}`,
     link: link(view, value.href),
     icon: look.icon,
     tone: look.tone,
@@ -181,7 +186,7 @@ function goal(ctx: Ctx, view: TripView, value: TripGoal): GoalView {
     label: value.date ? `${word} · ${shortDate(value.date, view.format.intl)}` : word,
     title,
     status,
-    ariaLabel: `${word}: ${title}. ${status}`,
+    ariaLabel: `${word}: ${sentence(title, status)}`,
     link: value.href ? link(view, value.href) : null,
     icon: value.id === "T-goal" ? "plane" : "sun",
     ...(value.button
@@ -229,7 +234,7 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       area: tile.area,
       title,
       status,
-      ariaLabel: `${title}. ${status}`,
+      ariaLabel: sentence(title, status),
       href: path(view, tile.href),
       icon: "info",
       tone: "lavender",

@@ -811,3 +811,20 @@ Geprüft: ux-spec §14.1–14.5, W06/W07/W09/W10/W11, Sicherheit (Platzhalter-To
 - „Gesucht wurde: … · 4–5 Nächte“ bricht am Halbgeviertstrich um („4–“/„5 nights“) – kosmetisch, ggf. `nightsRangeFact` mit geschütztem Strich.
 - `withVoted` (Abstimmen, Live-Abgleich) vergleicht über Anzeigenamen – ok, da Namen je Reise eindeutig.
 - WebKit (iPhone 15) lokal nicht installiert; neue Tests nutzen `expect.poll`/sichtbare Elemente – CI-Lauf abwarten.
+
+## Review Inkrement 8 – Cockpit „Reiseverlauf“, Infos F-033, UX-8/UX-9, Pflege-Paket (Reviewer 2026-10-22, Commits a290c3d + 410ef7a)
+
+### R-072: „Heute“ wird in der Server-Zeitzone bestimmt, nicht in der Zeitzone der Reise
+- Schwere: mittel (vor Go-Live; für Demo/Vorschau vertretbar)
+- Datei: src/lib/dates.ts:51 (`todayIso`), src/features/trips/load.ts:50, src/features/cockpit/actions.ts:83, src/features/poll/actions.ts:211
+- Problem / Reproduktion: `todayIso()` nutzt die lokale Zeit des Servers; Vercel und Hetzner (deployment.md: „Zeitzone UTC“) laufen in UTC, eine Reise-Zeitzone gibt es im Schema nicht. Reise mit Anreise 23.10., Nutzerin in Berlin öffnet am 23.10. um 00:30 MESZ (= 22.10. 22:30 UTC) → Phasenzeile «Steht fest · noch 1 Tag», kein H-7, keine kleine Feier (UX-8); `departureCelebratedAction` lehnt mit `phase` ab. Erst ab 02:00 Ortszeit erscheint „Unterwegs · Tag 1“. Genauso verschieben sich Teilphase Danach, A2 (≤ 21 Tage), V1 (7 Tage) und alle Teilphasen-Grenzen um 1–2 Stunden. R.6 I8-05/I8-06/I8-07 und PRD §7 („Zeitzone der Reise, Standard: Zeitzone des Organisators“) verlangen das ausdrücklich; die Grenztag-Tests in `trip-route.test.ts` prüfen nur ISO-Datumsvergleiche. Vorbestehend seit Inkrement 3 (vgl. Hinweis „Datum abgegeben · geändert am als UTC-Tag“ weiter oben), mit Inkrement 8 aber sichtbar (Feier, Heute-Satz).
+- Erwartetes Verhalten: „heute“ einer Reise = Kalendertag in der Zeitzone der Reise (Standard: Zeitzone der Orga).
+- Vorschlag: Spalte `trip.time_zone` (IANA, beim Anlegen aus dem Browser der Orga, Fallback `Europe/Berlin`), `todayIso(now, timeZone)` über `Intl.DateTimeFormat(..., { timeZone })`; in `loadTripView`, den Cockpit-/Poll-Actions und im Löschjob verwenden; Unit-Test mit 22:30 UTC / Europe/Berlin. Alternativ (kleiner) feste App-Zeitzone `Europe/Berlin` per Konfiguration.
+- Status: offen
+
+#### Hinweise ohne Finding (Inkrement 8)
+- Selbst behoben: Zugängliche Namen «Ziel: Es geht los!. Noch 10 Tage» (doppelte Satzzeichen) – `src/features/cockpit/view.ts` setzt nach Titeln mit `.!?…` keinen zusätzlichen Punkt mehr.
+- `saveTripInfo`: Beim allerersten Speichern (noch keine Zeile) sperrt `FOR UPDATE` nichts – zwei parallele Erst-Speicherungen mit Version 0 überschreiben sich still. Praktisch nur eine Orga mit zwei Tabs; billig zu schließen mit `onConflictDoUpdate({ …, where: eq(tripInfo.version, expected) })` und Auswertung der zurückgegebenen Zeilen.
+- «Zuletzt geändert …» formatiert `updatedAt` als UTC-Tag (wie bisher bei „geändert am“) – Änderung um 00:30 MESZ zeigt den Vortag; mit R-072 mitlösen.
+- `telHref` macht aus «+49 (0) 30 1234» `tel:+49030…` (falsch gewählt) – entspricht W22 C („nur + und Ziffern“); ggf. „(0)“ nach Ländervorwahl entfernen.
+- Reisebeschreibung ist in Phase 3 für Mitglieder nirgends mehr sichtbar (W16 v2 sieht sie nicht vor) – UX entscheiden lassen, z. B. im Sheet „So habt ihr entschieden“.
