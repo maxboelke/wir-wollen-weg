@@ -1,6 +1,6 @@
 # Abstimmung UI/UX ↔ Design
 
-Stand: 2026-10-08 (Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-22 (Runde 4 – Cockpit Variante C „Reiseverlauf“, §12; vorher Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ## 0. Stand
 
@@ -308,7 +308,66 @@ Struktur und Texte sind in [ux-spec §14](ux-spec.md) festgelegt und können ohn
 
 Motion (zur Info an den Motion Designer über den CEO): Schrittwechsel im Erinnern-Sheet wie W09-08. Tab-Spur nach „Festlegung aufheben“ nur Fade (W11-07). Keine neuen Feier-Momente.
 
+## 12. Runde 4 – Cockpit-Varianten, Auswahl C „Reiseverlauf“ (2026-10-22)
+
+Der Auftraggeber hat **Variante C „Reiseverlauf“** gewählt und um Ausarbeitung gebeten. UX-Konzept: [W16 v2, Teil A](wireframes/w16-cockpit.md) (gültig; v1 als Teil B abgelöst). Die Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Zeitbezug als kompakte Kacheln unter dem Weg) ist **übernommen**.
+
+**Hinweis Nummern:** Die Punkte U-17–U-22 in `docs/design/abstimmung-ux.md` §9 überschneiden sich mit meinen U-17–U-21 aus §11 oben (anderer Inhalt). Ich bezeichne die Designer-Punkte hier als **R4-U-17 … R4-U-22**. Meine §11-Punkte bleiben unter ihren Nummern; sie sind im Design-Dokument noch unbeantwortet (niedrige Priorität, der Bau nutzt die dort genannten Standardwerte). Neue Punkte an den Designer laufen ab **D-36**, an den Motion Designer als **UM-1 …** (damit es keine Überschneidung mit M-U aus `docs/motion/abstimmung.md` gibt).
+
+### 12.1 Antworten auf `docs/design/abstimmung-ux.md` §9
+
+| Punkt | Antwort UX | Wo |
+|---|---|---|
+| **R4-U-17** Ring dauerhaft groß | **Einverstanden mit deinem Vorschlag:** große Feier einmal (W11, je Person und Festlegung), danach Ring groß, **statisch, ohne Ehrenrunde**; Antippen = kleine Konfetti-Runde (≤ 1,2 s, Sperre 3 s). Ring als `<button>` «Vorfreude: noch 41 Tage». **Neu:** Durchmesser gedeckelt `clamp(120px, 21svh, 168px)`. | W16 v2.2 |
+| **R4-U-18** Ticket-Kopf 470 px | **Reicht nicht.** Zeile 1 + Ticket ≤ **340 px** bei 360 × 640; Heute-Marker im ersten Bildschirm (360 × 640), erste Primär-Taste im ersten Bildschirm bei 360 × 740 und 390 × 844. Dafür ohne Felder-Reihe und Ticket-Nummer (s. D-36). | W16 v2.2 |
+| R4-U-19 Bento | entfällt (nicht gewählt) | – |
+| **R4-U-20** Stationen ohne Zeitbezug, Regeln, Länge | **Gelöst:** Stationen nur für Schritte mit Ende oder Datum; Kosten/Unterlagen/Infos = Kacheln „Immer griffbereit“, ihre Aufgaben stehen unter „Heute“. Feste Regeln für Zustände (erledigt / du bist dran / wartet auf andere / als Nächstes / später), genau eine Station „Als Nächstes“, Erledigtes eingeklappt, „Später“ max. 2 schmale Zeilen → typisch 1,9, max. 2,5 Bildschirme. | W16 v2.1, v2.3–v2.6 |
+| R4-U-21 Wallet | entfällt (nicht gewählt) | – |
+| R4-U-22 Dock | entfällt (nicht gewählt); bestätigt: kein Dock, keine Tabs in Phase 3 (UX-1) | – |
+
+### 12.2 Neue Punkte an den Designer (D-36 – D-45)
+
+Struktur, Zustände und Texte stehen in W16 v2. Bitte Optik festlegen (Tokens/Komponenten), möglichst im Varianten-Mockup als „C v2“ nachziehen, damit der Auftraggeber die ausgefeilte Fassung sieht.
+
+| ID | Thema | Bitte |
+|---|---|---|
+| **D-36** | **Ticket-Kopf kompakt** | Ticket aus A mit Ring aus C: Zeile 1 (sticky) · Ring `clamp(120px, 21svh, 168px)` mit Zahl + «Tage» · Zeitraum 18/800 · Abriss-Kante · Abschnitt mit Crew-Button (3 Avatare + «+3» + «6 dabei · 7 Nächte») und **einer** Taste rechts (je Teilphase: Kalender / + Ausgabe + Tickets / Ausgleichen). Budget ≤ 340 px bei 360 × 640. Varianten Unterwegs (Tages-Ring «Tag 3») und Danach (voller Ring «Schön war's!»). |
+| **D-37** | **Weg: Linie und Marker** | Linie durchgezogen Minze bis zum Heute-Marker, danach gestrichelt (`border`). Marker 32 px: erledigt (Minze + Häkchen), Heute (Sonne mit Indigo-Hof, größer 40 px), wartet (Halbkreis ◔), als Nächstes (leerer Kreis, kräftiger Rand), später (leerer Kreis, gedämpft), Ziel (Indigo + Sonne). Kontraste der Ränder ≥ 3:1 hell/dunkel (1.4.11). |
+| **D-38** | **Stationskarte – 4 Varianten** | (a) **ausgeklappt** „du bist dran“: Koralle-Kante links, Label-Chip, Titelzeile mit Chevron, 2 Zeilen Text, Primär-Taste volle Breite; (b) **kompakt** (≥ 64 px, ganze Karte Link, optional Balken 6 px); (c) **wartet** = kompakt ohne Kante + Erinnern-Taste `btn-sm` **unter** der Karte (nicht in der Karte, keine verschachtelten Ziele); (d) **später** = schmale Zeile 48 px ohne Fläche (Icon 24 · Titel · Zeithinweis). Plus Ziel-Karte Indigo (wie Mockup C). |
+| **D-39** | **Zustands-Labels** | Text-Labels «HEUTE · So., 2. Mai», «Du bist dran», «Läuft · wartet auf andere», «Als Nächstes», «Später», «Ziel» – Stil (Versalien 12/800 wie Mockup?), Heute-Label als Sonnen-Pille. EN: «TODAY», «Your turn», «In progress · waiting on others», «Up next», «Later», «Destination» – Längen prüfen. |
+| **D-40** | **Erledigt-Zeile (eingeklappt)** | Eine Zeile 48 px: gestapelte Mini-Häkchen (max. 3) + «2 erledigt: Termin steht, …» + Chevron ▾ (dreht bei offen). Variante «Neu erledigt: Unterkunft gebucht» (einmalig hervorgehoben, z. B. Minze-Tint). |
+| **D-41** | **Kacheln „Immer griffbereit“** | Kompakt ≥ 88 px, Icon 32, Titel 15/800, eine Statuszeile, optional Chip («1 neu»), **keine** Koralle-Kante. 2 Spalten mobil, 3 ab 600 px, einspaltig < 9,5 em. |
+| **D-42** | **Sticky Zeile 1 mit Mini-Ring** | Wenn der große Ring aus dem Bild ist, wird der Punkt der Phasenzeile zu einem Mini-Ring 20 px (gleiche Füllung). Bitte Optik + dunkel. |
+| **D-43** | **Schmal / 200 %** | Container < 22 em: Linie und Marker-Spalte entfallen, Zustands-Label als Chip über der Karte; Ring 120 px; Crew und Taste untereinander. Bitte prüfen, ob die Karten ohne Linie noch als „Weg“ lesbar sind (z. B. Label-Chips mit Marker-Symbol). |
+| **D-44** | **Ring als Konfetti-Taste** | Gedrückt-Zustand (`scale-press`?), Fokus isoliert auf Indigo (D-22), kein sichtbarer Hinweis nötig – optional Tooltip «Tippen für Konfetti» nur beim ersten Besuch? (UX: lieber ohne Hinweis, Entdeckung ist Teil des Spaßes.) |
+| **D-45** | **Desktop ≥ 960 px** | Ticket als breites Band (Ring links, Rest rechts, ≤ 240 px), darunter Weg (≈ 600) + Seitenspalte (Kacheln einspaltig, Mehr zur Reise). |
+
+### 12.3 Punkte an den Motion Designer (UM-1 – UM-7, über den CEO)
+
+| ID | Moment | Vorschlag UX | Reduzierte Bewegung |
+|---|---|---|---|
+| **UM-1** | **Konfetti auf Antippen** des Rings (nach der großen Feier) | Kleine Variante von E4: nur Konfetti + Funkel, ≤ 1,2 s, keine Ehrenrunde, kein Puff, keine Vibration, Sperre 3 s | kurzes Aufglühen 140 ms, kein Konfetti |
+| **UM-2** | **Weg baut sich auf** (erster Aufbau je Sitzung) | Linie „zeichnet“ sich von oben bis zum Heute-Marker (`moderate`), Stationen mit Staffel 60 ms (max. 400 ms) | sofort statisch |
+| **UM-3** | **Heute-Marker** | Puls 3× wie im Mockup C, nur beim ersten Aufbau je Sitzung, danach ruhig | kein Puls |
+| **UM-4** | **Station neu erledigt** (seit letztem Besuch) | Siegel-Plopp (Siegel 20 px) am Häkchen der Erledigt-Zeile, einmalig; **kein** Umsortieren/FLIP auf der Seite (Zustände wechseln beim Laden, M-U3-Prinzip) | nur Überblenden |
+| **UM-5** | **Aufklappen** Erledigt / „+ n weitere“ | Höhe über `grid-template-rows` 0fr→1fr (`base`) + Fade der Einträge | sofort |
+| **UM-6** | **Mini-Ring in Zeile 1** | Fade 140 ms beim Ein-/Ausblenden (IntersectionObserver, nicht scroll-gekoppelt) | Fade 140 ms bleibt (M-D2) |
+| **UM-7** | **Abreisetag** (nur falls UX-8 = ja) | Einmal je Person am ersten Tag *Unterwegs*: UM-1-Konfetti automatisch beim Öffnen + Heute-Satz «Heute geht's los – gute Reise!» | nur Text |
+
+Seitenwechsel Weg ↔ Bereich wie bisher (horizontal `distance-lg` + Fade). Keine neue große Feier.
+
+### 12.4 Abstimmungsstand Runde 4
+
+| Punkt | Status | Offen bei |
+|---|---|---|
+| R4-U-17, R4-U-18, R4-U-20 | entschieden (UX), Designer-Vorschlag zu U-17 übernommen | – |
+| R4-U-19, R4-U-21, R4-U-22 | entfallen (Variante nicht gewählt) | – |
+| D-36 – D-45 | neu | Designer |
+| UM-1 – UM-7 | neu (UM-7 abhängig von UX-8) | Motion Designer |
+| UX-8 (Feier am Abreisetag), UX-9 (Station „ohne App erledigt“) | Frage | Auftraggeber über CEO |
+
 ## Changelog
+- 2026-10-22 (Runde 4): §12 – Auswahl Variante C, Antworten R4-U-17–R4-U-22, neue Punkte D-36–D-45 (Designer) und UM-1–UM-7 (Motion), Fragen UX-8/UX-9; Konzept in W16 v2.
 - 2026-10-20 (Feedback-Runde 1): §11 Punkte U-17–U-21 (WhatsApp-Taste, Kennzahl-Box als Button, Personen-Zeilen, Hinweis „Basiert auf x von n“, Phase 3 ohne Tabs + Reise-Hub).
 - 2026-10-08 (Runde 3, Richtung B): §8 Entscheidungen zu den offenen Punkten aus richtung-b §14 und Q17, Usability-Befunde D-20–D-35; §9 Antworten an Motion M-U1–M-U11; §10 Abstimmungsstand.
 - 2026-10-08 (Runde 2): §0 aktualisiert; §3 Prüfung D-1–D-13; §4 Antworten U-1–U-14; §5 CEO-Entscheidungen; §6 neue Punkte D-14–D-18; §7 Abstimmungsstand.
