@@ -49,6 +49,7 @@ function toCard(
   const progress = phaseProgress(phase, members, placeholderCount);
   const todo = viewerTodo(phase, me, progress, {
     deadlinePassed: trip.pollDeadline !== null && trip.pollDeadline < today,
+    collectDeadlinePassed: trip.deadline !== null && trip.deadline < today,
   });
   return {
     publicId: trip.publicId,

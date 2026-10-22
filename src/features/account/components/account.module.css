@@ -130,6 +130,13 @@ button.textLink {
   align-self: flex-start;
 }
 
+/* «Daten & Datenschutz»: policy + export links stacked without the card gap in between */
+.linkGroup {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
 .success {
   display: flex;
   flex-direction: column;
