@@ -20,6 +20,10 @@
 // organises, all members in, placeholder Paul open → N1-6), «Silvester Prag» (everyone voted →
 // Anna N2-9 «Ben Bescheid geben», Ben N2-6; Ben had fixed and reopened the dates, so Anna sees
 // «Ben hat den Termin wieder geöffnet» once).
+// Increment 8 (F-053 «Reiseverlauf», F-033 Infos): «Familientreffen Harz» (Vorbereitung, Anna
+// organises – «Allen Bescheid geben» still due, placeholder Opa Klaus, infos filled),
+// «Roadtrip Schottland» (Unterwegs, today is the arrival day – small celebration UX-8 and the
+// meeting point as today's plan), «Gardasee» (Danach, back for 9 days, with infos).
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
 
@@ -143,6 +147,17 @@ interface TripSeed {
   fixedDaysAgo?: number;
   /** Q21: the vote was cancelled a day ago by this person – the others see the notice once. */
   pollCanceledBy?: string;
+  /** Infos of the fixed trip (F-033) – last edited by the organiser. */
+  info?: {
+    stayName?: string;
+    address?: string;
+    checkIn?: string;
+    checkOut?: string;
+    meetingPoint?: string;
+    emergencyName?: string;
+    emergencyPhone?: string;
+    notes?: string;
+  };
 }
 
 const TRIPS: TripSeed[] = [
@@ -280,6 +295,19 @@ const TRIPS: TripSeed[] = [
       [day(41), day(45)],
       [day(55), day(59)],
     ],
+    placeholders: ["Opa Klaus"],
+    info: {
+      stayName: "Ferienhaus Brockenblick",
+      address: "Am Kurpark 12\n38700 Braunlage",
+      checkIn: "15:00",
+      checkOut: "10:00",
+      meetingPoint:
+        "Treffpunkt 9:00 Uhr am Hauptbahnhof Hannover, Gleis 8\nWir fahren mit zwei Autos.",
+      emergencyName: "Vermieterin Frau Krüger",
+      emergencyPhone: "+49 5520 123456",
+      notes:
+        "Bettwäsche ist dabei, Handtücher bitte selbst mitbringen.\nWanderkarte: https://www.harzinfo.de",
+    },
     members: [
       {
         person: "anna",
@@ -416,6 +444,58 @@ const TRIPS: TripSeed[] = [
         celebratedRange: [day(30), day(33)],
       },
       { person: "greta", submitted: true, votes: ["maybe", "yes"] },
+    ],
+  },
+  // Increment 8: travelling – today is the arrival day (UX-8 small celebration, H-7).
+  {
+    name: "Roadtrip Schottland",
+    rangeStart: day(-60),
+    rangeEnd: day(30),
+    minNights: 6,
+    country: "GB",
+    locale: "de",
+    phase: "fixed",
+    fixedStart: day(0),
+    fixedEnd: day(7),
+    fixedDaysAgo: 40,
+    info: {
+      stayName: "Glen Coe Cottages",
+      address: "Glencoe, Ballachulish PH49 4HX, Schottland",
+      checkIn: "16:00",
+      checkOut: "10:30",
+      meetingPoint:
+        "Treffpunkt 7:30 Uhr · Flughafen Edinburgh, Mietwagen-Schalter\nBen holt den Wagen.",
+      notes: "Linksverkehr! Regenjacke einpacken.",
+    },
+    members: [
+      { person: "ben", organizer: true, submitted: true, voted: true, celebrated: true },
+      { person: "anna", submitted: true, voted: true, celebrated: true },
+      { person: "carla", submitted: true, voted: true, celebrated: true },
+      { person: "emma", submitted: true, voted: true, celebrated: true },
+    ],
+  },
+  // Increment 8: back for 9 days («Danach», H-5b, deletion hint).
+  {
+    name: "Gardasee",
+    rangeStart: day(-90),
+    rangeEnd: day(-5),
+    minNights: 5,
+    country: "DE",
+    locale: "de",
+    phase: "fixed",
+    fixedStart: day(-16),
+    fixedEnd: day(-9),
+    fixedDaysAgo: 70,
+    info: {
+      stayName: "Casa Limone",
+      address: "Via Nanzello 4, 25010 Limone sul Garda, Italien",
+      checkIn: "15:00",
+      checkOut: "10:00",
+    },
+    members: [
+      { person: "felix", organizer: true, submitted: true, voted: true, celebrated: true },
+      { person: "anna", submitted: true, voted: true, celebrated: true },
+      { person: "greta", submitted: true, voted: true, celebrated: true },
     ],
   },
   // Increment 6 (F-043): Ida organises a trip with others and a solo trip.
@@ -597,6 +677,27 @@ export async function seedDemo(
             );
           }
         }
+      }
+      if (seed.info) {
+        const orgaKey = seed.members.find((m) => m.organizer)?.person;
+        const info = seed.info;
+        await client.query(
+          `insert into trip_info (trip_id, stay_name, address, check_in, check_out, meeting_point,
+             emergency_name, emergency_phone, notes, updated_by, updated_at)
+           values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, now() - interval '2 days')`,
+          [
+            tripId,
+            info.stayName ?? null,
+            info.address ?? null,
+            info.checkIn ?? null,
+            info.checkOut ?? null,
+            info.meetingPoint ?? null,
+            info.emergencyName ?? null,
+            info.emergencyPhone ?? null,
+            info.notes ?? null,
+            orgaKey ? (ids.get(orgaKey) ?? null) : null,
+          ],
+        );
       }
       for (const name of seed.placeholders ?? []) {
         await client.query(

@@ -292,7 +292,8 @@ test.describe("F-012 lock in dates", () => {
     await sheet.getByRole("button", { name: p.fix.confirm }).click();
 
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
-    const heading = page.getByRole("heading", { name: p.result.title, level: 1 });
+    // W16 v2 (Increment 8): the trip name in row 1 is h1 and takes the focus (M-U10).
+    const heading = page.getByRole("heading", { name, level: 1 });
     await expect(heading).toBeFocused();
     await expect
       .poll(async () => pollState(trip.publicId))
@@ -367,12 +368,14 @@ test.describe("«It's on!» celebration (Q17 b)", () => {
     // ux-spec §14.4: phase 3 has no tabs – /poll while the celebration is due → overview.
     await page.goto(`/trips/${publicId}/poll`);
     await expect(page).toHaveURL(new RegExp(`/trips/${publicId}$`));
-    await expect(page.getByRole("heading", { name: p.result.title })).toBeVisible();
+    await expect(page.getByRole("heading", { level: 2, name: en.route.way.before })).toBeVisible();
     await expect
       .poll(async () => (await memberVoteStatus(publicId, email))?.celebrated_for)
       .toBe(`${day(10)}/${day(15)}`);
-    // Countdown as text (never counting up) and calendar actions are there at once.
-    await expect(page.locator("[data-countdown-text]")).toHaveText(`${String(S + 10)} days to go`);
+    // Countdown as text (never counting up) and calendar actions are there at once (W16 v2.2).
+    await expect(
+      page.getByText(`Locked in · ${String(S + 10)} days to go`, { exact: true }),
+    ).toBeVisible();
     await expect(page.getByRole("button", { name: p.result.addToCalendar })).toBeVisible();
 
     // Second visit (another device would be the same – stored per membership): static.
@@ -436,8 +439,13 @@ test.describe("«It's on!» celebration (Q17 b)", () => {
     await expect.poll(async () => page.locator("[data-burst]").count(), { timeout: 8000 }).toBe(1);
     await page.waitForTimeout(2800);
     await expect(page.locator("[data-burst]")).toHaveCount(0);
+    // Only the celebration counts – the «Heute» marker's pulse (UM-3, 3 × 1.6 s, Increment 8)
+    // is a separate CSS animation of the way.
     const running = await page.evaluate(
-      () => document.getAnimations().filter((a) => a.playState === "running").length,
+      () =>
+        document
+          .getAnimations()
+          .filter((a) => a.playState === "running" && !(a instanceof CSSAnimation)).length,
     );
     expect(running).toBe(0);
   });
@@ -565,7 +573,7 @@ test.describe("accessibility", () => {
         .getByRole("dialog", { name: p.fix.title })
         .getByRole("button", { name: p.fix.confirm })
         .click();
-      await expect(page.getByRole("heading", { name: p.result.title })).toBeVisible();
+      await expect(page.getByRole("heading", { name: en.route.way.before })).toBeVisible();
       await waitForAnimations(page);
       await expectNoSeriousAxeViolations(page, `result ${scheme}`);
 

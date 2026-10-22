@@ -213,13 +213,15 @@
       "addDates": "Deine Tage fehlen noch",
       "vote": "Jetzt abstimmen",
       "startVote": "Alle haben eingetragen – Abstimmung starten?",
-      "fixDates": "Bereit zum Festlegen"
+      "fixDates": "Bereit zum Festlegen",
+      "startVoteDeadline": "Frist zum Eintragen vorbei – Abstimmung starten?"
     },
     "action": {
       "addDates": "Tage eintragen",
       "vote": "Abstimmen",
       "startVote": "Abstimmung erstellen",
-      "fixDates": "Termin festlegen"
+      "fixDates": "Termin festlegen",
+      "startVoteDeadline": "Abstimmung erstellen"
     },
     "actionFor": "{action}: {trip}",
     "voteDeadline": "Abstimmen bis {date}",
@@ -743,7 +745,8 @@
       "help": "Hilfe",
       "unfix": "Festlegung aufheben",
       "cancelPoll": "Abstimmung abbrechen",
-      "remind": "Gruppe erinnern"
+      "remind": "Gruppe erinnern",
+      "decided": "So habt ihr entschieden"
     },
     "dialogs": {
       "leaveTitle": "„{trip}“ verlassen?",
@@ -872,7 +875,8 @@
       "nudgeP1Deadline": "Hey {orga}, die Frist für {trip} ist vorbei – magst du die Abstimmung starten? {link}",
       "nudgeP2All": "Hey {orga}, alle haben bei {trip} abgestimmt – du kannst jetzt den Termin festlegen: {link}",
       "nudgeP2Deadline": "Hey {orga}, die Abstimmungsfrist für {trip} ist vorbei – magst du den Termin festlegen? {link}",
-      "nudgePlaceholder": "Hey {orga}, {name} fehlt noch bei {trip} – schickst du {name} den persönlichen Link? {link}"
+      "nudgePlaceholder": "Hey {orga}, {name} fehlt noch bei {trip} – schickst du {name} den persönlichen Link? {link}",
+      "p3Placeholder": "Hey {name}, hier ist dein persönlicher Link für {trip} – ein Tipp und du bist dabei: {link}"
     }
   },
   "tripSettings": {
@@ -1459,5 +1463,236 @@
     "orgaTitle": "{orga} Bescheid geben",
     "placeholderTitle": "{name} ist noch nicht dabei",
     "placeholderText": "Den persönlichen Link für {name} hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken."
+  },
+  "route": {
+    "phase": {
+      "before": "Steht fest · {count, plural, one {noch # Tag} other {noch # Tage}}",
+      "during": "Unterwegs · Tag {day} von {total}",
+      "after": "Zurück seit {count, plural, =0 {heute} one {# Tag} other {# Tagen}}"
+    },
+    "sr": {
+      "before": "Noch {count, plural, one {# Tag} other {# Tage}} bis zur Abreise.",
+      "during": "Heute ist Tag {day} von {total} eurer Reise.",
+      "after": "Die Reise ist vorbei."
+    },
+    "ring": {
+      "before": "Vorfreude: noch {count, plural, one {# Tag} other {# Tage}}",
+      "during": "Unterwegs: Tag {day} von {total}",
+      "after": "Reise vorbei – schön war’s!",
+      "unit": "{count, plural, one {Tag} other {Tage}}",
+      "dayTop": "Tag",
+      "dayOf": "von {total}",
+      "bye": "Schön war’s!"
+    },
+    "crew": "{count} dabei · {nights, plural, one {# Nacht} other {# Nächte}}",
+    "calendar": "Kalender",
+    "way": {
+      "before": "Euer Weg bis zur Abreise",
+      "during": "Eure Reise, Tag für Tag",
+      "after": "Nach der Reise"
+    },
+    "meta": {
+      "done": "{done} von {total} geschafft",
+      "day": "Tag {day} von {total}"
+    },
+    "done": {
+      "prep": "Vorbereitung · {count} erledigt",
+      "trip": "Reise · Vorbereitung und {days} Tage",
+      "list": "{count} erledigt: {titles}",
+      "fresh": "Neu erledigt: {titles}",
+      "freshCount": "{count} erledigt",
+      "offline": "ohne App erledigt",
+      "unused": "nicht genutzt"
+    },
+    "label": {
+      "yours": "Du bist dran",
+      "waiting": "Läuft · wartet auf andere",
+      "waitingWord": "Wartet auf andere",
+      "next": "Als Nächstes",
+      "later": "Später",
+      "goal": "Ziel",
+      "doneWord": "Erledigt",
+      "unusedWord": "Nicht genutzt",
+      "plan": "Termin heute",
+      "task": "Du bist dran · {area}",
+      "areaInfo": "Infos"
+    },
+    "today": {
+      "short": "Heute · {date}",
+      "long": "Heute, {date}",
+      "dayShort": "Heute · Tag {day} · {date}",
+      "dayLong": "Heute, {date}, Tag {day}",
+      "backShort": "Heute · zurück seit {count, plural, =0 {heute} one {# Tag} other {# Tagen}}",
+      "backLong": "Heute, {date} – zurück seit {count, plural, =0 {heute} one {# Tag} other {# Tagen}}"
+    },
+    "sentence": {
+      "h1": "Du bist dran – {count, plural, one {eine Sache} other {# Sachen}} für dich.",
+      "h2": "Für dich gerade nichts zu tun. Ihr wartet auf: {short}.",
+      "h3": "Alles erledigt – jetzt nur noch Vorfreude!",
+      "h4": "Heute steht nichts an – genießt den Tag!",
+      "h5": "Alles ausgeglichen – schön war’s!",
+      "h5b": "Schön war’s – bis zur nächsten Reise!",
+      "h6": "Heute {plans, plural, one {ein Termin} other {# Termine}} – sonst genießt den Tag!",
+      "h6Tasks": "Heute {plans, plural, one {ein Termin} other {# Termine}} – und {count, plural, one {eine Sache} other {# Sachen}} für dich.",
+      "h7": "Heute geht’s los – gute Reise!"
+    },
+    "more": {
+      "showMore": "+ {count} weitere für dich",
+      "showMoreWaiting": "+ {count, plural, one {# weitere läuft} other {# weitere laufen}}",
+      "showMoreLater": "+ {count} weitere Schritte",
+      "showLess": "Weniger anzeigen"
+    },
+    "v1": {
+      "title": "Termin steht",
+      "yours": "Sag allen Bescheid, dass der Termin steht.",
+      "announce": "Allen Bescheid geben",
+      "doneVotes": "Platz 1 mit {count}× Ja · festgelegt von {orga}",
+      "done": "Festgelegt von {orga}"
+    },
+    "v2": {
+      "title": "Alle sind dabei",
+      "done": "Alle {count} sind dabei",
+      "doneOffline": "Alle dabei · {names} ohne App",
+      "waiting": "{names} {count, plural, one {ist} other {sind}} noch nicht beigetreten",
+      "short": "{names} {count, plural, one {tritt} other {treten}} bei",
+      "unused": "{names} {count, plural, one {ist} other {sind}} nicht beigetreten",
+      "remindOne": "{name} erinnern",
+      "remindOneName": "{name} erinnern – persönlichen Link schicken",
+      "remindAll": "Erinnern",
+      "remindAllName": "{names} erinnern – persönliche Links schicken",
+      "nudgeOrga": "{orga} Bescheid geben",
+      "nudgeOrgaName": "{orga} Bescheid geben, dass {names} {count, plural, one {fehlt} other {fehlen}}",
+      "withoutApp": "{name} macht ohne App mit",
+      "undo": "Rückgängig: {name} ohne App"
+    },
+    "a2": {
+      "title": "Infos eintragen",
+      "status": "Trag Treffpunkt und Adresse in die Infos ein.",
+      "action": "Infos ergänzen"
+    },
+    "plan": {
+      "meetTitle": "Treffpunkt",
+      "meetStatus": "{text}",
+      "meetAction": "Infos öffnen"
+    },
+    "goal": {
+      "go": "Es geht los!",
+      "text": "{text}",
+      "checkIn": "Check-in ab {time} Uhr",
+      "daysToGo": "Noch {count, plural, one {# Tag} other {# Tage}}",
+      "home": "Heimreise",
+      "checkOut": "Check-out bis {time} Uhr",
+      "daysLeft": "{count, plural, =0 {Heute ist Abreisetag} one {Noch # Tag} other {Noch # Tage}}",
+      "next": "Wohin geht’s als Nächstes?",
+      "nextStatus": "Die Gruppe steht schon – plant gleich die nächste Reise.",
+      "newTrip": "Neue Reise planen",
+      "deletion": "Diese Reise wird am {date} automatisch gelöscht."
+    },
+    "tiles": {
+      "title": "Immer griffbereit",
+      "info": "Infos",
+      "infoMeeting": "Treffpunkt steht",
+      "infoCheckIn": "Check-in ab {time} Uhr",
+      "infoAddress": "Adresse da",
+      "infoEmpty": "Noch leer – {orga} trägt sie ein",
+      "infoEmptyOrga": "Infos ergänzen"
+    },
+    "moreTitle": "Mehr zur Reise",
+    "decided": {
+      "title": "So habt ihr entschieden",
+      "sub": "Ergebnis und Gruppenkalender",
+      "fixedBy": "Steht fest · festgelegt von {orga} am {date}",
+      "place": "Platz {rank}",
+      "fixed": "festgelegt",
+      "votes": "{yes}× Ja · {maybe}× Vielleicht · {no}× Nein",
+      "noVotes": "Ohne Abstimmung festgelegt.",
+      "poll": "Abstimmungsergebnis",
+      "group": "Kalender der Gruppe"
+    },
+    "members": {
+      "title": "Wer ist dabei? ({count})",
+      "sub": "{orga} ist Orga",
+      "subPlaceholders": "{orga} ist Orga · {count, plural, one {# Platzhalter} other {# Platzhalter}}",
+      "going": "Dabei",
+      "placeholder": "Platzhalter",
+      "withoutAppChip": "ohne App",
+      "notJoined": "Noch nicht beigetreten – persönlicher Link offen",
+      "withoutApp": "Macht ohne App mit (von {orga} abgehakt)",
+      "manage": "Platzhalter verwalten"
+    },
+    "remind": {
+      "listTitle": "Noch nicht beigetreten",
+      "personal": "Persönlicher Link – nur für {name}, nicht in die Gruppe schicken.",
+      "orgaText": "Den persönlichen Link hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken."
+    },
+    "toast": {
+      "withoutApp": "„{name} macht ohne App mit“ ist abgehakt – für alle sichtbar.",
+      "undone": "Rückgängig gemacht – {name} fehlt wieder.",
+      "error": "Das hat nicht geklappt. Bitte versuch es noch einmal."
+    },
+    "skeleton": "Übersicht wird geladen …",
+    "unavailable": "Stand gerade nicht verfügbar",
+    "offline": "Du bist offline – du siehst den letzten Stand. Aktionen gehen wieder, sobald du online bist."
+  },
+  "tripInfo": {
+    "title": "Infos",
+    "editTitle": "Infos bearbeiten",
+    "edit": "Bearbeiten",
+    "editName": "Infos bearbeiten",
+    "pageTitle": "Infos · {trip}",
+    "editPageTitle": "Infos bearbeiten · {trip}",
+    "stayTitle": "Unterkunft",
+    "meetingTitle": "Treffpunkt & Anreise",
+    "notesTitle": "Gut zu wissen",
+    "address": "Adresse",
+    "addressMissing": "Adresse folgt, sobald die Unterkunft gebucht ist.",
+    "maps": "In Karten öffnen",
+    "newTab": "(öffnet neuen Tab)",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "checkInValue": "{date} · ab {time} Uhr",
+    "checkOutValue": "{date} · bis {time} Uhr",
+    "emergency": "Notfallkontakt der Unterkunft",
+    "updatedBy": "Zuletzt geändert von {name}, {date}",
+    "updatedAt": "Zuletzt geändert am {date}",
+    "emptyMember": "Noch keine Infos – {orga} trägt hier Adresse, Check-in und Treffpunkt ein.",
+    "emptyOrga": "Noch keine Infos – trag Adresse, Check-in und Treffpunkt ein, dann finden alle sie hier.",
+    "emptyAction": "Infos ergänzen",
+    "form": {
+      "stayName": "Name der Unterkunft",
+      "address": "Adresse der Unterkunft",
+      "addressHint": "Wird als Link „In Karten öffnen“ gezeigt – ohne eingebettete Karte.",
+      "checkIn": "Check-in ab",
+      "checkOut": "Check-out bis",
+      "timeHint": "Uhrzeit – das Datum kommt aus eurem Termin. Abweichungen gehören in „Gut zu wissen“.",
+      "meetingPoint": "Treffpunkt & Anreise",
+      "meetingHint": "Die erste Zeile steht in der Übersicht beim Ziel „Es geht los!“.",
+      "emergencyName": "Notfallkontakt der Unterkunft – Name",
+      "emergencyPhone": "Notfallkontakt – Telefon",
+      "emergencyHint": "Nur Kontakte der Unterkunft – keine privaten Nummern.",
+      "notes": "Gut zu wissen",
+      "notesHint": "Keine Ausweis- oder Buchungsnummern hier eintragen. Links (https) werden automatisch erkannt.",
+      "optional": "(optional)",
+      "counter": "Noch {count, plural, one {# Zeichen} other {# Zeichen}}",
+      "save": "Speichern",
+      "saving": "Speichert …",
+      "saved": "Infos gespeichert – alle sehen sie jetzt.",
+      "errorTooLong": "Höchstens {max} Zeichen.",
+      "errorTime": "Bitte eine Uhrzeit wählen, z. B. 15:00.",
+      "errorPhone": "Bitte nur die Telefonnummer – Ziffern, Leerzeichen und + sind erlaubt.",
+      "errorSummary": "Bitte prüf die markierten Felder.",
+      "errorGeneric": "Speichern hat nicht geklappt. Deine Eingaben sind noch da – versuch es noch einmal.",
+      "errorLimited": "Zu viele Änderungen in kurzer Zeit. Bitte warte ein paar Minuten.",
+      "conflict": "{name} hat die Infos inzwischen geändert.",
+      "conflictUnknown": "Jemand hat die Infos inzwischen geändert.",
+      "conflictHint": "Speichern überschreibt die neue Fassung. Neu laden zeigt sie – deine Eingaben gehen dann verloren.",
+      "reload": "Neu laden",
+      "discardTitle": "Änderungen verwerfen?",
+      "discardText": "Deine Änderungen an den Infos sind noch nicht gespeichert.",
+      "discard": "Verwerfen",
+      "keep": "Weiter bearbeiten",
+      "reloadTitle": "Neu laden?",
+      "reloadText": "Deine Eingaben gehen verloren und du siehst die neue Fassung."
+    }
   }
 }

@@ -86,6 +86,22 @@ describe("progress and to-dos (F-007, F-044)", () => {
     expect(viewerTodo("vote", member({ role: "organizer" }), { done: 2, total: 3 })).toBe("vote");
     expect(viewerTodo("vote", member({ votedAt: "x" }), { done: 3, total: 3 })).toBeNull();
   });
+
+  it("F-017 rest: organiser with own dates in → «startVoteDeadline» once the deadline for adding passed", () => {
+    const orga = member({ role: "organizer", submittedAt: "x" });
+    const open = { done: 2, total: 5 };
+    expect(viewerTodo("collect", orga, open)).toBeNull();
+    expect(viewerTodo("collect", orga, open, { collectDeadlinePassed: true })).toBe(
+      "startVoteDeadline",
+    );
+    // Own dates first; members never get «startVote».
+    expect(
+      viewerTodo("collect", member({ role: "organizer" }), open, { collectDeadlinePassed: true }),
+    ).toBe("addDates");
+    expect(
+      viewerTodo("collect", member({ submittedAt: "x" }), open, { collectDeadlinePassed: true }),
+    ).toBeNull();
+  });
 });
 
 describe("defaultTab (sitemap §2)", () => {

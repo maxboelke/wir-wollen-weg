@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
-import type { ReactNode } from "react";
 import { SealMotion } from "@/components/seal-motion";
 import { Illustration } from "@/components/illustrations/illustration";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -9,7 +8,6 @@ import { KpiBox } from "@/components/ui/cockpit";
 import { Icon } from "@/components/ui/icon";
 import { CancelNotice } from "@/features/poll/components/cancel-notice";
 import { FocusHeading } from "@/features/trips/components/focus-heading";
-import { HubTile, HubTiles } from "@/features/trips/components/hub-tile";
 import { MemberList } from "@/features/trips/components/member-list";
 import { RemindButton, RemindKpiButton } from "@/features/trips/components/remind-sheet";
 import { RingDraw } from "@/features/trips/components/ring-draw";
@@ -17,16 +15,12 @@ import { TripShell } from "@/features/trips/components/trip-shell";
 import { WelcomeHint } from "@/features/trips/components/welcome-hint";
 import { nameList, nightsText, rangeText } from "@/features/trips/format";
 import { loadTripView, openNames, type TripView } from "@/features/trips/load";
-import { tripModules } from "@/features/trips/modules";
 import { tripPath } from "@/features/trips/paths";
 import { orgaName, remindPhase, tripNextStep, tripRemindGroups } from "@/features/trips/remind";
 import { sheetContext } from "@/features/trips/sheet-context";
-import { CountdownRing } from "@/features/poll/components/countdown-ring";
-import { ResultCard } from "@/features/poll/components/result-card";
-import { resultShareTexts, tripLink } from "@/features/trips/share-texts";
-import { formatDate, formatDateRange, fromUtcDate } from "@/lib/dates";
-import { googleCalendarUrl } from "@/lib/ics";
-import { countdown, nightsOf, reopenNoticeDue, ringPercent, type Countdown } from "@/lib/poll";
+import { CockpitOverview } from "@/features/cockpit/components/cockpit-overview";
+import { formatDate } from "@/lib/dates";
+import { pollCancelNoticeDue, reopenNoticeDue } from "@/lib/poll";
 import { remindTarget } from "@/lib/remind";
 import type { NextAction, NextStep, NextStepId } from "@/lib/trip-status";
 import styles from "./overview.module.css";
@@ -39,35 +33,14 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: `${t("tabs.overview")} · ${view.trip.name}` };
 }
 
-/** Day the dates were fixed – start of the «Vorfreude» ring (older rows: last change). */
-function fixedOn(view: TripView): string {
-  return fromUtcDate(view.trip.fixedAt ?? view.trip.updatedAt);
-}
-
-/** «noch 23 Tage» · «noch 1 Tag» · «Heute geht's los!» · «Gute Reise!» (W11, D-24). */
-async function countdownText(value: Countdown): Promise<string> {
-  const t = await getTranslations("poll.result");
-  switch (value.kind) {
-    case "days":
-      return t("days", { count: value.count });
-    case "today":
-      return t("today");
-    case "during":
-      return t("during");
-    case "past":
-      return t("past");
-  }
-}
-
 /**
  * KPI of the overview (ux-spec §4.10, §14.2): phase 1 «x von n haben eingetragen», phase 2
  * votes (+ deadline). While somebody is open the whole box is a button → «Wer hat
- * eingetragen?». Phase 3: the «Vorfreude» ring with the countdown (W11; never counts up, G-16).
+ * eingetragen?». Phase 3 has its own head (ticket with the ring, W16 v2).
  */
 async function OverviewKpi({ view }: { view: TripView }) {
   const t = await getTranslations("trip");
-  const tResult = await getTranslations("poll.result");
-  const { phase, progress, trip, today, format } = view;
+  const { phase, progress, trip, format } = view;
   if ((phase === "collect" || phase === "vote") && progress) {
     const open = openNames(view);
     const allDone = open.length === 0;
@@ -118,81 +91,7 @@ async function OverviewKpi({ view }: { view: TripView }) {
       </RingDraw>
     );
   }
-  if (phase === "fixed" && trip.fixedStart && trip.fixedEnd) {
-    const period = { start: trip.fixedStart, end: trip.fixedEnd };
-    const value = countdown(period, today);
-    return (
-      <CountdownRing
-        percent={ringPercent(fixedOn(view), trip.fixedStart, today)}
-        celebrate={view.celebrate}
-        label={
-          value.kind === "days"
-            ? tResult.rich("ringLabel", {
-                count: value.count,
-                n: (chunks) => <b>{chunks}</b>,
-              })
-            : await countdownText(value)
-        }
-      />
-    );
-  }
   return null;
-}
-
-/** W11 result card (phase 3) with calendar links and the share text «Fix! …». */
-async function Result({
-  view,
-  focusHeading,
-  footer,
-}: {
-  view: TripView;
-  focusHeading: boolean;
-  footer: ReactNode;
-}) {
-  const t = await getTranslations("trip");
-  const tResult = await getTranslations("poll.result");
-  const { trip, format, today, members } = view;
-  if (!trip.fixedStart || !trip.fixedEnd) return null;
-  const period = { start: trip.fixedStart, end: trip.fixedEnd };
-  const nights = nightsOf(period);
-  const link = tripLink(tripPath(trip.publicId));
-  const [texts, value] = await Promise.all([
-    resultShareTexts({
-      tripName: trip.name,
-      link,
-      start: period.start,
-      end: period.end,
-      nights,
-      senderCountry: format.country,
-    }),
-    countdownText(countdown(period, today)),
-  ]);
-  return (
-    <ResultCard
-      publicId={trip.publicId}
-      tripName={trip.name}
-      dateText={formatDateRange(period.start, period.end, format.intl, { weekday: true, today })}
-      nightsText={t("nightsFact", { count: nights })}
-      goingText={tResult("going", { count: members.length })}
-      countdownText={value}
-      isOrganizer={view.isOrganizer}
-      celebrate={view.celebrate}
-      focusHeading={focusHeading && view.isOrganizer}
-      percent={ringPercent(fixedOn(view), period.start, today)}
-      icsHref={`${tripPath(trip.publicId)}/event.ics`}
-      googleHref={googleCalendarUrl({
-        title: trip.name,
-        start: period.start,
-        end: period.end,
-        url: link,
-        description: tResult("calendarDescription"),
-      })}
-      shareLink={link}
-      shareTexts={texts}
-      defaultLocale={format.locale}
-      footer={footer}
-    />
-  );
 }
 
 const STEPS = ["collect", "vote", "fixed"] as const;
@@ -233,87 +132,26 @@ async function PhaseSteps({ view }: { view: TripView }) {
 }
 
 /**
- * Phase-3 hub (ux-spec §14.4): docking slot «Als Nächstes» (no modules in the MVP → nothing
- * rendered) and «So habt ihr entschieden» with the read-only sub-pages.
- */
-async function Hub({ view }: { view: TripView }) {
-  const t = await getTranslations("trip");
-  const { trip, members, format, today } = view;
-  const modules = tripModules();
-  const nights = nightsText(trip.minNights, trip.preferredNights, {
-    nights: (count) => t("nightsFact", { count }),
-    range: (min, max) => t("nightsRangeFact", { min, max }),
-  });
-  return (
-    <>
-      {modules.length > 0 ? (
-        <section className={styles.hub} aria-labelledby="hub-next">
-          <h2 id="hub-next" className={styles.hubTitle}>
-            {t("hub.upNext")}
-          </h2>
-          <HubTiles>
-            {modules.map((module) => (
-              <HubTile
-                key={module.id}
-                href={module.href}
-                icon={module.icon}
-                tone={module.tone}
-                title={module.title}
-                meta={module.status}
-                todo={module.todo}
-              />
-            ))}
-          </HubTiles>
-        </section>
-      ) : null}
-      <section className={styles.hub} aria-labelledby="hub-decided">
-        <h2 id="hub-decided" className={styles.hubTitle}>
-          {t("hub.decidedTitle")}
-        </h2>
-        <HubTiles>
-          <HubTile
-            href={tripPath(trip.publicId, "poll")}
-            icon="vote"
-            tone="lavender"
-            title={t("hub.pollTitle")}
-            meta={t("hub.pollMeta", {
-              voted: members.filter((m) => m.votedAt).length,
-              total: members.length,
-            })}
-          />
-          <HubTile
-            href={`${tripPath(trip.publicId, "group")}?view=calendar`}
-            icon="calendar"
-            tone="mint"
-            title={t("hub.groupTitle")}
-            meta={t("hub.groupMeta")}
-          />
-        </HubTiles>
-        <p className={styles.searched} suppressHydrationWarning>
-          {t("hub.searched", {
-            range: rangeText(trip.rangeStart, trip.rangeEnd, format.intl, today),
-            nights,
-          })}
-        </p>
-      </section>
-    </>
-  );
-}
-
-/**
  * W07 «Übersicht» (F-007, F-004, ux-spec §14): phase 1/2 – facts, phase steps, «Nächster
- * Schritt», people grouped by status with [Erinnern]. Phase 3 (no tabs) – the trip hub:
- * result card, description, «So habt ihr entschieden», «Wer ist dabei?».
+ * Schritt», people grouped by status with [Erinnern]. Stored phase «fixed» (also during and
+ * after the trip) – the cockpit «Reiseverlauf» without tabs (W16 v2, F-053).
  */
 export default async function TripOverviewPage({ params, searchParams }: Params) {
   const { id } = await params;
   const query = await searchParams;
   const view = await loadTripView(id, `/trips/${id}`);
-  const t = await getTranslations("trip");
   const { trip, me, members, phase, format, today, isOrganizer } = view;
-  // Stored phase «fixed» = hub without tabs, also once the trip is over (§14.4).
-  const settled = trip.phase === "fixed";
-  const fixed = phase === "fixed";
+  if (trip.phase === "fixed") {
+    return (
+      <CockpitOverview
+        view={view}
+        welcome={query.welcome === "1"}
+        focusTitle={query.fixed === "1" && isOrganizer}
+      />
+    );
+  }
+  const [t, tPoll] = await Promise.all([getTranslations("trip"), getTranslations("poll")]);
+  const canceller = members.find((m) => m.userId === trip.pollCanceledBy)?.displayName;
   const nights = nightsText(trip.minNights, trip.preferredNights, {
     nights: (count) => t("nightsFact", { count }),
     range: (min, max) => t("nightsRangeFact", { min, max }),
@@ -345,56 +183,50 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
               text={t("reopenedNotice", { orga: orgaName(view) })}
             />
           ) : null}
-          {fixed ? (
-            <Result
-              view={view}
-              focusHeading={query.fixed === "1"}
-              footer={<PhaseSteps view={view} />}
+          {pollCancelNoticeDue(trip, me) ? (
+            // Q21: the one-off notice also on the overview (Pflege-Paket), not only in «Abstimmen».
+            <CancelNotice
+              publicId={trip.publicId}
+              text={
+                canceller
+                  ? tPoll("canceledNotice", { name: canceller })
+                  : tPoll("canceledNoticeUnknown")
+              }
             />
           ) : null}
-          {fixed ? (
-            trip.description ? (
-              <p className={styles.quote}>{trip.description}</p>
-            ) : null
-          ) : (
-            <div className={styles.intro}>
-              {settled ? (
-                <h1 className={styles.name}>{trip.name}</h1>
-              ) : (
-                <FocusHeading focus={query.unfixed === "1"} param="unfixed" className={styles.name}>
-                  {trip.name}
-                </FocusHeading>
-              )}
-              <p className={styles.facts}>
+          <div className={styles.intro}>
+            <FocusHeading focus={query.unfixed === "1"} param="unfixed" className={styles.name}>
+              {trip.name}
+            </FocusHeading>
+            <p className={styles.facts}>
+              <span className={styles.fact}>
+                <Icon name="calendar" size={18} />
+                <span suppressHydrationWarning>
+                  {rangeText(trip.rangeStart, trip.rangeEnd, format.intl, today)}
+                </span>
+              </span>
+              <span className={styles.fact}>
+                <Icon name="nights" size={18} />
+                <span>{nights}</span>
+              </span>
+              {trip.deadline && phase === "collect" ? (
                 <span className={styles.fact}>
-                  <Icon name="calendar" size={18} />
-                  <span suppressHydrationWarning>
-                    {rangeText(trip.rangeStart, trip.rangeEnd, format.intl, today)}
+                  <Icon name="clock" size={18} />
+                  <span>
+                    {t("deadlineFact", {
+                      date: formatDate(trip.deadline, format.intl, {
+                        weekday: true,
+                        year: false,
+                      }),
+                    })}
                   </span>
                 </span>
-                <span className={styles.fact}>
-                  <Icon name="nights" size={18} />
-                  <span>{nights}</span>
-                </span>
-                {trip.deadline && phase === "collect" ? (
-                  <span className={styles.fact}>
-                    <Icon name="clock" size={18} />
-                    <span>
-                      {t("deadlineFact", {
-                        date: formatDate(trip.deadline, format.intl, {
-                          weekday: true,
-                          year: false,
-                        }),
-                      })}
-                    </span>
-                  </span>
-                ) : null}
-              </p>
-              {trip.description ? <p className={styles.description}>{trip.description}</p> : null}
-            </div>
-          )}
+              ) : null}
+            </p>
+            {trip.description ? <p className={styles.description}>{trip.description}</p> : null}
+          </div>
 
-          {fixed ? null : <PhaseSteps view={view} />}
+          <PhaseSteps view={view} />
 
           {step ? (
             <Card as="section" aria-labelledby="next-step" className={styles.next}>
@@ -408,8 +240,6 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
               />
             </Card>
           ) : null}
-
-          {settled ? <Hub view={view} /> : null}
         </div>
 
         <div className={styles.side}>

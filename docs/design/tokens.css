@@ -225,6 +225,13 @@
   --ww-size-cockpit-button: 44px; /* runde Icon-Taste im Kopf */
   --ww-size-kpi-ring: 52px;       /* Fortschrittsring in der Kennzahl-Box */
   --ww-size-countdown-ring: 156px;/* Vorfreude-Ring */
+  /* Reiseverlauf (W16 v2, D-36–D-42, abstimmung-ux.md §10.1) */
+  --ww-size-countdown-ring-hero: clamp(120px, 21svh, 168px); /* Ring im Ticket-Kopf */
+  --ww-size-mini-ring: 20px;      /* Mini-Ring in Zeile 1 beim Scrollen */
+  --ww-route-line-w: 3px;         /* Linie des Wegs */
+  --ww-route-marker: 32px;        /* Marker erledigt / wartet / als Nächstes / Ziel */
+  --ww-route-marker-today: 40px;  /* Heute-Marker (Sonne) */
+  --ww-route-marker-later: 24px;  /* „später“ – bewusst kleiner = gedämpft */
   --ww-size-seal-sm: 20px;        /* Siegel klein (Beitritt, Abgabe) */
   --ww-size-seal-md: 40px;
   --ww-size-seal-lg: 64px;        /* Siegel groß (Termin steht fest) */
@@ -511,6 +518,13 @@
   --ww-todo-fg: var(--ww-coral-700);
   --ww-todo-bar: var(--ww-coral-500);
 
+  /* ---------------- Reiseverlauf (W16 v2, D-37) ---------------- */
+  --ww-route-line-done: var(--ww-color-accent-strong); /* erledigt, durchgezogen 5,0 */
+  --ww-route-line-todo: var(--ww-color-border-strong); /* ab Heute gestrichelt 3,1 */
+  --ww-route-wait: var(--ww-lavender-600);             /* „wartet“ Ring + Termin-Kante 6,1 */
+  --ww-route-today-halo: var(--ww-indigo-800);
+  --ww-route-coin: var(--ww-mint-500);                 /* Münzstapel am Erledigt-Marker */
+
   /* ---------------- Illustrationen (inline-SVG) ---------------- */
   --ww-illu-plate: var(--ww-lavender-100);
   --ww-illu-paper: var(--ww-mist-0);
@@ -740,6 +754,12 @@
     --ww-todo-fg: var(--ww-coral-300);
     --ww-todo-bar: var(--ww-coral-400);
 
+    --ww-route-line-done: var(--ww-color-accent-strong);
+    --ww-route-line-todo: var(--ww-color-border-strong);
+    --ww-route-wait: var(--ww-lavender-400);
+    --ww-route-today-halo: var(--ww-mint-400);
+    --ww-route-coin: var(--ww-mint-500);
+
     --ww-illu-plate: var(--ww-night-820);
     --ww-illu-paper: var(--ww-night-750);
     --ww-illu-ink: var(--ww-ink-50);
@@ -960,6 +980,12 @@
   --ww-todo-bg: var(--ww-coral-900);
   --ww-todo-fg: var(--ww-coral-300);
   --ww-todo-bar: var(--ww-coral-400);
+
+  --ww-route-line-done: var(--ww-color-accent-strong);
+  --ww-route-line-todo: var(--ww-color-border-strong);
+  --ww-route-wait: var(--ww-lavender-400);
+  --ww-route-today-halo: var(--ww-mint-400);
+  --ww-route-coin: var(--ww-mint-500);
 
   --ww-illu-plate: var(--ww-night-820);
   --ww-illu-paper: var(--ww-night-750);

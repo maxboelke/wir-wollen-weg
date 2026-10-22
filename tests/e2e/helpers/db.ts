@@ -705,3 +705,100 @@ export async function setCelebratedFor(
     );
   });
 }
+
+// ---------------------------------------------------------------------------
+// Increment 8: cockpit «Reiseverlauf» (F-053) + infos (F-033)
+// ---------------------------------------------------------------------------
+
+/**
+ * Fixes the dates of a trip directly (phase 3): `start`/`end` as offsets from today, fixed
+ * `fixedDaysAgo` days ago (V1 «Allen Bescheid geben» is due for 7 days), optionally announced.
+ */
+export async function setFixedDates(
+  tripId: string,
+  start: number,
+  end: number,
+  options: { fixedDaysAgo?: number; announced?: boolean } = {},
+): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip set phase = 'fixed', range_start = least(range_start, $2::date),
+         range_end = greatest(range_end, $3::date), fixed_start = $2, fixed_end = $3,
+         fixed_at = now() - make_interval(days => $4),
+         fixed_announced_at = case when $5::boolean then now() end
+       where id = $1`,
+      [tripId, isoDay(start), isoDay(end), options.fixedDaysAgo ?? 30, options.announced ?? true],
+    );
+    // Everybody has seen the big celebration (W11) – the cockpit shows its static state.
+    await client.query(`update trip_member set celebrated_for = $2 where trip_id = $1`, [
+      tripId,
+      `${isoDay(start)}/${isoDay(end)}`,
+    ]);
+  });
+}
+
+/** Infos of a trip (W22), last changed by the organiser. */
+export async function setTripInfo(
+  tripId: string,
+  values: Partial<
+    Record<"stay_name" | "address" | "check_in" | "check_out" | "meeting_point" | "notes", string>
+  >,
+): Promise<void> {
+  await withClient(async (client) => {
+    const keys = Object.keys(values);
+    await client.query(
+      `insert into trip_info (trip_id, updated_by, ${keys.join(", ")})
+       select $1, (select user_id from trip_member where trip_id = $1 and role = 'organizer'),
+         ${keys.map((_, i) => `$${String(i + 2)}`).join(", ")}`,
+      [tripId, ...Object.values(values)],
+    );
+  });
+}
+
+/** Cockpit markers of a trip and one member (V1, UX-8, UX-9). */
+export async function cockpitState(publicIdValue: string, email: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      announced: boolean;
+      departure: string | null;
+      offline: string[] | null;
+      info_version: number | null;
+      stay_name: string | null;
+    }>(
+      `select t.fixed_announced_at is not null as announced,
+         to_char(m.departure_celebrated_on, 'YYYY-MM-DD') as departure,
+         (select array_agg(p.display_name) from trip_placeholder p
+           where p.trip_id = t.id and p.without_app_at is not null) as offline,
+         i.version as info_version, i.stay_name
+       from trip t join trip_member m on m.trip_id = t.id
+       join "user" u on u.id = m.user_id left join trip_info i on i.trip_id = t.id
+       where t.public_id = $1 and u.email = $2`,
+      [publicIdValue, email],
+    );
+    return rows.rows[0];
+  });
+}
+
+/** Sets the deadline for adding dates (F-017). */
+export async function setDeadline(tripId: string, deadline: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(`update trip set deadline = $2 where id = $1`, [tripId, deadline]);
+  });
+}
+
+/** The organiser cancelled the vote a minute ago (Q21) – members see the notice once. */
+export async function markPollCanceled(tripId: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(
+      `update trip set poll_canceled_at = now(),
+         poll_canceled_by = (select user_id from trip_member where trip_id = $1 and role = 'organizer')
+       where id = $1`,
+      [tripId],
+    );
+    // Members joined before the cancel.
+    await client.query(
+      `update trip_member set joined_at = now() - interval '1 day' where trip_id = $1`,
+      [tripId],
+    );
+  });
+}

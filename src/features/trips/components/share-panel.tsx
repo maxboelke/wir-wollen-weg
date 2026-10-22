@@ -21,6 +21,8 @@ interface SharePanelProps {
   tripName: string;
   /** Link locked (join closed, organiser view): only the link row, marked «gesperrt». */
   locked?: boolean | undefined;
+  /** The text was shared (Web Share), copied or a direct link was tapped – e.g. V1 done. */
+  onShared?: (() => void) | undefined;
 }
 
 type CopyTarget = "text" | "link";
@@ -37,6 +39,7 @@ export function SharePanel({
   defaultLocale,
   tripName,
   locked = false,
+  onShared,
 }: SharePanelProps) {
   const t = useTranslations("share");
   const tCommon = useTranslations("common");
@@ -99,11 +102,13 @@ export function SharePanel({
     }
     setCopied(target);
     setAnnouncement(t("copiedStatus"));
+    if (target === "text") onShared?.();
   }
 
   async function share() {
     try {
       await navigator.share({ text });
+      onShared?.();
     } catch (error) {
       // Cancelled by the person: nothing to do. Anything else: copy instead.
       if (error instanceof DOMException && error.name === "AbortError") return;
@@ -166,13 +171,25 @@ export function SharePanel({
           </div>
           {canShare ? null : (
             <nav className={styles.direct} aria-label={t("directLabel")}>
-              <a href={direct.whatsapp} target="_blank" rel="noreferrer noopener">
+              <a
+                href={direct.whatsapp}
+                target="_blank"
+                rel="noreferrer noopener"
+                onClick={() => onShared?.()}
+              >
                 {t("whatsapp")}
               </a>
-              <a href={direct.telegram} target="_blank" rel="noreferrer noopener">
+              <a
+                href={direct.telegram}
+                target="_blank"
+                rel="noreferrer noopener"
+                onClick={() => onShared?.()}
+              >
                 {t("telegram")}
               </a>
-              <a href={direct.email}>{t("email")}</a>
+              <a href={direct.email} onClick={() => onShared?.()}>
+                {t("email")}
+              </a>
             </nav>
           )}
         </>
