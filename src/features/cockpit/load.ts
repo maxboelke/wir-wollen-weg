@@ -1,5 +1,5 @@
 import "server-only";
-import { fromUtcDate, type IsoDate } from "@/lib/dates";
+import { fromUtcDate, isoDateInZone, type IsoDate } from "@/lib/dates";
 import { compareTallies, rankOptions, tallyOf, type Tally } from "@/lib/poll";
 import { effectiveDeletionDate, TRIP_NOTICE_DAYS, tripDeletionDate } from "@/lib/retention";
 import { firstLine } from "@/lib/trip-info";
@@ -75,7 +75,8 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
   const places = ranked.slice(0, 2);
   if (fixedPlace && !places.includes(fixedPlace)) places.unshift(fixedPlace);
 
-  const fixedOn = fromUtcDate(trip.fixedAt ?? trip.updatedAt);
+  // Day of the fixing in the app time zone (R-072) – «festgelegt am …», ring start, V1 7 days.
+  const fixedOn = isoDateInZone(trip.fixedAt ?? trip.updatedAt);
   const deletion = effectiveDeletionDate(
     tripDeletionDate({ phase: trip.phase, fixedEnd: trip.fixedEnd, lastActivity: trip.updatedAt })
       .at,
