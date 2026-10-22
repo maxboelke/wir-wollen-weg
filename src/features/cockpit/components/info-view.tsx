@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Tile } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import { formatTime, linkParts, mapsHref, telHref } from "@/lib/trip-info";
 import type { TripInfoView } from "@/server/cockpit";
 import type { TripView } from "../../trips/load";
@@ -179,13 +179,13 @@ export async function InfoView({
         {info.editorName
           ? t("updatedBy", {
               name: info.editorName,
-              date: formatDate(info.updatedAt.toISOString().slice(0, 10), format.intl, {
+              date: formatDate(isoDateInZone(info.updatedAt), format.intl, {
                 weekday: false,
                 year: false,
               }),
             })
           : t("updatedAt", {
-              date: formatDate(info.updatedAt.toISOString().slice(0, 10), format.intl, {
+              date: formatDate(isoDateInZone(info.updatedAt), format.intl, {
                 weekday: false,
                 year: false,
               }),

@@ -62,13 +62,12 @@ export async function saveTripInfo(
   expectedVersion: number,
 ): Promise<SaveInfoResult> {
   return db().transaction(async (tx) => {
-    const [current] = await tx
-      .select({ version: tripInfo.version, updatedBy: tripInfo.updatedBy })
-      .from(tripInfo)
-      .where(eq(tripInfo.tripId, tripId))
-      .for("update");
-    const currentVersion = current?.version ?? 0;
-    if (currentVersion !== expectedVersion) {
+    const conflict = async () => {
+      // Read again: a parallel first save may have committed meanwhile (READ COMMITTED).
+      const [current] = await tx
+        .select({ version: tripInfo.version, updatedBy: tripInfo.updatedBy })
+        .from(tripInfo)
+        .where(eq(tripInfo.tripId, tripId));
       const [editor] = current?.updatedBy
         ? await tx
             .select({ name: tripMember.displayName })
@@ -78,19 +77,32 @@ export async function saveTripInfo(
       return {
         ok: false,
         reason: "conflict",
-        version: currentVersion,
+        version: current?.version ?? 0,
         editorName: editor?.name ?? null,
       } as const;
-    }
+    };
+    const [current] = await tx
+      .select({ version: tripInfo.version })
+      .from(tripInfo)
+      .where(eq(tripInfo.tripId, tripId))
+      .for("update");
+    const currentVersion = current?.version ?? 0;
+    if (currentVersion !== expectedVersion) return conflict();
     const version = currentVersion + 1;
     const now = new Date();
-    await tx
+    // Without a row yet, `FOR UPDATE` locks nothing: two parallel first saves (version 0) would
+    // both insert. The conflict branch only updates when the stored version is still the
+    // expected one – otherwise no row comes back and the later save reports a conflict.
+    const saved = await tx
       .insert(tripInfo)
       .values({ tripId, ...values, updatedBy: userId, updatedAt: now, version })
       .onConflictDoUpdate({
         target: tripInfo.tripId,
         set: { ...values, updatedBy: userId, updatedAt: now, version },
-      });
+        where: eq(tripInfo.version, expectedVersion),
+      })
+      .returning({ version: tripInfo.version });
+    if (saved.length === 0) return conflict();
     return { ok: true, version } as const;
   });
 }

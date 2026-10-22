@@ -413,6 +413,7 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
     placeholders: sheetPlaceholders,
     announce,
     decided: {
+      description: trip.description?.trim() ? trip.description : null,
       fixedBy: t("decided.fixedBy", {
         orga,
         date: formatDate(data.fixedOn, format.intl, { weekday: false }),

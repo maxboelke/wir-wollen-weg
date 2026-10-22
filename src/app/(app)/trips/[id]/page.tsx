@@ -19,7 +19,7 @@ import { tripPath } from "@/features/trips/paths";
 import { orgaName, remindPhase, tripNextStep, tripRemindGroups } from "@/features/trips/remind";
 import { sheetContext } from "@/features/trips/sheet-context";
 import { CockpitOverview } from "@/features/cockpit/components/cockpit-overview";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import { pollCancelNoticeDue, reopenNoticeDue } from "@/lib/poll";
 import { remindTarget } from "@/lib/remind";
 import type { NextAction, NextStep, NextStepId } from "@/lib/trip-status";
@@ -257,7 +257,7 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
                   voted: m.votedAt !== null,
                   // F-007: «eingetragen» with the date of the last change (viewer's format).
                   changedOn: changed
-                    ? formatDate(changed.toISOString().slice(0, 10), format.intl, {
+                    ? formatDate(isoDateInZone(changed), format.intl, {
                         weekday: false,
                         year: false,
                       })

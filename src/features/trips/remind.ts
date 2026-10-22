@@ -1,7 +1,7 @@
 import "server-only";
 import { getTranslations } from "next-intl/server";
 import { locales, type Locale } from "@/i18n/config";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import {
   NAMES_TOKEN,
   remindCase,
@@ -122,7 +122,7 @@ export async function remindSheetData(view: TripView): Promise<RemindSheetData |
     const changed = member?.availabilityUpdatedAt ?? member?.submittedAt;
     return changed
       ? t("status.submittedOn", {
-          date: formatDate(changed.toISOString().slice(0, 10), format.intl, {
+          date: formatDate(isoDateInZone(changed), format.intl, {
             weekday: false,
             year: false,
           }),

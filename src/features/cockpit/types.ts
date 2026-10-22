@@ -116,6 +116,8 @@ export interface SheetPlaceholder {
 }
 
 export interface DecidedView {
+  /** Trip description as a quote line on top (CEO 2026-10-22, ux-spec §14.4), if any. */
+  description: string | null;
   fixedBy: string;
   range: string;
   places: { label: string; range: string; votes: string; fixed: boolean }[];

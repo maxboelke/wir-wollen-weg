@@ -105,10 +105,19 @@ export function firstLine(value: string | null): string | null {
   return line ? line.trim() : null;
 }
 
-/** `tel:` target – only `+` and digits (W22 C); null when there are no digits. */
+/** «+49 (0) 30 …» – the national trunk «(0)» after a country code is never dialled. */
+const TRUNK_ZERO = /^(\s*(?:\+|00)\s*\d{1,3})[\s./-]*\(\s*0\s*\)/;
+
+/**
+ * `tel:` target – only `+` and digits (W22 C), without a «(0)» after the country code;
+ * null when there are no digits.
+ */
 export function telHref(phone: string | null): string | null {
   if (!phone) return null;
-  const digits = phone.replace(/[^+0-9]/g, "").replace(/(?!^)\+/g, "");
+  const digits = phone
+    .replace(TRUNK_ZERO, "$1 ")
+    .replace(/[^+0-9]/g, "")
+    .replace(/(?!^)\+/g, "");
   return /[0-9]/.test(digits) ? `tel:${digits}` : null;
 }
 

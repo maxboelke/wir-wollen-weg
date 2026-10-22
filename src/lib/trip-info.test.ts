@@ -71,6 +71,16 @@ describe("display helpers", () => {
     expect(telHref("()")).toBeNull();
   });
 
+  it("drops the «(0)» after a country code, nowhere else", () => {
+    expect(telHref("+49 (0) 30 1234")).toBe("tel:+49301234");
+    expect(telHref("+49(0)171 234567")).toBe("tel:+49171234567");
+    expect(telHref("0049 (0) 89 123")).toBe("tel:004989123");
+    expect(telHref("+41 ( 0 ) 44 123")).toBe("tel:+4144123");
+    expect(telHref("030 (0) 1234")).toBe("tel:03001234"); // no country code – keep as typed
+    expect(telHref("+385 (21) 123-456")).toBe("tel:+38521123456");
+    expect(telHref("+49 (030) 1234")).toBe("tel:+490301234"); // not «(0)» – unchanged
+  });
+
   it("maps link encodes the address, nothing else", () => {
     expect(mapsHref("Put Zlatnog rata 8,\n21420 Bol")).toBe(
       "https://www.google.com/maps/search/?api=1&query=Put%20Zlatnog%20rata%208%2C%2021420%20Bol",

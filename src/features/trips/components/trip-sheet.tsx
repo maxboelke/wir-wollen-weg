@@ -11,7 +11,7 @@ import { Checkbox, TextField } from "@/components/ui/field";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/toast";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import { DISPLAY_NAME_MAX } from "@/lib/display-name";
 import { cancelPollAction, unfixDatesAction } from "../../poll/actions";
 import {
@@ -516,7 +516,10 @@ function TransferStep({
           value: member.userId,
           label: member.displayName,
           hint: t("transferJoined", {
-            date: formatDate(member.joinedAt.slice(0, 10), intl, { weekday: false, year: false }),
+            date: formatDate(isoDateInZone(new Date(member.joinedAt)), intl, {
+              weekday: false,
+              year: false,
+            }),
           }),
         }))}
       />

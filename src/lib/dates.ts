@@ -47,12 +47,60 @@ export function diffDays(from: IsoDate, to: IsoDate): number {
   return Math.round((toUtcDate(to).getTime() - toUtcDate(from).getTime()) / DAY_MS);
 }
 
-/** Today as ISO date in the local time zone of the runtime (browser: the viewer's). */
-export function todayIso(now: Date = new Date()): IsoDate {
-  const y = now.getFullYear();
-  const m = String(now.getMonth() + 1).padStart(2, "0");
-  const d = String(now.getDate()).padStart(2, "0");
-  return `${y}-${m}-${d}`;
+/**
+ * Time zone that defines «today» for trips (R-072). For now one app time zone – `APP_TIME_ZONE`
+ * (IANA name, inlined into the client bundle at build time via next.config.ts), default
+ * Europe/Berlin. Servers run in UTC, so the runtime's local zone must never decide which
+ * calendar day it is. A per-trip zone (PRD §7) can later be passed as `timeZone` instead.
+ */
+export const DEFAULT_TIME_ZONE = "Europe/Berlin";
+
+const dayFormats = new Map<string, Intl.DateTimeFormat>();
+
+function dayFormat(timeZone: string): Intl.DateTimeFormat | null {
+  let format = dayFormats.get(timeZone);
+  if (!format) {
+    try {
+      format = new Intl.DateTimeFormat("en-CA", {
+        timeZone,
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+      });
+    } catch {
+      return null; // unknown IANA name
+    }
+    dayFormats.set(timeZone, format);
+  }
+  return format;
+}
+
+export function isValidTimeZone(value: string): boolean {
+  return value !== "" && dayFormat(value) !== null;
+}
+
+/** The configured app time zone (falls back to Europe/Berlin when unset or invalid). */
+export function appTimeZone(): string {
+  const configured = process.env.APP_TIME_ZONE;
+  return configured && isValidTimeZone(configured) ? configured : DEFAULT_TIME_ZONE;
+}
+
+/** Calendar day of the instant `at` in `timeZone` as ISO date. */
+export function isoDateInZone(at: Date, timeZone: string = appTimeZone()): IsoDate {
+  const format = dayFormat(timeZone) ?? dayFormat(DEFAULT_TIME_ZONE);
+  if (!format) throw new Error("Intl time zone data is missing");
+  const parts = format.formatToParts(at);
+  const part = (type: "year" | "month" | "day") =>
+    parts.find((entry) => entry.type === type)?.value ?? "";
+  return `${part("year")}-${part("month")}-${part("day")}`;
+}
+
+/**
+ * Today as ISO date in `timeZone` (default: the app time zone) – the single source for «today»
+ * on server and client (countdown, phases, deadlines, past days, celebration day).
+ */
+export function todayIso(now: Date = new Date(), timeZone: string = appTimeZone()): IsoDate {
+  return isoDateInZone(now, timeZone);
 }
 
 /** Quick picks for the search range (W05: «Nächste 3 Monate · 6 Monate · Sommer 2027»). */

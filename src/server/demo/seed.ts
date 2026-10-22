@@ -26,6 +26,7 @@
 // meeting point as today's plan), «Gardasee» (Danach, back for 9 days, with infos).
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
+import { addDays, todayIso } from "../../lib/dates.ts";
 
 export const DEMO_DOMAIN = "@demo.test";
 
@@ -72,12 +73,9 @@ function patternDays(rangeStart: string, pattern: DayPattern): [string, string][
   return out;
 }
 
-/** ISO date `days` from today (UTC calendar day). */
+/** ISO date `days` from today (calendar day in the app time zone, R-072). */
 function day(days: number): string {
-  const date = new Date();
-  date.setUTCHours(0, 0, 0, 0);
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
+  return addDays(todayIso(), days);
 }
 
 interface Person {

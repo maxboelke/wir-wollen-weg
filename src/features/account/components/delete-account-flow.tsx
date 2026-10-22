@@ -11,7 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { RadioGroup } from "@/components/ui/radio-group";
 import type { DeletionChoice } from "@/lib/account-deletion";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import { deleteAccountAction } from "../actions";
 import { ReauthStep } from "./reauth-step";
 import styles from "./account.module.css";
@@ -163,7 +163,7 @@ export function DeleteAccountFlow({
                         <option key={successor.userId} value={successor.userId}>
                           {t("successor", {
                             name: successor.displayName,
-                            date: formatDate(successor.joinedAt.slice(0, 10), intl, {
+                            date: formatDate(isoDateInZone(new Date(successor.joinedAt)), intl, {
                               weekday: false,
                               year: false,
                             }),

@@ -38,10 +38,14 @@ async function fixedTrip(
     end?: number;
     fixedDaysAgo?: number;
     announced?: boolean;
+    description?: string;
   } = {},
 ) {
   const name = `Cockpit ${String(Date.now())}`;
-  const trip = await seedTrip(name);
+  const trip = await seedTrip(
+    name,
+    options.description === undefined ? {} : { description: options.description },
+  );
   const email = await signUp(page, "Kai", uniqueEmail("kai"));
   await addAccountToTrip(trip.tripId, email, "Kai");
   if (options.role === "organizer") await makeOrganizer(trip.tripId, email);
@@ -235,6 +239,45 @@ test.describe("W16 v2 – Vorbereitung", () => {
       .toBe("My name");
   });
 
+  test("two parallel FIRST saves (no infos yet): exactly one wins, the other gets the conflict", async ({
+    page,
+    context,
+  }) => {
+    const trip = await fixedTrip(page, { role: "organizer" });
+    const f = en.tripInfo.form;
+    const other = await context.newPage();
+    for (const tab of [page, other]) {
+      await tab.goto(`/trips/${trip.publicId}/info/edit`);
+      await hydrated(tab);
+    }
+    await page.getByLabel(f.stayName).fill("Mine");
+    await other.getByLabel(f.stayName).fill("Theirs");
+    await Promise.all([
+      page.getByRole("button", { name: f.save }).click(),
+      other.getByRole("button", { name: f.save }).click(),
+    ]);
+    const conflict = fill(f.conflict, { name: "Kai" });
+    const outcome = async (tab: Page) => {
+      await expect
+        .poll(async () =>
+          /\/info$/.test(tab.url())
+            ? "saved"
+            : (await tab.getByText(conflict).isVisible())
+              ? "conflict"
+              : "pending",
+        )
+        .not.toBe("pending");
+      return /\/info$/.test(tab.url()) ? "saved" : "conflict";
+    };
+    const mine = await outcome(page);
+    const theirs = await outcome(other);
+    expect([mine, theirs].sort()).toEqual(["conflict", "saved"]);
+    const state = await cockpitState(trip.publicId, trip.email);
+    expect(state?.info_version).toBe(1);
+    expect(state?.stay_name).toBe(mine === "saved" ? "Mine" : "Theirs");
+    await other.close();
+  });
+
   test("rights: members cannot edit (redirect), info page only in phase 3 and for members", async ({
     page,
     browser,
@@ -263,7 +306,7 @@ test.describe("W16 v2 – Vorbereitung", () => {
   });
 
   test("«More about the trip» and the trip menu open the sheets", async ({ page }) => {
-    const trip = await fixedTrip(page);
+    const trip = await fixedTrip(page, { description: "Sun, pastéis, surfing." });
     await page.goto(`/trips/${trip.publicId}`);
     await hydrated(page);
     await page
@@ -284,6 +327,8 @@ test.describe("W16 v2 – Vorbereitung", () => {
     const decided = page.getByRole("dialog", { name: r.decided.title });
     await expect(decided).toBeVisible();
     await expect(decided.getByRole("link", { name: r.decided.poll })).toBeVisible();
+    // CEO 2026-10-22: the trip description as a quote line on top of the sheet.
+    await expect(decided.getByText("Sun, pastéis, surfing.")).toBeVisible();
   });
 });
 

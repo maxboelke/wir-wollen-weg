@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { todayIso } from "./dates";
 import {
   ANNOUNCE_DAYS,
   dayRingPercent,
@@ -414,5 +415,22 @@ describe("«Neu erledigt» (W16 v2.7, UM-4)", () => {
     expect(freshlyDone(null, ["V1", "V2"])).toEqual([]);
     expect(freshlyDone(["V1"], ["V1", "V2"])).toEqual(["V2"]);
     expect(freshlyDone(["V1", "V2"], ["V1"])).toEqual([]);
+  });
+});
+
+describe("arrival day in the app time zone (R-072)", () => {
+  it("00:30 CEST on the arrival day is «Unterwegs», although the server (UTC) is a day behind", () => {
+    const now = new Date("2027-06-11T22:30:00Z"); // 12 June, 00:30 in Berlin
+    expect(subphaseOf("2027-06-12", "2027-06-19", todayIso(now))).toBe("during");
+    expect(subphaseOf("2027-06-12", "2027-06-19", todayIso(now, "UTC"))).not.toBe("during");
+  });
+
+  it("23:30 CEST on the departure day is still the trip, 00:30 the next day is «Danach»", () => {
+    expect(subphaseOf("2027-06-12", "2027-06-19", todayIso(new Date("2027-06-19T21:30:00Z")))).toBe(
+      "during",
+    );
+    expect(subphaseOf("2027-06-12", "2027-06-19", todayIso(new Date("2027-06-19T22:30:00Z")))).toBe(
+      "after",
+    );
   });
 });

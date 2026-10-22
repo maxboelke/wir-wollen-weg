@@ -9,7 +9,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Icon } from "@/components/ui/icon";
 import { TripListCard, type TripListCardData } from "@/features/trips/components/trip-list-card";
 import { tripPath } from "@/features/trips/paths";
-import { todayIso } from "@/lib/dates";
+import { isoDateInZone, todayIso } from "@/lib/dates";
 import {
   compareTrips,
   daysUntil,
@@ -82,7 +82,7 @@ function deletionNotice(
   const now = new Date();
   if (!inNoticeWindow(due.at, now)) return null;
   const at = effectiveDeletionDate(due.at, trip.deletionNoticeSentAt, TRIP_NOTICE_DAYS);
-  return { date: at.toISOString().slice(0, 10), reason: due.reason };
+  return { date: isoDateInZone(at), reason: due.reason };
 }
 
 /**

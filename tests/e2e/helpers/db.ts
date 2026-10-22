@@ -1,5 +1,6 @@
 import { randomBytes, randomInt } from "node:crypto";
 import pg from "pg";
+import { addDays, todayIso } from "../../../src/lib/dates";
 import { deriveEmailLimitKey, hmacHex } from "../../../src/server/auth/email-limit-key";
 
 const databaseUrl = process.env.DATABASE_URL ?? "postgres://app:app@localhost:5432/wirwollenweg";
@@ -17,12 +18,9 @@ async function withClient<T>(work: (client: pg.Client) => Promise<T>): Promise<T
 const ALPHABET = "23456789abcdefghijkmnpqrstuvwxyz";
 const publicId = () => Array.from({ length: 10 }, () => ALPHABET.charAt(randomInt(32))).join("");
 
-/** ISO date `days` from today (UTC). */
+/** ISO date `days` from today – the app's «today» (R-072: app time zone, not UTC). */
 export function isoDay(days: number): string {
-  const date = new Date();
-  date.setUTCHours(0, 0, 0, 0);
-  date.setUTCDate(date.getUTCDate() + days);
-  return date.toISOString().slice(0, 10);
+  return addDays(todayIso(), days);
 }
 
 async function insertUser(client: pg.Client, name: string, email?: string): Promise<string> {

@@ -25,6 +25,9 @@ const nextConfig: NextConfig = {
   // Locally and in CI `pnpm start` (= `next start`) serves the regular build.
   ...(process.env.NEXT_OUTPUT_STANDALONE === "1" ? { output: "standalone" as const } : {}),
   poweredByHeader: false,
+  // R-072: «today» is the calendar day in the app time zone – inline it so server and client
+  // agree (src/lib/dates.ts appTimeZone(), default Europe/Berlin).
+  env: { APP_TIME_ZONE: process.env.APP_TIME_ZONE ?? "" },
   // Phone tests in the LAN with `pnpm dev -H 0.0.0.0` (deployment.md §0.3), e.g. "192.168.178.20".
   ...(process.env.DEV_ALLOWED_ORIGINS
     ? { allowedDevOrigins: process.env.DEV_ALLOWED_ORIGINS.split(",").map((o) => o.trim()) }

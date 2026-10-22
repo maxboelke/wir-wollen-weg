@@ -1,5 +1,6 @@
 import "server-only";
 import { and, asc, eq } from "drizzle-orm";
+import { todayIso } from "@/lib/dates";
 import { hasPassword } from "./account";
 import { db } from "./db/client";
 import {
@@ -158,6 +159,6 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
 
 /** File name of the download, e.g. «wir-wollen-weg-daten-2026-10-11.json». */
 export function exportFileName(locale: string, now = new Date()): string {
-  const date = now.toISOString().slice(0, 10);
+  const date = todayIso(now);
   return locale === "de" ? `wir-wollen-weg-daten-${date}.json` : `when-do-we-go-data-${date}.json`;
 }

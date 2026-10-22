@@ -242,6 +242,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `NODE_ENV` | ja | `production` in demo/staging/prod | `development` |
 | `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `preview` \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Zugangsschutz, Startschutz §0.6). Auf Vercel ohne Wert: `preview` | `development` |
 | `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende; `preview`/`staging`/`production` nur mit `https://` (R-064). Auf Vercel ohne Wert: `https://$VERCEL_PROJECT_PRODUCTION_URL` | `http://localhost:3000` |
+| `APP_TIME_ZONE` | nein | IANA-Zeitzone, die „heute“ für Reisen bestimmt (Countdown, Phasen, Fristen, Abreisetag-Feier – R-072). Leer/ungültig = `Europe/Berlin`. Wird beim **Build** eingelesen (auch für den Browser) – Änderung erst nach neuem Build/Deployment wirksam. Später ggf. Zeitzone pro Reise | leer |
 | `PREVIEW_ACCESS_PASSWORD` | nur preview | Passwort der HTTP-Basic-Auth (≥ 10 Zeichen, Benutzername beliebig); fehlt es, startet die Vorschau nicht bzw. antwortet 503 (§0.7) | leer |
 | `DATABASE_URL` | ja | PostgreSQL-Verbindung (Neon: Pooled-Endpunkt `…-pooler…`) | `postgres://app:app@localhost:5432/wirwollenweg` |
 | `DATABASE_URL_UNPOOLED` | nein | Neon (preview): direkte Verbindung – Migrationen und Seed nutzen sie, wenn gesetzt | – |

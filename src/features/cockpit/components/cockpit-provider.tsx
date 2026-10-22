@@ -339,6 +339,7 @@ function DecidedBody({ data }: { data: CockpitSheetData }) {
   const { decided } = data;
   return (
     <div className={styles.body}>
+      {decided.description ? <p className={styles.quote}>{decided.description}</p> : null}
       <p className={styles.muted}>{decided.fixedBy}</p>
       <p className={styles.range}>{decided.range}</p>
       {decided.noVotes ? (

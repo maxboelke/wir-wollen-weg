@@ -119,16 +119,6 @@
   }
 }
 
-/* Phase 3: description as a quote line under the result card (§14.4). */
-.quote {
-  padding-inline-start: var(--ww-space-3);
-  border-inline-start: var(--ww-space-1) solid var(--ww-color-primary-tint-strong);
-  color: var(--ww-color-text-muted);
-  font-style: italic;
-  overflow-wrap: anywhere;
-  white-space: pre-line;
-}
-
 .hub {
   display: flex;
   flex-direction: column;
