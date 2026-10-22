@@ -366,7 +366,36 @@ Seitenwechsel Weg ↔ Bereich wie bisher (horizontal `distance-lg` + Fade). Kein
 | UM-1 – UM-7 | neu (UM-7 abhängig von UX-8) | Motion Designer |
 | UX-8 (Feier am Abreisetag), UX-9 (Station „ohne App erledigt“) | Frage | Auftraggeber über CEO |
 
+## 13. Runde 4b – Antworten auf `docs/design/abstimmung-ux.md` §10 (C v2 „Reiseverlauf“, 2026-10-22)
+
+Geprüft gegen das Mockup [`cockpit-reiseverlauf/index.html`](../design/mockups/cockpit-reiseverlauf/index.html). **D-36 – D-45 sind aus UX-Sicht abgenommen** (Optik im Mockup = Vorgabe für die Entwicklung), ebenso der Token-Vorschlag (§10.1) – Übernahme in `tokens.css`/design-system jetzt möglich, da Q26/Q27 freigegeben sind. Ausführlich mit Begründungen: [W16 v2.12](wireframes/w16-cockpit.md) und [v2.13 Inkrement-8-Schnitt](wireframes/w16-cockpit.md).
+
+| Nr. | Antwort UX | Änderung am Mockup nötig? |
+|---|---|---|
+| **U-23** Heute-Satz H-6 | **Übernommen** mit ICU-Plural; zusätzlich **H-7** «Heute geht's los – gute Reise!» / «Today's the day – have a great trip!» (ganzer erster Reisetag) und **H-5b** «Schön war's – bis zur nächsten Reise!» (Danach ohne Ausgaben). Vorrang H-7 → H-6 → H-1 → H-2 → Rest. | nein (EN H-7 optional nachziehen) |
+| **U-24** Termin als erste Heute-Karte | **Bestätigt.** Primär-Taste = erste Heute-Karte; unterwegs = erster **anstehender** Termin (vergangene Termine des Tages kompakt mit «vorbei» ans Ende). Lavendel-Kante + Chip «Termin heute» passt; **EN-Chip «Today's plan»** statt «Today» (doppelt neben TODAY). | EN-Chip ändern |
+| **U-25** Zwei Primär-Tasten | **Entschieden: `[+ Ausgabe]` als Kontur-Taste (`on-ck`)** wie alle Kopf-Tasten, Plus-Icon, erste in der Gruppe. Die Termin-Karte behält die einzige Primär-Taste. Grund: ux-spec §1.1, zwei gefüllte Flächen im selben ersten Bildschirm, einheitlicher Kopf; Minze bleibt Ring/Linie/erledigt. | **ja**: `.btn.mint` → `.btn.on-ck` |
+| **U-26** Weg-Überschrift | **Ohne Reiseziel** (es gibt kein Zielfeld, nur den freien Reisenamen – «nach {Name}» bricht die Grammatik): «Euer Weg bis zur Abreise» / «Eure Reise, Tag für Tag» / «Nach der Reise» · EN «The road to departure» / «Your trip, day by day» / «After the trip». Meta «{done} von {total} geschafft», bei total = 0 entfällt sie. | **ja**: Überschriften |
+| **U-27** Unterlagen doppelt (Danach) | **Nicht beides.** D2 erscheint erst **7 Tage vor der Löschung** (als Nächstes, «jetzt herunterladen»); bis dahin nur die Kachel mit «gelöscht am 19. Juli» im Status. Regel „ein Einstieg je Bereich“ bleibt ohne Ausnahme. | ja (Danach: D2 nur im 7-Tage-Fenster, sonst Kachel) – niedrig, betrifft Inkr. 12 |
+| **U-28** Schiene (D-43) | **Bestätigt**, in W16 v2.9 eingearbeitet. | nein |
+| **U-29** Siegel = Marker | **Bestätigt** (s. UM-4). | nein |
+| **U-30** Abrechnung abschließen | **Bestätigt** als Mockup-Vereinfachung; gebaut wird nach W16 v2.4 (D1). `[Abschließen]` ist immer sekundär, auch als erste Heute-Karte. „Sara bucht“ = Demo-Daten. | nein |
+| **UM-4** Marker wird Siegel | **Einverstanden** (ein Objekt statt zwei Minze-Kreise, keine Layout-Verschiebung). Bedingungen: einmal je neu erledigter Station, bei mehreren nur ein Pop, keine Live-Ansage, reduziert = Überblenden 140 ms, kein FLIP. Gegenprüfung Motion Designer noch offen (nicht blockierend). | nein |
+
+**Hinweis an Design (Inkrement 8):** Ohne die Bereiche aus Inkr. 9–12 hat der Kopf unterwegs und danach **keine** Tastengruppe (nur der Crew-Button) – bitte prüfen, dass der Abschnitt unter der Abriss-Kante dann nicht leer wirkt (Crew-Button links, rechts nichts; kein Platzhalter). Nur **eine** Kachel („Infos“) unter „Immer griffbereit“: halbe Breite mobil, nicht strecken. Details W16 v2.13.
+
+### 13.1 Abstimmungsstand Runde 4b
+
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-36 – D-45, Token-Vorschlag | abgenommen (UX) | Designer: Tokens übernehmen |
+| U-23, U-24, U-28, U-29, U-30 | geklärt | – |
+| U-25, U-26, U-27 | entschieden (UX); kleine Mockup-Anpassungen | Designer (nicht blockierend für Inkr. 8 – W16 gilt) |
+| UM-1 – UM-7 | aus UX-Sicht abgenommen (UM-4 mit Bedingungen) | Motion Designer: Gegenprüfung |
+| UX-1, UX-2, UX-8, UX-9 | entschieden (Auftraggeber 2026-10-22): ja | – |
+
 ## Changelog
+- 2026-10-22 (Runde 4b): §13 – Antworten U-23–U-30, Bewertung UM-4, Abnahme D-36–D-45; W16 v2.12/v2.13 (Inkrement-8-Schnitt), W22 baureif.
 - 2026-10-22 (Runde 4): §12 – Auswahl Variante C, Antworten R4-U-17–R4-U-22, neue Punkte D-36–D-45 (Designer) und UM-1–UM-7 (Motion), Fragen UX-8/UX-9; Konzept in W16 v2.
 - 2026-10-20 (Feedback-Runde 1): §11 Punkte U-17–U-21 (WhatsApp-Taste, Kennzahl-Box als Button, Personen-Zeilen, Hinweis „Basiert auf x von n“, Phase 3 ohne Tabs + Reise-Hub).
 - 2026-10-08 (Runde 3, Richtung B): §8 Entscheidungen zu den offenen Punkten aus richtung-b §14 und Q17, Usability-Befunde D-20–D-35; §9 Antworten an Motion M-U1–M-U11; §10 Abstimmungsstand.

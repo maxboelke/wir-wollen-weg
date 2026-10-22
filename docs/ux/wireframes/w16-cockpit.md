@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
 Stand: 2026-10-22 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **UX-Konzept, Optik/Motion in Abstimmung** (`../abstimmung-design.md` §12), Umsetzung nach Freigabe Q26/Q27.
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -31,7 +31,7 @@ Beispieldaten wie Teil B (Kroatien 2027, 12.–19. Juni, Lena Orga + „bucht“
 |---|---|---|---|
 | 1 | **Zeile 1** (sticky): ← · Reisename + Phasenzeile · ⋯ | Orientierung, Zurück, Menü | wie überall in Reisen; beim Scrollen erscheint hier der Mini-Ring (v2.8) |
 | 2 | **Ticket-Kopf** (Indigo): großer Vorfreude-Ring mit Countdown, Reisezeitraum, Abriss-Kante, Abschnitt mit Crew + `[Kalender]` | Vorfreude und „Was ist das für eine Reise?“ | Der Auftraggeber will den Ring mit Konfetti in jedem Fall; das Ticket aus A gibt dem Kopf Reisegefühl. **Höhe gedeckelt** (v2.2), damit „Heute“ im ersten Bildschirm liegt. |
-| 3 | **Weg** (h2 «Euer Weg nach {Ziel/Reisename}»): Erledigt (eingeklappt) → **HEUTE** (du bist dran) → Läuft (wartet auf andere) → Als Nächstes → Später → **Ziel** | Beantwortet in Leserichtung: Was ist geschafft? Was mache ich jetzt? Worauf warten wir? Was kommt? | Kern der Variante C. „Heute“ ersetzt die Nächster-Schritt-/To-do-Karte (v2.5), es gibt also **eine** Stelle für „was tun“. |
+| 3 | **Weg** (h2 je Teilphase, v2.12 U-26: «Euer Weg bis zur Abreise» / «Eure Reise, Tag für Tag» / «Nach der Reise»): Erledigt (eingeklappt) → **HEUTE** (du bist dran) → Läuft (wartet auf andere) → Als Nächstes → Später → **Ziel** | Beantwortet in Leserichtung: Was ist geschafft? Was mache ich jetzt? Worauf warten wir? Was kommt? | Kern der Variante C. „Heute“ ersetzt die Nächster-Schritt-/To-do-Karte (v2.5), es gibt also **eine** Stelle für „was tun“. |
 | 4 | **Immer griffbereit** (h2): kompakte Kacheln | Bereiche ohne Ende (Kosten, Unterlagen, Infos) und bereits abgeschlossene Bereiche | Die Designer-Empfehlung: Was keinen Zeitpunkt hat, gehört nicht auf die Zeitachse. Unter dem Weg, weil es Nachschlagen ist, nicht Handeln. |
 | 5 | **Mehr zur Reise** (h2): «So habt ihr entschieden ›» · «Wer ist dabei? (6) ›» | Historie und Gruppe | Selten gebraucht, darum ganz unten; beide öffnen Sheets wie in v1 §2.4. |
 
@@ -52,7 +52,7 @@ Beispieldaten wie Teil B (Kroatien 2027, 12.–19. Juni, Lena Orga + „bucht“
 │▓ (LE)(MA)(KE)+3 6 dabei ·7 Nächte  ▓│  Crew = Button → Sheet „Wer ist dabei?“
 │▓                     [▣ Kalender]  ▓│  ICS wie W11
 ╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
-  Euer Weg nach Kroatien    1 von 5 ✓   h2 + Meta (erledigte Stationen / alle ohne Ziel)
+  Euer Weg bis zur Abreise  1 von 5 geschafft   h2 + Meta (erledigte Stationen / alle ohne Ziel)
   (✓) 1 erledigt: Termin steht      ▾   Button, aria-expanded="false"
    ┃
   (☀) HEUTE · So., 2. Mai               h3 – Heute-Marker (Sonne, Indigo-Hof)
@@ -131,7 +131,7 @@ Typischer Fall (Wireframe oben): Kopf ≈ 330 · Weg ≈ 880 · Kacheln ≈ 230 
 
 - **Ring dauerhaft groß**, aber in der Höhe gedeckelt: Durchmesser `clamp(120px, 21svh, 168px)` (360 × 640 → 134 px; 390 × 844 → 168 px). Im Ring Zahl + «Tage» (Jakarta), `aria-hidden`; der Countdown steht als Text in der Phasenzeile (und für Screenreader als `sr-only`-Satz «Noch 41 Tage bis zur Abreise.» direkt nach h1).
 - **Höhen-Budget Kopf:** Zeile 1 + Ticket ≤ **340 px** bei 360 × 640. Daraus folgt: Der **Heute-Marker liegt bei 360 × 640 im ersten Bildschirm**, die Primär-Taste der ersten Heute-Station bei **360 × 740 und 390 × 844** (Abnahme-Kriterium). Das 470-px-Ticket aus Variante A ist dafür zu hoch (Designer-Punkt U-18): keine Felder-Reihe Hin/Zurück/Nächte/Dabei (steht schon im Zeitraum bzw. im Abschnitt), keine Ticket-Nummer.
-- **Abschnitt unter der Abriss-Kante:** links Crew (3 Avatare + «+3», daneben «6 dabei · 7 Nächte») als **Button** → Sheet „Wer ist dabei?“; rechts Taste je Teilphase (v2.7): Vorbereitung `[Kalender]`, Unterwegs `[+ Ausgabe]` (Minze, primär im Kopf) + `[Tickets]`, Danach `[Ausgleichen]` (nur bei offenen Salden).
+- **Abschnitt unter der Abriss-Kante:** links Crew (3 Avatare + «+3», daneben «6 dabei · 7 Nächte») als **Button** → Sheet „Wer ist dabei?“; rechts **eine Tastengruppe** je Teilphase, **alle Kopf-Tasten Kontur** (`on-ck`, 44 px, nie Primär – v2.12 U-25): Vorbereitung `[Kalender]`, Unterwegs `[+ Ausgabe]` + `[Tickets]` (in dieser Reihenfolge), Danach `[Ausgleichen]` (nur bei offenen Salden). Eine Kopf-Taste erscheint nur, wenn ihr Bereich gebaut ist (v2.13).
 - **Feier:** Die große Feier „Es geht los!“ (W11, Ehrenrunde, Konfetti) läuft **einmal je Person und Festlegung** (Server-Merker, unverändert). Danach ist der Ring **statisch, ohne Ehrenrunde**. **Antippen des Rings** löst eine **kleine Konfetti-Runde** aus (≤ 1,2 s, kein Puff, keine Vibration, Sperre 3 s gegen Dauertippen) – Spaß ohne Pflicht. Technisch ein `<button>` mit Namen «Vorfreude: noch 41 Tage», `aria-describedby` nicht nötig; bei reduzierter Bewegung nur kurzes Aufglühen (140 ms). Fokus/Gedrückt-Stil: Designer (D-44).
 - **Orga direkt nach der Festlegung:** «Allen Bescheid geben» ist nicht mehr Kopf-Taste, sondern die Heute-Aufgabe der Station „Termin steht“ (v2.4, V1) – so bleibt der Kopf für alle gleich.
 
@@ -158,7 +158,7 @@ Die Reihenfolge ist **fest** (Katalog-Reihenfolge). Innerhalb jeder Gruppe (Heut
 
 **Bewusst keine Stationen (Stufe 1):** *Packen* (gibt es erst mit F-032 Checkliste – dann Station zwischen V5 und V6), *Fotos* (keine Funktion, Nicht-Ziel), *Infos/Treffpunkt* (Kachel; Treffpunkt steht in der Ziel-Station, fehlende Infos werden Aufgabe A2). Neue Bereiche docken über den Vertrag v2.10 an, ohne dass sich das Muster ändert.
 
-**Mit wenig Bereichen (Inkrement 8, nur Cockpit + Infos)** besteht der Weg aus V1 ✓ · V2 · Heute · Ziel. Das ist kurz, aber ehrlich – und wächst mit jedem Inkrement um eine Station.
+**Mit wenig Bereichen (Inkrement 8, nur Cockpit + Infos)** besteht der Weg aus V1 ✓ · V2 · Heute · Ziel. Das ist kurz, aber ehrlich – und wächst mit jedem Inkrement um eine Station. Details: v2.13.
 
 ## v2.4 Zustände je Station und Rolle
 
@@ -235,12 +235,12 @@ Datum der Anreise; Text = Treffpunkt aus Infos («Treffpunkt 6:15 Uhr · Flughaf
 
 ### Teilphase Unterwegs
 - Phasenzeile «Unterwegs · Tag 3 von 8»; Ring = Tages-Ring (Füllung = vergangene Reisetage), im Ring «Tag 3».
-- Weg: «(✓) Vorbereitung · {n} erledigt ▾» (alle V-Stationen eingeklappt; nicht erledigte heißen darin «nicht genutzt», ohne Häkchen) → **HEUTE · Tag 3 · Mo., 14. Juni**: zuerst die **Termine des Tages** (datierte Unterlagen, nach Uhrzeit, kompakte Karten «9:30 · Fähre nach Stari Grad ›»), dann Aufgaben (A1, offene V-Aufgaben, z. B. Reisedaten noch offen) → **kommende Tage** mit Terminen als Stationen («MORGEN · Di., 15. Juni», danach Wochentag + Datum), max. 2 Tage + «+ {n} weitere Termine ›» (→ Unterlagen) → Ziel **Heimreise · Sa., 19. Juni** (Rückreise-Unterlage, falls vorhanden).
-- Ohne Termine: Heute-Satz «Heute steht nichts an – genießt den Tag!»; der Weg ist dann Vorbereitung ✓ · Heute · Heimreise.
+- Weg: «(✓) Vorbereitung · {n} erledigt ▾» (alle V-Stationen eingeklappt; nicht erledigte heißen darin «nicht genutzt», ohne Häkchen) → **HEUTE · Tag 3 · Mo., 14. Juni**: zuerst die **Termine des Tages** (datierte Unterlagen, nach Uhrzeit; Karte mit Lavendel-Kante + Chip «Termin heute» / EN «Today's plan», **keine** Koralle – ein Termin ist keine Aufgabe), dann Aufgaben (A1, offene V-Aufgaben, z. B. Reisedaten noch offen). Ausklapp- und Primär-Regel für Termine: v2.12 U-24 → **kommende Tage** mit Terminen als Stationen («MORGEN · Di., 15. Juni», danach Wochentag + Datum), max. 2 Tage + «+ {n} weitere Termine ›» (→ Unterlagen) → Ziel **Heimreise · Sa., 19. Juni** (Rückreise-Unterlage, falls vorhanden).
+- Ohne Termine: Heute-Satz «Heute steht nichts an – genießt den Tag!» (H-4), mit Terminen H-6, am ersten Reisetag H-7 (v2.5); der Weg ist ohne Termine Vorbereitung ✓ · Heute · Heimreise.
 - Kacheln: Unterlagen · Kosten («du bekommst 42,00 €») · Infos · Unterkunft («Kamena Kuća · Adresse») · Reisedaten (nur „bucht“, solange Daten da sind).
 
 ### Teilphase Danach
-- Phasenzeile «Zurück · Kosten ausgleichen» bzw. «Zurück · alles ausgeglichen»; Ring voll, im Ring «Schön war's!» (statt Zahl), kein Konfetti auf Antippen mehr nötig – bleibt aber erlaubt.
+- Phasenzeile «Zurück · Kosten ausgleichen» bzw. «Zurück · alles ausgeglichen» (ohne Ausgaben bzw. ohne Bereich Kosten: «Zurück seit 9 Tagen»); Ring voll, im Ring «Schön war's!» (statt Zahl), kein Konfetti auf Antippen mehr nötig – bleibt aber erlaubt.
 - Weg: «(✓) Reise · Vorbereitung und 8 Tage ▾» → **HEUTE · zurück seit 9 Tagen** → D1, D2, D3 nach Regeln unten → Ziel «Wohin geht's als Nächstes?» `[Neue Reise planen]` (sekundär) + 13 px «Diese Reise wird am 17. Sep. 2027 automatisch gelöscht.»
 
 | D1 Kosten ausgleichen | Mitglied | Orga |
@@ -248,12 +248,12 @@ Datum der Anreise; Text = Treffpunkt aus Infos («Treffpunkt 6:15 Uhr · Flughaf
 | ich schulde | **dran** «Du schuldest Kemal 23,50 €» `[Zum Ausgleich]` | **dran** |
 | ich bekomme | wartet «Du bekommst noch 42,00 € von Sara» `[Sara erinnern]` | wartet, dto. |
 | ich ausgeglichen, andere offen | wartet «Noch 2 Ausgleiche offen» (kein Erinnern – Geld zwischen anderen geht mich nichts an) | wartet «Noch 2 Ausgleiche offen» `[Erinnern]` |
-| alle 0, nicht abgeschlossen | erledigt «Alles ausgeglichen ✓» | **dran** «Alles ausgeglichen – Abrechnung abschließen?» `[Abschließen]` (sekundär, keine Pflicht) |
+| alle 0, nicht abgeschlossen | erledigt «Alles ausgeglichen ✓» | **dran** «Alles ausgeglichen – Abrechnung abschließen?» `[Abschließen]` (**immer sekundär**, auch wenn die Karte als erste unter Heute ausgeklappt ist – die Seite hat dann keine Primär-Taste; keine Pflicht, v2.12 U-30) |
 | abgeschlossen | erledigt | erledigt |
 
-D2 Unterlagen sichern: später «Werden am 19. Juli gelöscht»; ab 7 Tage vorher als Nächstes «Werden am 19. Juli gelöscht – jetzt herunterladen.»; nie „dran“ (kein Druck); danach erledigt «Gelöscht am 19. Juli». D3 Reisedaten: später «Werden am 26. Juni gelöscht», danach erledigt «Am 26. Juni gelöscht – wie angekündigt.» (Vertrauen schaffen).
+D2 Unterlagen sichern (**geändert, v2.12 U-27**): **erscheint erst 7 Tage vor der Löschung** als Nächstes «Werden am 19. Juli gelöscht – jetzt herunterladen.»; vorher gibt es **nur die Kachel** „Unterlagen“ («7 Unterlagen · gelöscht am 19. Juli»). Solange D2 sichtbar ist, entfällt die Kachel (ein Einstieg je Bereich). Nie „dran“ (kein Druck); nach der Löschung erledigt «Gelöscht am 19. Juli» (in der Erledigt-Gruppe, keine Kachel mehr). D3 Reisedaten: später «Werden am 26. Juni gelöscht», danach erledigt «Am 26. Juni gelöscht – wie angekündigt.» (Vertrauen schaffen).
 
-Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen ✓») · Unterlagen (bis zur Löschung).
+Kacheln Danach: Unterkunft · Unterlagen (bis 7 Tage vor der Löschung, danach übernimmt D2) · Kosten (nach D1 erledigt: «ausgeglichen ✓») · Infos.
 
 ### Rollen auf einen Blick
 | | Mitglied | „bucht“ | Orga |
@@ -265,7 +265,7 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 
 ## v2.5 „Heute“ – wo der Nächste Schritt aufgeht
 
-- **Es gibt keine eigene Karte „Nächster Schritt“ oder „Für dich zu tun“ mehr.** Der Heute-Marker ist die Antwort: Er steht immer genau einmal im Weg, mit Datum, einem **Heute-Satz** (Wo stehen wir / wer ist dran) und darunter den Stationen und Aufgaben im Zustand **du bist dran**. Die erste davon ist ausgeklappt und trägt die **einzige Primär-Taste der Seite** (ux-spec §1.1, §14.1 Grundregel 3). Damit ist der Nächste Schritt identisch mit der ersten Station unter „Heute“ – nichts doppelt.
+- **Es gibt keine eigene Karte „Nächster Schritt“ oder „Für dich zu tun“ mehr.** (Präzisiert v2.12 U-24: Die Primär-Taste gehört der **ersten Heute-Karte** – in *Vorbereitung*/*Danach* ist das die dringendste „du bist dran“-Aufgabe, *Unterwegs* der nächste anstehende Termin des Tages.) Der Heute-Marker ist die Antwort: Er steht immer genau einmal im Weg, mit Datum, einem **Heute-Satz** (Wo stehen wir / wer ist dran) und darunter den Stationen und Aufgaben im Zustand **du bist dran**. Die erste davon ist ausgeklappt und trägt die **einzige Primär-Taste der Seite** (ux-spec §1.1, §14.1 Grundregel 3). Damit ist der Nächste Schritt identisch mit der ersten Station unter „Heute“ – nichts doppelt.
 - **Position:** direkt nach der Erledigt-Gruppe (bzw. ganz oben im Weg, wenn noch nichts erledigt ist). Der Marker wandert also nicht über die Zeitachse – er ist der feste Punkt „hier stehst du“, und die Stationen ordnen sich um ihn.
 - **Datum:** heute in der Zeitzone der Reise (wie die Teilphase).
 - **Sortierung „du bist dran“** (erste passende zuerst; gleicher Rang → Katalog-Reihenfolge):
@@ -281,14 +281,19 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 | H-2 | nichts dran, ≥ 1 wartet | Für dich gerade nichts zu tun. Ihr wartet auf: {erste wartende Station, Kurzform}. | Nothing for you right now. You're waiting on: {…}. |
 | H-3 | nichts dran, nichts wartet, Vorbereitung | Alles erledigt – jetzt nur noch Vorfreude! | All done – now it's just counting down! |
 | H-4 | Unterwegs ohne Termine/Aufgaben | Heute steht nichts an – genießt den Tag! | Nothing planned today – enjoy! |
-| H-5 | Danach, alles erledigt | Alles ausgeglichen – schön war's! | All settled – what a trip! |
+| H-5 | Danach, alles erledigt, es gab Ausgaben | Alles ausgeglichen – schön war's! | All settled – what a trip! |
+| H-5b | Danach, alles erledigt, keine Ausgaben (bzw. Kosten nicht gebaut) | Schön war's – bis zur nächsten Reise! | What a trip – see you on the next one! |
+| H-6 | Unterwegs, ≥ 1 Termin heute (neu, v2.12 U-23) | ≥ 1 „dran“: Heute {terms, plural, one {ein Termin} other {# Termine}} – und {count, plural, one {eine Sache} other {# Sachen}} für dich. · sonst: Heute {terms, plural, one {ein Termin} other {# Termine}} – sonst genießt den Tag! | {terms, plural, one {One plan} other {# plans}} today – and {count, plural, one {one thing} other {# things}} for you. · {terms, plural, one {One plan} other {# plans}} today – otherwise enjoy! |
+| H-7 | erster Tag *Unterwegs* (UX-8), ganzer Tag, vor H-1/H-4/H-6 | Heute geht's los – gute Reise! | Today's the day – have a great trip! |
+
+  **Vorrang:** H-7 → H-6 → H-1 → H-2 → H-3/H-4/H-5/H-5b (je Teilphase). Die Konfetti-Runde am Abreisetag (UM-7) läuft einmal je Person; der Satz H-7 steht den ganzen ersten Tag.
 
   Kurzformen für H-2: «Mia tritt bei», «Lena legt die Unterkunft fest», «Lena bucht Kamena Kuća», «Freigaben für Lena», «Sara gleicht aus».
-- ux-spec §14.1 („Phase 3: keine Nächster-Schritt-Karte“) bleibt richtig – die Matrix N1/N2 endet mit Phase 2, Phase 3 nutzt H-1 bis H-5.
+- ux-spec §14.1 („Phase 3: keine Nächster-Schritt-Karte“) bleibt richtig – die Matrix N1/N2 endet mit Phase 2, Phase 3 nutzt H-1 bis H-7.
 
 ## v2.6 Kacheln „Immer griffbereit“
 
-- Inhalt: Bereiche **ohne Ende** in der aktuellen Teilphase + Bereiche, deren Station **erledigt** ist. Feste Reihenfolge: Unterkunft · Unterlagen · Kosten · Infos · Reisedaten. Ein Bereich mit offener Station hat **keine** Kachel.
+- Inhalt: Bereiche **ohne Ende** in der aktuellen Teilphase + Bereiche, deren Station **erledigt** ist. Feste Reihenfolge: Unterkunft · Unterlagen · Kosten · Infos · Reisedaten. Ein Bereich mit **sichtbarer** offener Station hat **keine** Kachel – ohne Ausnahme (auch nicht für D2, v2.12 U-27).
   - Vorbereitung (Beispiel oben): Unterlagen, Kosten, Infos (Unterkunft und Reisedaten sind offene Stationen).
   - Nach «gebucht ✓»: Unterkunft wandert vom Weg in die Kacheln («Kamena Kuća · gebucht ✓»).
 - Kachel = ein Link: Icon-Kachel 32 · Titel 15/800 · **eine** Statuszeile (14/500, max. 2 Zeilen) · Chevron; optional ein Chip («1 neu»). **Keine Koralle-Kante** – Aufgaben stehen unter Heute. Zugänglicher Name = Titel + Status («Kosten. Gesamt 456,00 €, du schuldest 86,00 €»).
@@ -301,11 +306,11 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 | Fall | Verhalten |
 |---|---|
 | Erster Besuch nach Festlegung | Feier W11 (einmal je Person), danach diese Seite; Weg baut sich auf (v2.9). |
-| Station wurde seit dem letzten Besuch erledigt | Erledigt-Zeile zeigt einmalig «(✓) Neu erledigt: Unterkunft gebucht · 2 erledigt ▾» (Vergleich mit zuletzt gesehenem Stand, `sessionStorage`/`localStorage` je Reise); Siegel-Plopp am Häkchen (Motion). Kein automatisches Aufklappen. |
+| Station wurde seit dem letzten Besuch erledigt | Erledigt-Zeile zeigt einmalig «(✓) Neu erledigt: Unterkunft gebucht · 2 erledigt ▾» (Vergleich mit zuletzt gesehenem Stand, `sessionStorage`/`localStorage` je Reise); der **Erledigt-Marker selbst wird zum Siegel** und ploppt (UM-4, v2.12 U-29 – kein zusätzliches 20-px-Siegel). Keine Live-Ansage (der Text «Neu erledigt» trägt die Information). Kein automatisches Aufklappen. |
 | Bereich noch nie genutzt | Station im Zustand als Nächstes/später mit Einladung (V3 «schlag die erste vor»); **keine** Aufgabe, **kein** Erinnern. |
 | Gruppe erledigt etwas außerhalb der App | Orga: «ohne App erledigt» je Station (V2 «Mia macht ohne App mit», V3 «Haben wir schon / brauchen wir nicht», V5 «Jede:r reist selbst an»), rückgängig in der Erledigt-Gruppe. **Frage UX-9.** Ohne diese Funktion: die Station bleibt als Nächstes/später und wird an der Teilphasen-Grenze zu «nicht genutzt». |
 | Platzhalter | V2 wartet; zählen bei Kosten mit, nicht beim Bewerten/Reisedaten (s. V2). |
-| Reise vorbei, alles erledigt | Weg = Erledigt-Zeile · Heute (H-5) · Ziel «Wohin geht's als Nächstes?». |
+| Reise vorbei, alles erledigt | Weg = Erledigt-Zeile · Heute (H-5 bzw. H-5b) · Ziel «Wohin geht's als Nächstes?». |
 | Festlegung aufgehoben | wie ux-spec §14.4: Phase 2 mit Tabs, Weg verschwindet; Bereichsdaten bleiben (F-053 R.0.1). |
 | Spät beigetreten (nach Festlegung) | Feier beim ersten Besuch (Regel W11); V1 erledigt. |
 | Mehr als 3 „dran“ | 3 sichtbar + «+ {n} weitere für dich ▾». |
@@ -333,28 +338,28 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 - **„+ n weitere“** (Heute, Läuft, Später): ebenfalls Button mit `aria-expanded`, klappt an Ort und Stelle auf; Fokus bleibt auf dem Button, Text wechselt zu «Weniger anzeigen».
 - **Scroll-Verhalten:** Ticket-Kopf scrollt mit, **Zeile 1 bleibt sticky**. Sobald der große Ring den Bildschirm verlässt (IntersectionObserver, nicht scroll-gekoppelt), wird der Punkt in der Phasenzeile zum **Mini-Ring 20 px** mit derselben Füllung (Fade 140 ms). Kein fortlaufendes Schrumpfen des Kopfs (unruhig, teuer auf alten Handys, Bewegungsempfindlichkeit). Kein automatisches Scrollen zu „Heute“ – Heute liegt im ersten Bildschirm.
 - **Zurück aus einem Bereich:** Scroll-Position wiederherstellen, Fokus auf die Station/Kachel, über die man gekommen ist (ux-spec §3). Hat sich ihr Zustand geändert, steht der Fokus auf dem Heute-Marker (h3) – die Station ist dann woanders.
-- **Unterwegs-Kopf:** `[+ Ausgabe]` öffnet `/costs/new` (Datum = heute), `[Tickets]` → `/documents?date=today`.
+- **Unterwegs-Kopf:** `[+ Ausgabe]` (Kontur, Plus-Icon, zugänglicher Name «Ausgabe hinzufügen») öffnet `/costs/new` (Datum = heute), `[Tickets]` (Kontur) → `/documents?date=today`. Beide nur, wenn der Bereich gebaut ist (v2.13).
 
 ## v2.9 Barrierefreiheit & Responsive
 
-- **Überschriften:** h1 Reisename · h2 «Euer Weg nach Kroatien» · h3 «Heute, Sonntag, 2. Mai» (Heute-Marker – per Überschriften-Navigation direkt anspringbar) · h2 «Immer griffbereit» · h2 «Mehr zur Reise». Gruppen-Labels „Läuft“, „Als Nächstes“, „Später“, „Ziel“ sind **keine** Überschriften, sondern stehen als erstes Wort in jedem Eintrag.
+- **Überschriften:** h1 Reisename · h2 Weg-Überschrift je Teilphase (v2.12 U-26) · h3 «Heute, Sonntag, 2. Mai» (Heute-Marker – per Überschriften-Navigation direkt anspringbar) · h2 «Immer griffbereit» · h2 «Mehr zur Reise». Gruppen-Labels „Läuft“, „Als Nächstes“, „Später“, „Ziel“ sind **keine** Überschriften, sondern stehen als erstes Wort in jedem Eintrag.
 - **Struktur:** Der Weg ist eine `<ol>` (Reihenfolge trägt Bedeutung); jede Station ein `<li>`. Zustand steht als **Text** im Eintrag (sichtbares Label), nie nur als Marker/Farbe/Linie (alle `aria-hidden`).
-- **Screenreader-Reihenfolge = visuelle Reihenfolge.** Beispiel: «Kroatien 2027, Überschrift 1 · Steht fest, noch 41 Tage · Sa., 12. bis Sa., 19. Juni 2027 · Schaltfläche 6 dabei, 7 Nächte · Schaltfläche Zum Kalender · Euer Weg nach Kroatien, Überschrift 2 · Liste 6 Einträge · Schaltfläche 1 erledigt anzeigen, reduziert · Heute, Sonntag, 2. Mai, Überschrift 3 · Du bist dran – 3 Sachen für dich · Du bist dran: Reisedaten für Lena, Link · Angaben freigeben, Schaltfläche · Du bist dran: Unterkunft, du hast 2 von 5 bewertet, Link · …».
+- **Screenreader-Reihenfolge = visuelle Reihenfolge.** Beispiel: «Kroatien 2027, Überschrift 1 · Steht fest, noch 41 Tage · Sa., 12. bis Sa., 19. Juni 2027 · Schaltfläche 6 dabei, 7 Nächte · Schaltfläche Zum Kalender · Euer Weg bis zur Abreise, Überschrift 2 · Liste 6 Einträge · Schaltfläche 1 erledigt anzeigen, reduziert · Heute, Sonntag, 2. Mai, Überschrift 3 · Du bist dran – 3 Sachen für dich · Du bist dran: Reisedaten für Lena, Link · Angaben freigeben, Schaltfläche · Du bist dran: Unterkunft, du hast 2 von 5 bewertet, Link · …».
 - **Zugängliche Namen:** Station-Link = «{Zustand}: {Titel}. {Status}» (z. B. «Wartet auf andere: Alle sind dabei. Mia ist noch nicht beigetreten.»). Erinnern-Taste mit Objekt: «Lena Bescheid geben, dass Mia fehlt».
 - **Ring:** `aria-hidden`; Countdown als Text (Phasenzeile + `sr-only`-Satz). Konfetti-Button hat Namen, löst keine Ansage aus.
 - **Tippflächen:** Stationskarten ≥ 64 px, schmale Zeilen 48 px, Kacheln ≥ 88 px, Erinnern 44 px, Kopf-Tasten 44 px. Fokus-Stile wie D-22 (auf Indigo isoliert).
 - **Farbe nie allein:** Zustand als Wort, Saldo mit Wort, Fortschritt als Zahl.
-- **200 % Schrift / schmale Container:** Ist der Weg-Container < **22 em** breit (360 px bei ~160 % oder 200 %), entfallen Linie und linke Marker-Spalte; das Zustands-Label steht als Chip über jeder Karte (volle Breite, kein 46-px-Einzug). Ring schrumpft auf 120 px, Crew und Kopf-Taste brechen untereinander. Kacheln einspaltig. Nichts wird abgeschnitten, kein horizontales Scrollen (1.4.10).
-- **320 px:** wie 200 %-Regel (Container < 22 em) – Linie aus.
+- **200 % Schrift / schmale Container (geändert, v2.12 U-28 = D-43):** Ist der Weg-Container < **22 em** breit (360 px bei ~160 % oder 200 %), wird die Linie zur **Schiene** (3 px am linken Rand, 16 px Einzug statt 46 px; erledigt durchgezogen, danach gestrichelt) und die Marker-Spalte entfällt; das Zustands-Label steht als Chip (`surface-sunken`) **mit Marker-Symbol 22 px** über jeder Karte. Schiene und Symbol bleiben `aria-hidden`. Ring schrumpft auf 120 px, Crew und Kopf-Taste brechen untereinander. Kacheln einspaltig. Nichts wird abgeschnitten, kein horizontales Scrollen (1.4.10).
+- **320 px:** wie 200 %-Regel (Container < 22 em) – Schiene statt Linie.
 - **600–959 px:** Inhalt max. 640 px zentriert; Kacheln 3 Spalten; Linie + Marker bleiben.
 - **≥ 960 px:** Ticket-Kopf als breites Band (Ring links 168 px, Zeitraum/Crew/Tasten rechts, Höhe ≤ 240 px); darunter zwei Spalten: links der Weg (≈ 600 px), rechts „Immer griffbereit“ (einspaltig) + „Mehr zur Reise“. DOM-Reihenfolge: Weg vor Seitenspalte.
 - `<title>`: «Übersicht · Kroatien 2027 · Wir wollen weg».
 
 ## v2.10 Übergabe an Entwicklung (Vertrag)
 
-- **Reine Funktion** `tripRoute(trip, viewer, areas, today) → { subphase, heute: { date, sentenceKey, params, items: TripStation[] }, groups: { done, waiting, next, later }, goal, tiles: TripTile[] }` in `src/lib/trip-route.ts` – mit Unit-Tests **je Zeile** der Tabellen v2.4 und je Heute-Satz H-1–H-5 (analog `nextStep()`).
+- **Reine Funktion** `tripRoute(trip, viewer, areas, today) → { subphase, heute: { date, sentenceKey, params, items: TripStation[] }, groups: { done, waiting, next, later }, goal, tiles: TripTile[] }` in `src/lib/trip-route.ts` – mit Unit-Tests **je Zeile** der Tabellen v2.4 und je Heute-Satz H-1–H-7 inkl. Vorrang (analog `nextStep()`).
 - `TripStation { id: 'V1'|'V2'|…; state: 'done'|'yours'|'waiting'|'next'|'later'; title; status; href; primary?: {label, href}; remind?: {occasion, step}; textAction?: {label, action}; date?; isNew? }` · `TripTile { area; title; status; href; chip? }`.
-- Jeder Bereich liefert seinen Status über einen Adapter (`stayStatus()`, `travelDataStatus()`, …); nicht gebaute Bereiche liefern `null` → Station/Kachel entfällt. Damit ist v2 **schon mit Inkrement 8** (Cockpit + Infos) baubar: V1, V2, Heute, V6, Kachel Infos.
+- Jeder Bereich liefert seinen Status über einen Adapter (`stayStatus()`, `travelDataStatus()`, …); nicht gebaute Bereiche liefern `null` → Station/Kachel entfällt. Damit ist v2 **schon mit Inkrement 8** (Cockpit + Infos) baubar: V1, V2, Heute, V6, Kachel Infos – genauer Schnitt v2.13.
 - Ersetzt in `src/app/(app)/trips/[id]/page.tsx` (Phase `fixed`): Ergebnis-Karte, Andock-Slot `TripModule`, Phasen-Leiste. „So habt ihr entschieden“ und „Wer ist dabei?“ werden zu Zeilen mit Sheet.
 - **Abnahme UX:** 360 × 640, 360 × 740, 390 × 844, 200 % Text, Dark Mode; Fälle: Max Vorbereitung (Wireframe), Lena Vorbereitung (Orga + bucht), alles erledigt (H-3), Unterwegs mit/ohne Termine, Danach mit Schuld/Forderung/ausgeglichen; VoiceOver/TalkBack-Durchlauf der Reihenfolge v2.9.
 
@@ -365,7 +370,92 @@ Kacheln Danach: Unterkunft · Infos · Kosten (nach D1 erledigt: «ausgeglichen 
 | **UX-8** | **Kleine Feier am Abreisetag?** Am ersten Tag von *Unterwegs* zeigt die Übersicht einmal je Person eine kleine Konfetti-Runde und den Heute-Satz «Heute geht's los – gute Reise!». | **Ja** – zweiter, kleiner Moment ohne Ehrenrunde (die große Feier bleibt die Festlegung). Macht Spaß, kostet wenig, abschaltbar über „Bewegung reduzieren“. **Entschieden 2026-10-22 (Auftraggeber): Ja.** |
 | **UX-9** | **Darf die Orga eine Station „ohne App erledigt“ abhaken?** (V2 «Mia macht ohne App mit», V3 «Unterkunft haben wir schon / brauchen wir nicht», V5 «Jede:r reist selbst an») | **Ja** – sonst zeigt der Weg Wochen lang offene Schritte, die die Gruppe längst außerhalb der App erledigt hat, und verliert an Glaubwürdigkeit. Nur Orga, rückgängig machbar, für alle sichtbar «ohne App erledigt». Kleiner Zusatzaufwand (ein Merker je Station und Reise). **Entschieden 2026-10-22 (Auftraggeber): Ja.** |
 
-Optik- und Motion-Punkte: [`../abstimmung-design.md` §12](../abstimmung-design.md) (D-36–D-45, UM-1–UM-7).
+**UX-1** (Hub ohne Tabs) und **UX-2** (Reisedaten als eigener Bereich) sind ebenfalls entschieden: **Ja** (Auftraggeber 2026-10-22, zusammen mit Q26–Q36). UX-3 bis UX-7 gelten mit den Empfehlungen aus Teil B §8; UX-3 ist durch v2.4 geändert (Schwelle 50 € gilt auch unterwegs; danach übernimmt D1).
+
+Optik- und Motion-Punkte: [`../abstimmung-design.md` §12–§13](../abstimmung-design.md) (D-36–D-45, UM-1–UM-7, U-23–U-30).
+
+## v2.12 Entscheidungen Runde 4b – U-23 bis U-30, UM-4 (UI/UX, 2026-10-22)
+
+Grundlage: Design-Mockup [`cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) und `../../design/abstimmung-ux.md` §10.3. Das Mockup ist optische Vorgabe; wo es von dieser Tabelle abweicht, **gilt diese Tabelle** (Abweichungen sind in der Spalte „Mockup“ genannt).
+
+| Nr. | Entscheidung | Begründung | Mockup |
+|---|---|---|---|
+| **U-23** Heute-Satz unterwegs mit Terminen | **Übernommen als H-6** (mit ICU-Plural für Termine und Aufgaben), dazu **H-7** «Heute geht's los – gute Reise!» für den ganzen ersten Reisetag und eine feste **Vorrang-Reihenfolge** H-7 → H-6 → H-1 → H-2 → H-3/H-4/H-5/H-5b. Neu **H-5b** für *Danach* ohne Ausgaben. Texte DE/EN: v2.5. | Der Satz muss sagen, was der Tag bringt; „Du bist dran“ wäre bei einem Termin falsch (niemand muss etwas erledigen). | passt (EN H-7 ergänzt) |
+| **U-24** Erste Heute-Karte unterwegs = Termin | **Bestätigt.** Regel präzisiert: Die Primär-Taste gehört der **ersten Heute-Karte**; *Unterwegs* stehen Termine vor Aufgaben. (1) Termine des Tages nach Uhrzeit, Termine ohne Uhrzeit danach. (2) **Ausgeklappt mit Primär-Taste** ist der erste **anstehende** Termin (ohne Uhrzeit oder Uhrzeit + 60 min ≥ jetzt, Zeitzone der Reise, geprüft beim Laden). (3) Vergangene Termine des Tages werden kompakt, erhalten den Zusatz «vorbei» und rücken ans Ende der Heute-Liste. (4) Kein anstehender Termin → die erste Aufgabe ist ausgeklappt; keine Aufgabe → keine Primär-Taste. (5) Max. 3 Heute-Karten insgesamt, mehr → «+ {n} weitere heute ▾». Primär-Label: «Ticket öffnen» (Kategorien Flug/Anreise/Aktivität, W21), sonst «Unterlage öffnen»; Treffpunkt am ersten Reisetag «Infos öffnen». Optik: Lavendel-Kante, Chip «Termin heute» / «Today's plan» (EN «Today» wäre neben dem Label TODAY doppelt). Zugänglicher Name «Termin heute: 9:30, Fähre nach Stari Grad. Hafen Split, Anleger 3.» | Unterwegs ist der Termin die zeitkritische Handlung (Ticket am Schalter zeigen). Ein Termin ist aber keine Aufgabe – darum Lavendel statt Koralle und eigenes Wort. | EN-Chip «Today» → «Today's plan»; Regel (2)–(3) im Mockup nicht abgebildet |
+| **U-25** Zwei Primär-Tasten unterwegs | **Entschieden: `[+ Ausgabe]` ist Kontur (sekundär, `on-ck`) wie alle Kopf-Tasten**, Plus-Icon, erste Taste der Gruppe, Name «Ausgabe hinzufügen». Die erste Heute-Karte (Termin) behält die **einzige Primär-Taste** der Seite. Abgelehnt: Termin nur kompakt ohne Taste. | ux-spec §1.1 (eine Primär-Aktion je Ansicht); zwei gefüllte Flächen konkurrieren auf 360 px im selben ersten Bildschirm; der Kopf ist in allen Teilphasen gleich gebaut (nur Kontur-Tasten); `[+ Ausgabe]` bleibt durch Lage (oben, erster Bildschirm, erste Taste) und Plus-Icon schnell. Minze bleibt Ring, Linie und „erledigt“ vorbehalten. | Mockup: Minze → **Kontur** |
+| **U-26** Weg-Überschrift je Teilphase | **Festgelegt, ohne Reiseziel:** Vorbereitung «Euer Weg bis zur Abreise» / «The road to departure» · Unterwegs «Eure Reise, Tag für Tag» / «Your trip, day by day» · Danach «Nach der Reise» / «After the trip». Meta rechts: Vorbereitung/Danach «{done} von {total} geschafft» / «{done} of {total} done» (total = Stationen ohne Ziel; **total = 0 → Meta entfällt**), Unterwegs «Tag 3 von 8» / «Day 3 of 8». | Es gibt kein Feld „Reiseziel“, nur den frei gewählten Reisenamen («Jungs-Trip 2027», «Mallorca») – «nach {Name}» bricht die Grammatik (nach/in/auf/in die). Ein Zielfeld wäre ein eigenes Feature (später), dann kann die Überschrift es aufnehmen. | «Kroatien» im Mockup = Demo-Text, nicht übernehmen |
+| **U-27** Danach – Unterlagen doppelt | **Nicht „beides“.** D2 „Unterlagen sichern“ erscheint **erst 7 Tage vor der Löschung** (Als Nächstes «Werden am 19. Juli gelöscht – jetzt herunterladen.»); bis dahin nur die Kachel «7 Unterlagen · gelöscht am 19. Juli». Solange D2 sichtbar ist, entfällt die Kachel. Nach der Löschung: D2 erledigt, keine Kachel. | Hält die Regel „ein Einstieg je Bereich“ ohne Ausnahme; eine Später-Zeile wäre für eine Ablage, die man *jetzt* öffnen will, der falsche Ort; die Frist erscheint, wenn sie relevant wird. (Betrifft Inkrement 12.) | Mockup zeigt beides – Entwicklung folgt v2.4 |
+| **U-28** Schiene statt „Linie entfällt“ (D-43) | **Bestätigt.** Container < 22 em: Schiene 3 px links, 16 px Einzug, Label-Chips mit Marker-Symbol 22 px. Eingearbeitet in v2.9. | Der Weg bleibt auch bei 200 % als Weg lesbar; kein Platzverlust. | passt |
+| **U-29** Siegel = Marker (UM-4) | **Bestätigt** – s. Bewertung UM-4 unten. Eingearbeitet in v2.7. | – | passt |
+| **U-30** Orga Danach «Abrechnung abschließen?» | **Bestätigt:** Vereinfachung nur im Mockup; gebaut wird nach Tabelle D1 (v2.4). `[Abschließen]` ist **immer sekundär**, auch als erste ausgeklappte Heute-Karte (dann hat die Seite keine Primär-Taste). Rolle „Sara bucht“ ist nur eine Demo-Datenvariante; Lena bleibt Orga. (Betrifft Inkrement 10/11.) | Freiwilliges darf nicht wie Pflicht aussehen. | Rolle D1-Orga fehlt im Mockup – Entwicklung folgt v2.4 |
+
+**Bewertung Motion-Abweichung UM-4 (Marker wird selbst zum Siegel): einverstanden.** Ein Objekt statt zwei gleich aussehender Minze-Kreise; die Ursache-Wirkung ist klarer (der Schritt selbst wird „besiegelt“); keine Layout-Verschiebung, kein zusätzliches Element im Fokus-/Lesepfad. Bedingungen: (a) Pop **einmal** je neu erledigter Station (Merker je Reise in `localStorage`, v2.7); mehrere neu erledigte Stationen = **ein** Pop am Marker der Erledigt-Zeile; (b) keine Live-Ansage – «Neu erledigt: …» steht als Text; (c) reduzierte Bewegung: nur Überblenden 140 ms; (d) kein FLIP/Umsortieren (wie M-U3). Die Gegenprüfung durch den Motion Designer (`docs/motion/abstimmung.md`) steht noch aus – aus UX-Sicht nicht blockierend.
+
+## v2.13 Inkrement-8-Schnitt (Cockpit-Grundgerüst + Infos W22)
+
+**Gebaut in Inkrement 8:** Ticket-Kopf mit Ring (Feier W11 unverändert, Konfetti auf Antippen UM-1, Mini-Ring UM-6), Weg mit allen Zuständen und Motion UM-2–UM-7, „ohne App erledigt“ (UX-9) für V2, Kacheln, „Mehr zur Reise“, Infos (W22), Phase-3-Navigation (Hub ohne Tabs, Weiterleitung alter Tab-Routen). **Nicht gebaut:** Unterkunft (Inkr. 9), Kosten (10), „Bucht“ + Reisedaten (11), Unterlagen (12).
+
+**Grundregel – keine Teaser:** Adapter nicht gebauter Bereiche liefern `null`. Dann gibt es dafür **keine** Station, Kachel, Aufgabe, Kopf-Taste, keinen Menüpunkt, keinen Satzteil und keine Erwähnung in Leer-/Hilfetexten. Kein „Bald verfügbar“, keine ausgegrauten Kacheln, keine leeren Gruppen-Labels („Als Nächstes“/„Später“ entfallen ganz, wenn leer). Neue Bereiche docken später nur über ihren Adapter an – am Muster ändert sich nichts.
+
+| | Vorbereitung | Unterwegs | Danach |
+|---|---|---|---|
+| Phasenzeile | «Steht fest · noch 41 Tage» | «Unterwegs · Tag 3 von 8» | **«Zurück seit 9 Tagen»** / «Back for 9 days» (die Kosten-Varianten erst ab Inkr. 10) |
+| Kopf-Tasten | `[Kalender]` | **keine** (Crew-Button allein; `[+ Ausgabe]` ab 10, `[Tickets]` ab 12) | **keine** (`[Ausgleichen]` ab 10) |
+| Stationen | V1, V2, Ziel V6 | Erledigt-Gruppe «Vorbereitung · {n} erledigt», Ziel T-Ziel „Heimreise“; Termine: nur der **Treffpunkt am ersten Reisetag** (aus Infos, s. u.) | Erledigt-Gruppe «Reise · Vorbereitung und 8 Tage», Ziel „Wohin geht's als Nächstes?“ (keine D-Stationen) |
+| „du bist dran“ möglich | V1 (Orga: «Allen Bescheid geben»), A2 (nur **Orga**, Infos leer, ≤ 21 Tage vor Anreise) | – | – |
+| „wartet“ möglich | V2 (Platzhalter offen; Orga `[Mia erinnern]` + «Mia macht ohne App mit», Mitglied `[Lena Bescheid geben]`) | – | – |
+| Als Nächstes / Später | entfallen (kommt nicht vor) | entfallen | entfallen |
+| Heute-Sätze | H-1, H-2 («Mia tritt bei»), H-3 | H-7 (Tag 1), H-4 | H-5b |
+| Weg-Meta | «{done} von 2 geschafft» | «Tag 3 von 8» | entfällt (total = 0) |
+| Kacheln | Infos | Infos | Infos |
+| Mehr zur Reise | So habt ihr entschieden · Wer ist dabei? | dto. | dto. |
+
+**Details:**
+- **Ziel V6 „Es geht los!“** Statuszeile: erste Zeile des Felds *Treffpunkt & Anreise* (max. 2 Zeilen, „…“) → sonst «Check-in ab 15:00 Uhr» → sonst «Noch 41 Tage». Link → `/info`.
+- **Ziel T-Ziel „Heimreise · Sa., 19. Juni“** (unterwegs): Statuszeile «Check-out bis 10:00 Uhr» → sonst «Noch 5 Tage»; Link → `/info`.
+- **Treffpunkt-Termin am ersten Reisetag:** Haben die Infos einen Treffpunkt, steht er unter HEUTE als Termin-Karte (Lavendel, Chip «Termin heute», Titel «Treffpunkt», Text = Treffpunkt-Feld max. 2 Zeilen, Primär «Infos öffnen» → `/info`). Ohne Treffpunkt: Heute ohne Karte, nur H-7.
+- **V2 mit offenem Platzhalter nach Reisebeginn:** wird in die Erledigt-Gruppe einsortiert als «nicht genutzt – Mia ist nicht beigetreten» (ohne Häkchen, v2.4 Unterwegs).
+- **Infos-Kachel** (immer, einzige Kachel): Status = erste vorhandene Angabe aus «Treffpunkt steht» · «Check-in ab 15:00 Uhr» · «Adresse da»; mehrere → mit « · » verbunden, max. 2 Zeilen. Leer: Mitglied «Noch leer – {Orga} trägt sie ein», Orga «Infos ergänzen». Überschrift „Immer griffbereit“ bleibt auch bei nur einer Kachel (die Kachel nimmt mobil die halbe Breite ein, ab 600 px ein Drittel – nicht strecken).
+- **Rechte:** Infos bearbeiten und A2 nur **Orga** (F-056 „Bucht“ erst Inkr. 11; Prüfung über eine Funktion `canEditTripInfo(member)`, die später „Bucht“ ergänzt).
+- **Reisemenü `⋯`:** Freunde einladen · So habt ihr entschieden · *(Orga)* Reise bearbeiten · *(Orga)* Festlegung aufheben … · Hilfe · Reise verlassen … – **ohne** „Wer bucht?“ und ohne Saldo-/Unterlagen-Warnungen.
+- **Danach – „Neue Reise planen“** → `/trips/new` (ohne Vorbelegung der Gruppe in Inkr. 8) + 13-px-Löschhinweis (F-013, vorhanden).
+
+### Wireframes Inkrement 8 (360 px)
+
+```
+Vorbereitung, Max (Mitglied), alles erledigt        Vorbereitung, Lena (Orga), direkt nach Festlegung
+┌──────────────────────────────┐                     ┌──────────────────────────────┐
+│▓ Zeile 1 + Ticket (Kalender) ▓│                     │▓ Zeile 1 + Ticket (Kalender) ▓│
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯                     ╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+ Euer Weg bis zur Abreise                             Euer Weg bis zur Abreise
+                 2 von 2 geschafft                                     0 von 2 geschafft
+ (✓) 2 erledigt: Termin steht, … ▾                    (☀) HEUTE · Do., 22. Okt.
+  ┃                                                    ┃ Du bist dran – eine Sache für dich.
+ (☀) HEUTE · So., 2. Mai                               ┃ ┏ DU BIST DRAN ━━━━━━━━━━━━━━┓
+  ┆ Alles erledigt – jetzt nur                         ┃ ┃(✓) Termin steht          › ┃
+  ┆ noch Vorfreude!                                    ┃ ┃Sag allen Bescheid, dass  ┃
+  ┆                                                    ┃ ┃der Termin steht.         ┃
+ (★) ZIEL · Sa., 12. Juni                              ┃ ┃[  Allen Bescheid geben  ]┃  einzige Primär-Taste
+  ┌ Es geht los!               › ┐                     ┃ ┗━━━━━━━━━━━━━━━━━━━━━━━━━━┛
+  │ Treffpunkt 6:15 Uhr · Flug-  │                     ┆
+  │ hafen München T2             │                    (◔) LÄUFT · wartet auf andere
+  └──────────────────────────────┘                     ┆ ┌ Alle sind dabei        › ┐
+ Immer griffbereit                                     ┆ │ Mia ist noch nicht beigetreten │
+ ┌──────────────┐                                      ┆ └──────────────────────────┘
+ │(i)          ›│                                      ┆ [🔔 Mia erinnern]  Mia macht ohne App mit
+ │Infos         │                                      ┆
+ │Treffpunkt    │                                     (★) ZIEL · Sa., 12. Juni
+ │steht · Check-│                                       ┌ Es geht los!   Noch 233 Tage › ┐
+ │in ab 15 Uhr  │                                       └──────────────────────────────┘
+ └──────────────┘                                     Immer griffbereit
+ Mehr zur Reise                                        ┌ Infos – Infos ergänzen   › ┐
+ (✓) So habt ihr entschieden ›                        Mehr zur Reise …
+ (⚇) Wer ist dabei? (6)      ›
+```
+
+Länge Inkrement 8: Kopf ≈ 330 · Weg ≈ 300–520 · Kachel ≈ 130 · Mehr ≈ 150 → **≈ 0,9–1,3 Bildschirme** (390 × 844).
+
+**Abnahme UX Inkrement 8** (zusätzlich zu v2.10, soweit ohne spätere Bereiche möglich): Max Vorbereitung alles erledigt (H-3) · Max mit offenem Platzhalter (H-2, `[Lena Bescheid geben]`) · Lena direkt nach Festlegung (V1 dran, Primär) · Lena „Mia macht ohne App mit“ + Rückgängig in der Erledigt-Gruppe · Lena ≤ 21 Tage mit leeren Infos (A2) · Unterwegs Tag 1 mit/ohne Treffpunkt (H-7, UM-7 einmal je Person) · Unterwegs Tag 3 (H-4) · Danach (H-5b, «Zurück seit 9 Tagen») · Infos-Kachel leer/gefüllt je Rolle · 200 % (Schiene) · Dark Mode · Prüfung, dass **kein** Text, Menüpunkt oder Platzhalter die Bereiche aus Inkr. 9–12 erwähnt.
 
 ---
 
