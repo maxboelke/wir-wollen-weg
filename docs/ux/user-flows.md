@@ -161,7 +161,7 @@ Inhalt:
 
 - **Mobil:** Segment-Schalter oben `[Vorschläge] [Kalender]`, Standard **Vorschläge** (der Algorithmus ist der Kernnutzen; die Heatmap ist das Werkzeug zum Nachvollziehen).
 - **Desktop (≥ 960 px):** zweispaltig – links Heatmap (2 Monate), rechts Vorschlagsliste (sticky). Auswahl eines Vorschlags hebt den Zeitraum in der Heatmap hervor.
-- **Kennzahl-Box im Cockpit-Kopf (Richtung B, ersetzt das Statusband; ux-spec §4.10):** Ring + «5 von 7 haben abgegeben» + «Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» Orga: `[Erinnern]` (→ Flow K). Wenn alle abgegeben: «Alle haben abgegeben.» + Orga: `[Abstimmung starten]`. Die Box scrollt mit dem Inhalt weg (kein Einklappen); sticky bleibt nur der kompakte Kopf mit der Phasenzeile «Tage sammeln · 5/7 fertig». Desktop: Box im Kopf über beiden Spalten.
+- **Kennzahl-Box im Cockpit-Kopf (Richtung B, ersetzt das Statusband; ux-spec §4.10):** Ring + «5 von 7 haben abgegeben» + «Noch offen: Kemal, Sara – das Ergebnis kann sich noch ändern.» Orga: `[Erinnern]` (→ Flow K). Wenn alle abgegeben: «Alle haben abgegeben.» + Orga: `[Abstimmung starten]`. **Ab 2026-10-20 (ux-spec §14.2):** «5 von 9 haben eingetragen», die ganze Box ist ein Button → Liste „Wer hat eingetragen?“ mit Erinnern für alle Mitglieder. `[Erinnern]` steht nicht mehr in der Box; der Zusatz «– das Ergebnis kann sich noch ändern» wandert in den Hinweis unter „Alle dabei“ (C.2). Die Box scrollt mit dem Inhalt weg (kein Einklappen); sticky bleibt nur der kompakte Kopf mit der Phasenzeile «Tage sammeln · 5/7 fertig». Desktop: Box im Kopf über beiden Spalten.
 - **Filterzeile** (Chips, wirken nur lokal für den Betrachter, F-008/F-009): `Dauer: 5 Nächte ▾` (Stepper, Standard = Wunschdauer, Untergrenze 1) · `Darf fehlen: 1 ▾` (0–3) · `Personen ausblenden ▾` (Mehrfachauswahl). Aktive Filter sichtbar hervorgehoben + `[Filter zurücksetzen]`. Hinweis, wenn aktiv: «Nur für dich – die Gruppe sieht die Standardansicht.»
 
 ### C.2 Vorschlagsliste (F-009)
@@ -174,6 +174,7 @@ Inhalt:
    - Aktionen: `[Im Kalender zeigen]`; Orga zusätzlich Checkbox «Zur Abstimmung» (Mehrfachauswahl → fixierte Leiste «2 ausgewählt · [Abstimmung erstellen]»).
 3. Sortierung gemäß F-009 (keine Nutzer-Sortierung im MVP).
 4. Lange Listen: je Gruppe erst 3 Karten, dann `[Alle 7 anzeigen]`.
+5. **Hinweis unter „Alle dabei“ (ab 2026-10-20, ux-spec §14.3):** Solange jemand fehlt, steht direkt unter der Überschrift «Basiert auf 5 von 9 – noch offen: Kemal, Sara, Mia und Tom.» + [Erinnern]. In der Vorschlag-Leiste steht der Chip «Bisher 5 von 9». Wenn alle eingetragen haben, entfällt beides.
 
 **Leer-/Sonderzustände:**
 - ∅ Niemand hat abgegeben (außer ggf. Betrachter nicht): «Noch keine Vorschläge – sobald die ersten ihre Tage eingetragen haben, rechnen wir los.» + `[Meine Tage eintragen]` bzw. `[Freunde einladen]`.
@@ -194,7 +195,7 @@ Inhalt:
 - **Vorschlag im Kalender zeigen:** springt in Ansicht Kalender, scrollt zum Monat, umrandet den Zeitraum (Umriss + Beschriftung, nicht nur Farbe) für 4 s bzw. bis zur nächsten Interaktion; Screenreader-Ansage «Zeitraum 5. bis 10. Mai hervorgehoben». Danach verschwinden Umriss und Beschriftung, **das Band bleibt**, solange dieser Vorschlag in der Vorschlag-Leiste gewählt ist (M-U7).
 - **Vorschlag-Leiste (Richtung B, < 960 px, ux-spec §4.11):** fixiert unten in der Kalender-Ansicht, `[‹]` Vorschlag `[›]`. Beim direkten Öffnen der Ansicht ist Vorschlag 1 gewählt und sein Band sichtbar (ohne Umriss/Beschriftung, ohne Scroll-Sprung). Blättern setzt das Band neu und scrollt zum Anreisetag; Ansage «Vorschlag 2 von 5: …». Tipp auf die Mitte → Ansicht Vorschläge, Fokus auf diese Karte. Keine Orga-Auswahl in der Leiste. ∅ Keine Treffer: «Gerade kein passender Zeitraum. [Tipps ansehen]».
 - **Aufbau-Animation der Heatmap** (Motion W09-05) nur beim ersten direkten Öffnen der Kalender-Ansicht in der Sitzung – nicht über „Im Kalender zeigen“ und nicht beim Blättern in der Leiste (M-U8).
-- **Personen-Status:** unter der Heatmap aufklappbar «Wer hat abgegeben?» (Liste wie Übersicht).
+- **Personen-Status:** unter der Heatmap ~~aufklappbar «Wer hat abgegeben?»~~ → ab 2026-10-20 Button «Wer hat eingetragen? (5/9) ›» → Liste mit Erinnern (Flow K, ux-spec §14.2).
 
 ---
 
@@ -236,8 +237,8 @@ Nach dem Start: Optionen können nur **hinzugefügt** werden (`[+ Option hinzuf�
 4. `[Termin festlegen]` → Phase 3. Sheet schließt, **Fokus sofort auf h1 «Es geht los!»** (`aria-describedby` → Datum; M-U10). Erfolgsansicht (Übersicht, groß) mit **Feier** (Vorfreude-Ring, Konfetti; Kern ≤ 1 s, Ausklang ≤ 2,6 s, Text/Tasten ab ≤ 300 ms bedienbar; Vibration Android best effort; reduziert ohne Bewegung – ux-spec §7.5): «Es geht los! Mi., 5. Mai – Mo., 10. Mai 2027 · 5 Nächte · 7 dabei · noch 23 Tage» + Aktionen:
    - `[Allen Bescheid geben]` → Teilen-Sheet Text „Ergebnis“ (F-012).
    - `[Zum Kalender hinzufügen ▾]` → «Kalenderdatei (Apple, Outlook …)» (ICS-Download, ganztägig An- bis Abreisetag) · «Google Kalender» (öffnet Link in neuem Tab).
-5. Alle Mitglieder sehen beim nächsten Öffnen dieselbe Ergebnis-Karte mit „Zum Kalender hinzufügen“; Meine Tage + Abstimmen schreibgeschützt. **Feier für alle (Q17 b):** Jedes Mitglied erlebt die Feier **einmal** beim ersten Öffnen der Übersicht nach der Festlegung (serverseitig je Mitgliedschaft und Festlegung gemerkt, geräteübergreifend; gesetzt, sobald sie sichtbar startet). ◆ Direkt einen anderen Tab geöffnet → Banner «Der Termin steht fest! [Ansehen]» → Übersicht → Feier. Kein Fokus-Sprung bei Mitgliedern. Spätere Besuche statisch. ◆ Festlegung aufgehoben und **anderer** Zeitraum festgelegt → Feier erneut; gleicher Zeitraum → nicht. Beitritt in Phase 3 → Feier einmal.
-6. **Festlegung aufheben** (Reisemenü, Orga): Bestätigungsdialog «Termin wieder offen machen? Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.» `[Termin aufheben]` → Phase 2.
+5. Alle Mitglieder sehen beim nächsten Öffnen dieselbe Ergebnis-Karte mit „Zum Kalender hinzufügen“. **Ab 2026-10-20 (ux-spec §14.4): In Phase 3 gibt es keine Tabs mehr** – die Übersicht ist der Reise-Hub (Ergebnis-Karte, Andockfläche „Als Nächstes“ für spätere Module, «So habt ihr entschieden» mit Kacheln „Abstimmungsergebnis“ und „Kalender der Gruppe“ als schreibgeschützte Unterseiten, „Wer ist dabei?“). Deep-Links: `/days`, `/poll/new` → Übersicht; `/poll`, `/group` → Unterseite (bzw. Übersicht, solange die Feier für die Person fällig ist). **Feier für alle (Q17 b):** Jedes Mitglied erlebt die Feier **einmal** beim ersten Öffnen der Übersicht nach der Festlegung (serverseitig je Mitgliedschaft und Festlegung gemerkt, geräteübergreifend; gesetzt, sobald sie sichtbar startet). ◆ Direkt einen anderen Tab geöffnet → Banner «Der Termin steht fest! [Ansehen]» → Übersicht → Feier. Kein Fokus-Sprung bei Mitgliedern. Spätere Besuche statisch. ◆ Festlegung aufgehoben und **anderer** Zeitraum festgelegt → Feier erneut; gleicher Zeitraum → nicht. Beitritt in Phase 3 → Feier einmal.
+6. **Festlegung aufheben** (Reisemenü, Orga): Bestätigungsdialog «Termin wieder offen machen? Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.» `[Termin aufheben]` → Phase 2. Die Tabs kommen zurück, Fokus auf die h1 der Übersicht, Snackbar «Termin aufgehoben – die Abstimmung läuft wieder.» Mitglieder (SOLL) sehen einmal «{orga} hat den Termin wieder geöffnet. Die Abstimmung läuft wieder.» (ux-spec §14.4).
 
 **ICS-Hinweis iOS:** In iOS-In-App-Browsern ist Datei-Download oft eingeschränkt. Fallback: Bei erkanntem In-App-Browser zusätzlich Hinweis «Klappt der Download nicht? Öffne die Seite in Safari/Chrome (⋯ → Im Browser öffnen).» Der ICS-Link ist eine normale URL (`/trips/{id}/event.ics`, nur für angemeldete Mitglieder) und funktioniert dort nach Login.
 
@@ -412,12 +413,16 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 
 ## K Nachzügler erinnern (F-015)
 
-1. Einstiege (Orga): Übersicht → Fortschritt «5 von 7» → `[Erinnern]` · Statusband in Gruppe · Reisemenü «Gruppe erinnern». In Phase 2 bezieht sich „Erinnern“ auf **Abstimmung** (Fehlende = noch nicht abgestimmt).
-2. Teilen-Sheet mit vorbereitetem Text inkl. Namen der Fehlenden (ux-spec §10.3), Sprache umschaltbar, editierbar.
-3. Auswahl der Personen: Liste mit Checkboxen (alle Fehlenden vorausgewählt), Text aktualisiert sich.
-4. `[Teilen …]` / `[Text kopieren]`. Nach dem Teilen: Hinweis «Zuletzt erinnert: heute, 14:20» an der Fortschrittsanzeige (nur Orga sichtbar) – verhindert Mehrfach-Spam.
-5. ∅ Niemand fehlt → Button entfällt; stattdessen «Alle haben abgegeben → [Abstimmung starten]».
-6. Nicht-Orga: kein Erinnern-Button (sozial heikel); aber `[Freunde einladen]` – alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (*bestätigt (Auftraggeber 2026-10-08)*).
+**Überarbeitet 2026-10-20 (Feedback-Runde 1).** Regeln, Skizzen und alle Texte DE/EN: [ux-spec §14.2](ux-spec.md), [W06 Erinnern-Sheet](wireframes/06-einladen-teilen.md#erinnern-sheet-feedback-runde-1-2026-10-20). F-015 ist damit vorgezogen und gilt **für alle Mitglieder** (bisher nur Orga).
+
+1. **Einstiege** (Phase 1 = Tage fehlen, Phase 2 = Stimme fehlt): Kennzahl-Box in Übersicht und Gruppe (ganze Box antippbar) · Zeile „Fehlt noch“ in „Wer ist dabei?“ → [Erinnern] · Nächster-Schritt-Karte [Erinnern] / [{orga} erinnern] · Hinweis „Basiert auf x von n“ in Gruppe · «Wer hat eingetragen? ›» unter der Heatmap · Beteiligungs-Kachel im Tab Abstimmen · Reisemenü «Gruppe erinnern».
+2. **Liste „Wer hat eingetragen?“ / „Wer hat abgestimmt?“** (Schritt `status`): «Fehlt noch (n)» mit [Erinnern] je Person, danach «Eingetragen (n)» bzw. «Abgestimmt (n)». Die eigene Zeile hat [Tage eintragen] bzw. [Abstimmen]. Ab 2 Fehlenden zusätzlich [Alle erinnern (n)].
+3. **Eine Person erinnern** (Schritt `single`): vorformulierter Text mit Namen («Hey Kemal, du fehlst noch bei Lissabon 2027! …») + Link (Phase 1 → Meine Tage, Phase 2 → Abstimmen). Text editierbar, Sprache DE/EN umschaltbar. **[Per WhatsApp senden]** (primär, `wa.me/?text=`), [Teilen …] (wenn verfügbar), [Text kopieren] → «Kopiert ✓». Kein „@“ vor Namen.
+4. **Alle erinnern** (Schritt `all`): Checkboxen der offenen beigetretenen Mitglieder (alle vorausgewählt), Sammel-Text nach ux-spec §10.3. Platzhalter sind nicht dabei (eigener Link je Person) – Hinweiszeile.
+5. **Platzhalter:** Orga → `single` mit persönlichem Link. Nicht-Orga → Schritt `orga`: «Mia ist noch nicht dabei – den persönlichen Link für Mia hat nur Lena» + Nachricht an die Orga. ◆ Grund: Der allgemeine Einladungslink würde eine zweite „Mia“ erzeugen, und persönliche Links bleiben Orga-only.
+6. **Sich selbst** kann man nicht erinnern. ∅ Niemand außer einem selbst fehlt → kein Erinnern, nur die eigene Aufgabe. ∅ Alle fertig → Kennzahl-Box ist kein Button mehr. Mitglieder sehen dann „Jetzt ist {orga} dran“ + Text-Taste «{orga} Bescheid geben» (Flow-Schritt `orga`, ux-spec §14.1). Die Orga sieht [Abstimmung erstellen] bzw. [Termin festlegen].
+7. **Optional (MVP+):** «erinnert heute, 14:20» je Person für alle sichtbar, damit nicht mehrere dieselbe Person anschreiben (Entscheidung CEO).
+8. Nach dem Senden bleibt das Sheet offen (man kann die nächste Person erinnern). Zurück ‹ führt zur Liste, × schließt. Fokus zurück auf den Auslöser.
 
 ---
 
@@ -426,3 +431,4 @@ Alle als Dialoge (W12). Destruktive Buttons benennen die Handlung, nie „OK“.
 - 2026-10-08 (Abstimmungsrunde 2): B.1/B.2 Legende, Feiertagsliste, Zieh-Vorschau, Bereichs-Anker; C.1–C.3 „Alle dabei / Fast alle dabei“ (U-14), Zell-Semantik ✓/◐ (U-4), Legende (U-6), Tagesdetail-Kopf und „Noch offen“ (U-13), Tagesliste bei großer Schrift (U-5); D.2 Ergebnis-Sichtbarkeit, Segmente < 400 px, „Platz 1 / Top choice“; F.2 Sprachumschalter Header/Footer; H.1, K: CEO-Entscheidungen markiert.
 - 2026-10-08 (Auftraggeber-Entscheidungen): F.3 Produktname je Sprache („When do we go?“ für EN); CEO-Vermerke in H.1, K, D.2 auf „bestätigt (Auftraggeber 2026-10-08)“ umgestellt.
 - 2026-10-08 (Review-Nacharbeit R-006/R-008): A.4 Regel 4/6 und neuer Abschnitt H.5 – Magic-Link-Landeseite mit Button, Einlösen per POST, Fehlerfall → Code-Weg.
+- 2026-10-20 (Feedback-Runde 1): K neu (Erinnern für alle Mitglieder, Liste „Fehlt noch / Eingetragen“, Einzel-Erinnerung per WhatsApp, Platzhalter-Regel, „{Orga} Bescheid geben“); C.1 Kennzahl-Box als Button; C.2 Nr. 5 Hinweis „Basiert auf x von n“; C.3 Personen-Status; D.3 Nr. 5/6 Phase 3 ohne Tabs, Deep-Links, Festlegung aufheben. Nächster-Schritt-Matrix: ux-spec §14.1.

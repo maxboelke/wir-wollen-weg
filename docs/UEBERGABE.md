@@ -45,7 +45,7 @@ Die App ist zweisprachig (DE/EN), Mobile-first und folgt dem Look „Reise-Cockp
 corepack enable && pnpm install
 cp .env.example .env.local              # BETTER_AUTH_SECRET: openssl rand -base64 32
 pnpm dev:services                       # PostgreSQL :5432 + Mailpit :8025 (Docker)
-pnpm db:migrate && pnpm db:seed:demo    # Schema + Demo-Daten (9 Personen, 9 Reisen in allen Phasen)
+pnpm db:migrate && pnpm db:seed:demo    # Schema + Demo-Daten (9 Personen, 12 Reisen in allen Phasen)
 pnpm dev                                # http://localhost:3000
 ```
 

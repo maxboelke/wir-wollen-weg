@@ -3,7 +3,7 @@ import { getTranslations } from "next-intl/server";
 import type { ReactNode } from "react";
 import { PhaseDot } from "@/components/ui/cockpit";
 import { Icon } from "@/components/ui/icon";
-import type { TripTab } from "@/lib/trip-status";
+import { showTabs, type TripTab } from "@/lib/trip-status";
 import type { TripView } from "../load";
 import { tripPath } from "../paths";
 import { sheetContext } from "../sheet-context";
@@ -15,7 +15,10 @@ export const TAB_ORDER: TripTab[] = ["overview", "days", "group", "poll"];
 
 interface TripCockpitProps {
   view: TripView;
-  /** Active tab; null on sub-pages (invite, settings) – then no tab bar, back goes to the trip. */
+  /**
+   * Active tab; null on sub-pages (invite, settings, phase-3 «Abstimmungsergebnis») – then no
+   * tab bar, back goes to the trip. Phase 3 has no tab bar at all (ux-spec §14.4).
+   */
   tab: TripTab | null;
   /** Second line under the trip name on sub-pages (e.g. «Reise bearbeiten»). */
   subtitle?: string | undefined;
@@ -78,7 +81,7 @@ export async function TripCockpit({ view, tab, subtitle, kpi }: TripCockpitProps
           </div>
           <TripMenu label={t("menu")} {...sheetContext(view, tab)} />
         </div>
-        {tab ? <TabNav tabs={tabs} current={tab} label={t("tabsLabel")} /> : null}
+        {tab && showTabs(trip) ? <TabNav tabs={tabs} current={tab} label={t("tabsLabel")} /> : null}
       </StickyHead>
       {kpi ? <div className={styles.tail}>{kpi}</div> : null}
     </>

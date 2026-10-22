@@ -14,6 +14,8 @@ import {
   periodInRange,
   periodKey,
   pollCancelNoticeDue,
+  reopenNoticeAfterUnfix,
+  reopenNoticeDue,
   pollForViewer,
   preselectWinner,
   rankOptions,
@@ -23,6 +25,7 @@ import {
   shiftWindow,
   suggestedChoice,
   tallyOf,
+  type Period,
   type VoteRow,
 } from "./poll";
 
@@ -294,5 +297,176 @@ describe("pollCancelNoticeDue (Q21)", () => {
     expect(pollCancelNoticeDue(trip, seenBefore)).toBe(true);
     expect(pollCancelNoticeDue({ ...trip, phase: "voting" }, member)).toBe(false);
     expect(pollCancelNoticeDue({ ...trip, pollCanceledAt: null }, member)).toBe(false);
+  });
+});
+
+describe("reopenNoticeDue (ux-spec §14.4)", () => {
+  const member = { role: "member", reopenNoticeDue: true };
+  it("shows the flag set by «Festlegung aufheben» while the vote runs again", () => {
+    expect(reopenNoticeDue({ phase: "voting" }, member)).toBe(true);
+    expect(reopenNoticeDue({ phase: "voting" }, { ...member, reopenNoticeDue: false })).toBe(false);
+  });
+  it("not for the organiser, not in other phases", () => {
+    expect(reopenNoticeDue({ phase: "voting" }, { ...member, role: "organizer" })).toBe(false);
+    expect(reopenNoticeDue({ phase: "fixed" }, member)).toBe(false);
+    expect(reopenNoticeDue({ phase: "collecting" }, member)).toBe(false);
+  });
+  it("«Festlegung aufheben» flags only members who celebrated exactly that range", () => {
+    const fixed = { start: "2027-05-05", end: "2027-05-10" };
+    const key = periodKey(fixed);
+    expect(reopenNoticeAfterUnfix({ role: "member", celebratedFor: key }, fixed)).toBe(true);
+    expect(reopenNoticeAfterUnfix({ role: "member", celebratedFor: null }, fixed)).toBe(false);
+    expect(
+      reopenNoticeAfterUnfix({ role: "member", celebratedFor: "2027-06-01/2027-06-05" }, fixed),
+    ).toBe(false);
+    expect(reopenNoticeAfterUnfix({ role: "organizer", celebratedFor: key }, fixed)).toBe(false);
+  });
+});
+
+/**
+ * R-069: follow-up rounds. A small model of the server transitions in src/server/poll.ts
+ * (startPoll, fixDates, unfixDates, cancelPoll, markCelebrated, markReopenSeen) built on the
+ * same pure rules – what a member sees when opening the trip overview.
+ */
+describe("reopen notice and celebration across rounds (R-069)", () => {
+  interface MemberState {
+    role: string;
+    celebratedFor: string | null;
+    reopenNoticeDue: boolean;
+  }
+  const A = { start: "2027-05-05", end: "2027-05-10" };
+  const B = { start: "2027-06-01", end: "2027-06-05" };
+
+  function model() {
+    const state = {
+      phase: "collecting",
+      fixed: null as Period | null,
+      members: new Map<string, MemberState>([
+        ["lena", { role: "organizer", celebratedFor: null, reopenNoticeDue: false }],
+        ["kai", { role: "member", celebratedFor: null, reopenNoticeDue: false }],
+      ]),
+    };
+    const all = () => [...state.members.values()];
+    return {
+      start() {
+        state.phase = "voting";
+        for (const m of all()) m.reopenNoticeDue = false;
+      },
+      fix(period: Period) {
+        state.phase = "fixed";
+        state.fixed = period;
+        for (const m of all()) m.reopenNoticeDue = false;
+      },
+      unfix() {
+        const fixed = state.fixed;
+        if (!fixed) throw new Error("not fixed");
+        state.phase = "voting";
+        state.fixed = null;
+        for (const m of all()) m.reopenNoticeDue = reopenNoticeAfterUnfix(m, fixed);
+      },
+      cancel() {
+        state.phase = "collecting";
+        for (const m of all()) m.reopenNoticeDue = false;
+      },
+      /** Opens the overview: what is shown, and the «seen» marks the client sends back. */
+      open(name: string) {
+        const m = state.members.get(name);
+        if (!m) throw new Error(name);
+        const celebrate = state.phase === "fixed" && celebrationDue(state.fixed, m.celebratedFor);
+        const reopen = reopenNoticeDue(state, m);
+        if (celebrate && state.fixed) m.celebratedFor = periodKey(state.fixed);
+        if (reopen) m.reopenNoticeDue = false;
+        return { celebrate, reopen };
+      },
+    };
+  }
+
+  it("reopen notice exactly once after «Festlegung aufheben»", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    expect(trip.open("kai")).toEqual({ celebrate: true, reopen: false });
+    trip.unfix();
+    expect(trip.open("kai")).toEqual({ celebrate: false, reopen: true });
+    expect(trip.open("kai")).toEqual({ celebrate: false, reopen: false });
+    expect(trip.open("lena")).toEqual({ celebrate: false, reopen: false });
+  });
+
+  it("(a) unfix → not looked → cancel → new vote: no notice", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    trip.open("kai");
+    trip.unfix();
+    trip.cancel();
+    trip.start();
+    expect(trip.open("kai")).toEqual({ celebrate: false, reopen: false });
+  });
+
+  it("(b) same range fixed again and unfixed again: notice again, no second party", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    expect(trip.open("kai").celebrate).toBe(true);
+    trip.unfix();
+    expect(trip.open("kai").reopen).toBe(true);
+    trip.fix(A);
+    expect(trip.open("kai")).toEqual({ celebrate: false, reopen: false });
+    trip.unfix();
+    expect(trip.open("kai")).toEqual({ celebrate: false, reopen: true });
+  });
+
+  it("unfix twice without looking in between: one notice", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    trip.open("kai");
+    trip.unfix();
+    trip.fix(A);
+    trip.unfix();
+    expect(trip.open("kai").reopen).toBe(true);
+    expect(trip.open("kai").reopen).toBe(false);
+  });
+
+  it("no notice for a member who never celebrated the reopened range", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    // Kai does not look at A …
+    trip.unfix();
+    expect(trip.open("kai").reopen).toBe(false);
+    trip.fix(B);
+    expect(trip.open("kai").celebrate).toBe(true);
+    trip.unfix();
+    trip.fix(A);
+    trip.unfix();
+    // … he celebrated B, but A was reopened.
+    expect(trip.open("kai").reopen).toBe(false);
+  });
+
+  it("a different range after the notice celebrates again, once", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    trip.open("kai");
+    trip.unfix();
+    trip.open("kai");
+    trip.fix(B);
+    expect(trip.open("kai").celebrate).toBe(true);
+    expect(trip.open("kai").celebrate).toBe(false);
+  });
+
+  it("unseen notice disappears when the dates are fixed again", () => {
+    const trip = model();
+    trip.start();
+    trip.fix(A);
+    trip.open("kai");
+    trip.unfix();
+    trip.fix(B);
+    expect(trip.open("kai")).toEqual({ celebrate: true, reopen: false });
+    trip.unfix();
+    trip.cancel();
+    trip.start();
+    expect(trip.open("kai").reopen).toBe(false);
   });
 });

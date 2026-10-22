@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Banner } from "@/components/ui/banner";
-import { pollCancelSeenAction } from "../actions";
+import { pollCancelSeenAction, reopenSeenAction } from "../actions";
 import styles from "./poll.module.css";
 
 /**
@@ -10,13 +10,23 @@ import styles from "./poll.module.css";
  * §13.1 a): rendered by the server only while due; once shown, it is marked as seen for this
  * membership (across devices), so the next visit is quiet.
  */
-export function CancelNotice({ publicId, text }: { publicId: string; text: string }) {
+export function CancelNotice({
+  publicId,
+  text,
+  kind = "cancel",
+}: {
+  publicId: string;
+  text: string;
+  /** "reopen": «{orga} hat den Termin wieder geöffnet» after «Festlegung aufheben» (§14.4). */
+  kind?: "cancel" | "reopen" | undefined;
+}) {
   const sent = useRef(false);
   useEffect(() => {
     if (sent.current) return;
     sent.current = true;
-    void pollCancelSeenAction(publicId).catch(() => undefined);
-  }, [publicId]);
+    const seen = kind === "reopen" ? reopenSeenAction : pollCancelSeenAction;
+    void seen(publicId).catch(() => undefined);
+  }, [publicId, kind]);
   return (
     <Banner tone="info" role="status" className={styles.cancelNotice}>
       {text}

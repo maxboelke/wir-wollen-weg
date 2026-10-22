@@ -17,58 +17,34 @@
   list-style: none;
 }
 
-.row {
+.group {
   display: flex;
-  align-items: center;
-  gap: var(--ww-space-2) var(--ww-space-3);
-  min-height: var(--ww-size-control-md);
-  padding-block: var(--ww-space-2);
-  border-bottom: var(--ww-border-thin) solid var(--ww-color-border-subtle);
-}
-
-.row:last-child {
-  border-bottom: 0;
-}
-
-.who {
-  display: flex;
-  flex: 1;
   flex-direction: column;
-  gap: var(--ww-space-0-5);
-  min-width: 0;
-}
-
-.line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--ww-space-1) var(--ww-space-2);
-  min-width: 0;
-}
-
-.name {
-  overflow: hidden;
-  font-weight: var(--ww-font-weight-bold);
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.you {
-  color: var(--ww-color-text-muted);
-  font-weight: var(--ww-font-weight-medium);
-}
-
-.status {
-  display: inline-flex;
-  align-items: center;
   gap: var(--ww-space-1);
-  color: var(--ww-color-text-muted);
-  font-size: var(--ww-text-sm);
-  font-weight: var(--ww-font-weight-semibold);
 }
 
-.done {
-  color: var(--ww-color-accent-text);
+.group + .group {
+  padding-top: var(--ww-space-3);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+/* U-19 proposal: 13/800 capitals, muted */
+.groupTitle {
+  color: var(--ww-color-text-muted);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-extrabold);
+  letter-spacing: var(--ww-tracking-wide);
+  text-transform: uppercase;
+}
+
+/* Phase 3 / past: open placeholders after the list and its toggle (R-071) */
+.notJoined {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+  padding-top: var(--ww-space-3);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
 }
 
 .more {
@@ -139,6 +115,7 @@
 .manage {
   display: inline-flex;
   flex: none;
+  align-self: flex-start;
   align-items: center;
   min-height: var(--ww-size-touch-min);
   padding-inline: var(--ww-space-2);

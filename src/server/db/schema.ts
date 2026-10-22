@@ -246,6 +246,12 @@ export const tripMember = pgTable(
      * range fixed later celebrates again; the same range does not.
      */
     celebratedFor: text("celebrated_for"),
+    /**
+     * «{orga} hat den Termin wieder geöffnet» is still to be shown (ux-spec §14.4, R-069): set
+     * by «Festlegung aufheben» for members who had celebrated exactly the reopened range, cleared
+     * when the notice was shown and by every later phase change (fix, cancel, new vote).
+     */
+    reopenNoticeDue: boolean("reopen_notice_due").notNull().default(false),
     /** Saw the one-off notice about the cancelled vote (Q21) – compared with trip.pollCanceledAt. */
     pollCancelSeenAt: timestamp("poll_cancel_seen_at", { withTimezone: true }),
   },

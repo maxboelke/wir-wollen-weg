@@ -212,7 +212,7 @@
     "todo": {
       "addDates": "Deine Tage fehlen noch",
       "vote": "Jetzt abstimmen",
-      "startVote": "Alle haben abgegeben – Abstimmung starten?",
+      "startVote": "Alle haben eingetragen – Abstimmung starten?",
       "fixDates": "Bereit zum Festlegen"
     },
     "action": {
@@ -647,10 +647,10 @@
       "past": "Vergangen"
     },
     "phaseLineSr": "{done} von {total}",
-    "kpiSubmitted": "{done} von {total} haben abgegeben",
+    "kpiSubmitted": "{done} von {total} haben eingetragen",
     "kpiVoted": "{done} von {total} haben abgestimmt",
     "kpiOpen": "Noch offen: {names}",
-    "kpiAllDone": "Alle haben abgegeben.",
+    "kpiAllDone": "Alle haben eingetragen.",
     "kpiFixed": "{count, plural, one {noch # Tag} other {noch # Tage}}",
     "nightsFact": "{count, plural, one {# Nacht} other {# Nächte}}",
     "nightsRangeFact": "{min}–{max} Nächte",
@@ -664,17 +664,34 @@
     "stepCurrent": "aktueller Schritt",
     "nextTitle": "Nächster Schritt",
     "next": {
-      "addDates": "Trag deine Tage ein – dauert 2 Minuten.",
-      "startVote": "Alle haben abgegeben! Zeit für die Abstimmung.",
-      "waiting": "Danke! Jetzt warten wir auf {names}.",
-      "waitingAll": "Danke! Jetzt warten wir auf die anderen.",
-      "vote": "Die Abstimmung läuft – stimm ab.",
-      "voteDone": "{done} von {total} haben abgestimmt.",
-      "fixed": "Der Termin steht: {range}.",
       "past": "Diese Reise ist vorbei. Zeit für die nächste?",
-      "fixDates": "Alle haben abgestimmt! Zeit, den Termin festzulegen.",
-      "fixDatesDeadline": "Die Frist ist abgelaufen. Zeit, den Termin festzulegen.",
-      "voteWaiting": "Danke fürs Abstimmen! Bisher haben {done} von {total} abgestimmt."
+      "n1_1": "Die Frist ist vorbei – trag deine Tage trotzdem schnell ein.",
+      "n1_2": "Nur deine Tage fehlen noch – dann kann {orga} die Abstimmung starten.",
+      "n1_3": "Nur deine Tage fehlen noch – danach kannst du die Abstimmung starten.",
+      "n1_4": "Trag deine Tage ein – dauert 2 Minuten.",
+      "n1_5": "Alle haben ihre Tage eingetragen! Zeit für die Abstimmung.",
+      "n1_6": "Alle Mitglieder haben eingetragen. {names} {count, plural, one {ist} other {sind}} noch nicht beigetreten – du kannst die Abstimmung trotzdem schon starten.",
+      "n1_7": "Die Frist zum Eintragen ist vorbei, {count, plural, one {# fehlt} other {# fehlen}} noch. Du kannst die Abstimmung schon mit den eingetragenen Tagen starten.",
+      "n1_8": "Deine Tage sind drin. Sobald alle eingetragen haben, kannst du die Abstimmung starten.",
+      "n1_9": "Alle haben ihre Tage eingetragen. Jetzt ist {orga} dran und startet die Abstimmung.",
+      "n1_10": "Die Frist zum Eintragen ist vorbei. Jetzt ist {orga} dran und startet die Abstimmung.",
+      "n1_11": "Danke, deine Tage sind drin! Jetzt fehlen nur noch die Tage von {orga} – danach kann die Abstimmung starten.",
+      "n1_12": "Danke, deine Tage sind drin! Sobald alle eingetragen haben, startet {orga} die Abstimmung.",
+      "n2_1": "Die Frist ist vorbei, aber du kannst noch abstimmen, bis {orga} den Termin festlegt.",
+      "n2_2": "Die Frist ist vorbei. Stimm noch ab und leg dann den Termin fest.",
+      "n2_3": "Nur deine Stimme fehlt noch – dann kann {orga} den Termin festlegen.",
+      "n2_4": "Nur deine Stimme fehlt noch – danach kannst du den Termin festlegen.",
+      "n2_5": "Die Abstimmung läuft – stimm ab.",
+      "n2_5Deadline": "Die Abstimmung läuft – stimm ab. Abstimmen bis {date}.",
+      "n2_6": "Alle haben abgestimmt! Zeit, den Termin festzulegen.",
+      "n2_7": "Die Frist ist abgelaufen – {count, plural, one {# hat} other {# haben}} nicht abgestimmt. Zeit, den Termin festzulegen.",
+      "n2_8": "Deine Stimme ist drin. Sobald alle abgestimmt haben, legst du den Termin fest – du kannst es auch schon vorher tun.",
+      "n2_9": "Alle haben abgestimmt. Jetzt ist {orga} dran und legt den Termin fest.",
+      "n2_10": "Die Abstimmungsfrist ist vorbei. Jetzt ist {orga} dran und legt den Termin fest.",
+      "n2_11": "Danke fürs Abstimmen! Jetzt fehlt nur noch die Stimme von {orga} – danach wird der Termin festgelegt.",
+      "n2_12": "Danke fürs Abstimmen! Sobald alle abgestimmt haben, legt {orga} den Termin fest.",
+      "n2_12Deadline": "Danke fürs Abstimmen! Sobald alle abgestimmt haben – spätestens nach der Frist am {date} –, legt {orga} den Termin fest.",
+      "pastOpen": "Der Suchzeitraum ist vorbei, ohne dass ein Termin feststand."
     },
     "nextAction": {
       "addDates": "Tage eintragen",
@@ -683,15 +700,21 @@
       "vote": "Abstimmen",
       "newTrip": "Neue Reise planen",
       "fixDates": "Termin festlegen",
-      "poll": "Zur Abstimmung"
+      "poll": "Zur Abstimmung",
+      "remind": "Erinnern",
+      "remindOrga": "{orga} erinnern",
+      "results": "Ergebnis ansehen",
+      "nudgeOrga": "{orga} Bescheid geben",
+      "editTrip": "Reise bearbeiten"
     },
     "membersTitle": "Wer ist dabei? ({count})",
     "status": {
-      "open": "noch offen",
-      "submitted": "abgegeben",
+      "submitted": "eingetragen",
       "voted": "abgestimmt",
-      "submittedOn": "abgegeben · {date}",
-      "placeholder": "Platzhalter · fehlt noch"
+      "submittedOn": "eingetragen · {date}",
+      "placeholder": "noch nicht beigetreten",
+      "openCollect": "noch nicht eingetragen",
+      "openVote": "noch nicht abgestimmt"
     },
     "organizer": "Orga",
     "you": "du",
@@ -719,7 +742,8 @@
       "delete": "Reise löschen",
       "help": "Hilfe",
       "unfix": "Festlegung aufheben",
-      "cancelPoll": "Abstimmung abbrechen"
+      "cancelPoll": "Abstimmung abbrechen",
+      "remind": "Gruppe erinnern"
     },
     "dialogs": {
       "leaveTitle": "„{trip}“ verlassen?",
@@ -755,7 +779,7 @@
       "unfixTitle": "Termin wieder offen machen?",
       "unfixText": "Die Abstimmung wird wieder geöffnet, alle Stimmen bleiben erhalten. Bereits geteilte Termine musst du im Gruppenchat selbst korrigieren.",
       "unfixConfirm": "Termin aufheben",
-      "unfixDone": "Die Abstimmung ist wieder offen.",
+      "unfixDone": "Termin aufgehoben – die Abstimmung läuft wieder.",
       "cancelPollTitle": "Abstimmung abbrechen?",
       "cancelPollText": "Alle Optionen und Stimmen werden gelöscht. Eingetragene Tage bleiben erhalten; die Reise geht zurück zu ‚Tage sammeln‘.",
       "cancelPollKeep": "Abstimmung behalten",
@@ -768,9 +792,25 @@
     "kpiMore": "{count} weitere",
     "membersTitlePlaceholders": "Wer ist dabei? ({count} + {placeholders} Platzhalter)",
     "commentOf": "Kommentar von {name}",
-    "placeholderManage": "Verwalten",
     "kpiVoteDeadline": "Abstimmen bis {date}",
-    "kpiAllVoted": "Alle haben abgestimmt."
+    "kpiAllVoted": "Alle haben abgestimmt.",
+    "kpiListOpen": "Liste öffnen",
+    "groupOpen": "Fehlt noch ({count})",
+    "groupSubmitted": "Eingetragen ({count})",
+    "groupVoted": "Abgestimmt ({count})",
+    "groupPlaceholders": "Noch nicht beigetreten ({count})",
+    "groupNotJoined": "Nicht beigetreten ({count})",
+    "placeholdersManage": "Platzhalter verwalten",
+    "hub": {
+      "decidedTitle": "So habt ihr entschieden",
+      "pollTitle": "Abstimmungsergebnis",
+      "pollMeta": "{voted} von {total} haben abgestimmt",
+      "groupTitle": "Kalender der Gruppe",
+      "groupMeta": "Wer wann konnte",
+      "searched": "Gesucht wurde: {range} · {nights}",
+      "upNext": "Als Nächstes"
+    },
+    "reopenedNotice": "{orga} hat den Termin wieder geöffnet. Die Abstimmung läuft wieder."
   },
   "share": {
     "title": "Freunde einladen",
@@ -815,6 +855,24 @@
       "poll": "Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm bis {deadline} ab: {link}",
       "pollNoDeadline": "Abstimmung für {trip} läuft! Es gibt {count} Vorschläge – stimm jetzt ab: {link}",
       "result": "Fix! {trip}: {range} ({nights} Nächte). Termin in den Kalender: {link}"
+    },
+    "remind": {
+      "p1": "Hey {name}, du fehlst noch bei {trip}! Trag kurz ein, wann du kannst – dauert 2 Minuten: {link}",
+      "p1Deadline": "Hey {name}, du fehlst noch bei {trip}! Trag bis {deadline} ein, wann du kannst – dauert 2 Minuten: {link}",
+      "p1Last": "Hey {name}, bei {trip} fehlen nur noch deine Tage! Trag sie kurz ein, dann kann's mit der Abstimmung losgehen: {link}",
+      "p1Placeholder": "Hey {name}, du fehlst noch bei {trip}! Hier ist dein persönlicher Link – trag ein, wann du kannst: {link}",
+      "p2": "Hey {name}, deine Stimme fehlt noch bei {trip}! Stimm kurz ab: {link}",
+      "p2Deadline": "Hey {name}, deine Stimme fehlt noch bei {trip}! Stimm bis {deadline} ab: {link}",
+      "p2Last": "Hey {name}, bei {trip} fehlt nur noch deine Stimme! Stimm kurz ab, dann können wir den Termin festlegen: {link}",
+      "allP1One": "{names}, du fehlst noch bei {trip}! Trag kurz deine Tage ein: {link}",
+      "allP1Many": "{names}, ihr fehlt noch bei {trip}! Tragt kurz eure Tage ein, dann können wir planen: {link}",
+      "allP2One": "{names}, deine Stimme fehlt noch bei {trip}: {link}",
+      "allP2Many": "{names}, eure Stimme fehlt noch bei {trip}: {link}",
+      "nudgeP1All": "Hey {orga}, alle haben ihre Tage für {trip} eingetragen – du kannst jetzt die Abstimmung starten: {link}",
+      "nudgeP1Deadline": "Hey {orga}, die Frist für {trip} ist vorbei – magst du die Abstimmung starten? {link}",
+      "nudgeP2All": "Hey {orga}, alle haben bei {trip} abgestimmt – du kannst jetzt den Termin festlegen: {link}",
+      "nudgeP2Deadline": "Hey {orga}, die Abstimmungsfrist für {trip} ist vorbei – magst du den Termin festlegen? {link}",
+      "nudgePlaceholder": "Hey {orga}, {name} fehlt noch bei {trip} – schickst du {name} den persönlichen Link? {link}"
     }
   },
   "tripSettings": {
@@ -981,7 +1039,6 @@
       "suggestions": "Vorschläge",
       "calendar": "Kalender"
     },
-    "kpiOpen": "Noch offen: {names} – das Ergebnis kann sich noch ändern.",
     "startVote": "Abstimmung starten",
     "filters": {
       "label": "Filter (nur für dich)",
@@ -1025,7 +1082,7 @@
       "nobody": "Noch keine Vorschläge – sobald die ersten ihre Tage eingetragen haben, rechnen wir los.",
       "addDates": "Meine Tage eintragen",
       "invite": "Freunde einladen",
-      "onlyOne": "Bisher hat erst eine Person abgegeben – noch nicht aussagekräftig.",
+      "onlyOne": "Bisher hat erst eine Person eingetragen – noch nicht aussagekräftig.",
       "noMatch": "Leider kein Zeitraum mit {count, plural, one {# Nacht} other {# Nächten}}, in dem alle dabei sind.",
       "tips": "So klappt es vielleicht:",
       "shorter": "Mit {nights} statt {min} Nächten: {count, plural, one {# Option} other {# Optionen}}",
@@ -1078,7 +1135,7 @@
       "open": "Noch offen ({count})",
       "hidden": "Ausgeblendet ({count})",
       "nobody": "niemand",
-      "nodata": "Noch hat niemand abgegeben.",
+      "nodata": "Noch hat niemand eingetragen.",
       "placeholder": "fehlt noch",
       "you": "du",
       "comment": "Kommentar von {name}"
@@ -1096,16 +1153,17 @@
       "suggestion": "Vorschlag {rank} von {total}: {range}, {group}",
       "highlight": "Zeitraum {range} hervorgehoben"
     },
-    "submitted": {
-      "title": "Wer hat abgegeben? ({done}/{total})",
-      "done": "Abgegeben ({count})",
-      "open": "Noch offen ({count})"
-    },
     "pick": "Zur Abstimmung",
     "pickedCount": "{count} ausgewählt",
     "pickedCreate": "Abstimmung erstellen",
     "goToPoll": "Zur Abstimmung",
-    "pollOpen": "Die Abstimmung läuft – der Termin wird gerade entschieden."
+    "pollOpen": "Die Abstimmung läuft – der Termin wird gerade entschieden.",
+    "whoSubmitted": "Wer hat eingetragen? ({done}/{total})",
+    "basedOn": "Basiert auf {done} von {total} – noch offen: {names}.",
+    "basedOnRemind": "Erinnern",
+    "basedOnAddDates": "Deine Tage eintragen",
+    "soFarChip": "Bisher {done} von {total}",
+    "soFarChipSr": "Basiert auf {done} von {total} Personen"
   },
   "poll": {
     "title": "Abstimmen",
@@ -1377,5 +1435,29 @@
       "confirmRequired": "Bitte zuerst das Häkchen setzen.",
       "generic": "Das hat nicht geklappt. Bitte versuch es nochmal."
     }
+  },
+  "remind": {
+    "titleCollect": "Wer hat eingetragen?",
+    "titleVote": "Wer hat abgestimmt?",
+    "remind": "Erinnern",
+    "remindName": "{name} erinnern",
+    "remindAll": "Alle erinnern ({count})",
+    "allTitle": "Alle erinnern",
+    "allLegend": "Wen erinnern?",
+    "allNone": "Wähl mindestens eine Person aus.",
+    "allPlaceholdersOrga": "{names} {count, plural, one {ist} other {sind}} noch nicht beigetreten – erinnere sie einzeln mit ihrem persönlichen Link.",
+    "allPlaceholdersMember": "{names} {count, plural, one {ist} other {sind}} noch nicht beigetreten – das übernimmt {orga}.",
+    "back": "Zurück zur Liste",
+    "contextCollect": "{name} hat noch keine Tage eingetragen.",
+    "contextVote": "{name} hat noch nicht abgestimmt.",
+    "contextPlaceholder": "{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link.",
+    "footer": "Schick es {name} direkt oder in euren Gruppenchat.",
+    "footerAll": "Schick es direkt in euren Gruppenchat.",
+    "messageLabel": "Nachricht",
+    "whatsapp": "Per WhatsApp senden",
+    "whatsappSr": "(öffnet WhatsApp)",
+    "orgaTitle": "{orga} Bescheid geben",
+    "placeholderTitle": "{name} ist noch nicht dabei",
+    "placeholderText": "Den persönlichen Link für {name} hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken."
   }
 }

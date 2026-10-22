@@ -48,6 +48,7 @@ import {
 } from "@/lib/suggestions";
 import { MAX_OPTIONS } from "@/lib/poll";
 import { useWasServerPainted } from "@/lib/use-hydration";
+import { RemindButton, useRemind } from "../../trips/components/remind-sheet";
 import { storeLegendState } from "../legend-cookie";
 import { DayDetail, type DetailPerson } from "./day-detail";
 import { HeatMonth, type HeatCellModel } from "./heatmap-month";
@@ -100,6 +101,13 @@ export interface GroupViewProps {
   /** "none": phase 1 (organiser may create) · "open": voting · "closed": dates fixed. */
   pollState: "none" | "open" | "closed";
   viewerSubmitted: boolean;
+  /**
+   * «Basiert auf 5 von 9 – noch offen: …» under «Alle dabei» and the chip «Bisher 5 von 9»
+   * (ux-spec §14.3) – null when everyone has added their dates and in phase 3.
+   */
+  basedOn?: { text: string; done: number; total: number } | null | undefined;
+  /** Phase 3 sub-page «Kalender der Gruppe»: read-only, no organiser tools (§14.4). */
+  readOnly?: boolean | undefined;
   /** Server-rendered illustrations for the empty states (W09-11). */
   emptyArt?: ReactNode;
   noMatchArt?: ReactNode;
@@ -144,6 +152,7 @@ export function GroupView(props: GroupViewProps) {
     setViewState(queryView);
   }
   const tCommon = useTranslations("common");
+  const tTrip = useTranslations("trip");
   const serverPainted = useWasServerPainted();
   const helpId = useId();
 
@@ -220,7 +229,9 @@ export function GroupView(props: GroupViewProps) {
   const current = list[selected] ?? null;
 
   // «Zur Abstimmung» (W09, Flow C.2): the organiser ticks suggestions for the vote (max. 6).
-  const pickable = props.isOrganizer && props.pollState === "none";
+  const pickable = props.isOrganizer && props.pollState === "none" && !props.readOnly;
+  const remind = useRemind();
+  const basedOn = props.readOnly ? null : (props.basedOn ?? null);
   const [picked, setPicked] = useState<string[]>([]);
   const togglePick = (key: string, on: boolean) => {
     setPicked((value) =>
@@ -922,7 +933,7 @@ export function GroupView(props: GroupViewProps) {
     <div className={styles.empty}>
       {props.emptyArt}
       <p>{t("empty.nobody")}</p>
-      {props.viewerSubmitted ? (
+      {props.readOnly ? null : props.viewerSubmitted ? (
         <ButtonLink href={props.inviteHref} variant="secondary" size="md" icon="plus">
           {t("empty.invite")}
         </ButtonLink>
@@ -987,7 +998,7 @@ export function GroupView(props: GroupViewProps) {
         ) : (
           <p className={styles.muted}>{t("empty.none")}</p>
         )}
-        {props.isOrganizer ? (
+        {props.isOrganizer && !props.readOnly ? (
           <ButtonLink href={props.settingsHref} variant="text" size="md" icon="edit">
             {t("empty.editTrip")}
           </ButtonLink>
@@ -995,15 +1006,38 @@ export function GroupView(props: GroupViewProps) {
       </div>
     ) : null;
 
+  // ux-spec §14.3: «Alle dabei» means «all who added their dates» – say who is missing.
+  const basedOnHint = basedOn ? (
+    <div className={styles.basedOn}>
+      <Icon name="users" size={16} />
+      <p id={`${helpId}-based`}>{basedOn.text}</p>
+      {props.viewerSubmitted ? (
+        <RemindButton target={{ step: "status" }} variant="text" size="sm">
+          {t("basedOnRemind")}
+        </RemindButton>
+      ) : (
+        <ButtonLink href={props.daysHref} variant="text" size="sm">
+          {t("basedOnAddDates")}
+        </ButtonLink>
+      )}
+    </div>
+  ) : null;
+
   const group = (kind: "all" | "almost", groupCards: SuggestionCardModel[], heading: string) => {
     const open = expanded[kind];
     const shown = open ? groupCards : groupCards.slice(0, CARDS_SHOWN);
+    const hint = kind === "all" && basedOn ? basedOnHint : null;
     return (
-      <section className={styles.group} aria-labelledby={`${helpId}-${kind}`}>
+      <section
+        className={styles.group}
+        aria-labelledby={`${helpId}-${kind}`}
+        aria-describedby={hint ? `${helpId}-based` : undefined}
+      >
         <h2 id={`${helpId}-${kind}`} className={styles.groupTitle} data-kind={kind}>
           <Icon name={kind === "all" ? "check" : "users"} size={20} />
           {heading}
         </h2>
+        {hint}
         {groupCards.length === 0 ? (
           <p className={styles.muted}>{t("groups.allEmpty")}</p>
         ) : (
@@ -1205,34 +1239,51 @@ export function GroupView(props: GroupViewProps) {
           />
         ))}
       </div>
-      <details className={styles.who}>
-        <summary className={styles.legendSummary}>
-          <span>{t("submitted.title", { done: submittedCount, total })}</span>
-          <Icon name="chevron-down" size={18} className={styles.chevron} />
-        </summary>
-        <div className={styles.legendBody}>
-          <h3 className={styles.whoTitle}>{t("submitted.done", { count: submittedCount })}</h3>
-          <ul className={styles.whoList}>
-            {props.people.map((person) => (
-              <li key={person.key}>{person.name}</li>
-            ))}
-          </ul>
-          {props.pending.length > 0 ? (
-            <>
-              <h3 className={styles.whoTitle}>
-                {t("submitted.open", { count: props.pending.length })}
-              </h3>
-              <ul className={styles.whoList}>
-                {props.pending.map((person) => (
-                  <li key={person.key} className={styles.personOpen}>
-                    {person.name}
-                  </li>
-                ))}
-              </ul>
-            </>
-          ) : null}
-        </div>
-      </details>
+      {remind ? (
+        // ux-spec §14.2: the list with [Erinnern] lives in the remind sheet.
+        <button
+          type="button"
+          className={cx(styles.legendSummary, styles.whoButton)}
+          aria-haspopup="dialog"
+          onClick={() => {
+            remind.open({ step: "status" });
+          }}
+        >
+          <span>{t("whoSubmitted", { done: submittedCount, total })}</span>
+          <Icon name="chevron-right" size={18} />
+        </button>
+      ) : (
+        <details className={styles.who}>
+          <summary className={styles.legendSummary}>
+            <span>{t("whoSubmitted", { done: submittedCount, total })}</span>
+            <Icon name="chevron-down" size={18} className={styles.chevron} />
+          </summary>
+          <div className={styles.legendBody}>
+            <h3 className={styles.whoTitle}>
+              {tTrip("groupSubmitted", { count: submittedCount })}
+            </h3>
+            <ul className={styles.whoList}>
+              {props.people.map((person) => (
+                <li key={person.key}>{person.name}</li>
+              ))}
+            </ul>
+            {props.pending.length > 0 ? (
+              <>
+                <h3 className={styles.whoTitle}>
+                  {tTrip("groupOpen", { count: props.pending.length })}
+                </h3>
+                <ul className={styles.whoList}>
+                  {props.pending.map((person) => (
+                    <li key={person.key} className={styles.personOpen}>
+                      {person.name}
+                    </li>
+                  ))}
+                </ul>
+              </>
+            ) : null}
+          </div>
+        </details>
+      )}
     </div>
   );
 
@@ -1281,7 +1332,11 @@ export function GroupView(props: GroupViewProps) {
                 type="button"
                 ref={barContentRef}
                 className={styles.barMain}
-                aria-label={t("bar.toList", { range: rangeText(current.start, current.end) })}
+                aria-label={
+                  basedOn && current.group === "all"
+                    ? `${t("bar.toList", { range: rangeText(current.start, current.end) })} – ${t("soFarChipSr", { done: basedOn.done, total: basedOn.total })}`
+                    : t("bar.toList", { range: rangeText(current.start, current.end) })
+                }
                 onClick={() => {
                   showInList(selected);
                 }}
@@ -1295,6 +1350,12 @@ export function GroupView(props: GroupViewProps) {
                   })}
                 </span>
                 <span className={styles.barRange}>{rangeText(current.start, current.end)}</span>
+                {basedOn && current.group === "all" ? (
+                  <span className={styles.barChip} data-so-far="">
+                    <Icon name="users" size={14} />
+                    {t("soFarChip", { done: basedOn.done, total: basedOn.total })}
+                  </span>
+                ) : null}
                 <span className={styles.barMeta}>
                   {t("card.nights", { count: current.nights })}
                   {" · "}

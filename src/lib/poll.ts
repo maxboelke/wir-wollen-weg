@@ -387,6 +387,31 @@ export function celebrationDue(
 }
 
 /**
+ * «Festlegung aufheben» (ux-spec §14.4, R-069): does this member get the one-off notice
+ * «{orga} hat den Termin wieder geöffnet»? Only members who celebrated exactly the range that
+ * is being reopened (they may have it in their calendar) – not the organiser, not people who
+ * joined or celebrated nothing/another range. Decided once per unfixing; every later phase
+ * change (fix, cancel, new vote) clears the flag again.
+ */
+export function reopenNoticeAfterUnfix(
+  member: { role: string; celebratedFor: string | null },
+  fixed: Period,
+): boolean {
+  return member.role !== "organizer" && member.celebratedFor === periodKey(fixed);
+}
+
+/**
+ * Shows the notice while the vote runs again and the flag set by `reopenNoticeAfterUnfix` is
+ * still there (cleared once shown). Never for the (current) organiser.
+ */
+export function reopenNoticeDue(
+  trip: { phase: string },
+  member: { role: string; reopenNoticeDue: boolean },
+): boolean {
+  return trip.phase === "voting" && member.role !== "organizer" && member.reopenNoticeDue;
+}
+
+/**
  * One-off notice «{Name} hat die Abstimmung abgebrochen. Eine neue folgt.» (Q21, ux-spec
  * §13.1 a): only while the trip is back in «Tage sammeln», not for the organiser who cancelled,
  * not for people who joined afterwards, and only until the member has seen it once.

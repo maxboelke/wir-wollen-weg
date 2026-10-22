@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 (v0.4, Entscheidungen Q1–Q6 und Q11–Q18 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
+Stand: 2026-10-20 (v0.5, Planung Ausbaustufe „Reise managen“; Entscheidungen Q1–Q6, Q11–Q18, Q20–Q25 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -9,6 +9,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.3 (2026-10-08, Auftraggeber-Entscheidungen Q11–Q13, UX-Abstimmung):** Neu **F-051 Hilfe-/FAQ-Seite** (Must, MVP; Q13 e). F-011: Ergebnis einer Option erst nach eigener Stimme sichtbar, Orga sieht immer alles (Q13 a). F-002/F-004: alle Mitglieder dürfen den Einladungslink teilen, solange der Beitritt offen ist (Q13 b). F-004: UI-Rollenname „Orga“ / „Organizer“ (Q13 c). F-041: „Angemeldet bleiben“ standardmäßig an (Q13 d). F-046: sprachabhängiger Produktname „Wir wollen weg“ / „When do we go?“ (Q11). F-008: Zählregel präzisiert (U-4). F-009: Gruppennamen „Alle dabei“ / „Fast alle dabei“ (U-14). F-040/F-003: Name erst nach dem Code (UX-Abweichung bestätigt). F-015: kein „@“ vor Namen im Erinnerungstext (UX-Abweichung bestätigt).
 
 **Änderungen v0.4 (2026-10-08, Auftraggeber-Entscheidungen Q17/Q18):** Neu **F-052 Bewegung, Animationen & Haptik** (Must, MVP; Querschnitts-Feature) mit Schalter „Bewegung reduzieren“ im Konto zusätzlich zur Systemeinstellung (Q17 a), Reduced-Motion-Regeln, Performance-Leitplanken und dezenter Android-Vibration (Q17 c); Detailkatalog: [docs/motion/interaktionen.md](../motion/interaktionen.md). F-012: Feier „Es geht los!“ für **alle** Mitglieder beim ersten Öffnen nach Festlegung, einmal pro Person (Q17 b). F-043: Abschnitt „Darstellung“ in den Kontoeinstellungen. Look & Feel 2.0 (Q18, Richtung B „Reise-Cockpit“, Palette „Indigo & Minze“) betrifft alle UI-Features optisch, ändert aber keine Akzeptanzkriterien – umgesetzt im Roadmap-Schritt „UI-Fundament“.
+
+**Änderungen v0.5 (2026-10-20, Auftraggeber-Wunsch „Reise managen“, Planung – Entscheidungen Q26–Q36 offen):** Neue **Ausbaustufe „Reise managen“** (nach „Termin finden“) mit detaillierten Steckbriefen im neuen Abschnitt **AUSBAUSTUFE „Reise managen“** (vor „WON'T“): neu **F-053 Reise-Cockpit (Übersicht Phase 3)**, **F-054 Persönliche Reisedaten**, **F-055 Reiseunterlagen (Dateien)**, **F-056 Zuständigkeit „Bucht“**; **F-031** (Unterkünfte per Swipe), **F-033** (Reise-Infoseite, jetzt ohne Dateien – Dateien → F-055), **F-035 + F-036** (Kosten teilen, zusammen als ein Modul) detailliert und aus „Won't“ in die Ausbaustufe gehoben; F-037 bleibt „später“. Einordnung gegenüber v1 (Kalender-Import) und Reihenfolge: PRD Q26/Q27 (beantwortet Q7 und Q19 mit).
 
 ## Übersicht
 
@@ -39,13 +41,13 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | F-023 | Pflicht- und optionale Teilnehmer | C | v1 | Premium? |
 | F-024 | Urlaubstage-Optimierung (Brückentage) | C | v1 | Premium? |
 | F-030 | Zielfindung (Vorschläge & Abstimmung) | W | später | Free |
-| F-031 | Unterkünfte sammeln & per Swipe bewerten (Auftraggeber-Idee 2026-10-08) | W | **nächste Ausbaustufe nach „Termin finden“** (Einordnung ggü. v1 offen, Q19) | Premium? |
+| F-031 | Unterkünfte sammeln & per Swipe bewerten (Auftraggeber-Idee 2026-10-08) | **R** | **Ausbaustufe „Reise managen“** (Inkrement 9; Screenshots Inkrement 12) – Einordnung Q26 | Free (Basis) · Premium? (mehr Bilder) |
 | F-032 | Aufgaben & Packliste | W | später | Premium? |
-| F-033 | Reise-Infoseite (Adresse, Anreise, Dokumente) | W | später | Free (Dateien: Premium?) |
+| F-033 | Reise-Infoseite (Adresse, Treffpunkt, Check-in – Text & Links) | **R** | **Ausbaustufe „Reise managen“** (Inkrement 8) | Free |
 | F-034 | Budget-Abfrage (anonym) | W | später | Free |
-| F-035 | Ausgaben erfassen | W | später (Priorität offen, Q7) | Free |
-| F-036 | Salden & Ausgleichsvorschlag (Verrechnung) | W | später (Priorität offen, Q7) | Free |
-| F-037 | Mehrere Währungen | W | später (Priorität offen, Q7) | Premium? |
+| F-035 | Ausgaben erfassen (Kosten teilen, Teil 1) | **R** | **Ausbaustufe „Reise managen“** (Inkrement 10) – Q7 → Q26/Q27 | Free (Belegfotos: Premium?) |
+| F-036 | Salden & Ausgleichsvorschlag (Kosten teilen, Teil 2) | **R** | **Ausbaustufe „Reise managen“** (Inkrement 10) | Free |
+| F-037 | Mehrere Währungen | W | später (nach Kosten-Basis) | Premium? |
 | F-038 | PWA / Push-Benachrichtigungen | W | später | Free |
 | **F-040** | **Registrierung (passwortlos, optional Passwort)** | **M** | **MVP** | Free |
 | **F-041** | **Anmelden & Abmelden (Code/Magic-Link, Passwort, Sessions)** | **M** | **MVP** | Free |
@@ -60,6 +62,12 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | **F-050** | **Premium-Tarif & Bezahlung (Freemium)** | W | später | – |
 | **F-051** | **Hilfe-/FAQ-Seite** | **M** | **MVP** | Free |
 | **F-052** | **Bewegung, Animationen & Haptik (Querschnitt, inkl. Schalter „Bewegung reduzieren“)** | **M** (Basis) | **MVP** (Motion-Prio „MVP+“ vor Beta, „später“ danach) | Free |
+| **F-053** | **Reise-Cockpit: Übersicht nach der Festlegung (Phase 3, Hub „Reise managen“)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 8) | Free |
+| **F-054** | **Persönliche Reisedaten (Name laut Ausweis, Geburtsdatum, optional Ausweisdaten) – Abfrage & Freigabe** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11; echte Daten erst nach Gate G1b) | Free |
+| **F-055** | **Reiseunterlagen: Tickets & Dokumente sicher teilen (Dateien)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 12; echte Daten erst nach Gate G1b) | Free bis Kontingent · Premium? (mehr Speicher) |
+| **F-056** | **Zuständigkeit „Bucht“ (buchende Person, von der Orga vergeben)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11) | Free |
+
+**Prio R** = Ausbaustufe „Reise managen“ (nach dem MVP „Termin finden“; Einordnung gegenüber v1 siehe PRD Q26). Innerhalb der Ausbaustufe gilt je Feature ein eigener MVP-Schnitt („Stufe 1 / später“).
 
 **MVP-Umfang (Must):** F-001, F-002, F-003, F-004, F-005, F-007, F-008, F-009, F-010, F-011, F-012, F-013, F-016, F-040, F-041, F-042, F-043, F-044, F-046, F-051, F-052 · **Should:** F-015, F-017.
 
@@ -474,9 +482,253 @@ Akzeptanzkriterien:
 ### F-024 Urlaubstage-Optimierung
 - [ ] Sortieroption „wenigste Urlaubstage“ für Kandidaten (nutzt F-016, alle Regionen inkl. UK/US); Hinweis auf Brückentage. Premium-Kandidat.
 
+## AUSBAUSTUFE „Reise managen“ (nach „Termin finden“) – Planung 2026-10-20
+
+**Auftraggeber-Wunsch (2026-10-20, sinngemäß):** Nach der Festlegung zeigt die Reise heute nur noch die Übersicht. Aus ihr heraus soll man künftig **die ganze Reise managen**: (1) Unterkünfte per Swipe, (2) Kosten teilen wie Tricount, (3) persönliche Reisedaten (z. B. Ausweisnummern) für die buchende Person – abgefragt **nach der Einigung auf den Zeitraum**, (4) Reiseunterlagen (Flugtickets, Aktivitäten-Tickets) für alle zugänglich.
+
+**Status:** Planung. Entscheidungen des Auftraggebers offen (PRD §12, **Q26–Q36**). Alle Angaben unten mit „(Q…)“ sind PM-Empfehlungen bis zur Entscheidung.
+
+### R.0 Leitplanken der Ausbaustufe
+1. **Alles hängt an der festgelegten Reise (Phase 3).** Die neuen Bereiche erscheinen erst, wenn ein Zeitraum feststeht (F-012). Wird die Festlegung aufgehoben, bleiben Unterkünfte, Ausgaben, Reisedaten und Unterlagen erhalten (Hinweis „Termin wird neu abgestimmt“); Fristen, die am Reiseende hängen, werden bei neuer Festlegung neu berechnet.
+2. **Ein Hub, kein Menü-Labyrinth.** Die Übersicht wird zum **Reise-Cockpit** (F-053): oben die persönlichen To-dos, darunter je Bereich eine Kachel mit Status. Jede Kachel führt in ihren Bereich.
+3. **Mitmachen bleibt kostenlos** (Prinzip 2): Bewerten, Ausgaben eintragen, eigene Reisedaten freigeben und Unterlagen ansehen sind nie Premium.
+4. **Sensible Daten nur mit Schutzpaket.** F-054 und F-055 dürfen mit **echten** Daten erst nach einem zusätzlichen Sicherheits-/Datenschutz-Gate **G1b** genutzt werden (roadmap.md). In Offline-Demo und privater Vorschau sind sie mit Fantasiedaten vorführbar (R.5).
+5. **Wiederverwenden statt neu erfinden:** Sichtbarkeitsregel „Ergebnis erst nach eigener Bewertung“ (Q13 a), Teilen-Texte (F-002), Kennzahl-Muster des Cockpits (ux-spec §4.10), Motion-System (F-052).
+6. **Kein Zahlungsverkehr, keine Buchung:** Die App zeigt, wer wem was schuldet, überweist aber nichts; sie verlinkt Unterkünfte, bucht aber nicht (bleibt Nicht-Ziel, PRD §7).
+
+### R.1 Rollen & Rechte in der Ausbaustufe
+
+**Ist die „buchende Person“ eine eigene Rolle? – Empfehlung: Nein, eine Zuständigkeit (F-056, Q28).** Rollen bleiben Orga und Mitglied (F-004). Zusätzlich kann die Orga bis zu **3 Mitgliedern die Markierung „Bucht“** geben (Standard: die Orga selbst). Begründung: In Freundesgruppen bucht oft nicht die Orga (eine Person bucht Flüge, eine andere die Unterkunft); eine dritte feste Rolle würde das Rollenmodell und alle Rechteprüfungen verkomplizieren, eine Markierung mit genau einem Zusatzrecht (Reisedaten anfragen/sehen) bleibt schlank und prüfbar.
+
+| Aktion | Mitglied | „Bucht“ | Orga |
+|---|---|---|---|
+| Cockpit, Infoseite, Unterkünfte, Ausgaben, freigegebene Unterlagen ansehen | ✔ | ✔ | ✔ |
+| Unterkunft vorschlagen, swipen; Ausgabe eintragen; Unterlage hochladen (Q32) | ✔ | ✔ | ✔ |
+| Eigene Vorschläge/Ausgaben/Unterlagen bearbeiten/löschen | ✔ | ✔ | ✔ (auch fremde) |
+| Infoseite bearbeiten (F-033) | – | ✔ | ✔ |
+| Unterkunft festlegen / als „gebucht“ markieren (F-031) | – | ✔ „gebucht“ | ✔ beides |
+| **Reisedaten anfragen und freigegebene Reisedaten anderer sehen** (F-054) | – | ✔ | nur wenn selbst „Bucht“ |
+| Markierung „Bucht“ vergeben/entziehen (F-056) | – | – | ✔ |
+| Abrechnung abschließen (F-036) | – | – | ✔ |
+
+Alle Rechte werden **serverseitig** geprüft (wie F-004). Die Orga sieht **nicht automatisch** fremde Reisedaten – nur, wer „Bucht“ trägt und eine Freigabe erhalten hat.
+
+### F-053 Reise-Cockpit: Übersicht nach der Festlegung (Phase 3)
+**Als** Mitglied **möchte ich** nach der Festlegung auf einer Seite sehen, was für unsere Reise noch zu tun ist und wie der Stand ist, **damit** ich nicht im Gruppenchat suchen muss und nichts vergessen wird.
+**Als** Orga **möchte ich** auf einen Blick sehen, wo die Gruppe hängt (Unterkunft, Reisedaten, Geld), **damit** ich gezielt nachhaken kann.
+
+Akzeptanzkriterien (Stufe 1):
+- [ ] Ab Phase 3 (`fixed`) zeigt die Übersicht oben weiter den Kopf mit Termin + Vorfreude-Ring/Countdown und „Zum Kalender hinzufügen“ (F-012, W11) – darunter das Cockpit.
+- [ ] **„Für dich zu tun“** (persönliche Aufgabenkarte, nur sichtbar, wenn etwas offen ist): höchstens 3 Einträge, sortiert nach Dringlichkeit, z. B. «Lena bittet um deine Reisedaten», «3 neue Unterkünfte bewerten», «Du schuldest Kemal 23,50 €». Der erste Eintrag ist die **Hauptaktion** der Seite (ux-spec §1.1); alles erledigt → «Alles erledigt – Vorfreude!» (keine leere Karte).
+- [ ] **Kacheln je Bereich** in fester Reihenfolge je Teilphase (s. Tabelle unten), jede mit Titel, **einer** Statuszeile (Text, nie nur Farbe/Ring) und Link in den Bereich. Bereiche, die (noch) nicht gebaut sind, erscheinen nicht.
+- [ ] **Teilphasen nach Datum** (in der Zeitzone der Reise): *Vorbereitung* (bis Tag vor Anreise) · *Unterwegs* (Anreise bis Abreise) · *Danach* (ab Tag nach Abreise). Die Phasenzeile im Kopf lautet entsprechend «Steht fest · noch 41 Tage» / «Unterwegs · Tag 2 von 6» / «Zurück · Kosten ausgleichen» (EN-Texte UX).
+- [ ] **Navigation Phase 3** (Empfehlung an UX, Entscheidung UX/CEO): Tabs «Übersicht · Unterkunft · Kosten · Unterlagen» (Reisedaten als Abschnitt in «Unterlagen», s. F-054); Termin-Historie (Gruppenkalender, Abstimmungsergebnis) über die Karte «So habt ihr entschieden» bzw. das Reisemenü `⋯`. Tabs nur für gebaute Bereiche.
+- [ ] Die **Orga** sieht zusätzlich Fortschritt der Gruppe (z. B. «3 von 5 haben Reisedaten freigegeben», «2 haben noch nicht bewertet») und `[Erinnern]` (Teilen-Text, F-015-Muster) – Mitglieder sehen nur ihren eigenen Stand + neutrale Gruppenzahlen.
+- [ ] Platzhalter (F-007), die noch nicht beigetreten sind, zählen in den Fortschritten mit (wie Q20) und werden als «noch nicht dabei» ausgewiesen.
+- [ ] Statusangaben aktualisieren sich bei Neuladen (kein Live-Update nötig, wie F-008).
+- [ ] Mobile 360 px, Dark Mode, DE/EN, große Schrift (200 %) ohne Funktionsverlust; Kacheln sind Links mit zugänglichem Namen (Titel + Status).
+
+**Kachel-Reihenfolge und Statusbeispiele (Grundlage für UI/UX + Designer):**
+
+| Pos. | Vorbereitung (bis Anreise) | Unterwegs | Danach |
+|---|---|---|---|
+| 0 | Kopf: «Es geht los: 5.–10. Mai» + Countdown-Ring | Kopf: «Tag 2 von 6» | Kopf: «Schön war's!» + Reisezeitraum |
+| 1 | **Für dich zu tun** (falls offen) | Für dich zu tun | Für dich zu tun (meist: ausgleichen) |
+| 2 | **Unterkunft** – «5 Vorschläge · du hast 3 von 5 bewertet» → «Favorit: Casa Azul (4 ♥)» → festgelegt: Bild + «Casa Azul · gebucht ✓» bzw. «noch nicht gebucht» | **Kosten** – «Gesamt 1.240 € · du bekommst 42,00 €» + `[+ Ausgabe]` | **Kosten** – «Noch 3 Ausgleiche offen · du schuldest Kemal 23,50 €» |
+| 3 | **Reisedaten** – Mitglied: «Lena bucht – deine Daten fehlen noch» / «Freigegeben an Lena ✓»; Bucht: «3 von 5 haben freigegeben» | **Unterlagen** – «4 Unterlagen · Flug Rückreise: Fr. 10. Mai» | Unterlagen – «werden am 9. Juni gelöscht» |
+| 4 | **Unterlagen** – «2 Flugtickets · 1 Aktivität · 1 neu» | **Infos** – Adresse, Check-in/out, Treffpunkt (Kurzfassung) | Unterkunft (statisch) |
+| 5 | **Kosten** – «Noch keine Ausgaben» bzw. «Gesamt 640 € · du bekommst 42 €» | Unterkunft (statisch) | Reisedaten – «gelöscht am 17. Mai» bzw. entfällt |
+| 6 | **Infos** (F-033) – «Adresse, Check-in 15 Uhr» / Orga: «Infos ergänzen» | Reisedaten (nur Bucht) | «So habt ihr entschieden» |
+| 7 | «So habt ihr entschieden» (Termin-Historie) + Mitglieder | Mitglieder | – |
+
+Saldo-Formulierungen (verbindlich als Inhalt, Wortlaut UX): **«du bekommst 42,00 €»** / **«du schuldest 23,50 €»** / **«ausgeglichen ✓»** – immer mit Wort, nicht nur mit Vorzeichen oder Farbe.
+
+MVP-Schnitt: Stufe 1 = Kopf + To-dos + Kacheln für gebaute Bereiche + Teilphasen. **Später:** Wetter/Countdown-Spielereien, Kachel-Anpassung durch Nutzer, Live-Updates, Push (F-038).
+Abhängigkeiten: F-012 (Phase 3), F-007 (Status/Platzhalter), F-052 (Motion: Kachel-Eintritt, Ring). Wird mit jedem Bereich (F-031, F-035/036, F-054, F-055) erweitert.
+Aufwand: **S–M** (mit F-033 zusammen ≈ 1 Inkrement).
+
+### F-033 Reise-Infoseite (Text & Links) – präzisiert
+**Als** Mitglied **möchte ich** Adresse, Check-in-Zeiten, Treffpunkt und wichtige Links an einem Ort finden, **damit** ich nicht im Chat suchen muss.
+
+Akzeptanzkriterien (Stufe 1):
+- [ ] Strukturierte Felder (alle optional): Unterkunftsadresse (übernehmbar aus festgelegter Unterkunft F-031), Check-in/Check-out (Datum/Uhrzeit), Treffpunkt/Anreise, Notfallkontakt **der Unterkunft** (nicht von Personen), freier Text (≤ 2 000 Zeichen, Zeilenumbrüche + automatisch erkannte Links, kein HTML).
+- [ ] Bearbeiten: Orga und „Bucht“ (R.1); Anzeige: alle Mitglieder. „Zuletzt geändert von <Name>, <Datum>“.
+- [ ] Adresse mit Link „In Karten öffnen“ (normaler Link zu einem Kartendienst, **keine eingebettete Karte** – keine Drittinhalte, compliance-checklist §4).
+- [ ] Hinweis im Feld Freitext: «Keine Ausweis- oder Buchungsnummern hier eintragen – dafür gibt es Reisedaten und Unterlagen.»
+- **Dateien** gehören nicht mehr zu F-033, sondern zu **F-055**.
+
+MVP-Schnitt: wie oben. **Später:** mehrere Orte (Rundreise), Tagesplan/Programm, Checkliste (→ F-032).
+Abhängigkeiten: F-053. Aufwand: **S**.
+
+### F-031 Unterkünfte sammeln & per Swipe bewerten – Steckbrief
+**Als** Mitglied **möchte ich** Unterkünfte per Link vorschlagen, **damit** alle Ideen an einem Ort sind statt verstreut im Chat.
+**Als** Mitglied **möchte ich** alle Vorschläge wie Karten durchswipen (gefällt mir / eher nicht), **damit** ich schnell und ohne Diskussion meine Meinung abgebe.
+**Als** Orga **möchte ich** eine Rangliste sehen und die Gewinner-Unterkunft festlegen, **damit** gebucht werden kann.
+
+Akzeptanzkriterien (Stufe 1 – Inkrement 9):
+- [ ] **Verfügbar ab Phase 3** (Termin steht – Preise und Verfügbarkeit hängen am Datum). Kachel im Cockpit + Tab «Unterkunft».
+- [ ] **Vorschlagen** (alle Mitglieder): **Link Pflicht** (nur `https://`), Titel Pflicht (wird aus der Link-Vorschau vorbelegt), Gesamtpreis optional (Währung der Reise), Notiz optional (≤ 200 Zeichen, Hinweis «Alle in der Reise können das lesen»). Die App zeigt zusätzlich **«≈ X € pro Person»** (Gesamtpreis ÷ Anzahl Reisende = Mitglieder + Platzhalter; Anzahl von der Orga änderbar). Max. **30 Vorschläge** pro Reise.
+- [ ] **Link-Vorschau (best effort):** Der Server lädt Titel, Beschreibung und Vorschaubild (Open Graph) – mit SSRF-Schutz (nur https, nur öffentliche IP-Adressen auch nach Weiterleitungen, max. 3 Weiterleitungen, Zeitlimit 5 s, max. 1 MB HTML, eigener User-Agent, Rate-Limit pro Person). Klappt das nicht (viele Portale blockieren Abrufe), erscheint sofort eine **Platzhalterkarte** (Domain + Titel + Illustration) – das Vorschlagen wird nie blockiert.
+- [ ] **Vorschaubilder** werden **nicht dauerhaft gespeichert**, sondern über einen eigenen Bild-Proxy ausgeliefert (Größe begrenzt, kurzer Cache ≤ 7 Tage), damit Browser der Mitglieder **keine Drittserver** kontaktieren (keine IP-Weitergabe, CSP bleibt `self`) und keine fremden Fotos archiviert werden (Urheberrecht; Q34). Quelle/Domain ist auf jeder Karte sichtbar; Karte → Link öffnet das Portal in neuem Tab.
+- [ ] **Swipen:** Kartenstapel aller noch nicht bewerteten Vorschläge (auch eigene). **Rechts / ♥ = gefällt mir**, **links / ✕ = eher nicht**; gleichwertige **Buttons** (Pflicht, SC 2.5.7) und Tastatur (← / →); **Rückgängig** für den letzten Swipe; Zähler «3 von 5». Neue Vorschläge erscheinen im Stapel mit Hinweis «2 neue Unterkünfte». Eigene Bewertung bleibt in der Listenansicht änderbar.
+- [ ] **Ergebnis-Sichtbarkeit (analog Q13 a, Q33):** Rangliste und Likes anderer sieht ein Mitglied erst, wenn es **alle aktuellen** Vorschläge bewertet hat; vorher «Swipe alle durch, um das Ranking zu sehen». **Orga sieht immer alles.** Serverseitig durchgesetzt (Daten werden vorher nicht ausgeliefert).
+- [ ] **Rangliste:** (1) meiste ♥, (2) wenigste ✕, (3) niedrigerer Preis pro Person, (4) früher vorgeschlagen. Nach eigener Bewertung sind ♥ namentlich sichtbar (Transparenz wie F-011).
+- [ ] **Festlegen** (Orga): «Das wird's» auf einer Karte → Unterkunft gilt als gewählt (Feier klein, Motion), Teilen-Text «Unsere Unterkunft: <Titel> <Link>»; Swipen endet, Rangliste bleibt sichtbar. Orga oder „Bucht“ markiert später **«gebucht ✓»**; Adresse kann in die Infoseite (F-033) übernommen werden. Festlegung ist aufhebbar.
+- [ ] Löschen: eigener Vorschlag oder Orga (mit Bestätigung; Bewertungen dazu werden gelöscht).
+- [ ] Datenschutz: Beim Verlassen der Reise (F-013) werden eigene Bewertungen gelöscht; eigene Vorschläge bleiben für die Gruppe, als Urheber erscheint «ehemaliges Mitglied».
+
+MVP-Schnitt: **Stufe 1** = Link + Vorschau/Platzhalter + manuelle Felder + Swipe + Rangliste + Festlegen + «gebucht». **Stufe 2 (mit Dateispeicher, Inkrement 12):** bis zu 3 **eigene Screenshots** je Vorschlag als Rückfall, wenn keine Vorschau kommt. **Später:** Superlike/„Muss ich haben“, Kommentare je Unterkunft, Vergleichsansicht (Preis, Schlafplätze, Lage), mehrere Unterkünfte (Rundreise), Erinnerung „noch nicht bewertet“ per E-Mail (F-014).
+Abhängigkeiten: F-053, F-012; Motion Designer (Swipe-Geste, Feder-/Rückhol-Animation, reduzierte Bewegung = Überblenden); Operations (SSRF-sicherer Abruf, Bild-Proxy-Cache).
+Aufwand: **M–L** (≈ 1–1,5 Inkremente; Risiko: Swipe-Gesten im In-App-Browser, Link-Vorschau).
+
+### F-035 + F-036 Kosten teilen (wie Tricount) – Steckbrief
+**Als** Mitreisende **möchte ich** eine Ausgabe in Sekunden eintragen (wer hat bezahlt, für wen), **damit** wir nach der Reise nicht Kassenzettel und Chatnachrichten zusammensuchen.
+**Als** Mitglied **möchte ich** jederzeit meinen Saldo sehen («du bekommst 42 €»), **damit** ich weiß, wo ich stehe.
+**Als** Gruppe **wollen wir** am Ende mit möglichst wenigen Überweisungen ausgleichen, **damit** die Abrechnung keinen Streit auslöst.
+
+Akzeptanzkriterien F-035 Ausgaben (Stufe 1 – Inkrement 10):
+- [ ] **Verfügbar ab Phase 3** (Q35). Kachel im Cockpit + Tab «Kosten». Jedes Mitglied kann Ausgaben eintragen – **ohne Mengenlimit** (bewusste Abgrenzung zu Splitwise, dessen Gratis-Tarif Einträge pro Tag begrenzt).
+- [ ] **Eine Währung pro Reise** (Standard aus der Region der Orga, z. B. EUR; von der Orga änderbar, solange keine Ausgabe existiert). Fremdwährungen → F-037 (später).
+- [ ] Ausgabe: **Betrag** (Pflicht, > 0, max. 2 Nachkommastellen, intern in Cent als Ganzzahl), **Titel** (Pflicht, ≤ 60 Zeichen), **bezahlt von** (genau eine Person, Standard: ich), **für wen** (Standard: alle Reisenden; abwählbar), **Datum** (Standard heute bzw. Anreisetag), Kategorie optional (Unterkunft, Anreise, Essen, Aktivitäten, Sonstiges – mit Icon).
+- [ ] **Aufteilung:** *gleich* (Standard) oder *individuelle Beträge* (Summe muss dem Gesamtbetrag entsprechen; Live-Anzeige «noch 12,00 € zu verteilen»). Rundungsrest in Cent wird deterministisch verteilt (z. B. an die ersten Personen in fester Reihenfolge), Summe stimmt immer exakt.
+- [ ] **Beteiligte:** alle Mitglieder **und Platzhalter** (F-007) – wer nicht in der App ist, kann trotzdem mitgerechnet werden. Tritt eine Person über ihren Platzhalter-Link bei, übernimmt sie dessen Ausgaben und Saldo.
+- [ ] Bearbeiten/Löschen: wer die Ausgabe angelegt hat, wer bezahlt hat, und die Orga; jede Ausgabe zeigt «angelegt von / zuletzt geändert von <Name>, <Datum>». Löschen mit Rückgängig (Snackbar).
+- [ ] Liste: neueste zuerst, gruppiert nach Tag; Summe gesamt und «davon dein Anteil».
+- [ ] Eingabe auf 360 px mit Zahlentastatur (`inputmode="decimal"`), Dezimaltrennzeichen gemäß Region (Komma/Punkt), optimistisches UI (ux-spec §1.3).
+
+Akzeptanzkriterien F-036 Salden & Ausgleich (Stufe 1 – Inkrement 10):
+- [ ] **Saldo je Person** = bezahlt − eigener Anteil (+ erhaltene/geleistete Ausgleichszahlungen). Anzeige als Text «bekommt 42,00 €» / «schuldet 23,50 €» / «ausgeglichen ✓» (nie nur Farbe/Vorzeichen); Summe aller Salden = 0 (Test).
+- [ ] **Ausgleichsvorschlag:** minimale Zahl von Überweisungen (Greedy: größter Schuldner an größten Gläubiger; deterministisch, reine Funktion, testbar; 30 Personen < 100 ms). Darstellung «Kemal → Lena: 23,50 €».
+- [ ] **«Als bezahlt markieren»** durch Zahlende **oder** Empfangende → wird als Ausgleichszahlung gebucht (rückgängig machbar); der Saldo aktualisiert sich.
+- [ ] **Zahlungshinweis (optional, Q35):** Jedes Mitglied kann für diese Reise freiwillig eine Zahlungsinfo hinterlegen (Freitext ≤ 100 Zeichen, z. B. PayPal-Name oder IBAN), sichtbar für Mitglieder der Reise, Hinweis «Alle in der Reise können das lesen»; Kopier-Button. **Keine** Zahlungsabwicklung, keine Bank-/PayPal-Anbindung.
+- [ ] **Abrechnung abschließen** (Orga, ab Teilphase *Danach* empfohlen): Kosten werden schreibgeschützt; Wiederöffnen möglich.
+- [ ] Teilen-Text «Abrechnung <Reise>: Kemal → Lena 23,50 € …» (für den Gruppenchat).
+- [ ] **Datenschutz & Löschung:** Ausgaben werden mit der Reise gelöscht (F-013, 90 Tage nach Reiseende). Hat die Reise **offene Salden**, nennt die Lösch-Hinweismail an die Orga dies ausdrücklich. **Reise verlassen mit offenem Saldo:** Warnung mit Betrag; nach Bestätigung bleiben die Ausgaben für die Gruppe korrekt erhalten, die Person erscheint darin als «ehemaliges Mitglied» (Name wird entfernt) (Q35).
+
+MVP-Schnitt: **Stufe 1** = eine Währung, ein Zahler, gleich/individuelle Beträge, Platzhalter, Salden, Ausgleichsvorschlag, als bezahlt markieren, Abschluss. **Später:** Aufteilung nach Anteilen/Prozent, mehrere Zahler pro Ausgabe, **Belegfotos** (braucht F-055-Speicher; Premium-Kandidat), **Fremdwährungen F-037** (Premium-Kandidat), Export CSV/PDF (Premium-Kandidat), wiederkehrende Ausgaben, Budget (F-034), Statistik nach Kategorie, Ausgaben schon vor Phase 3 (Anzahlungen) – bei Bedarf.
+Abhängigkeiten: F-053, F-007 (Platzhalter), F-046 (Zahlen-/Währungsformate). Kein Dateispeicher, keine sensiblen Daten → **nicht** an Gate G1b gebunden.
+Aufwand: **M–L** (≈ 1,5 Inkremente; Schwerpunkt Rechenlogik + Tests, Formular-UX).
+
+### F-056 Zuständigkeit „Bucht“ (buchende Person)
+**Als** Orga **möchte ich** festlegen, wer für die Gruppe bucht, **damit** diese Person die nötigen Reisedaten bekommt – und nur sie.
+
+Akzeptanzkriterien:
+- [ ] Die Orga kann in der Mitgliederliste bis zu **3 Mitgliedern** die Markierung **«Bucht»** geben/entziehen (Standard bei Phase 3: die Orga selbst, entziehbar). Platzhalter können nicht „Bucht“ sein.
+- [ ] Die Markierung ist für alle sichtbar (Chip «Bucht» / «Booking») – Transparenz, wer Reisedaten sehen kann.
+- [ ] Recht: Reisedaten anfragen und freigegebene Reisedaten sehen (F-054); Infoseite bearbeiten (F-033); Unterkunft als „gebucht“ markieren (F-031).
+- [ ] **Entzug** der Markierung oder Verlassen der Reise beendet sofort den Zugriff auf alle Reisedaten (serverseitig); betroffene Mitglieder sehen in ihrer Freigabe-Übersicht, dass die Freigabe an diese Person erloschen ist.
+- [ ] Orga-Übergabe (F-004) überträgt die Markierung nicht automatisch.
+Aufwand: **S** (mit F-054 zusammen).
+
+### F-054 Persönliche Reisedaten – Abfrage & Freigabe
+**Als** buchende Person **möchte ich** die für eine Buchung nötigen Daten aller Mitreisenden an einem Ort abfragen, **damit** ich sie nicht einzeln per Chat einsammeln muss.
+**Als** Mitreisender **möchte ich** genau sehen, wer welche meiner Daten wofür bekommt, und die Freigabe jederzeit zurückziehen können, **damit** ich meine Ausweisdaten nicht ungeschützt in einen Gruppenchat schreiben muss.
+
+**Grundprinzip „Anfrage → Freigabe“:** Daten werden **nur auf konkrete Anfrage** einer Person mit „Bucht“ (F-056) erfasst und **nur an diese Person** freigegeben – nicht an die Gruppe, nicht automatisch an die Orga. Zeitpunkt: **erst nach der Festlegung** (Auftraggeber-Wunsch).
+
+Datensparsamkeit – welche Felder? (Q29)
+
+| Feld | Standard in Anfrage | Wofür typischerweise nötig | Empfehlung |
+|---|---|---|---|
+| Vor- und Nachname(n) **genau wie im Ausweis** | **immer** | jede Flug-/Bahn-/Fährbuchung | Pflicht |
+| Geburtsdatum | **an** (abwählbar) | viele Airlines (Kinder-/Jugendtarife), Fähren, Mietwagen | an |
+| Geschlecht/Anrede laut Ausweis (w/m/x) | aus | manche Airlines verlangen Anrede | optional anfragbar |
+| Staatsangehörigkeit | aus | Fernreisen, Einreise-/APIS-Daten | optional anfragbar |
+| Dokumentart (Reisepass/Personalausweis) + **Dokumentnummer** | aus | Fernreisen/APIS (z. B. USA, UK), Fähren, teils Hotels im Ausland | optional anfragbar, **mit Warnhinweis** |
+| Ablaufdatum des Dokuments | aus | APIS; Prüfung „gültig bis nach Reiseende“ | optional anfragbar (nur zusammen mit Dokumentnummer) |
+| Ausstellungsland | aus | APIS | optional anfragbar (nur zusammen mit Dokumentnummer) |
+| **Nicht erhoben:** Ausweisfoto/-scan, Adresse, Größe, Augenfarbe, Ausstellungsbehörde, Zugangs-/CAN-Nummer, Vielfliegernummer, Freitext (Risiko Gesundheits-/Ernährungsangaben = besondere Kategorien Art. 9 DSGVO) | – | – | **nie** in Stufe 1 |
+
+Akzeptanzkriterien (Stufe 1 – Inkrement 11):
+- [ ] **Anfrage erstellen** (nur „Bucht“, nur Phase 3): Zweck wählen/benennen (z. B. «Flüge Lissabon», ≤ 60 Zeichen), Felder per Schalter wählen (Standard: Name + Geburtsdatum), Empfänger: alle Reisenden (Standard) oder Auswahl. Bei Dokumentnummer erscheint der Hinweis «Nur anfragen, wenn die Buchung sie wirklich verlangt – innerhalb Europas genügt meist der Name.»
+- [ ] **Mitglied** sieht im Cockpit «Lena bucht <Zweck> und bittet um: Name laut Ausweis, Geburtsdatum» → Formular → **Freigabe-Schritt mit Einwilligung** (nicht vorangekreuzt): «Ich gebe diese Angaben für <Zweck> an Lena frei. Sie werden verschlüsselt gespeichert, nur Lena sieht sie, und sie werden am <Datum> automatisch gelöscht. Ich kann die Freigabe jederzeit zurückziehen.» Ablehnen ist möglich («Ich kläre das direkt mit Lena»), ohne Begründung.
+- [ ] **Sichtbarkeit:** nur die Person selbst und die anfragende „Bucht“-Person. Andere Mitglieder und die Orga (ohne „Bucht“) sehen nur den **Status** («freigegeben / offen / abgelehnt»), nie Inhalte.
+- [ ] **Ansicht für „Bucht“:** Liste der Reisenden mit Status; Daten standardmäßig **maskiert** (z. B. «C01X••••7»), «Anzeigen» und «Kopieren» je Feld (zum Übertragen in Buchungsformulare). Kein Sammel-Export, kein CSV, kein Druck-Layout in Stufe 1.
+- [ ] **Zugriffsprotokoll:** Jede Anzeige/Kopie durch „Bucht“ wird protokolliert (wer, wann, welches Feld – ohne Inhalt); die betroffene Person sieht «Lena hat deine Angaben am 3. März angesehen». Protokoll wird mit den Daten gelöscht.
+- [ ] **Re-Authentifizierung** (Empfehlung): Vor dem ersten Anzeigen fremder Dokumentnummern in einer Sitzung ist eine frische Anmeldung (Code) nötig, wenn die letzte Anmeldung > 12 h zurückliegt.
+- [ ] **Widerruf** jederzeit: sofort unsichtbar für „Bucht“ und **sofort gelöscht** (nicht nur ausgeblendet). Bearbeiten der eigenen Angaben jederzeit; „Bucht“ sieht «geändert am …».
+- [ ] **Hinweis Plausibilität (Could):** Liegt das Ablaufdatum vor dem Reiseende, sieht **nur die Person selbst** «Dein Dokument läuft vor der Rückreise ab».
+- [ ] **Löschung (Q31):** automatisch **7 Tage nach Reiseende** (festgelegtes Abreisedatum), außerdem sofort bei Widerruf, Verlassen der Reise, Entzug „Bucht“ (für diese Anfrage), Reise-/Konto-Löschung. Wird die Festlegung aufgehoben und 30 Tage lang kein neuer Termin festgelegt, werden Reisedaten ebenfalls gelöscht. „Bucht“ kann eine Anfrage vorzeitig als «erledigt – Daten löschen» schließen.
+- [ ] **Speicherung:** Felder **anwendungsseitig verschlüsselt** (AES-256-GCM, Schlüssel außerhalb der Datenbank, z. B. Umgebungs-Secret mit Rotation; Datenbank-Backups enthalten nur Chiffrat). Niemals in Logs, Fehler-Tracking, Analytics, URLs oder E-Mails; Mails (ab F-014) sagen nur «Lena bittet um deine Reisedaten».
+- [ ] Datenexport (F-043) enthält die **eigenen** Reisedaten der Person; der Export der „Bucht“-Person enthält **keine** fremden Reisedaten.
+- [ ] UI-Hinweis für „Bucht“: «Was du außerhalb der App mit den Daten machst (z. B. in ein Buchungsformular eintragen), liegt in deiner Verantwortung – bitte nicht in Chats weiterleiten.»
+
+MVP-Schnitt: **Stufe 1** = Anfrage/Freigabe pro Reise, Felder wie oben, Maskierung, Protokoll, Widerruf, Auto-Löschung. **Später (Q30):** «Für künftige Reisen in meinem Konto merken» (opt-in, eigener Löschpfad, erst nach Sicherheitsreview), Vielfliegernummern, Plausibilitätsprüfung der maschinenlesbaren Prüfziffern, Export für Gruppenbuchungen. **Nie:** Ausweis-Scans/-Fotos.
+Abhängigkeiten: F-012, F-053, **F-056**; Operations (Schlüsselverwaltung, Gate G1b), Reviewer (Security-Review). Rechtliche Prüfung vor echten Daten: Verwendungsbeschränkungen für Ausweis-/Passnummern (u. a. Seriennummer nach PAuswG), DSFA-Schwellwertanalyse.
+Aufwand: **M** (≈ 1 Inkrement inkl. F-056) + Security-Review.
+
+### F-055 Reiseunterlagen – Tickets & Dokumente sicher teilen
+**Als** buchende Person **möchte ich** Flugtickets, Buchungsbestätigungen und Aktivitäten-Tickets in der Reise ablegen, **damit** alle sie unterwegs griffbereit haben.
+**Als** Mitreisender **möchte ich** meine Tickets offline auf dem Handy öffnen können, **damit** ich am Gate nicht nach der Mail suchen muss.
+
+Akzeptanzkriterien (Stufe 1 – Inkrement 12):
+- [ ] **Verfügbar ab Phase 3.** Tab «Unterlagen» (gemeinsam mit dem Abschnitt Reisedaten, F-054) + Cockpit-Kachel.
+- [ ] **Hochladen (Q32):** alle Mitglieder. Je Unterlage: Datei, Titel (vorbelegt aus Dateiname), Kategorie (Flug/Anreise, Unterkunft, Aktivität, Sonstiges), optional Datum (für Sortierung «nächste zuerst» und Teilphase *Unterwegs*).
+- [ ] **Sichtbarkeit je Unterlage:** *alle in der Reise* (Standard für Gruppenbuchungen) oder *nur ausgewählte Personen* (z. B. persönliche Bordkarte). Hinweis beim Hochladen: «Tickets enthalten oft Buchungscode + Nachname – damit kann man eine Buchung ändern. Teile persönliche Tickets nur mit der Person.»
+- [ ] **Dateitypen:** PDF, JPG, PNG, HEIC (wird in JPG umgewandelt). Prüfung über Dateiinhalt (Magic Bytes), nicht nur Endung. **Keine** Office-Dateien, Archive, ausführbaren Dateien, SVG/HTML.
+- [ ] **Größen:** max. **10 MB pro Datei**, Kontingent **100 MB pro Reise** in Free (Premium-Kandidat: mehr), max. 50 Dateien pro Reise.
+- [ ] **Bilder** werden serverseitig neu kodiert; **Metadaten (EXIF inkl. GPS) werden entfernt**.
+- [ ] **Virenscan** jeder Datei vor Freigabe (z. B. ClamAV, selbst gehostet); bis zum Ergebnis Status «wird geprüft»; Fund → Datei verworfen, Hinweis an Hochladende.
+- [ ] **Auslieferung** nur nach Login + Mitgliedschafts-/Sichtbarkeitsprüfung, über kurzlebige Download-Links (≤ 60 s) bzw. durch die App gestreamt; **keine öffentlichen Datei-URLs**. Antwort-Header `Content-Disposition`, `X-Content-Type-Options: nosniff`, restriktive CSP/Sandbox für PDFs (kein Ausführen von Skripten im App-Ursprung).
+- [ ] **Speicher:** privater, EU-gehosteter Objektspeicher (Empfehlung Go-Live: S3-kompatibler Speicher in Deutschland, z. B. Hetzner Object Storage – gleicher Anbieter/AVV wie Hosting), Verschlüsselung at rest; Backups gemäß Löschkonzept.
+- [ ] **Löschung (Q31):** Hochladende und Orga können löschen (sofort, auch aus dem Speicher). Automatisch **30 Tage nach Reiseende**, sonst mit Reise/Konto. Cockpit zeigt in *Danach* «Unterlagen werden am <Datum> gelöscht – jetzt herunterladen». Beim **Verlassen** der Reise fragt die App: «Deine 3 Unterlagen für die Gruppe behalten oder löschen?» (Standard: löschen, wenn nur für einen selbst sichtbar).
+- [ ] Ansicht offline: Download/«Auf dem Handy speichern» ist möglich; echtes Offline-Caching in der App erst mit PWA (F-038).
+
+MVP-Schnitt: **Stufe 1** = Upload, zwei Sichtbarkeitsstufen, Kategorien, Scan, Auto-Löschung. **Später:** Wallet-Pässe (.pkpass), Unterlagen per E-Mail-Weiterleitung an eine Reise-Adresse, Vorschau-Thumbnails von PDFs, mehr Speicher (Premium-Kandidat), Belegfotos für F-035 und Screenshots für F-031 (nutzen dieselbe Datei-Infrastruktur – Screenshots F-031 bereits in Inkrement 12).
+Abhängigkeiten: F-053, Datei-Infrastruktur (Operations: Speicher, Scan, Kosten), Gate G1b für echte Dateien; Nutzungsbedingungen (keine rechtswidrigen Inhalte, Hochladende verantwortlich) und Meldeweg für Inhalte (DSA-Pflichten für Hosting-Dienste prüfen, Operations).
+Aufwand: **L** (≈ 1,5–2 Inkremente inkl. Infrastruktur).
+
+### R.2 Reihenfolge-Empfehlung (Nutzen / Aufwand / Risiko)
+
+| Inkrement | Inhalt | Nutzen | Aufwand | Risiko | Begründung |
+|---|---|---|---|---|---|
+| **8** | F-053 Reise-Cockpit + F-033 Infoseite (Text/Links) + Phase-3-Navigation | hoch (sichtbarer Sprung „Reise managen“) | S–M (≈ 1) | gering | Rahmen, in den alles Weitere einsteckt; ohne Cockpit hätte jedes Feature eine Insellösung. |
+| **9** | F-031 Unterkünfte Stufe 1 (Link, Vorschau, Swipe, Rangliste, Festlegen) | sehr hoch (Auftraggeber-Idee, chronologisch der erste Schritt nach dem Termin, Spaß-Faktor) | M–L (≈ 1–1,5) | mittel (Gesten, Link-Vorschau) | Kommt in der echten Reiseplanung direkt nach der Festlegung; kein Dateispeicher nötig, keine sensiblen Daten. |
+| **10** | F-035 + F-036 Kosten teilen Stufe 1 | sehr hoch (Bindung bis nach der Reise, starkes Premium-Umfeld) | M–L (≈ 1,5) | gering–mittel (Rechenlogik, gut testbar) | Großer Nutzen, keine sensiblen Daten, nicht an G1b gebunden → mit echten Gruppen ab Beta nutzbar. |
+| **11** | F-056 „Bucht“ + F-054 Reisedaten Stufe 1 | hoch (echtes Ärgernis), aber kleinere Nutzerzahl je Reise | M (≈ 1) + Security-Review | **hoch** (Ausweisdaten) | Braucht Verschlüsselung, Schlüsselverwaltung, rechtliche Prüfung – mit echten Daten erst nach G1b; in Demo/Vorschau voll vorführbar. |
+| **12** | F-055 Unterlagen Stufe 1 + Datei-Infrastruktur + F-031 Screenshots | hoch unterwegs | L (≈ 1,5–2) | **hoch** (Dateien, Scan, Kosten) | Größter Infrastruktur-Anteil (Speicher, Virenscan, Header-Härtung); bündelt alle Datei-Funktionen in einem Schritt. |
+
+**Summe: ≈ 6–7 Inkremente** (Bezugsgröße: bisherige Inkremente 1–6). Alternative (Q27): Reisedaten (Inkrement 11) vor Kosten (10) ziehen, falls dem Auftraggeber die Chronologie der echten Reiseplanung wichtiger ist – technisch keine Abhängigkeit.
+
+### R.3 Monetarisierung (Bezug F-050, Q8, Q36)
+
+| Bereich | Free (dauerhaft) | Premium-Kandidat (Reise-Pass, gilt für alle Mitglieder der Reise) |
+|---|---|---|
+| Cockpit & Infoseite (F-053, F-033) | vollständig | personalisiertes Titelbild/Farbe der Reise |
+| Unterkünfte (F-031) | Vorschlagen, Swipen, Rangliste, Festlegen | eigene Screenshots > 1 pro Vorschlag, Vergleichsansicht, Superlike |
+| Kosten (F-035/F-036) | **unbegrenzte Ausgaben**, Salden, Ausgleich | Fremdwährungen (F-037), Belegfotos, Export CSV/PDF, Anteile/mehrere Zahler (zu prüfen) |
+| Reisedaten (F-054) | **vollständig** (Sicherheitsfunktion – nie hinter Bezahlschranke, sonst wandern Ausweisdaten zurück in den Chat) | – |
+| Unterlagen (F-055) | bis 100 MB / 50 Dateien pro Reise | mehr Speicher/größere Dateien, Wallet-Pässe |
+
+Hinweis Kosten: Speicher ist kein Kostentreiber (EU-Objektspeicher ca. 6–7 €/Monat inkl. 1 TB laut Drittquellen 2026, Preis vor Bestellung prüfen; 1 TB ≈ 10 000 Reisen mit vollem 100-MB-Kontingent). Relevanter sind Virenscan (ClamAV braucht ca. 1–1,5 GB RAM → ggf. größere VM) und Betriebsaufwand → Operations bewertet.
+
+### R.4 Datenschutz & Sicherheit – Empfehlungen (Zusammenfassung für Operations/Reviewer)
+- **Klassifizierung:** Ausweis-/Passnummern, Geburtsdaten und Tickets mit Namen/Buchungscodes sind personenbezogene Daten mit **hohem Missbrauchsrisiko** (Identitätsdiebstahl, Buchungsmanipulation). Keine besondere Kategorie nach Art. 9 DSGVO – solange **kein Freitext** (Gesundheit/Ernährung/Religion) erhoben wird. Für F-054/F-055 eine **DSFA-Schwellwertanalyse**, voraussichtlich eine schlanke **DSFA**, vor echten Daten.
+- **Rechtsgrundlage:** F-054 per **Einwilligung** (Art. 6 Abs. 1 lit. a) je Freigabe, protokolliert, widerrufbar; F-055 und F-035/036 als Teil der Nutzung (Art. 6 Abs. 1 lit. b). Datenschutzerklärung ergänzen (neue Abschnitte, Empfänger Objektspeicher, Virenscan, Löschfristen).
+- **Sichtbarkeit:** Need-to-know – Reisedaten nur an die anfragende „Bucht“-Person; Unterlagen „alle“ oder „ausgewählte“; Orga ohne Sonderzugriff auf Inhalte.
+- **Verschlüsselung:** TLS; at rest (DB, Objektspeicher, Backups); **zusätzlich anwendungsseitig** für Reisedaten-Felder. Ende-zu-Ende-Verschlüsselung ist für Stufe 1 **nicht** empfohlen: passwortlose Konten haben kein Nutzergeheimnis für Schlüssel, Gerätewechsel/Wiederherstellung würde Daten unlesbar machen – erneut bewerten, falls „im Konto merken“ (Q30) kommt.
+- **Löschfristen (Q31):** Reisedaten 7 Tage nach Reiseende · Unterlagen 30 Tage nach Reiseende · übrige Reisedaten (Unterkünfte, Ausgaben) wie bisher 90 Tage (F-013) · Backups max. 30 Tage.
+- **Dateien:** Magic-Byte-Prüfung, Typ-Whitelist, Größenlimits, Virenscan, EXIF-Entfernung, keine öffentlichen URLs, Header-Härtung, Rate-Limits für Upload.
+- **Link-Vorschau (F-031):** SSRF-Schutz, Bild-Proxy ohne Daueraufbewahrung, keine Drittressourcen im Browser.
+- **Logs/Monitoring:** keine Inhalte aus F-054/F-055, keine Dateinamen mit Personenbezug in Logs; Fehler-Tracking scrubbt Felder.
+- **Neues Gate G1b** (vor echter Nutzung von F-054/F-055, zusätzlich zu G1): Schlüsselverwaltung + Rotation, EU-Objektspeicher mit AVV, Virenscan in Betrieb, DSFA/Schwellwert dokumentiert, VVT/TOM/Löschkonzept ergänzt, Datenschutzerklärung + Nutzungsbedingungen (Upload-Regeln) ergänzt, rechtliche Prüfung zu Ausweisnummern, Security-Review durch Reviewer bestanden. Details roadmap.md.
+
+### R.5 Was ist in Offline-Demo und privater Vorschau (Q25) vertretbar?
+| Feature | Offline-Demo (Docker) | Private Vorschau (Vercel + Neon) |
+|---|---|---|
+| F-053, F-033, F-031, F-035/036 | ✔ voll (Fantasiedaten) | ✔ voll (Fantasiedaten) |
+| F-031 Link-Vorschau | ✔ (Abruf echter Portale ist unkritisch, nur öffentliche Seiten) | ✔, Bild-Proxy mit kurzem Cache |
+| F-054 Reisedaten | ✔ mit Fantasiedaten; Verschlüsselung aktiv (zum Testen) | ✔ nur mit Fantasiedaten; **deutlicher Hinweis im Formular „Demo – keine echten Ausweisdaten eingeben“**; „Demo zurücksetzen“ löscht alles |
+| F-055 Unterlagen | ✔ lokaler Dateispeicher, Scan optional (EICAR-Test) | ✔ nur Beispieldateien, Limit z. B. 2 MB/Datei, 20 Dateien gesamt; Speicher ohne neues Konto (z. B. in der Datenbank) – Entscheidung Operations; Hinweis „keine echten Tickets hochladen“ |
+| Echte Daten (echte Ausweisnummern, echte Tickets) | ✘ | ✘ – erst nach **G1 + G1b** |
+
+Begründung: Vercel ist ein US-Anbieter (Drittlandbezug); für Fantasiedaten unkritisch, für echte Ausweisdaten nicht vertretbar. Für echte Nutzung gilt die Go-Live-Planung (EU-Hosting).
+
+---
+
 ## WON'T (jetzt) – spätere Ausbaustufen
 
-Nur grob beschrieben; werden vor Umsetzung detailliert.
+Nur grob beschrieben; werden vor Umsetzung detailliert. **F-031, F-033, F-035, F-036 sind seit v0.5 im Abschnitt **AUSBAUSTUFE „Reise managen“** (oben) detailliert; die Zeilen unten bleiben als Historie.**
 
 | ID | Feature | Kern-User-Story | Notizen |
 |---|---|---|---|
@@ -490,4 +742,4 @@ Nur grob beschrieben; werden vor Umsetzung detailliert.
 | F-037 | Mehrere Währungen | Als Reisender im Ausland will ich Ausgaben in Fremdwährung erfassen. | Tageskurs oder manueller Kurs; Basiswährung pro Reise. Premium-Kandidat. **Priorität offen (Q7).** |
 | F-038 | PWA / Push | Als Mitglied will ich die App aufs Handy legen und Push erhalten. | Erst nach Nachweis, dass Teilen-Texte/E-Mail nicht reichen. Hinweis: Eine PWA erhält auf iOS **keinen** Kalenderzugriff – kein Ersatz für F-049. |
 | F-049 | Apple-/iOS-Kalender Stufe 3: On-Device-Weg | Als iPhone-Nutzer will ich alle Kalender auf meinem Gerät (iCloud, Exchange, Google) mit einem Tipp übernehmen, ohne etwas öffentlich zu machen oder Passwörter einzugeben. | **Spike in v1**, Umsetzung später. Option A: von uns bereitgestellter **iOS-Kurzbefehl** („Shortcuts“), der lokal per „Kalenderereignisse suchen“ die Termine im Suchzeitraum liest, daraus nur belegte Tage berechnet und diese (ohne Titel) an die Reise übergibt (URL mit signiertem, kurzlebigem Token). Option B: native iOS-App bzw. App Clip mit EventKit (nur bei nachgewiesenem Bedarf, A7). Entscheidung nach Spike + v1-Kennzahlen. |
-| F-050 | Premium-Tarif & Bezahlung | Als Organisator will ich Komfortfunktionen freischalten, damit Planung noch weniger Aufwand ist – während meine Gruppe kostenlos mitmacht. | Freemium (Q4). Abrechnungseinheit/Preis offen (Q8; Tendenz Reise-Pass, optional Jahresabo). Kandidaten: F-019, F-048-Auto-Sync, F-022, F-023, F-024, F-031, F-032, Dateien in F-033, F-037, Exporte, personalisierte Reiseseite. Kern (alle MVP-Features, einmaliger Import) bleibt Free. Voraussetzungen: Zahlungsanbieter, USt/OSS, AGB, Widerruf (→ Operations). |
+| F-050 | Premium-Tarif & Bezahlung | Als Organisator will ich Komfortfunktionen freischalten, damit Planung noch weniger Aufwand ist – während meine Gruppe kostenlos mitmacht. | Freemium (Q4). Abrechnungseinheit/Preis offen (Q8; Tendenz Reise-Pass, optional Jahresabo). Kandidaten: F-019, F-048-Auto-Sync, F-022, F-023, F-024, F-031-Extras (Screenshots, Vergleich), F-032, mehr Speicher in F-055, Belegfotos/Export in F-035/F-036, F-037, personalisierte Reiseseite (Details Abschnitt R.3; Reisedaten F-054 bleiben immer Free). Kern (alle MVP-Features, einmaliger Import) bleibt Free. Voraussetzungen: Zahlungsanbieter, USt/OSS, AGB, Widerruf (→ Operations). |

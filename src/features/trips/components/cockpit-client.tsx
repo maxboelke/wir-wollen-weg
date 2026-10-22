@@ -46,6 +46,29 @@ export interface TabLink {
 }
 
 const TAB_KEY = "ww-tab-from";
+const TABS_RETURN_KEY = "ww-tabs-return";
+
+/**
+ * «Festlegung aufheben» (ux-spec §14.4): the tab bar comes back – it fades in once (`base`,
+ * opacity only, the layout simply jumps); reduced motion: at once.
+ */
+export function markTabsReturn() {
+  try {
+    sessionStorage.setItem(TABS_RETURN_KEY, String(Date.now()));
+  } catch {
+    // storage blocked: no fade
+  }
+}
+
+function takeTabsReturn(): boolean {
+  try {
+    const at = Number(sessionStorage.getItem(TABS_RETURN_KEY) ?? 0);
+    sessionStorage.removeItem(TABS_RETURN_KEY);
+    return Date.now() - at < 5000;
+  } catch {
+    return false;
+  }
+}
 const TAB_FRESH_MS = 2000;
 
 interface TabMove {
@@ -103,6 +126,14 @@ export function TabNav({
       nav.removeEventListener("scroll", update);
       observer?.disconnect();
     };
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!takeTabsReturn() || prefersReducedMotion()) return;
+    navRef.current?.animate([{ opacity: 0 }, { opacity: 1 }], {
+      duration: DURATION.base,
+      easing: EASING.standard,
+    });
   }, []);
 
   useLayoutEffect(() => {

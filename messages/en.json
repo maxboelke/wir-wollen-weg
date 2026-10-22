@@ -212,7 +212,7 @@
     "todo": {
       "addDates": "Your dates are still missing",
       "vote": "Vote now",
-      "startVote": "Everyone's submitted – start the vote?",
+      "startVote": "Everyone's added their dates – start the vote?",
       "fixDates": "Ready to lock in the dates"
     },
     "action": {
@@ -647,10 +647,10 @@
       "past": "Past"
     },
     "phaseLineSr": "{done} of {total}",
-    "kpiSubmitted": "{done} of {total} have submitted",
+    "kpiSubmitted": "{done} of {total} have added their dates",
     "kpiVoted": "{done} of {total} have voted",
     "kpiOpen": "Still missing: {names}",
-    "kpiAllDone": "Everyone has submitted.",
+    "kpiAllDone": "Everyone has added their dates.",
     "kpiFixed": "{count, plural, one {# day to go} other {# days to go}}",
     "nightsFact": "{count, plural, one {# night} other {# nights}}",
     "nightsRangeFact": "{min}–{max} nights",
@@ -664,17 +664,34 @@
     "stepCurrent": "current step",
     "nextTitle": "Next step",
     "next": {
-      "addDates": "Add your dates – it takes 2 minutes.",
-      "startVote": "Everyone has submitted! Time to vote.",
-      "waiting": "Thanks! Now we're waiting for {names}.",
-      "waitingAll": "Thanks! Now we're waiting for the others.",
-      "vote": "Voting is open – cast your vote.",
-      "voteDone": "{done} of {total} have voted.",
-      "fixed": "The dates are set: {range}.",
       "past": "This trip is over. Time for the next one?",
-      "fixDates": "Everyone has voted! Time to lock in the dates.",
-      "fixDatesDeadline": "The voting deadline has passed. Time to lock in the dates.",
-      "voteWaiting": "Thanks for voting! {done} of {total} have voted so far."
+      "n1_1": "The deadline has passed – add your dates quickly anyway.",
+      "n1_2": "Only your dates are missing – then {orga} can start the vote.",
+      "n1_3": "Only your dates are missing – then you can start the vote.",
+      "n1_4": "Add your dates – it takes 2 minutes.",
+      "n1_5": "Everyone has added their dates! Time to start the vote.",
+      "n1_6": "All members have added their dates. {names} {count, plural, one {hasn't} other {haven't}} joined yet – you can start the vote anyway.",
+      "n1_7": "The deadline for adding dates has passed and {count, plural, one {# person is} other {# people are}} still missing. You can start the vote with the dates you have.",
+      "n1_8": "Your dates are in. Once everyone has added theirs, you can start the vote.",
+      "n1_9": "Everyone has added their dates. Now it's {orga}'s turn to start the vote.",
+      "n1_10": "The deadline for adding dates has passed. Now it's {orga}'s turn to start the vote.",
+      "n1_11": "Thanks, your dates are in! Only {orga}'s dates are missing – then the vote can start.",
+      "n1_12": "Thanks, your dates are in! Once everyone has added theirs, {orga} will start the vote.",
+      "n2_1": "The deadline has passed, but you can still vote until {orga} locks in the dates.",
+      "n2_2": "The deadline has passed. Cast your vote, then lock in the dates.",
+      "n2_3": "Only your vote is missing – then {orga} can lock in the dates.",
+      "n2_4": "Only your vote is missing – then you can lock in the dates.",
+      "n2_5": "Voting is open – cast your vote.",
+      "n2_5Deadline": "Voting is open – cast your vote. Vote by {date}.",
+      "n2_6": "Everyone has voted! Time to lock in the dates.",
+      "n2_7": "The voting deadline has passed – {count, plural, one {# person hasn't} other {# people haven't}} voted. Time to lock in the dates.",
+      "n2_8": "Your vote is in. Once everyone has voted, you lock in the dates – or do it earlier if you like.",
+      "n2_9": "Everyone has voted. Now it's {orga}'s turn to lock in the dates.",
+      "n2_10": "The voting deadline has passed. Now it's {orga}'s turn to lock in the dates.",
+      "n2_11": "Thanks for voting! Only {orga}'s vote is missing – then the dates get locked in.",
+      "n2_12": "Thanks for voting! Once everyone has voted, {orga} will lock in the dates.",
+      "n2_12Deadline": "Thanks for voting! Once everyone has voted – or after the deadline on {date} – {orga} will lock in the dates.",
+      "pastOpen": "The date range has ended without fixed dates."
     },
     "nextAction": {
       "addDates": "Add your dates",
@@ -683,15 +700,21 @@
       "vote": "Vote",
       "newTrip": "Plan a new trip",
       "fixDates": "Lock in dates",
-      "poll": "Go to the vote"
+      "poll": "Go to the vote",
+      "remind": "Remind",
+      "remindOrga": "Remind {orga}",
+      "results": "See results",
+      "nudgeOrga": "Let {orga} know",
+      "editTrip": "Edit trip"
     },
     "membersTitle": "Who's in? ({count})",
     "status": {
-      "open": "not yet",
-      "submitted": "submitted",
+      "submitted": "dates added",
       "voted": "voted",
-      "submittedOn": "submitted · {date}",
-      "placeholder": "Placeholder · not joined yet"
+      "submittedOn": "dates added · {date}",
+      "placeholder": "hasn't joined yet",
+      "openCollect": "no dates yet",
+      "openVote": "hasn't voted yet"
     },
     "organizer": "Organizer",
     "you": "you",
@@ -719,7 +742,8 @@
       "delete": "Delete trip",
       "help": "Help",
       "unfix": "Undo locked dates",
-      "cancelPoll": "Cancel the vote"
+      "cancelPoll": "Cancel the vote",
+      "remind": "Remind the group"
     },
     "dialogs": {
       "leaveTitle": "Leave “{trip}”?",
@@ -755,7 +779,7 @@
       "unfixTitle": "Reopen the dates?",
       "unfixText": "The vote opens again, all votes are kept. If you already shared the dates, correct them in your group chat yourself.",
       "unfixConfirm": "Reopen dates",
-      "unfixDone": "The vote is open again.",
+      "unfixDone": "Dates unlocked – voting is open again.",
       "cancelPollTitle": "Cancel the vote?",
       "cancelPollText": "All options and votes will be deleted. Everyone's dates are kept and the trip goes back to ‘Collecting dates’.",
       "cancelPollKeep": "Keep vote",
@@ -766,11 +790,27 @@
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
     "notFoundAction": "My trips",
     "kpiMore": "{count} more",
-    "membersTitlePlaceholders": "Who's in? ({count} + {placeholders} placeholders)",
+    "membersTitlePlaceholders": "Who's in? ({count} + {placeholders, plural, one {# placeholder} other {# placeholders}})",
     "commentOf": "Comment from {name}",
-    "placeholderManage": "Manage",
     "kpiVoteDeadline": "Vote by {date}",
-    "kpiAllVoted": "Everyone has voted."
+    "kpiAllVoted": "Everyone has voted.",
+    "kpiListOpen": "Open list",
+    "groupOpen": "Still missing ({count})",
+    "groupSubmitted": "Dates added ({count})",
+    "groupVoted": "Voted ({count})",
+    "groupPlaceholders": "Not joined yet ({count})",
+    "groupNotJoined": "Not joined ({count})",
+    "placeholdersManage": "Manage placeholders",
+    "hub": {
+      "decidedTitle": "How you decided",
+      "pollTitle": "Vote results",
+      "pollMeta": "{voted} of {total} voted",
+      "groupTitle": "Group calendar",
+      "groupMeta": "Who could make it when",
+      "searched": "Searched: {range} · {nights}",
+      "upNext": "Up next"
+    },
+    "reopenedNotice": "{orga} has reopened the dates. Voting is open again."
   },
   "share": {
     "title": "Invite friends",
@@ -815,6 +855,24 @@
       "poll": "Voting for {trip} is open! {count} options to choose from – vote by {deadline}: {link}",
       "pollNoDeadline": "Voting for {trip} is open! {count} options to choose from – vote now: {link}",
       "result": "It's on! {trip}: {range} ({nights} nights). Add it to your calendar: {link}"
+    },
+    "remind": {
+      "p1": "Hey {name}, we're still missing your dates for {trip}! Add them quickly – it takes 2 minutes: {link}",
+      "p1Deadline": "Hey {name}, we're still missing your dates for {trip}! Add them by {deadline} – it takes 2 minutes: {link}",
+      "p1Last": "Hey {name}, yours are the last dates we need for {trip}! Add them quickly so we can start the vote: {link}",
+      "p1Placeholder": "Hey {name}, we're still missing you for {trip}! Here's your personal link to add your dates: {link}",
+      "p2": "Hey {name}, we still need your vote for {trip}! Vote here: {link}",
+      "p2Deadline": "Hey {name}, we still need your vote for {trip}! Vote by {deadline}: {link}",
+      "p2Last": "Hey {name}, yours is the last vote we need for {trip}! Vote now so we can lock in the dates: {link}",
+      "allP1One": "{names}, we're still missing your dates for {trip}: {link}",
+      "allP1Many": "{names}, we're still missing your dates for {trip}! Add them quickly so we can plan: {link}",
+      "allP2One": "{names}, we still need your vote for {trip}: {link}",
+      "allP2Many": "{names}, we still need your vote for {trip}: {link}",
+      "nudgeP1All": "Hey {orga}, everyone has added their dates for {trip} – you can start the vote now: {link}",
+      "nudgeP1Deadline": "Hey {orga}, the deadline for {trip} has passed – could you start the vote? {link}",
+      "nudgeP2All": "Hey {orga}, everyone has voted for {trip} – you can lock in the dates now: {link}",
+      "nudgeP2Deadline": "Hey {orga}, the voting deadline for {trip} has passed – could you lock in the dates? {link}",
+      "nudgePlaceholder": "Hey {orga}, {name} still hasn't joined {trip} – could you send them their personal link? {link}"
     }
   },
   "tripSettings": {
@@ -981,7 +1039,6 @@
       "suggestions": "Suggestions",
       "calendar": "Calendar"
     },
-    "kpiOpen": "Still open: {names} – the result may still change.",
     "startVote": "Start a vote",
     "filters": {
       "label": "Filters (just for you)",
@@ -1025,7 +1082,7 @@
       "nobody": "No suggestions yet – as soon as the first people add their dates, we'll start working them out.",
       "addDates": "Add my dates",
       "invite": "Invite friends",
-      "onlyOne": "Only one person has submitted so far – not very telling yet.",
+      "onlyOne": "Only one person has added their dates so far – not very telling yet.",
       "noMatch": "Sadly there are no {count, plural, one {# night} other {# nights}} where everyone's in.",
       "tips": "This might work:",
       "shorter": "With {nights} instead of {min} nights: {count, plural, one {# option} other {# options}}",
@@ -1078,7 +1135,7 @@
       "open": "Still open ({count})",
       "hidden": "Hidden ({count})",
       "nobody": "nobody",
-      "nodata": "Nobody has submitted yet.",
+      "nodata": "Nobody has added their dates yet.",
       "placeholder": "not joined yet",
       "you": "you",
       "comment": "Comment from {name}"
@@ -1096,16 +1153,17 @@
       "suggestion": "Suggestion {rank} of {total}: {range}, {group}",
       "highlight": "Dates {range} highlighted"
     },
-    "submitted": {
-      "title": "Who has submitted? ({done}/{total})",
-      "done": "Submitted ({count})",
-      "open": "Still open ({count})"
-    },
     "pick": "Add to vote",
     "pickedCount": "{count, plural, one {# selected} other {# selected}}",
     "pickedCreate": "Create a vote",
     "goToPoll": "Go to the vote",
-    "pollOpen": "Voting is open – the dates are being decided."
+    "pollOpen": "Voting is open – the dates are being decided.",
+    "whoSubmitted": "Who has added their dates? ({done}/{total})",
+    "basedOn": "Based on {done} of {total} – still waiting for {names}.",
+    "basedOnRemind": "Remind",
+    "basedOnAddDates": "Add your dates",
+    "soFarChip": "So far {done} of {total}",
+    "soFarChipSr": "Based on {done} of {total} people"
   },
   "poll": {
     "title": "Vote",
@@ -1377,5 +1435,29 @@
       "confirmRequired": "Please tick the box first.",
       "generic": "That did not work. Please try again."
     }
+  },
+  "remind": {
+    "titleCollect": "Who has added their dates?",
+    "titleVote": "Who has voted?",
+    "remind": "Remind",
+    "remindName": "Remind {name}",
+    "remindAll": "Remind all ({count})",
+    "allTitle": "Remind everyone",
+    "allLegend": "Who should get a reminder?",
+    "allNone": "Pick at least one person.",
+    "allPlaceholdersOrga": "{names} {count, plural, one {hasn't} other {haven't}} joined yet – remind them one by one with their personal link.",
+    "allPlaceholdersMember": "{names} {count, plural, one {hasn't} other {haven't}} joined yet – {orga} will take care of that.",
+    "back": "Back to the list",
+    "contextCollect": "{name} hasn't added any dates yet.",
+    "contextVote": "{name} hasn't voted yet.",
+    "contextPlaceholder": "{name} hasn't joined yet – the message includes their personal link.",
+    "footer": "Send it to {name} directly or to your group chat.",
+    "footerAll": "Send it straight to your group chat.",
+    "messageLabel": "Message",
+    "whatsapp": "Send via WhatsApp",
+    "whatsappSr": "(opens WhatsApp)",
+    "orgaTitle": "Let {orga} know",
+    "placeholderTitle": "{name} hasn't joined yet",
+    "placeholderText": "Only {orga} has {name}'s personal link. Give them a nudge so they can pass it on."
   }
 }

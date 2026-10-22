@@ -63,6 +63,8 @@ Entscheidung [abstimmung-design §8.1 B-4](../abstimmung-design.md), Regeln [ux-
 ```
 Sheet «Wer hat abgestimmt?»: «Abgestimmt (4)» Lena, Jonas, Tim, Anna · «Noch offen (3)» Kemal, Sara, Paul (gestrichelter Avatar-Ring) · nur Status, **keine** Stimmen · Orga: `[Erinnern]` (→ Flow K). Die Avatar-Reihe im Kopf entfällt.
 
+**Ab 2026-10-20 (Feedback-Runde 1, [ux-spec §14.2](../ux-spec.md)):** Das Sheet ist das gemeinsame Erinnern-Sheet (`RemindSheet`, Phase 2). Reihenfolge «Fehlt noch (3)» zuerst, dann «Abgestimmt (4)». **Jede fehlende Person** hat [Erinnern] → „{Name} erinnern“ mit Text «Hey Kemal, deine Stimme fehlt noch bei Lissabon 2027! Stimm kurz ab: {link}» und [Per WhatsApp senden]. Das gilt für **alle Mitglieder**, nicht nur die Orga. Ab 2 Fehlenden zusätzlich [Alle erinnern (n)]. Eigene Zeile: [Abstimmen] statt [Erinnern]. Weiterhin nur Status, **keine** Stimmen. Die Regel aus ux-spec §13 B4 („`[Erinnern]` entfällt“) ist damit aufgehoben.
+
 - Karten: „Platz 1“-Chip in der Kopfzeile der Karte (bricht das Datum um, nicht sich selbst); Segmente 60 px mit Icon über Label (≥ U-8).
 - Geister-Stimme: sichtbar „Nein?“, zugänglicher Name „Nein“ + Beschreibung „Vorschlag aus deinen Tagen“ (D-34).
 - **Sortierung (M-U3):** Nach der letzten offenen Stimme sortieren sich die Karten **nicht** sofort um; Rang-Reihenfolge erst beim nächsten Öffnen des Tabs.
@@ -133,6 +135,20 @@ Mitglied                              Orga
 │ [Vorschläge ansehen]         │      │ [Abstimmung erstellen]       │
 └──────────────────────────────┘      └──────────────────────────────┘
 ```
+
+## Phase 3 – Unterseite „Abstimmungsergebnis“ (ab 2026-10-20, [ux-spec §14.4](../ux-spec.md))
+```
+│▓(←)  Lissabon 2027             (⋯)▓│  ← = zurück zur Übersicht; keine Tabs
+│▓     Abstimmungsergebnis          ▓│  Untertitel statt Phasenzeile
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ ✓ Termin steht fest: Mi., 5. Mai – │  vorhandenes fixedBanner + Link «Zur Übersicht»
+│   Mo., 10. Mai 2027                │
+│ [Karten schreibgeschützt, alle     │  wie heute phase="fixed": gewählte Option markiert,
+│  Ergebnisse sichtbar]              │  alle Balken sichtbar, keine Orga-Aktionen
+```
+- Erreichbar über die Kachel „Abstimmungsergebnis“ der Übersicht (Phase 3) und über alte Links auf `/poll`.
+- Ist die Feier für die Person noch fällig, geht es per Weiterleitung auf die Übersicht. `/poll/new` leitet in Phase 3 immer auf die Übersicht.
+- `/poll?fix=1` (Orga, Phase 2) öffnet das Sheet „Termin festlegen“ direkt (Einstieg aus der Nächster-Schritt-Karte N2-6/N2-7).
 
 ## Desktop
 Erstellen: Optionen-Liste links (max. 640 px), Mini-Heatmap rechts zur Orientierung. Abstimmen: Karten in einer Spalte (max. 720 px), Ergebnisbalken rechts in der Karte; „Wer hat wie gestimmt?“ als Tabelle (Zeilen = Personen, Spalten = Optionen, Zellen = Ja/Vielleicht/Nein als Text + Symbol) – auf Desktop standardmäßig aufgeklappt.

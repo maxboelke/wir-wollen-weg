@@ -1,0 +1,91 @@
+/* Person row – W07 «Wer ist dabei?», remind sheet (ux-spec §14.2, design-system §9.17) */
+/* Grid: avatar | name (+ Orga) | buttons; status line below name and buttons, so the
+   buttons never squeeze the status (360 px: name «…» + [Erinnern] + [⋯] in one line). */
+/* The row is a container: with large text (200 %) the buttons would squeeze the name to
+   zero width – below 14 em they move under the name (ux-spec §14.2). */
+.item {
+  container-type: inline-size;
+  border-bottom: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.item:last-child {
+  border-bottom: 0;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: var(--ww-space-0-5) var(--ww-space-3);
+  align-items: center;
+  min-height: var(--ww-size-control-md);
+  padding-block: var(--ww-space-2);
+}
+
+.row > :first-child {
+  grid-row: 1 / span 2;
+  align-self: start;
+}
+
+.below {
+  display: flex;
+  grid-column: 2 / -1;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+}
+
+.line {
+  grid-column: 2;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1) var(--ww-space-2);
+  min-width: 0;
+}
+
+.name {
+  overflow: hidden;
+  max-width: 100%;
+  font-weight: var(--ww-font-weight-bold);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.you {
+  color: var(--ww-color-text-muted);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.done {
+  color: var(--ww-color-accent-text);
+}
+
+.actions {
+  display: inline-flex;
+  grid-column: 3;
+  grid-row: 1;
+  align-items: center;
+  gap: var(--ww-space-1);
+}
+
+@container (max-width: 14em) {
+  .row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .actions {
+    flex-wrap: wrap;
+    grid-column: 2;
+    grid-row: auto;
+    order: 1;
+  }
+}

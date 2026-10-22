@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { Illustration } from "@/components/illustrations/illustration";
 import { SealMotion } from "@/components/seal-motion";
@@ -33,6 +34,8 @@ export default async function DaysPage({ params, searchParams }: Params) {
   const { id } = await params;
   const query = await searchParams;
   const view = await loadTripView(id, `/trips/${id}/days`);
+  // Phase 3 has no tabs (ux-spec §14.4): old links to «Meine Tage» land on the overview.
+  if (view.trip.phase === "fixed") redirect(tripPath(view.trip.publicId));
   const t = await getTranslations("days");
   const tTrip = await getTranslations("trip");
   const { trip, me, phase, today, format } = view;

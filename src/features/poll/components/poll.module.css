@@ -15,7 +15,8 @@
   gap: var(--ww-space-2);
 }
 
-.head h1 {
+.head h1,
+.pageTitle {
   font-size: var(--ww-text-3xl);
 }
 

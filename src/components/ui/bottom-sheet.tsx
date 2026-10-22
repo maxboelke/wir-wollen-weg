@@ -16,6 +16,10 @@ interface BottomSheetProps {
    * open, focus moves to the new heading (ux-spec §4.2).
    */
   focusKey?: string | undefined;
+  /** «‹» before the heading (multi-step sheets, e.g. remind sheet → back to the list). */
+  back?: { label: string; onClick: () => void } | undefined;
+  /** Bar below the scrolling body that always stays visible (e.g. «Alle erinnern»). */
+  footer?: ReactNode;
 }
 
 /**
@@ -40,6 +44,8 @@ export function BottomSheet({
   closeLabel,
   children,
   focusKey,
+  back,
+  footer,
 }: BottomSheetProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const titleRef = useRef<HTMLHeadingElement>(null);
@@ -139,9 +145,19 @@ export function BottomSheet({
         onClose();
       }}
     >
-      <div className={styles.panel}>
+      <div className={footer ? `${styles.panel} ${styles.bounded}` : styles.panel}>
         <span className={styles.handle} aria-hidden="true" />
         <div className={styles.head}>
+          {back ? (
+            <button
+              type="button"
+              className={styles.close}
+              aria-label={back.label}
+              onClick={back.onClick}
+            >
+              <Icon name="chevron-left" size={20} />
+            </button>
+          ) : null}
           <h2 id={titleId} ref={titleRef} tabIndex={-1} className={styles.title}>
             {title}
           </h2>
@@ -150,6 +166,7 @@ export function BottomSheet({
           </button>
         </div>
         <div className={styles.body}>{children}</div>
+        {footer ? <div className={styles.footer}>{footer}</div> : null}
       </div>
     </dialog>
   );

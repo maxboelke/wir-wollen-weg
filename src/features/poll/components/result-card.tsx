@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/ui/icon";
@@ -33,6 +33,8 @@ export interface ResultCardProps {
   shareLink: string;
   shareTexts: Record<Locale, string>;
   defaultLocale: Locale;
+  /** Three-step progress at the bottom of the card (phase 3 hub, ux-spec §14.4). */
+  footer?: ReactNode;
 }
 
 /** In-app browsers (WhatsApp, Instagram, Facebook …) often block downloads (Flow D.3). */
@@ -258,6 +260,7 @@ export function ResultCard(props: ResultCardProps) {
           <Icon name="info" size={16} /> {t("inAppHint")}
         </p>
       ) : null}
+      {props.footer}
       <p className="visually-hidden" role="status">
         {downloaded ? t("downloaded") : ""}
       </p>

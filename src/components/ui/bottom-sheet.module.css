@@ -44,7 +44,10 @@
 }
 
 .title {
+  flex: 1;
+  min-width: 0;
   font-size: var(--ww-text-xl);
+  overflow-wrap: anywhere;
 }
 
 .title:focus {
@@ -67,6 +70,49 @@
 .body {
   margin-top: var(--ww-space-3);
   overflow-y: auto;
+}
+
+/*
+ * With a footer the body scrolls inside and the footer stays visible (remind sheet) – but only
+ * when the screen is tall enough for head, footer AND a few list rows. `em` in media queries
+ * follows the browser text size: at 200 % text (or high zoom / landscape) the whole sheet
+ * scrolls and the footer scrolls along (R-070).
+ */
+@media (min-height: 36em) {
+  .bounded {
+    max-height: inherit;
+  }
+
+  .bounded .body {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+}
+
+/* Little height (large text, landscape): compact head so the content starts earlier (R-070). */
+@media (max-height: 35.99em) {
+  .sheet {
+    overflow-y: auto;
+  }
+
+  .handle {
+    margin-bottom: var(--ww-space-1);
+  }
+
+  .title {
+    font-size: var(--ww-text-lg);
+  }
+
+  .body {
+    overflow-y: visible;
+  }
+}
+
+.footer {
+  flex: none;
+  padding-top: var(--ww-space-3);
+  border-top: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+  margin-top: var(--ww-space-3);
 }
 
 @media (min-width: 960px) {

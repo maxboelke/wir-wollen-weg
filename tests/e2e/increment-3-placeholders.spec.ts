@@ -27,9 +27,9 @@ test("organiser adds a placeholder; signing up via its link pre-fills the name a
   await expect(page.getByText(/already has this name/)).toBeVisible();
   await expectNoSeriousAxeViolations(page, "invite page with placeholders");
 
-  // Overview: «Who's in? (1 + 1 placeholders)» with «not joined yet».
+  // Overview: «Who's in? (1 + 1 placeholder)» with «not joined yet».
   await page.goto(`/trips/${publicId}`);
-  await expect(page.getByRole("heading", { name: "Who's in? (1 + 1 placeholders)" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Who's in? (1 + 1 placeholder)" })).toBeVisible();
   await expect(page.getByText(en.trip.status.placeholder)).toBeVisible();
 
   const token = await placeholderToken(publicId, "Kemal");
@@ -77,8 +77,11 @@ test("renew link also renews placeholder links; removing a placeholder kills its
   await page.getByRole("button", { name: en.share.renewConfirm }).click();
   await expect(page.getByText(en.share.renewed)).toBeVisible();
   expect(await placeholderToken(publicId, "Jonas")).not.toBe(jonas);
-  await page.goto(`/i/${jonas ?? ""}`);
-  await expect(page.getByRole("heading", { name: en.invite.invalidTitle })).toBeVisible();
+  // A separate tab: the action's re-render can still navigate this one (WebKit race).
+  const check = await page.context().newPage();
+  await check.goto(`/i/${jonas ?? ""}`);
+  await expect(check.getByRole("heading", { name: en.invite.invalidTitle })).toBeVisible();
+  await check.close();
 
   await page.goto(`/trips/${publicId}/invite`);
   const mia = await placeholderToken(publicId, "Mia");

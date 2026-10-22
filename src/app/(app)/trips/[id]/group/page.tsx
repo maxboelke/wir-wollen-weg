@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import { cookies } from "next/headers";
 import { getTranslations } from "next-intl/server";
 import { Illustration } from "@/components/illustrations/illustration";
+import { redirect } from "next/navigation";
 import { KpiBox } from "@/components/ui/cockpit";
 import { ButtonLink } from "@/components/ui/button-link";
 import { GroupView, type GroupPerson } from "@/features/group/components/group-view";
 import { LEGEND_COOKIE } from "@/features/group/legend-cookie";
 import { tripCalendar, utcFormat } from "@/features/trips/calendar-format";
+import { RemindKpiButton } from "@/features/trips/components/remind-sheet";
 import { RingDraw } from "@/features/trips/components/ring-draw";
 import { TripShell } from "@/features/trips/components/trip-shell";
 import { nameList } from "@/features/trips/format";
@@ -24,13 +26,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     getTranslations("trip"),
     loadTripView(id, `/trips/${id}/group`),
   ]);
-  return { title: `${t("tabs.group")} · ${view.trip.name}` };
+  const title = view.trip.phase === "fixed" ? t("hub.groupTitle") : t("tabs.group");
+  return { title: `${title} · ${view.trip.name}` };
 }
 
 /**
- * KPI box of the group tab (ux-spec §4.10, W09-09): ring + «5 von 7 haben abgegeben» + who is
- * still open (members, then placeholders – Q20). Everyone in → «Alle haben abgegeben.» and the
- * organiser gets «Abstimmung starten». «Erinnern» comes with F-015 (Increment 7).
+ * KPI box of the group tab (ux-spec §4.10, §14.2, W09-09): ring + «5 von 9 haben eingetragen»
+ * + who is still open (members, then placeholders – Q20). While somebody is open the whole box
+ * is a button → «Wer hat eingetragen?» with [Erinnern]. Everyone in → «Alle haben
+ * eingetragen.» and the organiser gets «Abstimmung starten».
  */
 async function GroupKpi({ view }: { view: TripView }) {
   const t = await getTranslations("trip");
@@ -39,29 +43,62 @@ async function GroupKpi({ view }: { view: TripView }) {
   if (!progress || phase !== "collect") return null;
   const open = openNames(view);
   const allIn = open.length === 0;
+  const title = t("kpiSubmitted", { done: progress.done, total: progress.total });
+  const status = allIn
+    ? t("kpiAllDone")
+    : t("kpiOpen", { names: nameList(open, format.locale, (count) => t("kpiMore", { count })) });
+  const box = (
+    <KpiBox
+      value={progress.done}
+      max={progress.total}
+      title={title}
+      text={status}
+      chevron={!allIn}
+      action={
+        allIn && isOrganizer ? (
+          <ButtonLink href={tripPath(trip.publicId, "pollNew")} variant="accent" size="sm">
+            {tGroup("startVote")}
+          </ButtonLink>
+        ) : undefined
+      }
+    />
+  );
   return (
     <RingDraw sessionKey={`kpi:${trip.publicId}:group`}>
-      <KpiBox
-        value={progress.done}
-        max={progress.total}
-        title={t("kpiSubmitted", { done: progress.done, total: progress.total })}
-        text={
-          allIn
-            ? t("kpiAllDone")
-            : tGroup("kpiOpen", {
-                names: nameList(open, format.locale, (count) => t("kpiMore", { count })),
-              })
-        }
-        action={
-          allIn && isOrganizer ? (
-            <ButtonLink href={tripPath(trip.publicId, "pollNew")} variant="accent" size="sm">
-              {tGroup("startVote")}
-            </ButtonLink>
-          ) : undefined
-        }
-      />
+      {allIn ? (
+        box
+      ) : (
+        <RemindKpiButton label={`${title}. ${status}. ${t("kpiListOpen")}`}>{box}</RemindKpiButton>
+      )}
     </RingDraw>
   );
+}
+
+/**
+ * «Basiert auf 5 von 9 – noch offen: du, Kemal und Sara.» (ux-spec §14.3): counts dates
+ * added (placeholders count, Q20) in phase 1 and 2; null when everyone is in or nobody is.
+ */
+async function basedOnHint(view: TripView) {
+  const t = await getTranslations("trip");
+  const tGroup = await getTranslations("group");
+  const { members, placeholders, me, format } = view;
+  const done = members.filter((m) => m.submittedAt).length;
+  const total = members.length + placeholders.length;
+  if (done === 0 || done === total) return null;
+  const others = [
+    ...members.filter((m) => !m.submittedAt && m.userId !== me.userId).map((m) => m.displayName),
+    ...placeholders.map((p) => p.displayName),
+  ];
+  const open = me.submittedAt ? others : [t("you"), ...others];
+  return {
+    done,
+    total,
+    text: tGroup("basedOn", {
+      done,
+      total,
+      names: nameList(open, format.locale, (count) => t("kpiMore", { count })),
+    }),
+  };
 }
 
 /**
@@ -74,6 +111,10 @@ export default async function GroupPage({ params }: Params) {
   const { id } = await params;
   const view = await loadTripView(id, `/trips/${id}/group`);
   const tTrip = await getTranslations("trip");
+  // Phase 3 (ux-spec §14.4): read-only sub-page «Kalender der Gruppe» – while the celebration
+  // is still due for this person, the overview comes first.
+  const settled = view.trip.phase === "fixed";
+  if (settled && view.celebrate) redirect(tripPath(view.trip.publicId));
   const { trip, me, members, placeholders, format, today, isOrganizer } = view;
   const calendar = await tripCalendar(view);
   const rows = await listSubmittedAvailability(trip.id);
@@ -116,8 +157,15 @@ export default async function GroupPage({ params }: Params) {
   const cookieStore = await cookies();
 
   return (
-    <TripShell view={view} tab="group" kpi={<GroupKpi view={view} />}>
-      <h1 className="visually-hidden">{`${tTrip("tabs.group")} · ${trip.name}`}</h1>
+    <TripShell
+      view={view}
+      tab={settled ? null : "group"}
+      subtitle={settled ? tTrip("hub.groupTitle") : undefined}
+      kpi={settled ? undefined : <GroupKpi view={view} />}
+    >
+      <h1 className="visually-hidden">
+        {`${settled ? tTrip("hub.groupTitle") : tTrip("tabs.group")} · ${trip.name}`}
+      </h1>
       <GroupView
         publicId={trip.publicId}
         today={today}
@@ -146,6 +194,8 @@ export default async function GroupPage({ params }: Params) {
         pollNewHref={tripPath(trip.publicId, "pollNew")}
         pollState={view.phase === "collect" ? "none" : view.phase === "vote" ? "open" : "closed"}
         viewerSubmitted={me.submittedAt !== null}
+        basedOn={settled ? null : await basedOnHint(view)}
+        readOnly={settled}
       />
     </TripShell>
   );

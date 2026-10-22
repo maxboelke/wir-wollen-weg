@@ -22,6 +22,8 @@ import {
   transferOrganizerAction,
 } from "../actions";
 import { tripPath } from "../paths";
+import { markTabsReturn } from "./cockpit-client";
+import { useRemind } from "./remind-sheet";
 import styles from "./trip-sheet.module.css";
 
 export interface SheetMember {
@@ -57,6 +59,8 @@ export interface TripSheetContext {
   canUnfix: boolean;
   /** Organiser in phase 2, tab «Abstimmen»: «Abstimmung abbrechen» (Q21, ux-spec §13.1 a). */
   canCancelPoll: boolean;
+  /** Phase 1/2 with somebody else open: «Gruppe erinnern» for everyone (ux-spec §14.2). */
+  canRemind: boolean;
 }
 
 interface TripSheetProps extends TripSheetContext {
@@ -186,6 +190,8 @@ function MenuItem({
 
 function MenuStep({
   onStep,
+  onClose,
+  canRemind,
   publicId,
   isOrganizer,
   canInvite,
@@ -194,8 +200,20 @@ function MenuStep({
   helpHref,
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.menuItems");
+  const remind = useRemind();
   return (
     <ul className={styles.menu}>
+      {canRemind && remind ? (
+        <MenuItem
+          icon="remind"
+          onClick={() => {
+            onClose();
+            remind.open({ step: "status" });
+          }}
+        >
+          {t("remind")}
+        </MenuItem>
+      ) : null}
       {canCancelPoll ? (
         <MenuItem
           icon="undo"
@@ -560,8 +578,8 @@ function DeleteStep({ onClose, publicId, tripName }: { onClose: () => void } & T
 }
 
 /**
- * «Festlegung aufheben» (F-012, W11-07): calm – no animation, the vote opens again with all
- * votes kept; the organiser lands in the tab «Abstimmen».
+ * «Festlegung aufheben» (F-012, W11-07, ux-spec §14.4): calm – the vote opens again with all
+ * votes kept; the organiser stays on the overview, where the tabs fade back in.
  */
 function UnfixStep({ onClose, publicId }: { onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
@@ -582,7 +600,10 @@ function UnfixStep({ onClose, publicId }: { onClose: () => void } & TripSheetCon
               () => {
                 toast({ message: t("unfixDone") });
                 onClose();
-                router.push(tripPath(publicId, "poll"));
+                // ux-spec §14.4: stay on (or go to) the overview – the tab bar comes back with a
+                // fade, focus on the trip name, «Nächster Schritt» shows the N2 row.
+                markTabsReturn();
+                router.push(`${tripPath(publicId)}?unfixed=1`);
               },
             );
           }}

@@ -15,6 +15,11 @@
 // Increment 6: Ben cancelled the vote of «Skiurlaub Arlberg» (Q21 – the others see the notice
 // once in «Abstimmen»), «Kroatien Segeln» is deleted automatically in 10 days (F-013 banner for
 // Anna), ida@demo.test organises «Städtetrip Wien» (with others) and a solo trip (F-043).
+// Feedback-Runde 1 (ux-spec §14): more «Nächster Schritt» rows for Anna – «Kochkurs Toskana»
+// (only the organiser Hanna is open → N1-11 «Hanna erinnern»), «Surfcamp Algarve» (Anna
+// organises, all members in, placeholder Paul open → N1-6), «Silvester Prag» (everyone voted →
+// Anna N2-9 «Ben Bescheid geben», Ben N2-6; Ben had fixed and reopened the dates, so Anna sees
+// «Ben hat den Termin wieder geöffnet» once).
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
 
@@ -109,6 +114,8 @@ interface MemberSeed {
   votes?: ("yes" | "maybe" | "no" | null)[];
   /** Has already seen «Es geht los!» for the fixed range (F-012). */
   celebrated?: boolean;
+  /** Celebrated a range that was unfixed again – reopen notice still due (ux-spec §14.4). */
+  celebratedRange?: [string, string];
 }
 
 interface TripSeed {
@@ -352,6 +359,65 @@ const TRIPS: TripSeed[] = [
       { person: "hanna", submitted: true, voted: true, celebrated: true },
     ],
   },
+  // Feedback-Runde 1 (ux-spec §14.1): Anna is in, only the organiser is open (N1-11).
+  {
+    name: "Kochkurs Toskana",
+    rangeStart: day(35),
+    rangeEnd: day(95),
+    minNights: 3,
+    preferredNights: 4,
+    deadline: day(10),
+    country: "DE",
+    locale: "de",
+    phase: "collecting",
+    members: [
+      { person: "hanna", organizer: true },
+      { person: "anna", submitted: true },
+      { person: "ben", submitted: true },
+    ],
+  },
+  // Anna organises; every member is in, only the placeholder Paul is open (N1-6).
+  {
+    name: "Surfcamp Algarve",
+    description: "Wellen, Sonne, Bohnen aus der Dose.",
+    rangeStart: day(50),
+    rangeEnd: day(110),
+    minNights: 5,
+    country: "DE",
+    locale: "de",
+    phase: "collecting",
+    members: [
+      { person: "anna", organizer: true, submitted: true },
+      { person: "carla", submitted: true },
+      { person: "david", submitted: true },
+    ],
+    placeholders: ["Paul"],
+  },
+  // Everyone voted (Anna N2-9, Ben N2-6); Ben reopened fixed dates – Anna sees the notice once.
+  {
+    name: "Silvester Prag",
+    rangeStart: day(25),
+    rangeEnd: day(80),
+    minNights: 2,
+    preferredNights: 3,
+    country: "DE",
+    locale: "de",
+    phase: "voting",
+    options: [
+      [day(30), day(33)],
+      [day(44), day(47)],
+    ],
+    members: [
+      { person: "ben", organizer: true, submitted: true, votes: ["yes", "maybe"] },
+      {
+        person: "anna",
+        submitted: true,
+        votes: ["yes", "no"],
+        celebratedRange: [day(30), day(33)],
+      },
+      { person: "greta", submitted: true, votes: ["maybe", "yes"] },
+    ],
+  },
   // Increment 6 (F-043): Ida organises a trip with others and a solo trip.
   {
     name: "Städtetrip Wien",
@@ -491,8 +557,8 @@ export async function seedDemo(
           (member.votes ?? []).filter((v) => v !== null).length === optionIds.length;
         await client.query(
           `insert into trip_member (trip_id, user_id, display_name, role, joined_at, submitted_at,
-             voted_at, availability_updated_at, comment, celebrated_for)
-           values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9, $10)`,
+             voted_at, availability_updated_at, comment, celebrated_for, reopen_notice_due)
+           values ($1, $2, $3, $4, now() - make_interval(days => $5), $6, $7, $8, $9, $10, $11)`,
           [
             tripId,
             ids.get(member.person),
@@ -505,7 +571,11 @@ export async function seedDemo(
             member.comment ?? null,
             member.celebrated && seed.fixedStart && seed.fixedEnd
               ? `${seed.fixedStart}/${seed.fixedEnd}`
-              : null,
+              : member.celebratedRange
+                ? member.celebratedRange.join("/")
+                : null,
+            // Celebrated a range that was unfixed since → notice still due (R-069).
+            Boolean(member.celebratedRange) && seed.phase === "voting",
           ],
         );
         for (const [optionIndex, choice] of (member.votes ?? []).entries()) {

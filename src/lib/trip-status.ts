@@ -143,3 +143,234 @@ export function compareTrips(a: SortableTrip, b: SortableTrip, today: IsoDate): 
   const byActivity = b.updatedAt.localeCompare(a.updatedAt);
   return byActivity !== 0 ? byActivity : a.name.localeCompare(b.name);
 }
+
+/* ------------------------------------------------------------------------------------------ */
+/* «Nächster Schritt» (ux-spec §14.1, W07 – Feedback-Runde 1)                                  */
+/* ------------------------------------------------------------------------------------------ */
+
+/** Rows of the matrix in ux-spec §14.1 (first matching row wins) plus phase 3 / past. */
+export type NextStepId =
+  | "N1-1"
+  | "N1-2"
+  | "N1-3"
+  | "N1-4"
+  | "N1-5"
+  | "N1-6"
+  | "N1-7"
+  | "N1-8"
+  | "N1-9"
+  | "N1-10"
+  | "N1-11"
+  | "N1-12"
+  | "N2-1"
+  | "N2-2"
+  | "N2-3"
+  | "N2-4"
+  | "N2-5"
+  | "N2-6"
+  | "N2-7"
+  | "N2-8"
+  | "N2-9"
+  | "N2-10"
+  | "N2-11"
+  | "N2-12"
+  | "past"
+  | "pastOpen";
+
+/**
+ * Actions of the card. `remind` opens the remind sheet (exactly one other person open →
+ * that person, else the list), `remindOrga` the single step for the organiser, `nudgeOrga`
+ * the step «{orga} Bescheid geben».
+ */
+export type NextActionKind =
+  | "addDates"
+  | "startVote"
+  | "remind"
+  | "remindOrga"
+  | "suggestions"
+  | "vote"
+  | "fixDates"
+  | "poll"
+  | "results"
+  | "nudgeOrga"
+  | "newTrip"
+  | "editTrip";
+
+export interface NextAction {
+  kind: NextActionKind;
+  /** At most one primary action; waiting members never get one (§14.1 rule 3). */
+  variant: "primary" | "secondary" | "text";
+}
+
+/** Occasion of «{orga} Bescheid geben» – selects the share text (§14.1). */
+export type OrgaNudge = "p1All" | "p1Deadline" | "p2All" | "p2Deadline";
+
+export interface NextStep {
+  id: NextStepId;
+  params: {
+    /** Number of other people still open (N1-7, N2-7). */
+    count?: number;
+    /** Names of the open placeholders (N1-6). */
+    names?: string[];
+    /** Deadline that is still ahead – the «mit Frist» texts (N2-5, N2-12). */
+    deadline?: IsoDate;
+  };
+  actions: NextAction[];
+  /** «{orga} Bescheid geben» for non-organisers (N1-9, N1-10, N2-9, N2-10). */
+  nudge?: OrgaNudge;
+}
+
+export interface NextStepPerson {
+  userId: string;
+  role: "organizer" | "member";
+  /** Phase 1: dates added («eingetragen»), phase 2: voted. */
+  done: boolean;
+}
+
+export interface NextStepInput {
+  phase: UiPhase;
+  /** Stored phase – tells «past after fixing» from «range over without fixed dates». */
+  storedPhase: StoredPhase;
+  viewerId: string;
+  members: readonly NextStepPerson[];
+  /** Names of the open placeholders (count in phase 1 only, Q20). */
+  placeholders: readonly string[];
+  /** Phase 1: `trip.deadline`, phase 2: `trip.pollDeadline`. */
+  deadline: IsoDate | null;
+  today: IsoDate;
+}
+
+const primary = (kind: NextActionKind): NextAction => ({ kind, variant: "primary" });
+const secondary = (kind: NextActionKind): NextAction => ({ kind, variant: "secondary" });
+const text = (kind: NextActionKind): NextAction => ({ kind, variant: "text" });
+
+/**
+ * «Nächster Schritt» for every phase and role (ux-spec §14.1): rows are evaluated from top to
+ * bottom, the first match wins. Answers «Wo stehen wir? → Wer ist dran? → Was kann ich tun?».
+ * Phase 3 has no card (null) – the result card and the trip hub take over (§14.4).
+ * `viewerTodo` stays the source for «Meine Reisen» (F-044).
+ */
+export function nextStep(input: NextStepInput): NextStep | null {
+  const { phase, viewerId, members, placeholders, deadline, today } = input;
+  if (phase === "fixed") return null;
+  if (phase === "past") {
+    return input.storedPhase === "fixed"
+      ? { id: "past", params: {}, actions: [secondary("newTrip")] }
+      : {
+          id: "pastOpen",
+          params: {},
+          actions: [
+            ...(members.find((m) => m.userId === viewerId)?.role === "organizer"
+              ? [secondary("editTrip")]
+              : []),
+            secondary("newTrip"),
+          ],
+        };
+  }
+  const viewer = members.find((m) => m.userId === viewerId);
+  if (!viewer) return null;
+  const orga = viewer.role === "organizer";
+  const others = members.filter((m) => m.userId !== viewerId);
+  const openMembers = others.filter((m) => !m.done);
+  const passed = deadline !== null && deadline < today;
+  const ahead = deadline !== null && !passed ? { deadline } : {};
+
+  if (phase === "collect") {
+    const openOthers = openMembers.length + placeholders.length;
+    if (!viewer.done) {
+      if (passed) return { id: "N1-1", params: {}, actions: [primary("addDates")] };
+      if (openOthers === 0) {
+        return { id: orga ? "N1-3" : "N1-2", params: {}, actions: [primary("addDates")] };
+      }
+      return { id: "N1-4", params: {}, actions: [primary("addDates")] };
+    }
+    if (orga) {
+      if (openOthers === 0) return { id: "N1-5", params: {}, actions: [primary("startVote")] };
+      if (openMembers.length === 0) {
+        return {
+          id: "N1-6",
+          params: { names: [...placeholders], count: placeholders.length },
+          actions: [primary("startVote"), secondary("remind")],
+        };
+      }
+      if (passed) {
+        return {
+          id: "N1-7",
+          params: { count: openOthers },
+          actions: [primary("startVote"), secondary("remind")],
+        };
+      }
+      return { id: "N1-8", params: {}, actions: [primary("remind"), secondary("suggestions")] };
+    }
+    if (openOthers === 0) {
+      return {
+        id: "N1-9",
+        params: {},
+        actions: [secondary("suggestions"), text("nudgeOrga")],
+        nudge: "p1All",
+      };
+    }
+    if (passed) {
+      return {
+        id: "N1-10",
+        params: {},
+        actions: [secondary("suggestions"), text("nudgeOrga")],
+        nudge: "p1Deadline",
+      };
+    }
+    if (openOthers === 1 && openMembers[0]?.role === "organizer") {
+      return {
+        id: "N1-11",
+        params: {},
+        actions: [secondary("remindOrga"), secondary("suggestions")],
+      };
+    }
+    return { id: "N1-12", params: {}, actions: [secondary("remind"), secondary("suggestions")] };
+  }
+
+  // Phase 2 – members only (placeholders cannot vote).
+  const openOthers = openMembers.length;
+  if (!viewer.done) {
+    if (passed) return { id: orga ? "N2-2" : "N2-1", params: {}, actions: [primary("vote")] };
+    if (openOthers === 0) {
+      return { id: orga ? "N2-4" : "N2-3", params: {}, actions: [primary("vote")] };
+    }
+    return { id: "N2-5", params: { ...ahead }, actions: [primary("vote")] };
+  }
+  if (orga) {
+    if (openOthers === 0) return { id: "N2-6", params: {}, actions: [primary("fixDates")] };
+    if (passed) {
+      return {
+        id: "N2-7",
+        params: { count: openOthers },
+        actions: [primary("fixDates"), secondary("remind")],
+      };
+    }
+    return { id: "N2-8", params: {}, actions: [primary("remind"), secondary("poll")] };
+  }
+  if (openOthers === 0) {
+    return {
+      id: "N2-9",
+      params: {},
+      actions: [secondary("results"), text("nudgeOrga")],
+      nudge: "p2All",
+    };
+  }
+  if (passed) {
+    return {
+      id: "N2-10",
+      params: {},
+      actions: [secondary("results"), text("nudgeOrga")],
+      nudge: "p2Deadline",
+    };
+  }
+  if (openOthers === 1 && openMembers[0]?.role === "organizer") {
+    return { id: "N2-11", params: {}, actions: [secondary("remindOrga"), secondary("poll")] };
+  }
+  return { id: "N2-12", params: { ...ahead }, actions: [secondary("remind"), secondary("poll")] };
+}
+
+/** Phase 3 (stored phase «fixed», also once the trip is over) has no tab bar (§14.4). */
+export function showTabs(trip: { phase: StoredPhase }): boolean {
+  return trip.phase !== "fixed";
+}

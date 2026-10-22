@@ -270,7 +270,8 @@ test.describe("F-012 lock in dates", () => {
   test("organiser: place 1 pre-selected → phase 3, focus on «It's on!», calendar file", async ({
     page,
   }) => {
-    const trip = await seedTrip(`Fix ${String(Date.now())}`);
+    const name = `Fix ${String(Date.now())}`;
+    const trip = await seedTrip(name);
     const email = await signUp(page, "Kemal", uniqueEmail("kemal"));
     await addAccountToTrip(trip.tripId, email, "Kemal");
     await makeOrganizer(trip.tripId, email);
@@ -307,12 +308,20 @@ test.describe("F-012 lock in dates", () => {
     expect(body).toContain(`DTSTART;VALUE=DATE:${day(40).replaceAll("-", "")}`);
     expect(body).toContain(`DTEND;VALUE=DATE:${day(46).replaceAll("-", "")}`);
 
-    // «Undo locked dates» (W11-07): back to voting, votes kept.
+    // Phase 3 has no tabs (ux-spec §14.4).
+    await expect(page.getByRole("navigation", { name: en.trip.tabsLabel })).toHaveCount(0);
+
+    // «Undo locked dates» (W11-07, §14.4): back to voting, votes kept – the organiser stays on
+    // the overview, the tabs come back, focus on the trip name, snackbar.
     await page.getByRole("button", { name: en.trip.menu }).click();
     await page.getByRole("button", { name: en.trip.menuItems.unfix }).click();
     await page.getByRole("button", { name: en.trip.dialogs.unfixConfirm }).click();
-    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/poll$`));
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
+    await expect(page.getByRole("navigation", { name: en.trip.tabsLabel })).toBeVisible();
+    await expect(page.getByText(en.trip.dialogs.unfixDone)).toBeVisible();
+    await expect(page.getByRole("heading", { level: 1, name })).toBeFocused();
     await expect.poll(async () => (await pollState(trip.publicId))?.phase).toBe("voting");
+    await page.goto(`/trips/${trip.publicId}/poll`);
     await expect(page.getByText(fill(p.resultSr, { yes: 2, maybe: 0, no: 0 }))).toBeAttached();
   });
 
@@ -351,13 +360,12 @@ test.describe("«It's on!» celebration (Q17 b)", () => {
     return { ...trip, email };
   }
 
-  test("members: banner on other tabs, celebration once on the overview, then static", async ({
+  test("members: old links lead to the overview, celebration once there, then static", async ({
     page,
   }) => {
     const { publicId, email } = await fixedTrip(page);
-    await page.goto(`/trips/${publicId}/days`);
-    await expect(page.getByText(p.result.bannerFixed)).toBeVisible();
-    await page.getByRole("link", { name: p.result.bannerAction, exact: true }).click();
+    // ux-spec §14.4: phase 3 has no tabs – /poll while the celebration is due → overview.
+    await page.goto(`/trips/${publicId}/poll`);
     await expect(page).toHaveURL(new RegExp(`/trips/${publicId}$`));
     await expect(page.getByRole("heading", { name: p.result.title })).toBeVisible();
     await expect
@@ -370,8 +378,11 @@ test.describe("«It's on!» celebration (Q17 b)", () => {
     // Second visit (another device would be the same – stored per membership): static.
     await page.reload();
     await expect(page.locator("[data-countdown-ring]")).not.toHaveAttribute("data-celebrate", /.*/);
-    await page.goto(`/trips/${publicId}/days`);
-    await expect(page.getByText(p.result.bannerFixed)).toHaveCount(0);
+    // Afterwards /poll is the read-only sub-page «Vote results».
+    await page.goto(`/trips/${publicId}/poll`);
+    await expect(page).toHaveURL(new RegExp(`/trips/${publicId}/poll$`));
+    await expect(page.getByText(p.result.bannerFixed, { exact: true })).toHaveCount(0);
+    await expect(page.getByText(p.fixedBanner)).toBeVisible();
   });
 
   test("a new device sees no celebration once it was seen (server-side marker)", async ({

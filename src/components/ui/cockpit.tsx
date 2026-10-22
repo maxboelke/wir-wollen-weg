@@ -97,24 +97,35 @@ export function CockpitIconButton({ label, children }: { label: string; children
 interface KpiBoxProps {
   value: number;
   max: number;
-  /** Main sentence, e.g. "5 von 7 haben abgegeben" (number never counts up, G-16). */
+  /** Main sentence, e.g. "5 von 7 haben eingetragen" (number never counts up, G-16). */
   title: ReactNode;
   text?: ReactNode;
   action?: ReactNode;
+  /** The box is (inside) a button: chevron at the end, no action (ux-spec §14.2, U-18). */
+  chevron?: boolean | undefined;
 }
 
-/** KPI box in the cockpit: ring 52 px + sentence + optional mint button (design-system §9.3). */
-export function KpiBox({ value, max, title, text, action }: KpiBoxProps) {
+/**
+ * KPI box in the cockpit: ring 52 px + sentence + optional mint button (design-system §9.3).
+ * Only phrasing content (spans), so the whole box can sit inside a `<button>`.
+ */
+export function KpiBox({ value, max, title, text, action, chevron = false }: KpiBoxProps) {
   return (
-    <div className={styles.kpi}>
+    <span className={cx(styles.kpi, chevron && styles.kpiWithChevron)}>
       <ProgressRing value={value} max={max} tone="onBrand" className={styles.kpiRing}>
         <Icon name="users" size={20} />
       </ProgressRing>
-      <div className={styles.kpiText}>
-        <p className={styles.kpiTitle}>{title}</p>
-        {text ? <p className={styles.kpiDetail}>{text}</p> : null}
-      </div>
-      {action ? <div className={styles.kpiAction}>{action}</div> : null}
-    </div>
+      <span className={styles.kpiText}>
+        <span className={styles.kpiTitle}>{title}</span>
+        {text ? <span className={styles.kpiDetail}>{text}</span> : null}
+      </span>
+      {chevron ? (
+        <span className={styles.kpiChevron} aria-hidden="true">
+          <Icon name="chevron-right" size={20} />
+        </span>
+      ) : action ? (
+        <span className={styles.kpiAction}>{action}</span>
+      ) : null}
+    </span>
   );
 }

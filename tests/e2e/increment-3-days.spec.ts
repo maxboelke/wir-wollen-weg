@@ -201,7 +201,7 @@ test.describe("F-005/F-007 submit and status", () => {
     expect((await memberStatus(publicId, email))?.submitted).toBe(true);
     await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
     await page.goto(`/trips/${publicId}`);
-    await expect(page.getByText(/^submitted · /)).toBeVisible();
+    await expect(page.getByText(/^dates added · /)).toBeVisible();
     await expect(page.getByText("Collecting dates · 1/1 done")).toHaveCount(0); // sr text differs
     await expect(page.getByText(en.trip.kpiAllDone)).toBeVisible();
 
@@ -328,7 +328,7 @@ test.describe("security and phases", () => {
       .toEqual({ [isoDay(-3)]: "no", [isoDay(-1)]: "maybe", [day ?? ""]: "no" });
   });
 
-  test("R-047: dates fixed while the page is open – the save is refused with the lock notice", async ({
+  test("R-047: dates fixed while the page is open – the save is refused, the page moves to the overview", async ({
     page,
   }) => {
     const email = await signUp(page, "Tom", uniqueEmail("tom"));
@@ -338,7 +338,8 @@ test.describe("security and phases", () => {
     const [day] = await firstDates(page, 1);
     await fixTripDates(trip.tripId);
     await cell(page, day ?? "").click();
-    await expect(page.getByText(days.banner.locked).first()).toBeVisible();
+    // The refused save refreshes the page; phase 3 has no «My dates» (ux-spec §14.4) → overview.
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
     await expect(page.getByText(days.banner.rangeChanged)).toHaveCount(0);
     expect(await availabilityOf(trip.publicId, email)).toEqual({});
   });
@@ -356,12 +357,14 @@ test.describe("security and phases", () => {
     expect(posts).toEqual([]);
   });
 
-  test("fixed dates: «My dates» is read-only, states stay visible", async ({ page }) => {
+  test("fixed dates: «My dates» is gone – old links land on the overview (ux-spec §14.4)", async ({
+    page,
+  }) => {
     const email = await signUp(page, "Lia", uniqueEmail("lia"));
     const trip = await seedTrip(`Fixed ${String(Date.now())}`, { phase: "fixed" });
     await addAccountToTrip(trip.tripId, email, "Lia");
     await page.goto(`/trips/${trip.publicId}/days`);
-    await expect(page.getByText(days.banner.locked)).toBeVisible();
+    await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
     await expect(cells(page)).toHaveCount(0);
     await expect(page.getByRole("button", { name: days.submit })).toHaveCount(0);
   });
