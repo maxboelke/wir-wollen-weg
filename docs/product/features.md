@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-20 (v0.5, Planung Ausbaustufe „Reise managen“; Entscheidungen Q1–Q6, Q11–Q18, Q20–Q25 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md)
+Stand: 2026-10-22 (v0.6, Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -11,6 +11,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.4 (2026-10-08, Auftraggeber-Entscheidungen Q17/Q18):** Neu **F-052 Bewegung, Animationen & Haptik** (Must, MVP; Querschnitts-Feature) mit Schalter „Bewegung reduzieren“ im Konto zusätzlich zur Systemeinstellung (Q17 a), Reduced-Motion-Regeln, Performance-Leitplanken und dezenter Android-Vibration (Q17 c); Detailkatalog: [docs/motion/interaktionen.md](../motion/interaktionen.md). F-012: Feier „Es geht los!“ für **alle** Mitglieder beim ersten Öffnen nach Festlegung, einmal pro Person (Q17 b). F-043: Abschnitt „Darstellung“ in den Kontoeinstellungen. Look & Feel 2.0 (Q18, Richtung B „Reise-Cockpit“, Palette „Indigo & Minze“) betrifft alle UI-Features optisch, ändert aber keine Akzeptanzkriterien – umgesetzt im Roadmap-Schritt „UI-Fundament“.
 
 **Änderungen v0.5 (2026-10-20, Auftraggeber-Wunsch „Reise managen“, Planung – Entscheidungen Q26–Q36 offen):** Neue **Ausbaustufe „Reise managen“** (nach „Termin finden“) mit detaillierten Steckbriefen im neuen Abschnitt **AUSBAUSTUFE „Reise managen“** (vor „WON'T“): neu **F-053 Reise-Cockpit (Übersicht Phase 3)**, **F-054 Persönliche Reisedaten**, **F-055 Reiseunterlagen (Dateien)**, **F-056 Zuständigkeit „Bucht“**; **F-031** (Unterkünfte per Swipe), **F-033** (Reise-Infoseite, jetzt ohne Dateien – Dateien → F-055), **F-035 + F-036** (Kosten teilen, zusammen als ein Modul) detailliert und aus „Won't“ in die Ausbaustufe gehoben; F-037 bleibt „später“. Einordnung gegenüber v1 (Kalender-Import) und Reihenfolge: PRD Q26/Q27 (beantwortet Q7 und Q19 mit).
+
+**Änderungen v0.6 (2026-10-22, Auftraggeber „Ja zu allem“):** **Q26–Q36 entschieden wie empfohlen** – alle „(Q…)“-Angaben in der Ausbaustufe gelten jetzt als entschieden. **UX-1:** Phase 3 ohne Tabs, Cockpit als Hub. **UX-2:** Reisedaten eigener Bereich (F-054, F-055 angepasst). **F-053 neu gefasst nach W16 v2 „Reiseverlauf“** (Ticket-Kopf, Weg mit Stationen V1–V6/T/D, „Heute“ statt „Für dich zu tun“, Kacheln „Immer griffbereit“, Mehr zur Reise) inkl. **UX-8** (kleine Feier am Abreisetag) und **UX-9** („ohne App erledigt“ durch die Orga). F-031/F-035/F-055: „Tab“ → Station/Kachel + Bereichs-Unterseite. F-033: Bearbeiten in Inkrement 8 nur Orga („Bucht“ ab Inkrement 11). Neu **R.6 Zuschnitt Inkrement 8** mit User Stories, Akzeptanzkriterien, Abgrenzung und Datenhaltung. F-015 und F-017: Umsetzungsstand nachgetragen (Inkrement 7 wird aufgelöst, roadmap.md).
 
 ## Übersicht
 
@@ -30,9 +32,9 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | F-012 | Ergebnis festlegen & verkünden | M | MVP | Free |
 | F-013 | Datenschutz: Reise verlassen/löschen & Aufbewahrung | M | MVP | Free |
 | F-014 | E-Mail-Benachrichtigungen (opt-in) | C | **v1** (verschoben aus MVP) | Free |
-| F-015 | Nachzügler erinnern (Teilen-Text) | S | MVP | Free |
+| F-015 | Nachzügler erinnern (Teilen-Text) – **gebaut** (Feedback-Runde 1, PR #22) | S | MVP | Free |
 | F-016 | Feiertage & Wochenenden einblenden (DE/AT/CH/UK/US) | **M** (hochgestuft) | MVP | Free |
-| F-017 | Abstimmungsfrist | S | MVP | Free |
+| F-017 | Abstimmungsfrist – **großteils gebaut** (Inkrement 5 + Feedback-Runde 1; Rest s. F-017) | S | MVP | Free |
 | ~~F-018~~ | ~~Optionales Konto & Reiseübersicht~~ – **ersetzt durch F-040–F-044** | – | – | – |
 | F-019 | Kalender-Abo-Sync (ICS-URL automatisch aktualisieren) | C | v1 | Premium? |
 | F-020 | Google-Kalender-Anbindung (OAuth, Free/Busy) | C | v1 | Free/Premium? |
@@ -63,7 +65,7 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | **F-051** | **Hilfe-/FAQ-Seite** | **M** | **MVP** | Free |
 | **F-052** | **Bewegung, Animationen & Haptik (Querschnitt, inkl. Schalter „Bewegung reduzieren“)** | **M** (Basis) | **MVP** (Motion-Prio „MVP+“ vor Beta, „später“ danach) | Free |
 | **F-053** | **Reise-Cockpit: Übersicht nach der Festlegung (Phase 3, Hub „Reise managen“)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 8) | Free |
-| **F-054** | **Persönliche Reisedaten (Name laut Ausweis, Geburtsdatum, optional Ausweisdaten) – Abfrage & Freigabe** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11; echte Daten erst nach Gate G1b) | Free |
+| **F-054** | **Persönliche Reisedaten (Name laut Ausweis, Geburtsdatum, optional Ausweisdaten) – Abfrage & Freigabe; eigener Bereich (UX-2)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11; echte Daten erst nach Gate G1b) | Free |
 | **F-055** | **Reiseunterlagen: Tickets & Dokumente sicher teilen (Dateien)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 12; echte Daten erst nach Gate G1b) | Free bis Kontingent · Premium? (mehr Speicher) |
 | **F-056** | **Zuständigkeit „Bucht“ (buchende Person, von der Orga vergeben)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11) | Free |
 
@@ -391,12 +393,18 @@ Akzeptanzkriterien:
 - [ ] Keine E-Mail im MVP; Erinnerungs-E-Mails folgen mit F-014 (v1).
 - [ ] Säumige sehen beim nächsten Besuch das To-do in „Meine Reisen“ (F-044).
 
+**Umsetzungsstand (2026-10-22):** In **Feedback-Runde 1** (ux-spec §14.2, PR #22) vorgezogen und erweitert gebaut: `RemindSheet` (Status · einzeln · alle · Orga), Erinnern für **alle Mitglieder** (nicht nur Orga), WhatsApp als primärer Kanal, Platzhalter-Hinweise, „{Orga} Bescheid geben“. Damit sind die Kriterien oben inhaltlich erfüllt → **Reviewer bestätigt die Abnahme beim nächsten Review** (kein eigenes Inkrement mehr). **Bewusst später (MVP+, CEO-Entscheidung 2026-10-20):** „zuletzt erinnert“ (`reminded_at`, ux-spec §14.2) – nach Beta-Feedback. In Phase 3 nutzt das Cockpit dasselbe `RemindSheet` mit neuen Anlässen (W16 v2.8).
+
 ### F-017 Abstimmungsfrist
 **Als** Organisatorin **möchte ich** eine Frist setzen, **damit** die Entscheidung nicht ewig offen bleibt.
 
 Akzeptanzkriterien:
 - [ ] Optionales Fristdatum für Verfügbarkeitsabgabe und für Abstimmung; Anzeige „noch 3 Tage“; Frist wird in Teilen-Texte übernommen.
 - [ ] Nach Fristablauf wird nicht automatisch entschieden; der Organisator wird per Banner in der Reise und in „Meine Reisen“ aufgefordert, abzuschließen (E-Mail erst mit F-014).
+
+**Umsetzungsstand (2026-10-22):** Gebaut in Inkrement 5 und Feedback-Runde 1: beide Fristen (`deadline` Eintragen, `pollDeadline` Abstimmung), Anzeige in Übersicht/Abstimmen/„Meine Reisen“, Frist in Teilen- und Erinnerungstexten, „Frist vorbei“-Zustände im Nächster-Schritt (N1-1/-7/-10, N2-1/-2/-7/-10), Banner im Tab Abstimmen, To-do „Termin festlegen“ in „Meine Reisen“ nach Ablauf der **Abstimmungs**frist, R-040 (abgelaufene Frist blockiert Bearbeiten nicht). **Rest (klein, „Pflege-Paket“ neben Inkrement 8, s. roadmap.md):**
+- [ ] „Meine Reisen“: Nach Ablauf der **Eintrage**-Frist sieht die Orga auf der Reisekarte ein To-do «Abstimmung starten» (heute nur, wenn alle eingetragen haben) – analog `fixDates` bei der Abstimmungsfrist.
+- Anzeige „noch 3 Tage“: im Tab Abstimmen vorhanden (Kennzahl-Kachel, ux-spec §9); an anderen Stellen genügt das Datum bzw. „Frist vorbei“ – Kriterium gilt als erfüllt.
 
 ## COULD – v1
 
@@ -486,11 +494,11 @@ Akzeptanzkriterien:
 
 **Auftraggeber-Wunsch (2026-10-20, sinngemäß):** Nach der Festlegung zeigt die Reise heute nur noch die Übersicht. Aus ihr heraus soll man künftig **die ganze Reise managen**: (1) Unterkünfte per Swipe, (2) Kosten teilen wie Tricount, (3) persönliche Reisedaten (z. B. Ausweisnummern) für die buchende Person – abgefragt **nach der Einigung auf den Zeitraum**, (4) Reiseunterlagen (Flugtickets, Aktivitäten-Tickets) für alle zugänglich.
 
-**Status:** Planung. Entscheidungen des Auftraggebers offen (PRD §12, **Q26–Q36**). Alle Angaben unten mit „(Q…)“ sind PM-Empfehlungen bis zur Entscheidung.
+**Status:** **Entschieden 2026-10-22** (Auftraggeber „Ja zu allem“: PRD §12 Q26–Q36, UX-1, UX-2, Cockpit-Layout Variante C, UX-8, UX-9). Alle Angaben unten mit „(Q…)“ gelten als entschieden. Umsetzung ab **Inkrement 8** (Zuschnitt R.6).
 
 ### R.0 Leitplanken der Ausbaustufe
 1. **Alles hängt an der festgelegten Reise (Phase 3).** Die neuen Bereiche erscheinen erst, wenn ein Zeitraum feststeht (F-012). Wird die Festlegung aufgehoben, bleiben Unterkünfte, Ausgaben, Reisedaten und Unterlagen erhalten (Hinweis „Termin wird neu abgestimmt“); Fristen, die am Reiseende hängen, werden bei neuer Festlegung neu berechnet.
-2. **Ein Hub, kein Menü-Labyrinth.** Die Übersicht wird zum **Reise-Cockpit** (F-053): oben die persönlichen To-dos, darunter je Bereich eine Kachel mit Status. Jede Kachel führt in ihren Bereich.
+2. **Ein Hub, kein Menü-Labyrinth – ohne Tabs (UX-1).** Die Übersicht wird zum **Reise-Cockpit** (F-053) im Layout „Reiseverlauf“ (W16 v2): der **Weg** zeigt die Schritte der Reise als Stationen mit „Heute“ als einziger Stelle für „was tun“; Bereiche ohne Ende stehen als Kacheln „Immer griffbereit“ darunter. Jeder Bereich hat genau **einen** Einstieg (Station, solange er ein offenes Ende hat, sonst Kachel) und ist eine Unterseite eine Ebene tief.
 3. **Mitmachen bleibt kostenlos** (Prinzip 2): Bewerten, Ausgaben eintragen, eigene Reisedaten freigeben und Unterlagen ansehen sind nie Premium.
 4. **Sensible Daten nur mit Schutzpaket.** F-054 und F-055 dürfen mit **echten** Daten erst nach einem zusätzlichen Sicherheits-/Datenschutz-Gate **G1b** genutzt werden (roadmap.md). In Offline-Demo und privater Vorschau sind sie mit Fantasiedaten vorführbar (R.5).
 5. **Wiederverwenden statt neu erfinden:** Sichtbarkeitsregel „Ergebnis erst nach eigener Bewertung“ (Q13 a), Teilen-Texte (F-002), Kennzahl-Muster des Cockpits (ux-spec §4.10), Motion-System (F-052).
@@ -510,6 +518,7 @@ Akzeptanzkriterien:
 | **Reisedaten anfragen und freigegebene Reisedaten anderer sehen** (F-054) | – | ✔ | nur wenn selbst „Bucht“ |
 | Markierung „Bucht“ vergeben/entziehen (F-056) | – | – | ✔ |
 | Abrechnung abschließen (F-036) | – | – | ✔ |
+| Station „ohne App erledigt“ abhaken / rückgängig (F-053, UX-9) | – | – | ✔ |
 
 Alle Rechte werden **serverseitig** geprüft (wie F-004). Die Orga sieht **nicht automatisch** fremde Reisedaten – nur, wer „Bucht“ trägt und eine Freigabe erhalten hat.
 
@@ -517,18 +526,27 @@ Alle Rechte werden **serverseitig** geprüft (wie F-004). Die Orga sieht **nicht
 **Als** Mitglied **möchte ich** nach der Festlegung auf einer Seite sehen, was für unsere Reise noch zu tun ist und wie der Stand ist, **damit** ich nicht im Gruppenchat suchen muss und nichts vergessen wird.
 **Als** Orga **möchte ich** auf einen Blick sehen, wo die Gruppe hängt (Unterkunft, Reisedaten, Geld), **damit** ich gezielt nachhaken kann.
 
-Akzeptanzkriterien (Stufe 1):
-- [ ] Ab Phase 3 (`fixed`) zeigt die Übersicht oben weiter den Kopf mit Termin + Vorfreude-Ring/Countdown und „Zum Kalender hinzufügen“ (F-012, W11) – darunter das Cockpit.
-- [ ] **„Für dich zu tun“** (persönliche Aufgabenkarte, nur sichtbar, wenn etwas offen ist): höchstens 3 Einträge, sortiert nach Dringlichkeit, z. B. «Lena bittet um deine Reisedaten», «3 neue Unterkünfte bewerten», «Du schuldest Kemal 23,50 €». Der erste Eintrag ist die **Hauptaktion** der Seite (ux-spec §1.1); alles erledigt → «Alles erledigt – Vorfreude!» (keine leere Karte).
-- [ ] **Kacheln je Bereich** in fester Reihenfolge je Teilphase (s. Tabelle unten), jede mit Titel, **einer** Statuszeile (Text, nie nur Farbe/Ring) und Link in den Bereich. Bereiche, die (noch) nicht gebaut sind, erscheinen nicht.
-- [ ] **Teilphasen nach Datum** (in der Zeitzone der Reise): *Vorbereitung* (bis Tag vor Anreise) · *Unterwegs* (Anreise bis Abreise) · *Danach* (ab Tag nach Abreise). Die Phasenzeile im Kopf lautet entsprechend «Steht fest · noch 41 Tage» / «Unterwegs · Tag 2 von 6» / «Zurück · Kosten ausgleichen» (EN-Texte UX).
-- [ ] **Navigation Phase 3** (Empfehlung an UX, Entscheidung UX/CEO): Tabs «Übersicht · Unterkunft · Kosten · Unterlagen» (Reisedaten als Abschnitt in «Unterlagen», s. F-054); Termin-Historie (Gruppenkalender, Abstimmungsergebnis) über die Karte «So habt ihr entschieden» bzw. das Reisemenü `⋯`. Tabs nur für gebaute Bereiche.
-- [ ] Die **Orga** sieht zusätzlich Fortschritt der Gruppe (z. B. «3 von 5 haben Reisedaten freigegeben», «2 haben noch nicht bewertet») und `[Erinnern]` (Teilen-Text, F-015-Muster) – Mitglieder sehen nur ihren eigenen Stand + neutrale Gruppenzahlen.
-- [ ] Platzhalter (F-007), die noch nicht beigetreten sind, zählen in den Fortschritten mit (wie Q20) und werden als «noch nicht dabei» ausgewiesen.
-- [ ] Statusangaben aktualisieren sich bei Neuladen (kein Live-Update nötig, wie F-008).
-- [ ] Mobile 360 px, Dark Mode, DE/EN, große Schrift (200 %) ohne Funktionsverlust; Kacheln sind Links mit zugänglichem Namen (Titel + Status).
+**Gültige Spezifikation: W16 v2 „Reiseverlauf“** (`docs/ux/wireframes/w16-cockpit.md` Teil A, Auftraggeber-Wahl Variante C, 2026-10-22). Die Akzeptanzkriterien unten sind die produktseitige Zusammenfassung; Texte, Zustandstabellen je Station und Rolle (v2.4) und der Developer-Vertrag (v2.10) stehen in W16 v2. Bei Widerspruch gilt W16 v2.
 
-**Kachel-Reihenfolge und Statusbeispiele (Grundlage für UI/UX + Designer):**
+Akzeptanzkriterien (Stufe 1, gesamt über Inkremente 8–12; Inkrement-8-Schnitt siehe **R.6**):
+- [ ] **Hub ohne Tabs (UX-1):** Ab Phase 3 (`fixed`) gibt es keine Tab-Leiste; jeder Bereich ist eine Unterseite eine Ebene tief (Routen W16 Teil B §1), alte Tab-Routen leiten auf die schreibgeschützte Variante um (ux-spec §14.4). Termin-Historie über «So habt ihr entschieden» und das Reisemenü `⋯`.
+- [ ] **Aufbau von oben nach unten (W16 v2.1):** (1) Zeile 1 sticky (Zurück · Reisename + Phasenzeile · `⋯`) · (2) **Ticket-Kopf** mit großem Vorfreude-Ring + Countdown, Reisezeitraum, Crew-Button → „Wer ist dabei?“, eine Kopf-Taste je Teilphase · (3) **Weg** «Euer Weg nach {Reisename}» · (4) **Immer griffbereit** (Kacheln) · (5) **Mehr zur Reise** («So habt ihr entschieden», «Wer ist dabei? (n)»).
+- [ ] **Ring & Konfetti:** Die große Feier „Es geht los!“ (F-012, W11) bleibt einmal je Person und Festlegung. Danach ist der Ring statisch; **Antippen löst eine kleine Konfetti-Runde aus** (≤ 1,2 s, Sperre 3 s, keine Vibration; reduziert: nur Aufglühen). Countdown steht immer auch als Text (Phasenzeile + `sr-only`).
+- [ ] **Weg = Stationen** (Katalog W16 v2.3, feste Reihenfolge): V1 Termin steht · V2 Alle sind dabei · V3 Unterkunft · V4 Reisedaten · V5 Anreise & Tickets · V6 **Ziel „Es geht los!“**; unterwegs Tage mit Terminen (T1…Tn) + Ziel „Heimreise“; danach D1 Kosten ausgleichen · D2 Unterlagen sichern · D3 Reisedaten gelöscht + Ziel „Wohin geht's als Nächstes?“. **Nicht gebaute Bereiche liefern keine Station/Kachel.**
+- [ ] **Fünf Zustände** je Station (erledigt · du bist dran · wartet auf andere · als Nächstes · später) + Ziel, ausgewertet nach den Regeln W16 v2.4 je Rolle (Mitglied / „Bucht“ / Orga). Zustand steht immer **als Wort** im Eintrag, nie nur als Marker/Farbe/Linie. Erledigte Stationen sind zu einer Zeile eingeklappt.
+- [ ] **„Heute“ ersetzt „Für dich zu tun“ (W16 v2.5):** genau ein Heute-Marker mit Datum (Zeitzone der Reise), **Heute-Satz** H-1–H-5 und darunter alle Einträge im Zustand „du bist dran“ (Stationen + Aufgaben ohne Station A1/A2), sortiert nach Dringlichkeit; max. 3 sichtbar, Rest aufklappbar. Der erste Eintrag trägt die **einzige Primär-Taste** der Seite.
+- [ ] **Längen-Budget:** typischer Fall ≤ 2 Bildschirme (390 × 844); Heute-Marker liegt bei 360 × 640 im ersten Bildschirm, die erste Primär-Taste bei 360 × 740 und 390 × 844 (W16 v2.2).
+- [ ] **Kacheln „Immer griffbereit“** (W16 v2.6): nur Bereiche **ohne Ende** bzw. mit erledigter Station, feste Reihenfolge Unterkunft · Unterlagen · Kosten · Infos · Reisedaten; je Kachel Titel + **eine** Statuszeile + Link; keine Kachel für Bereiche mit offener Station; ohne Kacheln entfällt die Überschrift.
+- [ ] **Teilphasen nach Datum** (Zeitzone der Reise): *Vorbereitung* (bis Tag vor Anreise) · *Unterwegs* (Anreise- bis Abreisetag) · *Danach* (ab Tag nach Abreise); Wechsel beim Neuladen. Phasenzeile «Steht fest · noch 41 Tage» / «Unterwegs · Tag 3 von 8» / «Zurück · …».
+- [ ] **Kleine Feier am Abreisetag (UX-8):** am ersten Tag *Unterwegs* einmal je Person kleine Konfetti-Runde automatisch beim Öffnen + Heute-Satz «Heute geht's los – gute Reise!» (Details R.6, I8-07).
+- [ ] **„Ohne App erledigt“ (UX-9):** Die Orga kann V2 («{Name} macht ohne App mit»), V3 («Haben wir schon / brauchen wir nicht») und V5 («Jede:r reist selbst an») als erledigt abhaken; für alle sichtbar als «ohne App erledigt», rückgängig machbar in der Erledigt-Gruppe; serverseitig nur Orga. Umsetzung je Station mit ihrem Inkrement (V2: 8, V3: 9, V5: 12).
+- [ ] **Erinnern / Bescheid geben** bei „wartet auf andere“ über das vorhandene `RemindSheet` (F-015) mit den Anlässen aus W16 v2.8; Reisedaten-Texte enthalten nie Felder oder Werte.
+- [ ] **Rollen:** Mitglieder sehen eigenen Stand + neutrale Gruppenzahlen; Orga zusätzlich Gruppenfortschritt; Orga ohne „Bucht“ sieht bei Reisedaten nie Inhalte (F-054).
+- [ ] Platzhalter (F-007) zählen, wo sie teilnehmen können (Kosten, „€ pro Person“), nicht beim Bewerten/Reisedaten; V2 zeigt offene Platzhalter.
+- [ ] Statusangaben aktualisieren sich bei Neuladen (kein Live-Update, wie F-008).
+- [ ] Mobile 360 px, 320 px, große Schrift (200 %), Dark Mode, DE/EN, Desktop ≥ 960 px zweispaltig; Weg als `<ol>`, Überschriften und Screenreader-Reihenfolge wie W16 v2.9; zugängliche Namen «{Zustand}: {Titel}. {Status}».
+
+**Abgelöst (W16 v1, 2026-10-20):** Die frühere Kachel-Tabelle („Für dich zu tun“ + Kachelraster je Teilphase, Phase-3-Tabs) ist durch W16 v2 ersetzt und bleibt nur als Verlauf stehen:
 
 | Pos. | Vorbereitung (bis Anreise) | Unterwegs | Danach |
 |---|---|---|---|
@@ -543,16 +561,16 @@ Akzeptanzkriterien (Stufe 1):
 
 Saldo-Formulierungen (verbindlich als Inhalt, Wortlaut UX): **«du bekommst 42,00 €»** / **«du schuldest 23,50 €»** / **«ausgeglichen ✓»** – immer mit Wort, nicht nur mit Vorzeichen oder Farbe.
 
-MVP-Schnitt: Stufe 1 = Kopf + To-dos + Kacheln für gebaute Bereiche + Teilphasen. **Später:** Wetter/Countdown-Spielereien, Kachel-Anpassung durch Nutzer, Live-Updates, Push (F-038).
-Abhängigkeiten: F-012 (Phase 3), F-007 (Status/Platzhalter), F-052 (Motion: Kachel-Eintritt, Ring). Wird mit jedem Bereich (F-031, F-035/036, F-054, F-055) erweitert.
-Aufwand: **S–M** (mit F-033 zusammen ≈ 1 Inkrement).
+MVP-Schnitt: Stufe 1 = Ticket-Kopf + Weg (Stationen gebauter Bereiche, Heute, Ziel) + Kacheln + Mehr zur Reise + Teilphasen + UX-8 + UX-9. **Später:** Station „Packen“ (mit F-032), Wetter/weitere Countdown-Spielereien, Kachel-Anpassung durch Nutzer, Live-Updates, Push (F-038), „zuletzt erinnert“.
+Abhängigkeiten: F-012 (Phase 3, Feier W11), F-007 (Status/Platzhalter), F-015 (`RemindSheet`), F-052 (Motion UM-1–UM-7, Designer D-36–D-45 – `docs/ux/abstimmung-design.md` §12). Wird mit jedem Bereich (F-031 → V3, F-054 → V4, F-055 → V5/T/D2, F-035/036 → A1/D1 + Kachel Kosten) um Station/Kachel/Adapter erweitert (Vertrag W16 v2.10).
+Aufwand: **M** (mit F-033 zusammen ≈ 1 Inkrement; gegenüber v1 etwas mehr wegen Weg-Logik `tripRoute()` und UX-8/UX-9).
 
 ### F-033 Reise-Infoseite (Text & Links) – präzisiert
 **Als** Mitglied **möchte ich** Adresse, Check-in-Zeiten, Treffpunkt und wichtige Links an einem Ort finden, **damit** ich nicht im Chat suchen muss.
 
 Akzeptanzkriterien (Stufe 1):
 - [ ] Strukturierte Felder (alle optional): Unterkunftsadresse (übernehmbar aus festgelegter Unterkunft F-031), Check-in/Check-out (Datum/Uhrzeit), Treffpunkt/Anreise, Notfallkontakt **der Unterkunft** (nicht von Personen), freier Text (≤ 2 000 Zeichen, Zeilenumbrüche + automatisch erkannte Links, kein HTML).
-- [ ] Bearbeiten: Orga und „Bucht“ (R.1); Anzeige: alle Mitglieder. „Zuletzt geändert von <Name>, <Datum>“.
+- [ ] Bearbeiten: Orga und „Bucht“ (R.1) – **in Inkrement 8 nur Orga**, „Bucht“ kommt mit F-056 (Inkrement 11) dazu; Anzeige: alle Mitglieder. „Zuletzt geändert von <Name>, <Datum>“. Wireframe W22, Routen `/trips/{id}/info`, `/info/edit`; Einstieg im Cockpit über Kachel „Infos“ und Ziel-Station „Es geht los!“ (W16 v2).
 - [ ] Adresse mit Link „In Karten öffnen“ (normaler Link zu einem Kartendienst, **keine eingebettete Karte** – keine Drittinhalte, compliance-checklist §4).
 - [ ] Hinweis im Feld Freitext: «Keine Ausweis- oder Buchungsnummern hier eintragen – dafür gibt es Reisedaten und Unterlagen.»
 - **Dateien** gehören nicht mehr zu F-033, sondern zu **F-055**.
@@ -566,7 +584,7 @@ Abhängigkeiten: F-053. Aufwand: **S**.
 **Als** Orga **möchte ich** eine Rangliste sehen und die Gewinner-Unterkunft festlegen, **damit** gebucht werden kann.
 
 Akzeptanzkriterien (Stufe 1 – Inkrement 9):
-- [ ] **Verfügbar ab Phase 3** (Termin steht – Preise und Verfügbarkeit hängen am Datum). Kachel im Cockpit + Tab «Unterkunft».
+- [ ] **Verfügbar ab Phase 3** (Termin steht – Preise und Verfügbarkeit hängen am Datum). Einstieg im Cockpit als **Station V3 „Unterkunft“** (Zustände W16 v2.4), nach «gebucht ✓» als Kachel; Bereich `/trips/{id}/stays` (kein Tab, UX-1). Orga kann V3 „ohne App erledigt“ abhaken («Haben wir schon / brauchen wir nicht», UX-9).
 - [ ] **Vorschlagen** (alle Mitglieder): **Link Pflicht** (nur `https://`), Titel Pflicht (wird aus der Link-Vorschau vorbelegt), Gesamtpreis optional (Währung der Reise), Notiz optional (≤ 200 Zeichen, Hinweis «Alle in der Reise können das lesen»). Die App zeigt zusätzlich **«≈ X € pro Person»** (Gesamtpreis ÷ Anzahl Reisende = Mitglieder + Platzhalter; Anzahl von der Orga änderbar). Max. **30 Vorschläge** pro Reise.
 - [ ] **Link-Vorschau (best effort):** Der Server lädt Titel, Beschreibung und Vorschaubild (Open Graph) – mit SSRF-Schutz (nur https, nur öffentliche IP-Adressen auch nach Weiterleitungen, max. 3 Weiterleitungen, Zeitlimit 5 s, max. 1 MB HTML, eigener User-Agent, Rate-Limit pro Person). Klappt das nicht (viele Portale blockieren Abrufe), erscheint sofort eine **Platzhalterkarte** (Domain + Titel + Illustration) – das Vorschlagen wird nie blockiert.
 - [ ] **Vorschaubilder** werden **nicht dauerhaft gespeichert**, sondern über einen eigenen Bild-Proxy ausgeliefert (Größe begrenzt, kurzer Cache ≤ 7 Tage), damit Browser der Mitglieder **keine Drittserver** kontaktieren (keine IP-Weitergabe, CSP bleibt `self`) und keine fremden Fotos archiviert werden (Urheberrecht; Q34). Quelle/Domain ist auf jeder Karte sichtbar; Karte → Link öffnet das Portal in neuem Tab.
@@ -587,7 +605,7 @@ Aufwand: **M–L** (≈ 1–1,5 Inkremente; Risiko: Swipe-Gesten im In-App-Brows
 **Als** Gruppe **wollen wir** am Ende mit möglichst wenigen Überweisungen ausgleichen, **damit** die Abrechnung keinen Streit auslöst.
 
 Akzeptanzkriterien F-035 Ausgaben (Stufe 1 – Inkrement 10):
-- [ ] **Verfügbar ab Phase 3** (Q35). Kachel im Cockpit + Tab «Kosten». Jedes Mitglied kann Ausgaben eintragen – **ohne Mengenlimit** (bewusste Abgrenzung zu Splitwise, dessen Gratis-Tarif Einträge pro Tag begrenzt).
+- [ ] **Verfügbar ab Phase 3** (Q35). Einstieg im Cockpit als Kachel „Kosten“, Aufgabe A1 unter „Heute“ (eigene Schuld ≥ 50 €), in *Danach* Station D1 „Kosten ausgleichen“, unterwegs Kopf-Taste `[+ Ausgabe]` (W16 v2); Bereich `/trips/{id}/costs` (kein Tab, UX-1). Jedes Mitglied kann Ausgaben eintragen – **ohne Mengenlimit** (bewusste Abgrenzung zu Splitwise, dessen Gratis-Tarif Einträge pro Tag begrenzt).
 - [ ] **Eine Währung pro Reise** (Standard aus der Region der Orga, z. B. EUR; von der Orga änderbar, solange keine Ausgabe existiert). Fremdwährungen → F-037 (später).
 - [ ] Ausgabe: **Betrag** (Pflicht, > 0, max. 2 Nachkommastellen, intern in Cent als Ganzzahl), **Titel** (Pflicht, ≤ 60 Zeichen), **bezahlt von** (genau eine Person, Standard: ich), **für wen** (Standard: alle Reisenden; abwählbar), **Datum** (Standard heute bzw. Anreisetag), Kategorie optional (Unterkunft, Anreise, Essen, Aktivitäten, Sonstiges – mit Icon).
 - [ ] **Aufteilung:** *gleich* (Standard) oder *individuelle Beträge* (Summe muss dem Gesamtbetrag entsprechen; Live-Anzeige «noch 12,00 € zu verteilen»). Rundungsrest in Cent wird deterministisch verteilt (z. B. an die ersten Personen in fester Reihenfolge), Summe stimmt immer exakt.
@@ -640,6 +658,7 @@ Datensparsamkeit – welche Felder? (Q29)
 | **Nicht erhoben:** Ausweisfoto/-scan, Adresse, Größe, Augenfarbe, Ausstellungsbehörde, Zugangs-/CAN-Nummer, Vielfliegernummer, Freitext (Risiko Gesundheits-/Ernährungsangaben = besondere Kategorien Art. 9 DSGVO) | – | – | **nie** in Stufe 1 |
 
 Akzeptanzkriterien (Stufe 1 – Inkrement 11):
+- [ ] **Eigener Bereich (UX-2, entschieden 2026-10-22):** Reisedaten sind **nicht** Teil der Unterlagen, sondern ein eigener Bereich `/trips/{id}/travel-data` (W20) mit eigener Station **V4** im Weg (Sichtbarkeit/Zustände W16 v2.4) und Kachel (nur „Bucht“, solange Daten da sind); in *Danach* Station D3 «Reisedaten gelöscht».
 - [ ] **Anfrage erstellen** (nur „Bucht“, nur Phase 3): Zweck wählen/benennen (z. B. «Flüge Lissabon», ≤ 60 Zeichen), Felder per Schalter wählen (Standard: Name + Geburtsdatum), Empfänger: alle Reisenden (Standard) oder Auswahl. Bei Dokumentnummer erscheint der Hinweis «Nur anfragen, wenn die Buchung sie wirklich verlangt – innerhalb Europas genügt meist der Name.»
 - [ ] **Mitglied** sieht im Cockpit «Lena bucht <Zweck> und bittet um: Name laut Ausweis, Geburtsdatum» → Formular → **Freigabe-Schritt mit Einwilligung** (nicht vorangekreuzt): «Ich gebe diese Angaben für <Zweck> an Lena frei. Sie werden verschlüsselt gespeichert, nur Lena sieht sie, und sie werden am <Datum> automatisch gelöscht. Ich kann die Freigabe jederzeit zurückziehen.» Ablehnen ist möglich («Ich kläre das direkt mit Lena»), ohne Begründung.
 - [ ] **Sichtbarkeit:** nur die Person selbst und die anfragende „Bucht“-Person. Andere Mitglieder und die Orga (ohne „Bucht“) sehen nur den **Status** («freigegeben / offen / abgelehnt»), nie Inhalte.
@@ -662,7 +681,7 @@ Aufwand: **M** (≈ 1 Inkrement inkl. F-056) + Security-Review.
 **Als** Mitreisender **möchte ich** meine Tickets offline auf dem Handy öffnen können, **damit** ich am Gate nicht nach der Mail suchen muss.
 
 Akzeptanzkriterien (Stufe 1 – Inkrement 12):
-- [ ] **Verfügbar ab Phase 3.** Tab «Unterlagen» (gemeinsam mit dem Abschnitt Reisedaten, F-054) + Cockpit-Kachel.
+- [ ] **Verfügbar ab Phase 3.** Bereich `/trips/{id}/documents` (W21, kein Tab, UX-1; **ohne** Reisedaten – eigener Bereich, UX-2) + Cockpit-Kachel „Unterlagen“; Station V5 „Anreise & Tickets“ (Orga kann „Jede:r reist selbst an“ abhaken, UX-9), unterwegs Tage mit Terminen (T1…Tn) aus datierten Unterlagen, in *Danach* Station D2 «Unterlagen sichern».
 - [ ] **Hochladen (Q32):** alle Mitglieder. Je Unterlage: Datei, Titel (vorbelegt aus Dateiname), Kategorie (Flug/Anreise, Unterkunft, Aktivität, Sonstiges), optional Datum (für Sortierung «nächste zuerst» und Teilphase *Unterwegs*).
 - [ ] **Sichtbarkeit je Unterlage:** *alle in der Reise* (Standard für Gruppenbuchungen) oder *nur ausgewählte Personen* (z. B. persönliche Bordkarte). Hinweis beim Hochladen: «Tickets enthalten oft Buchungscode + Nachname – damit kann man eine Buchung ändern. Teile persönliche Tickets nur mit der Person.»
 - [ ] **Dateitypen:** PDF, JPG, PNG, HEIC (wird in JPG umgewandelt). Prüfung über Dateiinhalt (Magic Bytes), nicht nur Endung. **Keine** Office-Dateien, Archive, ausführbaren Dateien, SVG/HTML.
@@ -682,7 +701,7 @@ Aufwand: **L** (≈ 1,5–2 Inkremente inkl. Infrastruktur).
 
 | Inkrement | Inhalt | Nutzen | Aufwand | Risiko | Begründung |
 |---|---|---|---|---|---|
-| **8** | F-053 Reise-Cockpit + F-033 Infoseite (Text/Links) + Phase-3-Navigation | hoch (sichtbarer Sprung „Reise managen“) | S–M (≈ 1) | gering | Rahmen, in den alles Weitere einsteckt; ohne Cockpit hätte jedes Feature eine Insellösung. |
+| **8** | F-053 Reise-Cockpit „Reiseverlauf“ (W16 v2: Ticket-Kopf, Weg-Gerüst mit V1, V2, Heute, Ziel; Teilphasen; UX-8; UX-9 für V2) + F-033 Infoseite (Text/Links) – Zuschnitt **R.6** | hoch (sichtbarer Sprung „Reise managen“) | M (≈ 1) | gering–mittel (Weg-Logik, Längen-Budget) | Rahmen, in den alles Weitere einsteckt; ohne Cockpit hätte jedes Feature eine Insellösung. |
 | **9** | F-031 Unterkünfte Stufe 1 (Link, Vorschau, Swipe, Rangliste, Festlegen) | sehr hoch (Auftraggeber-Idee, chronologisch der erste Schritt nach dem Termin, Spaß-Faktor) | M–L (≈ 1–1,5) | mittel (Gesten, Link-Vorschau) | Kommt in der echten Reiseplanung direkt nach der Festlegung; kein Dateispeicher nötig, keine sensiblen Daten. |
 | **10** | F-035 + F-036 Kosten teilen Stufe 1 | sehr hoch (Bindung bis nach der Reise, starkes Premium-Umfeld) | M–L (≈ 1,5) | gering–mittel (Rechenlogik, gut testbar) | Großer Nutzen, keine sensiblen Daten, nicht an G1b gebunden → mit echten Gruppen ab Beta nutzbar. |
 | **11** | F-056 „Bucht“ + F-054 Reisedaten Stufe 1 | hoch (echtes Ärgernis), aber kleinere Nutzerzahl je Reise | M (≈ 1) + Security-Review | **hoch** (Ausweisdaten) | Braucht Verschlüsselung, Schlüsselverwaltung, rechtliche Prüfung – mit echten Daten erst nach G1b; in Demo/Vorschau voll vorführbar. |
@@ -723,6 +742,127 @@ Hinweis Kosten: Speicher ist kein Kostentreiber (EU-Objektspeicher ca. 6–7 €
 | Echte Daten (echte Ausweisnummern, echte Tickets) | ✘ | ✘ – erst nach **G1 + G1b** |
 
 Begründung: Vercel ist ein US-Anbieter (Drittlandbezug); für Fantasiedaten unkritisch, für echte Ausweisdaten nicht vertretbar. Für echte Nutzung gilt die Go-Live-Planung (EU-Hosting).
+
+### R.6 Zuschnitt Inkrement 8 – Cockpit „Reiseverlauf“ + Infoseite (2026-10-22)
+
+**Ziel:** Nach der Festlegung sieht jede Person den **Weg ihrer Reise** – was geschafft ist, was heute zu tun ist, worauf die Gruppe wartet und wann es losgeht – und findet Adresse, Check-in und Treffpunkt an einem Ort. Inkrement 8 baut das **vollständige Gerüst von W16 v2** mit den Stationen, die es ohne spätere Bereiche schon gibt; die Bereiche 9–12 docken danach nur noch über Adapter an (Vertrag W16 v2.10).
+
+**Quellen (verbindlich):** W16 v2 (`docs/ux/wireframes/w16-cockpit.md` Teil A) · W22 (`docs/ux/wireframes/w22-infoseite.md`) · Mockup `docs/design/mockups/cockpit-reiseverlauf/index.html` · Optik D-36–D-45 und Motion UM-1–UM-7 (`docs/ux/abstimmung-design.md` §12) · ux-spec §14 (RemindSheet, Deep-Links, Festlegung aufheben).
+
+**Voraussetzung für den Start der Umsetzung:** Designer hat D-36–D-45 und Motion Designer UM-1–UM-7 beantwortet (bzw. CEO hat offene Punkte entschieden). UI/UX ergänzt den Heute-Satz für *Danach* ohne Kosten-Bereich (H-6, s. I8-06).
+
+#### Im Umfang (Übersicht)
+| Baustein | W16 v2 | Feature |
+|---|---|---|
+| Ticket-Kopf mit großem Ring, Countdown, Crew-Button, Kopf-Taste; Ring-Konfetti auf Antippen; Mini-Ring in Zeile 1 | v2.2, v2.8 | F-053, F-052 |
+| Weg-Gerüst + reine Funktion `tripRoute()` mit Adaptern (nicht gebaute Bereiche = `null`) | v2.3, v2.4, v2.10 | F-053 |
+| Station **V1 „Termin steht“** (Orga: «Allen Bescheid geben») | v2.4 V1 | F-053, F-012 |
+| Station **V2 „Alle sind dabei“** inkl. Erinnern und **UX-9** «{Name} macht ohne App mit» | v2.4 V2, v2.7 | F-053, F-007, F-015 |
+| **Heute** (Marker, Heute-Satz, „du bist dran“-Liste) inkl. Aufgabe **A2** «Infos eintragen» | v2.5 | F-053 |
+| **Ziel „Es geht los!“** (V6) → Infos | v2.4 V6 | F-053, F-033 |
+| Teilphasen **Vorbereitung / Unterwegs / Danach** – soweit ohne spätere Bereiche sinnvoll | v2.4 Teilphasen | F-053 |
+| **UX-8** kleine Feier am Abreisetag | v2.11, UM-7 | F-053, F-052 |
+| Kachel **„Infos“** in „Immer griffbereit“; **Mehr zur Reise** (2 Sheets) | v2.6, v2.1 | F-053 |
+| **Infoseite** anzeigen + bearbeiten (Orga) | W22 | F-033 |
+
+#### User Stories & Akzeptanzkriterien
+
+**I8-01 Ticket-Kopf & Ring**
+**Als** Mitglied **möchte ich** nach der Festlegung oben sofort sehen, wann es losgeht und wie lange es noch dauert, **damit** die Vorfreude sichtbar bleibt.
+- [ ] Phase `fixed`: Zeile 1 sticky (← · Reisename + Phasenzeile · `⋯`), darunter Ticket-Kopf mit Ring `clamp(120px, 21svh, 168px)`, Countdown im Ring (`aria-hidden`), Reisezeitraum, Abriss-Kante (dekorativ), Crew-Button «{n} dabei · {Nächte} Nächte» → Sheet „Wer ist dabei?“, Kopf-Taste je Teilphase (s. I8-06).
+- [ ] Zeile 1 + Ticket ≤ 340 px bei 360 × 640; Heute-Marker im ersten Bildschirm bei 360 × 640.
+- [ ] Countdown als Text in der Phasenzeile und als `sr-only`-Satz «Noch 41 Tage bis zur Abreise.» nach h1.
+- [ ] Große Feier W11 unverändert einmal je Person und Festlegung; danach Ring statisch. **Antippen des Rings** (Button «Vorfreude: noch 41 Tage») → kleine Konfetti-Runde ≤ 1,2 s, Sperre 3 s, keine Vibration; reduzierte Bewegung: Aufglühen 140 ms (UM-1).
+- [ ] Verlässt der große Ring den Bildschirm, zeigt Zeile 1 einen Mini-Ring 20 px (IntersectionObserver, Fade 140 ms; UM-6).
+
+**I8-02 Weg-Gerüst & `tripRoute()`**
+**Als** Mitglied **möchte ich** die Schritte unserer Reise als Weg sehen, **damit** ich ohne Nachfragen weiß, was geschafft ist und was als Nächstes kommt.
+- [ ] Reine Funktion `tripRoute(trip, viewer, areas, today)` in `src/lib/trip-route.ts` gemäß W16 v2.10 (Typen `TripStation`, `TripTile`); Bereiche 9–12 liefern `null` → keine Station, keine Kachel. Unit-Tests **je Zeile** der Tabellen V1, V2 und je Heute-Satz (H-1–H-5 + H-6) sowie je Teilphase.
+- [ ] Weg als `<ol>` mit h2 «Euer Weg nach {Reisename}» und Meta «{erledigt} von {alle ohne Ziel} ✓»; Linie/Marker `aria-hidden`, Zustand als sichtbares Wort.
+- [ ] Erledigte Stationen eingeklappt zu einer Zeile «(✓) {n} erledigt: {Titel} …» (`aria-expanded`, Zustand bis Sitzungsende); „+ {n} weitere“-Muster für Heute/Läuft/Später vorhanden (auch wenn in Inkrement 8 selten nötig).
+- [ ] Ersetzt in `src/app/(app)/trips/[id]/page.tsx` (Phase `fixed`) Ergebnis-Karte, Andock-Slot `TripModule` und Phasen-Leiste. „Festlegung aufheben“ führt wie bisher zurück in Phase 2 (ux-spec §14.4); der Weg verschwindet, Infos bleiben gespeichert.
+
+**I8-03 Station V1 „Termin steht“**
+**Als** Orga **möchte ich** direkt nach der Festlegung daran erinnert werden, allen Bescheid zu geben, **damit** die Gruppe den Termin auch außerhalb der App erfährt.
+- [ ] Mitglied: V1 immer erledigt, Status «Platz 1 mit {n}× Ja · festgelegt von {Orga}»; Tippen → Sheet „So habt ihr entschieden“.
+- [ ] Orga: V1 „du bist dran“ «Sag allen Bescheid, dass der Termin steht.» mit `[Allen Bescheid geben]` (vorhandener Teilen-Text F-012), bis die Orga im Teilen-Sheet WhatsApp/Teilen/Kopieren getippt hat **oder** 7 Tage seit Festlegung vergangen sind – danach erledigt.
+- [ ] Neue Festlegung (nach Aufheben) setzt den Merker zurück.
+
+**I8-04 Station V2 „Alle sind dabei“ + „ohne App erledigt“ (UX-9)**
+**Als** Orga **möchte ich** sehen, wer noch nicht beigetreten ist, und Personen, die bewusst ohne App mitmachen, abhaken können, **damit** der Weg nicht wochenlang einen offenen Schritt zeigt.
+- [ ] Keine offenen Platzhalter → erledigt «Alle {n} sind dabei». Sonst „wartet auf andere“ «{Namen} {ist/sind} noch nicht beigetreten».
+- [ ] Mitglied: Text-Taste `[{Orga} Bescheid geben]` (Platzhalter-Text ux-spec §14.1). Orga: `[{Name} erinnern]` (persönlicher Link, RemindSheet `single`; bei mehreren Platzhaltern `status`) und Text-Taste «{Name} macht ohne App mit».
+- [ ] **UX-9:** «macht ohne App mit» wird **je Platzhalter** gespeichert (nur Orga, serverseitig geprüft). V2 ist erledigt, wenn jeder offene Platzhalter beigetreten **oder** so markiert ist; Status dann «Alle dabei · {Name} ohne App». Für alle sichtbar; in der aufgeklappten Erledigt-Gruppe und im Sheet „Wer ist dabei?“ kann die Orga es **rückgängig** machen. Ein später neu angelegter Platzhalter öffnet V2 wieder.
+- [ ] Der Platzhalter bleibt bestehen (zählt weiter bei Kosten/„€ pro Person“ in späteren Inkrementen; persönlicher Link bleibt gültig). Tritt die Person doch bei, ist der Merker gegenstandslos.
+
+**I8-05 „Heute“**
+**Als** Mitglied **möchte ich** an einer einzigen Stelle sehen, ob ich gerade etwas tun muss, **damit** ich nichts übersehe und nicht gedrängt werde, wenn nichts ansteht.
+- [ ] Genau ein Heute-Marker (h3 «Heute, {Wochentag}, {Datum}», Zeitzone der Reise) direkt nach der Erledigt-Zeile; Heute-Satz nach W16 v2.5 (H-1 «Du bist dran – …», H-2 «Für dich gerade nichts zu tun. Ihr wartet auf: {…}», H-3 «Alles erledigt – jetzt nur noch Vorfreude!», H-4, H-5/H-6 je Teilphase).
+- [ ] Darunter alle „du bist dran“-Einträge, sortiert nach W16 v2.5 (in Inkrement 8: V1 Orga, A2); erster Eintrag ausgeklappt mit der **einzigen Primär-Taste der Seite**.
+- [ ] **A2** (Orga): Infos leer (weder Treffpunkt noch Adresse) und ≤ 21 Tage vor Anreise → «Trag Treffpunkt und Adresse in die Infos ein.» → `/info/edit`.
+
+**I8-06 Ziel und Teilphasen**
+**Als** Mitglied **möchte ich**, dass sich die Übersicht vor, während und nach der Reise passend verhält, **damit** sie mich die ganze Reise begleitet.
+- [ ] **Vorbereitung:** Weg V1 · V2 · Heute · **Ziel V6 „Es geht los!“** (Datum der Anreise; Text = erste Zeile Treffpunkt aus den Infos, sonst Check-in, sonst «Noch {n} Tage»; Link → `/info`). Kopf-Taste `[Kalender]` (ICS wie W11).
+- [ ] **Unterwegs** (Anreise- bis Abreisetag): Phasenzeile «Unterwegs · Tag {x} von {y}», Tages-Ring «Tag {x}»; Weg «(✓) Vorbereitung · {n} erledigt ▾» (nicht erledigte V-Stationen heißen dort «nicht genutzt») · Heute (H-4 «Heute steht nichts an – genießt den Tag!», bzw. H-1 bei offenen eigenen Aufgaben) · Ziel **«Heimreise · {Datum}»** → `/info`. Kopf-Taste: `[Infos]` (sekundär), bis Kosten/Unterlagen die Tasten `[+ Ausgabe]`/`[Tickets]` liefern.
+- [ ] **Danach** (ab Tag nach Abreise): Ring voll mit «Schön war's!», Weg «(✓) Reise · Vorbereitung und {y} Tage ▾» · Heute mit **H-6** (neu, ohne Kosten-Bezug; Vorschlag DE «Schön war's – danke fürs Mitreisen!» / EN «What a trip – thanks for coming along!», Wortlaut UI/UX) · Ziel «Wohin geht's als Nächstes?» `[Neue Reise planen]` (sekundär) + Hinweis «Diese Reise wird am {Datum} automatisch gelöscht.» (Datum aus F-013). Keine Kopf-Taste. Phasenzeile «Zurück · schön war's» (Wortlaut UI/UX; «Kosten ausgleichen» erst mit Inkrement 10).
+- [ ] Teilphase wechselt beim Neuladen; Tests für die Grenztage (Tag vor Anreise, Anreisetag, Abreisetag, Tag danach) in der Zeitzone der Reise.
+
+**I8-07 Kleine Feier am Abreisetag (UX-8)**
+**Als** Mitreisende **möchte ich** am Tag der Abreise kurz begrüßt werden, **damit** der Start der Reise ein kleiner Moment ist.
+- [ ] Nur am **Anreisetag** (erster Tag *Unterwegs*, Zeitzone der Reise), **einmal je Person** (Server-Merker, geräteübergreifend): beim Öffnen der Übersicht automatisch die kleine Konfetti-Runde (UM-1/UM-7, ≤ 1,2 s, keine Ehrenrunde, keine Vibration) und Heute-Satz «Heute geht's los – gute Reise!» / «Today's the day – have a great trip!».
+- [ ] Wer am Anreisetag nicht öffnet, bekommt sie später **nicht** nachgeholt. Läuft am selben Tag die große Feier W11 (Festlegung am Anreisetag), entfällt die kleine Feier (kein doppeltes Konfetti).
+- [ ] Reduzierte Bewegung (System oder Konto-Schalter): kein Konfetti, nur der Satz. Kein Ton, keine Mitteilung.
+- [ ] Wird die Festlegung geändert, gilt die Feier für das neue Anreisedatum erneut.
+
+**I8-08 Kachel „Infos“ und „Mehr zur Reise“**
+- [ ] „Immer griffbereit“ enthält in Inkrement 8 nur die Kachel **Infos**: Status = Check-in-Text bzw. Treffpunkt-Kurzform; leer: Mitglied «Noch leer – {Orga} trägt sie ein», Orga «Infos ergänzen». Zugänglicher Name = Titel + Status.
+- [ ] „Mehr zur Reise“: «So habt ihr entschieden ›» (Sheet: Ergebnis, festgelegt von, Platz 1/2 mit Stimmen nach Q13 a, Link auf Gruppenkalender/Abstimmung nur lesen) und «Wer ist dabei? ({n}) ›» (Sheet: Personen mit Chips Orga / Platzhalter · noch nicht dabei / ohne App).
+
+**I8-09 Infoseite anzeigen (F-033)**
+**Als** Mitglied **möchte ich** Adresse, Check-in/-out, Treffpunkt und wichtige Links an einem Ort finden, **damit** ich nicht im Chat suchen muss.
+- [ ] Route `/trips/{id}/info` (nur Mitglieder, Phase `fixed`; sonst gleiche 404 wie andere Reise-Unterseiten). Karten gemäß W22 (Unterkunft · Treffpunkt & Anreise · Gut zu wissen), je Karte h2, Label/Wert als `<dl>`; leere Felder werden nicht angezeigt; Leerzustand je Rolle.
+- [ ] Adresse mit Link «In Karten öffnen ↗» (normaler externer Link, neuer Tab, **keine eingebettete Karte**, keine Drittinhalte beim Laden); Notfallkontakt als `tel:`-Link, wenn als Nummer erkennbar.
+- [ ] Freitext mit Zeilenumbrüchen; nur `https://`-Links werden automatisch verlinkt (`rel="noopener noreferrer"`, `target="_blank"`); kein HTML/Markdown.
+- [ ] «Zuletzt geändert von {Name}, {Datum}» (gelöschtes Konto → «ehemaliges Mitglied»).
+
+**I8-10 Infoseite bearbeiten (F-033)**
+**Als** Orga **möchte ich** die wichtigsten Infos einmal eintragen, **damit** alle sie finden und niemand mehr fragt.
+- [ ] Route `/trips/{id}/info/edit`, **nur Orga** (serverseitig; „Bucht“ ab Inkrement 11). Felder alle optional: Adresse der Unterkunft (≤ 200), Check-in (Freitext ≤ 60), Check-out (Freitext ≤ 60), Treffpunkt & Anreise (≤ 300), Notfallkontakt der Unterkunft (≤ 120, Hinweis «Nur Kontakte der Unterkunft – keine privaten Nummern.»), Gut zu wissen (≤ 2 000, Zähler ab 1 800, Hinweis «Keine Ausweis- oder Buchungsnummern …»). Validierung Client + Server (zod), Steuerzeichen entfernt.
+- [ ] Expliziter Speichern-Knopf; ungespeicherte Änderungen beim Zurück → «Änderungen verwerfen?»; nach dem Speichern Snackbar «Infos gespeichert – alle sehen sie jetzt.»
+- [ ] **Konflikt:** Hat jemand anderes inzwischen gespeichert (Versionsnummer), Hinweis «{Name} hat die Infos inzwischen geändert. [Neu laden]» statt stillem Überschreiben.
+- [ ] Rate-Limit pro Person wie andere Schreibaktionen. «Aus Unterkunft übernehmen» entfällt bis Inkrement 9.
+
+**I8-11 Querschnitt (Abnahme)**
+- [ ] 360 × 640, 360 × 740, 390 × 844, 320 px, 200 % Schrift (Container < 22 em: ohne Linie, Zustands-Label als Chip), Dark Mode, DE/EN, Desktop ≥ 960 px zweispaltig (Weg links, Kacheln + Mehr rechts; DOM: Weg zuerst).
+- [ ] Motion UM-2 (Weg baut sich auf, einmal je Sitzung), UM-3 (Heute-Marker-Puls beim ersten Aufbau), UM-5 (Aufklappen), UM-4 (Siegel-Plopp bei «Neu erledigt», s. u.) – alle mit reduzierter Variante; Prüfliste interaktionen §4.
+- [ ] **«Neu erledigt»** (W16 v2.7, Should): Erledigt-Zeile zeigt einmalig «(✓) Neu erledigt: {Titel} · {n} erledigt ▾» anhand des zuletzt gesehenen Stands im Browser (`localStorage` je Reise, nur Stations-IDs).
+- [ ] Skelett ab 300 ms (Ticket-Umriss, Heute-Marker, 3 Stations-Umrisse); Offline-Banner; Fehler eines Bereichs-Status → «Stand gerade nicht verfügbar».
+- [ ] Rückkehr aus `/info`: Scroll-Position und Fokus auf die Herkunfts-Station/-Kachel (bzw. Heute-Marker, wenn sie die Gruppe gewechselt hat).
+- [ ] Screenreader-Durchlauf (VoiceOver/TalkBack) in der Reihenfolge W16 v2.9; Abnahme-Fälle: Max Vorbereitung (Mitglied, Platzhalter offen), Lena Vorbereitung (Orga, V1 offen, A2), alles erledigt (H-3), Unterwegs (Anreisetag mit UX-8, Tag 3), Danach.
+- [ ] Demo-Daten (`seed.ts`, „Demo zurücksetzen“): je eine festgelegte Reise in *Vorbereitung* (mit Platzhalter und gefüllten Infos), *Unterwegs* und *Danach*, damit Teilphasen in Demo und Vorschau vorführbar sind.
+
+#### Datenhaltung (Vorgabe für Developer, Bewertung durch Reviewer)
+| Was | Wo (Empfehlung) | Löschung / Datenschutz |
+|---|---|---|
+| Infoseite | neue Tabelle `trip_info` (1:1 zur Reise): `address`, `check_in`, `check_out`, `meeting_point`, `emergency_contact`, `notes` (Längen s. I8-10), `updated_by` (FK Konto, `ON DELETE SET NULL` → «ehemaliges Mitglied»), `updated_at`, `version` (Ganzzahl für Konflikt-Erkennung) | Kaskadierend mit der Reise (F-013, 90 Tage nach Reiseende bzw. Reise löschen); bleibt bei „Festlegung aufheben“ erhalten. Inhalte nie in Logs/Fehler-Tracking. Nicht Teil des persönlichen Datenexports (Reise-Inhalt, kein Profil der exportierenden Person) – Reviewer bestätigt. |
+| V1 «Allen Bescheid geben» | `trips.fixed_announced_at` (timestamptz, null) | Zurücksetzen bei neuer Festlegung. |
+| UX-9 für V2 | am Platzhalter: `without_app_at` + `without_app_by` (null = nicht markiert) | Mit dem Platzhalter gelöscht; Rückgängig = null. Für V3/V5 (Inkremente 9/12) folgt eine allgemeine Tabelle `trip_station_marks(trip_id, station, set_by, set_at)` – darf schon in Inkrement 8 angelegt werden, wenn das sauberer ist; gelesen wird beides über die Stations-Adapter. |
+| UX-8 Abreisetag-Feier | an der Mitgliedschaft: `departure_celebrated_on` (date = gefeiertes Anreisedatum) | Feier zeigen, wenn heute = Anreisedatum und Wert ≠ Anreisedatum; dadurch automatisch neu bei geändertem Termin. Mit der Mitgliedschaft gelöscht. |
+| Nur im Browser | Erledigt aufgeklappt (`sessionStorage`), «Neu erledigt» (`localStorage`: Reise-ID → Liste erledigter Stations-IDs), Konfetti-Sperre (Speicher) | Keine personenbezogenen Daten; keine Cookies. |
+
+Migrationen: eine Migration für `trip_info`, `trips.fixed_announced_at`, Platzhalter-Spalten, `departure_celebrated_on` (ggf. `trip_station_marks`). Keine neuen Drittanbieter, kein Dateispeicher, nicht an G1b gebunden.
+
+#### Nicht in Inkrement 8 (Abgrenzung)
+| Kommt mit | Inhalt |
+|---|---|
+| **Inkrement 9** (F-031) | Station V3 „Unterkunft“ inkl. UX-9 «Haben wir schon / brauchen wir nicht», Kachel Unterkunft, RemindSheet-Anlässe `stay-rate`/`stay-fix`/`stay-book`, Infos «Aus Unterkunft übernehmen». |
+| **Inkrement 10** (F-035/036) | Kachel Kosten, Aufgabe A1 (Schuld ≥ 50 €), Station D1 „Kosten ausgleichen“, Kopf-Tasten `[+ Ausgabe]` (unterwegs) und `[Ausgleichen]` (danach), Heute-Satz H-5 und Phasenzeile «Zurück · Kosten ausgleichen / alles ausgeglichen», Anlässe `settle`/`settle-all`. |
+| **Inkrement 11** (F-056/F-054) | Markierung „Bucht“ (Reisemenü «Wer bucht?», Chips), Infos bearbeiten durch „Bucht“, Station V4 + D3, Kachel Reisedaten, Anlass `travel-data`. |
+| **Inkrement 12** (F-055) | Station V5 inkl. UX-9 «Jede:r reist selbst an», Termine des Tages / Tage T1…Tn unterwegs, Ziel „Heimreise“ mit Rückreise-Unterlage, Kopf-Taste `[Tickets]`, Station D2, Kachel Unterlagen. |
+| später | Check-in/-out als Datum + Uhrzeit (W22 Stufe 2), mehrere Orte, Station „Packen“ (F-032), „zuletzt erinnert“, Live-Updates. |
+
+Aufwand: **M (≈ 1 Inkrement)**. Risiko: Weg-Logik und Längen-Budget (durch reine Funktion + Tests je Tabellenzeile beherrschbar), Konfetti-Performance auf alten Android-Geräten (vorhandene Feier-Technik wiederverwenden).
 
 ---
 

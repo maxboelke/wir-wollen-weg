@@ -1,6 +1,8 @@
 # Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-20 (v0.5, Planung Ausbaustufe „Reise managen“; Entscheidungen Q1–Q6, Q11–Q18, Q20–Q25 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-22 (v0.6, Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+
+**Änderungen v0.6 (2026-10-22, Auftraggeber „Ja zu allem“):** **Q26/Q27 entschieden** – Ausbaustufe R kommt **vor** Phase 2, Reihenfolge 8 → 12 wie vorgeschlagen. **Inkrement 7 wird aufgelöst:** F-015 ist mit Feedback-Runde 1 gebaut, F-017 großteils mit Inkrement 5; der kleine Rest geht in ein **Pflege-Paket** neben Inkrement 8, Motion „MVP+“ in eine **Politur vor der Beta** (vor M1). **Inkrement 8** nach W16 v2 „Reiseverlauf“ zugeschnitten (features.md R.6).
 
 **Änderungen v0.5 (2026-10-20, Planung – Entscheidung Q26/Q27 offen):** Neue **Ausbaustufe R „Reise managen“** (Inkremente 8–12: F-053 Cockpit, F-033 Infoseite, F-031 Unterkünfte, F-035/F-036 Kosten, F-056 + F-054 Reisedaten, F-055 Unterlagen) – empfohlen **nach Inkrement 7 und vor Phase 2 (Kalender-Import)**; neues Sicherheits-/Datenschutz-Gate **G1b** vor echter Nutzung von F-054/F-055. Phase 3a/3b entsprechend verkleinert. Stand Phase 1: Inkremente 0–6 erledigt (CLAUDE.md „Projektstand“), M0.5 inhaltlich erreicht, Demo-Abnahme über die Vorschau offen.
 
@@ -18,7 +20,7 @@ Phasen sind ergebnis-, nicht datumsgetrieben. Jede Phase endet mit einem Meilens
 |---|---|---|---|
 | 0 – Konzept & Setup ✅ | Wireframes, Stack, Design, Ops-Konzept (M0 abgenommen 2026-10-08) | – | – |
 | 1 – MVP | Gruppe kommt mit Konto vom Link zum festen Zeitraum, DE/EN, manuelle Verfügbarkeit; **zuerst als lokale Offline-Demo (M0.5), nach Go-Live-Gate G1 als Beta (M1)** | F-040–F-044, F-046, F-001–F-005, F-007–F-013, F-016, F-051, F-052 (+ F-015, F-017) | komplett kostenlos |
-| **R – Reise managen (neu, Einordnung Q26)** | Nach der Festlegung: Reise-Cockpit, Unterkünfte per Swipe, Kosten teilen, Reisedaten, Reiseunterlagen | F-053, F-033, F-031, F-035, F-036, F-056, F-054, F-055 | kostenlos; Premium-Kandidaten markiert (features.md R.3) |
+| **R – Reise managen (entschieden 2026-10-22, vor Phase 2)** | Nach der Festlegung: Reise-Cockpit „Reiseverlauf“ (Hub ohne Tabs), Infoseite, Unterkünfte per Swipe, Kosten teilen, Reisedaten (eigener Bereich), Reiseunterlagen | F-053, F-033, F-031, F-035, F-036, F-056, F-054, F-055 | kostenlos; Premium-Kandidaten markiert (features.md R.3) |
 | 2 – v1 | Kalender-Import inkl. **Apple-/iOS-Kalender**, E-Mail-Benachrichtigungen, Social Login, Monetarisierung vorbereitet | F-006, **F-047, F-048**, F-019–F-021, F-014, F-045, F-022–F-024, Spike F-049 | kostenlos; Premium-Kandidaten markiert |
 | 3 – später | Rest der Reiseplanung, Premium-Tarif | F-030, F-032, F-034, F-037, F-038, **F-049**, F-050 | Freemium aktiv |
 
@@ -69,7 +71,7 @@ Steuerung: Im MVP wird per Feedback-Frage (F-005) und aggregierter Gerätestatis
 | 4 | Heatmap + Kandidaten-Berechnung (+ Motion W09 Heatmap-Aufbau, Vorschlag-Band) | F-008, F-009 |
 | 5 | Abstimmung & Festlegung (+ Motion W10, **Feier „Es geht los!“ für alle**, W11) | F-010, F-011, F-012 |
 | 6 | Datenschutz-Funktionen & Konto löschen, Hilfe-/FAQ-Seite | F-013, F-043, F-051 |
-| 7 | Should-Features nach Kapazität (Reihenfolge); Motion „MVP+“ inkl. Haptik (G-18) vor der Beta | F-015, F-017, F-052 (MVP+) |
+| ~~7~~ | **Aufgelöst (2026-10-22)** – ursprünglich: Should-Features + Motion „MVP+“. Verbleib siehe „Inkrement 7 – Auflösung“ unten. | F-015 ✅ (Feedback-Runde 1) · F-017 ✅ großteils (Inkrement 5; Rest → Pflege-Paket) · Haptik G-18 ✅ (Inkremente 3/5) · übrige Motion „MVP+“ → Politur vor Beta |
 
 ### Schritt 0a – UI-Fundament (Look & Feel 2.0 + Motion-Basis) (neu, Q18)
 **Ziel:** Einmal die gemeinsame Grundlage für Optik und Bewegung legen, bevor weitere Ansichten entstehen – damit nichts doppelt gebaut oder später flächig umgestylt werden muss.
@@ -106,22 +108,38 @@ Entscheidungen dazu holt der CEO beim Auftraggeber ein, sobald M0.5 erreicht ist
 
 *Falls* der Auftraggeber die Beta ausschließlich im eigenen engen Umfeld ohne öffentliche Erreichbarkeit fahren will, kann G1 nicht entfallen, nur schlanker ausfallen (Impressum/Datenschutz sind bei jeder Verarbeitung personenbezogener Daten Dritter nötig) – Bewertung durch Operations.
 
-## Ausbaustufe R – „Reise managen“ (neu 2026-10-20, Planung; Einordnung Q26)
-**Ziel:** Nach der Festlegung wird die Übersicht zum **Reise-Cockpit**, aus dem die Gruppe die ganze Reise managt – Unterkunft, Kosten, Reisedaten, Unterlagen. Auftraggeber-Wunsch vom 2026-10-20; beantwortet zugleich Q19 (Unterkünfte) und Q7 (Kosten) – vorbehaltlich Q26/Q27.
+### Inkrement 7 – Auflösung (2026-10-22, PM-Empfehlung an den CEO)
+Inkrement 7 war als Sammel-Inkrement „Should-Features + Motion MVP+“ geplant. Inzwischen ist das meiste gebaut; ein eigenes Inkrement lohnt nicht mehr und würde die Ausbaustufe R unnötig verzögern.
 
-**Empfohlene Einordnung (Q26):** nach Inkrement 7 (F-015, F-017, Motion MVP+) und **vor** Phase 2 (Kalender-Import). Begründung: Der Auftraggeber wünscht die Reiseorganisation ausdrücklich als nächste Stufe; sie ist das stärkste Unterscheidungsmerkmal gegenüber Doodle/Rallly/When2meet („von der Terminfindung bis zur Abrechnung“) und schafft Bindung über das Festlegen hinaus. Der Kalender-Import senkt dagegen Aufwand in einem Schritt, der bereits funktioniert. Entwickelt wird weiter im Arbeitsmodus Offline-Demo + private Vorschau (Q25); Go-Live G1 kann parallel vorbereitet werden.
+| Ursprünglicher Inhalt | Stand | Verbleib |
+|---|---|---|
+| **F-015** Nachzügler erinnern | ✅ in Feedback-Runde 1 vorgezogen und erweitert (RemindSheet, alle Mitglieder, WhatsApp, PR #22) | Reviewer bestätigt die Akzeptanzkriterien beim nächsten Review. „zuletzt erinnert“ (`reminded_at`) → **Backlog nach Beta-Feedback** (CEO 2026-10-20). |
+| **F-017** Fristen | ✅ großteils (Inkrement 5 + Feedback-Runde 1: beide Fristen, Anzeige, Teilen-Texte, „Frist vorbei“-Zustände, Banner, To-do nach Abstimmungsfrist) | **Rest → Pflege-Paket:** Orga-To-do «Abstimmung starten» in „Meine Reisen“ nach Ablauf der *Eintrage*-Frist (features.md F-017). |
+| **Haptik G-18** | ✅ gebaut (Tage malen, Feier) | – |
+| **Übrige Motion „MVP+“** (u. a. G-15 Fortschrittsbalken, G-17 Hover, W01-03/-06, W04-02…06 inkl. Mini-Vorfreude-Ring in „Meine Reisen“, W06-05, W09-12, W10-11, W15-02) | offen | **Politur vor der Beta**: gebündelt als kurzer Schritt vor M1 (parallel zur G1-Vorbereitung), blockiert die Ausbaustufe R nicht. Motion Designer priorisiert die Liste vorab nach Wirkung/Aufwand. |
+
+**Pflege-Paket (neben Inkrement 8, eigene Commits, gleicher Review):** F-017-Rest · Abbruch-Hinweis (Q21) auch auf der Übersicht zeigen (bisher nur Tab Abstimmen) · Abstand „Daten & Datenschutz“ (Inkrement 6, klein). Alles klein und ohne Bezug zum Cockpit-Code – deshalb getrennt committen, damit das Inkrement-8-Review übersichtlich bleibt.
+
+Die übrigen „vor Go-Live“-Punkte (CLAUDE.md, compliance-checklist) bleiben unverändert dem Gate G1 zugeordnet.
+
+## Ausbaustufe R – „Reise managen“ (entschieden 2026-10-22; Q26/Q27)
+**Ziel:** Nach der Festlegung wird die Übersicht zum **Reise-Cockpit** „Reiseverlauf“ (W16 v2, Hub ohne Tabs – UX-1), aus dem die Gruppe die ganze Reise managt – Infos, Unterkunft, Kosten, Reisedaten (eigener Bereich – UX-2), Unterlagen. Auftraggeber-Wunsch vom 2026-10-20; beantwortet zugleich Q19 (Unterkünfte) und Q7 (Kosten).
+
+**Einordnung (Q26, entschieden 2026-10-22):** direkt nach dem MVP-Stand (Inkremente 1–6 + Feedback-Runde 1; Inkrement 7 aufgelöst, s. o.) und **vor** Phase 2 (Kalender-Import). Begründung: Der Auftraggeber wünscht die Reiseorganisation ausdrücklich als nächste Stufe; sie ist das stärkste Unterscheidungsmerkmal gegenüber Doodle/Rallly/When2meet („von der Terminfindung bis zur Abrechnung“) und schafft Bindung über das Festlegen hinaus. Der Kalender-Import senkt dagegen Aufwand in einem Schritt, der bereits funktioniert. Entwickelt wird weiter im Arbeitsmodus Offline-Demo + private Vorschau (Q25); Go-Live G1 kann parallel vorbereitet werden.
 
 | Inkrement | Inhalt | Feature-IDs | Aufwand | Echte Daten ab |
 |---|---|---|---|---|
-| 8 | Reise-Cockpit Phase 3 (Teilphasen Vorbereitung/Unterwegs/Danach, „Für dich zu tun“, Kacheln), Phase-3-Navigation, Infoseite (Text/Links) | F-053, F-033 | S–M (≈ 1) | G1 |
+| 8 | Reise-Cockpit „Reiseverlauf“ (W16 v2): Ticket-Kopf mit Ring + Konfetti, Weg-Gerüst (`tripRoute()`), Stationen V1 „Termin steht“ + V2 „Alle sind dabei“ (inkl. UX-9 „ohne App“), Heute, Ziel „Es geht los!“, Teilphasen Vorbereitung/Unterwegs/Danach, kleine Feier am Abreisetag (UX-8), Kachel Infos, Mehr zur Reise; Infoseite (Text/Links, Bearbeiten Orga) – **Zuschnitt features.md R.6** | F-053, F-033 | M (≈ 1) | G1 |
 | 9 | Unterkünfte Stufe 1: Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (+ Motion Swipe) | F-031 | M–L (≈ 1–1,5) | G1 |
 | 10 | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Abschluss | F-035, F-036 | M–L (≈ 1,5) | G1 |
 | 11 | Zuständigkeit „Bucht“ + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung) + Security-Review | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
 | 12 | Datei-Infrastruktur (EU-Objektspeicher, Virenscan, Header-Härtung) + Reiseunterlagen Stufe 1 + Screenshots für Unterkünfte | F-055, F-031 (Stufe 2) | L (≈ 1,5–2) | **G1 + G1b** |
 
-**Summe ≈ 6–7 Inkremente.** Reihenfolge-Begründung (Details features.md R.2): erst der Rahmen (Cockpit), dann die chronologisch erste und spaßigste Aufgabe nach dem Termin (Unterkunft), dann der größte Dauernutzen ohne sensible Daten (Kosten), zuletzt die beiden Bereiche mit hohem Datenschutz-/Infrastruktur-Aufwand (Reisedaten, Dateien), die mit echten Daten ohnehin erst nach G1b laufen dürfen. Alternative Q27: Inkrement 11 vor 10 ziehen (keine technische Abhängigkeit).
+**Summe ≈ 6–7 Inkremente.** Reihenfolge-Begründung (Details features.md R.2): erst der Rahmen (Cockpit), dann die chronologisch erste und spaßigste Aufgabe nach dem Termin (Unterkunft), dann der größte Dauernutzen ohne sensible Daten (Kosten), zuletzt die beiden Bereiche mit hohem Datenschutz-/Infrastruktur-Aufwand (Reisedaten, Dateien), die mit echten Daten ohnehin erst nach G1b laufen dürfen. Die Alternative (11 vor 10) wurde nicht gewählt (Q27, 2026-10-22).
 
-**Je Inkrement:** UI/UX + Designer liefern vorab Mockups (Briefing siehe Bericht PM 2026-10-20), Motion Designer die Bewegungen (Swipe, Kachel-Eintritt, Saldo-Ausgleich), Reviewer prüft DE/EN, 360 px, Dark Mode, reduzierte Bewegung, WCAG 2.2 AA.
+**Je Inkrement:** UI/UX + Designer liefern vorab Mockups (Briefing siehe Bericht PM 2026-10-20), Motion Designer die Bewegungen (Swipe, Kachel-Eintritt, Saldo-Ausgleich), Reviewer prüft DE/EN, 360 px, Dark Mode, reduzierte Bewegung, WCAG 2.2 AA. Jedes Inkrement 9–12 dockt seinen Bereich über einen Status-Adapter an den Weg an (Station und/oder Kachel, W16 v2.10) und liefert die zugehörigen „ohne App erledigt“-Optionen (UX-9) und Erinnern-Anlässe mit.
+
+**Vor Start Inkrement 8:** Designer beantwortet D-36–D-45, Motion Designer UM-1–UM-7 (`docs/ux/abstimmung-design.md` §12); UI/UX liefert Heute-Satz H-6 (*Danach* ohne Kosten) und bestätigt die Kopf-Taste `[Infos]` für *Unterwegs* (features.md R.6, I8-06).
 
 **Gate G1b – Sicherheit & Datenschutz für sensible Reisedaten und Dateien (neu, vor echter Nutzung von F-054/F-055, zusätzlich zu G1):**
 - Feldverschlüsselung für Reisedaten mit Schlüssel außerhalb der DB, Rotationskonzept, Runbook bei Schlüsselverlust/-leck;
