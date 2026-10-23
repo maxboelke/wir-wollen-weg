@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <title>Demo-Unterkunft: Chalet in den Bergen</title>
+  <desc>Eigene Illustration (Fantasie-Unterkunft, Demo-Daten F-031): Holzchalet mit breitem Dach, Balkon und Blumenkästen auf einer Almwiese, dahinter Gipfel mit Schneekappen, Sonne und Wolken. Lizenzfrei, selbst erstellt.</desc>
+  <!-- v1.1 (2026-10-23) · 4:3 · Motiv in der sicheren Zone x 50 bis 350, y 38 bis 262 · keine Theme-Umschaltung -->
+  <defs>
+    <linearGradient id="wwd7-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9DBFF"/>
+      <stop offset="1" stop-color="#F4F2FB"/>
+    </linearGradient>
+    <linearGradient id="wwd7-meadow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7DEDCB"/>
+      <stop offset="1" stop-color="#1FBF94"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#wwd7-sky)"/>
+  <circle cx="320" cy="62" r="40" fill="#FFCF4A" opacity=".3"/>
+  <circle cx="320" cy="62" r="24" fill="#FFCF4A"/>
+  <g fill="#FFFFFF" opacity=".6">
+    <circle cx="70" cy="56" r="14"/>
+    <circle cx="90" cy="50" r="20"/>
+    <circle cx="112" cy="58" r="12"/>
+  </g>
+  <path d="M-10 190L80 60l60 70 66-96 90 116 40-40 74 140z" fill="#A79AF2"/>
+  <path d="M80 60l26 30-14-4-12 12-10-10-12 8z" fill="#FFFFFF"/>
+  <path d="M206 34l34 44-18-8-16 14-12-12-18 8z" fill="#FFFFFF"/>
+  <path d="M336 110l18 18-10-2-8 8-8-8-10 2z" fill="#FFFFFF"/>
+  <path d="M-10 200l120-60 90 40 100-50 110 70v100H-10z" fill="#5B48C9"/>
+  <path d="M0 208c80-28 170-36 260-26 60 7 110 20 140 30v88H0z" fill="url(#wwd7-meadow)"/>
+  <g fill="#00775A">
+    <path d="M42 214l14-50 14 50z"/>
+    <path d="M62 218l16-62 16 62z"/>
+    <path d="M318 214l14-50 14 50z"/>
+    <path d="M338 220l16-64 16 64z"/>
+  </g>
+  <rect x="128" y="146" width="144" height="92" fill="#B9734A"/>
+  <g stroke="#8E5638" stroke-width="2.5">
+    <path d="M128 160h144M128 174h144M128 220h144M128 232h144"/>
+  </g>
+  <path d="M108 154l92-56 92 56h-14l-78-46-78 46z" fill="#2B2266"/>
+  <path d="M136 154l64-40 64 40z" fill="#EADFCF"/>
+  <rect x="186" y="124" width="28" height="24" rx="3" fill="#2B2266"/>
+  <rect x="186" y="124" width="28" height="24" rx="3" fill="#FFCF4A" opacity=".3"/>
+  <path d="M200 124v24" stroke="#EADFCF" stroke-width="2.5"/>
+  <rect x="120" y="182" width="160" height="6" rx="2" fill="#8E5638"/>
+  <path d="M126 188v18M144 188v18M162 188v18M180 188v18M198 188v18M216 188v18M234 188v18M252 188v18M270 188v18" stroke="#8E5638" stroke-width="3"/>
+  <rect x="120" y="204" width="160" height="5" rx="2" fill="#8E5638"/>
+  <g fill="#2B2266">
+    <rect x="146" y="160" width="26" height="22" rx="3"/>
+    <rect x="228" y="160" width="26" height="22" rx="3"/>
+    <rect x="188" y="210" width="24" height="28" rx="3"/>
+    <rect x="146" y="212" width="22" height="18" rx="3"/>
+    <rect x="232" y="212" width="22" height="18" rx="3"/>
+  </g>
+  <g fill="#F0503F">
+    <circle cx="150" cy="180" r="4"/>
+    <circle cx="160" cy="178" r="4"/>
+    <circle cx="170" cy="180" r="4"/>
+    <circle cx="232" cy="180" r="4"/>
+    <circle cx="242" cy="178" r="4"/>
+    <circle cx="252" cy="180" r="4"/>
+  </g>
+  <rect x="142" y="180" width="34" height="5" rx="2" fill="#1FBF94"/>
+  <rect x="224" y="180" width="34" height="5" rx="2" fill="#1FBF94"/>
+  <path d="M120 238h160" stroke="#57527A" stroke-width="4" stroke-linecap="round"/>
+  <path d="M200 240c-6 20-26 40-60 60h40c18-20 26-40 28-60z" fill="#EADFCF" opacity=".8"/>
+  <g fill="#FFFFFF">
+    <circle cx="70" cy="262" r="3"/>
+    <circle cx="96" cy="276" r="3"/>
+    <circle cx="300" cy="266" r="3"/>
+    <circle cx="330" cy="282" r="3"/>
+  </g>
+  <g fill="#FFCF4A">
+    <circle cx="84" cy="270" r="3"/>
+    <circle cx="316" cy="276" r="3"/>
+    <circle cx="276" cy="260" r="3"/>
+  </g>
+</svg>

@@ -1,6 +1,7 @@
 /* ==========================================================================
    Wir wollen weg / When do we go? – Design Tokens
    Version 1.0 · 2026-10-08 · Verantwortlich: Designer
+   v1.1 · 2026-10-23: Unterkünfte F-031 (§2 --ww-stay-*, --ww-stamp-*; §5 --ww-pattern-stay-placeholder) – nur Ergänzungen
    Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“ (Auftraggeber, PRD §12 Q18)
    Dokumentation: docs/design/design-system.md (v1.0)
 
@@ -282,6 +283,36 @@
   --ww-z-sheet: 40;
   --ww-z-celebration: 45; /* Konfetti-Ebene, pointer-events: none */
   --ww-z-toast: 50;
+
+  /* ---------------- Unterkünfte F-031 (v1.1, 2026-10-23, design-system §9.21) ----------------
+     Bild-Quellen sind 4:3 (Demo-Bilder 400 × 300) und werden per object-fit: cover
+     auf die Anzeigeformate zugeschnitten; das Motiv liegt in der sicheren Mitte.
+     Elemente AUF Bildern (Stempel, Domain-Chip) sind absichtlich theme-unabhängig,
+     weil Bilder in beiden Modi gleich aussehen. */
+  --ww-stay-image-ratio: 16 / 10;        /* Swipe-Karte, Vorschau W17 (W18 E.5.2) */
+  --ww-stay-image-max-h: 34svh;          /* 360 × 640: Titel, Preis, Tasten ohne Scrollen */
+  --ww-stay-image-max-h-narrow: 28svh;   /* Container < 22 em */
+  --ww-stay-image-ratio-wide: 16 / 9;    /* „Eure Unterkunft“ */
+  --ww-stay-thumb: 64px;                 /* Vorschlags-Zeile (Liste und Rangliste) */
+  --ww-stay-thumb-radius: 14px;
+  --ww-stay-thumb-tile: 28px;            /* Mini-Stapel in der Kachel „Unterkunft“ */
+  --ww-stay-card-max-w: 420px;
+  --ww-stay-card-radius: 28px;
+  --ww-stay-rate-btn: 64px;              /* ✕ / ♥ unter dem Stapel */
+  --ww-stay-undo-btn: 48px;
+  --ww-stay-toggle: 44px;                /* Bewertungspaar in der Zeile */
+  --ww-stay-rank: 32px;                  /* Rang-Kreis */
+  --ww-stay-source-bg: rgb(20 17 46 / 0.72); /* Domain-Chip: Weiß darauf ≥ 7,3 auch über reinem Weiß */
+  --ww-stay-source-fg: #ffffff;
+  --ww-stay-image-scrim: linear-gradient(to top, rgb(20 17 46 / 0.55), rgb(20 17 46 / 0) 42%);
+  --ww-stamp-like-bg: var(--ww-mint-400);
+  --ww-stamp-like-fg: var(--ww-indigo-800);  /* 8,7 */
+  --ww-stamp-nope-bg: var(--ww-mist-0);
+  --ww-stamp-nope-fg: var(--ww-ink-900);     /* 16,5 */
+  --ww-stamp-nope-border: var(--ww-ink-900);
+  --ww-stamp-ring: rgb(255 255 255 / 0.9);
+  --ww-stamp-radius: 14px;
+  --ww-stamp-tilt: 8deg;                     /* ♥ −8°, ✕ +8° */
 }
 
 /* --------------------------------------------------------------------------
@@ -1038,6 +1069,13 @@
       var(--ww-avail-no-line) 0 1.5px,
       transparent 1.5px 7px
     );
+  /* Unterkunft ohne Vorschaubild (F-031, D-48) – Streifen 135°, 10 px / 20 px;
+     text-muted darauf hell ≥ 6,0, dunkel ≥ 8,9. Grafik: assets/unterkuenfte/stay-placeholder.svg */
+  --ww-pattern-stay-placeholder: repeating-linear-gradient(
+    135deg,
+    var(--ww-color-surface-sunken) 0 10px,
+    var(--ww-color-bg) 10px 20px
+  );
   /* Wochenend-Spur */
   --ww-pattern-weekend-lane: linear-gradient(
     var(--ww-hm-weekend-lane),

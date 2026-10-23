@@ -61,7 +61,8 @@ Wortmarken liegen als `<text>` in **Plus Jakarta Sans 800, 28 px, −0,02 em** v
 | `plus` / `minus` | Stepper | `undo` | Rückgängig |
 | `sun` | Urlaubstage / Sonne | `star` | Platz 1 |
 | `sparkle` | Vorschlag | `chart` | Übersicht / Kennzahl |
-| `plane` | Reise | | |
+| `plane` | Reise | `bed` | Unterkunft (v1.1) |
+| `heart` / `heart-filled` | Gefällt mir – Kontur / gewählt (v1.1) | `external` | Öffnet neuen Tab, ↗ (v1.1) |
 
 Einzeldateien (Ansicht, gleiche Formen): `calendar`, `share`, `vote`, `crown`, `check`, `maybe`, `cross`, `language`, `calendar-download`, `copy`, `holiday`, `link`, `all-available`. Maßgeblich ist das Sprite.
 
@@ -96,6 +97,25 @@ Stil B: flach, **ohne Kontur**, Kachel (abgerundetes Quadrat, Radius 32) statt T
 | `vote-waiting.svg` | Abstimmung noch nicht gestartet W10 | `plate`, `cards`, `clock` |
 | `error.svg` | Fehlerseiten W14 | `plate`, `calendar`, `cloud` |
 | `goodbye.svg` | Konto gelöscht W14 | `plate`, `sun`, `sea`, `plane` |
+
+Neu in v1.1 (2026-10-23): `empty-stays.svg` – Leerzustand „Noch keine Unterkünfte“ (W18 E.3), Ebenen `plate`, `sun`, `sea`, `house`, `card`, `sparks`. Icons v1.1: `bed`, `heart`, `heart-filled`, `external` im Sprite.
+
+## Unterkünfte (`unterkuenfte/`, v1.1, F-031)
+
+| Datei | Zweck | Hinweise |
+|---|---|---|
+| `stay-placeholder.svg` | Unterkunft ohne Vorschaubild (Portal blockt, Zeitlimit, Bild später nicht ladbar) | 400 × 300, `preserveAspectRatio="xMidYMid slice"`; Farben über Tokens mit Fallback + `prefers-color-scheme` → hell/dunkel; Plakette mit Bett-Icon bleibt in 16:10, 16:9 und 1:1 sichtbar; CSS-Alternative `--ww-pattern-stay-placeholder` + Icon `bed` |
+| `demo-steinhaus-meerblick.svg` | Demo: Steinhaus mit Meerblick | z. B. „Kamena Kuća – Steinhaus“ |
+| `demo-villa-pool.svg` | Demo: Villa mit Pool | „Villa Mare mit Pool“ |
+| `demo-apartment-hafen.svg` | Demo: Apartment am Hafen | „Casa Azul“ / Hafen-Apartment |
+| `demo-altstadtwohnung.svg` | Demo: Altstadtwohnung | „Apartment Lavanda“ (Split, Altstadt) |
+| `demo-strandhaus-duenen.svg` | Demo: Strandhaus in den Dünen | „Ferienwohnung Bačvice“ oder Nordsee-Reise |
+| `demo-holzhuette-see.svg` | Demo: Holzhütte am See | Seen-/Wanderreise |
+| `demo-chalet-berge.svg` | Demo: Chalet in den Bergen | Skireise |
+| `demo-mobilheim-camping.svg` | Demo: Mobilheim auf dem Campingplatz | günstige Option |
+| `icons-unterkuenfte.svg` | **Referenzblatt** (nicht ausliefern): neue Icons + Stempel hell/dunkel | maßgeblich sind Sprite und design-system §9.21 |
+
+Demo-Bilder: 4:3 (400 × 300), je < 7 KB, selbst gezeichnet, keine Fotos/fremden Assets, keine Texte, keine Figuren, keine Theme-Umschaltung (wirken wie Fotos). Motiv in der sicheren Mitte x 50–350 / y 38–262. Einbindung als `<img src="/demo/stays/…" alt="" loading="lazy">` mit `object-fit: cover`. **Kopie unter `public/demo/stays/`** (identisch, für den Demo-Seed) – bei Änderungen beide Orte pflegen bzw. per `sync-design-assets` kopieren. Für die Demo **nicht** über den Bild-Proxy laden (eigene, statische Dateien).
 
 ## Hinweise für die Einbindung
 - **XML-Wohlgeformtheit (Prüfstand v1.0, 2026-10-08):** in Kommentaren kein doppelter Bindestrich (Token-Namen ohne Präfix-Striche schreiben); `&` als `&amp;`; IDs je Datei einmalig; `url(#…)`-Bezüge zeigen auf vorhandene IDs. In `<style>` und `style`-Attributen (`var(--ww-…)`) sind doppelte Bindestriche erlaubt.
