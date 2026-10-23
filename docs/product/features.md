@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-22 (v0.6, Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
+Stand: 2026-10-23 (v0.7, Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -13,6 +13,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.5 (2026-10-20, Auftraggeber-Wunsch „Reise managen“, Planung – Entscheidungen Q26–Q36 offen):** Neue **Ausbaustufe „Reise managen“** (nach „Termin finden“) mit detaillierten Steckbriefen im neuen Abschnitt **AUSBAUSTUFE „Reise managen“** (vor „WON'T“): neu **F-053 Reise-Cockpit (Übersicht Phase 3)**, **F-054 Persönliche Reisedaten**, **F-055 Reiseunterlagen (Dateien)**, **F-056 Zuständigkeit „Bucht“**; **F-031** (Unterkünfte per Swipe), **F-033** (Reise-Infoseite, jetzt ohne Dateien – Dateien → F-055), **F-035 + F-036** (Kosten teilen, zusammen als ein Modul) detailliert und aus „Won't“ in die Ausbaustufe gehoben; F-037 bleibt „später“. Einordnung gegenüber v1 (Kalender-Import) und Reihenfolge: PRD Q26/Q27 (beantwortet Q7 und Q19 mit).
 
 **Änderungen v0.6 (2026-10-22, Auftraggeber „Ja zu allem“):** **Q26–Q36 entschieden wie empfohlen** – alle „(Q…)“-Angaben in der Ausbaustufe gelten jetzt als entschieden. **UX-1:** Phase 3 ohne Tabs, Cockpit als Hub. **UX-2:** Reisedaten eigener Bereich (F-054, F-055 angepasst). **F-053 neu gefasst nach W16 v2 „Reiseverlauf“** (Ticket-Kopf, Weg mit Stationen V1–V6/T/D, „Heute“ statt „Für dich zu tun“, Kacheln „Immer griffbereit“, Mehr zur Reise) inkl. **UX-8** (kleine Feier am Abreisetag) und **UX-9** („ohne App erledigt“ durch die Orga). F-031/F-035/F-055: „Tab“ → Station/Kachel + Bereichs-Unterseite. F-033: Bearbeiten in Inkrement 8 nur Orga („Bucht“ ab Inkrement 11). Neu **R.6 Zuschnitt Inkrement 8** mit User Stories, Akzeptanzkriterien, Abgrenzung und Datenhaltung. F-015 und F-017: Umsetzungsstand nachgetragen (Inkrement 7 wird aufgelöst, roadmap.md).
+
+**Änderungen v0.7 (2026-10-23):** Neu **R.7 Zuschnitt Inkrement 9 – Unterkünfte (F-031 Stufe 1)** mit User Stories I9-01–I9-11, Rechte-Tabelle (Bucher = Orga bis Inkrement 11), Sicherheit (SSRF-Schutz, Bild-Proxy ohne offene URL, Rate-Limits), Datenhaltung (`trip_stay`, `trip_stay_rating`, Festlegung/gebucht an der Reise, `trip_station_marks`, `trip.currency`), Demo-Seed und Abgrenzung zu 10–12. Festlegungen: Bereich außerhalb Phase 3 nicht erreichbar (Daten bleiben); neue Termin-Festlegung mit anderem Zeitraum setzt «gebucht» zurück; «Aus Unterkunft übernehmen» übernimmt nur den Titel, keine Adresse; ✕ nur als Zahl, ♥ namentlich.
 
 ## Übersicht
 
@@ -583,7 +585,7 @@ Abhängigkeiten: F-053. Aufwand: **S**.
 **Als** Mitglied **möchte ich** alle Vorschläge wie Karten durchswipen (gefällt mir / eher nicht), **damit** ich schnell und ohne Diskussion meine Meinung abgebe.
 **Als** Orga **möchte ich** eine Rangliste sehen und die Gewinner-Unterkunft festlegen, **damit** gebucht werden kann.
 
-Akzeptanzkriterien (Stufe 1 – Inkrement 9):
+Akzeptanzkriterien (Stufe 1 – Inkrement 9; **Zuschnitt, Rechte, Datenhaltung und Sicherheit siehe R.7** – bei Widerspruch gilt R.7):
 - [ ] **Verfügbar ab Phase 3** (Termin steht – Preise und Verfügbarkeit hängen am Datum). Einstieg im Cockpit als **Station V3 „Unterkunft“** (Zustände W16 v2.4), nach «gebucht ✓» als Kachel; Bereich `/trips/{id}/stays` (kein Tab, UX-1). Orga kann V3 „ohne App erledigt“ abhaken («Haben wir schon / brauchen wir nicht», UX-9).
 - [ ] **Vorschlagen** (alle Mitglieder): **Link Pflicht** (nur `https://`), Titel Pflicht (wird aus der Link-Vorschau vorbelegt), Gesamtpreis optional (Währung der Reise), Notiz optional (≤ 200 Zeichen, Hinweis «Alle in der Reise können das lesen»). Die App zeigt zusätzlich **«≈ X € pro Person»** (Gesamtpreis ÷ Anzahl Reisende = Mitglieder + Platzhalter; Anzahl von der Orga änderbar). Max. **30 Vorschläge** pro Reise.
 - [ ] **Link-Vorschau (best effort):** Der Server lädt Titel, Beschreibung und Vorschaubild (Open Graph) – mit SSRF-Schutz (nur https, nur öffentliche IP-Adressen auch nach Weiterleitungen, max. 3 Weiterleitungen, Zeitlimit 5 s, max. 1 MB HTML, eigener User-Agent, Rate-Limit pro Person). Klappt das nicht (viele Portale blockieren Abrufe), erscheint sofort eine **Platzhalterkarte** (Domain + Titel + Illustration) – das Vorschlagen wird nie blockiert.
@@ -863,6 +865,191 @@ Migrationen: eine Migration für `trip_info`, `trips.fixed_announced_at`, Platzh
 | später | Check-in/-out als Datum + Uhrzeit (W22 Stufe 2), mehrere Orte, Station „Packen“ (F-032), „zuletzt erinnert“, Live-Updates. |
 
 Aufwand: **M (≈ 1 Inkrement)**. Risiko: Weg-Logik und Längen-Budget (durch reine Funktion + Tests je Tabellenzeile beherrschbar), Konfetti-Performance auf alten Android-Geräten (vorhandene Feier-Technik wiederverwenden).
+
+### R.7 Zuschnitt Inkrement 9 – Unterkünfte (F-031 Stufe 1) (2026-10-23)
+
+**Ziel:** Nach der Festlegung sammelt die Gruppe Unterkünfte per Link an einem Ort, jede Person bewertet alle Vorschläge unbeeinflusst per Swipe, die Orga legt die Unterkunft fest und markiert sie als gebucht – sichtbar als **Station V3 „Unterkunft“** im Weg und danach als Kachel. Kein Dateispeicher, keine sensiblen Daten → nicht an G1b gebunden (echte Nutzung ab G1).
+
+**Quellen (verbindlich):** F-031 (Steckbrief oben) · PRD §12 **Q33** (Rangliste erst nach eigenem Swipen, Orga sieht alles, Orga legt fest) und **Q34** (Bilder nur über unseren Server, nicht dauerhaft gespeichert; eigene Screenshots erst Inkrement 12) · Q31 (Löschung wie die Reise, 90 Tage) · Q36 (alles Free) · W16 v2.4 **V3**, v2.5 (Heute-Reihenfolge), v2.6 (Kacheln), v2.7 (UX-9), v2.8 (Anlässe `stay-rate`/`stay-fix`/`stay-book`), v2.10 (Adapter) · **W17** (Vorschlagen) und **W18** (Liste, Swipen, Rangliste, Festlegen) – werden von UI/UX parallel baureif gemacht. **Für UI, Texte, Zustände und Layout gilt die UX-Spec (W16/W17/W18); dieser Abschnitt regelt Daten, Rechte, Abgrenzung und Akzeptanz.** Bei Widerspruch in Rechten/Datenhaltung gilt R.7; UI/UX gleicht W17/W18 an.
+
+**Voraussetzung für den Start der Umsetzung:** W17/W18 „baureif“ von UI/UX; Motion Designer liefert Swipe-Geste, Rückfedern, Stempel, Stapel-Ende-Siegel, Festlegen-Siegel (je mit reduzierter Variante); Designer liefert Platzhalterkarte (Bett-Icon, gestreift) und **6–8 eigene Demo-Bilder** für Unterkünfte (selbst erstellt/illustriert, keine fremden Fotos).
+
+#### Im Umfang (Übersicht)
+| Baustein | UX-Quelle | Feature |
+|---|---|---|
+| Bereich `/trips/{id}/stays` (Liste „Alle Vorschläge“, Rangliste/Sperrhinweis, „Eure Unterkunft“) | W18 A, C, D | F-031 |
+| Vorschlagen `/trips/{id}/stays/new` mit Link-Vorschau (SSRF-sicher) und Platzhalterkarte | W17 | F-031 |
+| Bild-Proxy (keine Drittserver im Browser, keine Daueraufbewahrung) | W17 „Datenschutz/Technik“ | F-031, Q34 |
+| Swipen `/trips/{id}/stays/swipe` (Geste + Tasten + Tastatur, Rückgängig) | W18 B | F-031, F-052 |
+| Rangliste mit Sichtbarkeitsregel (Q33) | W18 C | F-031 |
+| Festlegen (Orga), «gebucht ✓» (Orga), Aufheben, Teilen-Text | W18 D | F-031 |
+| Station **V3** + Kachel **Unterkunft** im Cockpit, UX-9 «Haben wir schon / brauchen wir nicht», Erinnern-Anlässe | W16 v2.4 V3, v2.6–v2.8 | F-053 |
+| Infos «Aus Unterkunft übernehmen» | W22, W18 D | F-033 |
+| Datenexport, Löschung, Demo-Seed | – | F-013, F-043 |
+
+#### Rechte in Inkrement 9 (serverseitig geprüft, Ergänzung zu R.1)
+„Bucher“ im Sinne von W16 V3 ist in Inkrement 9 **immer die Orga** (Markierung „Bucht“ kommt mit Inkrement 11). Platzhalter (F-007) handeln nicht.
+
+| Aktion | Mitglied | Orga | Bedingung |
+|---|---|---|---|
+| Bereich ansehen, Vorschläge sehen | ✔ | ✔ | Mitglied der Reise, Phase `fixed` |
+| Unterkunft vorschlagen, Link-Vorschau abrufen | ✔ | ✔ | keine Unterkunft festgelegt; < 30 Vorschläge |
+| Bewerten (♥ / ✕), Bewertung ändern/zurücknehmen | ✔ | ✔ | keine Unterkunft festgelegt |
+| Rangliste + Bewertungen anderer sehen | nach eigener Bewertung **aller aktuellen** Vorschläge – oder sobald festgelegt | **immer** | Q33 |
+| Fortschritt «{x} von {n} haben bewertet» (nur Zahl) | ✔ | ✔ | – (wie Teilnahme-Zahlen F-007) |
+| Eigenen Vorschlag bearbeiten (Titel, Preis, Notiz – nicht den Link) | ✔ (eigene) | ✔ (alle) | Should; nicht die festgelegte Unterkunft nach «gebucht» |
+| Vorschlag löschen | ✔ (eigene) | ✔ (alle) | nicht die festgelegte Unterkunft (erst Festlegung aufheben) |
+| Festlegen «Das wird's» / Festlegung aufheben | – | ✔ | auch wenn noch nicht alle bewertet haben («Schon festlegen») |
+| «gebucht ✓» setzen / zurücknehmen | – | ✔ | nur für die festgelegte Unterkunft; „Bucht“ ab Inkrement 11 |
+| V3 „ohne App erledigt“ (UX-9) setzen / rückgängig | – | ✔ | – |
+| Anzahl Reisende für «≈ € pro Person» ändern | – | ✔ | Should |
+| Infos «Aus Unterkunft übernehmen» | – | ✔ | wie Infos bearbeiten (I8-10); „Bucht“ ab Inkrement 11 |
+
+Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseiten (I8-09). **Bewusste Festlegung (Abweichung zu W18 „Fehler & Sonderfälle“):** Wird die Termin-Festlegung aufgehoben, ist der Bereich wie die Infoseite **nicht erreichbar** (es gibt außerhalb von Phase 3 keinen Einstieg, UX-1); alle Daten bleiben erhalten und sind nach der nächsten Festlegung wieder da (s. I9-09).
+
+#### User Stories & Akzeptanzkriterien
+
+**I9-01 Bereich „Unterkünfte“ und Einstieg**
+**Als** Mitglied **möchte ich** nach der Festlegung einen Ort haben, an dem alle Unterkunfts-Ideen liegen, **damit** sie nicht im Gruppenchat untergehen.
+- [ ] Route `/trips/{id}/stays` (nur Mitglieder, nur Phase `fixed`); Aufbau, Leerzustand und Texte nach W18 A/C/D. Einstieg ausschließlich über Station V3 bzw. – sobald V3 erledigt ist – über die Kachel „Unterkunft“ (W16 v2.6); kein Tab (UX-1).
+- [ ] „Alle Vorschläge (n)“ in neutraler Reihenfolge (Eingang, älteste zuerst), je Eintrag: Bild (Proxy) oder Platzhalter, Titel, Domain, «von {Name}» (gelöschtes Konto/ausgetreten → «ehemaliges Mitglied»), Preis + «≈ X pro Person» (falls Preis), eigene Bewertung als zwei `aria-pressed`-Tasten. **Ohne** Zahlen oder Namen anderer, solange die Rangliste für die Person gesperrt ist.
+- [ ] Jede Karte öffnet das Portal in neuem Tab (`rel="noopener noreferrer"`, sichtbares «↗», sr-only «(öffnet neuen Tab)»); die Domain ist auf jeder Karte sichtbar.
+- [ ] Statusangaben aktualisieren sich beim Neuladen (kein Live-Update, wie F-008).
+
+**I9-02 Unterkunft vorschlagen**
+**Als** Mitglied **möchte ich** eine Unterkunft mit einem Link vorschlagen, **damit** alle sie mit einem Tipp ansehen und bewerten können.
+- [ ] Route `/trips/{id}/stays/new`; Felder: **Link** Pflicht (nur `https://`, ≤ 2 048 Zeichen, gültiger Hostname, keine Zugangsdaten `user:pass@`, keine IP-Literale), **Titel** Pflicht (≤ 80, vorbelegt aus der Vorschau, änderbar), **Gesamtpreis** optional (> 0, ≤ 1 000 000, max. 2 Nachkommastellen, Dezimaltrennzeichen gemäß Sprache, intern Cent als Ganzzahl, Währung der Reise), **Notiz** optional (≤ 200, Hinweis «Alle in der Reise können das lesen»). Validierung Client + Server (zod), Steuerzeichen entfernt, Ausgabe nur als Text (kein HTML/Markdown).
+- [ ] **«≈ X pro Person»** = Gesamtpreis ÷ Anzahl Reisende, kaufmännisch auf ganze Währungseinheiten gerundet, immer mit «≈». Anzahl Reisende = Mitglieder + **nicht eingelöste Platzhalter** (auch „ohne App“ markierte, Q35-Logik); *Should:* Orga kann die Zahl überschreiben (1–50, „automatisch“ wiederherstellbar).
+- [ ] **Max. 30 Vorschläge** pro Reise (gelöschte zählen nicht), geprüft unter Sperre der Reise; danach Taste deaktiviert mit Grund (W17).
+- [ ] **Doppelter Link:** Vergleich über die normalisierte URL (Hostname klein ohne `www.`, ohne Fragment, ohne abschließenden `/`, Query ohne Tracking-Parameter wie `utm_*`, `fbclid`, `gclid`, `aid`/`label` – Liste im Code mit Tests für Booking-, Airbnb- und Ferienhaus-Beispiel-URLs) → Absenden gesperrt mit Hinweis (W17). Datenbank-Eindeutigkeit je Reise; Erkennung ist „best effort“ (Portale mit unterschiedlichen URLs für dieselbe Unterkunft werden nicht erkannt – akzeptiert).
+- [ ] Absenden ist auch während laufender oder nach gescheiterter Vorschau möglich (W17): Liegt kein gültiges Vorschau-Ergebnis vor, startet der Server den Abruf nach dem Speichern im Hintergrund (`after()`, wie R-067) und ergänzt Bild/Site-Name; schlägt er fehl, bleibt die Platzhalterkarte.
+- [ ] Neuer Vorschlag liegt sofort bei **allen** (auch der vorschlagenden Person) im Swipe-Stapel und sperrt die Rangliste für alle Mitglieder, die ihn noch nicht bewertet haben (W18 Grundregeln).
+- [ ] Bei festgelegter Unterkunft: kein Vorschlagen (Route leitet um, W17), Server lehnt ab.
+
+**I9-03 Link-Vorschau (best effort, SSRF-sicher)**
+**Als** Mitglied **möchte ich**, dass Titel und Bild automatisch erscheinen, **damit** ich nichts abtippen muss – und nie warten muss, wenn ein Portal blockt.
+- [ ] Server-Endpunkt für den Vorschau-Abruf nimmt nur **Mitglieder einer Reise in Phase `fixed`** an (reisebezogen, kein offener Dienst) und liefert Titel (`og:title`, sonst `<title>`), Site-Name (`og:site_name`, sonst Domain) und Bild-URL (`og:image`/`twitter:image`, relativ aufgelöst, muss ebenfalls `https://` sein). Texte: HTML-Entities dekodiert, Steuerzeichen entfernt, auf Feldlänge gekürzt, nur als Text angezeigt.
+- [ ] Das Ergebnis geht als **serverseitig signiertes Vorschau-Token** (HMAC über Reise, normalisierte URL, Bild-URL, Site-Name, Ablauf ≤ 30 min) an den Client; beim Speichern übernimmt der Server Bild-URL/Site-Name **nur aus einem gültigen Token** – vom Client gelieferte Bild-URLs werden nie übernommen.
+- [ ] **Jeder Fehler** (blockiert, 4xx/5xx, Zeitlimit, zu groß, kein HTML, keine Metadaten, unsichere Adresse) ergibt dieselbe neutrale Antwort „keine Vorschau“ → Platzhalterkarte (W17); keine Fehlerdetails an den Client (kein Werkzeug zum Abtasten von Netzen). Das Vorschlagen wird nie blockiert.
+- [ ] SSRF-Schutz und Limits: siehe **Sicherheit** unten (Pflicht, Reviewer prüft mit Tests).
+
+**I9-04 Vorschaubilder über den Bild-Proxy (Q34)**
+**Als** Mitglied **möchte ich** Bilder der Unterkünfte sehen, ohne dass mein Browser Kontakt zu fremden Servern aufnimmt, **damit** meine IP-Adresse nicht an Portale und Werbenetzwerke geht.
+- [ ] Alle Vorschaubilder werden über einen eigenen Endpunkt ausgeliefert (gleiche Origin). **Kein offener Proxy:** Der Endpunkt nimmt keine frei wählbare URL an, sondern nur die ID eines gespeicherten Vorschlags (mit Mitgliedschaftsprüfung) bzw. ein signiertes Vorschau-Token (vor dem Speichern).
+- [ ] Abruf mit demselben SSRF-Schutz wie I9-03; nur `image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/avif`, Typ per **Magic Bytes** geprüft (Header des Fremdservers wird nicht vertraut); **kein SVG**; max. **5 MB**; Zeitlimit 5 s.
+- [ ] Antwort mit eigenem `Content-Type` (aus Magic Bytes), `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, `Cache-Control: private, max-age=86400` (Browser-Cache ≤ 7 Tage erlaubt, nie `public` – keine geteilten Caches/CDN).
+- [ ] **Keine dauerhafte Speicherung** der Bilddaten: nicht in DB, nicht im Objektspeicher, nicht in Backups. Erlaubt ist höchstens ein **flüchtiger** Server-Zwischenspeicher (Arbeitsspeicher/Temp-Verzeichnis, ≤ 7 Tage, nicht gesichert) – Entscheidung Developer/Operations; auf Vercel genügt der Browser-Cache. Gespeichert wird nur die **Bild-URL** (Verweis).
+- [ ] Bild nicht ladbar → Platzhalterbild (dekorativ, `alt=""`); Inhalt steht immer als Text auf der Karte.
+- [ ] *Should:* Response-Header `Content-Security-Policy: img-src 'self' data: blob:` für `/trips/*/stays*`, damit versehentliche Drittbilder vom Browser blockiert werden (aktuell gibt es keine globale CSP – Operations/Developer prüfen, ob sie global eingeführt wird).
+
+**I9-05 Swipen**
+**Als** Mitglied **möchte ich** alle Vorschläge schnell wie Karten durchswipen, **damit** ich ohne Diskussion meine Meinung abgebe.
+- [ ] Route `/trips/{id}/stays/swipe`; Stapel = alle aktuellen Vorschläge **ohne eigene Bewertung** (auch eigene Vorschläge), älteste zuerst; Zähler als Text. Geste, Schwellen, Stempel, Rückfedern, Tasten (✕ / ↶ / ♥, SC 2.5.7), Tastatur ← / →, Strg/Cmd+Z, Live-Region, Stapel-Ende «Geschafft!», In-App-Browser-Schutz und reduzierte Bewegung nach W18 B und Motion-Spec.
+- [ ] Jede Bewertung wird sofort gespeichert (optimistisches UI, Retry wie W18 „Fehler & Sonderfälle“); **Rückgängig** nimmt die zuletzt in dieser Sitzung abgegebene Bewertung zurück (Server: Bewertung löschen/auf vorigen Wert setzen).
+- [ ] In der Liste (I9-01) bleibt die eigene Bewertung änderbar; erneutes Tippen auf die gedrückte Taste = zurück auf „offen“ (Bewertung gelöscht → Rangliste ggf. wieder gesperrt).
+- [ ] Neue Vorschläge während des Swipens werden beim nächsten Laden hinten angehängt (Banner W18); gelöschte verschwinden mit Hinweis.
+- [ ] Platzhalter können nicht bewerten; Bewertungen nach Festlegung der Unterkunft lehnt der Server ab (Route zeigt «Die Unterkunft steht schon»).
+
+**I9-06 Rangliste & Sichtbarkeit (Q33)**
+**Als** Mitglied **möchte ich** erst nach meiner eigenen Bewertung sehen, was den anderen gefällt, **damit** ich unbeeinflusst entscheide.
+**Als** Orga **möchte ich** jederzeit den Stand sehen, **damit** ich weiß, wann ich festlegen kann.
+- [ ] „Fertig“ = die Person hat **jeden aktuellen** (nicht gelöschten) Vorschlag bewertet. Ein neuer Vorschlag macht alle, die ihn nicht bewertet haben, wieder „nicht fertig“.
+- [ ] **Serverseitig durchgesetzt:** Für nicht fertige Mitglieder liefert der Server **keine** Zählwerte, Namen oder Reihenfolge der Bewertungen anderer aus (weder in HTML/RSC-Payload noch in API-Antworten) – nur eigene Bewertungen und die Fortschrittszahl. Test je Rolle/Zustand. Orga erhält immer alles. Nach Festlegung der Unterkunft sehen **alle** die Rangliste (Swipen ist beendet).
+- [ ] Sortierung als reine, getestete Funktion: (1) meiste ♥, (2) wenigste ✕, (3) niedrigerer Preis pro Person (ohne Preis = hinter allen mit Preis), (4) früher vorgeschlagen. Platz 1 nur, wenn mindestens ein ♥ existiert.
+- [ ] Nach Freischaltung: je Vorschlag ♥- und ✕-Zahl, ♥ **namentlich** (Transparenz wie F-011); ✕ nur als Zahl (kein Bloßstellen). Ausgetretene Personen zählen nicht mehr (Bewertungen gelöscht).
+- [ ] Fortschritt «{x} von {n} haben bewertet»: n = aktuelle Mitglieder (ohne Platzhalter), x = davon „fertig“.
+
+**I9-07 Unterkunft festlegen, gebucht, aufheben**
+**Als** Orga **möchte ich** die Gewinner-Unterkunft festlegen und als gebucht markieren, **damit** alle wissen, woran sie sind.
+- [ ] «Das wird's» (nur Orga, Bestätigung W18 D) setzt genau **eine** festgelegte Unterkunft je Reise (DB-Eindeutigkeit); Swipen und Vorschlagen enden; kleine Feier ohne Konfetti (Siegel + Snackbar, W18 D); Teilen-Text «Unsere Unterkunft: {Titel} {Link}» (DE/EN) über das vorhandene Teilen-Sheet.
+- [ ] «Als gebucht markieren» / Rückgängig (nur Orga in Inkrement 9) speichert Zeitpunkt + Person; sichtbar für alle als «gebucht ✓» bzw. «noch nicht gebucht» (Wort + Icon, nie nur Farbe).
+- [ ] «Festlegung aufheben» (nur Orga, Bestätigung) setzt Festlegung **und** «gebucht» zurück; Swipen/Vorschlagen sind wieder möglich, Bewertungen bleiben erhalten.
+- [ ] Die festgelegte Unterkunft kann nicht gelöscht werden (erst aufheben). Löschen anderer Vorschläge bleibt möglich.
+
+**I9-08 Station V3, Kachel „Unterkunft“, Erinnern, UX-9 (F-053)**
+**Als** Mitglied **möchte ich** im Weg sehen, wo wir bei der Unterkunft stehen und ob ich dran bin, **damit** ich nicht nachfragen muss.
+- [ ] Adapter für `tripRoute()` (Vertrag W16 v2.10) liefert Station **V3** mit den Zuständen der Tabelle W16 v2.4 V3 je Rolle (Mitglied / Orga; „bucht“-Spalte entfällt bis Inkrement 11, „Bucher“ = Orga). Unit-Tests **je Zeile** der V3-Tabelle und je Rolle; Heute-Reihenfolge nach W16 v2.5 (V3 festlegen = blockiert andere; V3 buchen = Frist/Datum; V3 bewerten = eigener Beitrag).
+- [ ] Erledigt, wenn die festgelegte Unterkunft «gebucht ✓» ist **oder** die Orga V3 „ohne App erledigt“ markiert hat. Danach erscheint die **Kachel „Unterkunft“** in „Immer griffbereit“ (Reihenfolge W16 v2.6) mit einer Statuszeile (Wortlaut UX) → `/stays`.
+- [ ] **UX-9:** Orga markiert V3 «Haben wir schon / brauchen wir nicht» (je Reise, für alle sichtbar als «ohne App erledigt», rückgängig in der Erledigt-Gruppe; serverseitig nur Orga). Der Bereich bleibt über die Kachel nutzbar. Wird später eine Unterkunft festgelegt und gebucht, ist der Merker gegenstandslos.
+- [ ] Teilphasen: Ist V3 bei Anreise nicht erledigt, wird sie im Vorbereitungs-Block als «nicht genutzt» gezeigt (W16 v2.4); der Bereich bleibt in *Unterwegs*/*Danach* über die Kachel erreichbar, sobald es mindestens einen Vorschlag gibt.
+- [ ] Erinnern über das vorhandene `RemindSheet` (F-015) mit den Anlässen **`stay-rate`** (an Mitglieder, die nicht fertig sind), **`stay-fix`** (an die Orga, wenn alle fertig sind), **`stay-book`** (an den Bucher = Orga) – Texte DE/EN nach W16 v2.8; Texte enthalten Reisename, Link zur Reise und ggf. Titel der Unterkunft, nie Notizen oder Preise anderer.
+- [ ] Station nie gebaut/genutzt (keine Vorschläge, kein Merker): Zustand nach W16 „Bereich noch nie genutzt“ – keine Aufgabe, kein Erinnern.
+
+**I9-09 Termin-Änderung und Infos übernehmen**
+**Als** Mitglied **möchte ich** gewarnt werden, wenn sich der Termin nach dem Sammeln geändert hat, **damit** wir nicht für falsche Daten buchen.
+- [ ] Wird die Termin-Festlegung aufgehoben, bleiben Vorschläge, Bewertungen und Festlegung gespeichert (R.0 Nr. 1); der Bereich ist bis zur nächsten Festlegung nicht erreichbar.
+- [ ] **Neue Festlegung mit anderem Zeitraum:** «gebucht» wird automatisch zurückgesetzt (die Buchung galt für andere Daten); die Festlegung der Unterkunft bleibt. Im Bereich erscheint ein Hinweis «Euer Termin hat sich geändert – prüft Preise und Verfügbarkeit.» (Wortlaut UX), solange es Vorschläge gibt, die vor der aktuellen Festlegung angelegt wurden, bis die Orga ihn schließt. Gleicher Zeitraum erneut festgelegt → nichts ändert sich.
+- [ ] **Infos «Aus Unterkunft übernehmen»** (Orga, in `/info/edit` bzw. als Text-Taste auf „Eure Unterkunft“): übernimmt den **Titel** der festgelegten Unterkunft in `trip_info.stay_name` und öffnet das Bearbeiten-Formular vorbelegt (nicht automatisch speichern). Eine **Adresse** wird nicht übernommen (die Vorschau liefert sie nicht verlässlich; Portale zeigen die genaue Adresse oft erst nach der Buchung) – Hinweis im Feld Adresse (Wortlaut UX).
+
+**I9-10 Datenschutz, Export, Löschung**
+**Als** Mitglied **möchte ich**, dass meine Bewertungen und Vorschläge nach denselben Regeln wie die Reise gelöscht werden, **damit** nichts liegen bleibt.
+- [ ] Alles zu Unterkünften wird **mit der Reise gelöscht** (F-013, 90 Tage nach Reiseende bzw. „Reise löschen“, Q31) – per Fremdschlüssel-Kaskade; Löschjob muss nichts Zusätzliches tun (Test).
+- [ ] **Reise verlassen / entfernt werden:** eigene Bewertungen werden gelöscht; eigene Vorschläge bleiben für die Gruppe, Urheber erscheint als «ehemaliges Mitglied» (Verweis auf die Person entfernt). **Konto löschen (F-043):** ebenso. Festlegung/«gebucht» durch eine gelöschte Person bleiben bestehen, ohne Namen.
+- [ ] **Datenexport (F-013, Q23):** je Reise die **eigenen** Vorschläge (Link, Titel, Preis + Währung, Notiz, angelegt am) und **eigenen** Bewertungen (Titel des Vorschlags, ♥/✕, Zeitpunkt). Keine Bewertungen/Notizen anderer, keine Bilder, keine Bild-URLs nötig.
+- [ ] Notizen, Titel, Links und Bild-URLs erscheinen nie in Logs, Fehler-Tracking oder Mails (Ausnahme: Teilen-Texte, die die Person selbst auslöst). Vorschau-Abrufe loggen höchstens Hostname + Ergebnis-Kategorie (ok / blockiert / Zeitlimit / unsicher), keinen Pfad, keine Query.
+- [ ] Operations ergänzt vor G1 die Datenschutzerklärung (Platzhalter) um den Abschnitt „Unterkünfte & Link-Vorschau“: Abruf fremder Seiten erfolgt durch unseren Server, ohne Daten der Person; Bilder werden nicht gespeichert; Notizen sind für die Reise sichtbar.
+
+**I9-11 Querschnitt (Abnahme)**
+- [ ] 360 × 640, 390 × 844, 320 px, 200 % Schrift, Dark Mode, DE/EN, Desktop ≥ 960 px (W17/W18 „Desktop“); Swipe mit Finger, Maus, Tastatur und nur Tasten bedienbar; Screenreader-Durchlauf Vorschlagen → Swipen → Rangliste → Festlegen.
+- [ ] In-App-Browser (WhatsApp/Instagram iOS + Android): Swipe kollidiert nicht mit „Zurück wischen“ (W18 B); Tasten funktionieren immer.
+- [ ] Reduzierte Bewegung (System oder Konto-Schalter): keine Flugbahn, Überblenden 140 ms; kein Konfetti bei Festlegen der Unterkunft.
+- [ ] Abnahme-Fälle: Anna als Mitglied mit offenen Vorschlägen (Rangliste gesperrt, keine fremden Daten im Payload) · Anna fertig (Rangliste sichtbar) · Orga vor/nach „alle fertig“ (V3 dran «Festlegen») · festgelegt, nicht gebucht · gebucht (V3 erledigt, Kachel) · V3 „ohne App erledigt“ · Portal blockiert Vorschau (Platzhalter) · Termin neu festgelegt (Hinweis, «gebucht» zurückgesetzt) · 30er-Grenze · Person verlässt die Reise.
+
+#### Sicherheit (Pflicht – Reviewer prüft mit Tests)
+**SSRF-Schutz für jeden ausgehenden Abruf (Seite und Bild)** – als eine gemeinsame, isoliert getestete Server-Funktion (Node-Runtime, nicht Edge):
+1. **Nur `https:`**, nur Port 443, nur `GET`; keine Zugangsdaten in der URL; Hostname statt IP-Literal; URL ≤ 2 048 Zeichen.
+2. **Nur öffentliche Adressen:** DNS-Auflösung durch uns, **jede** aufgelöste Adresse wird geprüft und **die Verbindung geht an genau die geprüfte Adresse** (DNS-Pinning gegen DNS-Rebinding). Gesperrt u. a.: `0.0.0.0/8`, `10.0.0.0/8`, `100.64.0.0/10`, `127.0.0.0/8`, `169.254.0.0/16` (inkl. Cloud-Metadaten `169.254.169.254`), `172.16.0.0/12`, `192.0.0.0/24`, `192.0.2.0/24`, `192.168.0.0/16`, `198.18.0.0/15`, `198.51.100.0/24`, `203.0.113.0/24`, `224.0.0.0/4`, `240.0.0.0/4`, `255.255.255.255`; IPv6 `::`, `::1`, `fc00::/7`, `fe80::/10`, `ff00::/8`, `2001:db8::/32`, `64:ff9b::/96` u. ä., sowie IPv4-gemappte/-eingebettete IPv6-Adressen (`::ffff:10.0.0.1`) nach Umrechnung. Hostnamen wie `localhost`, `*.local`, `*.internal` werden vorab abgewiesen.
+3. **Weiterleitungen:** manuell verfolgt, **max. 3**, jede Ziel-URL durchläuft Regeln 1–2 erneut (auch `https` → `http` wird abgewiesen).
+4. **Limits:** Gesamt-Zeitlimit **5 s** je Abruf (inkl. Verbindung und Weiterleitungen); HTML **max. 1 MB**, Bild **max. 5 MB** – Abbruch beim Streamen, nicht erst nach dem Laden; HTML nur bei `text/html`/`application/xhtml+xml`; komprimierte Antworten nur mit Größenprüfung **nach** Dekompression (Schutz vor Kompressionsbomben).
+5. **Keine Weitergabe:** keine Cookies (weder senden noch speichern), kein `Authorization`, keine Header der Nutzeranfrage (keine IP, kein `X-Forwarded-For`, keine Sprache der Person über die Reise-Sprache hinaus), kein `Referer`; eigener User-Agent `WirWollenWeg-LinkPreview/1.0` (Kontakt-URL nach G1 ergänzen).
+6. **Parsen:** nur Meta-Tags/Title mit einem robusten Parser, kein Ausführen von Skripten, kein Nachladen weiterer Ressourcen außer dem einen Vorschaubild.
+7. **Einheitliche Fehlerantwort** (I9-03) – keine Unterscheidung „Port zu“ vs. „blockiert“ nach außen.
+
+**Rate-Limits** (pro **Konto**, gleicher Mechanismus wie `src/server/rate-limit.ts`, Fenster ≤ 1 h; Werte als Vorgabe, Developer darf begründet anpassen):
+| Aktion | Limit |
+|---|---|
+| Link-Vorschau abrufen | 20 / 10 min und 60 / h je Konto |
+| Vorschlag anlegen | 10 / 10 min je Konto (zusätzlich Obergrenze 30 je Reise) |
+| Bewerten / Rückgängig | 300 / 10 min je Konto |
+| Bild-Proxy | 600 / 10 min je Konto (Browser-Cache entlastet) |
+| Festlegen / gebucht / UX-9 / Löschen | wie andere Schreibaktionen der Orga |
+Überschreitung: Vorschau → Platzhalterkarte (still), übrige Aktionen → bestehende Limit-Meldung. *Could:* app-weit max. 30 Abrufe/min je Ziel-Hostname, damit wir kein Portal belasten.
+
+**Weitere Pflichten:** alle Rechte aus der Tabelle oben serverseitig (Tests je Zeile, inkl. Nicht-Mitglied und falsche Reise-ID für Vorschlag/Bewertung → keine Reise-übergreifenden Zugriffe); Links in der UI nur `https:` (Schema beim Rendern erneut prüfen, kein `javascript:`); Titel/Notizen/Site-Name nur als Text.
+
+#### Datenhaltung (Vorgabe für Developer, Bewertung durch Reviewer)
+| Was | Wo (Empfehlung) | Löschung / Datenschutz |
+|---|---|---|
+| Vorschläge | neue Tabelle `trip_stay`: `id`, `trip_id` (FK, `ON DELETE CASCADE`), `url` (≤ 2 048, `https://`), `url_normalized` (eindeutig je Reise), `title` (≤ 80), `price_cents` (Ganzzahl, null), `currency` (ISO 4217, Währung der Reise beim Anlegen), `note` (≤ 200, null), `preview_image_url` (null, nur `https://`), `preview_site_name` (≤ 80, null), `preview_status` (`pending` / `ok` / `none`), `created_by` (FK Konto, `ON DELETE SET NULL` → «ehemaliges Mitglied»), `created_at`, `updated_at` | Kaskade mit der Reise (90 Tage, F-013). Beim Verlassen der Reise: `created_by` auf null setzen (aktiv im Austritts-Code, da die Mitgliedschaft – nicht das Konto – endet). Inhalte nie in Logs. |
+| Bewertungen | neue Tabelle `trip_stay_rating`: `stay_id` (FK `ON DELETE CASCADE`), `trip_id`, `user_id`, `value` (`like` / `nope`), `rated_at`; PK (`stay_id`, `user_id`); zusammengesetzter FK (`trip_id`, `user_id`) → `trip_member` `ON DELETE CASCADE` (wie `availability`) | Verschwindet automatisch beim Verlassen/Entfernen, beim Löschen des Vorschlags und mit der Reise. „Offen“ = keine Zeile. |
+| Festlegung & gebucht | an der Reise: `trip.chosen_stay_id` (FK `trip_stay`, `ON DELETE RESTRICT`), `stay_chosen_at`, `stay_chosen_by`, `stay_booked_at`, `stay_booked_by` (FKs Konto `ON DELETE SET NULL`); Alternative: Spalten am Vorschlag mit Teil-Unique-Index „max. eine festgelegte je Reise“ – Developer entscheidet, Hauptsache DB-garantiert eindeutig | Aufheben = null. Neue Termin-Festlegung mit anderem Zeitraum setzt `stay_booked_*` zurück (I9-09). |
+| Termin-Hinweis | `trip.stay_date_notice_dismissed_at` (null) oder Ableitung aus `trip_stay.created_at < trip.fixed_at` + Merker | Mit der Reise gelöscht. |
+| Anzahl Reisende (Should) | `trip.party_size_override` (1–50, null = automatisch) | Wird in Inkrement 10 für „€ pro Person“ wiederverwendet, nicht für die Kostenaufteilung. |
+| Währung der Reise | `trip.currency` (ISO 4217), Standard aus der Feiertagsregion der Reise bzw. Region der Orga (EUR für Euro-Länder, GBP, CHF, USD …); Änderung durch die Orga kommt mit Inkrement 10 (F-035) | Wird von F-035 übernommen – deshalb schon jetzt anlegen, nicht doppelt. |
+| UX-9 V3 | `trip_station_marks(trip_id, station, set_by, set_at)` mit `station = 'V3'` (in Inkrement 8 angekündigt, R.6 Datenhaltung) – jetzt anlegen; PK (`trip_id`, `station`) | Kaskade mit der Reise; `set_by` `ON DELETE SET NULL`. |
+| Vorschau-Ergebnis vor dem Speichern | **nicht in der DB** – nur im signierten Token (I9-03) | Läuft nach ≤ 30 min ab. |
+| Vorschaubilder | **nirgends dauerhaft** (Q34) – nur Browser-Cache `private` ≤ 7 Tage, optional flüchtiger Server-Cache ≤ 7 Tage | Kein Backup, kein Objektspeicher. |
+| Nur im Browser | Stapel-Position, „letzter Swipe“ für Rückgängig (`sessionStorage`), ausstehende Bewertungen bei Netzfehler | Keine Cookies. |
+
+Migrationen: eine Migration (`0010`) für `trip_stay`, `trip_stay_rating`, `trip_station_marks`, Spalten an `trip`. Keine neuen Drittanbieter-Konten, kein Dateispeicher, nicht an G1b gebunden. Neue ausgehende Verbindungen nur durch den Server (Link-Vorschau) → Operations prüft Firewall/Egress der Docker-Demo und Vercel (Node-Runtime).
+
+#### Demo-Seed (`seed.ts`, „Demo zurücksetzen“)
+- **Neue Reise in *Vorbereitung*, Anna ist Mitglied (nicht Orga)**, z. B. „Sommerhaus Dänemark“ (Orga Ben, ~5 Mitglieder + 1 Platzhalter, Anreise in ~60 Tagen): 6 Vorschläge, Anna hat 2 bewertet → V3 „du bist dran“, Rangliste gesperrt; einer der Vorschläge ohne Bild (Platzhalterkarte), einer von einem «ehemaligen Mitglied», einer mit Notiz.
+- **„Familientreffen Harz“** (Anna Orga): 4 Vorschläge, alle Mitglieder fertig → V3 Orga „du bist dran – Festlegen“, Favorit «Ferienhaus Brockenblick» passend zu den Infos.
+- **„Roadtrip Schottland“** (*Unterwegs*): «Glen Coe Cottages» festgelegt und **gebucht** → V3 erledigt, Kachel „Unterkunft“.
+- **„Gardasee“** (*Danach*): V3 per UX-9 «Haben wir schon» erledigt (Beispiel „ohne App“).
+- Bilder: nur **eigene Demo-Bilder** des Designers (statisch unter `public/`, direkt ausgeliefert, kein Proxy nötig); **keine fremden Fotos, keine echten Portal-Links** – Links auf reservierte Beispiel-Domains (z. B. `https://ferienhaus.example/…`, RFC 2606), damit die Demo nichts Echtes vortäuscht und offline funktioniert. Die Live-Vorschau eines echten Links ist in der Demo trotzdem vorführbar (Abruf echter öffentlicher Seiten ist unkritisch, R.5).
+
+#### Nicht in Inkrement 9 (Abgrenzung)
+| Kommt mit | Inhalt |
+|---|---|
+| **Inkrement 10** (F-035/036) | Änderung der Reise-Währung durch die Orga, Unterkunftspreis als Ausgabe übernehmen (Idee, nicht zugesagt), „€ pro Person“-Logik in Kosten. |
+| **Inkrement 11** (F-056/F-054) | Markierung „Bucht“: «gebucht ✓» setzen und Infos übernehmen auch durch „Bucht“; V3-Spalte „bucht“ und Anlass `stay-book` an „Bucht“ statt Orga. |
+| **Inkrement 12** (F-055 + F-031 Stufe 2) | Bis zu 3 **eigene Screenshots** je Vorschlag (Dateispeicher, Scan, EXIF), Rückfall bei blockierter Vorschau. |
+| später | Superlike, Kommentare je Unterkunft, Vergleichsansicht, mehrere Unterkünfte (Rundreise), Ort/Schlafplätze als Felder, Erinnerung per E-Mail (F-014), Live-Updates, Premium-Extras (R.3). |
+| nie (Nicht-Ziel) | Buchung in der App, Preis-/Verfügbarkeitsabfrage bei Portalen, Affiliate-Links. |
+
+Aufwand: **M–L (≈ 1–1,5 Inkremente)**. Risiko: Link-Vorschau (viele Portale blocken → Platzhalter ist Normalfall, nicht Fehler), SSRF-Härtung (gemeinsame Funktion + Tests), Swipe im In-App-Browser (Tasten als gleichwertiger Weg).
 
 ---
 
