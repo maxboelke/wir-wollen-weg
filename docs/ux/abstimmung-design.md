@@ -512,7 +512,39 @@ Keine an den Auftraggeber. An PM/CEO (nicht blockierend): Widerruf, solange die 
 | M-U14 | von UX bestätigt (W18 E.16) | – |
 | Widerruf in Phase 2 | Empfehlung | PM/CEO |
 
+## 17. Runde 8 – Geschlossene Beta „Stufe B“ & installierte Web-App (W23, 2026-10-23)
+
+Struktur, Abläufe und Texte: [W23](wireframes/w23-beta-und-installation.md), Regeln [ux-spec §15](ux-spec.md). Die App wird in der Beta vor allem **als Web-App vom iPhone-Home-Bildschirm** genutzt – damit werden App-Symbol, Startbild und Statusleiste zum ersten Eindruck.
+
+### 17.1 Punkte an den Designer (D-72 – D-80)
+
+| Nr. | Thema | Bitte | Bezug |
+|---|---|---|---|
+| **D-72** | **Etikett „Beta“** | Kleiner Chip rechts neben der Wortmarke im globalen Header (hell/dunkel), Text „Beta“ (DE = EN), Kontrast ≥ 4,5 : 1, gleiche Höhe wie Wortmarke-x-Höhe o. Ä.; muss bei 320 px neben Bildmarke + Sprachumschalter passen. **Blockierend** (klein, mit vorhandenen Tokens lösbar). | W23 D.1 |
+| **D-73** | **Install-Skizzen iOS** | Drei kleine, schematische Skizzen (kein Screenshot, kein Apple-Markenmaterial): (1) Safari-Leiste unten mit hervorgehobenem „⋯“ bzw. Teilen-Symbol, (2) Teilen-Blatt mit hervorgehobener Zeile „Zum Home-Bildschirm“, (3) Dialog mit unserem Symbol, Name, Schalter „Als Web-App öffnen“ an, „Hinzufügen“. Je DE/EN-Beschriftung (oder textfrei + Text daneben – bevorzugt **textfrei**, dann eine Version für beide Sprachen), hell/dunkel, SVG, max. 328 px breit. Plus optional Android-Skizze „⋮ → App installieren“. **Blockierend für die Endfassung** von `/install` – bis dahin baut der Developer die Text-Anleitung ohne Bilder. | W23 B.2, B.3, F |
+| **D-74** | **App-Symbol-Varianten** | Prüfen/liefern: `apple-touch-icon` 180 px **randlos, ohne Transparenz** (iOS füllt Transparenz schwarz), Motiv mit genug Rand für die iOS-Maske; Symbol auf hellem **und** dunklem Home-Bildschirm testen. Kein „Beta“ im Symbol (bleibt nach der Beta stehen). | W23 C.1 |
+| **D-75** | **Statusleiste & Theme-Farbe** | Auf dem iPhone ist die Statusleisten-Schrift in der App immer **weiß** (`black-translucent`). Bitte (a) die Fläche hinter der Statusleiste auf hellen Seiten (Login, Meine Reisen, Konto, Hilfe, Rechtstexte, Offline) gestalten – Vorschlag: Indigo-Band in Höhe der Safe Area, ggf. Meine-Reisen-Kopf insgesamt in Indigo; (b) Dark-Mode-Wert für `theme-color` (Android) und das Band nennen. | W23 C.3 |
+| **D-76** | **Startbild & Offline** | (a) `background_color` des Manifests: Vorschlag Indigo statt `#F4F2FB`, damit es im Dark Mode keinen hellen Blitz gibt – bitte bestätigen; (b) iOS-Startbilder (`apple-touch-startup-image`) ja/nein – Empfehlung UX: **nein** in der Beta (viele Gerätegrößen, Pflegeaufwand), sofern (a) den Blitz verhindert; (c) kleine Illustration für die Offline-Seite (oder vorhandene wiederverwenden). | W23 C.2, C.3 |
+| D-77 | Illustration `/beta` (optional) | Kleine Willkommens-Illustration für Schritt 1, ≤ 120 px hoch; vorhandene wiederverwenden ist ok. | W23 A.3 |
+| D-78 | Icons | Neu im Sprite, falls nicht vorhanden: `share-ios` (Quadrat mit Pfeil nach oben, für die Anleitung), `plus-square` („Zum Home-Bildschirm“), `external` (Link verlässt die App), `feedback` (Sprechblase), `download-app` (Menü „App installieren“). | W23 B, C.6, D |
+| D-79 | Maskable / monochrome | Eigenes **maskable** 512er (Motiv in der 80-%-Sicherheitszone) statt Wiederverwendung des normalen 512er; optional `monochrome`-Symbol für Android-Themen-Icons. | W23 C.1 |
+| D-80 | Sichtprüfung | `/beta` (beide Schritte) und `/install` bei 320 px und 200 % Text – Abstände, Skizzengröße. Nach dem Bau. | W23 F |
+
+### 17.2 Punkte an den Motion Designer (über den CEO)
+
+- **UM-25:** `/install` und `/beta` ohne neue Bewegung (Standard-Eintritt reicht). Keine animierten Pfeile auf die Safari-Leiste (Lage je iOS-Layout verschieden). Offline-Seite: kein Lade-Spinner-Loop außer `aria-busy` auf der Taste. Bitte nur bestätigen.
+
+### 17.3 Abstimmungsstand Runde 8
+
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-72, D-73 | neu, **blockierend** (D-73 nur für die Endfassung) | Designer |
+| D-74 – D-80 | neu | Designer |
+| UM-25 | neu (Bestätigung) | Motion Designer |
+| B-E2 (Einladung ersetzt Beta-Code), Löschversprechen, Feedback-Kanal, Beta-Code-Modell | Empfehlung | CEO / Operations |
+
 ## Changelog
+- 2026-10-23 (Runde 8): §17 – Beta „Stufe B“ & installierte Web-App (W23): Punkte D-72 – D-80, UM-25.
 - 2026-10-23 (Runde 7, Inkrement 11): §16 – Punkte D-64–D-71 (Designer), UM-20–UM-24 (Motion), M-U14 bestätigt; W20 H, W16 v2.16, W22 E, W18 E.16 (an R.9 angeglichen).
 - 2026-10-23 (Runde 6, Inkrement 10): §15 – Punkte D-56–D-63 (Designer), UM-14–UM-19 (Motion), CEO-Fragen Notiz/„Als Ausgabe eintragen“; W19 D, W16 v2.15 (an R.8 und CEO-Entscheidungen a/b angeglichen).
 - 2026-10-23 (Runde 5, Inkrement 9): §14 – Punkte D-46–D-55 (Designer), UM-8–UM-13 (Motion), Frage UX-10; W17 F, W18 E, W16 v2.14, W22 D.
