@@ -435,7 +435,46 @@ Struktur, Zustände und Texte: [W18 E](wireframes/w18-unterkunft-swipen.md), [W1
 | UM-8 – UM-13 | neu | Motion Designer |
 | UX-10 | Bestätigung | Auftraggeber über CEO (nicht blockierend) |
 
+## 15. Runde 6 – Inkrement 10 „Kosten teilen“ (W19 D, W16 v2.15, 2026-10-23)
+
+Struktur, Zustände und Texte: [W19 D](wireframes/w19-kosten.md) (gilt vor W19 A–C), Cockpit [W16 v2.15](wireframes/w16-cockpit.md), Daten/Rechte `docs/product/features.md` R.8. Prototyp-Stand `mockups/reise-managen/index.html` `#/costs*` ist **überholt** in: Kategorie-Vorauswahl, Teilzahlung (gibt es nicht), Zahlungsinfo als ein Freitext (jetzt IBAN + anderer Weg), Segment-Label. **Blockierend für den Bau: D-58 (Icons), D-60 (Leer-Illustration), D-63 (Siegel klein)** – R.8 nennt sie als Voraussetzung.
+
+### 15.1 Punkte an den Designer (D-56 – D-63)
+| ID | Thema | Bitte |
+|---|---|---|
+| **D-56** | **Bereichsfarbe Kosten** | Kachel, Kategorie-Icon-Kacheln, Kopf-Icon. Prototyp/Mockup nutzen Sonne (`t-sun`) – bitte bestätigen oder Alternative; Bedingung: **nicht** Koralle (= „du bist dran“), **nicht** Minze-Fläche (U-25), Schulden nie in Warn-/Fehlerfarbe. |
+| **D-57** | **„Dein Stand“ + Salden-Liste** | Karte mit Saldo-Satz 26/800 tabular (bekommt = `accent-text`, schuldet = `text`, ausgeglichen = `accent-text` + ✓), 2 Erklärzeilen 14 px. Salden-Zeilen: Avatar · Name · Chip · Saldo rechts. **Optional** Balken je Person (Tricount-Stil, `aria-hidden`): bekommt nach rechts in Minze-Tönung, schuldet nach links neutral (`border-strong`) – Vorschlag oder bewusst weglassen. |
+| **D-58** | **Icons** (fehlen im Sprite) | `wallet` (Bereich Kosten, Kachel, A1/D1, Kopf `[Ausgleichen]`), `food` (Essen), `tag` (Sonstiges), `receipt` (Ausgabe ohne Kategorie). Vorhanden und verwendet: `bed` (Unterkunft), `plane` (Anreise), `sparkle` (Aktivitäten), `arrow-right` (Ausgleich «→»), `copy`, `eye`/`eye-off` (IBAN anzeigen/verbergen), `lock` (abgeschlossen), `comment` (Notiz). **Blockierend.** |
+| **D-59** | **Avatar „ehemaliges Mitglied“** | neutral (`surface-sunken`, Icon `user` oder «?»), ohne Initialen; bei Nummer nur im Text. Platzhalter-Avatar unverändert. |
+| **D-60** | **Leerzustand** `empty-costs.svg` | Stil B wie `empty-stays`, Motiv z. B. Kassenzettel + Münzen, ohne Text, `data-anim`. **Blockierend.** |
+| **D-61** | **Formular „Ausgabe“** | Betragsfeld groß (56 px, 28/800, Währungszeichen DE Suffix / EN Präfix, dekorativ); Kategorie-Umschalt-Chips (gedrückt ohne Farbe allein erkennbar: Rahmen 2 px + Häkchen), Für-wen-Chips mit Avatar 24 + Haken; Segment „Gleich / Nach Beträgen“ (wie W09-Segment); Live-Zeile: Amber-Text + Info-Icon (zu wenig/zu viel, **nicht Rot**), Minze-Text + ✓ (passt); Betragsfelder je Person rechtsbündig 44 px. 360 px + 200 % prüfen. |
+| **D-62** | **Ausgleichszeile + Zahlungsinfo** | Zeile «Du → Kemal · 86,00 €» (Pfeil-Icon, Betrag 17/800 tabular), maskierte IBAN in Monospace/tabular Vierergruppen mit `•`, Text-Tasten Anzeigen/Kopieren (44 px, bei 360 px unter der IBAN), Freitext-Zeile, Tasten «Als bezahlt/erhalten markieren» (Primär nur die erste eigene Schuld), Zustand «✓ Bezahlt»-Chip (Minze) + «Zurücknehmen»; „Bereits bezahlt“ eingeklappt; Hinweise „abgeschlossen“ (Info + Schloss), „an dich bezahlt“ (Info), Konflikt (Amber). Dark Mode ≥ 4,5 : 1. |
+| **D-63** | **Siegel klein „Alles ausgeglichen“** | Variante des vorhandenen Siegels (20 px in „Dein Stand“ neben «Du bist ausgeglichen ✓», 40 px auf der Karte «Alles ausgeglichen ✓»). **Blockierend** (R.8). |
+
+### 15.2 Punkte an den Motion Designer (UM-14 – UM-19, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-14** | Saldo/Summen ändern sich | **kein Hochzählen** (G-16) – ganzer Satz `fade` 140 ms | sofort |
+| **UM-15** | Als bezahlt markiert → „Bereits bezahlt“ | Häkchen-Pop am Chip «✓ Bezahlt» (`fast`, `spring-soft`); die Zeile bleibt an Ort und Stelle (Rückgängig bleibt greifbar), Umzug nach „Bereits bezahlt“ beim nächsten Laden. R.8 wünscht ein sichtbares „Wandern“ – **bitte prüfen**, ob das ohne Verstoß gegen motion-system §5.10 geht (Vorschlag: erst nach Ablauf der Snackbar, Zeile klappt `base` zu, Zähler «Bereits bezahlt (n)» blendet um; Fokus bleibt stabil). | sofort |
+| **UM-16** | **Ausgleich-Moment:** eigener Saldo wird 0 durch meine Aktion | Siegel 20 ploppt in „Dein Stand“ (`celebrate`, `spring-bouncy`), einmal | Überblenden |
+| **UM-17** | Alle ausgeglichen (letzte Zahlung durch meine Aktion) | Karte «Alles ausgeglichen ✓» mit Siegel 40 ploppt; **kein Konfetti** | Überblenden |
+| **UM-18** | Liste: neue Ausgabe / gelöscht / Rückgängig | neu: kurze Tönung (`slow`), kein Einfliegen; löschen: Zeile klappt zu (`fast`), Rückgängig klappt auf | sofort |
+| **UM-19** | Haptik | **keine** (Q17) – bitte bestätigen | – |
+Alle Momente nur bei eigener Aktion im Client, nie beim Laden von Server-HTML.
+
+### 15.3 Fragen
+Keine an den Auftraggeber. An den CEO (Umfang, Empfehlung UX): **Notiz** zur Ausgabe aufnehmen (R.8 hat kein Feld – W19 D.15 Nr. 2, Empfehlung ja) · Could «Als Ausgabe eintragen» bei der gebuchten Unterkunft (W19 D.17, Empfehlung ja, wenn Luft).
+
+### 15.4 Abstimmungsstand Runde 6
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-56, D-57, D-59, D-61, D-62 | neu (Feinschliff, mit vorhandenen Tokens baubar) | Designer |
+| D-58, D-60, D-63 | neu, **blockierend** | Designer |
+| UM-14 – UM-19 | neu (UM-15 mit Prüfauftrag) | Motion Designer |
+| Notiz, „Als Ausgabe eintragen“ | Empfehlung | CEO |
+
 ## Changelog
+- 2026-10-23 (Runde 6, Inkrement 10): §15 – Punkte D-56–D-63 (Designer), UM-14–UM-19 (Motion), CEO-Fragen Notiz/„Als Ausgabe eintragen“; W19 D, W16 v2.15 (an R.8 und CEO-Entscheidungen a/b angeglichen).
 - 2026-10-23 (Runde 5, Inkrement 9): §14 – Punkte D-46–D-55 (Designer), UM-8–UM-13 (Motion), Frage UX-10; W17 F, W18 E, W16 v2.14, W22 D.
 - 2026-10-22 (Runde 4b): §13 – Antworten U-23–U-30, Bewertung UM-4, Abnahme D-36–D-45; W16 v2.12/v2.13 (Inkrement-8-Schnitt), W22 baureif.
 - 2026-10-22 (Runde 4): §12 – Auswahl Variante C, Antworten R4-U-17–R4-U-22, neue Punkte D-36–D-45 (Designer) und UM-1–UM-7 (Motion), Fragen UX-8/UX-9; Konzept in W16 v2.
