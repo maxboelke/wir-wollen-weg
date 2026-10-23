@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.7 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.7: **Gate G0 – geschlossene Freundes-Beta §13** (Pflichtpunkte, Kurzbewertung Vercel/Neon/Lettermint, Impressum-Einschätzung, Entwurf Beta-Datenschutzhinweis, Speicher/Löschung PWA), Einträge §3; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.8 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.8: §13 an W23 angeglichen – Kurzfassung §13.6, Beta-/Einladungs-Pass-Cookies, Feedback, kein Lösch-Versprechen zum Beta-Ende; v0.7: **Gate G0 – geschlossene Freundes-Beta §13** (Pflichtpunkte, Kurzbewertung Vercel/Neon/Lettermint, Impressum-Einschätzung, Entwurf Beta-Datenschutzhinweis, Speicher/Löschung PWA), Einträge §3; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -423,7 +423,8 @@ Entscheidung CEO + Auftraggeber 2026-10-23: private, nicht-kommerzielle Beta fü
 |---|---|---|
 | ☐ | Beta-Modus gebaut und vom Reviewer freigegeben (P1-B0: `APP_ENV=beta`, Startschutz, Beta-Code, Zustimmung mit Version, PWA/Service Worker ohne personenbezogene Daten im Cache, Rechtstexte ohne Platzhalter) | Developer → Reviewer |
 | ☐ | **Verantwortlicher benannt:** Auftraggeber (Name in `LEGAL_OPERATOR_NAME`, Kontakt in `CONTACT_EMAIL`) – **nicht** im öffentlichen Repository | Auftraggeber |
-| ☐ | **Beta-Datenschutzhinweis** (§13.4) online, mit Name + Kontakt, versioniert; Häkchen bei der Registrierung speichert Version + Zeitpunkt | Developer, CEO prüft Text |
+| ☐ | **Beta-Datenschutzhinweis** (§13.4) online, mit Name + Kontakt, versioniert; Häkchen bei der Registrierung (`/beta` Schritt 2 bzw. Einladungsweg Z4a, W23 A.4/A.8) speichert Version + Zeitpunkt am Konto | Developer, CEO prüft Text |
+| ☐ | **Kurzfassung** auf `/beta` und im Einladungsweg mit den Texten aus §13.6 (insb. **kein** Versprechen „am Ende der Beta löschen wir alle Daten“, ehrliche Hosting-Zeile statt „Server in der EU“) | Developer, CEO prüft |
 | ☐ | Seite **„Anbieter & Kontakt“** statt Platzhalter-Impressum (§13.3) | Developer |
 | ☐ | **AVV/DPA abgelegt** (PDF mit Datum, außerhalb des Repos): Lettermint, Neon; **Vercel: Entscheidung E-G0-1 dokumentiert** (§13.2) | Auftraggeber |
 | ☐ | **Vercel: KI-Training/Weitergabe zu Trainingszwecken abgeschaltet** (Team → Settings → Data Preferences) | Auftraggeber |
@@ -432,10 +433,11 @@ Entscheidung CEO + Auftraggeber 2026-10-23: private, nicht-kommerzielle Beta fü
 | ☐ | Eigene Neon-Datenbank `wir-wollen-weg-beta` (Frankfurt), getrennt von der Vorschau; eigener `BETTER_AUTH_SECRET`/`CRON_SECRET` | Auftraggeber |
 | ☐ | `TRAVEL_DATA_ENABLED=false`, Startschutz verweigert `true` | Developer, Reviewer |
 | ☐ | Löschjob läuft täglich (Vercel Cron, erster Lauf im Log sichtbar: nur Anzahlen) | Operations, Auftraggeber zeigt Log |
-| ☐ | **Hinweis an Tester** verschickt (Vorlage beta-anleitung.md §8): private Beta, US-Hosting-Bezug, keine sensiblen Angaben in Freitexten, Konto jederzeit löschbar, was am Beta-Ende passiert | Auftraggeber |
+| ☐ | **Hinweis an Tester** verschickt (Vorlage beta-anleitung.md §8, W23 A.1 + Datenschutz-Zeilen): private Beta, US-Hosting-Bezug, keine sensiblen Angaben in Freitexten, Konto jederzeit löschbar, normale Löschfristen | Auftraggeber |
+| ☐ | **Feedback-Kanal** nur über Env-Variablen (`FEEDBACK_WHATSAPP_NUMBER`, `FEEDBACK_EMAIL`), nicht im Repo; vorausgefüllter Text ohne Reisenamen/IDs/Namen/E-Mail (W23 D.2) | Auftraggeber, Reviewer prüft Text |
 | ☐ | Kurzer **VVT-Eintrag „Freundes-Beta“** (eine Seite, außerhalb des Repos oder `docs/ops/vvt.md` ohne Personenbezug): Zwecke, Kategorien, Empfänger (Vercel, Neon, Lettermint), Drittland USA (DPF/SCC), Fristen §6, TOM §7 | Operations (Entwurf) → Auftraggeber |
 | ☐ | **Datenpannen-Mini-Prozess** notiert: wer merkt was, Auftraggeber entscheidet binnen 72 h über Meldung an die Aufsichtsbehörde (Art. 33), Kontakt der zuständigen Landesbehörde (Wohnsitz des Auftraggebers) notiert | Operations → Auftraggeber |
-| ☐ | **Beta-Ende festgelegt** (Zeitpunkt oder Kriterium) und angekündigt: Daten löschen **oder** nach Ankündigung mit Widerspruchsmöglichkeit in den Echtbetrieb (G1, Hetzner) übernehmen | CEO + Auftraggeber |
+| ☐ | **Kein Lösch-Versprechen zum Beta-Ende** (CEO 2026-10-23): Es gelten die normalen Löschfristen (§6: Reisen 90 Tage nach Reiseende bzw. 12 Monate Inaktivität, Konten 24 Monate ohne Anmeldung, Konto jederzeit selbst löschbar). Ein späterer Umzug in den Echtbetrieb (G1, EU-Hosting) wird **vorher angekündigt** (neuer Dienstleister → neue Hinweis-Version, Widerspruch = Konto löschen). Ein Abschalten ohne Umzug wird mit Frist für den Datenexport angekündigt | CEO + Auftraggeber |
 
 ### 13.2 Datenschutz-Kurzbewertung der Dienstleister (Stand 2026-10-23)
 
@@ -473,7 +475,7 @@ Platzhalter in geschweiften Klammern füllt die App aus Env-Variablen (`{name}` 
 >
 > **1. Wer ist verantwortlich?** {name} (Privatperson). Kontakt: {kontakt}. Die Beta ist ein privates, nicht-kommerzielles Testprojekt für einen geschlossenen Freundeskreis.
 >
-> **2. Welche Daten verarbeiten wir?** *Konto:* E-Mail-Adresse, Anzeigename, Sprache, Region, optional ein Passwort (nur als sicherer Hash). *Reisen:* Mitgliedschaften und Rollen, deine freien und belegten Tage, Kommentare, Stimmen, Inhalte der Infoseite, Unterkunftsvorschläge und Bewertungen, Ausgaben und Salden, freiwillig hinterlegte Zahlungsinfo (z. B. IBAN). *Technik:* IP-Adresse, Zeitpunkt und Art der Anfrage in kurzlebigen Server-Protokollen, ein Anmelde-Cookie.
+> **2. Welche Daten verarbeiten wir?** *Konto:* E-Mail-Adresse, Anzeigename, Sprache, Region, optional ein Passwort (nur als sicherer Hash). *Reisen:* Mitgliedschaften und Rollen, deine freien und belegten Tage, Kommentare, Stimmen, Inhalte der Infoseite, Unterkunftsvorschläge und Bewertungen, Ausgaben und Salden, freiwillig hinterlegte Zahlungsinfo (z. B. IBAN). *Registrierung:* Zeitpunkt und Version deiner Zustimmung zu diesem Hinweis, ob du über Beta-Code oder Einladung gekommen bist. *Technik:* IP-Adresse, Zeitpunkt und Art der Anfrage in kurzlebigen Server-Protokollen, ein Anmelde-Cookie, während der Registrierung kurz ein Cookie, das den geprüften Beta-Code bzw. die Einladung festhält (ohne den Code selbst).
 >
 > **3. Wofür und auf welcher Rechtsgrundlage?** Damit die App für dich und deine Reisegruppen funktioniert (Art. 6 Abs. 1 lit. b DSGVO) und um sie vor Missbrauch zu schützen, z. B. durch Begrenzung von Anmeldeversuchen (Art. 6 Abs. 1 lit. f DSGVO). Die Teilnahme ist freiwillig; bei der Registrierung bestätigst du, diesen Hinweis gelesen zu haben.
 >
@@ -483,11 +485,13 @@ Platzhalter in geschweiften Klammern füllt die App aus Env-Variablen (`{name}` 
 >
 > **6. Cookies und Speicher auf deinem Gerät:** nur technisch notwendige (Anmeldung, Sprache, Darstellung). Installierst du die App auf dem Home-Bildschirm, speichert sie eine Offline-Seite und Programmdateien – keine persönlichen Daten.
 >
-> **7. Wie lange?** Dein Konto, bis du es löschst, spätestens nach 24 Monaten ohne Anmeldung (mit Hinweis-Mail vorher). Reisen 90 Tage nach dem Reiseende bzw. 12 Monate nach der letzten Aktivität. Server-Protokolle nur wenige Tage. **Ende der Beta:** Wir löschen die Daten oder übernehmen sie – nur nach vorheriger Ankündigung, mit der Möglichkeit zu widersprechen – in den regulären Betrieb.
+> **7. Wie lange?** Dein Konto, bis du es löschst, spätestens nach 24 Monaten ohne Anmeldung (mit Hinweis-Mail vorher). Reisen 90 Tage nach dem Reiseende bzw. 12 Monate nach der letzten Aktivität. Server-Protokolle nur wenige Tage. Diese Fristen gelten auch während und nach der Test-Phase. Ändern wir etwas Wesentliches – etwa einen Umzug zu einem anderen Hosting-Anbieter –, sagen wir dir vorher Bescheid; du kannst dann dein Konto löschen.
 >
 > **8. Deine Rechte:** Auskunft (auch als Datenexport in der App), Berichtigung, Löschung (Konto löschen in der App), Einschränkung, Widerspruch und Datenübertragbarkeit. Schreib dafür an {kontakt}. Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren, z. B. der deines Wohnorts.
 >
 > **9. Pflicht zur Angabe?** Ohne E-Mail-Adresse kein Konto; alles andere ist freiwillig. Es gibt keine automatisierten Entscheidungen.
+>
+> **10. Feedback:** Wenn du über „Feedback geben“ per WhatsApp oder E-Mail schreibst, siehst du vorher den Text; er enthält Gerät, App-Version und die Ansicht – keine Reisen oder Namen. Für die Übermittlung gelten die Bedingungen von WhatsApp bzw. deines Mail-Anbieters. Wir nutzen Feedback nur, um die App zu verbessern.
 
 Prüfpunkte für den Text: Abschnitte §2a (Link-Vorschau: unser Server ruft die verlinkte Seite ohne deine Daten ab) und §2b (Kosten/Zahlungsinfo) in Kurzform ergänzen, falls die Rechtsprüfung das verlangt; HIBP nur erwähnen, wenn eingeschaltet (für G0 aus).
 
@@ -496,12 +500,31 @@ Prüfpunkte für den Text: Abschnitte §2a (Link-Vorschau: unser Server ruft die
 | Speicherung / Daten | Zweck | Bewertung |
 |---|---|---|
 | **Service Worker + Cache Storage** `ww-shell-<buildId>` (nur `beta`/`production`) | Offline-Hinweisseite, App-Shell, gehashte Programmdateien (`/_next/static`) | technisch erforderlich für die vom Nutzer gewählte Installation/Offline-Anzeige (§ 25 Abs. 2 Nr. 2 TDDDG); **keine** personenbezogenen Daten, keine Kennung; Abmelden/Konto löschen sendet `Clear-Site-Data: "cache"` |
-| Beta-Pass (serverseitig, `verification`, ≤ 30 Min.) | Beta-Code + Zustimmung bis zur Kontoanlage festhalten | kein Endgerätezugriff; HMAC der Adresse statt Klartext; verfällt bzw. wird bei Kontoanlage verbraucht |
-| `betaConsentVersion`, `betaConsentAt` am Konto | Nachweis der Zustimmung zum Beta-Hinweis | Löschung mit dem Konto |
-| Install-Hinweis „Zum Home-Bildschirm“ (optional, UX) | Hinweis nur einmal zeigen | nur falls gespeichert: Eintrag in §4 nachtragen (Reviewer prüft) |
+| Cookie **`ww_beta_pass`** (httpOnly, signiert, ≤ 24 h) | geprüften Beta-Code (nur Kennung, nicht der Code) + Zustimmung bis zur Kontoanlage festhalten (deployment.md §0.12.5 Nr. 2) | technisch erforderlich für die angeforderte Registrierung (§ 25 Abs. 2 Nr. 2 TDDDG); keine E-Mail, kein Code; wird bei Kontoanlage gelöscht |
+| Cookie **`ww_invite_pass`** (nur Variante B, httpOnly, signiert, ≤ 24 h) | Einladung (Hash des Tokens, Reise-ID) + Zustimmung bis zur Kontoanlage | wie oben; Token nur als Hash |
+| `sessionStorage` (nur App-Modus) | Formularzustand der Beta-Schritte, wenn der Datenschutzhinweis im selben Fenster geöffnet wird (W23 C.5) | technisch erforderlich; endet mit dem Fenster; keine Codes |
+| Merker „Install-Hinweis gesehen“: `installHintSeenAt` am Konto + `localStorage` (W23 B.5) | Hinweis nur einmal zeigen | `localStorage`-Wert ohne Personenbezug (nur Zeitstempel/`1`), vom Nutzer veranlasste Funktion; Löschung mit Konto bzw. Abmelden (`Clear-Site-Data`) |
+| `standalone`-Kennzeichen an der Code-Anforderung | Hinweis auf der Magic-Link-Seite (W23 A.6) | verfällt mit der Anforderung |
+| `betaConsentVersion`, `betaConsentAt`, `betaSignupVia` am Konto | Nachweis der Zustimmung zum Beta-Hinweis, Weg der Registrierung | Löschung mit dem Konto |
 | Neon-Sicherungs-Branches (manuell vor Migrationen) | Wiederherstellung | **innerhalb von 30 Tagen löschen** (wie Backup-Rotation §6); bei Konto-/Reiselöschungen in der Zwischenzeit gilt dasselbe wie für Backups |
 | Lettermint-Zustell-Logs | Zustellnachweis, Fehleranalyse | Aufbewahrung laut Anbieter, möglichst kurz einstellen |
 | Vercel-Funktionslogs | Betrieb | laut Vercel bei Hobby nur kurz aufbewahrt; App schreibt keine Adressen/Tokens/Inhalte hinein |
+
+### 13.6 Kurzfassung für `/beta` Schritt 2 und den Einladungsweg (Operations-Fassung zu W23 A.4 / E)
+
+W23 hat die Kurzfassung als UX-Entwurf geliefert und Operations um die Hosting-Zeile und eine Entscheidung zum Lösch-Versprechen gebeten. Ergebnis (CEO 2026-10-23: **kein** Versprechen „am Ende der Beta löschen wir alle Daten“; es gelten die normalen Löschfristen):
+
+| Schlüssel | DE | EN | Änderung ggü. W23 |
+|---|---|---|---|
+| `beta.privacy.p1` | Wir speichern nur, was die App braucht: E-Mail, deinen Namen und was du in Reisen einträgst. | We only store what the app needs: your email, your name and what you add to trips. | unverändert |
+| `beta.privacy.p2` | Deine Angaben sehen nur die Leute in deinen Reisen. | Only the people in your trips see what you add. | unverändert |
+| `beta.privacy.p3` | Keine Werbung, kein Tracking. | No ads, no tracking. | unverändert |
+| `beta.privacy.p4` | Die Daten liegen in Frankfurt. Die App läuft bei Vercel, einem US-Anbieter – mehr dazu im Datenschutzhinweis. | Your data is stored in Frankfurt. The app runs on Vercel, a US provider – more in the privacy notice. | ersetzt „Server in der EU. {Hosting-Zeile}“ (Vercel ist US-Anbieter mit weltweitem CDN – „Server in der EU“ wäre nicht ganz richtig) |
+| `beta.privacy.p5` | Es ist eine Test-Version. Du kannst dein Konto jederzeit selbst löschen; Reisen löschen wir automatisch 90 Tage nach dem Reiseende. | This is a test version. You can delete your account yourself at any time; we delete trips automatically 90 days after they end. | ersetzt „Am Ende der Beta löschen wir alle Daten …“ |
+| `beta.privacy.p6` *(neu)* | Bitte trag keine Ausweis- oder Gesundheitsdaten in Notizen ein. | Please don't put ID or health details in notes. | neu (Datenminimierung, §13.2) |
+| `beta.privacy.consent` | Ich habe das gelesen und bin einverstanden. | I've read this and I agree. | unverändert |
+
+Häkchen-Glyph bleibt dekorativ (W23 F). Der Link „Alles Weitere: Datenschutzhinweis“ zeigt auf die Fassung §13.4 (Version `beta-1`). Mail-Footer in beta: „Private Test-Version von Wir wollen weg · Datenschutz: {APP_URL}/datenschutz“ / „Private test version of When do we go? · Privacy: {APP_URL}/privacy“.
 
 ## Quellen (Abruf 2026-10-08)
 
