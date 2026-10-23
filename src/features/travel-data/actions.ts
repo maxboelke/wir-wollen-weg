@@ -9,6 +9,7 @@ import {
   isCopyField,
   normalizeRequestFields,
   overlappingValues,
+  toInput,
   type CopyField,
   type TravelInput,
   type ValueErrors,
@@ -65,7 +66,10 @@ interface Ctx {
   found: Membership;
 }
 
-async function context(publicId: unknown, needsArea = true): Promise<Ctx | { error: TravelActionError }> {
+async function context(
+  publicId: unknown,
+  needsArea = true,
+): Promise<Ctx | { error: TravelActionError }> {
   const session = await getSession();
   if (!session) return { error: "signedOut" };
   if (typeof publicId !== "string") return { error: "notAllowed" };
@@ -88,9 +92,12 @@ export async function setBookerAction(
   targetUserId: unknown,
   on: unknown,
   confirmed: unknown,
-): Promise<BookerResult | { ok: false; error: "signedOut" | "limited" | "notAllowed" | "invalid" }> {
+): Promise<
+  BookerResult | { ok: false; error: "signedOut" | "limited" | "notAllowed" | "invalid" }
+> {
   const ctx = await context(publicId, false);
-  if ("error" in ctx) return { ok: false, error: ctx.error === "signedOut" ? "signedOut" : "notAllowed" };
+  if ("error" in ctx)
+    return { ok: false, error: ctx.error === "signedOut" ? "signedOut" : "notAllowed" };
   const target = idSchema.safeParse(targetUserId);
   if (!target.success || typeof on !== "boolean") return { ok: false, error: "invalid" };
   if (ctx.found.member.role !== "organizer") return { ok: false, error: "notAllowed" };
@@ -229,7 +236,7 @@ export async function releaseAction(
     ctx.found.trip.id,
     ctx.found.member.userId,
     id.data,
-    values.data as TravelInput,
+    values.data,
     { given: consent === true, locale },
     { demo: isDemo() },
   );
@@ -262,7 +269,10 @@ export async function withdrawAction(publicId: string, requestId: unknown): Prom
   return withdrawRelease(ctx.found.trip.id, ctx.found.member.userId, id.data);
 }
 
-export async function dismissExpiredAction(publicId: string, requestId: unknown): Promise<TravelResult> {
+export async function dismissExpiredAction(
+  publicId: string,
+  requestId: unknown,
+): Promise<TravelResult> {
   const ctx = await context(publicId);
   if ("error" in ctx) return { ok: false, error: ctx.error };
   const id = idSchema.safeParse(requestId);
@@ -290,7 +300,9 @@ export async function ownDocumentAction(
   if (!id.success) return { ok: false, error: "invalid" };
   if (await limited(ACCESS_LIMIT, ctx.found.member.userId)) return { ok: false, error: "limited" };
   const values = await readOwnRelease(ctx.found.trip.id, ctx.found.member.userId, id.data);
-  return values?.documentNumber ? { ok: true, value: values.documentNumber } : { ok: false, error: "gone" };
+  return values?.documentNumber
+    ? { ok: true, value: values.documentNumber }
+    : { ok: false, error: "gone" };
 }
 
 /**
@@ -311,28 +323,6 @@ export async function reuseAction(
   const values = await readOwnRelease(ctx.found.trip.id, ctx.found.member.userId, id.data);
   if (!values) return { ok: false, error: "gone" };
   return { ok: true, input: toInput(overlappingValues(values, fields)) };
-}
-
-/** Values → form input (dates as three parts). */
-function toInput(values: ReturnType<typeof overlappingValues>): TravelInput {
-  const parts = (iso: string | undefined) => {
-    if (!iso) return {};
-    const [y, m, d] = iso.split("-");
-    return { d: d ?? "", m: m ?? "", y: y ?? "" };
-  };
-  const birth = parts(values.birthDate);
-  const expiry = parts(values.documentExpiry);
-  return {
-    ...(values.givenNames ? { givenNames: values.givenNames } : {}),
-    ...(values.familyNames ? { familyNames: values.familyNames } : {}),
-    ...("d" in birth ? { birthDay: birth.d, birthMonth: birth.m, birthYear: birth.y } : {}),
-    ...(values.sex ? { sex: values.sex } : {}),
-    ...(values.nationality ? { nationality: values.nationality } : {}),
-    ...(values.documentType ? { documentType: values.documentType } : {}),
-    ...(values.documentNumber ? { documentNumber: values.documentNumber } : {}),
-    ...("d" in expiry ? { expiryDay: expiry.d, expiryMonth: expiry.m, expiryYear: expiry.y } : {}),
-    ...(values.issuingCountry ? { issuingCountry: values.issuingCountry } : {}),
-  };
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -363,11 +353,16 @@ export async function revealAction(
   const recipient = idSchema.safeParse(recipientId);
   if (!id.success || !recipient.success) return { ok: false, error: "invalid" };
   if (await limited(ACCESS_LIMIT, ctx.found.member.userId)) return { ok: false, error: "limited" };
-  const result = await bookerAccess(ctx.found.trip.id, ctx.found.member.userId, ctx.session.session.id, {
-    mode: "view",
-    requestId: id.data,
-    recipientId: recipient.data,
-  });
+  const result = await bookerAccess(
+    ctx.found.trip.id,
+    ctx.found.member.userId,
+    ctx.session.session.id,
+    {
+      mode: "view",
+      requestId: id.data,
+      recipientId: recipient.data,
+    },
+  );
   if (!result.ok) return result;
   if (result.mode !== "view") return { ok: false, error: "invalid" };
   const format = await formatOptions();
@@ -391,17 +386,27 @@ export async function copyAction(
   if ("error" in ctx) return { ok: false, error: ctx.error };
   const id = idSchema.safeParse(requestId);
   const recipient = idSchema.safeParse(recipientId);
-  if (!id.success || !recipient.success || !isCopyField(field)) return { ok: false, error: "invalid" };
+  if (!id.success || !recipient.success || !isCopyField(field))
+    return { ok: false, error: "invalid" };
   if (await limited(ACCESS_LIMIT, ctx.found.member.userId)) return { ok: false, error: "limited" };
-  const result = await bookerAccess(ctx.found.trip.id, ctx.found.member.userId, ctx.session.session.id, {
-    mode: "copy",
-    requestId: id.data,
-    recipientId: recipient.data,
-    field,
-  });
+  const result = await bookerAccess(
+    ctx.found.trip.id,
+    ctx.found.member.userId,
+    ctx.session.session.id,
+    {
+      mode: "copy",
+      requestId: id.data,
+      recipientId: recipient.data,
+      field,
+    },
+  );
   if (!result.ok) return result;
   if (result.mode !== "copy") return { ok: false, error: "invalid" };
-  const shown = displayValue(field, fromCopyFields({ [field]: result.value }), await formatOptions());
+  const shown = displayValue(
+    field,
+    fromCopyFields({ [field]: result.value }),
+    await formatOptions(),
+  );
   return { ok: true, value: shown ?? result.value };
 }
 
@@ -412,7 +417,9 @@ function fromCopyFields(values: Partial<Record<CopyField, string>>) {
     ...(values.birth_date ? { birthDate: values.birth_date } : {}),
     ...(values.sex ? { sex: values.sex as "F" | "M" | "X" } : {}),
     ...(values.nationality ? { nationality: values.nationality } : {}),
-    ...(values.document_type ? { documentType: values.document_type as "passport" | "id_card" } : {}),
+    ...(values.document_type
+      ? { documentType: values.document_type as "passport" | "id_card" }
+      : {}),
     ...(values.document_number ? { documentNumber: values.document_number } : {}),
     ...(values.document_expiry ? { documentExpiry: values.document_expiry } : {}),
     ...(values.issuing_country ? { issuingCountry: values.issuing_country } : {}),

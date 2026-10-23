@@ -3,6 +3,8 @@ import { and, asc, eq } from "drizzle-orm";
 import { todayIso } from "@/lib/dates";
 import { hasPassword } from "./account";
 import { exportRows, partiesOfUser } from "./costs/db";
+import { exportTravelData, type TravelExport } from "./travel-data/db";
+import { travelDeleteOn } from "@/lib/travel-data";
 import { db } from "./db/client";
 import {
   availability,
@@ -82,6 +84,12 @@ export interface DataExport {
      * shares of other people (the other side is «andere Person» / «other person»).
      */
     costs: CostExport | null;
+    /**
+     * F-054/F-056 (Increment 11, R.9 I11-11): own releases with values, the access log about
+     * them, own «klärt es direkt» answers and own requests as «Bucht» (counts only). Never
+     * values, names or states of other people. Null when the trip never involved the person.
+     */
+    travelData: TravelExport | null;
   }[];
 }
 
@@ -168,7 +176,11 @@ async function costExport(
   };
 }
 
-export async function exportUserData(userId: string, now = new Date()): Promise<DataExport | null> {
+export async function exportUserData(
+  userId: string,
+  now = new Date(),
+  options: { travelReauthed?: boolean } = {},
+): Promise<DataExport | null> {
   const [account] = await db().select().from(user).where(eq(user.id, userId));
   if (!account) return null;
   const [sessions, memberships, days, votes, passwordSet, infoEdits, stays, stayRatings] =
@@ -304,6 +316,11 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
         costs: await costExport(t.id, userId, t.currency, {
           iban: member.paymentIban,
           note: member.paymentNote,
+        }),
+        travelData: await exportTravelData(t.id, userId, {
+          reauthed: options.travelReauthed === true,
+          formerName: "former member",
+          deleteOn: t.fixedEnd ? travelDeleteOn(t.fixedEnd) : null,
         }),
       })),
     ),

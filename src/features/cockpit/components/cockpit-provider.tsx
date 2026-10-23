@@ -26,6 +26,15 @@ import {
   useCostRemindTitle,
   type CostRemindStep,
 } from "@/features/costs/components/cost-remind";
+import { BookerChip } from "@/features/travel-data/components/bits";
+import { BookerSheetBody } from "@/features/travel-data/components/booker-sheet";
+import {
+  isTravelRemindDetail,
+  TravelRemindBody,
+  useTravelRemindTitle,
+  type TravelRemindStep,
+} from "@/features/travel-data/components/travel-remind";
+import { nameListClient } from "@/features/trips/format";
 import { announcedAction, withoutAppAction } from "../actions";
 import type { CockpitAction, CockpitSheetData, SheetPlaceholder } from "../types";
 import styles from "./sheets.module.css";
@@ -42,7 +51,11 @@ type Open =
   /** Costs (W16 v2.15): reminders `settle` / `settle-all`. */
   | { kind: "cost"; step: CostRemindStep }
   /** D1 (organiser): «Abrechnung abschließen?» (W19 D.9). */
-  | { kind: "closeCosts"; open: number };
+  | { kind: "closeCosts"; open: number }
+  /** «Wer bucht?» (W20 H.2) – organiser, phase 3; `fromMembers` shows «‹ Wer ist dabei?». */
+  | { kind: "bookers"; fromMembers?: boolean | undefined }
+  /** Travel details (W16 v2.16): reminder `travel-data` / `travel-data-join`. */
+  | { kind: "travel"; step: TravelRemindStep };
 
 interface CockpitContextValue {
   data: CockpitSheetData;
@@ -216,6 +229,8 @@ export function CockpitProvider({
   const placeholder = (key: string | undefined) => data.placeholders.find((p) => p.id === key);
   const stayTitle = useStayRemindTitle(data.stayRemind ?? EMPTY_STAY_REMIND);
   const costTitle = useCostRemindTitle(data.costRemind ?? EMPTY_COST_REMIND);
+  const travelTitle = useTravelRemindTitle(data.travelRemind);
+  const tBooking = useTranslations("booking");
   const title = (() => {
     switch (shown.kind) {
       case "members":
@@ -232,6 +247,10 @@ export function CockpitProvider({
         return costTitle(shown.step);
       case "closeCosts":
         return tClose("title");
+      case "bookers":
+        return tBooking("sheet.title");
+      case "travel":
+        return travelTitle(shown.step);
       case "remind": {
         const subject = placeholder(
           shown.key ?? (shown.keys.length === 1 ? shown.keys[0] : undefined),
@@ -254,34 +273,49 @@ export function CockpitProvider({
           shown.kind +
           (shown.kind === "remind" ? (shown.key ?? "list") : "") +
           (shown.kind === "stay" ? shown.step.occasion + (shown.step.key ?? "") : "") +
-          (shown.kind === "cost" ? shown.step.occasion + (shown.step.key ?? "") : "")
+          (shown.kind === "cost" ? shown.step.occasion + (shown.step.key ?? "") : "") +
+          (shown.kind === "travel" ? (shown.step.requestId ?? "") + (shown.step.key ?? "") : "")
         }
         back={
-          shown.kind === "remind" && shown.key && shown.keys.length > 1
+          shown.kind === "bookers" && shown.fromMembers
             ? {
-                label: tRemind("back"),
+                label: tBooking("sheet.back"),
                 onClick: () => {
-                  setSheet({ ...shown, key: undefined });
+                  setSheet({ kind: "members" });
                 },
               }
-            : shown.kind === "stay" && shown.step.occasion === "stay-rate" && shown.step.key
+            : shown.kind === "travel" && isTravelRemindDetail(shown.step)
               ? {
                   label: tRemind("back"),
                   onClick: () => {
-                    setSheet({ kind: "stay", step: { occasion: "stay-rate" } });
+                    setSheet({ kind: "travel", step: { requestId: shown.step.requestId } });
                   },
                 }
-              : shown.kind === "cost" &&
-                  shown.step.key &&
-                  firstCostStep(data.costRemind ?? EMPTY_COST_REMIND, shown.step.occasion).key ===
-                    undefined
+              : shown.kind === "remind" && shown.key && shown.keys.length > 1
                 ? {
                     label: tRemind("back"),
                     onClick: () => {
-                      setSheet({ kind: "cost", step: { occasion: shown.step.occasion } });
+                      setSheet({ ...shown, key: undefined });
                     },
                   }
-                : undefined
+                : shown.kind === "stay" && shown.step.occasion === "stay-rate" && shown.step.key
+                  ? {
+                      label: tRemind("back"),
+                      onClick: () => {
+                        setSheet({ kind: "stay", step: { occasion: "stay-rate" } });
+                      },
+                    }
+                  : shown.kind === "cost" &&
+                      shown.step.key &&
+                      firstCostStep(data.costRemind ?? EMPTY_COST_REMIND, shown.step.occasion)
+                        .key === undefined
+                    ? {
+                        label: tRemind("back"),
+                        onClick: () => {
+                          setSheet({ kind: "cost", step: { occasion: shown.step.occasion } });
+                        },
+                      }
+                    : undefined
         }
       >
         {!opened ? null : (
@@ -332,6 +366,26 @@ function SheetBody({
   onShared: () => void;
 }) {
   switch (shown.kind) {
+    case "bookers":
+      return (
+        <BookerSheetBody
+          publicId={data.publicId}
+          travelData={data.travelData}
+          people={data.members}
+          placeholders={data.placeholders.map((p) => ({ id: p.id, name: p.name }))}
+          locale={data.defaultLocale}
+        />
+      );
+    case "travel":
+      return data.travelRemind ? (
+        <TravelRemindBody
+          data={data.travelRemind}
+          step={shown.step}
+          onStep={(step) => {
+            onOpen({ kind: "travel", step });
+          }}
+        />
+      ) : null;
     case "cost":
       return data.costRemind ? (
         <CostRemindBody
@@ -423,8 +477,28 @@ function MembersBody({
   const t = useTranslations("route");
   const tTrip = useTranslations("trip");
   const tRemind = useTranslations("remind");
+  const tBooking = useTranslations("booking");
+  const bookers = data.members.filter((m) => m.booker);
+  const bookerNames = nameListClient(
+    bookers.map((m) => m.name),
+    data.defaultLocale,
+  );
   return (
     <div className={styles.body}>
+      {data.canSetBookers && bookers.length === 0 ? (
+        <div className={styles.footer} data-booker-none="">
+          <p className={styles.muted}>{tBooking("none")}</p>
+          <button
+            type="button"
+            className={styles.textLink}
+            onClick={() => {
+              onOpen({ kind: "bookers", fromMembers: true });
+            }}
+          >
+            {tBooking("start")}
+          </button>
+        </div>
+      ) : null}
       <ul className={styles.people}>
         {data.members.map((person) => (
           <PersonRow
@@ -434,7 +508,12 @@ function MembersBody({
             youLabel={person.me ? tTrip("you") : null}
             orgaLabel={person.organizer ? tTrip("organizer") : null}
             state={null}
-            extra={<span className={styles.muted}>{t("members.going")}</span>}
+            extra={
+              <span className={styles.chips}>
+                <span className={styles.muted}>{t("members.going")}</span>
+                {person.booker ? <BookerChip label={tBooking("chip")} /> : null}
+              </span>
+            }
           />
         ))}
         {data.placeholders.map((p) => (
@@ -514,7 +593,26 @@ function MembersBody({
           />
         ))}
       </ul>
+      {bookers.length > 0 && !data.canSetBookers ? (
+        <p className={styles.note} data-booker-sentence="">
+          {data.travelData
+            ? tBooking("sentence", { names: bookerNames, count: bookers.length })
+            : tBooking("sentenceNoData", { names: bookerNames, count: bookers.length })}
+        </p>
+      ) : null}
       <div className={styles.footer}>
+        {data.canSetBookers && bookers.length > 0 ? (
+          <button
+            type="button"
+            className={styles.textLink}
+            data-booker-change=""
+            onClick={() => {
+              onOpen({ kind: "bookers", fromMembers: true });
+            }}
+          >
+            {tBooking("change")}
+          </button>
+        ) : null}
         {data.manageHref ? (
           <Link className={styles.textLink} href={data.manageHref}>
             {t("members.manage")}

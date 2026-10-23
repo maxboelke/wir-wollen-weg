@@ -87,17 +87,16 @@ export async function stayRemindData(view: TripView, raw: StaysRaw): Promise<Sta
         : {
             title: chosen.title,
             bookers: await Promise.all(
-              (bookers.length > 0
-                ? bookers
-                : members.filter((m) => m.role === "organizer")
-              ).map(async (b) => ({
-                key: b.userId,
-                name: b.displayName,
-                texts: await perLocale(async (locale) => {
-                  const t = await getTranslations({ locale, namespace: "share.remind" });
-                  return t("stayBook", { booker: b.displayName, stay: chosen.title, link });
+              (bookers.length > 0 ? bookers : members.filter((m) => m.role === "organizer")).map(
+                async (b) => ({
+                  key: b.userId,
+                  name: b.displayName,
+                  texts: await perLocale(async (locale) => {
+                    const t = await getTranslations({ locale, namespace: "share.remind" });
+                    return t("stayBook", { booker: b.displayName, stay: chosen.title, link });
+                  }),
                 }),
-              })),
+              ),
             ),
           },
   };

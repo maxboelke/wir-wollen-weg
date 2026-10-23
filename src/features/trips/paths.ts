@@ -34,7 +34,7 @@ export function costsPath(
  * Travel details (W20 H): area, new request, one request. URLs carry ids only – never fields or
  * values (R.9 Verschlüsselung Nr. 5).
  */
-export function travelDataPath(publicId: string, page: "area" | "new" | string = "area"): string {
+export function travelDataPath(publicId: string, page = "area"): string {
   const base = `/trips/${publicId}/travel-data`;
   if (page === "area") return base;
   if (page === "new") return `${base}/new`;

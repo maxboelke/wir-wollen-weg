@@ -1,4 +1,4 @@
-import { addDays, diffDays, isIsoDate, type IsoDate } from "./dates";
+import { addDays, diffDays, isIsoDate, type IsoDate } from "./dates.ts";
 
 /**
  * Personal travel details (F-054 stage 1 + F-056, features.md R.9, W20 H) – pure rules shared by
@@ -145,14 +145,13 @@ export function normalizeRequestFields(input: unknown): TravelField[] | null {
 }
 
 /** Control and format characters (also bidi overrides) – never part of a stored text. */
-// eslint-disable-next-line no-control-regex
-const CONTROL = /[\u0000-\u001f\u007f-\u009f​-‏‪-‮⁠-⁩﻿]/g;
+const CONTROL = /[\u0000-\u001f\u007f-\u009f\u200b-\u200f\u202a-\u202e\u2060-\u2069\ufeff]/g;
 
 /** «Wofür?» (R.9 I11-04): text only, control characters removed, spaces collapsed, 1–60. */
 export function cleanPurpose(input: unknown): string | null {
   if (typeof input !== "string") return null;
   const clean = input.replace(CONTROL, " ").replace(/\s+/g, " ").trim();
-  if (clean.length === 0 || [...clean].length > TRAVEL_LIMITS.purposeMax) return null;
+  if (clean.length === 0 || Array.from(clean).length > TRAVEL_LIMITS.purposeMax) return null;
   return clean;
 }
 
@@ -196,7 +195,7 @@ const NAME = /^[\p{L}\p{M}][\p{L}\p{M} .'’-]*$/u;
 export function cleanName(input: unknown): string | null {
   if (typeof input !== "string") return null;
   const clean = input.normalize("NFC").replace(/\s+/g, " ").trim();
-  if (clean.length === 0 || [...clean].length > TRAVEL_LIMITS.nameMax) return null;
+  if (clean.length === 0 || Array.from(clean).length > TRAVEL_LIMITS.nameMax) return null;
   return NAME.test(clean) ? clean : null;
 }
 
@@ -359,6 +358,28 @@ export function overlappingValues(
   return out;
 }
 
+/** Values → form input (dates as three parts). */
+export function toInput(values: TravelValues): TravelInput {
+  const parts = (iso: string | undefined) => {
+    if (!iso) return {};
+    const [y, m, d] = iso.split("-");
+    return { d: d ?? "", m: m ?? "", y: y ?? "" };
+  };
+  const birth = parts(values.birthDate);
+  const expiry = parts(values.documentExpiry);
+  return {
+    ...(values.givenNames ? { givenNames: values.givenNames } : {}),
+    ...(values.familyNames ? { familyNames: values.familyNames } : {}),
+    ...("d" in birth ? { birthDay: birth.d, birthMonth: birth.m, birthYear: birth.y } : {}),
+    ...(values.sex ? { sex: values.sex } : {}),
+    ...(values.nationality ? { nationality: values.nationality } : {}),
+    ...(values.documentType ? { documentType: values.documentType } : {}),
+    ...(values.documentNumber ? { documentNumber: values.documentNumber } : {}),
+    ...("d" in expiry ? { expiryDay: expiry.d, expiryMonth: expiry.m, expiryYear: expiry.y } : {}),
+    ...(values.issuingCountry ? { issuingCountry: values.issuingCountry } : {}),
+  };
+}
+
 /** The decrypted record must contain exactly the requested fields – anything else is rejected. */
 export function parseStoredValues(
   record: unknown,
@@ -385,13 +406,13 @@ export function maskName(value: string): string {
   return value
     .split(/\s+/)
     .filter(Boolean)
-    .map((word) => `${[...word][0] ?? ""}${DOTS}`)
+    .map((word) => `${Array.from(word)[0] ?? ""}${DOTS}`)
     .join(" ");
 }
 
 /** «C01X4F7R7» → «C••••7». */
 export function maskDocumentNumber(value: string): string {
-  const chars = [...value];
+  const chars = Array.from(value);
   return `${chars[0] ?? ""}••••${chars.at(-1) ?? ""}`;
 }
 

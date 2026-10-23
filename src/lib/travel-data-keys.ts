@@ -28,8 +28,7 @@ export interface ParsedKey {
 }
 
 export type KeyRingResult =
-  | { ok: true; keys: ParsedKey[]; warning: string | null }
-  | { ok: false; problem: string };
+  { ok: true; keys: ParsedKey[]; warning: string | null } | { ok: false; problem: string };
 
 /** Decoded length of a standard base64 string, or -1 when it is not valid base64. */
 function base64Length(text: string): number {
@@ -66,7 +65,10 @@ export function parseKeyRing(raw: string): KeyRingResult {
       return { ok: false, problem: `TRAVEL_DATA_KEYS: the key id "${DERIVED_KEY_ID}" is reserved` };
     }
     if (base64Length(base64) !== 32) {
-      return { ok: false, problem: "TRAVEL_DATA_KEYS: every key must be base64 of exactly 32 bytes" };
+      return {
+        ok: false,
+        problem: "TRAVEL_DATA_KEYS: every key must be base64 of exactly 32 bytes",
+      };
     }
     if (keys.some((key) => key.kid === kid)) {
       return { ok: false, problem: "TRAVEL_DATA_KEYS: key ids must be unique" };
@@ -105,9 +107,7 @@ export function travelDataSwitchOn(appEnv: string, env: Env): boolean {
 }
 
 export type KeySource =
-  | { kind: "ring"; keys: ParsedKey[] }
-  | { kind: "derived"; secret: string }
-  | { kind: "none" };
+  { kind: "ring"; keys: ParsedKey[] } | { kind: "derived"; secret: string } | { kind: "none" };
 
 /**
  * Where the key comes from: an explicit ring (always wins), else – only in demo-like modes – the

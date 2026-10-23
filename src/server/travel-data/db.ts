@@ -84,7 +84,7 @@ async function lockTrip(tx: Tx, tripId: string, mode: "update" | "share") {
     .from(trip)
     .where(eq(trip.id, tripId))
     .for(mode);
-  return (row ?? null) as LockedTrip | null;
+  return row ?? null;
 }
 
 async function memberOf(executor: Executor, tripId: string, userId: string) {
@@ -100,7 +100,10 @@ async function memberOf(executor: Executor, tripId: string, userId: string) {
 }
 
 /** Phase «fixed» and the deletion date not reached (R.9 I11-10: no values after it). */
-function usable(locked: LockedTrip | null, today: IsoDate): locked is LockedTrip & { fixedEnd: IsoDate } {
+function usable(
+  locked: LockedTrip | null,
+  today: IsoDate,
+): locked is LockedTrip & { fixedEnd: IsoDate } {
   return (
     locked !== null &&
     locked.phase === "fixed" &&
@@ -240,7 +243,12 @@ export async function setBooker(
       }
       await tx
         .update(tripMember)
-        .set({ bookerSince: now, bookerSetBy: actorId, bookerRevokedAt: null, bookerHintSeenAt: null })
+        .set({
+          bookerSince: now,
+          bookerSetBy: actorId,
+          bookerRevokedAt: null,
+          bookerHintSeenAt: null,
+        })
         .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, targetId)));
       logCounter("travel_data.booker changed");
       return { ok: true, deleted: 0 } as const;
@@ -289,7 +297,9 @@ export async function markTravelHintSeen(
 ): Promise<void> {
   await db()
     .update(tripMember)
-    .set(hint === "booker" ? { bookerHintSeenAt: new Date() } : { travelDatesHintSeenAt: new Date() })
+    .set(
+      hint === "booker" ? { bookerHintSeenAt: new Date() } : { travelDatesHintSeenAt: new Date() },
+    )
     .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
 }
 
@@ -382,7 +392,12 @@ async function checkRecipients(
 export async function createRequest(
   tripId: string,
   userId: string,
-  input: { purpose: string; fields: TravelField[]; recipients: RecipientChoice; idempotencyKey: string | null },
+  input: {
+    purpose: string;
+    fields: TravelField[];
+    recipients: RecipientChoice;
+    idempotencyKey: string | null;
+  },
   today: IsoDate = todayIso(),
 ): Promise<Result<{ id: string; count: number }>> {
   const users = [...new Set(input.recipients.users)];
@@ -393,7 +408,8 @@ export async function createRequest(
   }
   return db().transaction(async (tx) => {
     const locked = await lockTrip(tx, tripId, "update");
-    if (!locked || locked.phase !== "fixed" || !locked.fixedEnd) return { ok: false, error: "phase" } as const;
+    if (!locked || locked.phase !== "fixed" || !locked.fixedEnd)
+      return { ok: false, error: "phase" } as const;
     if (today > locked.fixedEnd) return { ok: false, error: "phase" } as const;
     const me = await memberOf(tx, tripId, userId);
     if (!me?.bookerSince) return { ok: false, error: "notBooker" } as const;
@@ -443,10 +459,12 @@ export async function createRequest(
       })
       .returning({ id: travelDataRequest.id });
     if (!row) return { ok: false, error: "invalid" } as const;
-    await tx.insert(travelDataRecipient).values([
-      ...users.map((id) => ({ requestId: row.id, tripId, userId: id })),
-      ...placeholders.map((id) => ({ requestId: row.id, tripId, placeholderId: id })),
-    ]);
+    await tx
+      .insert(travelDataRecipient)
+      .values([
+        ...users.map((id) => ({ requestId: row.id, tripId, userId: id })),
+        ...placeholders.map((id) => ({ requestId: row.id, tripId, placeholderId: id })),
+      ]);
     logCounter("travel_data.request ok");
     return { ok: true, id: row.id, count: total } as const;
   });
@@ -483,7 +501,10 @@ export async function addRecipients(
     const request = await ownOpenRequest(tx, tripId, userId, requestId);
     if (!request) return { ok: false, error: "notAllowed" } as const;
     const existing = await tx
-      .select({ userId: travelDataRecipient.userId, placeholderId: travelDataRecipient.placeholderId })
+      .select({
+        userId: travelDataRecipient.userId,
+        placeholderId: travelDataRecipient.placeholderId,
+      })
       .from(travelDataRecipient)
       .where(eq(travelDataRecipient.requestId, requestId));
     const users = [...new Set(choice.users)].filter((id) => !existing.some((e) => e.userId === id));
@@ -497,12 +518,17 @@ export async function addRecipients(
     if (!(await checkRecipients(tx, tripId, userId, { users, placeholders }))) {
       return { ok: false, error: "invalid" } as const;
     }
-    await tx.insert(travelDataRecipient).values([
-      ...users.map((id) => ({ requestId, tripId, userId: id })),
-      ...placeholders.map((id) => ({ requestId, tripId, placeholderId: id })),
-    ]);
+    await tx
+      .insert(travelDataRecipient)
+      .values([
+        ...users.map((id) => ({ requestId, tripId, userId: id })),
+        ...placeholders.map((id) => ({ requestId, tripId, placeholderId: id })),
+      ]);
     // New people → not everybody has answered any more (V4 row 3 again).
-    await tx.update(travelDataRequest).set({ usedAt: null }).where(eq(travelDataRequest.id, requestId));
+    await tx
+      .update(travelDataRequest)
+      .set({ usedAt: null })
+      .where(eq(travelDataRequest.id, requestId));
     return { ok: true, count: users.length + placeholders.length } as const;
   });
 }
@@ -700,7 +726,11 @@ export async function setDeclined(
     const now = new Date();
     await tx
       .update(travelDataRecipient)
-      .set({ state: declined ? "declined" : "open", respondedAt: declined ? now : null, updatedAt: now })
+      .set({
+        state: declined ? "declined" : "open",
+        respondedAt: declined ? now : null,
+        updatedAt: now,
+      })
       .where(eq(travelDataRecipient.id, answer.recipientId));
     if (declined) logCounter("travel_data.decline ok");
     return { ok: true } as const;
@@ -888,7 +918,11 @@ export async function bookerAccess(
       );
     if (!request) return { ok: false, error: "notAllowed" } as const;
     const fields = request.fields as TravelField[];
-    if (access.mode !== "mask" && fields.includes("document") && !(await reauthValid(tx, sessionId))) {
+    if (
+      access.mode !== "mask" &&
+      fields.includes("document") &&
+      !(await reauthValid(tx, sessionId))
+    ) {
       logCounter("travel_data.reauth required");
       return { ok: false, error: "reauth" } as const;
     }
@@ -948,7 +982,9 @@ export async function bookerAccess(
       const row = rows[0];
       const values = row ? open(row) : null;
       if (!row || !values) {
-        logCounter(access.mode === "view" ? "travel_data.reveal denied" : "travel_data.copy denied");
+        logCounter(
+          access.mode === "view" ? "travel_data.reveal denied" : "travel_data.copy denied",
+        );
         return { ok: false, error: "gone" } as const;
       }
       await tx.insert(travelDataAccess).values({
@@ -1068,7 +1104,9 @@ export async function loadTravelRaw(tripId: string, viewerId: string): Promise<T
       .leftJoin(travelDataRelease, eq(travelDataRelease.recipientId, travelDataRecipient.id))
       .where(eq(travelDataRecipient.tripId, tripId)),
   ]);
-  const mine = recipients.filter((r) => r.userId === viewerId && r.releaseCreatedAt).map((r) => r.id);
+  const mine = recipients
+    .filter((r) => r.userId === viewerId && r.releaseCreatedAt)
+    .map((r) => r.id);
   const myAccess =
     mine.length > 0
       ? await db()
@@ -1198,7 +1236,12 @@ export async function purgeTravelData(now = new Date()): Promise<number> {
   let purged = 0;
   // Candidates only: trips with open requests or stored releases.
   const candidates = await db()
-    .selectDistinct({ id: trip.id, phase: trip.phase, fixedEnd: trip.fixedEnd, unfixedAt: trip.unfixedAt })
+    .selectDistinct({
+      id: trip.id,
+      phase: trip.phase,
+      fixedEnd: trip.fixedEnd,
+      unfixedAt: trip.unfixedAt,
+    })
     .from(trip)
     .innerJoin(travelDataRequest, eq(travelDataRequest.tripId, trip.id))
     .leftJoin(travelDataRecipient, eq(travelDataRecipient.requestId, travelDataRequest.id))
@@ -1227,7 +1270,11 @@ export async function purgeTravelData(now = new Date()): Promise<number> {
   }
   // Safety net: open requests whose asker is no longer a member with the marking …
   const orphans = await db()
-    .select({ id: travelDataRequest.id, tripId: travelDataRequest.tripId, member: tripMember.userId })
+    .select({
+      id: travelDataRequest.id,
+      tripId: travelDataRequest.tripId,
+      member: tripMember.userId,
+    })
     .from(travelDataRequest)
     .leftJoin(
       tripMember,
@@ -1274,5 +1321,145 @@ export async function releaseCountsByKey(): Promise<{ keyId: string; n: number }
     .groupBy(travelDataRelease.keyId);
 }
 
-
 export { travelReauthIdentifier };
+
+/* ------------------------------------------------------------------------------------------ */
+/* Data export (R.9 I11-11, F-013/F-043)                                                         */
+/* ------------------------------------------------------------------------------------------ */
+
+export interface TravelExport {
+  /** The person carries the marking «Bucht» in this trip (since). */
+  bookerSince: string | null;
+  /** Own stored releases: purpose, recipient, values (plain text), consent proof, access log. */
+  myReleases: {
+    purpose: string;
+    sharedWith: string;
+    values: TravelValues | null;
+    /** The document number was left out – confirm by code first (R.9 I11-11 Should). */
+    documentNumberWithheld: boolean;
+    consentAt: string;
+    consentVersion: number;
+    consentLanguage: string;
+    deletedOn: string | null;
+    accessLog: { by: string; action: "view" | "copy"; field: string | null; at: string }[];
+  }[];
+  /** Own answers «klärt es direkt» (only the fact – there is nothing else stored). */
+  mySortItOutDirectly: { purpose: string; askedBy: string }[];
+  /** As «Bucht»: own requests – never values, names or states of other people. */
+  myRequests: {
+    purpose: string;
+    fields: TravelField[];
+    createdAt: string;
+    closedAt: string | null;
+    answers: { open: number; shared: number; sortingItOutDirectly: number };
+  }[];
+}
+
+/**
+ * Export of ONE person's travel details in ONE trip (R.9 I11-11): their own releases with the
+ * values in plain text (decrypted through `readOwnRelease` – the same rights and deadline), the
+ * access log about them, own «klärt es direkt» answers and – as «Bucht» – their own requests
+ * with counts only. Values of other people are never read here. A document number is only
+ * included when the session confirmed by code within 12 h (`reauthed`).
+ */
+export async function exportTravelData(
+  tripId: string,
+  userId: string,
+  options: { reauthed: boolean; formerName: string; deleteOn: string | null },
+): Promise<TravelExport | null> {
+  const [member] = await db()
+    .select({ bookerSince: tripMember.bookerSince })
+    .from(tripMember)
+    .where(and(eq(tripMember.tripId, tripId), eq(tripMember.userId, userId)));
+  const raw = await loadTravelRaw(tripId, userId);
+  const names = new Map(
+    (
+      await db()
+        .select({ userId: tripMember.userId, name: tripMember.displayName })
+        .from(tripMember)
+        .where(eq(tripMember.tripId, tripId))
+    ).map((row) => [row.userId, row.name]),
+  );
+  const nameOf = (id: string | null) =>
+    id ? (names.get(id) ?? options.formerName) : options.formerName;
+  const own = raw.recipients.filter((r) => r.userId === userId);
+  const requestOf = (id: string) => raw.requests.find((q) => q.id === id);
+  const myReleases: TravelExport["myReleases"] = [];
+  for (const recipient of own) {
+    if (!recipient.release) continue;
+    const request = requestOf(recipient.requestId);
+    if (!request) continue;
+    const values = await readOwnRelease(tripId, userId, request.id);
+    const withheld = Boolean(values?.documentNumber) && !options.reauthed;
+    const shown = values ? { ...values } : null;
+    if (shown && withheld) delete shown.documentNumber;
+    const [proof] = await db()
+      .select({
+        consentVersion: travelDataRelease.consentVersion,
+        consentLocale: travelDataRelease.consentLocale,
+      })
+      .from(travelDataRelease)
+      .where(eq(travelDataRelease.recipientId, recipient.id));
+    myReleases.push({
+      purpose: request.purpose,
+      sharedWith: nameOf(request.requesterId),
+      values: shown,
+      documentNumberWithheld: withheld,
+      consentAt: recipient.release.consentAt.toISOString(),
+      consentVersion: proof?.consentVersion ?? 0,
+      consentLanguage: proof?.consentLocale ?? "",
+      deletedOn: options.deleteOn,
+      accessLog: raw.myAccess
+        .filter((a) => a.recipientId === recipient.id)
+        .map((a) => ({
+          by: nameOf(a.actorId),
+          action: a.action,
+          field: a.field,
+          at: a.at.toISOString(),
+        })),
+    });
+  }
+  const mySortItOutDirectly = own
+    .filter((r) => r.state === "declined")
+    .flatMap((r) => {
+      const request = requestOf(r.requestId);
+      return request && !request.closedAt
+        ? [{ purpose: request.purpose, askedBy: nameOf(request.requesterId) }]
+        : [];
+    });
+  const myRequests = raw.requests
+    .filter((q) => q.requesterId === userId)
+    .map((q) => {
+      const answers = raw.recipients.filter((r) => r.requestId === q.id && r.userId !== null);
+      return {
+        purpose: q.purpose,
+        fields: q.fields,
+        createdAt: q.createdAt.toISOString(),
+        closedAt: q.closedAt ? q.closedAt.toISOString() : null,
+        answers: {
+          open: answers.filter((r) => r.state === "open").length,
+          shared: answers.filter((r) => r.state === "released").length,
+          sortingItOutDirectly: answers.filter((r) => r.state === "declined").length,
+        },
+      };
+    });
+  if (
+    !member?.bookerSince &&
+    myReleases.length === 0 &&
+    mySortItOutDirectly.length === 0 &&
+    myRequests.length === 0
+  ) {
+    return null;
+  }
+  return {
+    bookerSince: member?.bookerSince ? member.bookerSince.toISOString() : null,
+    myReleases,
+    mySortItOutDirectly,
+    myRequests,
+  };
+}
+
+/** The session confirmed by code/magic link within 12 hours (R.9 I11-08). */
+export async function travelReauthenticated(sessionId: string): Promise<boolean> {
+  return db().transaction((tx) => reauthValid(tx, sessionId));
+}

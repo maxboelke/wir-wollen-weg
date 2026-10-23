@@ -88,14 +88,14 @@ describe("travel-data crypto (R.9 Verschlüsselung)", () => {
     );
     const tag = Buffer.from(sealed.ciphertext);
     tag[tag.length - 1] = (tag[tag.length - 1] ?? 0) ^ 1;
-    expect(errorReason(() => openRecord(keys, { ...sealed, ciphertext: tag }, AAD))).toBe(
-      "failed",
-    );
+    expect(errorReason(() => openRecord(keys, { ...sealed, ciphertext: tag }, AAD))).toBe("failed");
     const nonce = Buffer.from(sealed.nonce);
     nonce[0] = (nonce[0] ?? 0) ^ 1;
     expect(errorReason(() => openRecord(keys, { ...sealed, nonce }, AAD))).toBe("failed");
     expect(
-      errorReason(() => openRecord(keys, { ...sealed, ciphertext: sealed.ciphertext.subarray(0, 10) }, AAD)),
+      errorReason(() =>
+        openRecord(keys, { ...sealed, ciphertext: sealed.ciphertext.subarray(0, 10) }, AAD),
+      ),
     ).toBe("failed");
     // Only the fixed counter name is logged – no ids, no values.
     expect(info).toHaveBeenCalledWith("travel_data.decrypt_failed");
@@ -132,7 +132,10 @@ describe("travel-data crypto (R.9 Verschlüsselung)", () => {
     expect(moved.nonce.equals(sealed.nonce)).toBe(false);
     expect(openRecord(rotated, moved, AAD)).toEqual(RECORD);
     // Once the old key is removed, only the re-sealed row is readable.
-    const newOnly = keyRingFrom({ kind: "ring", keys: [{ kid: "t202701", base64: rotated.active.key.toString("base64") }] });
+    const newOnly = keyRingFrom({
+      kind: "ring",
+      keys: [{ kid: "t202701", base64: rotated.active.key.toString("base64") }],
+    });
     if (!newOnly) throw new Error("no ring");
     vi.spyOn(console, "info").mockImplementation(() => undefined);
     expect(openRecord(newOnly, moved, AAD)).toEqual(RECORD);

@@ -2428,7 +2428,8 @@
       "done": "{name} bucht nicht mehr – die Reisedaten sind gelöscht."
     },
     "error": "Das hat nicht geklappt – bitte neu laden.",
-    "notAllowed": "Das kann gerade nur {bookers} oder die Orga."
+    "notAllowed": "Das kann gerade nur {bookers} oder die Orga.",
+    "chip": "Bucht"
   },
   "travelData": {
     "title": "Reisedaten",
@@ -2497,7 +2498,8 @@
       "filled": "Fantasiedaten eingesetzt.",
       "request": "Demo – hier werden nur Fantasiedaten gesammelt.",
       "release": "Demo – bitte keine echten Ausweisdaten freigeben. „Demo zurücksetzen“ löscht alles.",
-      "docHelp": "Vorschau: nur Fantasie-Nummern, die mit DEMO beginnen – z. B. DEMO12345."
+      "docHelp": "Vorschau: nur Fantasie-Nummern, die mit DEMO beginnen – z. B. DEMO12345.",
+      "tag": "Vorschau"
     },
     "hints": {
       "marked": "{name} hat dich als „Bucht“ markiert. Du kannst Reisedaten anfragen – du siehst nur, was dir jemand freigibt.",
@@ -2737,7 +2739,8 @@
       "release": "An {name} freigeben",
       "releaseChange": "Änderungen freigeben",
       "released": "Freigegeben an {name}.",
-      "failed": "Das hat nicht geklappt – deine Angaben sind noch nicht freigegeben. Bitte versuch es noch einmal."
+      "failed": "Das hat nicht geklappt – deine Angaben sind noch nicht freigegeben. Bitte versuch es noch einmal.",
+      "textRich": "Ich gebe diese Angaben für „{purpose}“ an <b>{name}</b> frei. Sie werden verschlüsselt gespeichert, nur {name} sieht sie, und sie werden <b>7 Tage nach der Reise automatisch gelöscht (derzeit am {date})</b>. Ich kann die Freigabe jederzeit zurückziehen."
     },
     "remind": {
       "title": "Wer fehlt noch?",
@@ -2749,6 +2752,7 @@
       "context": "{name} hat für „{purpose}“ noch nicht geantwortet.",
       "contextAll": "Erinnert alle, die für „{purpose}“ noch nicht geantwortet haben.",
       "contextJoin": "{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link."
-    }
+    },
+    "visibleTag": "sichtbar"
   }
 }

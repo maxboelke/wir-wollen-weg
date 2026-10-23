@@ -38,7 +38,8 @@ export interface ToMeCard {
   askedOn: string;
   state: AnswerState;
   /** Why an «erloschen» card says what it says. */
-  expiredReason: "closedByBooker" | "bookerRevoked" | "requesterLeft" | "unfixed" | "expired" | null;
+  expiredReason:
+    "closedByBooker" | "bookerRevoked" | "requesterLeft" | "unfixed" | "expired" | null;
   released: {
     /** «am 3. Mai» */
     on: string;

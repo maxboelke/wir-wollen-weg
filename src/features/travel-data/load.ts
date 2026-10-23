@@ -90,7 +90,11 @@ export function groupAccess(
     .map(({ action, field, count, at }) => ({ action, field, count, when: format(at) }));
 }
 
-function ownValues(values: TravelValues, fields: CopyField[], format: Parameters<typeof displayValue>[2]): OwnValue[] {
+function ownValues(
+  values: TravelValues,
+  fields: CopyField[],
+  format: Parameters<typeof displayValue>[2],
+): OwnValue[] {
   const out: OwnValue[] = [];
   for (const field of fields) {
     const shown = displayValue(field, values, format);
@@ -272,7 +276,9 @@ export async function travelPageModel(
         : members
             .filter(
               (m) =>
-                m.userId !== me.userId && !askedUsers.has(m.userId) && m.joinedAt > request.createdAt,
+                m.userId !== me.userId &&
+                !askedUsers.has(m.userId) &&
+                m.joinedAt > request.createdAt,
             )
             .map((m) => ({ key: m.userId, name: m.displayName })),
       closed: request.closedAt
@@ -317,9 +323,12 @@ export async function travelPageModel(
       : [];
 
   // --- One-off notices --------------------------------------------------------------------------
-  const setter = me.bookerSetBy && me.bookerSetBy !== me.userId ? memberName(view, me.bookerSetBy) : null;
+  const setter =
+    me.bookerSetBy && me.bookerSetBy !== me.userId ? memberName(view, me.bookerSetBy) : null;
   const marked =
-    isBooker && setter && (me.bookerHintSeenAt === null || me.bookerHintSeenAt < (me.bookerSince ?? new Date(0)))
+    isBooker &&
+    setter &&
+    (me.bookerHintSeenAt === null || me.bookerHintSeenAt < (me.bookerSince ?? new Date(0)))
       ? setter
       : null;
   const revoked =

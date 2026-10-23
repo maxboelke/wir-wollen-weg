@@ -5,6 +5,7 @@ import type { TripSheetContext } from "./components/trip-sheet";
 import type { TripView } from "./load";
 import { balancesOf, loadCostsRaw } from "@/server/costs/db";
 import { costsPath } from "./paths";
+import { travelFootprintByMember } from "@/server/travel-data/db";
 import { remindPhase, tripRemindGroups } from "./remind";
 
 /** Data the trip menu / management dialogs need (serialisable for client components). */
@@ -33,7 +34,24 @@ export async function sheetContext(
     // ux-spec §14.2: «Gruppe erinnern» for ALL members, phase 1/2, while somebody else is open.
     canRemind: canRemind(view),
     costs: await costsContext(view),
+    travel: await travelContext(view),
   };
+}
+
+/**
+ * Travel details for «Reise verlassen» / «Mitglied entfernen» / «Festlegung aufheben» (W20 H.9,
+ * H.11): per member whether releases or own open requests exist – counts only, never values.
+ * Null when the trip never used the area (no sentence – no teaser while it is switched off).
+ * The unfix sentence only needs to know that some release exists (organiser only).
+ */
+async function travelContext(view: TripView): Promise<TripSheetContext["travel"]> {
+  const all = await travelFootprintByMember(view.trip.id);
+  const any = Object.values(all).some((f) => f.released > 0 || f.requests > 0);
+  if (!any) return null;
+  // Members see only their own counts – who shared what is status the organiser may see (R.9).
+  const own = all[view.me.userId];
+  const byMember = view.isOrganizer ? all : own ? { [view.me.userId]: own } : {};
+  return { byMember };
 }
 
 /**

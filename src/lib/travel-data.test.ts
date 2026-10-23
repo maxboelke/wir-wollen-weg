@@ -25,7 +25,10 @@ const TODAY = "2027-03-01";
 
 describe("request fields (R.9 Felder)", () => {
   it("name always, dependent fields only with the document, fixed order", () => {
-    expect(normalizeRequestFields(["birth_date", "legal_name"])).toEqual(["legal_name", "birth_date"]);
+    expect(normalizeRequestFields(["birth_date", "legal_name"])).toEqual([
+      "legal_name",
+      "birth_date",
+    ]);
     expect(normalizeRequestFields(["birth_date"])).toBeNull();
     expect(normalizeRequestFields(["legal_name", "document_expiry"])).toBeNull();
     expect(normalizeRequestFields(["legal_name", "issuing_country", "document"])).toEqual([
@@ -119,7 +122,15 @@ describe("values (R.9 Prüfung)", () => {
   it("every requested field is required, with one error code per field", () => {
     const result = validateTravelValues(
       { birthDay: "12", birthMonth: "", birthYear: "1990", documentNumber: "x" },
-      ["legal_name", "birth_date", "sex", "nationality", "document", "document_expiry", "issuing_country"],
+      [
+        "legal_name",
+        "birth_date",
+        "sex",
+        "nationality",
+        "document",
+        "document_expiry",
+        "issuing_country",
+      ],
       { today: TODAY, demo: false },
     );
     expect(result.ok).toBe(false);
@@ -183,10 +194,10 @@ describe("values (R.9 Prüfung)", () => {
 
   it("taking over values only fills overlapping fields", () => {
     expect(
-      overlappingValues(
-        { givenNames: "A", familyNames: "B", birthDate: "1990-01-01", sex: "F" },
-        ["legal_name", "birth_date"],
-      ),
+      overlappingValues({ givenNames: "A", familyNames: "B", birthDate: "1990-01-01", sex: "F" }, [
+        "legal_name",
+        "birth_date",
+      ]),
     ).toEqual({ givenNames: "A", familyNames: "B", birthDate: "1990-01-01" });
   });
 });

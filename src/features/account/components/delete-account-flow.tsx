@@ -36,6 +36,8 @@ interface DeleteAccountFlowProps {
   intl: string;
   /** Trips with an open own balance (W19 D.10) – informs, does not block. */
   openCosts?: { name: string; href: string; cents: number; currency: string }[] | undefined;
+  /** Travel details (R.9 I11-11): own releases / own open requests as «Bucht» – counts only. */
+  travel?: { released: number; requests: number } | undefined;
 }
 
 /**
@@ -52,6 +54,7 @@ export function DeleteAccountFlow({
   memberOf,
   intl,
   openCosts = [],
+  travel,
 }: DeleteAccountFlowProps) {
   const t = useTranslations("account.delete");
   const tAccount = useTranslations("account");
@@ -113,6 +116,8 @@ export function DeleteAccountFlow({
         </h2>
         <p>{t("whatText")}</p>
         {memberOf > 0 ? <p className={styles.muted}>{t("memberOf", { count: memberOf })}</p> : null}
+        {travel && travel.released > 0 ? <p data-delete-travel="">{t("travelMember")}</p> : null}
+        {travel && travel.requests > 0 ? <p data-delete-travel="">{t("travelBooker")}</p> : null}
         {openCosts.length > 0 ? (
           <div data-open-costs="">
             <p>{tCosts("accountTitle", { count: openCosts.length })}</p>

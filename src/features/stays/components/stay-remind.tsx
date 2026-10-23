@@ -19,7 +19,8 @@ export function useStayRemindTitle(data: StayRemindData) {
   return (step: StayRemindStep): string => {
     if (step.occasion === "stay-book") {
       const people = data.book?.bookers ?? [];
-      const person = people.find((p) => p.key === step.key) ?? (people.length === 1 ? people[0] : undefined);
+      const person =
+        people.find((p) => p.key === step.key) ?? (people.length === 1 ? people[0] : undefined);
       return person ? tRemind("orgaTitle", { orga: person.name }) : t("bookersTitle");
     }
     if (step.occasion !== "stay-rate") return tRemind("orgaTitle", { orga: data.orgaName });

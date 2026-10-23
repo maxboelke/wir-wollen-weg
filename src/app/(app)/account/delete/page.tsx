@@ -9,6 +9,7 @@ import { costsPath } from "@/features/trips/paths";
 import { deletionOverview } from "@/server/account-deletion";
 import { userBalances } from "@/server/costs/db";
 import { getSession } from "@/server/session";
+import { travelFootprint } from "@/server/travel-data/db";
 import { viewerFormat } from "@/server/viewer";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -20,10 +21,11 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function DeleteAccountPage() {
   const session = await getSession();
   if (!session) redirect("/login?next=/account/delete");
-  const [trips, passwordSet, format] = await Promise.all([
+  const [trips, passwordSet, format, travel] = await Promise.all([
     deletionOverview(session.user.id),
     hasPassword(session.user.id),
     viewerFormat(session),
+    travelFootprint(session.user.id),
   ]);
   const balances = await userBalances(
     session.user.id,
@@ -58,6 +60,7 @@ export default async function DeleteAccountPage() {
           })),
         }))}
         solo={soloTrips(trips).map((trip) => trip.name)}
+        travel={travel}
         memberOf={trips.filter((trip) => trip.role === "member").length}
         intl={format.intl}
         openCosts={openCosts}

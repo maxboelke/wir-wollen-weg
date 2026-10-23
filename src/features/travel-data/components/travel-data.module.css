@@ -1031,3 +1031,9 @@
     display: block;
   }
 }
+
+/* «Wer bucht?» rows ≥ 56 px (§9.23.1) */
+.bookerRow {
+  min-height: 56px;
+  padding-block: var(--ww-space-1);
+}

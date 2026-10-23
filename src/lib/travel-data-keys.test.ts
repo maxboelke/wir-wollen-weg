@@ -61,7 +61,10 @@ describe("feature switch TRAVEL_DATA_ENABLED (§0.11.1)", () => {
 
   it("explicit false switches it off everywhere; a typo is off (and refused at start)", () => {
     expect(
-      travelDataEnabled("development", { TRAVEL_DATA_ENABLED: "false", BETTER_AUTH_SECRET: SECRET }),
+      travelDataEnabled("development", {
+        TRAVEL_DATA_ENABLED: "false",
+        BETTER_AUTH_SECRET: SECRET,
+      }),
     ).toBe(false);
     expect(
       travelDataEnabled("development", { TRAVEL_DATA_ENABLED: "ture", BETTER_AUTH_SECRET: SECRET }),
@@ -75,7 +78,10 @@ describe("feature switch TRAVEL_DATA_ENABLED (§0.11.1)", () => {
 
   it("production on with its own key", () => {
     expect(
-      travelDataEnabled("production", { TRAVEL_DATA_ENABLED: "true", TRAVEL_DATA_KEYS: `t1:${key()}` }),
+      travelDataEnabled("production", {
+        TRAVEL_DATA_ENABLED: "true",
+        TRAVEL_DATA_KEYS: `t1:${key()}`,
+      }),
     ).toBe(true);
     expect(keySource("production", { BETTER_AUTH_SECRET: SECRET }).kind).toBe("none");
   });
@@ -121,14 +127,20 @@ describe("start guard (deployment.md §0.11.3)", () => {
       expect(problems[0]).not.toContain(SECRET);
     }
     expect(
-      startupProblems({ ...prod, env: { TRAVEL_DATA_ENABLED: "true", BETTER_AUTH_SECRET: SECRET } }),
+      startupProblems({
+        ...prod,
+        env: { TRAVEL_DATA_ENABLED: "true", BETTER_AUTH_SECRET: SECRET },
+      }),
     ).toHaveLength(1);
   });
 
   it("row 4: staging/production with the area off and no key start fine", () => {
     expect(travelDataStartupProblems("production", { BETTER_AUTH_SECRET: SECRET })).toEqual([]);
     expect(
-      travelDataStartupProblems("staging", { TRAVEL_DATA_ENABLED: "false", BETTER_AUTH_SECRET: SECRET }),
+      travelDataStartupProblems("staging", {
+        TRAVEL_DATA_ENABLED: "false",
+        BETTER_AUTH_SECRET: SECRET,
+      }),
     ).toEqual([]);
     expect(startupProblems({ ...prod, env: { BETTER_AUTH_SECRET: SECRET } })).toEqual([]);
   });

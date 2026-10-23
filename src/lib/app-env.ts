@@ -5,7 +5,7 @@
  * (may run outside the Node.js runtime on a CDN), `src/server/env.ts`, scripts and unit tests.
  */
 
-import { travelDataEnabled, travelDataStartupProblems } from "./travel-data-keys";
+import { travelDataEnabled, travelDataStartupProblems } from "./travel-data-keys.ts";
 
 export const APP_ENVS = ["development", "demo", "ci", "staging", "preview", "production"] as const;
 export type AppEnv = (typeof APP_ENVS)[number];

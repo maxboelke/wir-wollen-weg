@@ -2428,7 +2428,8 @@
       "done": "{name} isn't booking any more – the travel details are deleted."
     },
     "error": "That didn't work – please reload.",
-    "notAllowed": "Only {bookers} or the organiser can do that right now."
+    "notAllowed": "Only {bookers} or the organiser can do that right now.",
+    "chip": "Booking"
   },
   "travelData": {
     "title": "Travel details",
@@ -2497,7 +2498,8 @@
       "filled": "Made-up details filled in.",
       "request": "Demo – only made-up details are collected here.",
       "release": "Demo – please don't share real ID details. “Reset demo” deletes everything.",
-      "docHelp": "Preview: only made-up numbers starting with DEMO – e.g. DEMO12345."
+      "docHelp": "Preview: only made-up numbers starting with DEMO – e.g. DEMO12345.",
+      "tag": "Preview"
     },
     "hints": {
       "marked": "{name} marked you as “Booking”. You can request travel details – you only see what people share with you.",
@@ -2737,7 +2739,8 @@
       "release": "Share with {name}",
       "releaseChange": "Share changes",
       "released": "Shared with {name}.",
-      "failed": "That didn't work – your details aren't shared yet. Please try again."
+      "failed": "That didn't work – your details aren't shared yet. Please try again.",
+      "textRich": "I'm sharing these details with <b>{name}</b> for “{purpose}”. They're stored encrypted, only {name} can see them, and they'll be <b>deleted automatically 7 days after the trip (currently on {date})</b>. I can withdraw this at any time."
     },
     "remind": {
       "title": "Who's still missing?",
@@ -2749,6 +2752,7 @@
       "context": "{name} hasn't answered for “{purpose}” yet.",
       "contextAll": "Reminds everyone who hasn't answered for “{purpose}” yet.",
       "contextJoin": "{name} hasn't joined yet – the message contains the personal link."
-    }
+    },
+    "visibleTag": "visible"
   }
 }

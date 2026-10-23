@@ -6,6 +6,8 @@ import { TripShell } from "@/features/trips/components/trip-shell";
 import { loadTripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { canEditTripInfo, INFO_FIELDS } from "@/lib/trip-info";
+import { travelDataOn } from "@/lib/app-env";
+import { orgaName } from "@/features/trips/remind";
 import { getTripInfo } from "@/server/cockpit";
 import { listStays } from "@/server/stays/db";
 
@@ -51,6 +53,8 @@ export default async function TripInfoEditPage({ params, searchParams }: Params)
         version={info?.version ?? 0}
         stayTitle={stayTitle}
         fromStay={query.from === "stay" && stayTitle !== null}
+        travelData={travelDataOn()}
+        orgaName={orgaName(view)}
       />
     </TripShell>
   );

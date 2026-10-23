@@ -1,5 +1,6 @@
 import { exportFileName, exportUserData } from "@/server/data-export";
 import { getSession } from "@/server/session";
+import { travelReauthenticated } from "@/server/travel-data/db";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,10 @@ export async function GET(): Promise<Response> {
       headers: { location: "/login?next=%2Faccount", "cache-control": "no-store" },
     });
   }
-  const data = await exportUserData(session.user.id);
+  // Document numbers only with a code confirmation within 12 h (R.9 I11-11, like I11-08).
+  const data = await exportUserData(session.user.id, new Date(), {
+    travelReauthed: await travelReauthenticated(session.session.id),
+  });
   if (!data) return new Response("Not found", { status: 404 });
   return new Response(JSON.stringify(data, null, 2), {
     headers: {

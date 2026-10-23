@@ -1,5 +1,5 @@
 import "server-only";
-import { travelDeleteOn, type TravelField } from "@/lib/travel-data";
+import { travelDeleteOn } from "@/lib/travel-data";
 import type { TravelDataStatus } from "@/lib/trip-route";
 import type { RawRecipient, RawRequest, TravelRaw } from "@/server/travel-data/db";
 import type { TripView } from "../trips/load";
@@ -35,7 +35,9 @@ export function countsOf(raw: TravelRaw, requestId: string): RequestCounts {
     total: members.length,
     open: members.filter((r) => r.state === "open"),
     declined: members.filter((r) => r.state === "declined").length,
-    placeholders: raw.recipients.filter((r) => r.requestId === requestId && r.placeholderId !== null),
+    placeholders: raw.recipients.filter(
+      (r) => r.requestId === requestId && r.placeholderId !== null,
+    ),
   };
 }
 
@@ -62,7 +64,7 @@ export function travelDataStatus(view: TripView, raw: TravelRaw): TravelDataStat
           requestId: request.id,
           byName: name(request.requesterId),
           purpose: request.purpose,
-          fieldKeys: request.fields as readonly TravelField[],
+          fieldKeys: request.fields,
           state: r.state,
         },
       ];
@@ -107,7 +109,8 @@ export function travelDataStatus(view: TripView, raw: TravelRaw): TravelDataStat
   const expiredByDate = (request: RawRequest | undefined) => request?.closedReason === "expired";
   const affected = gone
     ? raw.recipients.some(
-        (r) => r.userId === me.userId && r.state === "expired" && expiredByDate(byId.get(r.requestId)),
+        (r) =>
+          r.userId === me.userId && r.state === "expired" && expiredByDate(byId.get(r.requestId)),
       ) ||
       raw.requests.some(
         (request) =>

@@ -31,6 +31,10 @@ interface InfoFormProps {
   infoHref: string;
   initial: Draft;
   version: number;
+  /** The travel-details area is on – «Gut zu wissen» points to it (W22 E). */
+  travelData?: boolean;
+  /** Organiser's name for «… hat geändert, wer bucht» (W22 E). */
+  orgaName?: string;
   /** Title of the picked place to stay (W22 D) – null when nothing is picked. */
   stayTitle?: string | null;
   /** Opened via «Name in die Infos übernehmen» – pre-fill the name right away. */
@@ -47,6 +51,8 @@ export function InfoForm({
   publicId,
   infoHref,
   initial,
+  travelData = false,
+  orgaName,
   version: initialVersion,
   stayTitle = null,
   fromStay = false,
@@ -149,6 +155,14 @@ export function InfoForm({
         // Saving again overwrites («letzte Speicherung gewinnt», W22 C).
         setVersion(answer.version);
         setConflict({ name: answer.editorName });
+        return;
+      }
+      if (answer.error === "notAllowed" && orgaName) {
+        // The marking «Bucht» was taken away while the form was open (W22 E).
+        saved.current = true;
+        toast({ message: t("noLongerAllowed", { orga: orgaName }) });
+        router.push(infoHref);
+        router.refresh();
         return;
       }
       setError(answer.error === "limited" ? "limited" : "generic");
@@ -324,7 +338,7 @@ export function InfoForm({
         type: "tel",
         hint: t("emergencyHint"),
       })}
-      {field("notes", labels.notes, { hint: t("notesHint") })}
+      {field("notes", labels.notes, { hint: travelData ? t("notesHintTravel") : t("notesHint") })}
       <div className={styles.submit}>
         <Button type="submit" size="lg" block loading={pending} loadingLabel={t("saving")}>
           {t("save")}

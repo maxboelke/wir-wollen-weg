@@ -320,7 +320,13 @@ export interface TravelDataStatus {
     closed: boolean;
   }[];
   /** Organiser and «Bucht»: open requests of OTHER «Bucht» people (numbers only). */
-  others: readonly { byName: string; purpose: string; released: number; total: number; complete: boolean }[];
+  others: readonly {
+    byName: string;
+    purpose: string;
+    released: number;
+    total: number;
+    complete: boolean;
+  }[];
 }
 
 export interface RouteAreas {
@@ -998,7 +1004,12 @@ export function v4Station(
   const toMe = data.toMe.filter((r) => r.state !== "expired");
   const runningOthers = data.others;
   if (toMe.length === 0 && !booker && !(orga && runningOthers.length > 0)) return null;
-  const base = { id: "V4" as const, kind: "station" as const, title: msg("v4.title"), href: TRAVEL_DATA };
+  const base = {
+    id: "V4" as const,
+    kind: "station" as const,
+    title: msg("v4.title"),
+    href: TRAVEL_DATA,
+  };
 
   // 1 – a request to me is open: my turn, rank 1 (blocks the asker).
   const openToMe = toMe.filter((r) => r.state === "open");
@@ -1077,7 +1088,12 @@ export function v4Station(
     };
   }
   // 5 – «Bucht» without any own request and nothing else: a quiet «später» line.
-  if (booker && data.mine.length === 0 && toMe.length === 0 && !(orga && runningOthers.length > 0)) {
+  if (
+    booker &&
+    data.mine.length === 0 &&
+    toMe.length === 0 &&
+    !(orga && runningOthers.length > 0)
+  ) {
     if (sub !== "before") return null;
     return { ...base, state: "later", status: msg("v4.later"), laterOnly: true };
   }
@@ -1146,7 +1162,9 @@ function travelTile(
         : msg("tiles.travelMineMany", { count: withData.length }),
     );
   } else {
-    const sharedWith = [...new Set(data.toMe.filter((r) => r.state === "released").map((r) => r.byName))];
+    const sharedWith = [
+      ...new Set(data.toMe.filter((r) => r.state === "released").map((r) => r.byName)),
+    ];
     if (sharedWith.length === 0) return null;
     status.push(msg("tiles.travelShared", { names: { names: sharedWith } }));
   }
@@ -1339,7 +1357,8 @@ export function tripRoute(
 }
 
 function stripLater(station: TripStation & { laterOnly?: boolean }): TripStation {
-  const { laterOnly: _ignored, ...rest } = station;
+  const rest = { ...station };
+  delete rest.laterOnly;
   return rest;
 }
 

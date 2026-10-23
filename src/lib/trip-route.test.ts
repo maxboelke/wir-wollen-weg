@@ -402,7 +402,7 @@ describe("tile «Infos» (W16 v2.6, v2.13)", () => {
 
   it("empty: member «Noch leer – Lena trägt sie ein», organiser «Infos ergänzen»", () => {
     expect(tripRoute(trip(), MEMBER, areas(), BEFORE).tiles[0]?.status).toEqual([
-      { key: "tiles.infoEmpty", values: { orga: "Lena" } },
+      { key: "tiles.infoEmpty", values: { names: { names: ["Lena"] }, count: 1 } },
     ]);
     expect(tripRoute(trip(), ORGA, areas(), BEFORE).tiles[0]?.status).toEqual([
       { key: "tiles.infoEmptyOrga" },
