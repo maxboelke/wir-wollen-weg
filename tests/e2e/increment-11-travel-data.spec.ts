@@ -231,4 +231,19 @@ test.describe("W20 H.2 – «Wer bucht?» in the cockpit", () => {
     );
     for (const p of [c.lena, c.sara, c.max]) await p.context.close();
   });
+
+  test("«Bucht» may edit the infos, a member without the marking may not (I11-02)", async ({
+    browser,
+  }) => {
+    test.setTimeout(120_000);
+    const c = await crew(browser);
+    const edit = `/trips/${c.publicId}/info/edit`;
+    // Sara («Bucht», no organiser) gets the form …
+    await c.sara.page.goto(edit);
+    await expect(c.sara.page).toHaveURL(new RegExp(`${edit}$`));
+    // … Max (member without the marking) lands on the info page without an error (W22 C).
+    await c.max.page.goto(edit);
+    await expect(c.max.page).toHaveURL(new RegExp(`/trips/${c.publicId}/info$`));
+    for (const p of [c.lena, c.sara, c.max]) await p.context.close();
+  });
 });
