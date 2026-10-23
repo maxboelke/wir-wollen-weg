@@ -314,13 +314,16 @@ test.describe("§14.4 Phase 3: the overview is the trip hub", () => {
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}$`));
     await expect(tabs(page)).toHaveCount(0);
     await expect(nextCard(page)).toHaveCount(0);
-    await expect(
-      page.getByRole("heading", { level: 2, name: en.trip.hub.decidedTitle }),
-    ).toBeVisible();
+    // W16 v2 (Increment 8): «How you decided» is a row under «More about the trip» → sheet.
+    await expect(page.getByRole("heading", { level: 2, name: en.route.moreTitle })).toBeVisible();
 
     await setCelebratedFor(trip.tripId, trip.email, `${day(10)}/${day(14)}`);
     await page.goto(`/trips/${trip.publicId}`);
-    await page.getByRole("link", { name: new RegExp(en.trip.hub.pollTitle) }).click();
+    await page.getByRole("button", { name: new RegExp(en.route.decided.title) }).click();
+    await page
+      .getByRole("dialog", { name: en.route.decided.title })
+      .getByRole("link", { name: en.route.decided.poll })
+      .click();
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/poll$`));
     await expect(page.getByText(en.trip.hub.pollTitle).first()).toBeVisible();
     await expect(tabs(page)).toHaveCount(0);
@@ -339,7 +342,7 @@ test.describe("§14.4 Phase 3: the overview is the trip hub", () => {
     await expectNoSeriousAxeViolations(page, "phase 3 hub");
   });
 
-  test("R-071: open placeholders only at the end under «Not joined (n)», without reminders", async ({
+  test("R-071 → W16 v2: placeholders last in «Who's coming?», members only «Let Lena know»", async ({
     page,
   }) => {
     const trip = await memberTrip(page);
@@ -352,25 +355,22 @@ test.describe("§14.4 Phase 3: the overview is the trip hub", () => {
     await page.goto(`/trips/${trip.publicId}`);
     await hydrated(page);
 
-    const members = page.getByRole("region", { name: /Who's in\?/ });
-    const toggle = members.getByRole("button", { name: fill(en.trip.showAll, { count: 9 }) });
-    const notJoined = members.getByRole("region", {
-      name: fill(en.trip.groupNotJoined, { count: 1 }),
-    });
-    await expect(toggle).toBeVisible();
-    await expect(notJoined.getByText("Mia", { exact: true })).toBeVisible();
-    await expect(notJoined.getByRole("button")).toHaveCount(0);
-    // The folded list holds 5 members – Mia is not among them, and comes after the toggle.
-    const list = page.locator(`[id="${String(await toggle.getAttribute("aria-controls"))}"]`);
-    await expect(list.getByRole("listitem")).toHaveCount(5);
-    await expect(list.getByText("Mia", { exact: true })).toHaveCount(0);
-    const toggleBox = await toggle.boundingBox();
-    const notJoinedBox = await notJoined.boundingBox();
-    expect(notJoinedBox?.y ?? 0).toBeGreaterThan(toggleBox?.y ?? Infinity);
-
-    await toggle.click();
-    await expect(list.getByRole("listitem")).toHaveCount(9);
-    await expect(list.getByText("Mia", { exact: true })).toHaveCount(0);
+    // Increment 8 replaced the member card by the sheet «Who's coming?» (W16 v2.1).
+    await page
+      .getByRole("button", {
+        name: new RegExp(fill(en.route.members.title, { count: 9 }).replace(/[()?]/g, "\\$&")),
+      })
+      .click();
+    const sheet = page.getByRole("dialog", { name: fill(en.route.members.title, { count: 9 }) });
+    const rows = sheet.getByRole("listitem");
+    await expect(rows).toHaveCount(10);
+    await expect(rows.last().getByText("Mia", { exact: true })).toBeVisible();
+    await expect(rows.last().getByText(en.route.members.placeholder)).toBeVisible();
+    // Members never get the personal link – only «Let Lena Berg know».
+    await expect(sheet.getByRole("button", { name: en.remind.remind, exact: true })).toHaveCount(0);
+    await expect(
+      rows.last().getByRole("button", { name: fill(en.route.v2.nudgeOrga, { orga: "Lena Berg" }) }),
+    ).toBeVisible();
     await waitForAnimations(page);
     await expectNoSeriousAxeViolations(page, "phase 3 members with placeholder");
   });

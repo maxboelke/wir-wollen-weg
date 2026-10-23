@@ -32,6 +32,7 @@ const TODO_TARGET: Record<TripTodo, "days" | "poll" | "pollNew"> = {
   addDates: "days",
   vote: "poll",
   startVote: "pollNew",
+  startVoteDeadline: "pollNew",
   fixDates: "poll",
 };
 

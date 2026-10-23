@@ -1,8 +1,18 @@
 import "server-only";
 import { and, asc, eq } from "drizzle-orm";
+import { todayIso } from "@/lib/dates";
 import { hasPassword } from "./account";
 import { db } from "./db/client";
-import { availability, pollOption, pollVote, session, trip, tripMember, user } from "./db/schema";
+import {
+  availability,
+  pollOption,
+  pollVote,
+  session,
+  trip,
+  tripInfo,
+  tripMember,
+  user,
+} from "./db/schema";
 
 /**
  * «Meine Daten herunterladen» (Art. 15/20 DSGVO, F-013/F-043): everything stored about the
@@ -46,6 +56,13 @@ export interface DataExport {
     /** Only the days that are not «geht» (the default is never stored). */
     myDays: { day: string; state: "maybe" | "no" }[];
     myVotes: { start: string; end: string; answer: "yes" | "maybe" | "no" }[];
+    /** UX-8: arrival day for which the small departure-day celebration was shown (Increment 8). */
+    departureCelebratedOn: string | null;
+    /**
+     * F-033: when THIS person last changed the trip's infos (only the time – the infos are trip
+     * content, not personal data of the exporting person, features.md R.6).
+     */
+    infoLastChangedByMeAt: string | null;
   }[];
 }
 
@@ -54,7 +71,7 @@ const iso = (date: Date | null) => (date ? date.toISOString() : null);
 export async function exportUserData(userId: string, now = new Date()): Promise<DataExport | null> {
   const [account] = await db().select().from(user).where(eq(user.id, userId));
   if (!account) return null;
-  const [sessions, memberships, days, votes, passwordSet] = await Promise.all([
+  const [sessions, memberships, days, votes, passwordSet, infoEdits] = await Promise.all([
     db()
       .select({
         createdAt: session.createdAt,
@@ -91,6 +108,10 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
       .where(eq(pollVote.userId, userId))
       .orderBy(asc(pollOption.startDate)),
     hasPassword(userId),
+    db()
+      .select({ tripId: tripInfo.tripId, updatedAt: tripInfo.updatedAt })
+      .from(tripInfo)
+      .where(eq(tripInfo.updatedBy, userId)),
   ]);
   return {
     format: "wir-wollen-weg/data-export",
@@ -130,12 +151,14 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
       myVotes: votes
         .filter((row) => row.tripId === t.id)
         .map((row) => ({ start: row.start, end: row.end, answer: row.choice })),
+      departureCelebratedOn: member.departureCelebratedOn,
+      infoLastChangedByMeAt: iso(infoEdits.find((row) => row.tripId === t.id)?.updatedAt ?? null),
     })),
   };
 }
 
 /** File name of the download, e.g. «wir-wollen-weg-daten-2026-10-11.json». */
 export function exportFileName(locale: string, now = new Date()): string {
-  const date = now.toISOString().slice(0, 10);
+  const date = todayIso(now);
   return locale === "de" ? `wir-wollen-weg-daten-${date}.json` : `when-do-we-go-data-${date}.json`;
 }

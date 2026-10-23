@@ -28,6 +28,7 @@ import {
   startPoll,
   unfixDates,
 } from "@/server/poll";
+import { markDepartureCelebrated } from "@/server/cockpit";
 import { getSession } from "@/server/session";
 import { findMembership, listMembers, type Membership } from "@/server/trips";
 
@@ -207,6 +208,11 @@ export async function celebratedAction(publicId: string): Promise<PollActionResu
     return { ok: false, error: "phase" };
   }
   await markCelebrated(found.trip.id, found.member.userId, { start: fixedStart, end: fixedEnd });
+  // UX-8 (I8-07): the big celebration on the arrival day replaces the small one – no double
+  // confetti on that day.
+  if (todayIso() === fixedStart) {
+    await markDepartureCelebrated(found.trip.id, found.member.userId, fixedStart);
+  }
   return { ok: true };
 }
 

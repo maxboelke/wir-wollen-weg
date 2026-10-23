@@ -1,0 +1,431 @@
+/* Ticket head of the «Reiseverlauf» cockpit – W16 v2.2, D-36/D-42/D-44/D-45, mockup C v2 */
+.ticket {
+  --ticket-pad: var(--ww-space-4);
+  container: ticket / inline-size;
+  color: var(--ww-cockpit-text);
+}
+
+/* A container query cannot style its own container – the layout lives one level down. */
+.inner {
+  display: flex;
+  flex-direction: column;
+}
+
+.ringBox {
+  display: flex;
+  justify-content: center;
+  padding-top: var(--ww-space-0-5);
+}
+
+/* D-44: round button, pressed = scale-press, focus isolated on Indigo */
+.ringButton {
+  position: relative;
+  display: block;
+  width: var(--ww-size-countdown-ring-hero);
+  height: var(--ww-size-countdown-ring-hero);
+  padding: 0;
+  border: 0;
+  border-radius: var(--ww-radius-pill);
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.ringButton:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+.ring {
+  position: absolute;
+  inset: 0;
+  display: block;
+  transition: transform var(--ww-duration-instant) var(--ww-ease-standard);
+}
+
+.ringButton:active .ring {
+  transform: scale(var(--ww-motion-scale-press));
+}
+
+.ringSvg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Number 30 % of the ring, «Tage» below – decorative (aria-hidden on the parent) */
+.ringLabel {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--ww-cockpit-text-muted);
+  font-size: max(12px, calc(var(--ww-size-countdown-ring-hero) * 0.085));
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-tight);
+  text-align: center;
+  pointer-events: none;
+}
+
+.ringNumber {
+  display: block;
+  margin-block: 1px;
+  color: var(--ww-cockpit-text);
+  font-family: var(--ww-font-display);
+  font-size: calc(var(--ww-size-countdown-ring-hero) * 0.3);
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-display);
+  line-height: 1;
+}
+
+.ringBye {
+  max-width: 64%;
+  color: var(--ww-cockpit-text);
+  font-family: var(--ww-font-display);
+  font-size: calc(var(--ww-size-countdown-ring-hero) * 0.11);
+  line-height: 1.1;
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-tight);
+}
+
+/* Confetti puff of the big celebration (celebration.ts) stays inside the ticket */
+.ring [data-burst] {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+}
+
+.ring [data-burst] i {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+}
+
+/*
+ * R-017: layers that will animate are hidden BEFORE the first paint (only with JavaScript and
+ * full motion) – the big celebration hides all moving layers, the departure-day round only the
+ * confetti and sparkles. Failsafe: visible after 2.4 s if the script never runs.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  :global(:root[data-js]:not([data-motion="reduce"])) .ring[data-celebrate="pending"] [data-anim],
+  :global(:root[data-js]:not([data-motion="reduce"])) .ring[data-celebrate="small"] [data-piece],
+  :global(:root[data-js]:not([data-motion="reduce"]))
+    .ring[data-celebrate="small"]
+    [data-anim="sparkles"] {
+    opacity: 0;
+    animation: ticket-failsafe 0s linear 2.4s forwards;
+  }
+}
+
+@keyframes ticket-failsafe {
+  to {
+    opacity: 1;
+  }
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.range {
+  margin: var(--ww-space-1-5) 0 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: var(--ww-tracking-tight);
+  line-height: var(--ww-leading-snug);
+  text-align: center;
+}
+
+/* Tear-off edge of the ticket (decorative): notches in the page colour + dashed line */
+.perf {
+  position: relative;
+  height: var(--ww-space-6);
+  margin: var(--ww-space-2) calc(-1 * var(--ticket-pad)) var(--ww-space-0-5);
+}
+
+.perf::before {
+  content: "";
+  position: absolute;
+  inset-inline: var(--ww-space-6);
+  top: calc(var(--ww-space-3) - 1px);
+  border-top: 2px dashed rgb(255 255 255 / 0.3);
+}
+
+.notch {
+  position: absolute;
+  top: 0;
+  width: var(--ww-space-6);
+  height: var(--ww-space-6);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-bg);
+}
+
+.notchStart {
+  left: calc(-1 * var(--ww-space-3));
+}
+
+.notchEnd {
+  right: calc(-1 * var(--ww-space-3));
+}
+
+.stub {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2) var(--ww-space-3);
+}
+
+.crew {
+  display: inline-flex;
+  align-items: center;
+  gap: calc(var(--ww-space-2) + var(--ww-space-0-5));
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-2) 0 var(--ww-space-0-5);
+  border: 0;
+  border-radius: var(--ww-radius-md);
+  background: none;
+  color: var(--ww-cockpit-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: var(--ww-leading-snug);
+  text-align: start;
+  cursor: pointer;
+}
+
+.crew:focus-visible,
+.headButton:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+.stack {
+  display: inline-flex;
+  flex: none;
+}
+
+.stack > * + * {
+  margin-inline-start: calc(-1 * var(--ww-space-2));
+}
+
+.stack > * {
+  box-shadow: 0 0 0 2px var(--ww-cockpit-bg);
+}
+
+.more {
+  display: inline-grid;
+  place-items: center;
+  width: var(--ww-size-avatar-md);
+  height: var(--ww-size-avatar-md);
+  border-radius: var(--ww-radius-pill);
+  background: rgb(255 255 255 / 0.18);
+  color: var(--ww-cockpit-text);
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-display);
+}
+
+.actions {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2);
+  margin-inline-start: auto;
+}
+
+/* Head buttons: always outline on Indigo («on-ck», 44 px, never primary – v2.12 U-25) */
+.headButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ww-space-2);
+  min-height: var(--ww-size-touch-min);
+  padding: 0 calc(var(--ww-space-3) + var(--ww-space-0-5));
+  border: 2px solid var(--ww-cockpit-outline);
+  border-radius: var(--ww-radius-button-sm);
+  background: transparent;
+  color: var(--ww-cockpit-text);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+  transition: transform var(--ww-duration-instant) var(--ww-ease-standard);
+}
+
+.headButton:active {
+  transform: scale(var(--ww-motion-scale-press));
+}
+
+.menuList {
+  position: absolute;
+  z-index: var(--ww-z-sticky);
+  top: calc(100% + var(--ww-space-1));
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 15rem;
+  margin: 0;
+  padding: var(--ww-space-1);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-3);
+  list-style: none;
+}
+
+.menuItem {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  min-height: var(--ww-size-touch-min);
+  padding: var(--ww-space-2) var(--ww-space-3);
+  border-radius: var(--ww-radius-md);
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-semibold);
+  text-decoration: none;
+}
+
+.menuItem:hover {
+  background: var(--ww-color-surface-sunken);
+}
+
+.menuItem:focus-visible {
+  outline: var(--ww-focus-width) solid var(--ww-color-focus);
+  outline-offset: calc(-1 * var(--ww-focus-width));
+}
+
+@media (min-width: 600px) {
+  .ticket {
+    --ticket-pad: var(--ww-space-6);
+  }
+
+  .notch {
+    display: none;
+  }
+}
+
+/* D-43: narrow container (< 22 em – 320 px or 200 % text): ring 120, crew and buttons stacked */
+@container ticket (max-width: 22em) {
+  .ringButton {
+    width: 120px;
+    height: 120px;
+  }
+
+  .ringLabel {
+    font-size: 12px;
+  }
+
+  .ringNumber {
+    font-size: 36px;
+  }
+
+  .ringBye {
+    font-size: 13px;
+  }
+
+  .stub {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .actions {
+    margin-inline-start: 0;
+  }
+
+  .actions > *,
+  .headButton {
+    flex: 1;
+  }
+}
+
+/* D-45: desktop – ticket as a band: ring left, dashed divider, range/crew/buttons right */
+@container ticket (min-width: 900px) {
+  .inner {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--ww-space-8);
+    padding-block: var(--ww-space-2);
+  }
+
+  .ringButton {
+    width: 168px;
+    height: 168px;
+  }
+
+  .info {
+    flex: 1;
+    padding: var(--ww-space-2) 0 var(--ww-space-2) var(--ww-space-8);
+    border-inline-start: 2px dashed rgb(255 255 255 / 0.3);
+  }
+
+  .range {
+    margin: 0;
+    font-size: var(--ww-text-2xl);
+    text-align: start;
+  }
+
+  .perf {
+    display: none;
+  }
+
+  .stub {
+    justify-content: flex-start;
+    margin-top: calc(var(--ww-space-3) + var(--ww-space-0-5));
+  }
+
+  .actions {
+    margin-inline-start: var(--ww-space-6);
+  }
+}
+
+@media (forced-colors: active) {
+  .headButton,
+  .crew {
+    border: 2px solid ButtonText;
+  }
+}
+
+/* ---------- D-42: mini ring in row 1 (replaces the phase dot once the ring is out of view) */
+.phaseSlot {
+  position: relative;
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  width: var(--ww-size-mini-ring);
+  height: var(--ww-size-mini-ring);
+}
+
+.phaseDot {
+  width: 9px;
+  height: 9px;
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-sun);
+  transition: opacity var(--ww-duration-fade) linear;
+}
+
+.miniRing {
+  position: absolute;
+  inset: 0;
+  width: var(--ww-size-mini-ring);
+  height: var(--ww-size-mini-ring);
+  opacity: 0;
+  transition: opacity var(--ww-duration-fade) linear;
+}
+
+.mini .phaseDot {
+  opacity: 0;
+}
+
+.mini .miniRing {
+  opacity: 1;
+}

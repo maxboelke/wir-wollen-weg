@@ -217,6 +217,8 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
         fixedStart: option.start,
         fixedEnd: option.end,
         fixedAt: now,
+        // A new fixing → «Allen Bescheid geben» is due again (V1, I8-03).
+        fixedAnnouncedAt: null,
         updatedAt: now,
       })
       .where(eq(trip.id, tripId));
@@ -250,6 +252,7 @@ export async function unfixDates(tripId: string): Promise<{ ok: boolean }> {
         fixedStart: null,
         fixedEnd: null,
         fixedAt: null,
+        fixedAnnouncedAt: null,
         updatedAt: new Date(),
       })
       .where(eq(trip.id, tripId));

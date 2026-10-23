@@ -189,6 +189,8 @@
 
 /* KPI tail: Indigo continues below the sticky head, round bottom edge 30 */
 .tail {
+  /* The ticket's tear-off notches end exactly at the edge (W16 ticket head, no h-scroll). */
+  overflow-x: clip;
   padding: var(--ww-space-1) var(--ww-space-4) calc(var(--ww-space-3) + var(--ww-space-0-5));
   border: var(--ww-border-forced);
   border-top: 0;

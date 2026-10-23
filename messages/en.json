@@ -213,13 +213,15 @@
       "addDates": "Your dates are still missing",
       "vote": "Vote now",
       "startVote": "Everyone's added their dates – start the vote?",
-      "fixDates": "Ready to lock in the dates"
+      "fixDates": "Ready to lock in the dates",
+      "startVoteDeadline": "The deadline for dates has passed – start the vote?"
     },
     "action": {
       "addDates": "Add your dates",
       "vote": "Vote",
       "startVote": "Create a vote",
-      "fixDates": "Lock in dates"
+      "fixDates": "Lock in dates",
+      "startVoteDeadline": "Create a vote"
     },
     "actionFor": "{action}: {trip}",
     "voteDeadline": "Vote by {date}",
@@ -743,7 +745,8 @@
       "help": "Help",
       "unfix": "Undo locked dates",
       "cancelPoll": "Cancel the vote",
-      "remind": "Remind the group"
+      "remind": "Remind the group",
+      "decided": "How you decided"
     },
     "dialogs": {
       "leaveTitle": "Leave “{trip}”?",
@@ -872,7 +875,8 @@
       "nudgeP1Deadline": "Hey {orga}, the deadline for {trip} has passed – could you start the vote? {link}",
       "nudgeP2All": "Hey {orga}, everyone has voted for {trip} – you can lock in the dates now: {link}",
       "nudgeP2Deadline": "Hey {orga}, the voting deadline for {trip} has passed – could you lock in the dates? {link}",
-      "nudgePlaceholder": "Hey {orga}, {name} still hasn't joined {trip} – could you send them their personal link? {link}"
+      "nudgePlaceholder": "Hey {orga}, {name} still hasn't joined {trip} – could you send them their personal link? {link}",
+      "p3Placeholder": "Hey {name}, here’s your personal link for {trip} – one tap and you’re in: {link}"
     }
   },
   "tripSettings": {
@@ -1459,5 +1463,236 @@
     "orgaTitle": "Let {orga} know",
     "placeholderTitle": "{name} hasn't joined yet",
     "placeholderText": "Only {orga} has {name}'s personal link. Give them a nudge so they can pass it on."
+  },
+  "route": {
+    "phase": {
+      "before": "Locked in · {count, plural, one {# day} other {# days}} to go",
+      "during": "On the road · day {day} of {total}",
+      "after": "Back for {count, plural, =0 {a few hours} one {# day} other {# days}}"
+    },
+    "sr": {
+      "before": "{count, plural, one {# day} other {# days}} until you leave.",
+      "during": "Today is day {day} of {total} of your trip.",
+      "after": "The trip is over."
+    },
+    "ring": {
+      "before": "Countdown: {count, plural, one {# day} other {# days}} to go",
+      "during": "On the road: day {day} of {total}",
+      "after": "Trip over – what a trip!",
+      "unit": "{count, plural, one {day} other {days}}",
+      "dayTop": "Day",
+      "dayOf": "of {total}",
+      "bye": "What a trip!"
+    },
+    "crew": "{count} going · {nights, plural, one {# night} other {# nights}}",
+    "calendar": "Calendar",
+    "way": {
+      "before": "The road to departure",
+      "during": "Your trip, day by day",
+      "after": "After the trip"
+    },
+    "meta": {
+      "done": "{done} of {total} done",
+      "day": "Day {day} of {total}"
+    },
+    "done": {
+      "prep": "Preparation · {count} done",
+      "trip": "Trip · preparation and {days} days",
+      "list": "{count} done: {titles}",
+      "fresh": "Just done: {titles}",
+      "freshCount": "{count} done",
+      "offline": "done without the app",
+      "unused": "not used"
+    },
+    "label": {
+      "yours": "Your turn",
+      "waiting": "In progress · waiting on others",
+      "waitingWord": "Waiting on others",
+      "next": "Up next",
+      "later": "Later",
+      "goal": "Destination",
+      "doneWord": "Done",
+      "unusedWord": "Not used",
+      "plan": "Today’s plan",
+      "task": "Your turn · {area}",
+      "areaInfo": "Info"
+    },
+    "today": {
+      "short": "Today · {date}",
+      "long": "Today, {date}",
+      "dayShort": "Today · day {day} · {date}",
+      "dayLong": "Today, {date}, day {day}",
+      "backShort": "Today · back for {count, plural, =0 {a few hours} one {# day} other {# days}}",
+      "backLong": "Today, {date} – back for {count, plural, =0 {a few hours} one {# day} other {# days}}"
+    },
+    "sentence": {
+      "h1": "Your turn – {count, plural, one {one thing} other {# things}} for you.",
+      "h2": "Nothing for you right now. You’re waiting on: {short}.",
+      "h3": "All done – now it’s just counting down!",
+      "h4": "Nothing planned today – enjoy!",
+      "h5": "All settled – what a trip!",
+      "h5b": "What a trip – see you on the next one!",
+      "h6": "{plans, plural, one {One plan} other {# plans}} today – otherwise enjoy!",
+      "h6Tasks": "{plans, plural, one {One plan} other {# plans}} today – and {count, plural, one {one thing} other {# things}} for you.",
+      "h7": "Today’s the day – have a great trip!"
+    },
+    "more": {
+      "showMore": "+ {count} more for you",
+      "showMoreWaiting": "+ {count} more in progress",
+      "showMoreLater": "+ {count} more steps",
+      "showLess": "Show less"
+    },
+    "v1": {
+      "title": "Dates locked in",
+      "yours": "Let everyone know the dates are locked in.",
+      "announce": "Tell everyone",
+      "doneVotes": "Top choice with {count}× yes · locked in by {orga}",
+      "done": "Locked in by {orga}"
+    },
+    "v2": {
+      "title": "Everyone’s in",
+      "done": "All {count} are in",
+      "doneOffline": "Everyone’s in · {names} without the app",
+      "waiting": "{names} {count, plural, one {hasn’t} other {haven’t}} joined yet",
+      "short": "{names} to join",
+      "unused": "{names} didn’t join",
+      "remindOne": "Remind {name}",
+      "remindOneName": "Remind {name} – send the personal link",
+      "remindAll": "Remind",
+      "remindAllName": "Remind {names} – send the personal links",
+      "nudgeOrga": "Let {orga} know",
+      "nudgeOrgaName": "Let {orga} know that {names} {count, plural, one {is} other {are}} missing",
+      "withoutApp": "{name} joins without the app",
+      "undo": "Undo: {name} without the app"
+    },
+    "a2": {
+      "title": "Add the info",
+      "status": "Add the meeting point and address to the info.",
+      "action": "Add info"
+    },
+    "plan": {
+      "meetTitle": "Meeting point",
+      "meetStatus": "{text}",
+      "meetAction": "Open info"
+    },
+    "goal": {
+      "go": "Off we go!",
+      "text": "{text}",
+      "checkIn": "Check-in from {time}",
+      "daysToGo": "{count, plural, one {# day} other {# days}} to go",
+      "home": "Heading home",
+      "checkOut": "Check-out by {time}",
+      "daysLeft": "{count, plural, =0 {Departure day} one {# day left} other {# days left}}",
+      "next": "Where to next?",
+      "nextStatus": "The group is ready – plan the next trip right away.",
+      "newTrip": "Plan a new trip",
+      "deletion": "This trip will be deleted automatically on {date}."
+    },
+    "tiles": {
+      "title": "Always at hand",
+      "info": "Info",
+      "infoMeeting": "Meeting point set",
+      "infoCheckIn": "Check-in from {time}",
+      "infoAddress": "Address added",
+      "infoEmpty": "Still empty – {orga} will add it",
+      "infoEmptyOrga": "Add info"
+    },
+    "moreTitle": "More about the trip",
+    "decided": {
+      "title": "How you decided",
+      "sub": "Result and group calendar",
+      "fixedBy": "Locked in · by {orga} on {date}",
+      "place": "Place {rank}",
+      "fixed": "locked in",
+      "votes": "{yes}× yes · {maybe}× maybe · {no}× no",
+      "noVotes": "Locked in without a vote.",
+      "poll": "Vote results",
+      "group": "Group calendar"
+    },
+    "members": {
+      "title": "Who’s coming? ({count})",
+      "sub": "{orga} is the organiser",
+      "subPlaceholders": "{orga} is the organiser · {count, plural, one {# placeholder} other {# placeholders}}",
+      "going": "Going",
+      "placeholder": "Placeholder",
+      "withoutAppChip": "without the app",
+      "notJoined": "Hasn’t joined yet – personal link open",
+      "withoutApp": "Joins without the app (ticked by {orga})",
+      "manage": "Manage placeholders"
+    },
+    "remind": {
+      "listTitle": "Not joined yet",
+      "personal": "Personal link – only for {name}, don’t post it in the group.",
+      "orgaText": "Only {orga} has the personal link. Give them a quick heads-up so they can pass it on."
+    },
+    "toast": {
+      "withoutApp": "“{name} joins without the app” is ticked – everyone can see it.",
+      "undone": "Undone – {name} is missing again.",
+      "error": "That didn’t work. Please try again."
+    },
+    "skeleton": "Loading the overview …",
+    "unavailable": "Status not available right now",
+    "offline": "You’re offline – this is the last saved state. Actions work again once you’re back online."
+  },
+  "tripInfo": {
+    "title": "Info",
+    "editTitle": "Edit info",
+    "edit": "Edit",
+    "editName": "Edit info",
+    "pageTitle": "Info · {trip}",
+    "editPageTitle": "Edit info · {trip}",
+    "stayTitle": "Place to stay",
+    "meetingTitle": "Meeting point & getting there",
+    "notesTitle": "Good to know",
+    "address": "Address",
+    "addressMissing": "Address follows once the place is booked.",
+    "maps": "Open in maps",
+    "newTab": "(opens a new tab)",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "checkInValue": "{date} · from {time}",
+    "checkOutValue": "{date} · by {time}",
+    "emergency": "Emergency contact of the place",
+    "updatedBy": "Last changed by {name}, {date}",
+    "updatedAt": "Last changed on {date}",
+    "emptyMember": "No info yet – {orga} will add the address, check-in and meeting point here.",
+    "emptyOrga": "No info yet – add the address, check-in and meeting point so everyone finds them here.",
+    "emptyAction": "Add info",
+    "form": {
+      "stayName": "Name of the place",
+      "address": "Address of the place",
+      "addressHint": "Shown as an “Open in maps” link – no embedded map.",
+      "checkIn": "Check-in from",
+      "checkOut": "Check-out by",
+      "timeHint": "Time only – the date comes from your dates. Anything different goes in “Good to know”.",
+      "meetingPoint": "Meeting point & getting there",
+      "meetingHint": "The first line shows in the overview at “Off we go!”.",
+      "emergencyName": "Emergency contact of the place – name",
+      "emergencyPhone": "Emergency contact – phone",
+      "emergencyHint": "Only contacts of the place – no private numbers.",
+      "notes": "Good to know",
+      "notesHint": "Don’t enter ID or booking numbers here. Links (https) are detected automatically.",
+      "optional": "(optional)",
+      "counter": "{count, plural, one {# character} other {# characters}} left",
+      "save": "Save",
+      "saving": "Saving …",
+      "saved": "Info saved – everyone can see it now.",
+      "errorTooLong": "At most {max} characters.",
+      "errorTime": "Please pick a time, e.g. 3:00 PM.",
+      "errorPhone": "Just the phone number, please – digits, spaces and + are allowed.",
+      "errorSummary": "Please check the marked fields.",
+      "errorGeneric": "Saving didn’t work. Your entries are still here – please try again.",
+      "errorLimited": "Too many changes in a short time. Please wait a few minutes.",
+      "conflict": "{name} has changed the info in the meantime.",
+      "conflictUnknown": "Someone has changed the info in the meantime.",
+      "conflictHint": "Saving overwrites the new version. Reload shows it – your entries will be lost.",
+      "reload": "Reload",
+      "discardTitle": "Discard changes?",
+      "discardText": "Your changes to the info haven’t been saved yet.",
+      "discard": "Discard",
+      "keep": "Keep editing",
+      "reloadTitle": "Reload?",
+      "reloadText": "Your entries will be lost and you’ll see the new version."
+    }
   }
 }

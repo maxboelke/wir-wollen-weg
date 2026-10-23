@@ -98,7 +98,7 @@ jobs:
     needs: [detect, quality]
     if: needs.detect.outputs.has_app == 'true' && needs.detect.outputs.has_e2e == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
     services:
       postgres:
         image: postgres:18

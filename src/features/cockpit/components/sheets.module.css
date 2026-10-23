@@ -1,0 +1,124 @@
+/* Sheets of the «Reiseverlauf» cockpit – W16 v2.1/v2.8, mockup C v2 */
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.people {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.muted {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.note {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+/* Trip description as a quote line on top of «So habt ihr entschieden» (ux-spec §14.4). */
+.quote {
+  margin: 0;
+  padding-inline-start: var(--ww-space-3);
+  border-inline-start: var(--ww-space-1) solid var(--ww-color-primary-tint-strong);
+  color: var(--ww-color-text-muted);
+  font-style: italic;
+  overflow-wrap: anywhere;
+  white-space: pre-line;
+}
+
+.range {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-display);
+  line-height: var(--ww-leading-tight);
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-1);
+}
+
+.chip,
+.chipOk,
+.chipSun {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: var(--ww-space-6);
+  padding: var(--ww-space-0-5) var(--ww-space-2);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-bold);
+  white-space: nowrap;
+}
+
+.chipOk {
+  background: var(--ww-color-accent-tint);
+  color: var(--ww-color-accent-text);
+}
+
+.chipSun {
+  background: var(--ww-color-sun);
+  color: var(--ww-ink-900);
+}
+
+.places {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.place {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  min-height: var(--ww-size-control-md);
+  padding-block: var(--ww-space-2);
+  border-bottom: var(--ww-border-thin) solid var(--ww-color-border-subtle);
+}
+
+.place:last-child {
+  border-bottom: 0;
+}
+
+.placeText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+  min-width: 0;
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.links,
+.footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  min-height: var(--ww-size-touch-min);
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}

@@ -198,6 +198,11 @@ export const trip = pgTable(
      */
     pollCanceledAt: timestamp("poll_canceled_at", { withTimezone: true }),
     pollCanceledBy: uuid("poll_canceled_by").references(() => user.id, { onDelete: "set null" }),
+    /**
+     * Station V1 «Termin steht» (W16 v2.4, F-053): when the organiser tapped WhatsApp/share/copy
+     * in «Allen Bescheid geben». Cleared by every new fixing and by «Festlegung aufheben».
+     */
+    fixedAnnouncedAt: timestamp("fixed_announced_at", { withTimezone: true }),
     /** Automatic deletion (F-013): the organiser was told 14 days before (notice mail). */
     deletionNoticeSentAt: timestamp("deletion_notice_sent_at", { withTimezone: true }),
     createdAt: createdAt(),
@@ -254,6 +259,12 @@ export const tripMember = pgTable(
     reopenNoticeDue: boolean("reopen_notice_due").notNull().default(false),
     /** Saw the one-off notice about the cancelled vote (Q21) – compared with trip.pollCanceledAt. */
     pollCancelSeenAt: timestamp("poll_cancel_seen_at", { withTimezone: true }),
+    /**
+     * UX-8 (F-053, I8-07): arrival day for which this member has seen the small departure-day
+     * celebration – once per person and arrival date, across devices. A new fixing with another
+     * arrival day celebrates again.
+     */
+    departureCelebratedOn: date("departure_celebrated_on", { mode: "string" }),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
@@ -323,6 +334,12 @@ export const tripPlaceholder = pgTable(
     createdAt: createdAt(),
     claimedBy: uuid("claimed_by").references(() => user.id, { onDelete: "set null" }),
     claimedAt: timestamp("claimed_at", { withTimezone: true }),
+    /**
+     * UX-9 (F-053, I8-04): the organiser marked «{Name} macht ohne App mit» – station V2 counts
+     * the placeholder as done. Null = not marked (undo); removed with the placeholder.
+     */
+    withoutAppAt: timestamp("without_app_at", { withTimezone: true }),
+    withoutAppBy: uuid("without_app_by").references(() => user.id, { onDelete: "set null" }),
   },
   (table) => [
     index("trip_placeholder_trip_id_idx").on(table.tripId),
@@ -408,6 +425,65 @@ export const pollVote = pgTable(
       foreignColumns: [tripMember.tripId, tripMember.userId],
     }).onDelete("cascade"),
     check("poll_vote_choice_check", sql`${table.choice} in ('yes', 'maybe', 'no')`),
+  ],
+);
+
+// ---------------------------------------------------------------------------
+// Trip info page (F-033, Increment 8 – W22)
+// ---------------------------------------------------------------------------
+
+/** Field limits of the info page (W22 C) – checked in the app (zod) AND by the database. */
+export const TRIP_INFO_LIMITS = {
+  stayName: 80,
+  address: 200,
+  meetingPoint: 300,
+  emergencyName: 60,
+  emergencyPhone: 20,
+  notes: 2000,
+} as const;
+
+/**
+ * Infos of a fixed trip (F-033): address, check-in/-out time, meeting point, the
+ * accommodation's emergency contact and free text. 1:1 to the trip, deleted with it (F-013) and
+ * kept when the dates are reopened. Trip content – never written to logs or mails. `version`
+ * detects concurrent edits (W22 C «… hat die Infos inzwischen geändert»).
+ */
+export const tripInfo = pgTable(
+  "trip_info",
+  {
+    tripId: uuid("trip_id")
+      .primaryKey()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    stayName: text("stay_name"),
+    address: text("address"),
+    /** «15:00» – the date is the arrival day of the fixed dates (W22 C). */
+    checkIn: text("check_in"),
+    /** «10:00» – the date is the departure day. */
+    checkOut: text("check_out"),
+    meetingPoint: text("meeting_point"),
+    emergencyName: text("emergency_name"),
+    emergencyPhone: text("emergency_phone"),
+    notes: text("notes"),
+    /** Last editor – «ehemaliges Mitglied» once the account is gone. */
+    updatedBy: uuid("updated_by").references(() => user.id, { onDelete: "set null" }),
+    updatedAt: updatedAt(),
+    version: integer("version").notNull().default(1),
+  },
+  (table) => [
+    check(
+      "trip_info_length_check",
+      sql`coalesce(char_length(${table.stayName}), 0) <= 80
+        and coalesce(char_length(${table.address}), 0) <= 200
+        and coalesce(char_length(${table.meetingPoint}), 0) <= 300
+        and coalesce(char_length(${table.emergencyName}), 0) <= 60
+        and coalesce(char_length(${table.emergencyPhone}), 0) <= 20
+        and coalesce(char_length(${table.notes}), 0) <= 2000`,
+    ),
+    check(
+      "trip_info_time_check",
+      sql`(${table.checkIn} is null or ${table.checkIn} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')
+        and (${table.checkOut} is null or ${table.checkOut} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')`,
+    ),
   ],
 );
 

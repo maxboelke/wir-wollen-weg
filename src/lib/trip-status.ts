@@ -57,24 +57,28 @@ export function phaseProgress(
 }
 
 /** Highlighted to-do of the viewer (F-044, Flow E.1). */
-export type TripTodo = "addDates" | "vote" | "startVote" | "fixDates";
+export type TripTodo = "addDates" | "vote" | "startVote" | "startVoteDeadline" | "fixDates";
 
 /**
  * `deadlinePassed`: the voting deadline is over (F-017) – the organiser is asked to fix the
  * dates (never decided automatically); likewise once everybody has voted.
+ * `collectDeadlinePassed`: the deadline for adding dates is over (F-017 rest, Pflege-Paket) –
+ * the organiser is asked to start the vote, also while people are still missing.
  */
 export function viewerTodo(
   phase: UiPhase,
   viewer: MemberStatus,
   progress: Progress | null,
-  { deadlinePassed = false }: { deadlinePassed?: boolean } = {},
+  {
+    deadlinePassed = false,
+    collectDeadlinePassed = false,
+  }: { deadlinePassed?: boolean; collectDeadlinePassed?: boolean } = {},
 ): TripTodo | null {
   if (phase === "collect") {
     if (!viewer.submittedAt) return "addDates";
-    if (viewer.role === "organizer" && progress && progress.done === progress.total) {
-      return "startVote";
-    }
-    return null;
+    if (viewer.role !== "organizer") return null;
+    if (progress && progress.done === progress.total) return "startVote";
+    return collectDeadlinePassed ? "startVoteDeadline" : null;
   }
   if (phase === "vote" && !viewer.votedAt) return "vote";
   if (phase === "vote" && viewer.role === "organizer") {

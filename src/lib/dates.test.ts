@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 import {
   addDays,
   addMonths,
+  appTimeZone,
+  DEFAULT_TIME_ZONE,
   diffDays,
   formatDate,
   formatDateRange,
   isIsoDate,
+  isoDateInZone,
+  isValidTimeZone,
   presetRange,
   summerYear,
   todayIso,
@@ -28,9 +32,63 @@ describe("ISO calendar days", () => {
     expect(diffDays("2027-05-01", "2027-05-06")).toBe(5);
     expect(diffDays("2027-05-06", "2027-05-01")).toBe(-5);
   });
+});
 
-  it("today is the local calendar day", () => {
-    expect(todayIso(new Date(2027, 4, 1, 23, 59))).toBe("2027-05-01");
+describe("today in the app time zone (R-072)", () => {
+  const berlin = "Europe/Berlin";
+  const at = (iso: string) => new Date(iso);
+
+  it("defaults to Europe/Berlin, not the runtime's zone", () => {
+    expect(appTimeZone()).toBe(DEFAULT_TIME_ZONE);
+    // 00:30 CEST on 23 Oct = 22:30 UTC on 22 Oct.
+    expect(todayIso(at("2026-10-22T22:30:00Z"))).toBe("2026-10-23");
+  });
+
+  it("summer time (CEST, UTC+2): 23:30 and 00:30 local", () => {
+    expect(todayIso(at("2027-07-14T21:30:00Z"), berlin)).toBe("2027-07-14"); // 23:30
+    expect(todayIso(at("2027-07-14T22:30:00Z"), berlin)).toBe("2027-07-15"); // 00:30
+    expect(todayIso(at("2027-07-14T23:59:00Z"), berlin)).toBe("2027-07-15"); // 01:59
+  });
+
+  it("winter time (CET, UTC+1): 23:30 and 00:30 local", () => {
+    expect(todayIso(at("2027-01-14T22:30:00Z"), berlin)).toBe("2027-01-14"); // 23:30
+    expect(todayIso(at("2027-01-14T23:30:00Z"), berlin)).toBe("2027-01-15"); // 00:30
+    expect(todayIso(at("2026-12-31T23:00:00Z"), berlin)).toBe("2027-01-01"); // new year
+  });
+
+  it("across the DST switches", () => {
+    // Spring forward 28 Mar 2027 (02:00 → 03:00): 00:30 CET = 23:30 UTC the day before.
+    expect(todayIso(at("2027-03-27T23:30:00Z"), berlin)).toBe("2027-03-28");
+    expect(todayIso(at("2027-03-28T21:30:00Z"), berlin)).toBe("2027-03-28"); // 23:30 CEST
+    expect(todayIso(at("2027-03-28T22:30:00Z"), berlin)).toBe("2027-03-29"); // 00:30 CEST
+    // Fall back 31 Oct 2027 (03:00 → 02:00): 00:30 CEST = 22:30 UTC the day before.
+    expect(todayIso(at("2027-10-30T22:30:00Z"), berlin)).toBe("2027-10-31");
+    expect(todayIso(at("2027-10-31T22:30:00Z"), berlin)).toBe("2027-10-31"); // 23:30 CET
+    expect(todayIso(at("2027-10-31T23:30:00Z"), berlin)).toBe("2027-11-01"); // 00:30 CET
+  });
+
+  it("the time zone is exchangeable (later: per trip)", () => {
+    const instant = at("2027-05-01T03:00:00Z");
+    expect(todayIso(instant, "UTC")).toBe("2027-05-01");
+    expect(todayIso(instant, "America/New_York")).toBe("2027-04-30");
+    expect(todayIso(instant, "Pacific/Auckland")).toBe("2027-05-01");
+    expect(isoDateInZone(at("2027-05-01T13:00:00Z"), "Pacific/Auckland")).toBe("2027-05-02");
+  });
+
+  it("APP_TIME_ZONE configures it; unknown names fall back to Berlin", () => {
+    const before = process.env.APP_TIME_ZONE;
+    try {
+      process.env.APP_TIME_ZONE = "America/New_York";
+      expect(appTimeZone()).toBe("America/New_York");
+      expect(todayIso(at("2027-05-01T03:00:00Z"))).toBe("2027-04-30");
+      process.env.APP_TIME_ZONE = "Mars/Olympus";
+      expect(appTimeZone()).toBe(DEFAULT_TIME_ZONE);
+      expect(isValidTimeZone("Mars/Olympus")).toBe(false);
+      expect(isoDateInZone(at("2027-05-01T23:30:00Z"), "Mars/Olympus")).toBe("2027-05-02");
+    } finally {
+      if (before === undefined) delete process.env.APP_TIME_ZONE;
+      else process.env.APP_TIME_ZONE = before;
+    }
   });
 });
 

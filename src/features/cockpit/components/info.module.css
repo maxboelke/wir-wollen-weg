@@ -1,0 +1,255 @@
+/* W22 «Infos zur Reise» – display and edit (F-033) */
+.cards {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--ww-space-4);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.cardTitle {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-display);
+}
+
+.stayName {
+  margin: 0;
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  margin: 0;
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-0-5);
+}
+
+.entry dt {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.entry dd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-1);
+  margin: 0 0 0 calc(18px + var(--ww-space-1-5));
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.entry dd a,
+.text a {
+  color: var(--ww-color-link);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.text {
+  margin: 0;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.mapLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1);
+  min-height: var(--ww-size-touch-min);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.muted {
+  color: var(--ww-color-text-muted);
+}
+
+.changed {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--ww-space-4);
+  padding: var(--ww-space-5) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.empty p {
+  margin: 0;
+}
+
+/* Edit button in row 1 (outline on Indigo); under 400 px icon only (W22 C) */
+.edit {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-width: var(--ww-size-touch-min);
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-3);
+  border: 2px solid var(--ww-cockpit-outline);
+  border-radius: var(--ww-radius-button-sm);
+  color: var(--ww-cockpit-text);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: none;
+}
+
+.edit:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring-on-brand-isolated);
+}
+
+@media (max-width: 399px) {
+  .edit {
+    justify-content: center;
+    padding: 0;
+  }
+
+  .editLabel {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* ---------------- form ---------------- */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+  max-width: var(--ww-size-content-narrow);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
+.optional {
+  color: var(--ww-color-text-muted);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.input {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+  line-height: var(--ww-leading-snug);
+}
+
+.textarea {
+  resize: vertical;
+  field-sizing: content;
+  min-height: calc(var(--ww-size-control-md) * 2);
+}
+
+.input:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.invalid,
+.invalid:focus-visible {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.times {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr));
+  gap: var(--ww-space-3);
+}
+
+.hint,
+.count {
+  margin: calc(-1 * var(--ww-space-2)) 0 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.count {
+  margin: 0;
+}
+
+.bannerTitle {
+  margin: 0;
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.summary {
+  margin: var(--ww-space-1) 0 0;
+  padding-inline-start: var(--ww-space-5);
+}
+
+.submit {
+  padding-top: var(--ww-space-2);
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.confirm p {
+  margin: 0;
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ww-space-2);
+}
+
+@media (min-width: 960px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .changed {
+    grid-column: 1 / -1;
+  }
+}

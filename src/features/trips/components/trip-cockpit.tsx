@@ -24,6 +24,14 @@ interface TripCockpitProps {
   subtitle?: string | undefined;
   /** At most one KPI (ux-spec §4.10) – scrolls away, only row 1 + tabs stick. */
   kpi?: ReactNode;
+  /**
+   * Phase-3 cockpit «Reiseverlauf» (W16 v2.1): the trip name is the page's h1, the phase line
+   * text and its leading symbol (mini ring, D-42) come from the way, plus a screen-reader
+   * sentence right after h1 («Noch 41 Tage bis zur Abreise.»).
+   */
+  hub?: { phaseText: string; phaseLead: ReactNode; srSentence: string } | undefined;
+  /** Extra button in row 1 before «⋯» (e.g. «Bearbeiten» on the info page, W22 C). */
+  action?: ReactNode;
 }
 
 /**
@@ -31,7 +39,7 @@ interface TripCockpitProps {
  * trips; Indigo head with back button, trip name + phase line, «⋯» trip menu and the tab
  * pills. Phase line «Tage sammeln · 5/7 fertig» reads «5 von 7 fertig» to screen readers.
  */
-export async function TripCockpit({ view, tab, subtitle, kpi }: TripCockpitProps) {
+export async function TripCockpit({ view, tab, subtitle, kpi, hub, action }: TripCockpitProps) {
   const t = await getTranslations("trip");
   const { trip, phase, progress, members } = view;
   const tabs: TabLink[] = TAB_ORDER.map((key) => ({
@@ -73,12 +81,22 @@ export async function TripCockpit({ view, tab, subtitle, kpi }: TripCockpitProps
             <Icon name="arrow-left" size={20} />
           </Link>
           <div className={styles.titleBlock}>
-            <p className={styles.title}>{trip.name}</p>
+            {hub ? (
+              <>
+                <h1 className={styles.title} id="trip-title" tabIndex={-1}>
+                  {trip.name}
+                </h1>
+                <p className="visually-hidden">{hub.srSentence}</p>
+              </>
+            ) : (
+              <p className={styles.title}>{trip.name}</p>
+            )}
             <p className={styles.phase}>
-              <PhaseDot phase={phase} />
-              <span>{subtitle ?? phaseLine}</span>
+              {hub ? hub.phaseLead : <PhaseDot phase={phase} />}
+              <span>{hub ? hub.phaseText : (subtitle ?? phaseLine)}</span>
             </p>
           </div>
+          {action}
           <TripMenu label={t("menu")} {...sheetContext(view, tab)} />
         </div>
         {tab && showTabs(trip) ? <TabNav tabs={tabs} current={tab} label={t("tabsLabel")} /> : null}

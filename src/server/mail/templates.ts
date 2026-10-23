@@ -1,6 +1,7 @@
 import { createTranslator } from "next-intl";
 import type { Locale } from "@/i18n/config";
 import { resolveAppUrl } from "@/lib/app-env";
+import { appTimeZone } from "@/lib/dates";
 import de from "../../../messages/de.json";
 import en from "../../../messages/en.json";
 
@@ -280,7 +281,7 @@ function longDate(date: Date, locale: Locale): string {
     day: "numeric",
     month: "long",
     year: "numeric",
-    timeZone: "UTC",
+    timeZone: appTimeZone(),
   }).format(date);
 }
 

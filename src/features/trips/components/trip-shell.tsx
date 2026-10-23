@@ -18,6 +18,12 @@ interface TripShellProps {
   tab: TripTab | null;
   subtitle?: string | undefined;
   kpi?: ReactNode;
+  /** Phase-3 cockpit «Reiseverlauf» (W16 v2) – see `TripCockpit`. */
+  hub?: { phaseText: string; phaseLead: ReactNode; srSentence: string } | undefined;
+  /** Extra button in row 1 (e.g. «Bearbeiten» on the info page). */
+  action?: ReactNode;
+  /** Wraps the page (e.g. the cockpit's sheet provider around head AND content). */
+  frame?: ((content: ReactNode) => ReactNode) | undefined;
   children: ReactNode;
 }
 
@@ -27,7 +33,16 @@ interface TripShellProps {
  * not celebrated yet on another tab: «Der Termin steht fest! [Ansehen]» → overview, where the
  * celebration plays (ux-spec §7.5, W11).
  */
-export async function TripShell({ view, tab, subtitle, kpi, children }: TripShellProps) {
+export async function TripShell({
+  view,
+  tab,
+  subtitle,
+  kpi,
+  hub,
+  action,
+  frame,
+  children,
+}: TripShellProps) {
   const [t, remind] = await Promise.all([
     getTranslations("poll.result"),
     // One remind sheet per page (phase 1/2) – every entry point opens it (ux-spec §14.2).
@@ -47,11 +62,11 @@ export async function TripShell({ view, tab, subtitle, kpi, children }: TripShel
         {t("bannerFixed")}
       </Banner>
     ) : null;
-  return (
-    <RemindProvider data={remind}>
+  const page = (
+    <>
       <SkipLink />
       <DemoBanner />
-      <TripCockpit view={view} tab={tab} subtitle={subtitle} kpi={kpi} />
+      <TripCockpit view={view} tab={tab} subtitle={subtitle} kpi={kpi} hub={hub} action={action} />
       <main id="content" className={styles.main} data-cockpit="">
         <TabContent index={tab ? TAB_ORDER.indexOf(tab) : -1}>
           {banner}
@@ -59,6 +74,7 @@ export async function TripShell({ view, tab, subtitle, kpi, children }: TripShel
         </TabContent>
       </main>
       <SiteFooter />
-    </RemindProvider>
+    </>
   );
+  return <RemindProvider data={remind}>{frame ? frame(page) : page}</RemindProvider>;
 }

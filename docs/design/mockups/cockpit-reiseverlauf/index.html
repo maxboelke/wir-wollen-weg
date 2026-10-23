@@ -1,0 +1,1440 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Übersicht · Kroatien 2027 · Wir wollen weg – Cockpit C v2 „Reiseverlauf“ (Mockup)</title>
+<!-- Einzige externe Ressource: Schriften (im Produkt selbst gehostet, design-system §5.1). Ohne Netz greift die Systemschrift. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=Plus+Jakarta+Sans:wght@500..800&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================================
+   Design-Mockup „C v2 · Reiseverlauf“ – W16 v2 (docs/ux/wireframes/w16-cockpit.md Teil A)
+   KEIN Produktivcode. Verantwortlich: Designer · Stand 2026-10-22
+   Werte = docs/design/tokens.css v1.0 (hier als Kurznamen). Optik-Entscheidungen D-36–D-45 und
+   Motion UM-1–UM-7: docs/design/abstimmung-ux.md §10.
+   Texte im Handy in rem → der Schalter „Schrift 200 %“ verdoppelt die Wurzel-Schriftgröße wie die
+   Systemeinstellung. Abstände in px (wie im Produkt).
+   ========================================================================== */
+:root{
+  --bg:#F4F2FB; --surface:#FFFFFF; --sunken:#ECE9F7; --line:#E3DFF0;
+  --text:#1E1A3D; --muted:#57527A; --subtle:#6E6992; --border:#8A86A8;
+  --primary:#2B2266; --primary-h:#3A2F86; --on-primary:#FFFFFF; --link:#5A3FD0;
+  --accent:#52E5B8; --accent-strong:#00775A; --accent-text:#00775A; --accent-tint:#D9F8EC; --accent-deep:#1FBF94;
+  --info-text:#5A3FD0; --info-tint:#ECE6FF;
+  --todo-bg:#FFE4DF; --todo-fg:#A3321F; --todo-bar:#F0503F;
+  --focus:#2B59C3;
+  --ck:#2B2266; --ck-muted:#CFC9F2; --ck-ctrl:rgb(255 255 255 / .12); --ck-outline:rgb(255 255 255 / .6);
+  --ck-glow-mint:rgb(82 229 184 / .22); --ck-glow-lav:rgb(167 154 242 / .30);
+  --ck-accent:#52E5B8; --ck-on-accent:#2B2266;
+  --sun:#FFCF4A; --sun-ink:#1E1A3D;
+  --wait:#5A3FD0; --today-halo:#2B2266;
+  --btn2-bg:#FFFFFF; --btn2-fg:#2B2266; --btn2-border:#2B2266;
+  --seal-bg:#52E5B8; --seal-fg:#2B2266; --seal-ring:#FFFFFF;
+  --t-lav-bg:#ECE6FF; --t-lav-fg:#5A3FD0; --t-mint-bg:#D9F8EC; --t-mint-fg:#00775A;
+  --t-sun-bg:#FFF3CC; --t-sun-fg:#7A5200; --t-coral-bg:#FFE4DF; --t-coral-fg:#A3321F;
+  --progress-track:#ECE9F7; --progress-fill:#2B2266;
+  --inverse-bg:#1E1A3D; --inverse-text:#FFFFFF; --scrim:rgb(20 17 46 / .5);
+  --shadow-1:0 1px 2px rgb(30 26 61 / .06), 0 14px 30px -18px rgb(43 34 102 / .38);
+  --shadow-3:0 8px 16px rgb(30 26 61 / .10), 0 24px 40px -20px rgb(43 34 102 / .60);
+  --shadow-btn:0 10px 22px -10px rgb(43 34 102 / .60);
+  --shadow-btn-acc:0 12px 26px -12px rgb(82 229 184 / .75);
+  --av1:#FFD3C7; --av2:#C9DBFF; --av3:#D4F2B0; --av4:#DCD3FF; --av5:#FFE7A3; --av6:#BDEFE0;
+  --cf1:#52E5B8; --cf2:#FFCF4A; --cf3:#A79AF2; --cf4:#F0503F; --cf5:#FFFFFF;
+  --font-sans:"Figtree", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display:"Plus Jakarta Sans", var(--font-sans);
+  --d-instant:80ms; --d-fast:140ms; --d-base:220ms; --d-slow:320ms; --d-moderate:480ms; --d-fade:140ms;
+  --ease-standard:cubic-bezier(.2,0,0,1); --ease-enter:cubic-bezier(0,0,0,1);
+  --dist:16px; --dist-lg:24px; --scale-press:.97;
+  --stage-bg:#DCD8EE; --bar-bg:rgb(255 255 255 / .92);
+  color-scheme:light;
+}
+[data-theme="dark"]{
+  --bg:#14112E; --surface:#1F1A45; --sunken:#191538; --line:#2F2963;
+  --text:#F3F1FF; --muted:#B9B4DC; --subtle:#9C97C4; --border:#7D77AD;
+  --primary:#52E5B8; --primary-h:#7DEDCB; --on-primary:#14112E; --link:#52E5B8;
+  --accent-strong:#52E5B8; --accent-text:#52E5B8; --accent-tint:#133C3B;
+  --info-text:#C3B8FF; --info-tint:#2E2566;
+  --todo-bg:#4A1F1A; --todo-fg:#FFB4A8; --todo-bar:#FF8A7A;
+  --focus:#8FB3FF;
+  --ck:#221B52; --ck-glow-mint:rgb(82 229 184 / .18); --ck-glow-lav:rgb(167 154 242 / .22); --ck-on-accent:#14112E;
+  --wait:#C3B8FF; --today-halo:#52E5B8;
+  --btn2-bg:transparent; --btn2-fg:#F3F1FF; --btn2-border:#F3F1FF;
+  --seal-fg:#14112E; --seal-ring:#1F1A45;
+  --t-lav-bg:#2E2566; --t-lav-fg:#C3B8FF; --t-mint-bg:#133C3B; --t-mint-fg:#52E5B8;
+  --t-sun-bg:#3A3113; --t-sun-fg:#FFDB73; --t-coral-bg:#4A1F1A; --t-coral-fg:#FFB4A8;
+  --progress-track:#2A2458; --progress-fill:#52E5B8;
+  --inverse-bg:#F3F1FF; --inverse-text:#14112E; --scrim:rgb(0 0 0 / .6);
+  --shadow-1:0 14px 30px -16px rgb(0 0 0 / .70); --shadow-3:0 24px 48px -16px rgb(0 0 0 / .80);
+  --shadow-btn:0 10px 24px -12px rgb(82 229 184 / .55); --shadow-btn-acc:0 10px 24px -12px rgb(82 229 184 / .55);
+  --cf4:#FF8A7A;
+  --stage-bg:#0B0920; --bar-bg:rgb(31 26 69 / .94);
+  color-scheme:dark;
+}
+/* Reduzierte Bewegung: alles außer Überblenden (140 ms, M-D2) aus */
+[data-motion="reduce"]{ --d-instant:.01ms; --d-fast:.01ms; --d-base:.01ms; --d-slow:.01ms; --d-moderate:.01ms; --dist:0px; --dist-lg:0px; --scale-press:1; }
+@media (prefers-reduced-motion: reduce){ :root{ --d-instant:.01ms; --d-fast:.01ms; --d-base:.01ms; --d-slow:.01ms; --d-moderate:.01ms; --dist:0px; --dist-lg:0px; --scale-press:1; } }
+
+*,*::before,*::after{ box-sizing:border-box; }
+html,body{ margin:0; }
+body{ font:15px/1.4 var(--font-sans); background:var(--stage-bg); color:var(--text); min-height:100dvh; -webkit-font-smoothing:antialiased; }
+button,input,select{ font:inherit; color:inherit; }
+button{ cursor:pointer; }
+p{ margin:0; }
+.sr-only{ position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+.skip{ position:absolute; left:8px; top:-60px; z-index:100; background:#fff; color:#2B2266; padding:10px 14px; border-radius:12px; font-weight:700; }
+.skip:focus{ top:8px; }
+:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+.on-brand :focus-visible{ outline:none; box-shadow:0 0 0 2px var(--ck), 0 0 0 5px #FFFFFF, 0 0 0 7px var(--ck); }
+svg.ic{ width:22px; height:22px; flex:none; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; }
+svg.ic.s16{ width:16px; height:16px; } svg.ic.s20{ width:20px; height:20px; }
+
+/* ======================= Seitenleiste & Bühne (px – unabhängig vom 200-%-Schalter) ======================= */
+.pagebar{ position:sticky; top:0; z-index:50; background:var(--bar-bg); backdrop-filter:blur(10px); box-shadow:0 8px 24px -18px rgb(20 17 46 / .6); }
+.pagebar-in{ max-width:1500px; margin:0 auto; padding:12px 20px; }
+.pagebar h1{ margin:0; font:800 19px/1.2 var(--font-display); letter-spacing:-.02em; }
+.pagebar p{ font-size:13px; color:var(--muted); font-weight:600; margin-top:2px; }
+.stage{ display:flex; gap:32px; justify-content:center; align-items:flex-start; padding:20px 20px 48px; flex-wrap:wrap; }
+.panel{ width:340px; flex:none; background:var(--surface); color:var(--text); border-radius:20px; box-shadow:var(--shadow-1); padding:16px; display:flex; flex-direction:column; gap:18px; font-size:14px; line-height:1.4; }
+.panel h2{ margin:0 0 8px; font:800 12px/1.2 var(--font-sans); letter-spacing:.08em; text-transform:uppercase; color:var(--muted); }
+.panel .hint{ margin-top:8px; font-size:13px; color:var(--muted); }
+.seg{ display:flex; gap:4px; padding:4px; border-radius:14px; background:var(--sunken); }
+.seg button{ flex:1; min-height:48px; padding:4px 6px; border:0; border-radius:11px; background:transparent; font:800 14px/1.15 var(--font-display); color:var(--muted); }
+.seg button small{ display:block; font:600 12px/1.2 var(--font-sans); margin-top:2px; }
+.seg button[aria-pressed="true"]{ background:var(--surface); color:var(--text); box-shadow:0 0 0 2px var(--text), var(--shadow-1); }
+.pbtn{ display:flex; flex-direction:column; align-items:flex-start; gap:2px; width:100%; min-height:48px; padding:8px 12px; margin-bottom:8px; border-radius:14px; border:1.5px solid var(--border); background:var(--surface); text-align:left; font-size:14px; }
+.pbtn b{ font:800 14px/1.25 var(--font-display); }
+.pbtn span{ font-size:12.5px; color:var(--muted); font-weight:600; line-height:1.3; }
+.pbtn:disabled{ opacity:.55; cursor:not-allowed; }
+.pbtn.play{ background:#52E5B8; color:#2B2266; border-color:transparent; box-shadow:var(--shadow-btn-acc); }
+.pbtn.play span{ color:#2B2266; }
+.pbtn.ghost{ border-style:dashed; }
+.sw{ display:flex; align-items:center; gap:10px; min-height:40px; font-size:14px; font-weight:700; cursor:pointer; }
+.sw input{ width:20px; height:20px; accent-color:var(--primary); flex:none; }
+.sel{ display:flex; flex-direction:column; gap:4px; font-weight:700; margin-bottom:6px; }
+.sel select{ min-height:44px; border-radius:12px; border:1.5px solid var(--border); background:var(--surface); padding:0 10px; font-size:14px; }
+.measure{ margin:0; display:grid; grid-template-columns:auto 1fr; gap:6px 10px; font-size:13px; }
+.measure dt{ color:var(--muted); font-weight:700; }
+.measure dd{ margin:0; font-weight:700; font-variant-numeric:tabular-nums; }
+.measure .ok{ color:var(--accent-text); } .measure .bad{ color:var(--todo-fg); }
+.panel details summary{ cursor:pointer; font-weight:800; min-height:32px; }
+.panel details ul{ margin:8px 0 0; padding-left:18px; font-size:13px; color:var(--muted); display:flex; flex-direction:column; gap:4px; }
+.panel details b{ color:var(--text); }
+
+.device{ --dw:390px; --dh:844px; --sb:44px; position:relative; width:var(--dw); flex:none; border-radius:48px; background:var(--bg); color:var(--text);
+  box-shadow:0 0 0 11px #120F2A, 0 0 0 13px #3A3460, 0 40px 80px -30px rgb(20 17 46 / .7); overflow:hidden; isolation:isolate; }
+.sbar{ height:var(--sb); padding:14px 30px 0; display:flex; justify-content:space-between; font:700 14px/1 var(--font-sans); background:var(--ck); color:#fff; }
+.sbar .notch{ width:110px; height:28px; border-radius:20px; background:#000; margin-top:-6px; }
+.sbar .url{ display:none; }
+.device.desk{ --sb:36px; border-radius:14px; box-shadow:0 0 0 1px #3A3460, 0 30px 60px -30px rgb(20 17 46 / .7); }
+.device.desk .sbar{ padding:8px 14px; align-items:center; background:#120F2A; }
+.device.desk .sbar .notch, .device.desk .sbar .clock, .device.desk .sbar .net{ display:none; }
+.device.desk .sbar .url{ display:block; flex:1; background:#2A2458; color:#CFC9F2; border-radius:8px; padding:5px 12px; font:600 12px/1 var(--font-sans); }
+.view{ position:relative; height:var(--dh); overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain; background:var(--bg); container:wv / inline-size; scrollbar-width:thin; font-size:1rem; line-height:1.4; }
+.toast{ position:absolute; left:16px; right:16px; bottom:22px; z-index:60; background:var(--inverse-bg); color:var(--inverse-text); padding:12px 14px; border-radius:16px; font-size:14px; font-weight:600; box-shadow:var(--shadow-3);
+  opacity:0; transform:translateY(8px); transition:opacity var(--d-base), transform var(--d-base); pointer-events:none; }
+.toast.show{ opacity:1; transform:none; }
+@media (max-width: 800px){
+  .stage{ padding:12px 0 32px; gap:16px; }
+  .panel{ width:auto; margin:0 12px; }
+  .device, .device.desk{ width:100%; border-radius:0; box-shadow:none; }
+  .sbar{ display:none; }
+  .view{ height:calc(100dvh - 24px); min-height:560px; }
+  .device{ --sb:0px; }
+}
+
+/* ======================= Handy-Inhalt ======================= */
+.screen{ --ring-d:clamp(120px, calc(var(--vh, 8.44px) * 21), 168px); min-height:100%; padding-bottom:32px; }
+.screen.in-f{ animation:inF var(--d-slow) var(--ease-standard) backwards; }
+.screen.in-b{ animation:inB var(--d-slow) var(--ease-standard) backwards; }
+@keyframes inF{ from{ opacity:0; transform:translateX(var(--dist-lg)); } }
+@keyframes inB{ from{ opacity:0; transform:translateX(calc(-1 * var(--dist-lg))); } }
+@keyframes fadeIn{ from{ opacity:0; } }
+[data-motion="reduce"] .screen.in-f, [data-motion="reduce"] .screen.in-b{ animation:fadeIn 140ms linear backwards; }
+@media (prefers-reduced-motion: reduce){ .screen.in-f, .screen.in-b{ animation:fadeIn 140ms linear backwards; } }
+
+/* ---- D-36/D-42 Zeile 1 (sticky) mit Mini-Ring ---- */
+.z1{ position:sticky; top:0; z-index:6; display:flex; align-items:center; gap:6px; padding:6px 10px; color:#fff;
+  background:radial-gradient(240px 60px at 100% 0, var(--ck-glow-mint), rgb(82 229 184 / 0)), radial-gradient(220px 60px at 0 0, var(--ck-glow-lav), rgb(167 154 242 / 0)), var(--ck);
+  transition:box-shadow var(--d-fade) linear, border-radius var(--d-fade) linear; }
+.z1.mini{ border-radius:0 0 22px 22px; box-shadow:0 12px 24px -14px rgb(20 17 46 / .65); }
+.z1-t{ flex:1; min-width:0; text-align:center; }
+.z1 h1{ margin:0; font:800 1.3125rem/1.15 var(--font-display); letter-spacing:-.02em; overflow-wrap:anywhere; }
+.z1-phase{ margin-top:2px; color:var(--ck-muted); font:700 .8125rem/1.3 var(--font-sans); display:flex; gap:6px; align-items:center; justify-content:center; }
+.ph-slot{ position:relative; width:20px; height:20px; flex:none; display:inline-grid; place-items:center; }
+.ph-dot{ width:9px; height:9px; border-radius:50%; background:var(--sun); transition:opacity var(--d-fade) linear; }
+.mini-ring{ position:absolute; inset:0; width:20px; height:20px; opacity:0; transition:opacity var(--d-fade) linear; }
+.z1.mini .ph-dot{ opacity:0; } .z1.mini .mini-ring{ opacity:1; }
+.icbtn{ width:44px; height:44px; border-radius:50%; display:inline-grid; place-items:center; border:0; background:var(--ck-ctrl); color:#fff; flex:none; text-decoration:none; }
+
+/* ---- D-36 Ticket-Kopf ---- */
+.ticket{ position:relative; color:#fff; background:var(--ck); border-radius:0 0 30px 30px; padding:0 16px 14px; overflow:hidden; }
+.tk-in{ display:flex; flex-direction:column; }
+.tk-ring{ display:flex; justify-content:center; padding-top:2px; }
+.ring-btn{ position:relative; display:block; width:var(--ring-d); height:var(--ring-d); padding:0; border:0; border-radius:50%; background:none; color:inherit; -webkit-tap-highlight-color:transparent; touch-action:manipulation; }
+.ring{ position:absolute; inset:0; display:block; transition:transform var(--d-instant) var(--ease-standard); }
+.ring-btn:active .ring{ transform:scale(var(--scale-press)); }
+.ring svg{ display:block; width:100%; height:100%; overflow:visible; }
+.ring-label{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:var(--ck-muted); font:700 max(12px, calc(var(--ring-d) * .085))/1.15 var(--font-sans); pointer-events:none; }
+.rl-b{ display:block; color:#fff; font:800 calc(var(--ring-d) * .3)/1 var(--font-display); letter-spacing:-.03em; font-variant-numeric:tabular-nums; margin:1px 0; }
+.rl-bye{ color:#fff; font:800 calc(var(--ring-d) * .13)/1.1 var(--font-display); letter-spacing:-.02em; }
+.ring [data-burst]{ position:absolute; inset:0; pointer-events:none; z-index:3; }
+.ring [data-burst] i{ position:absolute; top:0; left:0; display:block; }
+.tk-range{ margin:6px 0 0; text-align:center; font:800 1.125rem/1.3 var(--font-display); letter-spacing:-.01em; }
+.tk-perf{ position:relative; height:24px; margin:8px -16px 2px; }
+.tk-perf::before{ content:""; position:absolute; left:24px; right:24px; top:11px; border-top:2px dashed rgb(255 255 255 / .3); }
+.tk-perf i{ position:absolute; top:0; width:24px; height:24px; border-radius:50%; background:var(--bg); }
+.tk-perf .nl{ left:-12px; } .tk-perf .nr{ right:-12px; }
+.tk-stub{ display:flex; align-items:center; justify-content:space-between; gap:8px 12px; flex-wrap:wrap; }
+.tk-crew{ display:inline-flex; align-items:center; gap:10px; min-height:44px; padding:0 8px 0 2px; border:0; background:none; color:#fff; font:700 .875rem/1.3 var(--font-sans); border-radius:12px; text-align:left; }
+.tk-acts{ display:flex; gap:8px; flex-wrap:wrap; margin-left:auto; }
+.av{ width:32px; height:32px; border-radius:50%; display:inline-grid; place-items:center; flex:none; font:800 12px/1 var(--font-display); color:#1E1A3D; box-shadow:0 0 0 2px var(--av-ring, var(--surface)); }
+.av.sm{ width:28px; height:28px; }
+.av.ph{ background:transparent; border:2px dashed var(--border); color:var(--muted); box-shadow:none; }
+.on-brand .av{ --av-ring:var(--ck); }
+.av.more{ background:rgb(255 255 255 / .18); color:#fff; }
+.stack{ display:inline-flex; flex:none; } .stack .av + .av{ margin-left:-8px; }
+
+/* ---- Tasten ---- */
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:8px; min-height:48px; padding:0 18px; border-radius:16px; font:700 1.0625rem/1.2 var(--font-sans); text-decoration:none; border:2px solid transparent; text-align:center; transition:transform var(--d-instant) var(--ease-standard), background-color var(--d-fast) linear; }
+.btn:active{ transform:scale(var(--scale-press)); }
+.btn.primary{ min-height:54px; background:var(--primary); color:var(--on-primary); box-shadow:var(--shadow-btn); }
+.btn.primary:hover{ background:var(--primary-h); }
+.btn.sm{ min-height:44px; padding:0 14px; border-radius:12px; font-size:.9375rem; }
+.btn.sec{ background:var(--btn2-bg); color:var(--btn2-fg); border-color:var(--btn2-border); }
+.btn.on-ck{ background:transparent; border-color:var(--ck-outline); color:#fff; }
+.btn.mint{ background:var(--ck-accent); color:var(--ck-on-accent); box-shadow:var(--shadow-btn-acc); }
+.btn.block{ width:100%; }
+.tbtn{ display:inline-flex; align-items:center; min-height:44px; padding:0 4px; border:0; background:none; color:var(--link); font:700 .9375rem/1.2 var(--font-sans); text-decoration:underline; text-underline-offset:3px; border-radius:8px; }
+
+/* ---- Abschnitte ---- */
+.content{ padding:18px 16px 8px; }
+.cols{ display:flex; flex-direction:column; gap:28px; }
+.aside{ display:flex; flex-direction:column; gap:28px; }
+.sec-row{ display:flex; align-items:baseline; justify-content:space-between; gap:4px 12px; flex-wrap:wrap; margin:0 2px 12px; }
+.sec{ margin:0; font:800 1.1875rem/1.2 var(--font-display); letter-spacing:-.02em; }
+.sec-gap{ margin:0 2px 12px; }
+.meta{ font:700 .8125rem/1.3 var(--font-sans); color:var(--muted); }
+.chev{ color:var(--subtle); display:inline-flex; flex:none; }
+.tile-ic{ width:40px; height:40px; border-radius:13px; display:grid; place-items:center; flex:none; }
+.tile-ic.sm{ width:32px; height:32px; border-radius:10px; }
+.t-lav{ background:var(--t-lav-bg); color:var(--t-lav-fg); } .t-mint{ background:var(--t-mint-bg); color:var(--t-mint-fg); }
+.t-sun{ background:var(--t-sun-bg); color:var(--t-sun-fg); } .t-coral{ background:var(--t-coral-bg); color:var(--t-coral-fg); }
+.chip{ display:inline-flex; align-items:center; gap:4px; min-height:24px; padding:2px 10px; border-radius:999px; font:800 .75rem/1.2 var(--font-sans); letter-spacing:.05em; text-transform:uppercase; width:fit-content; max-width:100%; }
+.chip.todo{ background:var(--todo-bg); color:var(--todo-fg); }
+.chip.info{ background:var(--info-tint); color:var(--info-text); }
+.chip.ok{ background:var(--accent-tint); color:var(--accent-text); text-transform:none; letter-spacing:0; font-weight:700; font-size:.8125rem; }
+.chip.new{ background:var(--info-tint); color:var(--info-text); text-transform:none; letter-spacing:0; font-weight:700; font-size:.8125rem; }
+.bar-p{ display:block; height:6px; border-radius:999px; background:var(--progress-track); overflow:hidden; margin-top:4px; }
+.bar-p i{ display:block; height:100%; background:var(--progress-fill); border-radius:inherit; }
+
+/* ---- D-37 Weg: Linie und Marker ---- */
+.weg{ list-style:none; margin:0; padding:0; }
+.st{ position:relative; padding:0 0 20px 48px; }
+.st:last-child{ padding-bottom:0; }
+.ln{ position:absolute; left:14.5px; width:3px; top:16px; bottom:-20px; border-radius:3px; }
+.ln.done{ background:var(--accent-strong); transform-origin:top; }
+.ln.todo{ background:repeating-linear-gradient(180deg, var(--border) 0 6px, transparent 6px 12px); }
+.st-done .ln{ top:24px; } .st-later .ln{ top:24px; } .st-more .ln, .st-link .ln{ top:22px; }
+.hd{ min-height:32px; display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.st-done .hd{ min-height:48px; margin-bottom:0; }
+.hd-later, .hd-link{ margin-bottom:0; }
+.lbl{ font:800 .75rem/1.25 var(--font-sans); letter-spacing:.06em; text-transform:uppercase; color:var(--muted); }
+.st-next .lbl, .st-goal .lbl{ color:var(--text); }
+.mk{ position:absolute; left:0; top:0; width:32px; height:32px; border-radius:50%; display:grid; place-items:center; z-index:1; }
+.mk svg.ic{ width:18px; height:18px; }
+.mk-done{ top:8px; background:var(--accent); color:var(--seal-fg); border:1.5px solid var(--accent-strong); }
+.mk-done svg.ic{ stroke-width:2.6; }
+.mk-done[data-n="2"]{ box-shadow:0 0 0 2px var(--bg), 0 -5px 0 0 var(--accent-deep); }
+.mk-done[data-n="3"]{ box-shadow:0 0 0 2px var(--bg), 0 -5px 0 0 var(--accent-deep), 0 -5px 0 2px var(--bg), 0 -10px 0 0 var(--accent-deep); }
+.st-done.fresh .mk-done{ box-shadow:0 0 0 3px var(--seal-ring), 0 0 0 4.5px var(--accent-strong); }
+.mk-today{ left:-4px; top:-4px; width:40px; height:40px; background:var(--sun); color:var(--sun-ink); box-shadow:0 0 0 3px var(--bg), 0 0 0 6px var(--today-halo); }
+.mk-today svg.ic{ width:22px; height:22px; }
+.mk-today::after{ content:""; position:absolute; inset:-6px; border-radius:50%; border:3px solid var(--sun); opacity:0; pointer-events:none; }
+.mk-today.pulse::after{ animation:pulse 1.6s var(--ease-standard) 3; }
+@keyframes pulse{ 0%{ opacity:.9; transform:scale(1); } 100%{ opacity:0; transform:scale(1.8); } }
+[data-motion="reduce"] .mk-today.pulse::after{ animation:none; }
+@media (prefers-reduced-motion: reduce){ .mk-today.pulse::after{ animation:none; } }
+.mk-wait{ background:var(--surface); border:2px solid var(--wait); }
+.mk-wait::before{ content:""; position:absolute; inset:5px; border-radius:50%; background:conic-gradient(var(--wait) 0 50%, transparent 0); }
+.mk-next{ background:var(--surface); border:2.5px solid var(--text); }
+.mk-later{ top:12px; left:4px; width:24px; height:24px; background:var(--bg); border:2px solid var(--border); }
+.mk-goal{ background:var(--ck); color:var(--sun); }
+[data-theme="dark"] .mk-goal{ border:2px solid var(--accent); }
+.mk-more{ top:17px; left:11px; width:10px; height:10px; background:var(--border); }
+
+/* ---- D-40 Erledigt-Zeile ---- */
+.done-row{ flex:1; min-width:0; display:flex; align-items:center; gap:8px; min-height:48px; padding:6px 10px 6px 12px; border-radius:16px; border:1.5px solid var(--line); background:transparent; color:var(--text); text-align:left; font:700 .875rem/1.3 var(--font-sans); }
+.done-txt{ flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.chev-d{ display:inline-flex; color:var(--subtle); flex:none; transition:transform var(--d-base) var(--ease-standard); }
+[aria-expanded="true"] > .chev-d{ transform:rotate(180deg); }
+.st-done.fresh .done-row{ background:var(--accent-tint); border-color:var(--accent-strong); }
+.st-done.fresh .done-txt b{ color:var(--accent-text); }
+.done-list{ list-style:none; margin:0; padding:8px 4px 4px; display:flex; flex-direction:column; gap:6px; }
+.done-item{ display:flex; align-items:center; gap:10px; min-height:52px; padding:6px 10px; border-radius:14px; border:1.5px solid var(--line); color:var(--text); text-decoration:none; }
+.done-item .ckm{ width:24px; height:24px; border-radius:50%; background:var(--accent-tint); color:var(--accent-text); display:grid; place-items:center; flex:none; }
+.done-item .grow{ flex:1; min-width:0; display:flex; flex-direction:column; gap:1px; }
+.done-item .t{ font:700 .9375rem/1.25 var(--font-sans); }
+.done-item .s{ font:500 .8125rem/1.35 var(--font-sans); color:var(--muted); }
+.dl-off{ display:flex; align-items:center; flex-wrap:wrap; gap:4px 8px; padding:2px 4px 0 44px; }
+
+/* ---- D-39 Heute ---- */
+.today-h{ margin:0; display:inline-flex; align-items:center; min-height:32px; padding:4px 12px; border-radius:999px; background:var(--sun); color:var(--sun-ink); font:800 .8125rem/1.2 var(--font-sans); letter-spacing:.06em; text-transform:uppercase; }
+.today-h:focus{ outline:none; } .today-h:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+.today-s{ margin:0 0 12px; font:600 .875rem/1.4 var(--font-sans); color:var(--muted); }
+.today-list{ list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px; }
+
+/* ---- D-38 Stationskarten ---- */
+.sc{ position:relative; display:flex; align-items:center; gap:12px; min-height:64px; padding:12px 12px 12px 14px; border-radius:20px; background:var(--surface); box-shadow:var(--shadow-1); color:var(--text); text-decoration:none; border:1px solid transparent; overflow:hidden; transition:transform var(--d-instant) var(--ease-standard); }
+a.sc:active{ transform:scale(.985); }
+.sc .grow{ flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+.sc .t{ font:800 1rem/1.25 var(--font-display); letter-spacing:-.01em; }
+.sc .s{ font:500 .875rem/1.4 var(--font-sans); color:var(--muted); }
+.sc .chip{ margin-bottom:2px; }
+.sc-yours, .sc-termin{ padding-left:19px; }
+.sc-yours::before, .sc-termin::before{ content:""; position:absolute; left:0; top:0; bottom:0; width:5px; background:var(--todo-bar); }
+.sc-termin::before{ background:var(--wait); }
+.sc-big{ flex-direction:column; align-items:stretch; gap:6px; padding:14px 14px 14px 19px; }
+.sc-head{ display:flex; align-items:center; gap:12px; min-height:44px; color:var(--text); text-decoration:none; border-radius:12px; }
+.sc-head .t{ flex:1; font:800 1.0625rem/1.25 var(--font-display); }
+.sc-big > .s{ margin:0 0 6px; }
+.sc-big > .btn{ margin-top:4px; }
+.sc-acts{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px; margin-top:8px; }
+.sc-goal{ background:radial-gradient(80% 120% at 100% 0, var(--ck-glow-mint), rgb(82 229 184 / 0) 60%), var(--ck); color:#fff; }
+.sc-goal .s{ color:var(--ck-muted); } .sc-goal .chev{ color:#fff; }
+.sc-goal .tile-ic{ background:var(--sun); color:var(--sun-ink); }
+[data-theme="dark"] .sc-goal{ border-color:rgb(255 255 255 / .14); }
+a.sc-goal:focus-visible{ outline:3px solid var(--focus); outline-offset:2px; }
+.sc-col{ flex-direction:column; align-items:stretch; gap:12px; }
+.sc-row{ display:flex; align-items:center; gap:12px; }
+.sc-col :focus-visible{ outline:none; box-shadow:0 0 0 2px var(--ck), 0 0 0 5px #FFFFFF, 0 0 0 7px var(--ck); }
+.goal-note{ margin:8px 4px 0; font:500 .8125rem/1.4 var(--font-sans); color:var(--muted); }
+.slim{ flex:1; min-width:0; display:flex; align-items:center; gap:10px; min-height:48px; padding:4px 8px; border-radius:14px; color:var(--text); text-decoration:none; }
+.slim:hover{ background:var(--sunken); }
+.slim > svg.ic{ color:var(--subtle); }
+.slim .grow{ flex:1; min-width:0; display:flex; flex-wrap:wrap; align-items:baseline; gap:0 8px; }
+.slim .t{ font:700 .9375rem/1.3 var(--font-sans); }
+.slim .w{ font:600 .8125rem/1.3 var(--font-sans); color:var(--muted); text-align:right; }
+.more-btn{ display:inline-flex; align-items:center; gap:6px; min-height:44px; padding:0 8px; border:0; background:none; color:var(--link); font:700 .9375rem/1.2 var(--font-sans); border-radius:10px; }
+.sub-st{ margin-top:14px; } .sub-st .mk{ display:none; }
+.sub-list{ list-style:none; margin:0; padding:0 4px 4px; }
+.sub-list > .st{ padding-left:0; padding-bottom:4px; } .sub-list > .st > .ln, .sub-list .mk-later{ display:none; }
+[data-motion="reduce"] a.sc:active, [data-motion="reduce"] a.tile:active{ transform:none; }
+@media (prefers-reduced-motion: reduce){ a.sc:active, a.tile:active{ transform:none; } }
+
+/* ---- UM-5 Aufklappen ---- */
+.exp{ display:grid; grid-template-rows:0fr; margin:0 -4px; transition:grid-template-rows var(--d-base) var(--ease-standard); }
+.exp.open{ grid-template-rows:1fr; }
+.exp-in{ min-height:0; overflow:hidden; visibility:hidden; transition:visibility 0s linear var(--d-base); }
+.exp.open .exp-in{ visibility:visible; transition-delay:0s; }
+
+/* ---- D-41 Kacheln ---- */
+.tiles{ list-style:none; margin:0; padding:0; display:grid; grid-template-columns:repeat(auto-fit, minmax(min(100%, 9.5em), 1fr)); gap:12px; }
+.tile{ position:relative; display:flex; flex-direction:column; gap:4px; min-height:88px; height:100%; padding:12px; border-radius:20px; background:var(--surface); box-shadow:var(--shadow-1); color:var(--text); text-decoration:none; border:1px solid transparent; transition:transform var(--d-instant) var(--ease-standard); }
+a.tile:active{ transform:scale(.985); }
+.tl-top{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:4px; }
+.tl-t{ font:800 .9375rem/1.25 var(--font-display); }
+.tl-s{ font:500 .875rem/1.35 var(--font-sans); color:var(--muted); }
+.tile .chip{ margin-top:4px; }
+
+/* ---- Mehr zur Reise ---- */
+.list-card{ background:var(--surface); border-radius:24px; box-shadow:var(--shadow-1); padding:4px 12px; border:1px solid transparent; }
+.row{ display:flex; align-items:center; gap:12px; width:100%; min-height:60px; padding:10px 4px; border:0; background:none; color:var(--text); text-align:left; border-radius:14px; text-decoration:none; }
+.row + .row{ border-top:1px solid var(--line); }
+.row .grow{ flex:1; min-width:0; display:flex; flex-direction:column; gap:2px; }
+.row .t{ font:700 1rem/1.25 var(--font-sans); } .row .s{ font:500 .875rem/1.35 var(--font-sans); color:var(--muted); }
+.row .t-row{ display:flex; flex-wrap:wrap; gap:4px 8px; align-items:center; }
+
+/* ---- Unterseiten (Platzhalter) ---- */
+.sub-head{ position:sticky; top:0; z-index:5; background:radial-gradient(90% 80% at 100% 0, var(--ck-glow-mint), rgb(82 229 184 / 0) 60%), var(--ck); color:#fff; padding:6px 12px 20px; border-radius:0 0 28px 28px; }
+.sub-top{ display:flex; align-items:center; gap:8px; }
+.sub-crumb{ color:var(--ck-muted); font:700 .875rem/1.2 var(--font-sans); }
+.sub-head h1{ margin:10px 6px 0; font:800 1.625rem/1.15 var(--font-display); letter-spacing:-.02em; }
+.sub-head h1:focus{ outline:none; }
+.card-pad{ background:var(--surface); border-radius:24px; box-shadow:var(--shadow-1); padding:16px; display:flex; flex-direction:column; gap:12px; }
+.sp-lead{ display:flex; gap:12px; align-items:flex-start; font:500 .9375rem/1.45 var(--font-sans); }
+.ph-note{ margin-top:16px; border:2px dashed var(--border); border-radius:16px; padding:12px 14px; color:var(--muted); font:500 .875rem/1.45 var(--font-sans); }
+
+/* ---- Sheets ---- */
+.sheet-wrap{ position:absolute; left:0; right:0; bottom:0; top:var(--sb); z-index:40; display:flex; flex-direction:column; justify-content:flex-end; }
+.sheet-wrap[hidden]{ display:none; }
+.scrim{ position:absolute; inset:0; background:var(--scrim); }
+.sheet{ position:relative; max-height:92%; overflow:auto; background:var(--surface); color:var(--text); border-radius:28px 28px 0 0; padding:8px 16px 24px; box-shadow:var(--shadow-3); font-size:1rem; }
+.sheet:focus{ outline:none; }
+.device.desk .sheet-wrap{ justify-content:center; align-items:center; }
+.device.desk .sheet{ width:480px; border-radius:28px; }
+.grab{ width:40px; height:5px; border-radius:3px; background:var(--border); margin:4px auto 8px; }
+.sheet-head{ display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:10px; }
+.sheet-head h2{ margin:0; font:800 1.1875rem/1.2 var(--font-display); }
+.sheet-head h2:focus{ outline:none; }
+.sheet .icbtn{ background:var(--sunken); color:var(--text); }
+.sheet-body{ display:flex; flex-direction:column; gap:12px; }
+.bubble{ background:var(--accent-tint); color:var(--text); border-radius:16px 16px 16px 4px; padding:12px 14px; font:500 .9375rem/1.45 var(--font-sans); }
+.s-note{ font:500 .8125rem/1.4 var(--font-sans); color:var(--muted); }
+.s-acts{ display:flex; flex-direction:column; gap:8px; }
+.chip.sun{ background:var(--sun); color:var(--sun-ink); text-transform:none; letter-spacing:0; font-weight:700; font-size:.8125rem; }
+.chip.ghost{ background:var(--sunken); color:var(--muted); text-transform:none; letter-spacing:0; font-weight:700; font-size:.8125rem; }
+.dec-date{ font:800 1.25rem/1.2 var(--font-display); }
+.mcal{ display:grid; grid-template-columns:repeat(7, 1fr); gap:4px; text-align:center; }
+.mcal span{ height:36px; display:grid; place-items:center; border-radius:11px; font:700 .875rem/1 var(--font-display); background:var(--sunken); }
+.mcal .hd2{ background:none; height:22px; font:700 .75rem/1 var(--font-sans); color:var(--muted); }
+.mcal .e{ background:none; } .mcal .sel{ background:var(--primary); color:var(--on-primary); }
+
+/* ======================= D-43 schmal / 200 % (Container < 22 rem) ======================= */
+@container wv (max-width: 22rem){
+  .screen{ --ring-d:120px; }
+  .st{ padding:0 0 18px 16px; }
+  .ln{ left:0 !important; top:0 !important; bottom:0 !important; }
+  .mk{ position:relative; left:auto !important; top:auto !important; width:22px; height:22px; }
+  .mk svg.ic{ width:14px; height:14px; }
+  .mk-today{ width:26px; height:26px; box-shadow:0 0 0 2px var(--bg), 0 0 0 4px var(--today-halo); }
+  .mk-today svg.ic{ width:16px; height:16px; }
+  .mk-later{ width:18px; height:18px; }
+  .mk-wait::before{ inset:3px; }
+  .mk-done[data-n]{ box-shadow:none; }
+  .st-done.fresh .mk-done{ box-shadow:0 0 0 2px var(--seal-ring), 0 0 0 3.5px var(--accent-strong); }
+  .mk-more, .st-link .mk{ display:none; }
+  .st-wait > .hd, .st-next > .hd, .st-goal > .hd, .sub-st > .hd{ background:var(--sunken); border-radius:999px; padding:4px 12px 4px 4px; width:fit-content; max-width:100%; }
+  .sub-st .mk{ display:grid; }
+  .dl-off{ padding-left:4px; }
+  .tk-stub{ flex-direction:column; align-items:stretch; }
+  .tk-acts{ margin-left:0; } .tk-acts .btn{ flex:1; }
+  .tiles{ grid-template-columns:1fr; }
+}
+/* ======================= 600–959 px ======================= */
+@container wv (min-width: 600px){
+  .content{ max-width:640px; margin:0 auto; }
+  .tk-in{ max-width:608px; margin:0 auto; width:100%; }
+  .tiles{ grid-template-columns:repeat(3, 1fr); }
+}
+/* ======================= D-45 Desktop ≥ 960 px ======================= */
+@container wv (min-width: 960px){
+  .screen{ --ring-d:168px; }
+  .z1{ padding:8px max(24px, calc((100% - 1000px) / 2)); }
+  .ticket{ padding:16px 24px 20px; }
+  .tk-in{ flex-direction:row; align-items:center; gap:32px; max-width:1000px; }
+  .tk-info{ flex:1; min-width:0; border-left:2px dashed rgb(255 255 255 / .3); padding:8px 0 8px 32px; }
+  .tk-range{ text-align:left; font-size:1.5rem; margin:0; }
+  .tk-perf{ display:none; }
+  .tk-stub{ margin-top:14px; justify-content:flex-start; }
+  .tk-acts{ margin-left:24px; }
+  .content{ max-width:1000px; padding:28px 24px; }
+  .cols{ display:grid; grid-template-columns:minmax(0, 600px) minmax(0, 320px); gap:40px; justify-content:center; align-items:start; }
+  .aside .tiles{ grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#device">Zur Handy-Vorschau springen</a>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+  <symbol id="i-chevd" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+  <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><circle cx="19" cy="12" r="1.8" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 18V6M3 14h18v4M21 14v-2a3 3 0 0 0-3-3h-7v5"/><circle cx="7" cy="11" r="2"/></symbol>
+  <symbol id="i-wallet" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18M16 14.5h2"/></symbol>
+  <symbol id="i-id" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="11" r="2.2"/><path d="M5.8 16c.6-1.5 1.8-2.2 3.2-2.2s2.6.7 3.2 2.2M15 10h3M15 13.5h3"/></symbol>
+  <symbol id="i-ticket" viewBox="0 0 24 24"><path d="M4 7a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2.5a2.5 2.5 0 0 0 0 5V17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-2.5a2.5 2.5 0 0 0 0-5z"/><path d="M14 6v12" stroke-dasharray="2 2.6"/></symbol>
+  <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 7.8v.2"/></symbol>
+  <symbol id="i-vote" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M8.5 12.5l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><path d="M3.5 19c.7-3 2.9-4.6 5.5-4.6s4.8 1.6 5.5 4.6"/><circle cx="17" cy="9.5" r="2.4"/><path d="M16 14.6c2.3-.2 4 1.2 4.6 3.9"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 19s-7-4.4-7-9.6A3.9 3.9 0 0 1 12 7.6a3.9 3.9 0 0 1 7 1.8C19 14.6 12 19 12 19z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+  <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></symbol>
+  <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4"/></symbol>
+  <symbol id="i-crown" viewBox="0 0 24 24"><path d="M4 18h16M5 15l-1.5-8 5 3.5L12 5l3.5 5.5 5-3.5L19 15z"/></symbol>
+  <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16v-5a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2 2 0 0 0 4 0"/></symbol>
+  <symbol id="i-plane" viewBox="0 0 24 24"><path d="M21 15.5l-8-4.5V5a1.5 1.5 0 0 0-3 0v6l-7 4.5V17l7-2v4l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-4l8 2z"/></symbol>
+  <symbol id="i-boat" viewBox="0 0 24 24"><path d="M3 15h18l-2.5 4.5h-13z"/><path d="M12 3v12M12 4l6 8h-6"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M4 11l8-6 8 6v8a1 1 0 0 1-1 1h-4v-6H9v6H5a1 1 0 0 1-1-1z"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 19.5l1.3-3.8A7.8 7.8 0 1 1 8.4 18.6z"/></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2.5"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
+</svg>
+
+<header class="pagebar">
+  <div class="pagebar-in">
+    <h1>Reise-Cockpit · C v2 „Reiseverlauf“</h1>
+    <p>W16 v2 nach der Festlegung · Kroatien 2027, 12.–19. Juni 2027 · nur Demo-Daten, nichts wird gespeichert · UX-8 und UX-9 vom Auftraggeber bestätigt</p>
+  </div>
+</header>
+
+<main class="stage">
+  <aside class="panel" aria-label="Steuerung des Mockups">
+    <div>
+      <h2 id="roleH">Wer schaut?</h2>
+      <div class="seg" id="roleSeg" role="group" aria-labelledby="roleH">
+        <button type="button" data-role="max" aria-pressed="true">Max<small>Mitglied</small></button>
+        <button type="button" data-role="lena" aria-pressed="false">Lena<small>Orga + bucht</small></button>
+        <button type="button" data-role="sara" aria-pressed="false">Sara<small>„bucht“</small></button>
+      </div>
+      <p class="hint" id="roleHint"></p>
+    </div>
+    <div>
+      <h2 id="phaseH">Teilphase</h2>
+      <div class="seg" id="phaseSeg" role="group" aria-labelledby="phaseH">
+        <button type="button" data-phase="pre" aria-pressed="true">Vorbereitung<small>So., 2. Mai</small></button>
+        <button type="button" data-phase="on" aria-pressed="false">Unterwegs<small>Mo., 14. Juni</small></button>
+        <button type="button" data-phase="post" aria-pressed="false">Danach<small>Mo., 28. Juni</small></button>
+      </div>
+    </div>
+    <div>
+      <h2>Szenarien</h2>
+      <button type="button" class="pbtn" id="stepBtn"><b>Station erledigen</b><span id="stepSub"></span></button>
+      <button type="button" class="pbtn" id="offBtn"><b>Orga hakt „ohne App erledigt“ ab</b><span>UX-9 (bestätigt): V2 «Mia macht ohne App mit» – Siegel, für alle sichtbar, Orga kann rückgängig machen</span></button>
+      <button type="button" class="pbtn" id="departBtn"><b>Abreisetag</b><span>UX-8 (bestätigt): kleine Konfetti-Runde + «Heute geht's los – gute Reise!»</span></button>
+      <button type="button" class="pbtn" id="buildBtn"><b>Weg neu aufbauen</b><span>Erster Besuch je Sitzung: Linie zeichnet sich, Stationen staffeln, Heute pulsiert 3×</span></button>
+      <button type="button" class="pbtn play" id="playBtn"><b>Feier abspielen</b><span>Große Feier „Es geht los!“ wie in der App (Ehrenrunde, Puff). Ring antippen = kleine Runde.</span></button>
+      <button type="button" class="pbtn ghost" id="resetBtn"><b>Alles zurücksetzen</b></button>
+    </div>
+    <div>
+      <h2>Ansicht</h2>
+      <label class="sel">Gerät
+        <select id="sizeSel">
+          <option value="390x844">Handy 390 × 844</option>
+          <option value="360x740">Handy 360 × 740</option>
+          <option value="360x640">Handy 360 × 640 (kleinstes Budget)</option>
+          <option value="320x568">Handy 320 × 568</option>
+          <option value="desk">Desktop 1024 × 720</option>
+        </select>
+      </label>
+      <label class="sw"><input type="checkbox" id="darkChk"> Dunkel</label>
+      <label class="sw"><input type="checkbox" id="motionChk"> Bewegung reduzieren</label>
+      <label class="sw"><input type="checkbox" id="fontChk"> Schrift 200 %</label>
+      <label class="sw"><input type="checkbox" id="enChk"> Zustands-Labels Englisch (Längen-Check D-39)</label>
+    </div>
+    <div>
+      <h2>Messung erster Bildschirm</h2>
+      <dl class="measure" id="measure"></dl>
+    </div>
+    <details>
+      <summary>Was ist neu in C v2?</summary>
+      <ul>
+        <li><b>Ticket-Kopf kompakt</b> (D-36): Ring 120–168 px, Zeitraum, Abriss-Kante, Crew + eine Taste je Teilphase.</li>
+        <li><b>Weg</b> (D-37): Minze-Linie bis Heute, danach gestrichelt; Marker je Zustand.</li>
+        <li><b>Heute</b>: Sonnen-Pille als h3, Heute-Satz, einzige Primär-Taste.</li>
+        <li><b>Erledigt eingeklappt</b> (D-40): Münzstapel-Marker, „Neu erledigt“ mit Siegel-Plopp.</li>
+        <li><b>Wartet</b>: Erinnern-Taste unter der Karte → Erinnern-Sheet mit WhatsApp-Text.</li>
+        <li><b>Immer griffbereit</b> (D-41), <b>Mehr zur Reise</b>, Sheets „Wer ist dabei?“ und „So habt ihr entschieden“.</li>
+        <li><b>Mini-Ring</b> in Zeile 1 beim Scrollen (D-42).</li>
+        <li><b>Schmal/200 %</b> (D-43): Schiene statt Linie, Label-Chips mit Marker-Symbol.</li>
+        <li><b>Desktop</b> (D-45): Ticket als Band, Weg + Seitenspalte.</li>
+      </ul>
+    </details>
+  </aside>
+
+  <div class="device" id="device" role="region" aria-label="Handy-Vorschau Übersicht Kroatien 2027" tabindex="-1">
+    <div class="sbar" aria-hidden="true"><span class="clock">9:41</span><span class="notch"></span><span class="url">wirwollenweg · /trips/kroatien-2027</span><span class="net">5G ▮</span></div>
+    <div class="view" id="view"></div>
+    <div class="sheet-wrap" id="sheetWrap" hidden>
+      <div class="scrim" data-close></div>
+      <div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-labelledby="sheetH">
+        <div class="grab" aria-hidden="true"></div>
+        <div class="sheet-head"><h2 id="sheetH" tabindex="-1"></h2><button class="icbtn" type="button" data-close aria-label="Schließen"><svg class="ic s20" aria-hidden="true" focusable="false"><use href="#i-close"></use></svg></button></div>
+        <div class="sheet-body" id="sheetBody"></div>
+      </div>
+    </div>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </div>
+</main>
+<noscript><p style="padding:20px">Dieses Mockup braucht JavaScript.</p></noscript>
+
+<script>
+(function () {
+"use strict";
+const $ = (s, r) => (r || document).querySelector(s);
+const $$ = (s, r) => Array.from((r || document).querySelectorAll(s));
+const html = document.documentElement;
+const mqReduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+const reduced = () => html.dataset.motion === "reduce" || mqReduce.matches;
+
+const view = $("#view"), device = $("#device"), toastEl = $("#toast");
+const sheetWrap = $("#sheetWrap"), sheetEl = $("#sheet"), sheetH = $("#sheetH"), sheetBody = $("#sheetBody");
+
+/* ---------------- Zustand ---------------- */
+const S = {
+  role: "max", phase: "pre", steps: {}, off: { V2: false, V5: false }, depart: false, cheer: false,
+  fresh: [], sealPending: false, open: {}, en: false, built: false,
+  page: "home", title: "", retIdx: -1, scroll: 0, lockUntil: 0
+};
+const stepOf = () => S.steps[S.role + "-" + S.phase] || 0;
+
+/* ---------------- Demo-Daten ---------------- */
+const PEOPLE = [
+  { name: "Lena", ini: "LE", av: 1 }, { name: "Max", ini: "MA", av: 2 }, { name: "Kemal", ini: "KE", av: 3 },
+  { name: "Sara", ini: "SA", av: 4 }, { name: "Jonas", ini: "JO", av: 5 }, { name: "Mia", ini: "MI", av: 6, ph: true }
+];
+const RANGE = "Sa., 12. – Sa., 19. Juni 2027";
+const LINK = "‹Link zur Reise›";
+const T_BACK = "Zurück zu „Meine Reisen“ – im Mockup ohne Funktion.";
+const T_MENU = "Reisemenü ⋯ (Freunde einladen, Wer bucht?, Hilfe …) – im Mockup ohne Funktion.";
+const T_ICS = "Kalenderdatei (.ics) wird geladen – im Mockup ohne Funktion.";
+const LBL = {
+  de: { today: "Heute", yours: "Du bist dran", waiting: "Läuft · wartet auf andere", waitWord: "Wartet auf andere", next: "Als Nächstes",
+    later: "Später", goal: "Ziel", doneWord: "Erledigt", doneN: "erledigt", fresh: "Neu erledigt", termin: "Termin heute" },
+  en: { today: "Today", yours: "Your turn", waiting: "In progress · waiting on others", waitWord: "Waiting on others", next: "Up next",
+    later: "Later", goal: "Destination", doneWord: "Done", doneN: "done", fresh: "Just done", termin: "Today" }
+};
+const T = (k) => LBL[S.en ? "en" : "de"][k];
+const CAT = { V1: 1, V2: 2, V3: 3, V4: 4, V5: 5, A1: 6, D1: 1, D2: 2, D3: 3 };
+const ROLE_HINT = {
+  max: "Max ist Mitglied (= „du“). Lena ist Orga und bucht.",
+  lena: "Lena ist Orga und trägt „bucht“ – sieht Gruppenstand, Favorit, Erinnern und „ohne App erledigt“.",
+  sara: "Demo-Variante: Sara trägt „bucht“ (bucht die Flüge), Lena bleibt Orga ohne „bucht“."
+};
+const STEP_LABELS = {
+  "max-pre": ["Max gibt seine Reisedaten frei → Siegel", "Max bewertet die übrigen Unterkünfte → Station wartet", "Max zahlt Kemal 86 € zurück → Aufgabe weg", "Die Gruppe erledigt den Rest → „Alles erledigt“ (H-3)"],
+  "lena-pre": ["Lena zahlt Sara zurück, alle haben bewertet → Lena legt fest", "Lena legt Kamena Kuća fest → jetzt buchen", "Lena bucht Kamena Kuća → Siegel, Kachel Unterkunft", "Alle Reisedaten da, Tickets oben, Mia dabei → H-3"],
+  "sara-pre": ["Max und Jonas geben ihre Reisedaten frei → Sara bucht", "Sara bucht und schließt die Anfrage ab → Siegel", "Alle sind mit Bewerten fertig → wartet auf Lena", "Lena legt fest und bucht, Tickets oben, Mia dabei → H-3"],
+  "max-on": ["Max zahlt Kemal zurück → Aufgabe verschwindet (keine Station, kein Siegel)"],
+  "lena-on": ["Lena zahlt Sara zurück → Aufgabe verschwindet (keine Station, kein Siegel)"],
+  "sara-on": [],
+  "max-post": ["Max gleicht 23,50 € aus → Siegel, „Alles ausgeglichen“ (H-5)"],
+  "lena-post": ["Sara zahlt Lena 42 € → Siegel, H-5"],
+  "sara-post": ["Sara gleicht 42 € aus → Siegel, H-5"]
+};
+
+/* ---------------- Helfer ---------------- */
+let uid = 0;
+const ic = (n, c) => `<svg class="ic ${c || ""}" aria-hidden="true" focusable="false"><use href="#i-${n}"></use></svg>`;
+const esc = (s) => String(s == null ? "" : s).replace(/<[^>]*>/g, "").replace(/&/g, "&amp;").replace(/"/g, "&quot;");
+const chev = () => `<span class="chev">${ic("chev", "s20")}</span>`;
+const av = (p, c) => p.ph ? `<span class="av ph ${c || ""}" aria-hidden="true">${p.ini}</span>`
+  : `<span class="av ${c || ""}" style="background:var(--av${p.av})" aria-hidden="true">${p.ini}</span>`;
+const stack = (n) => `<span class="stack" aria-hidden="true">${PEOPLE.slice(0, n).map((p) => av(p, "sm")).join("")}</span>`;
+const tile = (it) => `<span class="tile-ic sm ${it.tone || "t-lav"}">${ic(it.ic || "info", "s20")}</span>`;
+const bar = (it) => it.bar != null ? `<span class="bar-p" aria-hidden="true"><i style="width:${it.bar}%"></i></span>` : "";
+function attrs(it) {
+  return it.sheet ? `href="#" data-sheet="${it.sheet}" aria-haspopup="dialog"` : `href="#" data-go="${it.go}" data-title="${esc(it.goTitle || it.title)}"`;
+}
+
+/* ======================= Modell (W16 v2.3–v2.6) ======================= */
+function preStations() {
+  const r = S.role, st = stepOf(), off = S.off, L = [];
+  L.push({ id: "V1", title: "Termin steht", ic: "vote", tone: "t-lav", sheet: "decided", state: "done", status: "Platz 1 mit 5× Ja · festgelegt von Lena" });
+  const v2 = { id: "V2", title: "Alle sind dabei", ic: "users", tone: "t-mint", sheet: "members" };
+  if (off.V2) Object.assign(v2, { state: "done", status: "Mia macht ohne App mit", offline: true });
+  else if (st >= 4) Object.assign(v2, { state: "done", status: "Alle 6 sind dabei" });
+  else if (r === "lena") Object.assign(v2, { state: "waiting", status: "Mia ist noch nicht beigetreten", short: "Mia tritt bei",
+    remind: { label: "Mia erinnern", aria: "Mia erinnern – persönlichen Link schicken", occ: "mia" }, text: { label: "Mia macht ohne App mit", act: "offline:V2" } });
+  else Object.assign(v2, { state: "waiting", status: "Mia ist noch nicht beigetreten", short: "Mia tritt bei",
+    remind: { label: "Lena Bescheid geben", aria: "Lena Bescheid geben, dass Mia fehlt", occ: "orga-mia" } });
+  L.push(v2);
+
+  const v3 = { id: "V3", title: "Unterkunft", ic: "bed", tone: "t-lav", go: "stay" };
+  const rateRemind = { label: "Erinnern", aria: "Erinnern ans Bewerten der Unterkünfte", occ: "stay-rate" };
+  if (r === "max") {
+    if (st < 2) Object.assign(v3, { state: "yours", rank: 3, status: "Du hast 2 von 5 bewertet", bar: 40, primary: { label: "Jetzt swipen", go: "stay-swipe" } });
+    else if (st < 4) Object.assign(v3, { state: "waiting", status: "4 von 6 haben bewertet", short: "die Bewertungen der Unterkünfte", remind: rateRemind });
+    else Object.assign(v3, { state: "done", status: "Kamena Kuća · gebucht ✓" });
+  } else if (r === "lena") {
+    if (st < 1) Object.assign(v3, { state: "waiting", status: "4 von 6 haben bewertet · Favorit: Kamena Kuća (4 ♥)", short: "die Bewertungen der Unterkünfte", remind: rateRemind, text: { label: "Schon festlegen", go: "stay" } });
+    else if (st === 1) Object.assign(v3, { state: "yours", rank: 1, yTitle: "Unterkunft festlegen", status: "Alle haben bewertet. Favorit: Kamena Kuća (4 ♥).", primary: { label: "Festlegen", go: "stay" } });
+    else if (st === 2) Object.assign(v3, { state: "yours", rank: 2, yTitle: "Kamena Kuća buchen", status: "Danach als gebucht markieren – dann sehen es alle.", primary: { label: "Zur Unterkunft", go: "stay" } });
+    else Object.assign(v3, { state: "done", status: "Kamena Kuća · gebucht ✓" });
+  } else {
+    if (st < 3) Object.assign(v3, { state: "yours", rank: 3, status: "Du hast 3 von 5 bewertet", bar: 60, primary: { label: "Jetzt swipen", go: "stay-swipe" } });
+    else if (st < 4) Object.assign(v3, { state: "waiting", status: "Alle haben bewertet – Lena legt fest.", short: "Lena legt die Unterkunft fest", text: { label: "Lena Bescheid geben", act: "remind:stay-fix" } });
+    else Object.assign(v3, { state: "done", status: "Kamena Kuća · gebucht ✓" });
+  }
+  L.push(v3);
+
+  const v4 = { id: "V4", title: "Reisedaten", ic: "id", tone: "t-coral", go: "data" };
+  const dataRemind = { label: "Erinnern", aria: "Erinnern an die Reisedaten", occ: "travel-data" };
+  if (r === "max") {
+    if (st < 1) Object.assign(v4, { state: "yours", rank: 1, yTitle: "Reisedaten für Lena", status: "Für „Flüge München – Split“: Name und Geburtsdatum. Nur Lena sieht sie.", primary: { label: "Angaben freigeben", go: "data-form" } });
+    else Object.assign(v4, { state: "done", status: "Freigegeben an Lena ✓" });
+  } else if (r === "lena") {
+    if (st < 4) Object.assign(v4, { state: "waiting", status: "2 von 4 haben freigegeben · offen: Max, Jonas", short: "Freigaben für dich", remind: dataRemind });
+    else Object.assign(v4, { state: "done", status: "Erledigt – Daten gelöscht" });
+  } else {
+    if (st < 1) Object.assign(v4, { state: "waiting", status: "2 von 4 haben freigegeben · offen: Max, Jonas", short: "Freigaben für dich", remind: dataRemind });
+    else if (st === 1) Object.assign(v4, { state: "yours", rank: 2, yTitle: "Flüge buchen", status: "Alle Angaben da – jetzt buchen und die Anfrage abschließen.", primary: { label: "Zu den Reisedaten", go: "data" } });
+    else Object.assign(v4, { state: "done", status: "Erledigt – Daten gelöscht" });
+  }
+  L.push(v4);
+
+  const v5 = { id: "V5", title: "Anreise & Tickets", ic: "plane", tone: "t-mint", go: "docs-travel" };
+  if (off.V5) Object.assign(v5, { state: "done", status: "Jede:r reist selbst an", offline: true });
+  else if (st >= 4) Object.assign(v5, { state: "done", status: r === "max" ? "2 Tickets für dich da" : "Tickets für alle hochgeladen" });
+  else if (r === "max") Object.assign(v5, { state: "open", status: "Lena bucht die Flüge – die Tickets landen dann hier." });
+  else Object.assign(v5, { state: "open", status: "Lade die Tickets hoch, sobald gebucht – dann hat sie jede:r griffbereit.",
+    text: { label: "Hochladen", go: "docs-upload" }, text2: r === "lena" ? { label: "Jede:r reist selbst an", act: "offline:V5" } : null });
+  L.push(v5);
+
+  if (r === "max" && st < 3) L.push({ id: "A1", kind: "task", state: "yours", rank: 3, title: "Kosten", yTitle: "Du schuldest Kemal 86,00 €", status: "Fähre-Anzahlung · überweisen und als bezahlt markieren.", ic: "wallet", tone: "t-sun", go: "costs-bal", goTitle: "Ausgleichen", primary: { label: "Zum Ausgleich", go: "costs-bal" } });
+  if (r === "lena" && st < 1) L.push({ id: "A1", kind: "task", state: "yours", rank: 3, title: "Kosten", yTitle: "Du schuldest Sara 64,00 €", status: "Mietwagen-Anzahlung · überweisen und als bezahlt markieren.", ic: "wallet", tone: "t-sun", go: "costs-bal", goTitle: "Ausgleichen", primary: { label: "Zum Ausgleich", go: "costs-bal" } });
+  return L;
+}
+function classify(all) {
+  const open = all.filter((s) => s.state === "open");
+  return {
+    done: all.filter((s) => s.state === "done"),
+    yours: all.filter((s) => s.state === "yours").sort((a, b) => (a.rank - b.rank) || (CAT[a.id] - CAT[b.id])),
+    waiting: all.filter((s) => s.state === "waiting"),
+    next: open[0] || null, later: open.slice(1)
+  };
+}
+function sentenceFor(m, ph) {
+  const n = m.yours.length;
+  if (n) return `Du bist dran – ${n === 1 ? "eine Sache" : n + " Sachen"} für dich.`;
+  if (m.waiting.length) return `Für dich gerade nichts zu tun. Ihr wartet auf: ${m.waiting[0].short}.`;
+  return ph === "pre" ? "Alles erledigt – jetzt nur noch Vorfreude!" : "Alles ausgeglichen – schön war's!";
+}
+function preModel() {
+  const all = preStations(), g = classify(all), r = S.role, st = stepOf();
+  const stations = all.filter((s) => s.kind !== "task");
+  const isDone = (id) => all.some((s) => s.id === id && s.state === "done");
+  const tiles = [];
+  if (isDone("V3")) tiles.push({ go: "stay", title: "Unterkunft", status: "Kamena Kuća · gebucht ✓", ic: "bed", tone: "t-lav" });
+  tiles.push({ go: "docs", title: "Unterlagen", status: st >= 4 ? "4 Unterlagen" : "2 Unterlagen", chip: "1 neu", ic: "ticket", tone: "t-mint" });
+  const cost = r === "max" ? (st < 3 ? "456 € gesamt · du schuldest 86 €" : "456 € gesamt · bei dir ausgeglichen ✓")
+    : r === "lena" ? (st < 1 ? "456 € gesamt · du schuldest 64 €" : "456 € gesamt · du bekommst 42 €") : "456 € gesamt · du bekommst 18 €";
+  tiles.push({ go: "costs", title: "Kosten", status: cost, ic: "wallet", tone: "t-sun" });
+  tiles.push({ go: "info", title: "Infos", status: "Check-in 15 Uhr · Treffpunkt steht", ic: "info", tone: "t-lav" });
+  if (isDone("V4")) tiles.push({ go: "data", title: "Reisedaten", status: r === "max" ? "Freigegeben an Lena ✓" : "Anfrage abgeschlossen ✓", ic: "id", tone: "t-coral" });
+  const m = Object.assign(g, {
+    todayItems: g.yours, phase: "Steht fest · noch 41 Tage", sr: "Noch 41 Tage bis zur Abreise.",
+    ring: { pct: 65, kind: "count", big: "41", sub: "Tage", aria: "Vorfreude: noch 41 Tage" },
+    head: `<button class="btn on-ck sm" type="button" data-toast="${T_ICS}">${ic("cal", "s20")}Kalender</button>`,
+    wegTitle: "Euer Weg nach Kroatien",
+    meta: `${stations.filter((s) => s.state === "done").length} von ${stations.length} geschafft`,
+    today: { short: "So., 2. Mai", long: "Sonntag, 2. Mai" },
+    goal: { lbl: `${T("goal")} · Sa., 12. Juni`, title: "Es geht los!", status: "Treffpunkt 6:15 Uhr · Flughafen München T2", go: "info", goTitle: "Infos", ic: "sun" },
+    tiles: tiles
+  });
+  m.sentence = sentenceFor(m, "pre");
+  return m;
+}
+function prepDone() {
+  return [
+    { id: "V1", title: "Termin steht", status: "Platz 1 mit 5× Ja · festgelegt von Lena", sheet: "decided" },
+    { id: "V2", title: "Alle sind dabei", status: S.off.V2 ? "Mia macht ohne App mit" : "Alle 6 sind dabei", sheet: "members", offline: S.off.V2 },
+    { id: "V3", title: "Unterkunft", status: "Kamena Kuća · gebucht ✓", go: "stay" },
+    { id: "V4", title: "Reisedaten", status: S.role === "max" ? "Freigegeben an Lena ✓" : "Anfrage abgeschlossen ✓", go: "data" },
+    { id: "V5", title: "Anreise & Tickets", status: "Tickets für alle da", go: "docs-travel" }
+  ];
+}
+function onModel() {
+  const r = S.role, st = stepOf(), dep = S.depart;
+  const termine = dep ? [
+    { id: "T1", kind: "termin", title: "6:15 · Treffpunkt Flughafen München", status: "Terminal 2, Abflug-Ebene · Lena hat die Bordkarten.", ic: "users", tone: "t-lav", go: "info", goTitle: "Infos", primary: { label: "Infos öffnen", go: "info" } },
+    { id: "T2", kind: "termin", title: "9:05 · Flug München – Split", status: "Ankunft 10:40 · Bordkarte in den Unterlagen", ic: "plane", tone: "t-mint", go: "doc", goTitle: "Flug München – Split" }
+  ] : [
+    { id: "T3", kind: "termin", title: "9:30 · Fähre nach Stari Grad", status: "Hafen Split, Anleger 3 · Tickets für alle 6 in den Unterlagen.", ic: "boat", tone: "t-lav", go: "doc", goTitle: "Fähre nach Stari Grad", primary: { label: "Ticket öffnen", go: "doc" } }
+  ];
+  const tasks = [];
+  if (r !== "sara" && st < 1) tasks.push({ id: "A1", kind: "task", state: "yours", rank: 3, title: "Kosten", yTitle: r === "max" ? "Du schuldest Kemal 86,00 €" : "Du schuldest Sara 64,00 €", status: "Ab 50 € steht die Schuld auch unterwegs hier.", ic: "wallet", tone: "t-sun", go: "costs-bal", goTitle: "Ausgleichen" });
+  const tn = termine.length, n = tasks.length;
+  const tt = tn === 1 ? "ein Termin" : tn + " Termine";
+  const sentence = dep ? "Heute geht's los – gute Reise!" : n ? `Heute ${tt} – und ${n === 1 ? "eine Sache" : n + " Sachen"} für dich.` : `Heute ${tt} – sonst genießt den Tag!`;
+  const cost = r === "max" ? (st < 1 ? "1.284 € gesamt · du schuldest 86 €" : "1.284 € gesamt · bei dir ausgeglichen ✓")
+    : r === "lena" ? (st < 1 ? "1.284 € gesamt · du schuldest 64 €" : "1.284 € gesamt · du bekommst 42 €") : "1.284 € gesamt · du bekommst 42 €";
+  const tiles = [
+    { go: "stay", title: "Unterkunft", status: "Kamena Kuća · Ulica 12, Stari Grad", ic: "bed", tone: "t-lav" },
+    { go: "docs", title: "Unterlagen", status: dep ? "7 Unterlagen · 2 für heute" : "7 Unterlagen · 1 für heute", ic: "ticket", tone: "t-mint" },
+    { go: "costs", title: "Kosten", status: cost, ic: "wallet", tone: "t-sun" },
+    { go: "info", title: "Infos", status: "Notruf 112 · WLAN-Passwort", ic: "info", tone: "t-lav" }
+  ];
+  if (r !== "max") tiles.push({ go: "data", title: "Reisedaten", status: "Daten von 4 Personen · gelöscht am 26. Juni", ic: "id", tone: "t-coral" });
+  return {
+    done: prepDone(), doneText: `Vorbereitung · 5 ${T("doneN")}`,
+    todayItems: termine.concat(tasks), yours: tasks, waiting: [],
+    next: dep ? { lbl: "Morgen · So., 13. Juni", title: "11:00 · Mietwagen abholen", status: "Stari Grad, Hafenbüro · Voucher von Lena", ic: "ticket", tone: "t-lav", go: "doc", goTitle: "Mietwagen-Voucher" }
+      : { lbl: "Morgen · Di., 15. Juni", title: "10:00 · Bootstour Pakleni-Inseln", status: "Treffpunkt Hafen Hvar · Voucher von Kemal", ic: "boat", tone: "t-lav", go: "doc", goTitle: "Bootstour" },
+    later: dep ? [{ title: "9:30 · Fähre nach Stari Grad", when: "Mo., 14. Juni", ic: "boat", go: "doc", goTitle: "Fähre nach Stari Grad" }]
+      : [{ title: "19:30 · Konoba Menego", when: "Do., 17. Juni", ic: "ticket", go: "doc", goTitle: "Tischreservierung" }],
+    moreLink: { label: "+ 2 weitere Termine", go: "docs" },
+    goal: { lbl: `${T("goal")} · Sa., 19. Juni`, title: "Heimreise", status: "Fähre 7:00 · Flug Split – München 13:40", ic: "home", go: "doc", goTitle: "Rückreise" },
+    sentence: sentence,
+    phase: dep ? "Unterwegs · Tag 1 von 8" : "Unterwegs · Tag 3 von 8",
+    sr: dep ? "Heute ist Tag 1 von 8 eurer Reise." : "Heute ist Tag 3 von 8 eurer Reise.",
+    ring: dep ? { pct: 6, kind: "day", top: "Tag", big: "1", sub: "von 8", aria: "Unterwegs: Tag 1 von 8" } : { pct: 25, kind: "day", top: "Tag", big: "3", sub: "von 8", aria: "Unterwegs: Tag 3 von 8" },
+    head: `<button class="btn mint sm" type="button" data-go="costs-new" data-title="Ausgabe hinzufügen" aria-label="Ausgabe hinzufügen">${ic("plus", "s20")}Ausgabe</button><button class="btn on-ck sm" type="button" data-go="docs" data-title="Tickets von heute">${ic("ticket", "s20")}Tickets</button>`,
+    wegTitle: "Eure Tage in Kroatien", meta: dep ? "Tag 1 von 8" : "Tag 3 von 8",
+    today: dep ? { short: "Tag 1 · Sa., 12. Juni", long: "Samstag, 12. Juni, Tag 1" } : { short: "Tag 3 · Mo., 14. Juni", long: "Montag, 14. Juni, Tag 3" },
+    tiles: tiles
+  };
+}
+function postModel() {
+  const r = S.role, settled = stepOf() >= 1;
+  const L = [
+    { id: "D1", title: "Kosten ausgleichen", ic: "wallet", tone: "t-sun", go: "costs-bal", goTitle: "Ausgleichen" },
+    { id: "D2", title: "Unterlagen sichern", ic: "ticket", tone: "t-mint", go: "docs", state: "open", status: "Werden am 19. Juli gelöscht", when: "19. Juli" },
+    { id: "D3", title: "Reisedaten gelöscht", ic: "id", tone: "t-coral", go: "data", state: "done", status: "Am 26. Juni gelöscht – wie angekündigt." }
+  ];
+  const d1 = L[0];
+  if (settled) Object.assign(d1, { state: "done", status: "Alles ausgeglichen ✓" });
+  else if (r === "lena") Object.assign(d1, { state: "waiting", status: "Du bekommst noch 42,00 € von Sara", short: "Sara gleicht aus", remind: { label: "Sara erinnern", aria: "Sara erinnern an 42,00 €", occ: "settle" } });
+  else Object.assign(d1, { state: "yours", rank: 2, yTitle: r === "max" ? "Du schuldest Kemal 23,50 €" : "Du schuldest Lena 42,00 €", status: "Abrechnung der Reise · überweisen und als bezahlt markieren.", primary: { label: "Zum Ausgleich", go: "costs-bal" } });
+  const g = classify(L);
+  /* D2 bleibt bis 7 Tage vor dem Löschen „später“ (W16 v2.4) – nie „als Nächstes“ allein wegen der Reihenfolge */
+  g.later = (g.next ? [g.next] : []).concat(g.later); g.next = null;
+  const doneN = g.done.length;
+  const tiles = [
+    { go: "stay", title: "Unterkunft", status: "Kamena Kuća · Stari Grad", ic: "bed", tone: "t-lav" },
+    { go: "docs", title: "Unterlagen", status: "7 Unterlagen · bis 19. Juli", ic: "ticket", tone: "t-mint" }
+  ];
+  if (settled) tiles.push({ go: "costs", title: "Kosten", status: "2.140 € gesamt · ausgeglichen ✓", ic: "wallet", tone: "t-sun" });
+  tiles.push({ go: "info", title: "Infos", status: "Adresse und Check-in", ic: "info", tone: "t-lav" });
+  const m = Object.assign(g, {
+    todayItems: g.yours, doneText: settled ? null : "Reise · Vorbereitung, 8 Tage und Reisedaten gelöscht",
+    phase: settled ? "Zurück · alles ausgeglichen" : "Zurück · Kosten ausgleichen", sr: "Die Reise ist vorbei.",
+    ring: { pct: 100, kind: "bye", aria: "Reise vorbei – schön war's!" },
+    head: settled ? "" : `<button class="btn on-ck sm" type="button" data-go="costs-bal" data-title="Ausgleichen">${ic("wallet", "s20")}Ausgleichen</button>`,
+    wegTitle: "Nach der Reise", meta: `${doneN} von 3 geschafft`,
+    today: { short: "zurück seit 9 Tagen", long: "Montag, 28. Juni – zurück seit 9 Tagen" },
+    goal: { lbl: T("goal"), title: "Wohin geht's als Nächstes?", status: "Die Gruppe steht schon – plant gleich die nächste Reise.", ic: "sun", button: { label: "Neue Reise planen", go: "new-trip" }, note: "Diese Reise wird am 17. Sep. 2027 automatisch gelöscht." },
+    tiles: tiles
+  });
+  if (settled && !S.fresh.includes("D1")) m.doneText = "Reise · Vorbereitung, 8 Tage, Ausgleich und Reisedaten";
+  m.sentence = sentenceFor(m, "post");
+  return m;
+}
+const model = () => S.phase === "pre" ? preModel() : S.phase === "on" ? onModel() : postModel();
+
+/* ======================= Ring (countdown-ring.svg, Ausschnitt um den Ring) ======================= */
+const PIECES = [[52, 92, "r", 1, -24], [70, 104, "s", 2, -35], [88, 90, "c", 3, 0], [106, 102, "r", 5, 30], [124, 92, "r", 4, 40], [142, 100, "s", 1, 20],
+  [218, 98, "r", 2, 22], [236, 90, "c", 4, 0], [254, 104, "s", 1, 30], [272, 92, "r", 3, -12], [290, 102, "r", 5, -30], [308, 94, "s", 2, -35]];
+const polar = (a, d) => { const r = a * Math.PI / 180; return [+(195 + d * Math.sin(r)).toFixed(1), +(236 - d * Math.cos(r)).toFixed(1)]; };
+function piece(d) {
+  const p = polar(d[0], d[1]), x = p[0], y = p[1], f = `style="fill:var(--cf${d[3]})"`;
+  if (d[2] === "c") return `<circle cx="${x}" cy="${y}" r="4.5" ${f}/>`;
+  const w = d[2] === "s" ? 11 : 8, h = d[2] === "s" ? 2.5 : 13;
+  return `<rect x="${(x - w / 2).toFixed(1)}" y="${(y - h / 2).toFixed(1)}" width="${w}" height="${h}" rx="${d[2] === "s" ? 1.25 : 3}" ${f} transform="rotate(${d[4]} ${x} ${y})"/>`;
+}
+const spark = (pt, r, cf) => { const x = pt[0], y = pt[1]; return `<path d="M${x} ${y - r}L${x + r * 0.3} ${y - r * 0.3}L${x + r} ${y}L${x + r * 0.3} ${y + r * 0.3}L${x} ${y + r}L${x - r * 0.3} ${y + r * 0.3}L${x - r} ${y}L${x - r * 0.3} ${y - r * 0.3}Z" style="fill:var(--cf${cf})"/>`; };
+function ringLabel(r) {
+  if (r.kind === "count") return `<span class="rl-b">${r.big}</span><span>${r.sub}</span>`;
+  if (r.kind === "day") return `<span>${r.top}</span><span class="rl-b">${r.big}</span><span>${r.sub}</span>`;
+  return `<span class="rl-bye">Schön<br>war's!</span>`;
+}
+function ringSVG(r) {
+  uid += 1;
+  const id = "wwr" + uid, p = r.pct;
+  return `<span class="ring" data-ring data-pct="${p}" aria-hidden="true">
+  <svg viewBox="117 158 156 156" focusable="false" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <linearGradient id="${id}g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52E5B8"/><stop offset="1" stop-color="#FFCF4A"/></linearGradient>
+      <radialGradient id="${id}h" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#52E5B8" stop-opacity=".08"/><stop offset="0.7" stop-color="#52E5B8" stop-opacity=".22"/><stop offset="0.86" stop-color="#52E5B8" stop-opacity=".07"/><stop offset="1" stop-color="#52E5B8" stop-opacity="0"/></radialGradient>
+    </defs>
+    <g data-anim="glow"><circle cx="195" cy="236" r="92" fill="url(#${id}h)"/></g>
+    <g data-anim="confetti">${PIECES.map((d, i) => `<g data-piece="${i + 1}">${piece(d)}</g>`).join("")}</g>
+    <circle cx="195" cy="236" r="66" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width="12"/>
+    <g data-anim="ring"><path data-ring-fill d="M195 170a66 66 0 1 1 0 132a66 66 0 1 1 0-132" pathLength="100" fill="none" stroke="url(#${id}g)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${p} 100" stroke-dashoffset="0"/></g>
+    <g data-anim="knob"><circle cx="195" cy="236" r="75" fill="none" stroke="none"/><g transform="rotate(${(p * 3.6).toFixed(1)} 195 236)"><circle data-knob-dot cx="195" cy="170" r="9" stroke-width="3" style="fill:var(--sun);stroke:var(--ck)"/></g></g>
+    <g data-anim="sparkles">${spark(polar(62, 112), 7, 1)}${spark(polar(245, 114), 7, 5)}${spark(polar(118, 116), 5, 2)}</g>
+  </svg>
+  <span class="ring-label">${ringLabel(r)}</span>
+</span>`;
+}
+function miniRing(p) {
+  uid += 1;
+  const id = "wwm" + uid;
+  return `<svg class="mini-ring" viewBox="0 0 20 20" focusable="false"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#52E5B8"/><stop offset="1" stop-color="#FFCF4A"/></linearGradient></defs>
+    <circle cx="10" cy="10" r="7.5" fill="none" stroke="#FFFFFF" stroke-opacity=".25" stroke-width="3"/>
+    <circle cx="10" cy="10" r="7.5" fill="none" stroke="url(#${id})" stroke-width="3" stroke-linecap="round" pathLength="100" stroke-dasharray="${p} 100" transform="rotate(-90 10 10)"/></svg>`;
+}
+
+/* ======================= Bausteine der Übersicht ======================= */
+function z1(m) {
+  return `<div class="z1 on-brand" id="z1">
+    <a class="icbtn" href="#" data-toast="${T_BACK}" aria-label="Zurück zu Meine Reisen">${ic("back")}</a>
+    <div class="z1-t"><h1>Kroatien 2027</h1>
+      <p class="z1-phase"><span class="ph-slot" aria-hidden="true"><span class="ph-dot"></span>${miniRing(m.ring.pct)}</span><span>${m.phase}</span></p></div>
+    <button class="icbtn" type="button" data-toast="${T_MENU}" aria-label="Reisemenü">${ic("more")}</button>
+  </div><p class="sr-only">${m.sr}</p>`;
+}
+function ticket(m) {
+  const crew = `<span class="stack" aria-hidden="true">${PEOPLE.slice(0, 3).map((p) => av(p, "sm")).join("")}<span class="av sm more">+3</span></span>`;
+  return `<div class="ticket on-brand"><div class="tk-in">
+    <div class="tk-ring"><button class="ring-btn" type="button" data-ring-btn aria-label="${esc(m.ring.aria)}">${ringSVG(m.ring)}</button></div>
+    <div class="tk-info">
+      <p class="tk-range">${RANGE}</p>
+      <div class="tk-perf" aria-hidden="true"><i class="nl"></i><i class="nr"></i></div>
+      <div class="tk-stub">
+        <button class="tk-crew" type="button" data-sheet="members" aria-haspopup="dialog">${crew}<span>6 dabei · 7 Nächte</span></button>
+        ${m.head ? `<div class="tk-acts">${m.head}</div>` : ""}
+      </div>
+    </div>
+  </div></div>`;
+}
+const ln = (k) => `<span class="ln ${k || "todo"}" aria-hidden="true"></span>`;
+function mk(kind, n) {
+  if (kind === "done") return `<span class="mk mk-done" data-n="${n || 1}" aria-hidden="true"><svg class="ic" viewBox="0 0 24 24" focusable="false"><path class="ck-path" d="M5 12.5l4.5 4.5L19 7.5" pathLength="1"/></svg></span>`;
+  if (kind === "today") return `<span class="mk mk-today" aria-hidden="true">${ic("sun")}</span>`;
+  if (kind === "goal") return `<span class="mk mk-goal" aria-hidden="true">${ic("sun", "s20")}</span>`;
+  return `<span class="mk mk-${kind}" aria-hidden="true"></span>`;
+}
+function exp(id, o, content) { return `<div class="exp${o ? " open" : ""}" id="${id}"${o ? "" : " inert"}><div class="exp-in">${content}</div></div>`; }
+function moreBlock(key, label, content) {
+  const o = !!S.open[key], id = "x-" + key;
+  return `<button class="more-btn" type="button" data-exp="${key}" data-more="${esc(label)}" aria-expanded="${o}" aria-controls="${id}"><span class="more-lbl">${o ? "Weniger anzeigen" : label}</span><span class="chev-d">${ic("chevd", "s20")}</span></button>${exp(id, o, content)}`;
+}
+const moreLi = (key, label, content) => `<li class="st st-more">${ln()}${mk("more")}${moreBlock(key, label, content)}</li>`;
+function textBtn(t) {
+  if (t.go) return `<a class="tbtn" href="#" data-go="${t.go}" data-title="${esc(t.label)}">${t.label}</a>`;
+  if (t.act.indexOf("remind:") === 0) return `<button class="tbtn" type="button" data-sheet="${t.act}" aria-haspopup="dialog">${t.label}</button>`;
+  return `<button class="tbtn" type="button" data-act="${t.act}">${t.label}</button>`;
+}
+function acts(it) {
+  const b = [];
+  if (it.remind) b.push(`<button class="btn sm sec" type="button" data-sheet="remind:${it.remind.occ}" aria-haspopup="dialog" aria-label="${esc(it.remind.aria || it.remind.label)}">${ic("bell", "s20")}${it.remind.label}</button>`);
+  [it.text, it.text2].filter(Boolean).forEach((t) => b.push(textBtn(t)));
+  return b.length ? `<div class="sc-acts">${b.join("")}</div>` : "";
+}
+function card(it, word, cls) {
+  return `<a class="sc ${cls || ""}" ${attrs(it)} aria-label="${esc(word + ": " + it.title + ". " + it.status)}">${tile(it)}<span class="grow"><span class="t">${it.title}</span><span class="s">${it.status}</span>${bar(it)}</span>${chev()}</a>`;
+}
+function todayCard(it, first) {
+  const isT = it.kind === "termin";
+  const word = isT ? T("termin") : T("yours");
+  const chip = `<span class="chip ${isT ? "info" : "todo"}">${word}${it.kind === "task" ? " · " + it.title : ""}</span>`;
+  const title = it.yTitle || it.title;
+  const aria = esc(`${word}: ${title}. ${it.status}`);
+  const cls = isT ? "sc-termin" : "sc-yours";
+  if (first) {
+    return `<div class="sc ${cls} sc-big">${chip}
+      <a class="sc-head" ${attrs(it)} aria-label="${aria}">${tile(it)}<span class="t">${title}</span>${chev()}</a>
+      <p class="s">${it.status}</p>${bar(it)}
+      ${it.primary ? `<a class="btn primary block" href="#" data-go="${it.primary.go}" data-title="${esc(it.primary.label)}">${it.primary.label}</a>` : ""}
+    </div>`;
+  }
+  return `<a class="sc ${cls}" ${attrs(it)} aria-label="${aria}">${tile(it)}<span class="grow">${chip}<span class="t">${title}</span><span class="s">${it.status}</span>${bar(it)}</span>${chev()}</a>`;
+}
+function doneLi(m) {
+  const o = !!S.open.done, n = m.done.length;
+  const fresh = m.done.filter((d) => S.fresh.indexOf(d.id) >= 0);
+  const txt = fresh.length ? `<b>${T("fresh")}: ${fresh.map((d) => d.title).join(", ")}</b> · ${n} ${T("doneN")}`
+    : (m.doneText || `${n} ${T("doneN")}: ${m.done.map((d) => d.title).join(", ")}`);
+  const items = m.done.map((d) => `<li><a class="done-item" ${attrs(d)} aria-label="${esc(T("doneWord") + ": " + d.title + ". " + d.status)}"><span class="ckm" aria-hidden="true">${ic("check", "s16")}</span><span class="grow"><span class="t">${d.title}</span><span class="s">${d.status}</span></span>${chev()}</a>${d.offline ? `<div class="dl-off"><span class="chip ok">ohne App erledigt</span>${S.role === "lena" ? `<button class="tbtn" type="button" data-act="undo:${d.id}">Rückgängig</button>` : ""}</div>` : ""}</li>`).join("");
+  return `<li class="st st-done${fresh.length ? " fresh" : ""}">${ln("done")}<div class="hd">${mk("done", Math.min(n, 3))}<button class="done-row" type="button" data-exp="done" aria-expanded="${o}" aria-controls="x-done"><span class="done-txt">${txt}</span><span class="chev-d">${ic("chevd", "s20")}</span></button></div>${exp("x-done", o, `<ul class="done-list">${items}</ul>`)}</li>`;
+}
+function todayLi(m) {
+  const items = m.todayItems, vis = items.slice(0, 3), extra = items.slice(3);
+  let list = vis.length ? `<ul class="today-list">${vis.map((it, i) => `<li>${todayCard(it, i === 0)}</li>`).join("")}</ul>` : "";
+  if (extra.length) list += moreBlock("today", `+ ${extra.length} weitere für dich`, `<ul class="today-list">${extra.map((it) => `<li>${todayCard(it, false)}</li>`).join("")}</ul>`);
+  return `<li class="st st-today">${ln()}<div class="hd">${mk("today")}<h3 class="today-h" id="h-today" tabindex="-1"><span aria-hidden="true">${T("today")} · ${m.today.short}</span><span class="sr-only">${T("today")}, ${m.today.long}</span></h3></div><p class="today-s">${m.sentence}</p>${list}</li>`;
+}
+const waitInner = (it) => `<div class="hd">${mk("wait")}<span class="lbl">${T("waiting")}</span></div>${card(it, T("waitWord"))}${acts(it)}`;
+function laterLi(it) {
+  return `<li class="st st-later">${ln()}<div class="hd hd-later">${mk("later")}<a class="slim" ${attrs(it)} aria-label="${esc(T("later") + ": " + it.title + ". " + (it.status || it.when || ""))}">${ic(it.ic || "info", "s20")}<span class="grow"><span class="lbl">${T("later")}</span><span class="t">${it.title}</span></span><span class="w">${it.when || ""}</span>${chev()}</a></div></li>`;
+}
+function goalLi(g) {
+  const inner = `<span class="tile-ic sm">${ic(g.ic || "sun", "s20")}</span><span class="grow"><span class="t">${g.title}</span><span class="s">${g.status}</span></span>`;
+  const body = g.button
+    ? `<div class="sc sc-goal sc-col"><div class="sc-row">${inner}</div><a class="btn sm on-ck" href="#" data-go="${g.button.go}" data-title="${esc(g.button.label)}">${ic("plus", "s20")}${g.button.label}</a></div>${g.note ? `<p class="goal-note">${g.note}</p>` : ""}`
+    : `<a class="sc sc-goal" ${attrs(g)} aria-label="${esc(T("goal") + ": " + g.title + ". " + g.status)}">${inner}${chev()}</a>`;
+  return `<li class="st st-goal"><div class="hd">${mk("goal")}<span class="lbl">${g.lbl}</span></div>${body}</li>`;
+}
+function weg(m) {
+  const L = [];
+  if (m.done.length) L.push(doneLi(m));
+  L.push(todayLi(m));
+  m.waiting.slice(0, 2).forEach((it) => L.push(`<li class="st st-wait">${ln()}${waitInner(it)}</li>`));
+  if (m.waiting.length > 2) {
+    const k = m.waiting.length - 2;
+    L.push(moreLi("waiting", `+ ${k} ${k === 1 ? "weitere läuft" : "weitere laufen"}`, `<ul class="sub-list">${m.waiting.slice(2).map((it) => `<li class="sub-st">${waitInner(it)}</li>`).join("")}</ul>`));
+  }
+  if (m.next) L.push(`<li class="st st-next">${ln()}<div class="hd">${mk("next")}<span class="lbl">${m.next.lbl || T("next")}</span></div>${card(m.next, m.next.lbl || T("next"))}${acts(m.next)}</li>`);
+  m.later.slice(0, 2).forEach((it) => L.push(laterLi(it)));
+  if (m.later.length > 2) L.push(moreLi("later", `+ ${m.later.length - 2} weitere Schritte`, `<ul class="sub-list">${m.later.slice(2).map(laterLi).join("")}</ul>`));
+  if (m.moreLink) L.push(`<li class="st st-link">${ln()}${mk("more")}<div class="hd hd-link"><a class="tbtn" href="#" data-go="${m.moreLink.go}" data-title="Unterlagen">${m.moreLink.label} ›</a></div></li>`);
+  L.push(goalLi(m.goal));
+  return `<section aria-labelledby="weg-h"><div class="sec-row"><h2 class="sec" id="weg-h">${m.wegTitle}</h2><span class="meta">${m.meta}</span></div><ol class="weg">${L.join("")}</ol></section>`;
+}
+function tilesSec(m) {
+  if (!m.tiles.length) return "";
+  return `<section aria-labelledby="tiles-h"><h2 class="sec sec-gap" id="tiles-h">Immer griffbereit</h2><ul class="tiles">${m.tiles.map((t) =>
+    `<li><a class="tile" href="#" data-go="${t.go}" data-title="${esc(t.title)}" aria-label="${esc(t.title + ". " + t.status + (t.chip ? ", " + t.chip : ""))}"><span class="tl-top"><span class="tile-ic sm ${t.tone}">${ic(t.ic, "s20")}</span>${chev()}</span><span class="tl-t">${t.title}</span><span class="tl-s">${t.status}</span>${t.chip ? `<span class="chip new">${t.chip}</span>` : ""}</a></li>`).join("")}</ul></section>`;
+}
+function moreSec() {
+  return `<section aria-labelledby="more-h"><h2 class="sec sec-gap" id="more-h">Mehr zur Reise</h2><div class="list-card">
+    <button class="row" type="button" data-sheet="decided" aria-haspopup="dialog"><span class="tile-ic sm t-lav">${ic("vote", "s20")}</span><span class="grow"><span class="t">So habt ihr entschieden</span><span class="s">Ergebnis und Gruppenkalender</span></span>${chev()}</button>
+    <button class="row" type="button" data-sheet="members" aria-haspopup="dialog"><span class="tile-ic sm t-mint">${ic("users", "s20")}</span><span class="grow"><span class="t">Wer ist dabei? (6)</span><span class="s">${S.role === "sara" ? "Lena ist Orga · Sara bucht" : "Lena ist Orga und bucht"} · 1 Platzhalter</span></span>${stack(3)}${chev()}</button>
+  </div></section>`;
+}
+function homeHTML(m) {
+  return `<div class="screen">${z1(m)}${ticket(m)}<div class="content"><div class="cols"><div class="main">${weg(m)}</div><div class="aside">${tilesSec(m)}${moreSec()}</div></div></div></div>`;
+}
+
+/* ======================= Unterseiten (Platzhalter) ======================= */
+const SUBS = {
+  stay: { t: "Unterkunft", ic: "bed", tone: "t-lav", w: "W18", lead: "5 Vorschläge auf Hvar. Favorit: Kamena Kuća (4 ♥)." },
+  "stay-swipe": { t: "Unterkünfte bewerten", ic: "heart", tone: "t-mint", w: "W18", lead: "Wisch nach rechts für „gefällt mir“, nach links für „eher nicht“." },
+  data: { t: "Reisedaten", ic: "id", tone: "t-coral", w: "W20", lead: "Lena bucht die Flüge München – Split. Nur die Person, die bucht, sieht die Angaben; sie werden 7 Tage nach der Reise gelöscht." },
+  "data-form": { t: "Angaben freigeben", ic: "id", tone: "t-coral", w: "W20", lead: "Für „Flüge München – Split“: Name wie im Ausweis und Geburtsdatum. Nur Lena sieht sie." },
+  docs: { t: "Unterlagen", ic: "ticket", tone: "t-mint", w: "W21", lead: "Tickets, Buchungen und Belege – nur für die Gruppe, 30 Tage nach der Reise gelöscht." },
+  "docs-travel": { t: "Anreise & Tickets", ic: "plane", tone: "t-mint", w: "W21 (gefiltert)", lead: "Alle Unterlagen der Kategorie „Flug/Anreise“." },
+  "docs-upload": { t: "Unterlage hochladen", ic: "ticket", tone: "t-mint", w: "W21", lead: "PDF oder Foto auswählen, Kategorie und Sichtbarkeit festlegen." },
+  doc: { t: "Unterlage", ic: "ticket", tone: "t-mint", w: "W21 Detail", lead: "Die Unterlage öffnet sich hier im Detail – mit Datum, Uhrzeit und Datei." },
+  costs: { t: "Kosten", ic: "wallet", tone: "t-sun", w: "W19", lead: "Alle Ausgaben der Reise und wer wem was schuldet." },
+  "costs-bal": { t: "Ausgleichen", ic: "wallet", tone: "t-sun", w: "W19", lead: "Wer zahlt wem wie viel – überweisen und als bezahlt markieren." },
+  "costs-new": { t: "Ausgabe hinzufügen", ic: "plus", tone: "t-sun", w: "W19", lead: "Betrag, wer bezahlt hat, für wen – Datum ist heute." },
+  info: { t: "Infos", ic: "info", tone: "t-lav", w: "W22", lead: "Treffpunkt Sa., 12. Juni, 6:15 Uhr · Flughafen München T2. Check-in ab 15 Uhr." },
+  "new-trip": { t: "Neue Reise planen", ic: "plus", tone: "t-mint", w: "W02", lead: "Startet eine neue Reise – die Gruppe kannst du gleich mitnehmen." }
+};
+function subHTML(key, title) {
+  const D = SUBS[key] || {};
+  return `<div class="screen"><header class="sub-head on-brand"><div class="sub-top"><a class="icbtn" href="#" data-back aria-label="Zurück zur Übersicht">${ic("back")}</a><span class="sub-crumb" aria-hidden="true">Kroatien 2027</span></div><h1 tabindex="-1">${title || D.t || "Bereich"}</h1></header>
+  <div class="content"><div class="card-pad"><div class="sp-lead"><span class="tile-ic ${D.tone || "t-lav"}">${ic(D.ic || "info")}</span><p>${D.lead || "Hier liegt der Bereich."}</p></div></div>
+  <p class="ph-note">Platzhalter-Unterseite (${D.w || "W17–W22"}). Ausgearbeitet im UX-Prototyp „Reise managen“. „Zurück“ führt zur Übersicht – Scroll-Position und Fokus werden wiederhergestellt.</p></div></div>`;
+}
+
+/* ======================= Feier „Es geht los!“ (Port celebration.ts, W11-02 / E4) ======================= */
+const EASE_STD = "cubic-bezier(.2,0,0,1)", EASE_ENTER = "cubic-bezier(0,0,0,1)";
+const LIN = !!(window.CSS && CSS.supports && CSS.supports("transition-timing-function", "linear(0, 1)"));
+const SOFT = LIN ? "linear(0, 0.052 5%, 0.174 10%, 0.325 15%, 0.478 20%, 0.619 25%, 0.738 30%, 0.833 35%, 0.906 40%, 0.991 50%, 1.024 60%, 1.028 70%, 1.021 80%, 1.013 90%, 1)" : "cubic-bezier(.34,1.3,.64,1)";
+const BOUNCY = LIN ? "linear(0, 0.116 5%, 0.372 10%, 0.657 15%, 0.898 20%, 1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%, 0.987 60%, 0.974 70%, 0.986 80%, 0.999 90%, 1)" : "cubic-bezier(.34,1.56,.64,1)";
+function bezier(x1, y1, x2, y2) {
+  return (x) => {
+    if (x <= 0) return 0;
+    if (x >= 1) return 1;
+    let lo = 0, hi = 1, t = x;
+    for (let i = 0; i < 26; i++) { t = (lo + hi) / 2; const bx = 3 * x1 * t * (1 - t) * (1 - t) + 3 * x2 * t * t * (1 - t) + t * t * t; if (bx < x) lo = t; else hi = t; }
+    return 3 * y1 * t * (1 - t) * (1 - t) + 3 * y2 * t * t * (1 - t) + t * t * t;
+  };
+}
+const easeStd = bezier(0.2, 0, 0, 1);
+function ringKeyframes(percent) {
+  const ring = [], knob = [], steps = 28, lag = 0.12, end = percent * 3.6;
+  for (let s = 0; s <= steps; s++) {
+    const x = s / steps;
+    const head = (100 + percent) * easeStd(x);
+    const tail = 100 * easeStd(Math.max(0, (x - lag) / (1 - lag)));
+    const len = Math.min(100, Math.max(0, head - tail));
+    ring.push({ offset: x, strokeDasharray: `${len.toFixed(2)} ${(100 - len).toFixed(2)}`, strokeDashoffset: (-tail).toFixed(2) });
+    knob.push({ offset: x, transform: `rotate(${(head * 3.6 - end).toFixed(1)}deg)` });
+  }
+  return { ring, knob };
+}
+function anim(el, kf, opt) {
+  if (!el || !el.animate) return null;
+  try { return el.animate(kf, opt); } catch (e) {
+    const o = Object.assign({}, opt); delete o.easing;
+    try { return el.animate(kf, o); } catch (e2) { return null; }
+  }
+}
+const live = new Set();
+function prepBoxes(root) {
+  $$("[data-anim='glow'], [data-piece], [data-anim='sparkles'] path, [data-anim='knob'], [data-knob-dot]", root).forEach((el) => { el.style.transformBox = "fill-box"; el.style.transformOrigin = "center"; });
+}
+function celebrate(root) {
+  const p = Number(root.dataset.pct) || 0;
+  const Tm = { glow: 60, ring: 80, dur: 700, pieces: 120, land: 780, sparks: 800 };
+  const running = [], timers = [];
+  let burst = null, done = false;
+  const api = { finish: finish };
+  const track = (a) => { if (a) running.push(a); };
+  function stopBurst() {
+    const b = burst; burst = null;
+    if (!b) return;
+    const end = () => { b.anims.forEach((a) => a.cancel()); b.layer.remove(); };
+    const f = anim(b.layer, [{ opacity: 1 }, { opacity: 0 }], { duration: 140, fill: "forwards" });
+    if (f) f.onfinish = end; else end();
+  }
+  function finish() {
+    if (done) return;
+    done = true;
+    timers.forEach((t) => clearTimeout(t));
+    running.forEach((a) => { try { a.finish(); } catch (e) { /* abgebrochen */ } });
+    stopBurst();
+    live.delete(api);
+  }
+  if (reduced()) { track(anim(root, [{ opacity: 0 }, { opacity: 1 }], { duration: 140 })); done = true; return api; }
+  live.add(api);
+  const layer = (n) => root.querySelector(`[data-anim="${n}"]`);
+  prepBoxes(root);
+  track(anim(layer("glow"), [{ opacity: 0, transform: "scale(0.7)" }, { opacity: 1, transform: "none" }], { duration: 480, delay: Tm.glow, easing: SOFT, fill: "backwards" }));
+  const fr = ringKeyframes(p);
+  track(anim(root.querySelector("[data-ring-fill]"), fr.ring, { duration: Tm.dur, delay: Tm.ring, easing: "linear", fill: "backwards" }));
+  track(anim(layer("knob"), fr.knob, { duration: Tm.dur, delay: Tm.ring, easing: "linear", fill: "backwards" }));
+  track(anim(root.querySelector("[data-knob-dot]"), [{ transform: "scale(1)" }, { transform: "scale(1.35)" }, { transform: "scale(1)" }], { duration: 220, delay: Tm.land, easing: SOFT }));
+  $$("[data-piece]", root).forEach((pc, i) => {
+    const fall = 90 + ((i * 37) % 70), dx = ((i * 29) % 30) - 15, rot = (i % 2 ? 1 : -1) * (120 + ((i * 53) % 120));
+    track(anim(pc, [
+      { opacity: 0, transform: `translate(${dx}px, ${-fall}px) rotate(${rot}deg)` },
+      { opacity: 1, offset: 0.25, transform: `translate(${(dx * 0.4).toFixed(1)}px, ${(-fall * 0.55).toFixed(1)}px) rotate(${(rot * 0.5).toFixed(0)}deg)` },
+      { opacity: 1, transform: "none" }
+    ], { duration: 1100 + ((i * 71) % 400), delay: Tm.pieces + i * 40, easing: EASE_STD, fill: "backwards" }));
+  });
+  $$("[data-anim='sparkles'] path", root).forEach((s, i) => {
+    track(anim(s, [{ opacity: 0, transform: "scale(0)" }, { opacity: 1, transform: "none" }], { duration: 220, delay: Tm.sparks + i * 60, easing: SOFT, fill: "backwards" }));
+  });
+  timers.push(setTimeout(() => { if (!done) burst = puff(root, p); }, Tm.land));
+  timers.push(setTimeout(finish, 2600));
+  return api;
+}
+/* Konfetti-Puff aus dem Sonnenpunkt: 24 Teile, Fächer ± 75°, Schwerkraft; bleibt im Ticket (overflow: hidden) */
+function puff(root, pct) {
+  const svg = root.querySelector("svg");
+  if (!svg || !root.isConnected) return null;
+  const layer = document.createElement("span");
+  layer.setAttribute("aria-hidden", "true");
+  layer.setAttribute("data-burst", "");
+  root.appendChild(layer);
+  const box = svg.getBoundingClientRect(), own = root.getBoundingClientRect();
+  const vb = svg.viewBox.baseVal, scale = box.width / (vb.width || 156);
+  const ang = pct * 3.6 * Math.PI / 180;
+  const ox = box.left - own.left + (195 + 66 * Math.sin(ang) - vb.x) * scale;
+  const oy = box.top - own.top + (236 - 66 * Math.cos(ang) - vb.y) * scale;
+  const cs = getComputedStyle(root);
+  const colors = [1, 2, 3, 4, 5].map((n) => cs.getPropertyValue("--cf" + n).trim() || "#52E5B8");
+  const anims = [];
+  for (let i = 0; i < 24; i++) {
+    const el = document.createElement("i"), shape = i % 4;
+    const wh = shape === 0 ? [9, 14] : shape === 1 ? [10, 10] : shape === 2 ? [11, 2.5] : [12, 12];
+    el.style.width = wh[0] + "px"; el.style.height = wh[1] + "px";
+    el.style.marginLeft = (-wh[0] / 2) + "px"; el.style.marginTop = (-wh[1] / 2) + "px";
+    el.style.background = colors[i % colors.length];
+    if (shape === 0) el.style.borderRadius = "3px";
+    if (shape === 1) el.style.borderRadius = "50%";
+    if (shape === 2) el.style.borderRadius = "1.25px";
+    if (shape === 3) el.style.clipPath = "polygon(50% 0, 62% 38%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 38%)";
+    layer.appendChild(el);
+    const dir = ((-90 + (Math.random() * 150 - 75)) * Math.PI) / 180, speed = 260 + Math.random() * 300;
+    const vx = Math.cos(dir) * speed, vy = Math.sin(dir) * speed, duration = 1200 + Math.random() * 500;
+    const r0 = Math.random() * 360, spin = (Math.random() < 0.5 ? -1 : 1) * (240 + Math.random() * 360);
+    const kf = [];
+    for (let s = 0; s <= 10; s++) {
+      const f = s / 10, t = (duration * f) / 1000;
+      kf.push({ transform: `translate(${(ox + vx * t * (1 - 0.25 * f)).toFixed(1)}px, ${(oy + vy * t + 0.5 * 1100 * t * t).toFixed(1)}px) rotate(${(r0 + spin * f).toFixed(0)}deg)`, opacity: f < 0.7 ? 1 : Number(((1 - f) / 0.3).toFixed(2)) });
+    }
+    const a = anim(el, kf, { duration: duration, delay: Math.random() * 60, easing: "linear", fill: "both" });
+    if (a) anims.push(a);
+  }
+  Promise.all(anims.map((a) => a.finished.catch(() => undefined))).then(() => layer.remove());
+  return { layer: layer, anims: anims };
+}
+/* UM-1 / UM-7: kleine Konfetti-Runde ≤ 1,2 s – nur Konfetti + Funkel, keine Ehrenrunde, kein Puff, keine Vibration; Sperre 3 s */
+function smallBurst(root, auto) {
+  if (!root) return;
+  const now = Date.now();
+  if (!auto && now < S.lockUntil) return;
+  S.lockUntil = now + 3000;
+  if (root._cel) root._cel.finish();
+  if (reduced()) {
+    if (!auto) anim(root, [{ filter: "brightness(1)" }, { filter: "brightness(1.35)" }, { filter: "brightness(1)" }], { duration: 140 });
+    return;
+  }
+  const running = [];
+  let done = false;
+  const api = { finish: () => { if (done) return; done = true; running.forEach((a) => { try { a.finish(); } catch (e) { /* */ } }); live.delete(api); } };
+  live.add(api);
+  root._cel = api;
+  prepBoxes(root);
+  const glow = root.querySelector("[data-anim='glow']");
+  const ga = anim(glow, [{ opacity: 0.4 }, { opacity: 1 }], { duration: 220, easing: EASE_STD }); if (ga) running.push(ga);
+  $$("[data-piece]", root).forEach((pc, i) => {
+    const fall = 60 + ((i * 37) % 50), dx = ((i * 29) % 24) - 12, rot = (i % 2 ? 1 : -1) * (90 + ((i * 53) % 90));
+    const a = anim(pc, [{ opacity: 0, transform: `translate(${dx}px, ${-fall}px) rotate(${rot}deg)` }, { opacity: 1, offset: 0.3 }, { opacity: 1, transform: "none" }],
+      { duration: 700 + ((i * 53) % 200), delay: i * 25, easing: EASE_STD, fill: "backwards" });
+    if (a) running.push(a);
+  });
+  $$("[data-anim='sparkles'] path", root).forEach((s, i) => {
+    const a = anim(s, [{ opacity: 0, transform: "scale(0)" }, { opacity: 1, transform: "none" }], { duration: 220, delay: 520 + i * 60, easing: SOFT, fill: "backwards" });
+    if (a) running.push(a);
+  });
+  setTimeout(api.finish, 1250);
+}
+const finishAll = () => { Array.from(live).forEach((x) => x.finish()); };
+["pointerdown", "wheel", "touchmove", "keydown"].forEach((t) => window.addEventListener(t, finishAll, { capture: true, passive: true }));
+document.addEventListener("visibilitychange", () => { if (document.hidden) finishAll(); });
+
+/* ======================= Motion der Übersicht (UM-2 – UM-6) ======================= */
+function buildWeg() {
+  const lis = $$(".weg > li", view), mkT = $(".mk-today", view);
+  if (reduced()) return;
+  const lnDone = $(".weg .ln.done", view);
+  anim(lnDone, [{ transform: "scaleY(0)" }, { transform: "scaleY(1)" }], { duration: 480, easing: EASE_STD, fill: "backwards" });
+  lis.forEach((li, i) => anim(li, [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: Math.min(i * 60, 400), easing: EASE_ENTER, fill: "backwards" }));
+  $$(".tiles > li, .list-card", view).forEach((el, i) => anim(el, [{ opacity: 0, transform: "translateY(16px)" }, { opacity: 1, transform: "none" }], { duration: 320, delay: Math.min((lis.length + i) * 60, 400), easing: EASE_ENTER, fill: "backwards" }));
+  if (mkT) setTimeout(() => { if (mkT.isConnected && !reduced()) mkT.classList.add("pulse"); }, 480);
+}
+function plopSeal() {
+  const m = $(".st-done.fresh .mk-done", view);
+  if (!m) return;
+  const path = $(".ck-path", m);
+  if (reduced()) { anim(m, [{ opacity: 0 }, { opacity: 1 }], { duration: 140 }); return; }
+  anim(m, [{ opacity: 0, transform: "scale(.6)" }, { opacity: 1, transform: "scale(1)" }], { duration: 480, delay: 120, easing: BOUNCY, fill: "backwards" });
+  anim(path, [{ strokeDasharray: "1 1", strokeDashoffset: 1 }, { strokeDasharray: "1 1", strokeDashoffset: 0 }], { duration: 320, delay: 360, easing: EASE_STD, fill: "backwards" });
+}
+let io = null;
+function bindMini() {
+  if (io) { io.disconnect(); io = null; }
+  const ring = $(".ring-btn", view), z = $("#z1", view);
+  if (!ring || !z || !("IntersectionObserver" in window)) return;
+  io = new IntersectionObserver((es) => { es.forEach((e) => z.classList.toggle("mini", !e.isIntersecting)); }, { root: view, rootMargin: `-${z.offsetHeight}px 0px 0px 0px`, threshold: 0 });
+  io.observe(ring);
+}
+function toggleExp(btn) {
+  const key = btn.getAttribute("data-exp"), open = btn.getAttribute("aria-expanded") !== "true";
+  S.open[key] = open;
+  btn.setAttribute("aria-expanded", String(open));
+  const reg = document.getElementById(btn.getAttribute("aria-controls"));
+  if (reg) { reg.classList.toggle("open", open); if (open) reg.removeAttribute("inert"); else reg.setAttribute("inert", ""); }
+  const lbl = $(".more-lbl", btn);
+  if (lbl) lbl.textContent = open ? "Weniger anzeigen" : btn.getAttribute("data-more");
+  if (open && reg && !reduced()) $$(".exp-in > ul > li", reg).forEach((li, i) => anim(li, [{ opacity: 0 }, { opacity: 1 }], { duration: 220, delay: Math.min(i * 40, 400), easing: EASE_STD, fill: "backwards" }));
+  requestAnimationFrame(measure);
+}
+
+/* ======================= Render ======================= */
+function render(dir, keepScroll) {
+  finishAll();
+  const prevScroll = view.scrollTop;
+  if (S.page === "home") view.innerHTML = homeHTML(model());
+  else view.innerHTML = subHTML(S.page, S.title);
+  const scr = $(".screen", view);
+  if (dir && scr) scr.classList.add(dir === "fwd" ? "in-f" : "in-b");
+  if (S.page === "home") {
+    if (dir === "back") {
+      view.scrollTop = S.scroll;
+      const t = $$("[data-go],[data-sheet]", view)[S.retIdx];
+      if (t) t.focus({ preventScroll: true });
+    } else view.scrollTop = keepScroll ? prevScroll : 0;
+    bindMini();
+    if (!S.built) { S.built = true; buildWeg(); }
+    if (S.sealPending) { S.sealPending = false; plopSeal(); }
+    if (S.cheer) { S.cheer = false; const r = $("[data-ring]", view); setTimeout(() => smallBurst(r, true), 350); }
+  } else {
+    view.scrollTop = 0;
+    const h = $("h1", view);
+    if (h && dir) h.focus({ preventScroll: true });
+  }
+  updatePanel();
+  requestAnimationFrame(measure);
+}
+/* Zustand ändert sich „beim Neuladen“: kein Umsortieren/FLIP (M-U3), nur Überblenden 140 ms; neu erledigt → Siegel */
+function mutate(fn, msg) {
+  const before = model().done.map((d) => d.id);
+  fn();
+  const nw = model().done.map((d) => d.id).filter((id) => before.indexOf(id) < 0);
+  S.fresh = nw; S.sealPending = nw.length > 0;
+  S.page = "home";
+  render(null, true);
+  const scr = $(".screen", view);
+  anim(scr, [{ opacity: 0.35 }, { opacity: 1 }], { duration: 140, easing: "linear" });
+  if (msg) showToast(msg);
+}
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  clearTimeout(showToast.t);
+  showToast.t = setTimeout(() => toastEl.classList.remove("show"), 2800);
+}
+
+/* ======================= Sheets ======================= */
+const REM = {
+  "orga-mia": { title: "Lena Bescheid geben", text: `Hey Lena, Mia fehlt noch bei Kroatien 2027 – schickst du Mia den persönlichen Link? ${LINK}` },
+  mia: { title: "Mia erinnern", text: `Hey Mia, hier ist dein persönlicher Link für Kroatien 2027 – ein Tipp und du bist dabei: ${LINK}`, note: "Persönlicher Link – nur für Mia, nicht in die Gruppe schicken." },
+  "stay-rate": { title: "Ans Bewerten erinnern", head: "Noch nicht fertig bewertet", people: () => S.role === "max" ? ["Kemal", "Jonas"] : ["Max", "Jonas"], text: `Hey {name}, bei Kroatien 2027 warten 3 Unterkünfte auf deine Bewertung – dauert eine Minute: ${LINK}` },
+  "travel-data": { title: "An die Reisedaten erinnern", head: "Noch nicht freigegeben", people: () => ["Max", "Jonas"], text: `Hey {name}, für „Flüge München – Split“ brauche ich noch deine Reisedaten – bitte in der App freigeben, nicht hier im Chat: ${LINK}`, note: "Der Text enthält nie Felder oder Werte." },
+  "stay-fix": { title: "Lena Bescheid geben", text: `Hey Lena, alle haben die Unterkünfte für Kroatien 2027 bewertet – du kannst jetzt festlegen: ${LINK}` },
+  settle: { title: "Sara erinnern", text: `Hey Sara, laut Abrechnung von Kroatien 2027 bekomme ich noch 42,00 € von dir. Danke! ${LINK}` }
+};
+let sheetRet = null;
+function remindBody(occ, name) {
+  const R = REM[occ];
+  if (R.people && !name) {
+    return `<p class="s-note">${R.head}:</p><div class="list-card">${R.people().map((n) => { const p = PEOPLE.find((x) => x.name === n); return `<div class="row">${av(p)}<span class="grow"><span class="t">${n}</span></span><button class="btn sm sec" type="button" data-pick="${n}" aria-label="${n} erinnern">${ic("bell", "s20")}Erinnern</button></div>`; }).join("")}</div>`;
+  }
+  const text = R.text.replace(/\{name\}/g, name || "");
+  return `${R.people ? `<button class="tbtn" type="button" data-unpick>← Zur Liste</button>` : ""}
+    <p class="s-note">Vorschau – die Nachricht geht aus deinem WhatsApp, die App schickt nichts selbst.</p>
+    <p class="bubble">${text}</p>${R.note ? `<p class="s-note">${R.note}</p>` : ""}
+    <div class="s-acts"><a class="btn primary block" href="#" data-wa>${ic("chat", "s20")}Per WhatsApp senden</a><button class="btn sec block" type="button" data-copy>${ic("copy", "s20")}Text kopieren</button></div>`;
+}
+function membersBody() {
+  const sara = S.role === "sara";
+  return `<div class="list-card">${PEOPLE.map((p) => {
+    const me = (S.role === "max" && p.name === "Max") || (S.role === "lena" && p.name === "Lena") || (sara && p.name === "Sara");
+    let chips = "";
+    if (p.name === "Lena") chips += `<span class="chip sun">${ic("crown", "s16")}Orga</span>`;
+    if ((p.name === "Lena" && !sara) || (p.name === "Sara" && sara)) chips += `<span class="chip new">bucht</span>`;
+    if (p.ph) chips += `<span class="chip ghost">Platzhalter</span>`;
+    let sub = "Dabei", act = "";
+    if (p.ph) {
+      sub = S.off.V2 ? "Macht ohne App mit (von Lena abgehakt)" : "Noch nicht beigetreten – persönlicher Link offen";
+      if (!S.off.V2) act = S.role === "lena" ? `<button class="btn sm sec" type="button" data-sheet="remind:mia" aria-label="Mia erinnern">${ic("bell", "s20")}Erinnern</button>`
+        : `<button class="tbtn" type="button" data-sheet="remind:orga-mia" aria-label="Lena Bescheid geben, dass Mia fehlt">Lena Bescheid geben</button>`;
+    }
+    return `<div class="row">${av(p)}<span class="grow"><span class="t-row"><span class="t">${p.name}${me ? " (du)" : ""}</span>${chips}</span><span class="s">${sub}</span></span>${act}</div>`;
+  }).join("")}</div>`;
+}
+function decidedBody() {
+  const cells = ["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"].map((d) => `<span class="hd2">${d}</span>`);
+  cells.push('<span class="e"></span>');
+  for (let d = 1; d <= 30; d++) cells.push(`<span class="${d >= 12 && d <= 19 ? "sel" : ""}">${d}</span>`);
+  return `<p class="s-note">Steht fest · festgelegt von Lena am 14. Feb. 2027</p><p class="dec-date">${RANGE}</p>
+    <div class="row"><span class="chip sun">Platz 1</span><span class="grow"><span class="s">5× Ja · 1× Vielleicht</span></span></div>
+    <div class="row"><span class="chip ghost">Platz 2</span><span class="grow"><span class="s">Sa., 26. Juni – Sa., 3. Juli · 3× Ja</span></span></div>
+    <p class="s-note">Gruppenkalender Juni 2027 (nur lesen):</p><div class="mcal" aria-hidden="true">${cells.join("")}</div>`;
+}
+function fillSheet(kind, name) {
+  sheetEl.dataset.kind = kind;
+  if (kind === "members") { sheetH.textContent = "Wer ist dabei? (6)"; sheetBody.innerHTML = membersBody(); }
+  else if (kind === "decided") { sheetH.textContent = "So habt ihr entschieden"; sheetBody.innerHTML = decidedBody(); }
+  else { const occ = kind.split(":")[1]; sheetH.textContent = REM[occ].title; sheetBody.innerHTML = remindBody(occ, name); sheetEl.dataset.name = name || ""; }
+}
+function openSheet(kind, opener) {
+  sheetRet = opener || null;
+  fillSheet(kind);
+  sheetWrap.hidden = false;
+  view.inert = true;
+  if (reduced()) anim(sheetEl, [{ opacity: 0 }, { opacity: 1 }], { duration: 140 });
+  else { anim(sheetEl, [{ transform: "translateY(100%)" }, { transform: "none" }], { duration: 320, easing: EASE_STD }); anim($(".scrim", sheetWrap), [{ opacity: 0 }, { opacity: 1 }], { duration: 220 }); }
+  sheetH.focus({ preventScroll: true });
+}
+function closeSheet() {
+  if (sheetWrap.hidden) return;
+  const done = () => { sheetWrap.hidden = true; view.inert = false; if (sheetRet && sheetRet.isConnected) sheetRet.focus({ preventScroll: true }); };
+  const a = reduced() ? anim(sheetEl, [{ opacity: 1 }, { opacity: 0 }], { duration: 140 }) : anim(sheetEl, [{ transform: "none" }, { transform: "translateY(100%)" }], { duration: 220, easing: "cubic-bezier(.3,0,1,1)" });
+  if (a) a.onfinish = done; else done();
+}
+sheetWrap.addEventListener("click", (e) => {
+  const t = e.target;
+  if (!(t instanceof Element)) return;
+  if (t.closest("[data-close]")) { closeSheet(); return; }
+  const pick = t.closest("[data-pick]");
+  if (pick) { fillSheet(sheetEl.dataset.kind, pick.getAttribute("data-pick")); sheetH.focus(); return; }
+  if (t.closest("[data-unpick]")) { fillSheet(sheetEl.dataset.kind); sheetH.focus(); return; }
+  const sw = t.closest("[data-sheet]");
+  if (sw) { fillSheet(sw.getAttribute("data-sheet")); sheetH.focus(); return; }
+  if (t.closest("[data-wa]")) { e.preventDefault(); showToast("Öffnet WhatsApp mit dem Text (wa.me) – im Mockup ohne Funktion."); return; }
+  if (t.closest("[data-copy]")) { showToast("Text kopiert."); }
+});
+sheetWrap.addEventListener("keydown", (e) => {
+  if (e.key === "Escape") { closeSheet(); return; }
+  if (e.key !== "Tab") return;
+  const f = $$("a[href], button:not([disabled]), [tabindex='-1']#sheetH", sheetEl).filter((el) => el.offsetParent !== null);
+  if (!f.length) return;
+  const first = f[0], last = f[f.length - 1];
+  if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+  else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+});
+
+/* ======================= Klicks im Handy ======================= */
+view.addEventListener("click", (e) => {
+  const t = e.target;
+  if (!(t instanceof Element)) return;
+  const go = t.closest("[data-go]");
+  if (go) {
+    e.preventDefault();
+    S.retIdx = $$("[data-go],[data-sheet]", view).indexOf(go);
+    S.scroll = view.scrollTop;
+    S.page = go.getAttribute("data-go");
+    S.title = go.getAttribute("data-title") || "";
+    render("fwd");
+    return;
+  }
+  if (t.closest("[data-back]")) { e.preventDefault(); S.page = "home"; render("back"); return; }
+  const sh = t.closest("[data-sheet]");
+  if (sh) { e.preventDefault(); openSheet(sh.getAttribute("data-sheet"), sh); return; }
+  const ex = t.closest("[data-exp]");
+  if (ex) { toggleExp(ex); return; }
+  const act = t.closest("[data-act]");
+  if (act) {
+    const a = act.getAttribute("data-act").split(":");
+    if (a[0] === "offline") mutate(() => { S.off[a[1]] = true; }, "Als „ohne App erledigt“ markiert – für alle sichtbar.");
+    if (a[0] === "undo") { S.off[a[1]] = false; S.fresh = []; render(null, true); showToast("Rückgängig gemacht – die Station ist wieder offen."); }
+    return;
+  }
+  const to = t.closest("[data-toast]");
+  if (to) { e.preventDefault(); showToast(to.getAttribute("data-toast")); return; }
+  const rb = t.closest("[data-ring-btn]");
+  if (rb) smallBurst($("[data-ring]", rb), false);
+});
+
+/* ======================= Messung (Abnahme-Kriterien W16 v2.2) ======================= */
+function measure() {
+  const out = $("#measure");
+  if (S.page !== "home") { out.innerHTML = "<dt>Hinweis</dt><dd>Nur auf der Übersicht.</dd>"; return; }
+  const vr = view.getBoundingClientRect();
+  const yb = (el) => el ? Math.round(el.getBoundingClientRect().bottom - vr.top + view.scrollTop) : null;
+  const H = view.clientHeight, W = view.clientWidth;
+  const head = yb($(".ticket", view)), today = yb($(".today-h", view)), prim = yb($(".weg .btn.primary", view));
+  const ring = $(".ring-btn", view);
+  const mark = (ok) => `<span class="${ok ? "ok" : "bad"}">${ok ? "✓" : "✗"}</span>`;
+  out.innerHTML = `<dt>Bildschirm</dt><dd>${W} × ${H} px</dd>
+    <dt>Kopf (Zeile 1 + Ticket)</dt><dd>${head} px ${mark(head <= 340)} Budget ≤ 340</dd>
+    <dt>Ring</dt><dd>${ring ? Math.round(ring.getBoundingClientRect().width) : "–"} px</dd>
+    <dt>„Heute“ unten bei</dt><dd>${today} px ${mark(today <= H)} im 1. Bildschirm</dd>
+    <dt>Primär-Taste unten bei</dt><dd>${prim == null ? "keine (nichts zu tun)" : prim + " px " + mark(prim <= H) + (prim <= H ? " im 1. Bildschirm" : " darunter")}</dd>
+    <dt>Seitenlänge</dt><dd>${(view.scrollHeight / H).toFixed(1).replace(".", ",")} Bildschirme</dd>`;
+}
+
+/* ======================= Steuerpanel ======================= */
+function updatePanel() {
+  $$("#roleSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.role === S.role)));
+  $$("#phaseSeg button").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.phase === S.phase)));
+  $("#roleHint").textContent = ROLE_HINT[S.role];
+  const labels = STEP_LABELS[S.role + "-" + S.phase] || [], st = stepOf();
+  const stepBtn = $("#stepBtn");
+  stepBtn.disabled = !labels.length;
+  $("#stepSub").textContent = !labels.length ? "Sara hat unterwegs keine Aufgabe – Rolle oder Teilphase wechseln."
+    : st < labels.length ? `Schritt ${st + 1} von ${labels.length}: ${labels[st]}` : "Alles durchgespielt – nochmal tippen setzt diese Rolle zurück.";
+  $("#offBtn").disabled = S.off.V2;
+}
+function setRole(r) { S.role = r; S.fresh = []; S.open = {}; S.page = "home"; render(null); }
+function setPhase(p) { S.phase = p; S.depart = false; S.fresh = []; S.open = {}; S.page = "home"; render(null); }
+$$("#roleSeg button").forEach((b) => b.addEventListener("click", () => setRole(b.dataset.role)));
+$$("#phaseSeg button").forEach((b) => b.addEventListener("click", () => setPhase(b.dataset.phase)));
+$("#stepBtn").addEventListener("click", () => {
+  const key = S.role + "-" + S.phase, labels = STEP_LABELS[key] || [], st = stepOf();
+  if (!labels.length) return;
+  if (st >= labels.length) { S.steps[key] = 0; S.fresh = []; S.page = "home"; render(null); return; }
+  mutate(() => { S.steps[key] = st + 1; }, labels[st]);
+});
+$("#offBtn").addEventListener("click", () => {
+  if (S.phase !== "pre") { S.phase = "pre"; S.depart = false; }
+  mutate(() => { S.off.V2 = true; }, "Lena hat „Mia macht ohne App mit“ abgehakt.");
+});
+$("#departBtn").addEventListener("click", () => {
+  S.phase = "on"; S.depart = true; S.fresh = []; S.open = {}; S.page = "home"; S.cheer = true; S.lockUntil = 0;
+  render(null);
+});
+$("#buildBtn").addEventListener("click", () => { S.built = false; S.page = "home"; render(null); });
+$("#playBtn").addEventListener("click", () => {
+  if (S.page !== "home") { S.page = "home"; render(null); }
+  view.scrollTop = 0;
+  const r = $("[data-ring]", view);
+  if (r) { if (r._cel) r._cel.finish(); r._cel = celebrate(r); }
+});
+$("#resetBtn").addEventListener("click", () => {
+  S.steps = {}; S.off = { V2: false, V5: false }; S.depart = false; S.fresh = []; S.open = {}; S.built = false; S.page = "home";
+  render(null);
+});
+const SIZES = { "390x844": [390, 844], "360x740": [360, 740], "360x640": [360, 640], "320x568": [320, 568], desk: [1024, 720] };
+const sizeSel = $("#sizeSel");
+function applySize() {
+  const s = SIZES[sizeSel.value];
+  device.style.setProperty("--dw", s[0] + "px");
+  device.style.setProperty("--dh", s[1] + "px");
+  device.style.setProperty("--vh", (s[1] / 100) + "px");
+  device.classList.toggle("desk", sizeSel.value === "desk");
+  requestAnimationFrame(() => { bindMini(); measure(); });
+}
+sizeSel.addEventListener("change", applySize);
+const darkChk = $("#darkChk");
+darkChk.checked = window.matchMedia("(prefers-color-scheme: dark)").matches;
+html.dataset.theme = darkChk.checked ? "dark" : "light";
+darkChk.addEventListener("change", () => { html.dataset.theme = darkChk.checked ? "dark" : "light"; });
+const motionChk = $("#motionChk");
+motionChk.checked = mqReduce.matches;
+if (motionChk.checked) html.dataset.motion = "reduce";
+motionChk.addEventListener("change", () => { if (motionChk.checked) { html.dataset.motion = "reduce"; finishAll(); } else delete html.dataset.motion; });
+$("#fontChk").addEventListener("change", (e) => { html.style.fontSize = e.target.checked ? "200%" : ""; requestAnimationFrame(() => { bindMini(); measure(); }); });
+$("#enChk").addEventListener("change", (e) => { S.en = e.target.checked; render(null, true); });
+window.addEventListener("resize", () => requestAnimationFrame(measure));
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { bindMini(); measure(); });
+
+applySize();
+render(null);
+})();
+</script>
+</body>
+</html>

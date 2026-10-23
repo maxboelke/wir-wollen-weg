@@ -11,7 +11,7 @@ import { Checkbox, TextField } from "@/components/ui/field";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { RadioGroup } from "@/components/ui/radio-group";
 import { useToast } from "@/components/ui/toast";
-import { formatDate } from "@/lib/dates";
+import { formatDate, isoDateInZone } from "@/lib/dates";
 import { DISPLAY_NAME_MAX } from "@/lib/display-name";
 import { cancelPollAction, unfixDatesAction } from "../../poll/actions";
 import {
@@ -22,6 +22,7 @@ import {
   transferOrganizerAction,
 } from "../actions";
 import { tripPath } from "../paths";
+import { useCockpit } from "../../cockpit/components/cockpit-provider";
 import { markTabsReturn } from "./cockpit-client";
 import { useRemind } from "./remind-sheet";
 import styles from "./trip-sheet.module.css";
@@ -201,6 +202,8 @@ function MenuStep({
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.menuItems");
   const remind = useRemind();
+  // Phase-3 cockpit (W16 v2.13): «So habt ihr entschieden» opens the cockpit's sheet.
+  const cockpit = useCockpit();
   return (
     <ul className={styles.menu}>
       {canRemind && remind ? (
@@ -238,6 +241,17 @@ function MenuStep({
       {canInvite ? (
         <MenuItem icon="share" href={tripPath(publicId, "invite")}>
           {t("invite")}
+        </MenuItem>
+      ) : null}
+      {cockpit ? (
+        <MenuItem
+          icon="vote"
+          onClick={() => {
+            onClose();
+            cockpit.open({ kind: "decided" });
+          }}
+        >
+          {t("decided")}
         </MenuItem>
       ) : null}
       <MenuItem
@@ -502,7 +516,10 @@ function TransferStep({
           value: member.userId,
           label: member.displayName,
           hint: t("transferJoined", {
-            date: formatDate(member.joinedAt.slice(0, 10), intl, { weekday: false, year: false }),
+            date: formatDate(isoDateInZone(new Date(member.joinedAt)), intl, {
+              weekday: false,
+              year: false,
+            }),
           }),
         }))}
       />

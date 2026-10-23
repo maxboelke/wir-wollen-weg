@@ -352,3 +352,90 @@ function puff(root: HTMLElement, percent: number) {
   });
   return { layer, animations };
 }
+
+/**
+ * Small confetti round (UM-1 tap on the ring, UM-7 departure day): only the ring's confetti
+ * pieces fall in again and the sparkles pop – ≤ 1.2 s, no lap of honour, no puff, no
+ * vibration. Reduced motion: a 140 ms glow of the ring (opacity only), no confetti. The
+ * caller handles the 3 s lock against tapping repeatedly.
+ */
+export function confettiRound(root: HTMLElement, { glowOnly = false } = {}): Celebration {
+  const running: Animation[] = [];
+  let done = false;
+  let timer = 0;
+  const finish = () => {
+    if (done) return;
+    done = true;
+    window.clearTimeout(timer);
+    running.forEach((animation) => {
+      try {
+        animation.finish();
+      } catch {
+        // already cancelled
+      }
+    });
+  };
+  const track = (animation: Animation | null | undefined) => {
+    if (animation) running.push(animation);
+  };
+  root.removeAttribute("data-celebrate");
+  const glow = root.querySelector<SVGGElement>("[data-anim='glow']");
+  if (glowOnly || prefersReducedMotion()) {
+    // «Aufglühen» – the glow layer flashes once (UM-1 reduced).
+    track(
+      glow?.animate([{ opacity: 1 }, { opacity: 0.3 }, { opacity: 1 }], {
+        duration: DURATION.fade,
+        easing: "linear",
+      }),
+    );
+    timer = window.setTimeout(finish, DURATION.fade);
+    return { finish };
+  }
+  for (const element of root.querySelectorAll<SVGElement>(
+    "[data-piece], [data-anim='sparkles'] path",
+  )) {
+    element.style.transformBox = "fill-box";
+    element.style.transformOrigin = "center";
+  }
+  track(glow?.animate([{ opacity: 0.4 }, { opacity: 1 }], { duration: DURATION.base }));
+  root.querySelectorAll<SVGElement>("[data-piece]").forEach((piece, i) => {
+    const fall = 60 + ((i * 37) % 50);
+    const dx = ((i * 29) % 24) - 12;
+    const rotation = (i % 2 ? 1 : -1) * (90 + ((i * 53) % 90));
+    track(
+      piece.animate(
+        [
+          {
+            opacity: 0,
+            transform: `translate(${String(dx)}px, ${String(-fall)}px) rotate(${String(rotation)}deg)`,
+          },
+          { opacity: 1, offset: 0.3 },
+          { opacity: 1, transform: "none" },
+        ],
+        {
+          duration: 700 + ((i * 53) % 200),
+          delay: i * 25,
+          easing: EASING.standard,
+          fill: "backwards",
+        },
+      ),
+    );
+  });
+  const soft = spring("soft");
+  root.querySelectorAll<SVGElement>("[data-anim='sparkles'] path").forEach((spark, i) => {
+    track(
+      spark.animate(
+        [
+          { opacity: 0, transform: "scale(0)" },
+          { opacity: 1, transform: "none" },
+        ],
+        { duration: DURATION.base, delay: 520 + i * 60, easing: soft, fill: "backwards" },
+      ),
+    );
+  });
+  timer = window.setTimeout(finish, CONFETTI_ROUND_MS);
+  return { finish };
+}
+
+/** Hard end of the small round (UM-1: ≤ 1.2 s). */
+export const CONFETTI_ROUND_MS = 1200;

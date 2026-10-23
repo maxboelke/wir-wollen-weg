@@ -728,6 +728,8 @@ N1-9 ist der Wortlaut aus dem Auftraggeber-Feedback. Platzhalter, die noch fehle
 
 ### 14.4 Phase 3 „Steht fest“: nur noch die Übersicht als Reise-Hub
 
+> **Hinweis 2026-10-22:** Für die Ausbaustufe „Reise managen“ wird der Aufbau der Phase-3-Übersicht durch [W16 v2 „Reiseverlauf“](wireframes/w16-cockpit.md) (Teil A) abgelöst: Ergebnis-Karte → Ticket-Kopf, Andockfläche/`TripModule` → Weg + Kacheln „Immer griffbereit“, Nächster Schritt → Heute-Marker (H-1–H-5). Bis zur Umsetzung von W16 v2 gilt dieser Abschnitt unverändert; Regeln 1–3, Deep-Links, „Festlegung aufheben“ und Reisemenü gelten weiter.
+
 **Regeln**
 1. **Keine Tab-Leiste, sobald der Termin festgelegt ist** (gespeicherte Phase `fixed`, auch wenn die Reise schon vorbei ist). Der Cockpit-Kopf besteht nur aus Zeile 1 (← · Reisename + Phasenzeile «Steht fest · 7 dabei» · ⋯). Die Tab-Spur fällt weg. Eine Leiste mit nur „Übersicht“ wäre leere Navigation. Sticky bleibt Zeile 1. Der Vorfreude-Ring scrollt wie bisher mit. Höhe des kompakten Kopfs ohne Tabs: Designer (U-21).
 2. **Vergangen ohne Festlegung** (Suchzeitraum abgelaufen) behält die Tabs (unverändert).
@@ -802,3 +804,4 @@ Desktop (≥ 960 px): Hauptspalte 1–5, Seitenspalte 6 (wie W07).
 - 2026-10-10 (Inkrement 4): neu §12 – Bewertung der Abweichungen R-049, W09, Filter „Dauer“, Q20; §7.1 U-5 Tagesliste auf „vor Go-Live“ verschoben, Mindest-Fallback definiert.
 - 2026-10-10 (Inkrement 5): neu §13 – Bewertung der Abweichungen B1–B9 (Datumsfelder statt Mini-Kalender, Fokus nach Festlegen per Weiterleitung, Stimmenliste, Frist/Erinnern, Mindestnächte, „Platz 1“, Teilen-Text, Vorfreude-Ring, Status-Reset) und Empfehlungen zu „Abstimmung abbrechen“ und Suchzeitraum in Phase 2/3; §10.3 Teilen-Text „Abstimmung“ ohne Frist ergänzt.
 - 2026-10-20 (Feedback-Runde 1, Auftraggeber-Test der Live-Vorschau): neu §14 – Nächster-Schritt-Matrix N1/N2 inkl. „{Orga} Bescheid geben“ (14.1), Personen-Status + Erinnern für alle Mitglieder mit `RemindSheet` und WhatsApp als primärem Kanal (14.2, F-015 vorgezogen), Hinweis „Basiert auf x von n“ bei „Alle dabei“ (14.3), Phase 3 ohne Tabs als Reise-Hub mit Andockfläche, Deep-Links, Festlegung aufheben (14.4), Übergabeliste (14.5); Begriff „eingetragen“ statt „abgegeben“; Querverweise in §4.5, §4.10, §10.2, §10.3.
+- 2026-10-22 (Cockpit Variante C): Hinweis in §14.4 – Aufbau Phase 3 wird mit der Ausbaustufe durch W16 v2 „Reiseverlauf“ abgelöst.

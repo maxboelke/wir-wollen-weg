@@ -80,6 +80,8 @@ export interface PlaceholderView {
   createdAt: Date;
   /** Personal invite token – only ever handed to the organiser's views (F-007). */
   inviteToken: string;
+  /** UX-9: the organiser marked «macht ohne App mit» (station V2 counts it as done). */
+  withoutApp: boolean;
 }
 
 /** Open (not yet claimed) placeholders of a trip – only call after `findMembership`. */
@@ -90,6 +92,7 @@ export async function listPlaceholders(tripId: string): Promise<PlaceholderView[
       displayName: tripPlaceholder.displayName,
       createdAt: tripPlaceholder.createdAt,
       inviteToken: tripPlaceholder.inviteToken,
+      withoutApp: sql<boolean>`${tripPlaceholder.withoutAppAt} is not null`,
     })
     .from(tripPlaceholder)
     .where(and(eq(tripPlaceholder.tripId, tripId), isNull(tripPlaceholder.claimedAt)))

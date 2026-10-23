@@ -82,10 +82,12 @@ export default async function AccountPage() {
           <h2 id="account-privacy" className={styles.cardTitle}>
             {t("privacy.title")}
           </h2>
-          <a className={`${styles.textLink} ${styles.backLink}`} href={PRIVACY_PATHS[locale]}>
-            {t("privacy.policy")}
-          </a>
-          <div>
+          {/* Policy and export as one group – no extra card gap between the two links
+              (Pflege-Paket, Inkrement-6-Kosmetik «Abstand Daten & Datenschutz»). */}
+          <div className={styles.linkGroup}>
+            <a className={styles.textLink} href={PRIVACY_PATHS[locale]}>
+              {t("privacy.policy")}
+            </a>
             <a className={styles.textLink} href="/account/export" download>
               {t("privacy.export")}
             </a>
