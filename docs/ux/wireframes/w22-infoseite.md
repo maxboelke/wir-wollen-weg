@@ -1,6 +1,6 @@
 # W22 – Infos zur Reise (Anzeige & Bearbeiten)
 
-Stand: 2026-10-22 · UI/UX · Status: **baureif für Inkrement 8** (Präzisierungen und Inkrement-8-Schnitt: Abschnitt C – gilt vor A/B) · Feature **F-033** (Text & Links, ohne Dateien) · Routen `/trips/{id}/info`, `/info/edit`
+Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 8** (Präzisierungen und Inkrement-8-Schnitt: Abschnitt C – gilt vor A/B) · **Inkrement 9: Abschnitt D** (Übernahme aus der Unterkunft) · Feature **F-033** (Text & Links, ohne Dateien) · Routen `/trips/{id}/info`, `/info/edit`
 Prototyp: [`#/info`](../mockups/reise-managen/index.html) (als Lena: „Bearbeiten“; nach „Das wird's“ in W18 „Adresse übernehmen“).
 
 ## Rechte
@@ -108,3 +108,28 @@ Zwei Spalten ab 960 px (Unterkunft | Treffpunkt + Gut zu wissen), Bearbeiten ein
 - **Datenschutz:** Infos sind Inhalte der Reise (keine „Reisedaten“ im Sinn von F-054), werden mit der Reise gelöscht (F-013) und nie in Mails, Teilen-Texte oder Logs übernommen. Im Datenexport (F-013) wie die Reisebeschreibung behandeln.
 - **Leerzustand Mitglied:** «Noch keine Infos – {Orga} trägt hier Adresse, Check-in und Treffpunkt ein.» (Name der Orga, bei mehreren die erste). Orga: Primär `[Infos ergänzen]` → `/info/edit`.
 
+
+## D. Inkrement 9 – Übernahme aus der festgelegten Unterkunft (2026-10-23, gilt vor A/B)
+
+Grundlage: CEO-Entscheidung (c) vom 2026-10-23 und [`features.md` R.7](../../product/features.md) I9-09. Unterkünfte: [W18 E](w18-unterkunft-swipen.md).
+
+**Regel:** Übernommen wird **nur der Name** (Titel des Vorschlags → Feld «Name der Unterkunft»). **Keine Adresse, kein Check-in, kein Link** – die Link-Vorschau liefert sie nicht verlässlich, und Portale nennen die genaue Adresse oft erst nach der Buchung. Es wird **nie automatisch gespeichert**: Die Übernahme füllt nur das Formular, gespeichert wird mit `[Speichern]`. Die Infos zeigen **keine** aus der Unterkunft abgeleiteten Angaben (eine Quelle: was in den Infos steht, hat die Orga eingetragen).
+
+| Einstieg | Wer | Wirkung |
+|---|---|---|
+| W18 „Eure Unterkunft“: Text-Taste «Name in die Infos übernehmen ›» (solange Infos-Name ≠ Titel) | Orga (Inkr. 11: + „bucht“) | öffnet `/info/edit?from=stay`: Feld Name **vorbelegt** mit dem Titel (auch wenn schon ein anderer Name drinsteht – sichtbar geändert, Hinweis s. u.), Fokus auf das Feld **Adresse** |
+| `/info/edit`: Taste (Kontur, `btn-sm`) über dem Feld Name «Aus „{Titel}“ übernehmen» | wie oben | nur sichtbar, wenn eine Unterkunft festgelegt ist **und** Feld Name ≠ Titel; füllt das Feld (nicht gespeichert), Fokus auf Adresse, Live-Ansage «Name übernommen – jetzt Adresse und Check-in ergänzen.» |
+
+- War schon ein anderer Name eingetragen, steht unter dem Feld (Info, nicht Amber) «Vorher: „{alter Name}“» mit Text-Taste «Zurück» (stellt den alten Wert im Formular wieder her).
+- **Adress-Hinweis** im Feld Adresse (Hilfe unter dem Feld, immer, wenn eine Unterkunft festgelegt ist): «Die genaue Adresse steht meist in der Buchungsbestätigung.» / «The exact address is usually in your booking confirmation.» Ohne festgelegte Unterkunft bleibt die bisherige Hilfe («Wird als Link „In Karten öffnen“ gezeigt …»); beide Sätze stehen dann hintereinander.
+- Anzeige `/info`, Karte „Unterkunft“: bei festgelegter Unterkunft zusätzlich eine Text-Taste «Zur Unterkunft ›» (→ `/stays`), damit man vom Namen zum Portal-Link kommt – keine Kopie von Daten. Ist der Infos-Name leer, bleibt die Karte so, wie sie ohne Unterkunft wäre.
+- Wird die Unterkunft-Festlegung aufgehoben oder eine andere festgelegt, bleiben die Infos **unverändert** (die Orga entscheidet, ob sie den Namen ändert); die Übernahme-Taste erscheint dann wieder, weil Name ≠ neuer Titel.
+- Leerzustand Mitglied bei festgelegter, gebuchter Unterkunft, aber leeren Infos: unverändert «Noch keine Infos – {Orga} trägt hier Adresse, Check-in und Treffpunkt ein.»
+
+| Schlüssel (Vorschlag) | DE | EN |
+|---|---|---|
+| `info.fromStay` | Aus „{title}“ übernehmen | Copy from “{title}” |
+| `info.fromStay.done` (sr) | Name übernommen – jetzt Adresse und Check-in ergänzen. | Name copied – now add the address and check-in. |
+| `info.fromStay.previous` / `.restore` | Vorher: „{name}“ · Zurück | Before: “{name}” · Restore |
+| `info.addressHint.stay` | Die genaue Adresse steht meist in der Buchungsbestätigung. | The exact address is usually in your booking confirmation. |
+| `info.toStay` | Zur Unterkunft | Go to the place |

@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <title>Demo-Unterkunft: Altstadtwohnung</title>
+  <desc>Eigene Illustration (Fantasie-Unterkunft, Demo-Daten F-031): schmale Altstadtgasse mit Steinfassaden, Balkon mit Blumen, Wäscheleine, Torbogen und Glockenturm im Hintergrund, Pflaster mit Sonnenstreifen. Lizenzfrei, selbst erstellt.</desc>
+  <!-- v1.1 (2026-10-23) · 4:3 · Motiv in der sicheren Zone x 50 bis 350, y 38 bis 262 · keine Theme-Umschaltung -->
+  <defs>
+    <linearGradient id="wwd5-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#C9DBFF"/>
+      <stop offset="1" stop-color="#ECE6FF"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#wwd5-sky)"/>
+  <rect x="176" y="40" width="48" height="150" fill="#EADFCF"/>
+  <path d="M170 42l30-30 30 30z" fill="#F0503F"/>
+  <rect x="190" y="58" width="20" height="30" rx="10" fill="#2B2266"/>
+  <circle cx="200" cy="80" r="6" fill="#FFCF4A"/>
+  <rect x="188" y="110" width="24" height="24" rx="12" fill="#FFFFFF"/>
+  <path d="M200 114v8l5 4" fill="none" stroke="#2B2266" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M120 300V150h160v150z" fill="#D9CBB4"/>
+  <path d="M150 300v-90a50 50 0 0 1 100 0v90z" fill="#FFE7A3"/>
+  <path d="M150 300v-90a50 50 0 0 1 100 0v90h-14v-88a36 36 0 0 0-72 0v88z" fill="#EADFCF"/>
+  <path d="M0 0h150v300H0z" fill="#FFD3C7"/>
+  <path d="M150 0l-4 300" stroke="#EAB8A9" stroke-width="6"/>
+  <path d="M400 0H262v300h138z" fill="#EADFCF"/>
+  <path d="M262 0l4 300" stroke="#D9CBB4" stroke-width="6"/>
+  <g fill="#2B2266">
+    <rect x="34" y="30" width="34" height="50" rx="17"/>
+    <rect x="92" y="30" width="34" height="50" rx="17"/>
+    <rect x="34" y="200" width="34" height="56" rx="4"/>
+    <rect x="296" y="34" width="34" height="48" rx="4"/>
+    <rect x="348" y="34" width="34" height="48" rx="4"/>
+    <rect x="296" y="196" width="40" height="70" rx="20"/>
+  </g>
+  <rect x="62" y="104" width="64" height="58" rx="4" fill="#2B2266"/>
+  <rect x="62" y="104" width="64" height="58" rx="4" fill="#FFCF4A" opacity=".2"/>
+  <path d="M94 104v58" stroke="#FFD3C7" stroke-width="3"/>
+  <rect x="26" y="104" width="30" height="58" rx="3" fill="#00775A"/>
+  <rect x="132" y="104" width="12" height="58" rx="3" fill="#00775A"/>
+  <path d="M30 116h22M30 126h22M30 136h22M30 146h22" stroke="#133C3B" stroke-width="2"/>
+  <rect x="52" y="160" width="84" height="8" rx="2" fill="#57527A"/>
+  <path d="M56 168v18M68 168v18M80 168v18M92 168v18M104 168v18M116 168v18M128 168v18" stroke="#57527A" stroke-width="3"/>
+  <rect x="52" y="184" width="84" height="5" rx="2" fill="#57527A"/>
+  <g fill="#1FBF94">
+    <circle cx="60" cy="156" r="9"/>
+    <circle cx="80" cy="154" r="10"/>
+    <circle cx="106" cy="156" r="9"/>
+    <circle cx="126" cy="154" r="9"/>
+  </g>
+  <g fill="#F0503F">
+    <circle cx="58" cy="150" r="4"/>
+    <circle cx="82" cy="148" r="4"/>
+    <circle cx="124" cy="148" r="4"/>
+  </g>
+  <g fill="#FFCF4A">
+    <circle cx="70" cy="152" r="3.5"/>
+    <circle cx="106" cy="149" r="4"/>
+  </g>
+  <path d="M150 96c40 18 72 18 112 0" fill="none" stroke="#57527A" stroke-width="2"/>
+  <path d="M168 104h18v20l-4-3-5 3-5-3-4 3z" fill="#FFFFFF"/>
+  <path d="M196 108h16v22h-16z" fill="#52E5B8"/>
+  <path d="M222 106h20v16h-20z" fill="#FFCFE6"/>
+  <path d="M146 270h108l30 30H118z" fill="#C9C6D4"/>
+  <path d="M168 272h58l22 28h-96z" fill="#FFDB73" opacity=".7"/>
+  <g fill="none" stroke="#ABA7BD" stroke-width="2" stroke-linecap="round">
+    <path d="M140 284h34M206 284h40M128 294h30M236 294h42"/>
+  </g>
+  <rect x="330" y="130" width="40" height="30" rx="4" fill="#2B2266"/>
+  <path d="M350 130v30" stroke="#EADFCF" stroke-width="3"/>
+  <rect x="324" y="158" width="52" height="6" rx="2" fill="#F0503F"/>
+  <circle cx="336" cy="156" r="6" fill="#1FBF94"/>
+  <circle cx="364" cy="156" r="6" fill="#1FBF94"/>
+</svg>

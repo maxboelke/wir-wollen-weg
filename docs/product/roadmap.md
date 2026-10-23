@@ -1,6 +1,8 @@
 # Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-22 (v0.6, Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-23 (v0.7; v0.6: Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+
+**Änderungen v0.7 (2026-10-23):** **Inkrement 8 erledigt** (Cockpit „Reiseverlauf“ + Infoseite, PR #23 gemergt). **Inkrement 9 „Unterkünfte“ in Arbeit** – Zuschnitt features.md **R.7** (User Stories I9-01–I9-11, Rechte, SSRF-Schutz, Datenhaltung, Demo-Seed); UI/UX macht W17/W18 parallel baureif.
 
 **Änderungen v0.6 (2026-10-22, Auftraggeber „Ja zu allem“):** **Q26/Q27 entschieden** – Ausbaustufe R kommt **vor** Phase 2, Reihenfolge 8 → 12 wie vorgeschlagen. **Inkrement 7 wird aufgelöst:** F-015 ist mit Feedback-Runde 1 gebaut, F-017 großteils mit Inkrement 5; der kleine Rest geht in ein **Pflege-Paket** neben Inkrement 8, Motion „MVP+“ in eine **Politur vor der Beta** (vor M1). **Inkrement 8** nach W16 v2 „Reiseverlauf“ zugeschnitten (features.md R.6).
 
@@ -129,8 +131,8 @@ Die übrigen „vor Go-Live“-Punkte (CLAUDE.md, compliance-checklist) bleiben 
 
 | Inkrement | Inhalt | Feature-IDs | Aufwand | Echte Daten ab |
 |---|---|---|---|---|
-| 8 | Reise-Cockpit „Reiseverlauf“ (W16 v2): Ticket-Kopf mit Ring + Konfetti, Weg-Gerüst (`tripRoute()`), Stationen V1 „Termin steht“ + V2 „Alle sind dabei“ (inkl. UX-9 „ohne App“), Heute, Ziel „Es geht los!“, Teilphasen Vorbereitung/Unterwegs/Danach, kleine Feier am Abreisetag (UX-8), Kachel Infos, Mehr zur Reise; Infoseite (Text/Links, Bearbeiten Orga) – **Zuschnitt features.md R.6** | F-053, F-033 | M (≈ 1) | G1 |
-| 9 | Unterkünfte Stufe 1: Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (+ Motion Swipe) | F-031 | M–L (≈ 1–1,5) | G1 |
+| 8 ✅ | Reise-Cockpit „Reiseverlauf“ (W16 v2): Ticket-Kopf mit Ring + Konfetti, Weg-Gerüst (`tripRoute()`), Stationen V1 „Termin steht“ + V2 „Alle sind dabei“ (inkl. UX-9 „ohne App“), Heute, Ziel „Es geht los!“, Teilphasen Vorbereitung/Unterwegs/Danach, kleine Feier am Abreisetag (UX-8), Kachel Infos, Mehr zur Reise; Infoseite (Text/Links, Bearbeiten Orga) – **Zuschnitt features.md R.6** | F-053, F-033 | M (≈ 1) | G1 |
+| 9 🔄 in Arbeit | Unterkünfte Stufe 1: Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (Orga; „Bucht“ ab 11), Station V3 + Kachel + UX-9, Termin-Änderungs-Hinweis (+ Motion Swipe) – **Zuschnitt features.md R.7** | F-031 (+ F-053 V3) | M–L (≈ 1–1,5) | G1 |
 | 10 | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Abschluss | F-035, F-036 | M–L (≈ 1,5) | G1 |
 | 11 | Zuständigkeit „Bucht“ + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung) + Security-Review | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
 | 12 | Datei-Infrastruktur (EU-Objektspeicher, Virenscan, Header-Härtung) + Reiseunterlagen Stufe 1 + Screenshots für Unterkünfte | F-055, F-031 (Stufe 2) | L (≈ 1,5–2) | **G1 + G1b** |

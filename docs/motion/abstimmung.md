@@ -1,6 +1,6 @@
 # Abstimmung Motion ↔ Design, UI/UX, Entwicklung
 
-Stand: 2026-10-08 (Runde 2) · Verantwortlich: Motion Designer · Status: **M-D1–M-D9 und M-U1–M-U11 geklärt**; neu offen: M-D10–M-D12, M-U12, M-X6–M-X7
+Stand: 2026-10-23 (Runde 3) · Verantwortlich: Motion Designer · Status: **M-D1–M-D12, M-U1–M-U12 geklärt** (CEO 2026-10-08); **UM-1 – UM-13 beantwortet** (§4); neu offen: M-U13–M-U15, M-D13–M-D14, M-X8–M-X9
 Bezug: [motion-system.md](motion-system.md) · [interaktionen.md](interaktionen.md) · [prototypes/](prototypes/README.md) · Antworten Designer: [design/abstimmung-ux.md §6](../design/abstimmung-ux.md) · Antworten UI/UX: [ux/abstimmung-design.md §9](../ux/abstimmung-design.md)
 
 Der Motion Designer ändert keine Dateien in `docs/design/` oder `docs/ux/`. Wünsche stehen hier; Antworten bitte in den jeweiligen eigenen Abstimmungsdateien bzw. über den CEO.
@@ -67,6 +67,55 @@ Ebenfalls aus UX §9 übernommen: Konflikt (3) „Initiale reiht sich in Avatar-
 | **M-X6** | **Feier-Merker serverseitig** | Pro Mitgliedschaft die ID/Version der Festlegung speichern, für die die Feier gezeigt wurde (z. B. `celebratedFixationId`); setzen beim sichtbaren Start; neue Festlegung → neue ID → erneut. | offen (Developer) |
 | **M-X7** | **Ring per WAAPI** | Ehrenrunde animiert `stroke-dasharray`/`stroke-dashoffset` (Ring) und `transform` (Sonnenpunkt) aus gemeinsam vorberechneten Keyframes. In Safari/iOS-WebView ≥ 17 und Android WebView kurz prüfen; Fallback ohne Unterstützung: Ring steht sofort im Endzustand (kein Fehler, nur weniger Bewegung). | offen (Developer, Test T2) |
 
+## 4. Runde 3 – Cockpit „Reiseverlauf“ und Unterkünfte (2026-10-23)
+
+Antworten auf [ux/abstimmung-design.md §12.3, §13 und §14.2](../ux/abstimmung-design.md). Ausführliche Spezifikation: [interaktionen.md W16, W17, W18](interaktionen.md#w18--unterkünfte-swipen-rangliste-festlegen-f-031-inkrement-9---f). Prototyp: [f-unterkunft-swipen.html](prototypes/f-unterkunft-swipen.html).
+
+### 4.1 Antworten an UI/UX – UM-1 bis UM-7 (Cockpit, gegengeprüft am gebauten Code)
+
+| # | Antwort Motion | Katalog | Status |
+|---|---|---|---|
+| **UM-1** Konfetti auf Antippen | **Einverstanden und so gebaut** (`confettiRound`: ≤ 1,2 s, Sperre 3 s, kein Puff, keine Vibration; reduziert kurzes Aufglühen 140 ms). Hinweis: Die Teilchen liegen im Cockpit-Ring dauerhaft (Mockup C v2); M-D11 („ausblenden bei späteren Besuchen“) betraf nur die alte Ergebnis-Karte W11-04 und gilt für den Ticket-Ring nicht. | W16-01 | **geklärt** |
+| **UM-2** Weg baut sich auf | **Einverstanden, gebaut.** Läuft richtigerweise nur bei Client-Rendern (R-017); bei hartem Neuladen steht der Weg sofort – gewollt. | W16-02 | **geklärt** |
+| **UM-3** Heute-Marker | **Einverstanden**, eine kleine Korrektur: gebaut 3 × 1,6 s ab 480 ms = Ende bei 5,28 s. Empfehlung **3 × 1,4 s** (Ende 4,68 s), damit sicher nichts > 5 s automatisch läuft (WCAG 2.2.2). | W16-03 | **geklärt** (Fix an Developer, M-X8) |
+| **UM-4** Station neu erledigt | **Einverstanden mit den UX-Bedingungen** (ein Pop, keine Ansage, kein FLIP, reduziert statisch). Korrektur: Pop **nie kleiner** als der gemalte Zustand – `scale 1 → 1,25 → 1` ohne Verzögerung statt `0,6 → 1` nach 120 ms (sonst zuckt der server-gerenderte Marker). | W16-04 | **geklärt** (Fix an Developer, M-X8) |
+| **UM-5** Aufklappen | **Bewegung der Einträge ja, Höhen-Animation nein.** Die gebaute `grid-template-rows`-Transition ist eine Layout-Animation (motion-system §5.4/§7, G-14). Empfehlung: Transition entfernen, Layout springt, Einträge blenden gestaffelt ein (ist schon gebaut). Falls der CEO die weiche Höhe behalten will: als dokumentierte Ausnahme nur für kurze Listen (≤ 6 Einträge) in diesem einen Bauteil. | W16-05 | **geklärt** (Fix an Developer, M-X8 – oder CEO-Ausnahme) |
+| **UM-6** Mini-Ring | **Einverstanden, gebaut** (IntersectionObserver, Fade 140 ms, bleibt bei reduzierter Bewegung). | W16-06 | **geklärt** |
+| **UM-7** Abreisetag | **Einverstanden, gebaut** (einmal je Person, Server-Merker, Start erst bei sichtbarem Tab, Vorrang der großen Feier, reduziert nur Satz). | W16-07 | **geklärt** |
+
+### 4.2 Antworten an UI/UX – UM-8 bis UM-13 (Unterkünfte, Swipen)
+
+| # | Antwort Motion | Katalog | Status |
+|---|---|---|---|
+| **UM-8** Ziehen + Stempel | **Übernommen und präzisiert:** Slop 8 px (danach \|dx\| > \|dy\|, sonst Scroll), Randstreifen 16 px, Versatz ohne Sprung (dx − 8), Rotation tx/18, max. ±12°, Drehpunkt unten Mitte. Stempel-Deckkraft ab 16 px bis zur Schwelle, Skalierung 0,9 → 1, Neigung fest (♥ oben links −12°, ✕ oben rechts +12°). Zweite Karte kommt beim Ziehen halb näher (95 → 97,5 %, 8 → 4 px). **Neu W18-02:** an der Schwelle nickt der Stempel einmal und die passende Taste zeigt ihren Gedrückt-Look – das ist der Ersatz für Vibration. Reduziert: folgt dem Finger ohne Rotation; Stempel-Deckkraft bleibt (direkte Rückmeldung). | W18-A, W18-01, W18-02 | **geklärt** |
+| **UM-9** Auslösen / Ausfliegen | **Übernommen mit einer Änderung:** Nach einer **Geste** nicht `ease-exit`, sondern **`linear` mit übernommenem Schwung** (Dauer = Restweg / max(v, 1,2 px/ms), 140–220 ms) – `ease-exit` startet langsam und würde die fliegende Karte beim Loslassen kurz „stocken“ lassen. Nach **Taste/Pfeil** (Karte startet aus der Ruhe) wie vorgeschlagen `base` · `ease-exit`. Schwellen: 0,3 × Kartenbreite (geklemmt 80–140 px) oder ≥ 0,6 px/ms ab 24 px; bei schnellem Schwung entscheidet dessen Richtung. Nächste Karte **im selben Frame** oberste und bedienbar, federt `base` · `spring-soft` von ihrer aktuellen Lage auf 100 %. Ausflug 1,2 × Kartenbreite, Deckkraft ab 50 % → 0, max. 2 fliegende Karten. Gedrückt gehaltene Pfeiltaste bewertet nur einmal (`event.repeat` ignorieren). Reduziert: Überblenden 140 ms. | W18-03 … W18-05 | **geklärt** |
+| **UM-10** Zurückfedern + Rückgängig | **Übernommen:** Zurückfedern `slow` · `spring-soft` (unterbrechbar, ein neuer Griff friert die Feder ein). Rückgängig: Karte kommt aus ihrer Ausflugrichtung (`slow` · `spring-soft`), **ihr alter Stempel** steht anfangs voll da und blendet aus (erklärt die Rücknahme); bisher oberste Karte wird zweite. Reduziert: zurückfedern sofort, Rückgängig Überblenden. | W18-06, W18-07 | **geklärt** |
+| **UM-11** Stapel-Ende + Rangliste | **Übernommen:** Siegel **64 px** wie die Abgabe (W08-10) – erst nach Server-Bestätigung aller Bewertungen (sonst «Speichert …» ab 400 ms). Fokus sofort auf h2. Ranglisten-Staffel einmal je Freischaltung (Merker je Reise), nur bei Client-Rendern, nicht für die Orga – als **MVP+** (MVP darf statisch sein). | W18-08, W18-09 | **geklärt** |
+| **UM-12** Festlegen / gebucht | **Übernommen, kein Konfetti, keine Vibration.** Festlegen: „Eure Unterkunft“ tritt ein, **Siegel 40 px** ploppt (nur für die handelnde Orga, kein Server-Merker), Snackbar. Gebucht: das ✓ im Chip ist ein **Siegel 20 px** und ploppt; Chip überblendet. Scheitern: zurück per Überblenden ohne Rückwärts-Siegel. Aufheben/Doch nicht/UX-9: E0. | W18-11 … W18-13 | **geklärt** |
+| **UM-13** Haptik | **Bestätigt: keine zusätzliche Vibration.** Begründung: Bei bis zu 30 Karten würde eine Vibration je Schwelle/Auslösen schnell lästig; iOS (Mehrheit der Gruppe in WhatsApp/Instagram) kann ohnehin nicht vibrieren, d. h. das Gefühl muss optisch tragen (W18-02); Q17 bleibt unverändert bei zwei Stellen. **Keine Q17-Erweiterung vorgeschlagen.** | W18-18, motion-system §6.4 | **geklärt** |
+
+### 4.3 Neu an UI/UX (Runde 3)
+
+| # | Thema | Frage / Vorschlag | Status |
+|---|---|---|---|
+| **M-U13** | **Tastenreihe beim Swipen fixieren** | Karten sind unterschiedlich hoch (lange Titel, Notiz, ohne Bild bei 200 %). Steht die Tastenreihe direkt unter dem Stapel, springt sie nach jeder Bewertung – wer schnell `♥ ♥ ✕` tippt, trifft die falsche Taste (motion-system §5.10). Vorschlag: Tastenreihe + Hinweis als **fixierte Leiste unten** (Muster ux-spec §4.3, `env(safe-area-inset-bottom)`, Seite bekommt passenden `scroll-padding-bottom`); Stapel darüber. Alternative: Stapelhöhe merkt sich die größte bisher gezeigte Karte und wächst nur (springt seltener, aber nicht nie). | **offen** |
+| **M-U14** | **Fokus nach «Als gebucht markieren»** | Die Primär-Taste wird zur Text-Taste «Doch nicht gebucht» – der Fokus verlöre sein Ziel. Vorschlag: Fokus sofort auf «Doch nicht gebucht» (ersetzt den Auslöser), umgekehrt beim Rückgängig auf `[Als gebucht markieren]`. Bitte in W18 E.7.3 bestätigen. | **offen** |
+| **M-U15** | **Fokus in der ausfliegenden Karte** | Liegt der Fokus beim Bewerten (Pfeiltaste) auf dem Portal-Link der obersten Karte, verschwindet sein Element. Vorschlag: Fokus auf die h2 der neuen obersten Karte (`tabindex="-1"`); am Ende wie E.5.4 auf «Geschafft!». Bitte bestätigen oder anders festlegen. | **offen** |
+
+### 4.4 Neu an den Designer (Runde 3)
+
+| # | Thema | Bitte / Vorschlag | Status |
+|---|---|---|---|
+| **M-D13** | **Siegel an „Eure Unterkunft“** | UM-12 braucht einen Platz für das Siegel. Vorschlag: **40 px, überlappt die rechte obere Ecke des Bildes** (wie ein Stempel auf dem Foto, 3-px-Rand in Fläche), bleibt **dauerhaft** als Zeichen „das ist eure“ (statisch, `aria-hidden`); die Bewegung (Plopp) sieht nur die Orga direkt nach dem Festlegen. Bitte in D-51 aufnehmen oder anderen Platz nennen. | **offen** |
+| **M-D14** | **Stempel und Tasten-Gedrückt-Look (zu D-47/D-49)** | Für die Bewegung nötig: Stempel als **ein** Element (Icon + Wort) mit fester Neigung ±12°, `max-width` 60 % der Karte, darf zweizeilig umbrechen; deckend genug, um auf jedem Foto lesbar zu sein (heller Grund ≈ 92 % statt Verlauf, kein `backdrop-filter`). Für W18-02 einen **Gedrückt-/Scharf-Look** der 64-px-Tasten, der ohne Bewegung wirkt (z. B. gefülltes Icon + Ring), damit er auch bei reduzierter Bewegung trägt. Farben (Minze vs. Lavendel für ♥, neutral für ✕) entscheidet der Designer – die Bewegung ist davon unabhängig. | **offen** |
+
+### 4.5 An Developer (über den CEO)
+
+| # | Thema | Vorschlag | Status |
+|---|---|---|---|
+| **M-X8** | **Kleine Cockpit-Korrekturen** (niedrig, z. B. im Pflege-Paket von Inkrement 9) | (a) `route.module.css` `.pulse::after`: `1.6s` → `1.4s` (W16-03). (b) `route-view.tsx` UM-4: Keyframes `scale(1) → scale(1.25) @0.35 → scale(1)`, ohne `delay`, Kurve `EASING.standard`, Dauer `moderate` (W16-04). (c) `route.module.css` `.expand`: `transition: grid-template-rows …` entfernen (Inhalt springt, `revealEntries` bleibt) – sofern der CEO keine Ausnahme beschließt (W16-05). | **offen** |
+| **M-X9** | **Karten-Geste ohne Bibliothek** | Pointer Events + WAAPI, Parameter W18-A als Konstanten neben `src/lib/motion.ts`; Unterbrechen per `commitStyles()` + `cancel()`; Siegel-Pop über eine wiederverwendbare `sealPop(el, size)` (20/40/64 px) statt Einzel-Code an drei Stellen. Tests: Playwright mit `reducedMotion: 'reduce'` (keine `transform`-Animation außer dem Finger-Folgen), Geste per `page.mouse` (Schwelle, Schwung, Zurückfedern), `event.repeat`, Fokus nach Bewertung. | **offen** (zur Kenntnis) |
+
 ## Entscheidungen des Auftraggebers (2026-10-08, Q17)
 - Schalter „Bewegung reduzieren“ im Konto (W13) zusätzlich zur Systemeinstellung: **ja**.
 - Feier für **alle** Mitglieder, einmal pro Person und Festlegung (F-012): **ja**.
@@ -77,6 +126,7 @@ Ebenfalls aus UX §9 übernommen: Konflikt (3) „Initiale reiht sich in Avatar-
 - Die Feier F-012 ist der **Vorfreude-Ring** (`countdown-ring.svg`), nicht Siegel + Kalenderblatt.
 
 ## Changelog
+- 2026-10-23 Runde 3: §4 – Antworten UM-1 – UM-7 (Gegenprüfung Cockpit-Code, drei kleine Korrekturen → M-X8) und UM-8 – UM-13 (Swipen, UM-13 bestätigt: keine Vibration); neu M-U13–M-U15, M-D13–M-D14, M-X8–M-X9; Prototyp f.
 - 2026-10-08 Runde 2: Status aller M-Punkte nach den Antworten von Designer (abstimmung-ux §6) und UI/UX (abstimmung-design §9) gesetzt; neu M-D10–M-D12, M-U12, M-X6–M-X7.
 - 2026-10-08 Runde 1: Erstfassung M-D1–M-D9, M-U1–M-U11, M-X1–M-X5.
 

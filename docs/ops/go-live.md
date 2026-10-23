@@ -1,6 +1,6 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.2 (gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
+Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.3 (v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
@@ -48,6 +48,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | **AVV-Liste vollständig** (Hosting, Mail, Postfach, ggf. Backup-Speicher), Ablage außerhalb des Repos | Operations | compliance §3 |
 | ☐ | VVT angelegt, Löschkonzept final, Schwellwertanalyse DSFA dokumentiert | Operations (OPS-6) | compliance §5, §6 |
 | ☐ | **Entscheidung: HIBP-Check einschalten?** (`PASSWORD_BREACH_CHECK=hibp`) – neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität: nur 5 Zeichen des SHA-1-Hashs verlassen den Server; kein Konto, keine Kosten, fail-open). **Ja (Empfehlung Operations):** bessere Passwortqualität; Datenschutzerklärung muss die Übermittlung nennen, Server braucht ausgehende HTTPS-Verbindung zu `api.pwnedpasswords.com`. **Nein:** nur Offline-Liste (Ist-Stand Demo) | Auftraggeber, Operations setzt Env-Variable | tech-stack.md §3.2, deployment.md (Env-Variablen), compliance §2 |
+| ☐ | **Datenschutzerklärung um „Unterkünfte & Link-Vorschau“ ergänzt** (Abruf fremder Seiten durch unseren Server ohne Daten der Person, Bilder nicht gespeichert, Notizen für die Reise sichtbar; Urheberrecht Vorschaubilder geprüft) | Operations (Entwurf), Rechtsprüfung | compliance §2a, features.md R.7 I9-10 |
 | ☐ | Registrierungshinweis mit Links auf Datenschutz (und ab M2 Nutzungsbedingungen), Mindestalter 16 | Developer, Reviewer | compliance §9 |
 
 ### 2b. Betrieb (Q15)
@@ -61,6 +62,8 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | SPF/DKIM/DMARC grün, Zustellung an Gmail/Outlook/GMX/web.de/iCloud getestet (nicht im Spam) | Operations | deployment.md §7 |
 | ☐ | Retention-Job (F-013/F-043) läuft täglich, Testlauf auf Staging | Developer, Operations | compliance §6 |
 | ☐ | Security-Header geprüft, TLS A/A+, `noindex` auf Reiseseiten, Rate-Limits aktiv (`RATE_LIMIT_ENABLED=true`), `/.well-known/security.txt` mit echtem Kontakt | Operations, Reviewer | deployment.md §4, tech-stack.md §8 |
+| ☐ | **CSP Stufe 2 (Nonce, `strict-dynamic`) scharf geschaltet**, vorher ≥ 1 Inkrement Report-Only ohne Verstöße in E2E; Bild-Proxy mit `default-src 'none'; sandbox` | Developer, Reviewer | deployment.md §0.9 |
+| ☐ | **Egress-Härtung** des App-Containers (nur `tcp/443` ins Internet, interne Netze + Metadaten `169.254.169.254` gesperrt); SSRF-Tests der Link-Vorschau grün | Operations (OPS-1), Reviewer | deployment.md §0.8, §5.1 |
 | ☐ | **In-App-Browser-Gerätetest T2** (WhatsApp, Instagram; iOS + Android) über Staging bestanden | Developer + Reviewer | tech-stack.md §11 |
 | ☐ | Demo-Seed-Daten **nicht** in Produktion (Seed-Skript verweigert `APP_ENV=production`) | Developer, Reviewer | deployment.md §0.4 |
 | ☐ | Reviewer-Freigabe ✅ für alle Features des Meilensteins (DE und EN) | Reviewer | CLAUDE.md |

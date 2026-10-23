@@ -1,6 +1,7 @@
 import "server-only";
 import { and, asc, count, eq, inArray, isNull, ne, or, sql } from "drizzle-orm";
 import { cleanDisplayName, firstName, isNameTaken, suggestName } from "@/lib/display-name";
+import { currencyForCountry } from "@/lib/stays";
 import type { TripValues } from "@/lib/trip-input";
 import {
   generateInviteToken,
@@ -15,6 +16,7 @@ import {
   trip,
   tripMember,
   tripPlaceholder,
+  tripStay,
   type MemberRole,
 } from "./db/schema";
 
@@ -196,7 +198,12 @@ async function insertWithUniqueIds(tx: Tx, values: TripValues & { locale: string
       const row = await tx.transaction(async (sp) => {
         const [inserted] = await sp
           .insert(trip)
-          .values({ ...values, publicId: generatePublicId(), inviteToken: generateInviteToken() })
+          .values({
+            ...values,
+            currency: currencyForCountry(values.holidayCountry),
+            publicId: generatePublicId(),
+            inviteToken: generateInviteToken(),
+          })
           .returning();
         return inserted;
       });
@@ -302,6 +309,12 @@ export async function removeMember(tripId: string, userId: string): Promise<bool
       )
       .returning({ userId: tripMember.userId });
     if (removed.length === 0) return false;
+    // Places to stay (R.7 I9-10): the ratings went with the membership; own suggestions stay
+    // for the group, the author becomes «ehemaliges Mitglied».
+    await tx
+      .update(tripStay)
+      .set({ createdBy: null })
+      .where(and(eq(tripStay.tripId, tripId), eq(tripStay.createdBy, userId)));
     await tx
       .delete(tripPlaceholder)
       .where(and(eq(tripPlaceholder.tripId, tripId), eq(tripPlaceholder.claimedBy, userId)));

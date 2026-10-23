@@ -1,14 +1,14 @@
 # Status-Board – Wir wollen weg
 
-Stand: 2026-10-20 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
+Stand: 2026-10-23 · Gepflegt von: Operations Manager (Aktualisierung durch CEO nach jedem Agent-Bericht) · Bezug: [roadmap.md](../product/roadmap.md), [features.md](../product/features.md)
 
 Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer ✅ bzw. CEO-Abnahme bei Konzeptdokumenten) · **blockiert** · **zurückgestellt** (bewusst bis Go-Live verschoben, nicht blockierend)
 
-**Betriebsmodus:** Offline-Demo (lokal, Docker Compose + Mailpit, keine Konten/Abos) – [deployment.md §0](deployment.md). Übergang in den Echtbetrieb nur über das [Go-Live-Gate](go-live.md); **der CEO erinnert den Auftraggeber spätestens 6 Wochen vor dem gewünschten Beta-Start** (bzw. bei Beginn P1-5).
+**Betriebsmodus:** Offline-Demo (lokal, Docker Compose + Mailpit, keine Konten/Abos) – [deployment.md §0](deployment.md) – plus **private Live-Vorschau** auf Vercel Hobby + Neon Free (Zugangspasswort, nur Demo-Daten, PRD Q25, [deployment.md §0.7](deployment.md)). Übergang in den Echtbetrieb nur über das [Go-Live-Gate](go-live.md); **der CEO erinnert den Auftraggeber spätestens 6 Wochen vor dem gewünschten Beta-Start** (bzw. bei Beginn P1-5).
 
 ## Aktuelle Phase
 
-**Phase 1 – MVP, Demo-Abnahme M0.5 vorbereitet** (Inkremente 1–6 gemergt, zuletzt PR #11 am 2026-10-16; Entscheidungen Q23/Q24 getroffen). Demo-Paket für den Auftraggeber liegt bereit: Ein-Befehl-Start `bash scripts/demo.sh start` (nur Docker nötig, Handy im WLAN), [demo-anleitung.md](demo-anleitung.md), [demo-drehbuch.md](demo-drehbuch.md) mit Feedback-Checkliste. **Nächster Schritt:** Demo-Termin mit dem Auftraggeber (OPS-11), danach Go-Live-Gate G1 besprechen bzw. Inkrement 7.
+**Ausbaustufe „Reise managen“ (Inkremente 8–12, roadmap.md v0.7).** Phase 1 (Inkremente 1–6) und Feedback-Runde 1 sind gemergt; **Inkrement 7 ist aufgelöst** (F-015 mit Feedback-Runde 1 gebaut, F-017-Rest + Kleinigkeiten als Pflege-Paket mit Inkrement 8, Motion MVP+ als „Politur vor der Beta“ – CEO 2026-10-22). **Inkrement 8** (Cockpit „Reiseverlauf“, Infoseite) ist mit **PR #23 am 2026-10-23 gemergt**. **Inkrement 9 „Unterkünfte“ (F-031 Stufe 1) ist in Arbeit** – Zuschnitt features.md R.7; UI/UX macht W17/W18 baureif, Motion/Designer liefern zu, Operations hat Egress, CSP und Datenschutz bewertet (OPS-13). Offen beim Auftraggeber: Demo-Abnahme M0.5 über die Vorschau, Retest „Mails im Demo-Postfach“ (R-067).
 
 ## Übersicht
 
@@ -36,7 +36,13 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | P1-4 | Heatmap + Kandidaten-Berechnung | developer → reviewer | F-008, F-009 | **fertig** (PR #9 gemergt 2026-10-10) | P1-3 |
 | P1-5 | Abstimmung & Festlegung (inkl. ICS) | developer → reviewer | F-010, F-011, F-012 | **fertig** (PR #10 gemergt 2026-10-11) – M0.5 inhaltlich erreicht | P1-4 |
 | P1-6 | Datenschutz-Funktionen & Konto löschen (inkl. Retention-Job), Hilfe/Lizenzhinweise, Abstimmung abbrechen (Q21) | developer → reviewer | F-013, F-043, F-051 | **fertig** (PR #11 gemergt 2026-10-16; Q23 Datenexport bleibt, Q24 Lösch-Hinweis nur an Orga). Vor Go-Live: täglicher Timer für `POST /api/internal/retention` (Operations, mit OPS-1) | P1-2 |
-| P1-7 | Should-Features nach Kapazität | developer → reviewer | F-015, F-017, F-052 (MVP+ inkl. Haptik) | **geplant** (Inkrement 7, nach Demo-Abnahme) | P1-5 |
+| P1-7 | Should-Features nach Kapazität (Inkrement 7) | developer → reviewer | F-015, F-017, F-052 (MVP+ inkl. Haptik) | **aufgelöst** (CEO 2026-10-22): F-015 mit P1-FB1 gebaut, F-015 + F-017 mit P1-8 abgenommen; Q21-Hinweis Übersicht + Abstand „Daten & Datenschutz“ im Pflege-Paket von P1-8; Motion MVP+ → „Politur vor der Beta“ | P1-5 |
+| P1-FB1 | Feedback-Runde 1: Nächster-Schritt-Karte, Personen-Status + Erinnern (F-015), „Basiert auf x von n“, Phase 3 ohne Tabs | developer → reviewer | F-015, F-008, F-012 | **fertig** (PR #22 gemergt 2026-10-22) | OPS-12 |
+| P1-8 | Inkrement 8: Cockpit „Reiseverlauf“ (F-053 Grundgerüst, `tripRoute()`), Infoseite F-033, UX-8, UX-9, Migration 0009, Pflege-Paket, R-072 (`APP_TIME_ZONE`) | developer → reviewer | F-053, F-033, F-015, F-017 | **fertig** (PR #23 gemergt 2026-10-23; Reviewer ✅/⚠️) | P1-FB1, W16 v2 |
+| P1-9 | Inkrement 9: Unterkünfte – Vorschlagen mit Link-Vorschau (SSRF-sicher), Bild-Proxy, Swipen, Rangliste (Q33), Festlegen/gebucht, Station V3 + Kachel, Migration 0010 | ui-ux (W17/W18 baureif), designer (Platzhalterkarte, 6–8 Demo-Bilder), motion-designer (Swipe, Stempel, Siegel), developer → reviewer | F-031 (Stufe 1), F-053, F-033, F-013 | **in Arbeit** (Zuschnitt features.md R.7, 2026-10-23); Betriebsvorgaben: OPS-13 | P1-8; W17/W18 baureif; OPS-13 |
+| P1-10 | Inkrement 10: Kosten (Ausgaben, Salden) | developer → reviewer | F-035, F-036 | **geplant** | P1-9 |
+| P1-11 | Inkrement 11: „Bucht“ + Reisedaten Stufe 1 | developer → reviewer | F-056, F-054 | **geplant** (echte Nutzung erst nach G1 + G1b) | P1-10 |
+| P1-12 | Inkrement 12: Datei-Infrastruktur, Reiseunterlagen, Screenshots Unterkünfte | developer → reviewer | F-055, F-031 (Stufe 2) | **geplant** (echte Nutzung erst nach G1 + G1b) | P1-11 |
 
 ### Betrieb & Recht (Operations, parallel zu Phase 1)
 
@@ -52,7 +58,10 @@ Status: **geplant** · **in Arbeit** · **im Review** · **fertig** (Reviewer �
 | OPS-9 | Go-Live-Gate vorbereiten: Markenrecherche „Wir wollen weg“ + „When do we go?“, Domain-Verfügbarkeit, Angebotscheck Hetzner/Lettermint – **Erinnerung an Auftraggeber durch CEO** | operations-manager → CEO | Q11, Q14–Q16 | **geplant** | Auslöser lt. [go-live.md](go-live.md) | ≥ 6 Wochen vor Beta |
 | OPS-10 | Optional: In-App-Browser-Test T2 per temporärem Tunnel (ohne Konto, nur Demo-Daten, deployment.md §0.5) | developer + reviewer | F-040, F-041, F-003 | **geplant** (optional) | P1-1 | vor Ende Inkrement 1, falls gewünscht |
 | OPS-11 | **Demo-Abnahme M0.5 vorbereiten:** Ein-Befehl-Start `scripts/demo.sh` (nur Docker, `.env.demo` mit lokalen Zufalls-Secrets, LAN-IP für Handy, `seed`/`unlock`/`reset`), Laien-Anleitung, 20-Minuten-Drehbuch mit Feedback-Checkliste; selbst getestet (Build, Migration, Seed, Code-Login über `localhost` und LAN-IP, kompletter Ablauf bis ICS) | operations-manager | M0.5 | **fertig** (2026-10-16) – Demo-Termin mit dem Auftraggeber: **CEO** | Inkremente 1–6 | jetzt |
-| OPS-12 | **Private Live-Vorschau (PRD Q25):** Vercel Hobby + Neon Free, Zugangspasswort, Demo-Postfach; Klick-Anleitung für den Auftraggeber [vorschau-anleitung.md](vorschau-anleitung.md) (bestehendes Neon-Projekt, Variablen vor dem ersten Deploy) | developer (Technik, deployment.md §0.7) + operations-manager (Anleitung) → Auftraggeber (Einrichtung) | Q25 | **in Arbeit** (Code im Review; Anleitung fertig, ungetestet gegen die echte Vercel-/Neon-Oberfläche) | Vorschau-PR auf `main` gemergt | nach Merge |
+| OPS-12 | **Private Live-Vorschau (PRD Q25):** Vercel Hobby + Neon Free, Zugangspasswort, Demo-Postfach; Klick-Anleitung für den Auftraggeber [vorschau-anleitung.md](vorschau-anleitung.md) (bestehendes Neon-Projekt, Variablen vor dem ersten Deploy) | developer (Technik, deployment.md §0.7) + operations-manager (Anleitung) → Auftraggeber (Einrichtung) | Q25 | **fertig** (PR #18, #20, #21 gemergt 2026-10-20; vom Auftraggeber eingerichtet; Retest Demo-Postfach R-067 offen; Ergänzung Inkrement 9 in der Anleitung 2026-10-23) | – | – |
+| OPS-13 | **Inkrement 9 – Betrieb & Recht:** Egress der Link-Vorschau auf Vercel/Docker bewertet, Route-Konfiguration (`runtime`, `maxDuration`), DNS-Pinning-Hinweise (deployment.md §0.8); CSP-Vorschlag Stufe 1/2 (§0.9); Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ vorgemerkt (compliance §2a); Vorschau-Anleitung ergänzt; go-live.md v1.3 | operations-manager | F-031, R.7 | **fertig** (2026-10-23) – Umsetzung CSP Stufe 1 + Route-Konfiguration durch Developer in P1-9; **Entscheidung offen: Bild-Limit 4 MB statt 5 MB** (Vercel-Antwortgrenze 4,5 MB) | R.7 | mit P1-9 |
+| OPS-14 | CSP Stufe 2 (Nonce, `strict-dynamic`, erst Report-Only) | developer → reviewer | – | **geplant** (Go-Live-Gate Stufe 2b) | OPS-13 | mit P1-10 oder Go-Live-Paket |
+| OPS-15 | CI: E2E-Job-Timeout auf **45 min** erhöht (wachsende Suite, Commit `677abf3`, mit PR #23) | developer | – | **fertig** (2026-10-22). Beobachten: Dauer des E2E-Jobs; ab ~30 min Sharding (`--shard`) oder Aufteilen nach Projekten prüfen | – | laufend |
 | OPS-8 | Node 26 LTS evaluieren und umstellen | operations-manager | – | **geplant** | LTS-Start 28.10.2026 | Q1 2027 |
 
 ## Abhängigkeiten (Kurzfassung)
@@ -66,7 +75,9 @@ M0 ─> P1-0 Scaffold ─> P1-0a Auth-Spike ─> P1-0c UI-Fundament ─> P1-1 �
                                                      └──────────> P1-6 (vor M2)
 Offline-Demo (lokal) ─> … ─> Go-Live-Gate (go-live.md, Auftraggeber) ─> OPS-1/OPS-2 (Staging + Mail) ─> OPS-3/OPS-4 ─> Beta M1
 P1-1 ─> optional OPS-10 (Tunnel-Gerätetest T2)
-P1-5 + P1-6 ─> OPS-11 Demo-Paket ─> Demo-Abnahme M0.5 (Auftraggeber) ─> Go-Live-Gate G1 besprechen / P1-7
+P1-5 + P1-6 ─> OPS-11 Demo-Paket ─> Demo-Abnahme M0.5 (Auftraggeber) ─> Go-Live-Gate G1 besprechen
+OPS-12 Vorschau ─> P1-FB1 ─> P1-8 Cockpit ─> P1-9 Unterkünfte (+ OPS-13) ─> P1-10 Kosten ─> P1-11 Reisedaten ─> P1-12 Dateien
+                                                              G1 (+ OPS-14 CSP Stufe 2) ─> echte Nutzung 8–10; G1b ─> echte Nutzung 11–12
 ```
 
 ## Blocker & offene Entscheidungen
@@ -79,6 +90,8 @@ Aktuell **keine aktiven Blocker**. B1–B4 sind **zurückgestellt bis Go-Live (A
 | B2 | Domain (+ Markenprüfung beider Namen „Wir wollen weg“ / „When do we go?“, Q11) | **zurückgestellt bis Go-Live** – Q15 | OPS-1, OPS-2 | Auftraggeber | 2026-10-08 |
 | B3 | Accounts Hosting (Hetzner) + Mail (Lettermint) + Postfach | **zurückgestellt bis Go-Live** – Q15, bis dahin Mailpit | OPS-1, OPS-2 | Auftraggeber | 2026-10-08 |
 | B4 | Weg für Rechtstexte (Generator-Abo vs. Anwalt) | **zurückgestellt bis Go-Live** – Platzhalter-Rechtstexte, Q16 | OPS-5 | Auftraggeber | 2026-10-08 |
+
+Offene Entscheidung (nicht blockierend, CEO/PM): **Bild-Proxy-Limit 4 MB statt 5 MB** (R.7 I9-04) wegen der 4,5-MB-Antwortgrenze von Vercel-Functions – Empfehlung Operations: ja (deployment.md §0.8).
 
 Offene Produktfragen: siehe PRD §12 (Q11–Q16 am 2026-10-08 entschieden bzw. bis Go-Live zurückgestellt).
 
@@ -98,3 +111,4 @@ Offene Produktfragen: siehe PRD §12 (Q11–Q16 am 2026-10-08 entschieden bzw. b
 - 2026-10-09 (Operations): P1-0c Schritt 0a „UI-Fundament“ **fertig** (PR #5 gemergt). P1-1 (Inkrement 1) **im Review** – Fixes R-021–R-031 in Nachprüfung. tech-stack.md v1.2 (§3.2 Ist-Stand: Mail-Budget pro Adresse/Postfach, Fehlversuche nur bei ausstehendem Code, Sperre ohne Mail-Sperre, HKDF-Schlüssel, Re-Auth, Argon2id, `PASSWORD_BREACH_CHECK`); go-live.md v1.1: Entscheidungspunkt „HIBP-Check einschalten?“ (Stufe 2a).
 - 2026-10-16 (Operations): Board auf Ist-Stand gebracht – P1-0b, P1-1 … P1-6 und OPS-7 **fertig** (PR #6–#11). **OPS-11 Demo-Abnahme M0.5 vorbereitet:** `scripts/demo.sh` (Ein-Befehl-Start nur mit Docker, LAN-IP-Erkennung für den Handy-Test, `unlock` gegen das 5-Codes-pro-Stunde-Limit in der Demo), [demo-anleitung.md](demo-anleitung.md), [demo-drehbuch.md](demo-drehbuch.md); deployment.md §0.2/§0.3 und README verweisen darauf. Selbsttest in der Cloud-Umgebung bestanden.
 - 2026-10-20 (Operations): **OPS-12** private Live-Vorschau (Q25) – Klick-Anleitung [vorschau-anleitung.md](vorschau-anleitung.md) für Windows-PC + Handy (Neon-Adressen kopieren, Zufallswerte per PowerShell, Import in Vercel, Fehlerbehebung). Einrichtung erst nach Merge des Vorschau-PRs auf `main`.
+- 2026-10-23 (Operations): Board auf Ist-Stand gebracht – OPS-12 Vorschau **fertig** (PR #18/#20/#21, eingerichtet), P1-FB1 Feedback-Runde 1 **fertig** (PR #22), **P1-8 Inkrement 8 fertig** (PR #23 gemergt 2026-10-23), **P1-7 Inkrement 7 aufgelöst** (CEO 2026-10-22), **P1-9 Inkrement 9 „Unterkünfte“ in Arbeit**, P1-10–P1-12 geplant. OPS-15: CI-E2E-Timeout 45 min. **OPS-13 fertig:** deployment.md v0.5 §0.8 (Egress Vercel/Docker, `runtime`/`maxDuration`, DNS-Pinning mit undici-`Agent` + `connect.lookup`, Vercel-Antwortgrenze 4,5 MB) und §0.9 (CSP: Ist keine; Stufe 1 global mit Inkrement 9, Stufe 2 Nonce vor G1 → OPS-14), §5.1 Egress-Härtung; compliance-checklist.md v0.4 §2a (Platzhaltertext „Unterkünfte & Link-Vorschau“), Cookies/Storage, Löschkonzept, TOM; vorschau-anleitung.md (Unterkünfte, Fall I); go-live.md v1.3.

@@ -18,7 +18,7 @@ export type StationState = "done" | "yours" | "waiting" | "next" | "later";
  * V1 «Termin steht», V2 «Alle sind dabei», A2 task «Infos eintragen», T-meet meeting point on
  * the first travel day (a plan, not a task), goals V6 / T-goal / D-goal.
  */
-export type StationId = "V1" | "V2" | "A2" | "T-meet";
+export type StationId = "V1" | "V2" | "V3" | "A2" | "T-meet";
 export type GoalId = "V6" | "T-goal" | "D-goal";
 
 /** A value inside a message: formatted by the page (names as a list, dates, clock times). */
@@ -38,17 +38,25 @@ export interface Msg {
 
 export type RouteTarget =
   | { kind: "sheet"; sheet: "decided" | "members" }
-  | { kind: "page"; page: "info" | "infoEdit" | "newTrip" };
+  | {
+      kind: "page";
+      page: "info" | "infoEdit" | "newTrip" | "stays" | "staysSwipe" | "staysRanking";
+    };
 
 export type RouteAction =
   | { kind: "announce" }
   | { kind: "withoutApp"; placeholderId: string; name: string }
-  | { kind: "undoWithoutApp"; placeholderId: string; name: string };
+  | { kind: "undoWithoutApp"; placeholderId: string; name: string }
+  /** UX-9 for V3 «Haben wir schon / brauchen wir nicht» (on: dialog first) / undo. */
+  | { kind: "stayWithoutApp"; on: boolean };
 
 /** «Erinnern» below a waiting station – opens the remind sheet of the cockpit. */
 export interface RouteRemind {
-  /** `placeholder`: organiser → personal link(s); `orga`: member → «{orga} Bescheid geben». */
-  occasion: "placeholder" | "orga";
+  /**
+   * `placeholder`: organiser → personal link(s); `orga`: member → «{orga} Bescheid geben»;
+   * `stay-*`: places to stay (W16 v2.14) – rate (status list), fix/book (to the organiser).
+   */
+  occasion: "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book";
   /** Placeholder ids (one → single step, several → list). Empty for `orga`. */
   keys: string[];
   label: Msg;
@@ -63,13 +71,19 @@ export interface TripStation {
   state: StationState;
   title: Msg;
   status: Msg;
+  /** Longer status for the expanded first «Heute» card (W16 v2.14 «ausgeklappt»). */
+  detail?: Msg;
+  /** Urgency under «Heute» (W16 v2.5/v2.14: depends on the state, not only the station). */
+  rank?: number;
+  /** Progress bar of the compact card (0–1, decorative). */
+  progress?: number;
   /** Where the card leads (sheet or sub-page). */
   href: RouteTarget;
   /** Main action – only shown on the first «Heute» card (the only primary of the page). */
   primary?: { label: Msg; action: RouteTarget | RouteAction };
   remind?: RouteRemind;
   /** Text buttons (e.g. «Mia macht ohne App mit», «Rückgängig» in the done list). */
-  textActions?: { label: Msg; action: RouteAction }[];
+  textActions?: { label: Msg; action: RouteAction | RouteTarget }[];
   /** Done «ohne App» (UX-9) – chip «ohne App erledigt» in the done list. */
   offline?: boolean;
   /** Not done when its sub-phase ended – «nicht genutzt», without a tick (W16 v2.4). */
@@ -91,7 +105,7 @@ export interface TripGoal {
 }
 
 export interface TripTile {
-  area: "info";
+  area: "info" | "stay";
   title: Msg;
   /** Parts of the one status line, joined with « · ». */
   status: Msg[];
@@ -169,10 +183,35 @@ export interface InfoStatus {
   hasAddress: boolean;
 }
 
+/**
+ * Status of the places to stay (F-031) – adapter `stayStatus()` of W16 v2.14. `favourite` only
+ * for the organiser or when the viewer's ranking is free (Q33); null = area not built.
+ */
+export interface StayStatus {
+  /** Current suggestions. */
+  total: number;
+  /** Suggestions the viewer has not rated. */
+  myUnrated: number;
+  /** Unrated suggestions created after the viewer's latest rating (W18 E.5.6). */
+  myNew: number;
+  /** Members (without placeholders) who rated every current suggestion. */
+  membersDone: number;
+  membersTotal: number;
+  favourite: { titles: readonly string[]; likes: number } | null;
+  chosen: { title: string } | null;
+  booked: boolean;
+  /** «gebucht» was reset by new dates and the notice is still open (rule 5/8 «neu buchen»). */
+  rebook: boolean;
+  /** UX-9 «ohne App erledigt». */
+  withoutApp: boolean;
+}
+
 export interface RouteAreas {
   group: { placeholders: readonly { id: string; name: string; withoutApp: boolean }[] };
   info: InfoStatus | null;
-  // Increments 9–12 add `stay`, `costs`, `travelData`, `documents` adapters here.
+  /** Increment 9 – undefined/null: area not built (older callers and tests). */
+  stay?: StayStatus | null;
+  // Increments 10–12 add `costs`, `travelData`, `documents` adapters here.
 }
 
 /** A2 appears this many days before the arrival when the infos are still empty (W16 v2.4). */
@@ -180,10 +219,13 @@ export const INFO_TASK_DAYS = 21;
 /** V1 counts as done for the organiser this many days after fixing (W16 v2.4). */
 export const ANNOUNCE_DAYS = 7;
 
-/** Urgency under «Heute» (W16 v2.5): what blocks others first, then dates/deadlines. */
-const RANK: Record<StationId, number> = { "T-meet": 0, V1: 1, A2: 2, V2: 3 };
+/**
+ * Default urgency under «Heute» (W16 v2.5): what blocks others first (1), then dates/deadlines
+ * (2), then own contributions (3). V3 sets its rank per state (W16 v2.14).
+ */
+const RANK: Record<StationId, number> = { "T-meet": 0, V1: 1, A2: 2, V2: 3, V3: 3 };
 /** Catalogue order (W16 v2.3) – ties and every other group. */
-const ORDER: Record<StationId, number> = { "T-meet": 0, V1: 1, V2: 2, A2: 3 };
+const ORDER: Record<StationId, number> = { "T-meet": 0, V1: 1, V2: 2, V3: 3, A2: 4 };
 
 export function subphaseOf(start: IsoDate, end: IsoDate, today: IsoDate): Subphase {
   if (today < start) return "before";
@@ -354,9 +396,213 @@ function infoTile(viewer: RouteViewer, trip: RouteTrip, info: InfoStatus): TripT
   };
 }
 
+/* ------------------------------------------------------------------------------------------ */
+/* V3 «Unterkunft» (W16 v2.14, Increment 9)                                                    */
+/* ------------------------------------------------------------------------------------------ */
+
+const STAYS: RouteTarget = { kind: "page", page: "stays" };
+const RANKING: RouteTarget = { kind: "page", page: "staysRanking" };
+
+function favouriteMsg(prefix: string, stay: StayStatus): Msg {
+  const fav = stay.favourite;
+  if (!fav) return msg(`${prefix}NoFavourite`);
+  if (fav.titles.length > 1) return msg(`${prefix}Tied`, { titles: { names: fav.titles } });
+  return msg(`${prefix}Favourite`, { title: fav.titles[0] ?? "", likes: fav.likes });
+}
+
+/**
+ * Station V3 (W16 v2.14 table, first matching rule wins; «Bucher» = organiser in Increment 9).
+ * Counting base `membersTotal` = members without placeholders.
+ */
+export function v3Station(
+  trip: RouteTrip,
+  viewer: RouteViewer,
+  stay: StayStatus,
+  sub: Subphase,
+): TripStation {
+  const orga = viewer.role === "organizer";
+  const base = {
+    id: "V3" as const,
+    kind: "station" as const,
+    title: msg("v3.title"),
+    href: STAYS,
+  };
+  const withoutAppAction = {
+    label: msg("v3.withoutApp"),
+    action: { kind: "stayWithoutApp", on: true } as const,
+  };
+  const fixNow = { label: msg("v3.fixNow"), action: RANKING };
+  const chosenTitle = stay.chosen?.title ?? "";
+  const rated = stay.total - stay.myUnrated;
+
+  // 1 – done: picked and booked, or UX-9.
+  if (stay.chosen && stay.booked) {
+    return { ...base, state: "done", status: msg("v3.doneBooked", { title: chosenTitle }) };
+  }
+  if (stay.withoutApp) {
+    return {
+      ...base,
+      state: "done",
+      offline: true,
+      status: msg("v3.doneOffline"),
+      ...(orga
+        ? {
+            textActions: [
+              { label: msg("v3.undo"), action: { kind: "stayWithoutApp", on: false } as const },
+            ],
+          }
+        : {}),
+    };
+  }
+  // 2 – travelling / back and not done: «nicht genutzt».
+  if (sub !== "before") {
+    return {
+      ...base,
+      state: "done",
+      unused: true,
+      status: stay.chosen ? msg("v3.unusedChosen", { title: chosenTitle }) : msg("v3.unusedNone"),
+    };
+  }
+  // 9 – no suggestions: «als Nächstes» (no task, no reminder).
+  if (stay.total === 0) {
+    return {
+      ...base,
+      state: "next",
+      status: msg("v3.empty"),
+      ...(orga ? { textActions: [withoutAppAction] } : {}),
+    };
+  }
+  const allDone = stay.membersTotal > 0 && stay.membersDone >= stay.membersTotal;
+  // 3 – I have unrated suggestions, nothing picked: your turn (rank 3).
+  if (stay.myUnrated > 0 && !stay.chosen) {
+    return {
+      ...base,
+      state: "yours",
+      rank: 3,
+      status: msg("v3.rateShort", { rated, total: stay.total }),
+      detail:
+        stay.myNew > 0
+          ? msg("v3.rateNew", { count: stay.myNew })
+          : msg("v3.rateLong", { count: stay.myUnrated, rated, total: stay.total }),
+      progress: stay.total > 0 ? rated / stay.total : 0,
+      primary: { label: msg("v3.swipe"), action: { kind: "page", page: "staysSwipe" } },
+      ...(orga ? { textActions: [fixNow, withoutAppAction] } : {}),
+    };
+  }
+  if (orga) {
+    // 4 – everybody rated, nothing picked: pick (rank 1, blocks the others).
+    if (!stay.chosen && allDone) {
+      return {
+        ...base,
+        state: "yours",
+        rank: 1,
+        status: favouriteMsg("v3.fix", stay),
+        primary: { label: msg("v3.fixAction"), action: RANKING },
+      };
+    }
+    // 5 – picked, not booked: book (rank 2, a date/deadline).
+    if (stay.chosen) {
+      return {
+        ...base,
+        state: "yours",
+        rank: 2,
+        status: stay.rebook
+          ? msg("v3.rebook", { title: chosenTitle })
+          : msg("v3.book", { title: chosenTitle }),
+        primary: { label: msg("v3.toStay"), action: STAYS },
+      };
+    }
+    // 6 (organiser) – waiting for ratings.
+    const status = stay.favourite
+      ? msg("v3.waitingOrga", {
+          done: stay.membersDone,
+          total: stay.membersTotal,
+          favourite: { msg: favouriteMsg("v3.wait", stay) },
+        })
+      : msg("v3.waiting", { done: stay.membersDone, total: stay.membersTotal });
+    return {
+      ...base,
+      state: "waiting",
+      status,
+      short: msg("v3.shortRate"),
+      remind: {
+        occasion: "stay-rate",
+        keys: [],
+        label: msg("v3.remind"),
+        name: msg("v3.remindName"),
+      },
+      textActions: [fixNow, withoutAppAction],
+    };
+  }
+  // 8 – member: picked, not booked.
+  if (stay.chosen) {
+    return {
+      ...base,
+      state: "waiting",
+      status: stay.rebook
+        ? msg("v3.memberRebook", { orga: trip.orgaName, title: chosenTitle })
+        : msg("v3.memberBook", { orga: trip.orgaName, title: chosenTitle }),
+      short: msg("v3.shortBook", { orga: trip.orgaName, title: chosenTitle }),
+      remind: {
+        occasion: "stay-book",
+        keys: [],
+        label: msg("v2.nudgeOrga", { orga: trip.orgaName }),
+        name: msg("v3.nudgeBookName", { orga: trip.orgaName, title: chosenTitle }),
+      },
+    };
+  }
+  // 7 – member: everybody rated, the organiser picks.
+  if (allDone) {
+    return {
+      ...base,
+      state: "waiting",
+      status: msg("v3.memberFix", { orga: trip.orgaName }),
+      short: msg("v3.shortFix", { orga: trip.orgaName }),
+      remind: {
+        occasion: "stay-fix",
+        keys: [],
+        label: msg("v2.nudgeOrga", { orga: trip.orgaName }),
+        name: msg("v3.nudgeFixName", { orga: trip.orgaName }),
+      },
+    };
+  }
+  // 6 (member) – I am done, others are not.
+  return {
+    ...base,
+    state: "waiting",
+    status: msg("v3.waiting", { done: stay.membersDone, total: stay.membersTotal }),
+    short: msg("v3.shortRate"),
+    remind: {
+      occasion: "stay-rate",
+      keys: [],
+      label: msg("v3.remind"),
+      name: msg("v3.remindName"),
+    },
+  };
+}
+
+/**
+ * Tile «Unterkunft» (W16 v2.14): when V3 is done (not «nicht genutzt»), or while travelling /
+ * back as soon as there is at least one suggestion. First tile of «Immer griffbereit».
+ */
+function stayTile(stay: StayStatus, sub: Subphase, v3: TripStation | undefined): TripTile | null {
+  const done = v3?.state === "done" && !v3.unused;
+  if (!done && (sub === "before" || stay.total === 0)) return null;
+  const status: Msg =
+    stay.chosen && stay.booked
+      ? msg("tiles.stayBooked", { title: stay.chosen.title })
+      : stay.withoutApp
+        ? msg("tiles.stayOffline")
+        : stay.chosen
+          ? msg("tiles.stayChosen", { title: stay.chosen.title })
+          : msg("tiles.stayNone", { count: stay.total });
+  return { area: "stay", title: msg("tiles.stay"), status: [status], href: STAYS };
+}
+
 const byCatalogue = (a: TripStation, b: TripStation) => ORDER[a.id] - ORDER[b.id];
+const rankOf = (s: TripStation) => s.rank ?? RANK[s.id];
 const byUrgency = (a: TripStation, b: TripStation) =>
-  RANK[a.id] - RANK[b.id] || ORDER[a.id] - ORDER[b.id];
+  rankOf(a) - rankOf(b) || ORDER[a.id] - ORDER[b.id];
 
 /**
  * The way of a fixed trip for one viewer on one day (W16 v2.3–v2.6, v2.13 Increment-8 cut).
@@ -375,7 +621,12 @@ export function tripRoute(
   const daysBack = Math.max(0, diffDays(trip.end, today));
   const info = areas.info;
 
-  const stations = [v1Station(trip, viewer, today, sub), v2Station(trip, viewer, areas, sub)];
+  const stay = areas.stay ?? null;
+  const stations = [
+    v1Station(trip, viewer, today, sub),
+    v2Station(trip, viewer, areas, sub),
+    ...(stay ? [v3Station(trip, viewer, stay, sub)] : []),
+  ];
   const tasks = sub === "before" ? [infoTask(viewer, areas, daysToGo)] : [];
   const all: TripStation[] = [
     ...stations,
@@ -467,7 +718,18 @@ export function tripRoute(
     },
     groups: { done, waiting, next, later },
     goal: goalOf(sub, trip, info, today, daysToGo),
-    tiles: info ? [infoTile(viewer, trip, info)] : [],
+    tiles: [
+      ...(stay
+        ? [
+            stayTile(
+              stay,
+              sub,
+              stations.find((s) => s.id === "V3"),
+            ),
+          ]
+        : []),
+      ...(info ? [infoTile(viewer, trip, info)] : []),
+    ].filter((tile): tile is TripTile => tile !== null),
     departureDay: today === trip.start,
   };
 }

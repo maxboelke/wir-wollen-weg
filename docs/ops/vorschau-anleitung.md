@@ -1,6 +1,6 @@
 # Vorschau-Anleitung – private Live-Vorschau auf Vercel + Neon
 
-Stand: 2026-10-20 · Gepflegt von: Operations Manager · Zielgruppe: Auftraggeber (Windows-PC + Handy, keine Programmierkenntnisse nötig) · Entscheidung: PRD Q25 · Technische Referenz: [deployment.md §0.7](deployment.md)
+Stand: 2026-10-23 (Ergänzung Inkrement 9 „Unterkünfte“: Kapitel 6 Nr. 6, Fall I) · Gepflegt von: Operations Manager · Zielgruppe: Auftraggeber (Windows-PC + Handy, keine Programmierkenntnisse nötig) · Entscheidung: PRD Q25 · Technische Referenz: [deployment.md §0.7](deployment.md)
 
 Mit dieser Anleitung bekommt die App eine **feste Internet-Adresse** (z. B. `https://wir-wollen-weg.vercel.app`), die du am PC und am Handy öffnen kannst – ohne Download, ohne Docker. Die Adresse ist mit einem **Zugangspasswort** geschützt, das du selbst festlegst.
 
@@ -213,6 +213,10 @@ Das Demo-Postfach erreichst du jederzeit auch über den Link im gelben Demo-Balk
    - Es gibt noch kein echtes Impressum und keinen echten Datenschutztext; Vercel ist ein US-Anbieter. Echte Nutzung ist erst nach dem Go-Live (Gate G1) erlaubt.
 4. **WhatsApp & Co.:** Ein Link in WhatsApp, Instagram oder Signal zeigt **keine Vorschau** (kein Bild, kein Titel), und der eingebaute Browser dieser Apps fragt ebenfalls nach dem Passwort. Tipp: Link lange drücken → **„In Safari/Chrome öffnen“**.
 5. **Einladungen ausprobieren:** Eine in der App erzeugte Einladung (`…/i/…`) funktioniert genauso – die eingeladene Person braucht zusätzlich das Zugangspasswort.
+6. **Unterkünfte (ab Inkrement 9):** Beim Vorschlagen einer Unterkunft holt die App selbst Titel und Bild von der verlinkten Seite – dafür musst du in Vercel **nichts** einstellen, es gibt keine neue Variable. Gut zu wissen:
+   - **Oft erscheint nur die gestreifte Platzhalterkarte.** Große Portale (Airbnb, Booking & Co.) lassen solche Abrufe häufig nicht zu. Das ist normal und kein Fehler – Titel einfach selbst eintippen.
+   - Bitte nur **öffentliche Angebots-Links** einfügen, **nie** Links aus Buchungsbestätigungen, Postfächern oder persönliche Freigabe-Links – die können Namen oder Buchungsnummern enthalten (Regel „keine echten Daten“).
+   - Die Bilder kommen über die App, nicht direkt vom Portal; sie werden nicht dauerhaft gespeichert.
 
 ---
 
@@ -278,5 +282,9 @@ Vercel → **„Deployments“**: Läuft gerade ein Aufbau („Building“), ein
 ### Fall H – Termine der Demo-Reisen passen nicht mehr (z. B. Abstimmung längst vorbei)
 
 Die Demo-Daten werden beim ersten Aufbau angelegt und altern dann mit. → **„Demo zurücksetzen“** (Kapitel 7).
+
+### Fall I – Bei einer Unterkunft erscheint kein Bild oder kein Titel
+
+Das Portal lässt den Abruf nicht zu, antwortet zu langsam (mehr als 5 Sekunden) oder das Bild ist zu groß. Die App zeigt dann absichtlich die **Platzhalterkarte** – der Vorschlag funktioniert trotzdem ganz normal. Titel selbst eintragen; nichts in Vercel ändern. Fehlen die Bilder bei **allen** Vorschlägen, auch bei den Demo-Reisen, bitte dem Team Bescheid geben.
 
 Wenn nichts davon hilft: dem Team schreiben, **was** du gemacht hast, **welche Adresse** du geöffnet hast und **welche Meldung** kam – gerne mit Screenshot der Meldung, aber **nie** mit der Variablen-Seite von Vercel oder dem Connect-Fenster von Neon.

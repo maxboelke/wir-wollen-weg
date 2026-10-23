@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <title>Unterkunft ohne Vorschaubild</title>
+  <desc>Platzhalter für Unterkunfts-Vorschläge ohne Link-Vorschau (F-031, W17/W18): gestreiftes Feld mit Bett-Symbol auf einer runden Plakette. Hell und dunkel über Tokens bzw. prefers-color-scheme. Dekorativ.</desc>
+  <!--
+    v1.1 (2026-10-23), Quelle 4:3 wie die Demo-Bilder; slice schneidet auf 16:10 (Swipe-Karte), 16:9 (Eure Unterkunft)
+    und 1:1 (Zeile 64 px) zu, die Plakette bleibt in allen drei Ausschnitten vollständig sichtbar.
+    Plakette sitzt leicht über der Mitte; der Domain-Chip (Keine Vorschau · airbnb.de) liegt wie bei echten Bildern unten links.
+    Kontraste: Bett-Icon Lavendel 600 auf Weiß 6,8 : 1, dunkel Lavendel 400 auf night-760 7,3 : 1.
+    Text-Empfehlung darunter: text-muted auf den Streifen hell mindestens 6,0 : 1, dunkel mindestens 8,9 : 1.
+    Ebenen: stripes, plate, icon (data-anim, optional).
+  -->
+  <style>
+    .wu-stripe-a { fill: var(--ww-color-surface-sunken, #ECE9F7); }
+    .wu-stripe-b { fill: var(--ww-color-bg, #F4F2FB); }
+    .wu-plate { fill: var(--ww-color-surface, #FFFFFF); }
+    .wu-halo { fill: var(--ww-illu-brand, #2B2266); opacity: .07; }
+    .wu-icon { stroke: var(--ww-color-info-text, #5A3FD0); }
+    .wu-icon-fill { fill: var(--ww-color-info-text, #5A3FD0); }
+    @media (prefers-color-scheme: dark) {
+      .wu-stripe-a { fill: var(--ww-color-surface-sunken, #191538); }
+      .wu-stripe-b { fill: var(--ww-color-bg, #14112E); }
+      .wu-plate { fill: var(--ww-color-info-tint, #2E2566); }
+      .wu-halo { opacity: 0; }
+      .wu-icon { stroke: var(--ww-color-info-text, #C3B8FF); }
+      .wu-icon-fill { fill: var(--ww-color-info-text, #C3B8FF); }
+    }
+  </style>
+  <defs>
+    <pattern id="wwsp-stripes" width="20" height="20" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect class="wu-stripe-b" width="20" height="20"/>
+      <rect class="wu-stripe-a" width="10" height="20"/>
+    </pattern>
+  </defs>
+  <g data-anim="stripes">
+    <rect class="wu-stripe-b" width="400" height="300"/>
+    <rect width="400" height="300" fill="url(#wwsp-stripes)"/>
+  </g>
+  <g data-anim="plate">
+    <circle class="wu-halo" cx="200" cy="133" r="62"/>
+    <circle class="wu-plate" cx="200" cy="128" r="54"/>
+  </g>
+  <g data-anim="icon">
+    <g transform="translate(167 95) scale(2.75)" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path class="wu-icon" d="M3.5 18.5v-12"/>
+      <path class="wu-icon" d="M3.5 15h17v3.5"/>
+      <path class="wu-icon wu-icon-fill" fill-opacity=".16" d="M10.5 15v-4.5h7a3 3 0 0 1 3 3V15"/>
+      <circle class="wu-icon wu-icon-fill" fill-opacity=".16" cx="7" cy="12" r="1.75"/>
+    </g>
+  </g>
+</svg>

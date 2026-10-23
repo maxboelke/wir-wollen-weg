@@ -253,7 +253,33 @@ Zahlen zählen nirgends hoch (D-31): Countdown, Fortschritt „1 von 5“ und Be
 | U-29 | **Siegel = Marker (UM-4)** statt separatem 20-px-Siegel bestätigen. |
 | U-30 | Im Mockup vereinfacht: Orga Danach «Abrechnung abschließen?» (D1, freiwillig) nicht gezeigt; Rolle „Sara bucht“ ist eine Demo-Variante der Daten (Lena bleibt Orga ohne „bucht“). |
 
+## 11. Runde 5 – Inkrement 9 Unterkünfte: Antworten auf D-46 – D-55 (2026-10-23)
+
+Grundlage: `docs/ux/abstimmung-design.md` §14, W18 E, W17 F, W16 v2.14. Spezifikation der Optik: [design-system.md §9.21](design-system.md#921-unterkünfte-f-031-inkrement-9--v11-2026-10-23). Tokens: tokens.css v1.1 (`--ww-stay-*`, `--ww-stamp-*`, `--ww-pattern-stay-placeholder`). Bewertung **zweistufig** übernommen (kein „Vielleicht“, kein dritter Stempel).
+
+| ID | Antwort Design | Status |
+|---|---|---|
+| **D-46** Swipe-Karte | Angenommen: Bild **16:10**, `max-height: 34svh` (< 22 em: 28 svh, < 20 em ohne Bild). Domain-Chip unten links auf Verlauf `--ww-stay-image-scrim` (Chip Weiß auf Tinte 72 % ≥ 7,3 : 1 auch über reinem Weiß; Bilder sind in beiden Modi gleich, daher theme-unabhängig). Karte Radius 28, `shadow-2`; zweite Karte 95 %, 8 px versetzt, **volle Deckkraft** (Mockup hat .85 – bitte angleichen, sonst scheint Text durch). Typo §9.21. | erledigt |
+| **D-47** Stempel / Farbe ♥ | Schräg ja (♥ −8° links oben, ✕ +8° rechts oben), Icon + Text, 40 px, Jakarta 17/800. **Abgleich U-25:** Minze-*Fläche* bleibt Ring/Linie/erledigt/Siegel. ♥ gehört zur **Ja-Familie** (wie „Ja“ in F-011: `vote-yes-*` = Minze-Tönung + Minze-700) – das ist dieselbe Bedeutung („passt mir“), daher Minze statt Lavendel (Lavendel = Abstimmung/Links/Info, wäre mehrdeutig). Gefüllte Minze nur am **Stempel auf dem Bild** (flüchtig, `aria-hidden`, braucht Signal auf Fotos). Tasten ♥ und ✕ **gleich gewichtet** (beide getönt + Rahmen, keine Primär-Optik) – keine Lenkung zur Zustimmung. ✕ neutral Weiß/Tinte, nie Rot/Koralle. | erledigt |
+| **D-48** Platzhalter | `assets/unterkuenfte/stay-placeholder.svg` (Streifen 135° + Bett-Plakette, hell/dunkel über Tokens, `slice` → passt für 64 px, 16:10, 16:9) und CSS-Muster `--ww-pattern-stay-placeholder`. Domain steht als normaler Chip «Keine Vorschau · airbnb.de» unten links (gleiche Optik wie bei Bildern, kein Sonderfall-Look); der längere W17-Satz steht unter der Karte, nicht auf dem Bild. Text auf Streifen ≥ 6,0 / 8,9. | erledigt |
+| **D-49** Bewertungstasten | 64 · 48 · 64, Label darunter. Liste: Paar 44 px; gedrückt = **gefülltes Herz + 2-px-Rahmen + Tönung** bzw. ✕ mit Tönung + 2-px-Rahmen; nicht gedrückt = Kontur 1,5 px + Kontur-Icon; „offen“ als Wort davor. `cross` reicht für ✕ (Strich 2,6, gleiche Form wie „Nein“ in F-011). | erledigt |
+| **D-50** Ranglisten-Zeile | Rang-Kreis 32 px **überlappt die linke obere Bildecke** (spart 40 px bei 360 px Breite); Rang 1 Sonne, sonst `surface-sunken`. Chips «★ Platz 1» (Sonne, wie W10) / «Gleichauf» (Info). «♥ 5 · ✕ 0» 14/800 tabular, Namen 13 `text-muted`. `[Das wird's]` Sekundär klein 44 px. 200 %: Tasten unter den Titel. | erledigt (U-32 bestätigen) |
+| **D-51** Eure Unterkunft | Karte mit randlosem Bild 16:9, Chips «◷ noch nicht gebucht» (`warning-*`) / «✓ gebucht» (`accent-*`) + «am … von …», Primär `[Als gebucht markieren]`, Sekundär `[Ansehen ↗]` `[Teilen]`, Text-Tasten. Siegel 40 an der Bildecke (Festlegen) bzw. 20 am Chip (gebucht), kein Konfetti. | erledigt |
+| **D-52** Icons | **Im Sprite ergänzt** (`docs/design/assets/icons/icons.svg` v1.1): `bed`, `heart` (Kontur, Duoton), `heart-filled`, `external`. `cross` bleibt für ✕. Referenzblatt: `assets/unterkuenfte/icons-unterkuenfte.svg`. **Developer:** `public/icons.svg` per `scripts/sync-design-assets.ts` neu erzeugen und `ICON_NAMES` (`src/components/ui/icon-names`) um die vier IDs ergänzen – bis dahin schlägt der Drift-Test `scripts/design-assets.test.ts` fehl. | erledigt |
+| **D-53** Demo-Bilder + Leerzustand | 8 eigene Demo-Bilder `assets/unterkuenfte/demo-*.svg` (4:3, < 7 KB, keine fremden Assets) + Kopie `public/demo/stays/`; Leerzustand `illustrations/empty-stays.svg` (Stil B, `data-anim`). **Developer:** `illustrations.json` per Sync neu erzeugen (Drift-Test). Zuordnung zu den Mockup-Daten: Villa Mare → `demo-villa-pool`, Apartment Lavanda → `demo-altstadtwohnung`, Kamena Kuća → **ohne Bild** (zeigt den Platzhalter, wie im Prototyp), Casa Azul → `demo-apartment-hafen`, Ferienwohnung Bačvice → `demo-strandhaus-duenen`; übrige für weitere Demo-Reisen. | erledigt |
+| **D-54** Hinweise | Sperrhinweis `surface-sunken` + Schloss, ohne Balken/Zahlen/verwischte Zeilen; «Basiert auf …» Info wie U-20; «Termin hat sich geändert» Amber + Schließen 44 px nur Orga; „ohne App erledigt“ Info + Siegel 20. | erledigt |
+| **D-55** Desktop / Kachel | `/stays` zweispaltig wie das Cockpit (600 + 320, rechte Spalte sticky); `/stays/swipe` nur Stapel 420 zentriert. Kachel „Unterkunft“: **Lavendel** + `bed`; nach Festlegung ersetzt das Bild der Unterkunft (34 px) die Icon-Kachel. | erledigt (U-34 bestätigen) |
+
+### 11.1 Offen für UI/UX (bitte bestätigen oder anpassen)
+| Nr. | Punkt |
+|---|---|
+| U-31 | **Prototyp angleichen:** zweite Karte volle Deckkraft; Platzhalter mit Chip «Keine Vorschau · Domain» unten links statt zentriertem Satz auf dem Bild; Ort-Zeile raus (W18 E.0). |
+| U-32 | **Rang-Kreis auf der Bildecke** statt eigener Spalte – bestätigen (Lesereihenfolge bleibt: sr «Platz 1» vor dem Titel). |
+| U-33 | **♥-Taste unter dem Stapel getönt** (`vote-yes-bg` + Minze-Rahmen) statt gefüllter Minze wie im Prototyp (`.swipe-btns .like`) – gleiche Gewichtung wie ✕, passt zu U-25. |
+| U-34 | **Kachel nach Festlegung mit Unterkunftsbild** statt Bett-Icon – bestätigen (Bild ist dekorativ, Titel steht als Text). |
+
 ## Changelog
+- 2026-10-23 (Runde 5, Inkrement 9): §11 – Antworten D-46–D-55, offene Punkte U-31–U-34; Icons, Platzhalter, Demo-Bilder, Leerzustand, Tokens v1.1, design-system §9.21.
 - 2026-10-22 (Runde 4b): §10 C v2 „Reiseverlauf“ – Mockup `mockups/cockpit-reiseverlauf/`, Antworten D-36–D-45, Motion-Umsetzung UM-1–UM-7, Token-Vorschlag, offene Punkte U-23–U-30. UX-8/UX-9 als bestätigt umgesetzt.
 - 2026-10-22 (Runde 4): §9 Cockpit-Varianten A–E (Mockup `mockups/cockpit-varianten/`), Prüfpunkte U-17–U-22 für UI/UX.
 - 2026-10-08 (Runde 3, v1.0): §5 Struktur-Abweichungen von Richtung B, §6 Antworten an Motion M-D1–M-D9, §7 Antworten D-20–D-35 mit CEO-Entscheidungen (Hochzählen, Kalender U-1, Werkzeugleiste 150 px, Pflichtpunkte, Feier = Vorfreude-Ring), §8 offen: keine.

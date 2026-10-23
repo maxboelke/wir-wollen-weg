@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <title>Demo-Unterkunft: Mobilheim auf dem Campingplatz</title>
+  <desc>Eigene Illustration (Fantasie-Unterkunft, Demo-Daten F-031): Mobilheim mit Minze-Streifen und Holzterrasse unter Pinien, Lichterkette, Sonnenschirm mit Klappstühlen, dahinter ein Streifen Meer. Lizenzfrei, selbst erstellt.</desc>
+  <!-- v1.1 (2026-10-23) · 4:3 · Motiv in der sicheren Zone x 50 bis 350, y 38 bis 262 · keine Theme-Umschaltung -->
+  <defs>
+    <linearGradient id="wwd6-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ECE6FF"/>
+      <stop offset="1" stop-color="#FFF3CC"/>
+    </linearGradient>
+  </defs>
+  <rect width="400" height="300" fill="url(#wwd6-sky)"/>
+  <circle cx="200" cy="86" r="46" fill="#FFCF4A" opacity=".28"/>
+  <circle cx="200" cy="86" r="26" fill="#FFCF4A"/>
+  <rect y="142" width="400" height="22" fill="#52E5B8"/>
+  <path d="M0 150h400" stroke="#FFFFFF" stroke-width="2" opacity=".5"/>
+  <rect y="160" width="400" height="140" fill="#FFE7A3"/>
+  <path d="M0 196c60-10 140-12 220-6 70 5 130 4 180-4v114H0z" fill="#D4F2B0"/>
+  <g fill="#7A5200">
+    <path d="M34 200c4-50 10-90 26-122l6 2c-14 34-20 72-22 120z"/>
+    <path d="M354 204c-2-52-8-96-22-130l6-2c16 34 24 80 26 132z"/>
+  </g>
+  <g fill="#00775A">
+    <ellipse cx="66" cy="70" rx="58" ry="24"/>
+    <ellipse cx="30" cy="54" rx="40" ry="18"/>
+    <ellipse cx="336" cy="66" rx="60" ry="24"/>
+    <ellipse cx="380" cy="48" rx="40" ry="18"/>
+  </g>
+  <g fill="#133C3B" opacity=".35">
+    <ellipse cx="72" cy="80" rx="46" ry="12"/>
+    <ellipse cx="330" cy="76" rx="48" ry="12"/>
+  </g>
+  <path d="M60 92c48 18 96 26 140 26s92-8 140-26" fill="none" stroke="#57527A" stroke-width="1.5"/>
+  <g fill="#FFCF4A">
+    <circle cx="84" cy="101" r="4"/>
+    <circle cx="116" cy="110" r="4"/>
+    <circle cx="150" cy="115" r="4"/>
+    <circle cx="184" cy="118" r="4"/>
+    <circle cx="218" cy="118" r="4"/>
+    <circle cx="252" cy="115" r="4"/>
+    <circle cx="286" cy="110" r="4"/>
+    <circle cx="318" cy="101" r="4"/>
+  </g>
+  <rect x="96" y="132" width="196" height="74" rx="10" fill="#FFFFFF"/>
+  <path d="M96 128h196l-8-8H104z" fill="#C9C6D4"/>
+  <rect x="96" y="178" width="196" height="8" fill="#52E5B8"/>
+  <rect x="96" y="188" width="196" height="4" fill="#1FBF94"/>
+  <rect x="114" y="146" width="44" height="26" rx="4" fill="#2B2266"/>
+  <rect x="232" y="146" width="44" height="26" rx="4" fill="#2B2266"/>
+  <path d="M114 172l20-26h8l-20 26zM232 172l20-26h6l-20 26z" fill="#FFFFFF" opacity=".2"/>
+  <rect x="176" y="144" width="34" height="62" rx="4" fill="#5B48C9"/>
+  <circle cx="202" cy="176" r="2.5" fill="#FFCF4A"/>
+  <rect x="104" y="206" width="12" height="10" fill="#57527A"/>
+  <rect x="272" y="206" width="12" height="10" fill="#57527A"/>
+  <path d="M150 206h110v12H140z" fill="#B9734A"/>
+  <path d="M150 218h110v6H140z" fill="#8E5638"/>
+  <path d="M164 206v18M184 206v18M204 206v18M224 206v18M244 206v18" stroke="#8E5638" stroke-width="1.5"/>
+  <path d="M324 252v-74" stroke="#57527A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M282 184c12-26 72-26 84 0z" fill="#F0503F"/>
+  <path d="M310 184c4-18 24-18 28 0z" fill="#FFFFFF" opacity=".55"/>
+  <g fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M294 254l6-24h14l-4 24M300 230l-4-14" stroke="#5B48C9"/>
+    <path d="M354 254l-6-24h-14l4 24M348 230l4-14" stroke="#5B48C9"/>
+  </g>
+  <rect x="314" y="236" width="20" height="4" rx="2" fill="#FFFFFF"/>
+  <circle cx="320" cy="232" r="4" fill="#FFCF4A"/>
+  <path d="M40 300c40-14 80-18 120-14" fill="none" stroke="#1FBF94" stroke-width="10" stroke-linecap="round" opacity=".5"/>
+  <circle cx="72" cy="244" r="12" fill="#00775A"/>
+  <circle cx="88" cy="248" r="9" fill="#1FBF94"/>
+</svg>

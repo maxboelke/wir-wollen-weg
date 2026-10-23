@@ -31,6 +31,10 @@ interface InfoFormProps {
   infoHref: string;
   initial: Draft;
   version: number;
+  /** Title of the picked place to stay (W22 D) – null when nothing is picked. */
+  stayTitle?: string | null;
+  /** Opened via «Name in die Infos übernehmen» – pre-fill the name right away. */
+  fromStay?: boolean;
 }
 
 /**
@@ -39,14 +43,36 @@ interface InfoFormProps {
  * when leaving with unsaved changes, conflict notice «{Name} hat die Infos inzwischen
  * geändert» (saving again overwrites – the last save wins).
  */
-export function InfoForm({ publicId, infoHref, initial, version: initialVersion }: InfoFormProps) {
+export function InfoForm({
+  publicId,
+  infoHref,
+  initial,
+  version: initialVersion,
+  stayTitle = null,
+  fromStay = false,
+}: InfoFormProps) {
   const t = useTranslations("tripInfo.form");
   const tCommon = useTranslations("common");
   const router = useRouter();
   const toast = useToast();
   const ids = useId();
   const formRef = useRef<HTMLFormElement>(null);
-  const [draft, setDraft] = useState<Draft>(initial);
+  const [draft, setDraft] = useState<Draft>(() =>
+    fromStay && stayTitle ? { ...initial, stayName: stayTitle } : initial,
+  );
+  // W22 D: the name before the takeover («Vorher: „…“ · Zurück») – only when it differed.
+  const [previousName, setPreviousName] = useState<string | null>(() =>
+    fromStay && stayTitle && initial.stayName && initial.stayName !== stayTitle
+      ? initial.stayName
+      : null,
+  );
+  const [takeoverNote, setTakeoverNote] = useState("");
+  const tInfo = useTranslations("tripInfo");
+  // Opened via «Name in die Infos übernehmen»: focus on the address (W22 D).
+  useEffect(() => {
+    if (fromStay && stayTitle) document.getElementById(`${ids}-address`)?.focus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- once on mount
+  }, []);
   const [touched, setTouched] = useState<Partial<Record<InfoField, boolean>>>({});
   const [submitted, setSubmitted] = useState(false);
   const [version, setVersion] = useState(initialVersion);
@@ -250,8 +276,43 @@ export function InfoForm({ publicId, infoHref, initial, version: initialVersion 
           </ul>
         </Banner>
       ) : null}
+      {stayTitle && draft.stayName !== stayTitle ? (
+        <Button
+          variant="secondary"
+          size="sm"
+          className={styles.takeover}
+          onClick={() => {
+            setPreviousName(draft.stayName.trim() ? draft.stayName : null);
+            setDraft((value) => ({ ...value, stayName: stayTitle }));
+            setTakeoverNote(tInfo("fromStayDone"));
+            document.getElementById(`${ids}-address`)?.focus();
+          }}
+        >
+          {tInfo("fromStay", { title: stayTitle })}
+        </Button>
+      ) : null}
       {field("stayName", labels.stayName)}
-      {field("address", labels.address, { hint: t("addressHint") })}
+      {previousName && draft.stayName === stayTitle ? (
+        <p className={styles.hint}>
+          {tInfo("fromStayPrevious", { name: previousName })}{" "}
+          <button
+            type="button"
+            className={styles.inlineButton}
+            onClick={() => {
+              setDraft((value) => ({ ...value, stayName: previousName }));
+              setPreviousName(null);
+            }}
+          >
+            {tInfo("fromStayRestore")}
+          </button>
+        </p>
+      ) : null}
+      <p className="visually-hidden" aria-live="polite">
+        {takeoverNote}
+      </p>
+      {field("address", labels.address, {
+        hint: stayTitle ? `${tInfo("addressHintStay")} ${t("addressHint")}` : t("addressHint"),
+      })}
       <div className={styles.times}>
         {field("checkIn", labels.checkIn, { type: "time" })}
         {field("checkOut", labels.checkOut, { type: "time" })}

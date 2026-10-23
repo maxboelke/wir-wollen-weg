@@ -723,7 +723,8 @@ export async function setFixedDates(
       `update trip set phase = 'fixed', range_start = least(range_start, $2::date),
          range_end = greatest(range_end, $3::date), fixed_start = $2, fixed_end = $3,
          fixed_at = now() - make_interval(days => $4),
-         fixed_announced_at = case when $5::boolean then now() end
+         fixed_announced_at = case when $5::boolean then now() end,
+         last_fixed_range = $2::text || '/' || $3::text
        where id = $1`,
       [tripId, isoDay(start), isoDay(end), options.fixedDaysAgo ?? 30, options.announced ?? true],
     );
@@ -798,5 +799,159 @@ export async function markPollCanceled(tripId: string): Promise<void> {
       `update trip_member set joined_at = now() - interval '1 day' where trip_id = $1`,
       [tripId],
     );
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Increment 9: places to stay (F-031)
+// ---------------------------------------------------------------------------
+
+export interface StaySeedInput {
+  title: string;
+  /** Unique per trip – default derived from the title. */
+  url?: string;
+  /** E-mail of the author, or a display name of a synthetic member, or null (former member). */
+  by?: { email: string } | { name: string } | null;
+  priceEuro?: number;
+  note?: string;
+  /** Minutes ago (default: order of insertion, oldest first). */
+  minutesAgo?: number;
+  chosen?: boolean;
+  booked?: boolean;
+}
+
+async function userIdIn(
+  client: pg.Client,
+  tripId: string,
+  who: { email: string } | { name: string },
+): Promise<string> {
+  const row =
+    "email" in who
+      ? await client.query<{ id: string }>(`select id from "user" where email = $1`, [who.email])
+      : await client.query<{ id: string }>(
+          `select user_id as id from trip_member where trip_id = $1 and display_name = $2`,
+          [tripId, who.name],
+        );
+  return row.rows[0]?.id ?? "";
+}
+
+/** Inserts suggestions (no preview → placeholder card); returns their ids in order. */
+export async function addStays(tripId: string, stays: StaySeedInput[]): Promise<string[]> {
+  return withClient(async (client) => {
+    const ids: string[] = [];
+    for (const [index, stay] of stays.entries()) {
+      const slug = stay.title.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+      const url = stay.url ?? `https://ferienhaus.example/${slug}-${String(index)}`;
+      const by = stay.by ? await userIdIn(client, tripId, stay.by) : null;
+      const orga = await client.query<{ id: string }>(
+        `select user_id as id from trip_member where trip_id = $1 and role = 'organizer'`,
+        [tripId],
+      );
+      const row = await client.query<{ id: string }>(
+        `insert into trip_stay (trip_id, url, url_normalized, title, price_cents, currency, note,
+           preview_status, created_by, created_at, chosen_at, chosen_by, booked_at, booked_by)
+         values ($1, $2, $3, $4, $5, 'EUR', $6, 'none', $7, now() - make_interval(mins => $8),
+           case when $9::boolean then now() end, case when $9::boolean then $10::uuid end,
+           case when $11::boolean then now() end, case when $11::boolean then $10::uuid end)
+         returning id`,
+        [
+          tripId,
+          url,
+          url.replace(/^https:\/\/(www\.)?/, ""),
+          stay.title,
+          stay.priceEuro === undefined ? null : stay.priceEuro * 100,
+          stay.note ?? null,
+          by,
+          stay.minutesAgo ?? 100 - index,
+          stay.chosen === true,
+          orga.rows[0]?.id ?? null,
+          stay.booked === true,
+        ],
+      );
+      ids.push(row.rows[0]?.id ?? "");
+    }
+    return ids;
+  });
+}
+
+/** Ratings of one person (by e-mail or display name): stay id → «like» / «nope». */
+export async function rateStays(
+  tripId: string,
+  who: { email: string } | { name: string },
+  ratings: Record<string, "like" | "nope">,
+): Promise<void> {
+  await withClient(async (client) => {
+    const userId = await userIdIn(client, tripId, who);
+    for (const [stayId, value] of Object.entries(ratings)) {
+      await client.query(
+        `insert into trip_stay_rating (stay_id, trip_id, user_id, value, rated_at)
+         values ($1, $2, $3, $4, now())
+         on conflict (stay_id, user_id) do update set value = excluded.value`,
+        [stayId, tripId, userId, value],
+      );
+    }
+  });
+}
+
+/** Stays of a trip with picked/booked flags and the number of ratings. */
+export async function stayRows(tripId: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      title: string;
+      chosen: boolean;
+      booked: boolean;
+      ratings: number;
+      author: string | null;
+    }>(
+      `select s.title, s.chosen_at is not null as chosen, s.booked_at is not null as booked,
+         (select count(*)::int from trip_stay_rating r where r.stay_id = s.id) as ratings,
+         s.created_by as author
+       from trip_stay s where s.trip_id = $1 order by s.created_at`,
+      [tripId],
+    );
+    return rows.rows;
+  });
+}
+
+/** Ratings of one person in a trip (stay title → value). */
+export async function ratingsOf(tripId: string, email: string): Promise<Record<string, string>> {
+  return withClient(async (client) => {
+    const rows = await client.query<{ title: string; value: string }>(
+      `select s.title, r.value from trip_stay_rating r join trip_stay s on s.id = r.stay_id
+       join "user" u on u.id = r.user_id where r.trip_id = $1 and u.email = $2`,
+      [tripId, email],
+    );
+    return Object.fromEntries(rows.rows.map((r) => [r.title, r.value]));
+  });
+}
+
+/** Trip markers of the places to stay (UX-9, «Termin geändert»). */
+export async function stayTripState(tripId: string) {
+  return withClient(async (client) => {
+    const rows = await client.query<{
+      without_app: boolean;
+      dates_changed: boolean;
+      notice_dismissed: boolean;
+      booking_reset: boolean;
+      party: number | null;
+    }>(
+      `select exists (select 1 from trip_station_marks m where m.trip_id = t.id) as without_app,
+         t.stay_dates_changed_at is not null as dates_changed,
+         t.stay_date_notice_dismissed_at is not null as notice_dismissed,
+         t.stay_booking_reset as booking_reset, t.party_size_override as party
+       from trip t where t.id = $1`,
+      [tripId],
+    );
+    return rows.rows[0];
+  });
+}
+
+/** Simulates «Festlegung aufheben» after an earlier fixing: phase «voting», range remembered. */
+export async function setLastFixedRange(tripId: string, start: string, end: string) {
+  await withClient(async (client) => {
+    await client.query(`update trip set last_fixed_range = $2 where id = $1`, [
+      tripId,
+      `${start}/${end}`,
+    ]);
   });
 }

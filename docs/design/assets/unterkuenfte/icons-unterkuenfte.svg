@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 300" width="560" height="300" role="img" aria-labelledby="wwiu-t">
+  <title id="wwiu-t">Ansicht: neue Icons und Stempel für Unterkünfte (F-031)</title>
+  <desc>Referenzblatt, wird nicht ausgeliefert. Oben die vier neuen Sprite-Icons bed, heart, heart-filled, external in 24 px und 48 px. Unten die Stempel Gefällt mir und Eher nicht auf einem Demo-Bildausschnitt. Maßgeblich für die Icons ist docs/design/assets/icons/icons.svg, für die Stempel design-system.md Abschnitt 9.21.</desc>
+  <!-- v1.1 (2026-10-23). Formen identisch zum Sprite. Stempel liegen in der App als HTML über dem Bild (aria-hidden). -->
+  <defs>
+    <g id="wwiu-bed" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3.5 18.5v-12"/>
+      <path d="M3.5 15h17v3.5"/>
+      <path d="M10.5 15v-4.5h7a3 3 0 0 1 3 3V15" fill="currentColor" fill-opacity=".16"/>
+      <circle cx="7" cy="12" r="1.75" fill="currentColor" fill-opacity=".16"/>
+    </g>
+    <path id="wwiu-heart" d="M12 20.25S3.5 15.4 3.5 9.4A4.4 4.4 0 0 1 12 7.2a4.4 4.4 0 0 1 8.5 2.2c0 6-8.5 10.85-8.5 10.85z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+    <g id="wwiu-ext" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M14 4.5h5.5V10M19.5 4.5L11 13"/>
+      <path d="M17.5 14v3.5a2 2 0 0 1-2 2h-9a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2H10"/>
+    </g>
+    <g id="wwiu-cross" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
+      <path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/>
+    </g>
+  </defs>
+  <rect width="280" height="150" fill="#FFFFFF"/>
+  <rect x="280" width="280" height="150" fill="#1F1A45"/>
+  <g color="#1E1A3D">
+    <use href="#wwiu-bed" x="24" y="24"/>
+    <use href="#wwiu-heart" x="84" y="24" fill="currentColor" fill-opacity=".16"/>
+    <use href="#wwiu-heart" x="144" y="24" fill="currentColor"/>
+    <use href="#wwiu-ext" x="204" y="24"/>
+    <g transform="translate(12 70) scale(2)"><use href="#wwiu-bed"/></g>
+    <g transform="translate(72 70) scale(2)"><use href="#wwiu-heart" fill="currentColor" fill-opacity=".16"/></g>
+    <g transform="translate(132 70) scale(2)"><use href="#wwiu-heart" fill="currentColor"/></g>
+    <g transform="translate(192 70) scale(2)"><use href="#wwiu-ext"/></g>
+  </g>
+  <g color="#F3F1FF">
+    <use href="#wwiu-bed" x="304" y="24"/>
+    <use href="#wwiu-heart" x="364" y="24" fill="currentColor" fill-opacity=".16"/>
+    <use href="#wwiu-heart" x="424" y="24" fill="currentColor"/>
+    <use href="#wwiu-ext" x="484" y="24"/>
+    <g transform="translate(292 70) scale(2)"><use href="#wwiu-bed"/></g>
+    <g transform="translate(352 70) scale(2)"><use href="#wwiu-heart" fill="currentColor" fill-opacity=".16"/></g>
+    <g transform="translate(412 70) scale(2)"><use href="#wwiu-heart" fill="currentColor"/></g>
+    <g transform="translate(472 70) scale(2)"><use href="#wwiu-ext"/></g>
+  </g>
+  <rect y="150" width="560" height="150" fill="#ECE6FF"/>
+  <path d="M0 230c60-14 120-18 180-12s120 16 200 10 130-14 180-10v82H0z" fill="#52E5B8"/>
+  <path d="M0 262c80-12 160-14 240-8s180 12 320 0v46H0z" fill="#1FBF94"/>
+  <circle cx="470" cy="190" r="24" fill="#FFCF4A"/>
+  <g transform="rotate(-8 120 200)">
+    <rect x="44" y="178" width="152" height="44" rx="14" fill="#52E5B8" stroke="#FFFFFF" stroke-opacity=".9" stroke-width="3"/>
+    <g color="#2B2266" transform="translate(58 188)"><use href="#wwiu-heart" fill="currentColor"/></g>
+    <text x="90" y="206" fill="#2B2266" font-family="'Plus Jakarta Sans', 'Figtree', system-ui, sans-serif" font-size="17" font-weight="800">Gefällt mir</text>
+  </g>
+  <g transform="rotate(8 360 200)">
+    <rect x="286" y="178" width="148" height="44" rx="14" fill="#FFFFFF" stroke="#1E1A3D" stroke-width="2.5"/>
+    <g color="#1E1A3D" transform="translate(300 188)"><use href="#wwiu-cross"/></g>
+    <text x="332" y="206" fill="#1E1A3D" font-family="'Plus Jakarta Sans', 'Figtree', system-ui, sans-serif" font-size="17" font-weight="800">Eher nicht</text>
+  </g>
+</svg>

@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" width="400" height="300" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+  <title>Demo-Unterkunft: Villa mit Pool</title>
+  <desc>Eigene Illustration (Fantasie-Unterkunft, Demo-Daten F-031): weiße, flache Villa mit großen Glasfronten, davor ein türkiser Pool mit Lichtreflexen, Sonnenliege, Sonnenschirm und Palme. Lizenzfrei, selbst erstellt.</desc>
+  <!-- v1.1 (2026-10-23) · 4:3 · Motiv in der sicheren Zone x 50 bis 350, y 38 bis 262 · keine Theme-Umschaltung -->
+  <defs>
+    <linearGradient id="wwd3-sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#A79AF2"/>
+      <stop offset="1" stop-color="#ECE6FF"/>
+    </linearGradient>
+    <linearGradient id="wwd3-pool" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7DEDCB"/>
+      <stop offset="1" stop-color="#3FD0A5"/>
+    </linearGradient>
+    <clipPath id="wwd3-poolclip">
+      <path d="M60 236h280l24 40H36z"/>
+    </clipPath>
+  </defs>
+  <rect width="400" height="300" fill="url(#wwd3-sky)"/>
+  <circle cx="88" cy="70" r="44" fill="#FFCF4A" opacity=".3"/>
+  <circle cx="88" cy="70" r="26" fill="#FFCF4A"/>
+  <path d="M0 176c46-22 96-30 140-26 40 4 70 14 100 20 52 10 110 4 160-10v40H0z" fill="#5B48C9" opacity=".55"/>
+  <rect y="190" width="400" height="110" fill="#FFF3CC"/>
+  <rect x="110" y="104" width="220" height="16" rx="3" fill="#FFFFFF"/>
+  <rect x="122" y="120" width="196" height="54" fill="#F4F2FB"/>
+  <rect x="92" y="170" width="256" height="14" rx="3" fill="#FFFFFF"/>
+  <rect x="92" y="184" width="256" height="40" fill="#F4F2FB"/>
+  <rect x="136" y="128" width="66" height="38" rx="3" fill="#2B2266"/>
+  <rect x="212" y="128" width="92" height="38" rx="3" fill="#2B2266"/>
+  <path d="M136 166l30-38h14l-30 38zM232 166l30-38h10l-30 38z" fill="#fff" opacity=".18"/>
+  <rect x="104" y="190" width="72" height="30" rx="3" fill="#3F2F99"/>
+  <rect x="186" y="190" width="40" height="34" rx="3" fill="#2B2266"/>
+  <rect x="236" y="190" width="100" height="30" rx="3" fill="#3F2F99"/>
+  <path d="M104 220l28-30h12l-28 30zM250 220l28-30h10l-28 30z" fill="#fff" opacity=".16"/>
+  <rect x="300" y="138" width="22" height="30" rx="4" fill="#1FBF94"/>
+  <circle cx="311" cy="134" r="12" fill="#1FBF94"/>
+  <rect x="92" y="224" width="256" height="12" fill="#EADFCF"/>
+  <path d="M60 236h280l24 40H36z" fill="url(#wwd3-pool)"/>
+  <g clip-path="url(#wwd3-poolclip)" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" opacity=".7">
+    <path d="M70 250c12-5 24 5 36 0s24-5 36 0"/>
+    <path d="M196 246c12-5 24 5 36 0s24-5 36 0"/>
+    <path d="M120 266c12-5 24 5 36 0s24-5 36 0 24-5 36 0"/>
+    <path d="M286 262c10-4 20 4 30 0"/>
+  </g>
+  <path d="M36 276h328l8 24H28z" fill="#EADFCF"/>
+  <path d="M300 250v-22c0-4 6-4 6 0M314 250v-22c0-4 6-4 6 0M300 236h14M300 244h14" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M8 290l44-12h40l-6 8H50l-36 10z" fill="#FFFFFF"/>
+  <path d="M48 280l-8-16" stroke="#FFFFFF" stroke-width="4" stroke-linecap="round"/>
+  <path d="M376 300c-4-40 0-84 10-120" fill="none" stroke="#7A5200" stroke-width="7" stroke-linecap="round"/>
+  <g fill="#00775A">
+    <path d="M386 180c-20-12-46-12-62 2 20-2 40 0 62-2z"/>
+    <path d="M386 180c-10-20-30-30-50-28 18 8 34 18 50 28z"/>
+    <path d="M386 180c4-20 0-36-10-46 2 16 6 30 10 46z"/>
+  </g>
+  <path d="M60 228V140" stroke="#57527A" stroke-width="3" stroke-linecap="round"/>
+  <path d="M24 146c10-22 62-22 72 0z" fill="#F0503F"/>
+  <path d="M48 146c4-14 20-14 24 0z" fill="#FFFFFF" opacity=".5"/>
+  <circle cx="356" cy="58" r="14" fill="#fff" opacity=".4"/>
+  <circle cx="374" cy="64" r="10" fill="#fff" opacity=".4"/>
+</svg>

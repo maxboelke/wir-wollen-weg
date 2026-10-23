@@ -21,7 +21,7 @@ import {
   DURATION,
   EASING,
   prefersReducedMotion,
-  spring,
+  nod,
   STAGGER,
   staggerDelay,
 } from "@/lib/motion";
@@ -286,7 +286,15 @@ function StationCard({
           <span className={styles.title}>{station.title}</span>
           <Chevron />
         </Target>
-        <p className={styles.status}>{station.status}</p>
+        <p className={styles.status}>{station.detail ?? station.status}</p>
+        {station.progress !== undefined ? (
+          <span className={styles.progress} aria-hidden="true">
+            <span
+              className={styles.progressFill}
+              style={{ transform: `scaleX(${String(station.progress)})` }}
+            />
+          </span>
+        ) : null}
         {station.primary ? (
           <ActionButton
             action={station.primary.action}
@@ -314,6 +322,14 @@ function StationCard({
         {chip}
         <span className={styles.title}>{station.title}</span>
         <span className={styles.status}>{station.status}</span>
+        {station.progress !== undefined ? (
+          <span className={styles.progress} aria-hidden="true">
+            <span
+              className={styles.progressFill}
+              style={{ transform: `scaleX(${String(station.progress)})` }}
+            />
+          </span>
+        ) : null}
       </span>
       <Chevron />
     </Target>
@@ -343,11 +359,12 @@ function StationActions({
           aria-disabled={offline || undefined}
           onClick={() => {
             if (offline || !station.remind) return;
-            cockpit?.open({
-              kind: "remind",
-              occasion: station.remind.occasion,
-              keys: station.remind.keys,
-            });
+            const { occasion, keys } = station.remind;
+            if (occasion === "placeholder" || occasion === "orga") {
+              cockpit?.open({ kind: "remind", occasion, keys });
+            } else {
+              cockpit?.open({ kind: "stay", step: { occasion } });
+            }
           }}
         >
           {station.remind.label}
@@ -426,12 +443,9 @@ export function RouteSection({ view }: { view: RouteView }) {
     if (next.length === 0) return;
     const marker = rootRef.current?.querySelector("[data-route-marker='done']");
     if (!marker || prefersReducedMotion()) return;
-    // UM-4: the marker itself becomes the seal – a pop (transform only, nothing disappears).
-    marker.animate([{ transform: "scale(0.6)" }, { transform: "scale(1)" }], {
-      duration: DURATION.moderate,
-      delay: 120,
-      easing: spring("bouncy"),
-    });
+    // UM-4 / W16-04 (M-X8 b): the marker itself becomes the seal – a nod 1 → 1.25 → 1 without
+    // delay, never smaller than the painted state (R-017).
+    nod(marker);
   }, [sessionKey, view.done]);
 
   // Return from a sub-page: focus (and scroll) back on the entry we came from (v2.8).
@@ -633,6 +647,7 @@ export function RouteSection({ view }: { view: RouteView }) {
                         sessionKey={sessionKey}
                         offline={offline}
                       />
+                      <StationActions station={station} sessionKey={sessionKey} offline={offline} />
                     </li>
                   ))}
                 </ul>
@@ -648,6 +663,11 @@ export function RouteSection({ view }: { view: RouteView }) {
                         <StationCard
                           station={station}
                           big={false}
+                          sessionKey={sessionKey}
+                          offline={offline}
+                        />
+                        <StationActions
+                          station={station}
                           sessionKey={sessionKey}
                           offline={offline}
                         />

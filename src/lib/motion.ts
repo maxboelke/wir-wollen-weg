@@ -131,6 +131,82 @@ export function staggerDelay(index: number, step: number, max: number = STAGGER.
   return Math.min(Math.max(0, index) * step, max);
 }
 
+/** Seal sizes of G-21: 20 px (chip «gebucht»), 40 px («Eure Unterkunft»), 64 px (end of a stack). */
+export type SealSize = 20 | 40 | 64;
+
+/**
+ * Seal pop G-21 – ONE helper for 20/40/64 px (motion M-X9): the disc pops from `scale-pop`
+ * with the bouncy spring, the check follows from 40 % (scale + fade – transform/opacity only),
+ * sparks only at 64 px. Expects the layers `data-anim="disc|check|sparks"` of the `seal`
+ * illustration. 40 px starts after 120 ms, 64 px after 60 ms (W18-08/W18-11). Reduced motion:
+ * nothing (the seal is simply there). Callers only pop seals that appear on the client.
+ */
+export function sealPop(root: Element | null | undefined, size: SealSize, delay?: number) {
+  if (!root || prefersReducedMotion()) return;
+  const duration = size === 20 ? DURATION.moderate : DURATION.celebrate;
+  const start = delay ?? (size === 40 ? 120 : size === 64 ? 60 : 0);
+  const layer = (name: string) => root.querySelector(`[data-anim="${name}"]`);
+  for (const name of ["disc", "check", "sparks"]) {
+    const element = layer(name);
+    if (element instanceof SVGElement) {
+      element.style.transformOrigin = "center";
+      element.style.transformBox = "fill-box";
+    }
+  }
+  animate(
+    layer("disc"),
+    [
+      { transform: `scale(${String(SCALE.pop)})`, opacity: 0 },
+      { transform: "scale(1)", opacity: 1 },
+    ],
+    { duration, delay: start, easing: spring("bouncy"), fill: "backwards" },
+  );
+  animate(
+    layer("check"),
+    [
+      { transform: "scale(0.4)", opacity: 0 },
+      { transform: "scale(1)", opacity: 1 },
+    ],
+    {
+      duration: duration * 0.6,
+      delay: start + duration * 0.4,
+      easing: EASING.enter,
+      fill: "backwards",
+    },
+  );
+  if (size === 64) {
+    animate(
+      layer("sparks"),
+      [
+        { transform: "scale(0.6)", opacity: 0 },
+        { transform: "scale(1)", opacity: 1 },
+      ],
+      {
+        duration: DURATION.moderate,
+        delay: start + duration * 0.6,
+        easing: EASING.enter,
+        fill: "backwards",
+      },
+    );
+  }
+}
+
+/**
+ * A nod `scale 1 → 1.25 → 1` (W16-04, M-X8 b): for elements that are already painted – never
+ * smaller than the painted state, no delay (R-017).
+ */
+export function nod(element: Element | null | undefined, peak = 1.25) {
+  return animate(
+    element,
+    [
+      { transform: "scale(1)" },
+      { transform: `scale(${String(peak)})`, offset: 0.35 },
+      { transform: "scale(1)" },
+    ],
+    { duration: DURATION.moderate, easing: EASING.standard },
+  );
+}
+
 /** Code field "wrong code" (W02-04): one horizontal shake of 4 px; none when reduced. */
 export function shake(element: Element | null | undefined) {
   return animate(

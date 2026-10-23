@@ -253,3 +253,20 @@
     grid-column: 1 / -1;
   }
 }
+
+/* W22 D «Aus „{Titel}“ übernehmen» (Increment 9) */
+.takeover {
+  align-self: flex-start;
+}
+
+.inlineButton {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

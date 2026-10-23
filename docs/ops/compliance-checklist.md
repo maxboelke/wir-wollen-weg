@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: Entwurf v0.3 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.4 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -73,12 +73,37 @@ Seit 14.05.2024 gilt das **Digitale-Dienste-Gesetz (DDG)** statt TMG – im Impr
 | ☐ | Betroffenenrechte Art. 15–21 (Auskunft im MVP per E-Mail, F-043), Widerspruch gegen lit. f-Verarbeitungen, Beschwerderecht bei Aufsichtsbehörde (zuständige Behörde nach Sitz des Betreibers nennen) | M1 |
 | ☐ | Pflicht zur Bereitstellung: E-Mail ist für das Konto erforderlich; ohne Konto keine Teilnahme (Q2) | M1 |
 | ☐ | Keine automatisierte Entscheidung i. S. d. Art. 22 (Kandidaten-Vorschläge sind unverbindliche Vorschläge, die Gruppe entscheidet) | M1 |
+| ☐ | **Unterkünfte & Link-Vorschau** (F-031, Inkrement 9): Abschnitt nach §2a (Platzhaltertext vorgemerkt) | M1 |
 | ☐ | Hinweis für Organisatoren: Platzhalter-Namen (F-007) sind Daten Dritter → Hinweis „nur Vornamen/Spitznamen verwenden“ in UI und Erklärung | M1 |
 | ☐ | Englische Fassung mit Hinweis „Translation – the German version is legally binding“ | M2 |
 | ☐ | Kurzfassung („Datenschutz auf einen Blick“) auf Registrierungs- und Beitrittsseite verlinkt (F-013) | M1 |
 | ☐ | **v1-Ergänzungen vor Release:** Kalender-Import (nur frei/belegt, Rohdaten nur im Arbeitsspeicher, F-006/F-047), verschlüsselte Speicherung von Kalender-URLs/CalDAV-Passwörtern (F-019/F-048), Google/Microsoft/Apple als Login- bzw. Kalenderanbieter (F-045, F-020, F-021 – Drittland!), E-Mail-Benachrichtigungen mit Einwilligung (F-014) | v1 |
 
 Erstellung (Entscheidung zurückgestellt bis Go-Live, Q16): Generator mit Aktualisierungsservice (z. B. Anbieter mit Abmahnschutz/Haftungsübernahme, ca. 10–30 €/Monat, Schätzung) **oder** einmalige anwaltliche Erstellung/Prüfung (Schätzung ca. 500–1 500 €). Entscheidung Auftraggeber.
+
+## 2a. Vorgemerkt: Abschnitt „Unterkünfte & Link-Vorschau“ (F-031, Inkrement 9 – vor G1)
+
+Quelle: features.md R.7 (I9-03, I9-04, I9-10), PRD Q33/Q34, deployment.md §0.8. Gilt erst mit echter Nutzung (G1); in Demo/Vorschau nur als Platzhalter auf der Datenschutzseite (Gliederung §0a). **Entwurf, keine Rechtsberatung** – Wortlaut bei der Rechtsprüfung (Q16) final festlegen.
+
+| ☐ | Punkt | Wer | Fällig |
+|---|---|---|---|
+| ☐ | Überschrift „Unterkünfte & Link-Vorschau“ als eigener Abschnitt in der Platzhalter-Datenschutzseite (DE/EN) anlegen, Inhalt = Stichpunkte unten mit `[PLATZHALTER: …]`-Markern | Developer (Inkrement 9) | mit Inkrement 9 |
+| ☐ | Endfassung DE (verbindlich) + EN nach Rechtsprüfung | Operations → Rechtsprüfung | M1 (EN: M2) |
+| ☐ | **Urheberrecht Vorschaubilder** prüfen lassen: Anzeige des vom Portal selbst bereitgestellten `og:image` als verkleinerte Vorschau mit Quellenangabe (Domain) und Link, ohne dauerhafte Speicherung (Q34) – Risiko aus Betriebssicht gering, aber nicht null; ggf. Lösch-/Beschwerdeweg für Rechteinhaber nennen | Auftraggeber/Rechtsprüfung | M1 |
+| ☐ | Prüfen, ob Portal-AGB das automatisierte Abrufen einzelner Seiten verbieten → wir rufen nur **einmal pro Vorschlag** auf Nutzerwunsch ab, eigener User-Agent, keine Umgehung von Sperren, Platzhalter bei Blockade | Rechtsprüfung | M1 |
+
+**Platzhaltertext (Stichpunkte, Entwurf):**
+
+> **Unterkünfte & Link-Vorschau**
+> - **Was passiert:** Fügst du in einer Reise einen Link zu einer Unterkunft ein, ruft **unser Server** die öffentlich erreichbare Seite einmal ab, um Titel, Anbietername und ein Vorschaubild zu ermitteln. Der Abruf geht von unserem Server aus `[PLATZHALTER: Hosting-Anbieter, Standort]`, **nicht von deinem Gerät**.
+> - **Keine Daten über dich:** Dabei übermitteln wir keine Daten über dich – keine IP-Adresse, keine Cookies, keine Anmeldedaten, keine Kennung. Der aufgerufene Anbieter sieht nur die IP-Adresse unseres Servers, unsere Programmkennung und die Adresse der Seite (den eingefügten Link). Bitte füge keine Links ein, die selbst persönliche Daten enthalten (z. B. Buchungsbestätigungen oder persönliche Freigabe-Links).
+> - **Bilder:** Vorschaubilder leiten wir über unseren Server an deinen Browser weiter; dein Browser nimmt dafür **keinen Kontakt** zu den Servern der Portale auf. Die Bilder werden **nicht dauerhaft gespeichert** – höchstens im Zwischenspeicher deines Browsers für bis zu `[PLATZHALTER: 24 Stunden]` `[ggf.: und flüchtig auf unserem Server für höchstens 7 Tage, ohne Sicherung]`. Gespeichert wird nur die Adresse des Bildes.
+> - **Was wir speichern:** Link, Titel, optional Gesamtpreis und Notiz, wer den Vorschlag gemacht hat und wann; deine Bewertungen (gefällt / gefällt nicht) mit Zeitpunkt; Festlegung und „gebucht“ durch die Orga.
+> - **Wer es sieht:** nur Mitglieder derselben Reise. Vorschläge inkl. **Notiz** und Name der vorschlagenden Person sind für alle Mitglieder sichtbar – bitte keine sensiblen Angaben in Notizen. „Gefällt“ wird **namentlich**, „gefällt nicht“ nur **als Anzahl** gezeigt; die Rangliste siehst du erst, nachdem du selbst alle Vorschläge bewertet hast (die Orga sieht sie immer).
+> - **Öffnen eines Links:** Erst wenn du einen Unterkunfts-Link öffnest (neuer Tab), verbindet sich dein Browser mit dem Portal; dort gilt dessen Datenschutzerklärung.
+> - **Rechtsgrundlage:** Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung der von dir genutzten Funktion). Technisches Protokoll der Abrufe nur mit Hostname und Ergebnis (ohne Pfad, ohne Bezug zu dir, soweit technisch möglich) – Art. 6 Abs. 1 lit. f (Sicherheit, Missbrauchsschutz), Aufbewahrung `[PLATZHALTER: 7 Tage]`.
+> - **Löschung:** zusammen mit der Reise (`[PLATZHALTER: 90 Tage nach Reiseende]` bzw. wenn die Orga die Reise löscht). Verlässt du die Reise oder löschst dein Konto, werden deine Bewertungen gelöscht; deine Vorschläge bleiben für die Gruppe **ohne deinen Namen** („ehemaliges Mitglied“).
+> - **Auskunft/Export:** Der Datenexport enthält deine eigenen Vorschläge und Bewertungen.
 
 ## 3. Auftragsverarbeitung (Art. 28 DSGVO)
 
@@ -91,6 +116,7 @@ Erstellung (Entscheidung zurückgestellt bis Go-Live, Q16): Generator mit Aktual
 | ☐ | Fehler-Tracking: Bugsink selbst gehostet → **kein** AVV; bei Sentry SaaS: DPA + SCC/DPF | – | – | M1 |
 | ☐ | GitHub (Code, CI) – **keine** Nutzerdaten in Repo/CI/Logs (nur synthetische Testdaten) → kein AVV nötig; Regel im Reviewer-Check | – | – | laufend |
 | ☐ | Uptime-Dienst – ruft nur Health-Endpunkt auf, keine personenbezogenen Daten | – | – | – |
+| ☐ | Unterkunfts-Portale (Link-Vorschau, F-031) – **keine Empfänger** personenbezogener Daten: Abruf durch unseren Server ohne Nutzerdaten (§2a); kein AVV | – | – | – |
 | ☐ | Ablage aller AVVs (PDF + Datum) außerhalb des Repos; Liste hier pflegen | – | – | M1 |
 
 ## 4. Cookies & Endgerätezugriff (§ 25 TDDDG) – Banner nötig?
@@ -108,14 +134,17 @@ Seit 14.05.2024 heißt das TTDSG **TDDDG**. § 25 erfasst jedes Speichern/Ausles
 | `ww-motion` (Cookie, 12 Monate, nur bei expliziter Wahl „Bewegung reduzieren“ im Konto) | vom Nutzer gewählte Darstellung, serverseitig im ersten HTML berücksichtigt | erforderlich (Nutzerwunsch); ohne Wahl nichts gespeichert (Nachtrag Reviewer Inkrement 4) |
 | `ww-hm-legend` (Cookie, 12 Monate, nur nach Zuklappen der Legende im Gruppenkalender, Inkrement 4, U-6) | vom Nutzer gewählter Anzeigezustand, serverseitig im ersten HTML berücksichtigt; Wert nur `closed`, keine Kennung | erforderlich (Nutzerwunsch, funktional); Aufklappen löscht das Cookie |
 | `sessionStorage` `ww-anim:*`, `ww-tab-from` (Sitzungsende) | Einmal-Animationen nicht wiederholen, Tab-Richtung der Übergänge | erforderlich für die gewünschte Darstellung; keine Kennung, nichts verlässt das Gerät |
+| `sessionStorage` Unterkünfte (Inkrement 9, Schlüssel nach Wahl Developer, z. B. `ww-stays:*`): Stapel-Position, letzte Bewertung für „Rückgängig“, ausstehende Bewertungen bei Netzfehler | Swipen ohne Datenverlust, Rückgängig | erforderlich für die gewünschte Funktion; Sitzungsende, keine Kennung, nichts verlässt das Gerät außer der Bewertung selbst |
+| Browser-Cache Vorschaubilder (`Cache-Control: private`, ≤ 24 h) | Bilder nicht bei jedem Aufruf neu laden | normales HTTP-Caching, technisch erforderlich; keine Kennung |
 | Statistik | **serverseitig**, ohne Endgerätezugriff | nicht von § 25 erfasst |
 
-**Ergebnis:** Bei Umsetzung wie geplant (keine Tracker, keine Werbung, keine eingebetteten Drittinhalte, Schriften selbst gehostet, keine externen Karten/Videos) ist **kein Einwilligungs-Banner nötig** (deckt sich mit F-013). Pflicht bleibt die **Information** in der Datenschutzerklärung.
+**Ergebnis:** Bei Umsetzung wie geplant (keine Tracker, keine Werbung, keine eingebetteten Drittinhalte, Schriften selbst gehostet, keine externen Karten/Videos, **Unterkunfts-Bilder nur über den eigenen Bild-Proxy**) ist **kein Einwilligungs-Banner nötig** (deckt sich mit F-013). Pflicht bleibt die **Information** in der Datenschutzerklärung.
 
 | ☐ | Regel | Fällig |
 |---|---|---|
 | ☐ | Reviewer prüft je Release: keine neuen Cookies/Storage-Schlüssel ohne Eintrag in obiger Tabelle; keine Drittanbieter-Ressourcen (Netzwerk-Tab/CSP) | laufend |
 | ☐ | Google-Kalender-Link (F-012) ist ein normaler Link (kein Einbetten) → ok | M1 |
+| ☐ | Unterkunfts-Links (F-031) öffnen das Portal nur per Klick in neuem Tab (`noopener noreferrer`); Vorschaubilder nie direkt vom Portal; globale CSP `img-src 'self' data: blob:` als technische Absicherung (deployment.md §0.9) | mit Inkrement 9 |
 | ☐ | Bei späterer Einführung von Analytics mit Endgerätezugriff, Social-Login-Buttons mit SDK oder Zahlungs-Widgets: Neubewertung | v1/P |
 
 ## 5. Verzeichnis von Verarbeitungstätigkeiten (Art. 30 DSGVO)
@@ -125,7 +154,7 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | ☐ | Verarbeitungstätigkeit | Fällig |
 |---|---|---|
 | ☐ | Kontoverwaltung & Anmeldung (F-040–F-043) | M1 |
-| ☐ | Reiseplanung: Reisen, Mitgliedschaften, Verfügbarkeiten, Abstimmungen (F-001–F-013) | M1 |
+| ☐ | Reiseplanung: Reisen, Mitgliedschaften, Verfügbarkeiten, Abstimmungen (F-001–F-013); **Reise managen:** Infoseite (F-033), Unterkünfte inkl. Link-Vorschau (F-031) | M1 |
 | ☐ | Versand von Transaktionsmails | M1 |
 | ☐ | Sicherheit: Rate-Limiting, Logs, Fehler-Tracking | M1 |
 | ☐ | Backups | M1 |
@@ -147,6 +176,11 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Reise inkl. Mitgliedschaften, Verfügbarkeiten, Kommentare, Abstimmungen | Organisator löscht (sofort); automatisch 90 Tage nach festgelegtem Reiseende bzw. 12 Monate nach letzter Aktivität; Hinweis-Mail 14 Tage vorher (F-013) | `ON DELETE CASCADE` + Retention-Job | ☐ |
 | Mitgliedsdaten in einer Reise | sofort bei „Reise verlassen“ oder Entfernen durch Organisator (F-004, F-013) | Cascade | ☐ |
 | Platzhalter (F-007) | mit Reise bzw. bei Übernahme/Entfernen | Cascade | ☐ |
+| Unterkunfts-Vorschläge (F-031: Link, Titel, Preis, Notiz, Bild-**URL**) | mit der Reise (Q31); beim Verlassen/Konto-Löschen bleibt der Vorschlag ohne Urheber („ehemaliges Mitglied“) | `trip_stay` Cascade, `created_by` → null | ☐ |
+| Unterkunfts-Bewertungen | mit Reise, Vorschlag oder Mitgliedschaft (Verlassen/Entfernen/Konto löschen) | `trip_stay_rating` Cascade | ☐ |
+| Vorschaubilder | **nie dauerhaft** (Q34): nur Browser-Cache `private` ≤ 24 h, optional flüchtiger Server-Cache ≤ 7 Tage ohne Backup | Code-Review, kein Objektspeicher | ☐ |
+| Vorschau-Ergebnis vor dem Speichern | nicht gespeichert, nur im verschlüsselten Token (AES-256-GCM, R-076) (≤ 30 Min.) | – | ☐ |
+| Protokoll der Vorschau-Abrufe | nur Hostname + Ergebnis-Kategorie; wie Server-Logs 7 Tage | Logger, Reviewer | ☐ |
 | Server-/Proxy-Logs mit IP | 7 Tage; **ohne Tokens** in Pfad/Query/`Referer` (deployment.md §5.4, R-037) | Log-Rotation, Caddy-Log-Filter | ☐ |
 | Fehler-Tracking-Ereignisse | 30 Tage, ohne E-Mail/Token (URLs, Header, Breadcrumbs gescrubbt, deployment.md §6.2) | Bugsink-Retention, `beforeSend` | ☐ |
 | Backups | rollierend max. 30 Tage → gelöschte Daten spätestens dann auch aus Backups entfernt; bei Restore: Löschungen der letzten 30 Tage erneut anwenden (Lösch-Protokoll nur mit IDs, ohne Inhalte) | Backup-Rotation, Runbook | ☐ |
@@ -168,6 +202,8 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 | ☐ | Verschlüsselte Backups (`age`), Restore-Test monatlich | M1 |
 | ☐ | Least Privilege für Organisator-/Mitgliedsrechte, serverseitig geprüft (F-004) | M1 |
 | ☐ | Keine personenbezogenen Daten in Logs/CI/Issues; **keine Tokens in Zugriffs-/Fehler-Logs** – auch nicht im Pfad (`/i/<token>`, `/auth/*`) oder `Referer` (deployment.md §5.4, §6.2; R-037) | laufend |
+| ☐ | **SSRF-Schutz** für ausgehende Abrufe (Link-Vorschau/Bild-Proxy, F-031): nur `https`/443, DNS-Pinning, private Netze gesperrt, Limits, kein offener Proxy (features.md R.7); ab Go-Live zusätzlich Egress-Sperre auf dem Host (deployment.md §0.8, §5.1) | mit Inkrement 9 / M1 |
+| ☐ | **Content-Security-Policy**: Stufe 1 (`img-src 'self'` u. a.) mit Inkrement 9, Stufe 2 (Nonce) vor M1 (deployment.md §0.9) | Inkrement 9 / M1 |
 | ☐ | **Datenpannen-Prozess** (Art. 33/34): Erkennen → bewerten → Meldung an Aufsichtsbehörde binnen 72 h → ggf. Betroffene informieren; Kontaktdaten der Behörde notieren | M2 |
 | ☐ | `security.txt` mit Kontakt für Sicherheitsmeldungen | M2 |
 
