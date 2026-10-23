@@ -1,6 +1,8 @@
 # Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v0.8; v0.7: Inkrement 8 erledigt; v0.6: Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-23 (v0.9; v0.8: Inkrement 9 erledigt; v0.7: Inkrement 8 erledigt; v0.6: Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+
+**Änderungen v0.9 (2026-10-23):** **Inkrement 10 erledigt** (Kosten teilen, PR #27 gemergt). **Inkrement 11 „Bucht“ + Reisedaten in Arbeit** – Zuschnitt features.md **R.9** (User Stories I11-01–I11-13, Rechte, Lebenszyklus/Löschung, Verschlüsselung, Datenhaltung mit Migration 0012, Demo-Seed); UI/UX macht W20 parallel baureif. Für G1b neu: Feature-Schalter `TRAVEL_DATA_ENABLED` (in Produktion aus bis zur Abnahme) und Startschutz ohne eigenen Schlüssel; in Demo/Vorschau `DEMO`-Präfix für Dokumentnummern.
 
 **Änderungen v0.8 (2026-10-23):** **Inkrement 9 erledigt** (Unterkünfte, PR #24 gemergt). **Inkrement 10 „Kosten teilen“ in Arbeit** – Zuschnitt features.md **R.8** (User Stories I10-01–I10-11, Rechte, Rechenregeln Cent/Rest-Cent/Ausgleich, Datenhaltung mit Migration 0011, Demo-Seed); UI/UX macht W19 parallel baureif.
 
@@ -135,8 +137,8 @@ Die übrigen „vor Go-Live“-Punkte (CLAUDE.md, compliance-checklist) bleiben 
 |---|---|---|---|---|
 | 8 ✅ | Reise-Cockpit „Reiseverlauf“ (W16 v2): Ticket-Kopf mit Ring + Konfetti, Weg-Gerüst (`tripRoute()`), Stationen V1 „Termin steht“ + V2 „Alle sind dabei“ (inkl. UX-9 „ohne App“), Heute, Ziel „Es geht los!“, Teilphasen Vorbereitung/Unterwegs/Danach, kleine Feier am Abreisetag (UX-8), Kachel Infos, Mehr zur Reise; Infoseite (Text/Links, Bearbeiten Orga) – **Zuschnitt features.md R.6** | F-053, F-033 | M (≈ 1) | G1 |
 | 9 ✅ | Unterkünfte Stufe 1 (PR #24 gemergt 2026-10-23): Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (Orga; „Bucht“ ab 11), Station V3 + Kachel + UX-9, Termin-Änderungs-Hinweis (+ Motion Swipe) – **Zuschnitt features.md R.7** | F-031 (+ F-053 V3) | M–L (≈ 1–1,5) | G1 |
-| 10 🔄 in Arbeit | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Zahlungsinfo (IBAN geprüft/maskiert), Abschluss, Kachel Kosten + A1 + D1 – **Zuschnitt features.md R.8** | F-035, F-036 (+ F-053 A1/D1) | M–L (≈ 1,5) | G1 |
-| 11 | Zuständigkeit „Bucht“ + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung) + Security-Review | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
+| 10 ✅ | Kosten teilen Stufe 1 (PR #27 gemergt 2026-10-23): Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Zahlungsinfo (IBAN geprüft/maskiert), Abschluss, Kachel Kosten + A1 + D1 – **Zuschnitt features.md R.8** | F-035, F-036 (+ F-053 A1/D1) | M–L (≈ 1,5) | G1 |
+| 11 🔄 in Arbeit | Zuständigkeit „Bucht“ (inkl. Zusatzrechte Infoseite/«gebucht») + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, serverseitige Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung), Station V4/D3 + Kachel, Feature-Schalter für G1b, Vorschau-Schutz + Security-Review – **Zuschnitt features.md R.9** | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
 | 12 | Datei-Infrastruktur (EU-Objektspeicher, Virenscan, Header-Härtung) + Reiseunterlagen Stufe 1 + Screenshots für Unterkünfte | F-055, F-031 (Stufe 2) | L (≈ 1,5–2) | **G1 + G1b** |
 
 **Summe ≈ 6–7 Inkremente.** Reihenfolge-Begründung (Details features.md R.2): erst der Rahmen (Cockpit), dann die chronologisch erste und spaßigste Aufgabe nach dem Termin (Unterkunft), dann der größte Dauernutzen ohne sensible Daten (Kosten), zuletzt die beiden Bereiche mit hohem Datenschutz-/Infrastruktur-Aufwand (Reisedaten, Dateien), die mit echten Daten ohnehin erst nach G1b laufen dürfen. Die Alternative (11 vor 10) wurde nicht gewählt (Q27, 2026-10-22).

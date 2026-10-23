@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v0.8, Inkrement 10 „Kosten teilen“ zugeschnitten – R.8; v0.7: Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
+Stand: 2026-10-23 (v0.9, Inkrement 11 „Bucht“ + Reisedaten zugeschnitten – R.9; v0.8: Inkrement 10 „Kosten teilen“ zugeschnitten – R.8; v0.7: Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -17,6 +17,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.7 (2026-10-23):** Neu **R.7 Zuschnitt Inkrement 9 – Unterkünfte (F-031 Stufe 1)** mit User Stories I9-01–I9-11, Rechte-Tabelle (Bucher = Orga bis Inkrement 11), Sicherheit (SSRF-Schutz, Bild-Proxy ohne offene URL, Rate-Limits), Datenhaltung (`trip_stay`, `trip_stay_rating`, Festlegung/gebucht an der Reise, `trip_station_marks`, `trip.currency`), Demo-Seed und Abgrenzung zu 10–12. Festlegungen: Bereich außerhalb Phase 3 nicht erreichbar (Daten bleiben); neue Termin-Festlegung mit anderem Zeitraum setzt «gebucht» zurück; «Aus Unterkunft übernehmen» übernimmt nur den Titel, keine Adresse; ✕ nur als Zahl, ♥ namentlich.
 
 **Änderungen v0.8 (2026-10-23):** Neu **R.8 Zuschnitt Inkrement 10 – Kosten teilen (F-035 + F-036 Stufe 1)** mit User Stories I10-01–I10-11, Rechte-Tabelle, verbindlichen **Rechenregeln** (Cent-Ganzzahlen, Rest-Cent an die ersten Personen in fester Reihenfolge, Ausgleich per „exakte Paare + Greedy“ mit Garantie ≤ n−1 Überweisungen, A1-Schwelle je Währung, erlaubte Währungen), Sicherheit (Konfliktschutz `version`, Idempotenz beim Anlegen, Salden-Prüfung beim Markieren), Datenhaltung (`trip_cost_party` – überlebt das Verlassen –, `trip_expense`, `trip_expense_share`, `trip_settlement`, Zahlungsinfo an `trip_member`), Demo-Seed und Abgrenzung. Festlegungen: Orga darf alle Ausgaben bearbeiten/löschen, markiert Ausgleiche zwischen zwei Konto-Mitgliedern aber nicht für andere; Zahlungsinfo getrennt in **geprüfte IBAN** (maskiert angezeigt) + Freitext ≤ 100; Abschließen auch mit offenen Salden (nach Warnung) sperrt Ausgaben und Ausgleiche; Platzhalter mit Beteiligung nicht löschbar; UI sagt nicht „minimal“. Steckbrief F-035/F-036 verweist auf R.8.
+
+**Änderungen v0.9 (2026-10-23):** Neu **R.9 Zuschnitt Inkrement 11 – „Bucht“ + persönliche Reisedaten (F-056 + F-054 Stufe 1)** mit User Stories I11-01–I11-13, abschließender Feldliste, Rechte-Tabelle (Orga ohne Markierung nie Inhalte), Lebenszyklus-/Löschtabelle, Verschlüsselung (AES-256-GCM mit AAD, `TRAVEL_DATA_KEYS`, Rotation, HKDF-Ableitung nur in Demo/Vorschau), Sicherheit, Rate-Limits, Datenhaltung (Migration 0012), Demo-Seed und Abgrenzung. Festlegungen: Standard-Markierung nur bei der **ersten** Festlegung; Zusatzrechte „Bucht“ für Infoseite und «gebucht ✓» (Festlegen bleibt Orga); Maskierung serverseitig, Klartext nur per protokolliertem Anzeigen/Kopieren; Re-Authentifizierung (12 h, Code/Magic Link) nur für Dokumentnummern; Einwilligung mit Löschregel statt festem Datum (Terminänderung verschiebt das Löschdatum); Kachel Reisedaten auch für Personen mit eigener Freigabe (Widerruf leicht erreichbar); Zugriffsprotokoll lebt so lange wie die Freigabe; **Feature-Schalter `TRAVEL_DATA_ENABLED`** (in Produktion aus bis G1b) und **`DEMO`-Präfix für Dokumentnummern in Demo/Vorschau**. Steckbriefe F-054/F-056 verweisen auf R.9.
 
 ## Übersicht
 
@@ -634,7 +636,7 @@ Aufwand: **M–L** (≈ 1,5 Inkremente; Schwerpunkt Rechenlogik + Tests, Formula
 ### F-056 Zuständigkeit „Bucht“ (buchende Person)
 **Als** Orga **möchte ich** festlegen, wer für die Gruppe bucht, **damit** diese Person die nötigen Reisedaten bekommt – und nur sie.
 
-Akzeptanzkriterien:
+Akzeptanzkriterien (Inkrement 11; **Zuschnitt, Rechte und Datenhaltung siehe R.9** – bei Widerspruch gilt R.9):
 - [ ] Die Orga kann in der Mitgliederliste bis zu **3 Mitgliedern** die Markierung **«Bucht»** geben/entziehen (Standard bei Phase 3: die Orga selbst, entziehbar). Platzhalter können nicht „Bucht“ sein.
 - [ ] Die Markierung ist für alle sichtbar (Chip «Bucht» / «Booking») – Transparenz, wer Reisedaten sehen kann.
 - [ ] Recht: Reisedaten anfragen und freigegebene Reisedaten sehen (F-054); Infoseite bearbeiten (F-033); Unterkunft als „gebucht“ markieren (F-031).
@@ -661,7 +663,7 @@ Datensparsamkeit – welche Felder? (Q29)
 | Ausstellungsland | aus | APIS | optional anfragbar (nur zusammen mit Dokumentnummer) |
 | **Nicht erhoben:** Ausweisfoto/-scan, Adresse, Größe, Augenfarbe, Ausstellungsbehörde, Zugangs-/CAN-Nummer, Vielfliegernummer, Freitext (Risiko Gesundheits-/Ernährungsangaben = besondere Kategorien Art. 9 DSGVO) | – | – | **nie** in Stufe 1 |
 
-Akzeptanzkriterien (Stufe 1 – Inkrement 11):
+Akzeptanzkriterien (Stufe 1 – Inkrement 11; **Zuschnitt, Rechte, Lebenszyklus, Verschlüsselung und Datenhaltung siehe R.9** – bei Widerspruch gilt R.9):
 - [ ] **Eigener Bereich (UX-2, entschieden 2026-10-22):** Reisedaten sind **nicht** Teil der Unterlagen, sondern ein eigener Bereich `/trips/{id}/travel-data` (W20) mit eigener Station **V4** im Weg (Sichtbarkeit/Zustände W16 v2.4) und Kachel (nur „Bucht“, solange Daten da sind); in *Danach* Station D3 «Reisedaten gelöscht».
 - [ ] **Anfrage erstellen** (nur „Bucht“, nur Phase 3): Zweck wählen/benennen (z. B. «Flüge Lissabon», ≤ 60 Zeichen), Felder per Schalter wählen (Standard: Name + Geburtsdatum), Empfänger: alle Reisenden (Standard) oder Auswahl. Bei Dokumentnummer erscheint der Hinweis «Nur anfragen, wenn die Buchung sie wirklich verlangt – innerhalb Europas genügt meist der Name.»
 - [ ] **Mitglied** sieht im Cockpit «Lena bucht <Zweck> und bittet um: Name laut Ausweis, Geburtsdatum» → Formular → **Freigabe-Schritt mit Einwilligung** (nicht vorangekreuzt): «Ich gebe diese Angaben für <Zweck> an Lena frei. Sie werden verschlüsselt gespeichert, nur Lena sieht sie, und sie werden am <Datum> automatisch gelöscht. Ich kann die Freigabe jederzeit zurückziehen.» Ablehnen ist möglich («Ich kläre das direkt mit Lena»), ohne Begründung.
@@ -1259,6 +1261,251 @@ Alle Beträge, Namen und Zahlungsinfos sind Fantasie; IBANs **nur** öffentlich 
 | nie (Nicht-Ziel) | Zahlungsabwicklung in der App, Bank-/PayPal-/Open-Banking-Anbindung, Guthaben/Wallet, Zahlungsaufforderungen mit Zahlungsdienst. |
 
 Aufwand: **M–L (≈ 1,5 Inkremente)**. Risiko: gering–mittel – Rechenlogik (durch reine Funktionen + Eigenschaftstests beherrschbar), Partei-Modell beim Verlassen/Einlösen (Tests je Übergang), Formular-UX auf 360 px (Beträge je Person). Kein Datenschutz-Gate, keine neue Infrastruktur.
+
+### R.9 Zuschnitt Inkrement 11 – „Bucht“ + persönliche Reisedaten (F-056 + F-054 Stufe 1) (2026-10-23)
+
+**Ziel:** Die Orga legt fest, wer für die Gruppe bucht (Markierung „Bucht“, bis zu 3 Personen). Diese Personen können die für eine konkrete Buchung nötigen Reisedaten **gezielt anfragen**; jede gefragte Person gibt ihre Angaben **per Einwilligung nur an diese eine Person** frei, sieht, wer wann darauf zugegriffen hat, und kann jederzeit zurückziehen. Alles wird anwendungsseitig verschlüsselt gespeichert und spätestens **7 Tage nach Reiseende** gelöscht. Im Cockpit erscheint Station **V4 „Reisedaten“**, in *Danach* **D3 „Reisedaten gelöscht“**. Damit wandern Ausweisdaten nicht mehr in den Gruppenchat. **Echte Nutzung erst nach G1 + G1b**; bis dahin in Demo und Vorschau nur mit Fantasiedaten und technischer Absicherung (I11-12).
+
+**Quellen (verbindlich):** F-056, F-054 (Steckbriefe oben) · PRD §12 **Q28** (Markierung, keine Rolle; bis 3 Mitglieder, Standard Orga; Zusatzrechte Reisedaten, Infoseite, „gebucht“; Orga sieht fremde Reisedaten nicht automatisch) · **Q29** (Standard Name laut Ausweis + Geburtsdatum; weitere Felder nur auf ausdrückliche Anfrage mit Warnhinweis; nie Scans/Fotos, Adresse, Freitext; Einwilligung nur an die anfragende Person, widerrufbar, Zugriffsprotokoll) · **Q30** (nur pro Reise) · **Q31** (7 Tage nach Reiseende, sofort bei Widerruf/Verlassen) · **Q36** (nie Premium) · **UX-2** (eigener Bereich, Station V4) · PRD §8 NFR „Sensible Reisedaten & Dateien“ · R.1, R.4, R.5 · W16 v2.3 (V4, D3), v2.4 (V4-Tabelle, V3 „Bucher“), v2.5 (Heute-Reihenfolge), v2.6 (Kachel Reisedaten), v2.8 (Anlass `travel-data`), v2.10 (Adapter) · **W20** (Anfrage, Einwilligung, Ausfüllen, Status, Sicht „Bucht“, neue Anfrage, Danach) – wird von UI/UX parallel baureif gemacht. **Für UI, Texte, Zustände und Layout gilt die UX-Spec (W16/W20); dieser Abschnitt regelt Rechte, Lebenszyklus, Verschlüsselung, Datenhaltung, Abgrenzung und Akzeptanz.** Bei Widerspruch in diesen Punkten gilt R.9; UI/UX gleicht W20 an. R.9 präzisiert die Steckbriefe F-054/F-056 – bei Widerspruch gilt R.9.
+
+**Voraussetzung für den Start der Umsetzung:** W20 „baureif“ von UI/UX inkl. der Punkte in „Hinweise an UI/UX“ (unten); Markierung „Bucht“ in „Wer ist dabei?“ (Vergeben/Entziehen, Bestätigung, Grenze 3) im Wireframe; Designer liefert Chip «Bucht», Schild-Icon für Datenschutz-Hinweise, Leer-Illustration «Reisedaten gelöscht»; Motion Designer liefert Maskieren ↔ Anzeigen (nur Überblenden, keine Buchstaben-Animation), Freigabe-Siegel klein (reduziert: ohne Bewegung; kein Konfetti in diesem Bereich). **Operations** liefert vorab: Schlüssel-Konzept (Variable, Format, Rotation, Runbook – Entwurf reicht für Demo/Vorschau) und ergänzt `docs/ops/vorschau-anleitung.md`, falls für die Vorschau eine neue Variable nötig wird (Ziel: **keine**, s. Verschlüsselung Nr. 4).
+
+#### Im Umfang (Übersicht)
+| Baustein | UX-Quelle | Feature |
+|---|---|---|
+| Markierung „Bucht“ vergeben/entziehen (Orga, max. 3, Standard Orga bei der ersten Festlegung), Chip für alle sichtbar | W16 „Wer ist dabei?“ (Ergänzung) | F-056 |
+| Übergang Zusatzrechte: Infoseite bearbeiten, Unterkunft «gebucht ✓» markieren/zurücknehmen (bisher nur Orga) | W22, W18, W16 v2.4 V3 | F-056, F-033, F-031 |
+| Bereich `/trips/{id}/travel-data` (Mitglied: Anfragen an mich, eigene Freigaben; „Bucht“: eigene Anfragen, Personen, Status) | W20 A, D, E, G | F-054 |
+| Neue Anfrage `/travel-data/new` (Zweck, Felder, Empfänger) | W20 F | F-054 |
+| Beantworten `/travel-data/{requestId}` (Schritt 1 Angaben, Schritt 2 Freigeben mit Einwilligung, Ablehnen) | W20 B, C | F-054 |
+| Eigene Freigabe ansehen, ändern, zurückziehen; Zugriffsprotokoll | W20 D | F-054 |
+| Sicht „Bucht“: maskiert, Anzeigen/Kopieren je Feld (protokolliert), Re-Authentifizierung für Dokumentnummern, Empfänger ergänzen, «Erledigt – Daten löschen» | W20 E | F-054 |
+| Cockpit: Station **V4**, **D3**, Kachel **Reisedaten**, Heute-Einträge, Erinnern-Anlass `travel-data` | W16 v2.3–v2.8 | F-053 |
+| Lebenszyklus: Auto-Löschung 7 Tage nach Reiseende, Widerruf, Verlassen/Entfernen, Entzug „Bucht“, Konto löschen, Festlegung aufgehoben (30 Tage), Termin geändert | – | F-054, F-013, F-043, Q31 |
+| Anwendungsseitige Verschlüsselung (AES-256-GCM), Schlüssel außerhalb der DB, Rotation | – | PRD §8, R.4 |
+| Datenexport (eigene Reisedaten ja, fremde nie), Demo-/Vorschau-Schutz, Feature-Schalter für G1b, Demo-Seed | – | F-013, F-043, R.5 |
+
+#### Begriffe
+- **„Bucht“-Person** (UI-Chip «Bucht» / «Booking», Wortlaut UX): Mitglied mit Konto, dem die Orga die Markierung gegeben hat. Keine Rolle (Rollen bleiben Orga/Mitglied, F-004).
+- **Anfrage:** von einer „Bucht“-Person für einen **Zweck** («Flüge München – Split») mit festen **Feldern** an eine Auswahl von **Empfänger:innen** gestellt. Gehört genau der anfragenden Person.
+- **Empfänger:in:** Mitglied der Reise (nicht die anfragende Person selbst) oder offener Platzhalter («bekommt die Anfrage nach Beitritt»).
+- **Antwort** je Empfänger:in: *offen* · *freigegeben* (Angaben + Einwilligung gespeichert) · *klärt es direkt* (abgelehnt, ohne Begründung) · *erloschen* (Daten gelöscht, weil Anfrage geschlossen, „Bucht“ entzogen, anfragende Person weg oder Frist erreicht).
+- **Freigabe** = die verschlüsselt gespeicherten Angaben einer Person für **eine** Anfrage. Gibt dieselbe Person zwei Anfragen frei, sind das zwei Freigaben (Einwilligung je Zweck und Empfänger:in).
+- **Löschdatum** einer Freigabe = festgelegtes Abreisedatum (`trip.fixed_end`) + 7 Tage, 23:59 in `APP_TIME_ZONE` (wie I8 „heute“). Ändert sich der Reisezeitraum, ändert sich das Löschdatum mit (I11-10).
+
+#### Felder (Q29 – abschließende Liste Stufe 1)
+| Code | Feld (DE) | In der Anfrage | Prüfung (Client + Server, zod) |
+|---|---|---|---|
+| `legal_name` | Vorname(n) + Nachname(n) laut Ausweis | **immer** (nicht abwählbar) | je 1–100 Zeichen nach Trimmen; Buchstaben aller Schriften inkl. diakritischer Zeichen, Leerzeichen, Bindestrich, Apostroph, Punkt; keine Ziffern, keine Steuerzeichen |
+| `birth_date` | Geburtsdatum | Standard **an**, abwählbar | gültiges Datum `TT.MM.JJJJ` (EN-Format laut UX); nicht in der Zukunft; nicht älter als 120 Jahre |
+| `sex` | Geschlecht/Anrede laut Ausweis (w/m/x) | aus | genau einer der drei Werte |
+| `nationality` | Staatsangehörigkeit | aus | ISO-3166-1-Alpha-2 aus der vorhandenen Länderliste |
+| `document` | Dokumentart (Reisepass / Personalausweis) + Dokumentnummer | aus, **mit Warnhinweis** | Art aus Enum; Nummer normalisiert (Großbuchstaben, ohne Leerzeichen), nur `A–Z0–9`, 5–20 Zeichen. **In Demo/Vorschau zusätzlich: muss mit `DEMO` beginnen** (I11-12) |
+| `document_expiry` | Ablaufdatum | aus; nur zusammen mit `document` | gültiges Datum; liegt es vor dem Löschdatum der Reise, sieht **nur die Person selbst** «Dein Dokument läuft vor der Rückreise ab» (Should, kein Blocker) |
+| `issuing_country` | Ausstellungsland | aus; nur zusammen mit `document` | wie `nationality` |
+
+Alle angefragten Felder sind beim Freigeben **Pflicht**. **Nie** erhoben (auch nicht als Freitext, Kommentar oder Notiz zur Anfrage): Scans/Fotos, Adresse, Größe, Augenfarbe, Behörde, Zugangs-/CAN-Nummer, Vielfliegernummer, Gesundheits-/Ernährungsangaben. Die Anfrage hat **kein** Nachrichtenfeld – nur den Zweck (≤ 60 Zeichen, nur Text).
+
+#### Rechte in Inkrement 11 (serverseitig geprüft, ersetzt für diese Aktionen R.1)
+| Aktion | Mitglied | „Bucht“ | Orga ohne „Bucht“ | Bedingung |
+|---|---|---|---|---|
+| Markierung „Bucht“ vergeben / entziehen (auch sich selbst) | – | – | ✔ (Orga, mit oder ohne eigene Markierung) | Phase `fixed`; Ziel ist Mitglied mit Konto (kein Platzhalter); max. **3** je Reise, geprüft unter Sperre der Reise |
+| Infoseite bearbeiten (F-033) | – | ✔ | ✔ | wie R.6 |
+| Unterkunft festlegen / Festlegung aufheben (F-031) | – | – | ✔ | unverändert nur Orga (Q33) |
+| Unterkunft «gebucht ✓» markieren / zurücknehmen (F-031) | – | ✔ | ✔ | nur die festgelegte Unterkunft (R.7 I9-07) |
+| Reisedaten-Anfrage erstellen | – | ✔ | – (nur, wenn selbst „Bucht“) | Phase `fixed`, heute ≤ Abreisetag; max. **3 offene** Anfragen je „Bucht“-Person |
+| Empfänger:innen der **eigenen** Anfrage ergänzen / entfernen | – | ✔ | – | Anfrage offen; Entfernen löscht deren Freigabe sofort |
+| **Eigene** Anfrage abschließen («Erledigt – Daten löschen») | – | ✔ | – | löscht alle Freigaben der Anfrage sofort |
+| Anfrage an mich beantworten: Angaben eingeben, freigeben, ändern, ablehnen, «Doch freigeben», zurückziehen | ✔ | ✔ (wenn selbst gefragt) | ✔ (wenn selbst gefragt) | nur eigene Antwort; Anfrage offen; vor dem Löschdatum |
+| Freigegebene **Inhalte** anzeigen / kopieren | – | ✔ **nur** für die **eigenen** Anfragen | – **nie** | Markierung aktiv, Anfrage offen, Antwort *freigegeben*, vor dem Löschdatum; Dokumentnummer nur mit frischer Anmeldung (I11-08) |
+| Status je Person sehen (offen / freigegeben / klärt es direkt) | – (nur eigene Antwort + Zahlen «2 von 4») | ✔ alle Anfragen der Reise | ✔ alle Anfragen der Reise | nie Inhalte, nie «geändert am» fremder Anfragen |
+| Zugriffsprotokoll sehen | ✔ nur über die **eigenen** Angaben | dto. | dto. | – |
+| Erinnern `travel-data` | – | ✔ an offene Empfänger:innen der **eigenen** Anfrage | – | W16 v2.8 |
+
+**Grundsatz (Q28):** Die Orga hat **keinen** Sonderzugriff auf Inhalte – auch nicht über Export, Support-Wege, Admin-Seiten, Server-Actions mit fremder Request-ID oder die Datenbank-Oberfläche der App. Sie kann sich aber selbst die Markierung geben; das ist für alle am Chip sichtbar (Transparenz statt Verbot) und wirkt **nur für neue Anfragen** – bestehende Freigaben gelten weiter nur für die Person, an die sie erteilt wurden. Platzhalter und ehemalige Mitglieder handeln nie selbst. Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseiten (I8-09).
+
+#### User Stories & Akzeptanzkriterien
+
+**I11-01 Markierung „Bucht“ vergeben und entziehen (F-056)**
+**Als** Orga **möchte ich** festlegen, wer für die Gruppe bucht, **damit** diese Person die nötigen Reisedaten bekommt – und nur sie.
+- [ ] In „Wer ist dabei?“ (Sheet aus dem Cockpit, ab Phase `fixed`) hat jede Zeile eines Mitglieds mit Konto für die Orga die Aktion «Bucht markieren» bzw. «Markierung entfernen» (Wortlaut/Ort UX). Der Chip «Bucht» ist für **alle** Mitglieder an der Person sichtbar (auch in W20 und in „Mehr zur Reise“).
+- [ ] **Standard (Q28):** Bei der **ersten** Festlegung einer Reise erhält die Orga automatisch die Markierung (danach nie wieder automatisch – auch nicht nach Festlegung aufheben + neu festlegen oder nach eigenem Entzug). **Migration:** Bestehende Reisen in Phase `fixed` ohne Markierung erhalten sie für die aktuelle Orga einmalig.
+- [ ] **Grenze 3:** Eine vierte Markierung lehnt der Server ab (unter Sperre der Reise); UI zeigt vorher «Höchstens 3 Personen können buchen – entferne erst eine Markierung.» (Wortlaut UX).
+- [ ] **Entziehen** mit Bestätigung, wenn die Person offene Anfragen oder Freigaben hat: «{Name} sieht dann keine Reisedaten mehr – {n} freigegebene Angaben werden sofort gelöscht.» Danach: alle Anfragen dieser Person **erloschen**, alle Freigaben dazu **sofort gelöscht** (I11-10). Ohne offene Anfragen: ohne Bestätigung, Snackbar mit Rückgängig **nur**, solange nichts gelöscht wurde.
+- [ ] **Orga-Übergabe (F-004)** überträgt die Markierung **nicht**; die bisherige Orga behält ihre Markierung als Mitglied. **Verlassen/Entfernen/Konto löschen** beendet die Markierung (sie hängt an der Mitgliedschaft).
+- [ ] Ohne jede Markierung zeigt „Wer ist dabei?“ der Orga «Noch niemand bucht – markiere, wer Unterkunft und Tickets bucht.» (Could, Wortlaut UX); Mitglieder sehen nichts.
+- [ ] Die Markierung bleibt bei «Festlegung aufheben» erhalten (Bereich nicht erreichbar, R.0 Nr. 1).
+
+**I11-02 Zusatzrechte „Bucht“ für Infoseite und Unterkunft (Übergang von „nur Orga“)**
+**Als** „Bucht“-Person **möchte ich** die Infos ergänzen und die Unterkunft als gebucht markieren, **damit** ich nach dem Buchen nicht die Orga darum bitten muss.
+- [ ] `canEditTripInfo()` erlaubt Orga **oder** „Bucht“ (serverseitig bei jedem Speichern; bisher nur Orga, `src/lib/trip-info.ts`). «Zuletzt geändert von …» unverändert. Infoseite-Leerzustand/Text-Tasten «Infos ergänzen» erscheinen auch für „Bucht“ (W22, W16 A2 – Aufgabe A2 auch für „Bucht“, Wortlaut UX).
+- [ ] «Als gebucht markieren» / «Doch nicht gebucht» (W18): Orga **oder** „Bucht“. Festlegen/Aufheben bleibt Orga. `booked_by` speichert die handelnde Person.
+- [ ] **Station V3** wertet „Bucher“ nach W16 v2.4 aus: alle „Bucht“-Personen, sonst die Orga. Texte mit mehreren „Bucht“-Personen («Lena und Kemal buchen …», max. 3 Namen) nach UX; Erinnern-Text `stayBook` nennt die „Bucht“-Person(en) statt fest der Orga.
+- [ ] Wird die Markierung entzogen, bleiben bereits gesetzte «gebucht ✓» und Info-Änderungen bestehen (nur das Recht endet).
+- [ ] Tests je Rolle: Mitglied ohne Markierung kann weder Infos speichern noch «gebucht» setzen (Server lehnt ab), „Bucht“ ohne Orga kann beides, aber **nicht** festlegen.
+
+**I11-03 Bereich „Reisedaten“ und Einstiege im Cockpit (UX-2, F-053)**
+**Als** Mitglied **möchte ich** genau einen Ort, an dem ich sehe, wer welche meiner Daten wofür bekommt, **damit** ich den Überblick behalte.
+- [ ] Route `/trips/{id}/travel-data` (nur Mitglieder, nur Phase `fixed`); Aufbau nach W20: oben «Anfragen an dich» (offen → A; beantwortet → D bzw. «Du klärst das direkt mit …»; erloschen → Hinweis «… deine Angaben wurden gelöscht»), für „Bucht“ zusätzlich «Deine Anfragen» (E) und Taste `[+ Anfrage]`; für Orga ohne „Bucht“ eine Status-Karte je Anfrage (Zahlen + Chips, keine Felder, keine Anzeigen-Taste). Info-Aufklapper «Wer sieht was?» (W20). Kein Tab (UX-1).
+- [ ] **Station V4** (Adapter `tripRoute()`, Vertrag W16 v2.10): Sichtbarkeit und Zustände exakt nach W16 v2.3/v2.4 V4-Tabelle je Rolle; Unit-Tests **je Zeile und Rolle**. Erneute Anfrage nach „erledigt“ öffnet V4 wieder. Mehrere Anfragen: V4 ist für ein Mitglied „dran“, solange **irgendeine** Anfrage an es offen ist; für „Bucht“ zählt die **älteste offene eigene** Anfrage (Text UX).
+- [ ] **Heute** (W16 v2.5): «Reisedaten freigeben» steht in der Gruppe „blockiert andere“ an erster Stelle; «Alle Angaben da – jetzt buchen» in der Gruppe „Frist/Datum“.
+- [ ] **Kachel „Reisedaten“** (Reihenfolge W16 v2.6, nur wenn V4 erledigt bzw. nicht sichtbar): für „Bucht“, solange eigene Freigaben gespeichert sind («3 Freigaben · gelöscht am 26. Juni»); **zusätzlich für jede Person mit einer eigenen gespeicherten Freigabe** («Freigegeben an Lena · gelöscht am 26. Juni») – Begründung: Widerruf muss so leicht erreichbar sein wie die Erteilung (Art. 7 Abs. 3 DSGVO), auch *Unterwegs*, wenn V4 in der eingeklappten Vorbereitung steckt. *(Abweichung von W16 v2.6 „nur Bucht“ – UI/UX gleicht an.)*
+- [ ] **D3** (*Danach*): sichtbar, wenn es für mich Anfragen gab bzw. ich „Bucht“ mit Anfragen war; Zustand „erledigt“ automatisch, sobald alle betroffenen Freigaben gelöscht sind; Ziel = Leerzustand W20 G. Vor dem Löschdatum (Tage 1–7 nach Abreise) Zustand «als Nächstes» mit «Wird am {Datum} gelöscht» (Text UX). Weg-Meta *Danach* zählt D3 mit.
+- [ ] Platzhalter zählen in Zahlen («2 von 4») **nicht** mit; sie erscheinen in der „Bucht“-Sicht als «noch nicht dabei» (W16 v2.11).
+- [ ] Statusangaben aktualisieren sich beim Neuladen (kein Live-Update, wie F-008).
+
+**I11-04 Anfrage erstellen (nur „Bucht“)**
+**Als** „Bucht“-Person **möchte ich** für eine konkrete Buchung genau die nötigen Angaben anfragen, **damit** ich sie nicht einzeln im Chat einsammeln muss.
+- [ ] Route `/trips/{id}/travel-data/new` nach W20 F: **Zweck** (Pflicht, 1–60 Zeichen, nur Text, Steuerzeichen entfernt – Hinweis «Alle Gefragten sehen den Zweck»), **Felder** per Schalter (Tabelle oben: Name immer an und gesperrt, Geburtsdatum Standard an, Rest aus; Ablaufdatum/Ausstellungsland nur bedienbar, wenn Dokument an), Warnhinweis bei Dokument (Wortlaut F-054/W20), Liste «Nie abgefragt: …». **Empfänger:innen:** Standard alle Mitglieder außer mir **und** alle offenen Platzhalter; abwählbar; mindestens 1.
+- [ ] Server prüft: Markierung aktiv, Phase `fixed`, heute ≤ Abreisetag, ≤ 3 offene eigene Anfragen, Felder nur aus der Liste und Abhängigkeiten (`document_expiry`/`issuing_country` ⇒ `document`), Empfänger:innen sind Mitglieder/offene Platzhalter **dieser** Reise und nicht ich selbst. Idempotenz-Schlüssel je Formular-Öffnung (wie I10-02).
+- [ ] Nach dem Senden: Snackbar «Anfrage an {n} Personen gesendet», zurück zu `/travel-data`. Die Gefragten sehen V4 „dran“ im Cockpit. **Keine Mails** in Stufe 1 (erst F-014, und dann nur «{Name} bittet um deine Reisedaten» ohne Zweck-Details/Felder).
+- [ ] Felder einer bestehenden Anfrage sind **nicht** änderbar (Einwilligung bezieht sich auf die Felder); für weitere Felder wird eine neue Anfrage gestellt.
+
+**I11-05 Anfrage beantworten – Schritt 1 „Angaben“**
+**Als** Mitreisende **möchte ich** meine Angaben schnell und richtig eingeben, **damit** die Buchung nicht am falschen Namen scheitert.
+- [ ] Route `/trips/{id}/travel-data/{requestId}` nach W20 B: nur die angefragten Felder, Prüfregeln laut Feldtabelle, Meldungen nach UX, `autocomplete` nur hier (eigene Eingabe). Hinweis «Demo – bitte keine echten Ausweisdaten eingeben.» in Demo/Vorschau (I11-12).
+- [ ] **Übernehmen (Should):** Hat die Person in **derselben Reise** schon eine Freigabe mit überschneidenden Feldern, bietet Schritt 1 «Angaben aus deiner Freigabe an {Name} übernehmen» an (Felder vorbelegt, Person prüft). Reiseübergreifend **nie** (Q30).
+- [ ] Werte aus Schritt 1 liegen bis zur Freigabe **nur im Browser** (Formularzustand, kein `localStorage`/`sessionStorage`); ohne Freigabe wird **nichts** gespeichert. Verlassen der Seite verwirft die Eingabe.
+
+**I11-06 Schritt 2 „Freigeben“ – Einwilligung oder Ablehnen**
+**Als** Mitreisende **möchte ich** bewusst zustimmen, an wen meine Daten gehen und wann sie gelöscht werden, **damit** ich die Kontrolle behalte.
+- [ ] W20 C: Zusammenfassung der eigenen Werte (Klartext, nur für die Person selbst) + **Einwilligungs-Checkbox, nicht vorangekreuzt**, deren Label der Einwilligungstext ist. Inhalt (Wortlaut UX, sinngemäß): Zweck, Empfänger:in (Name), verschlüsselte Speicherung, nur diese Person sieht die Angaben, **Löschregel «7 Tage nach der Reise (derzeit {Datum})»** bzw. früher bei Widerruf, jederzeit widerrufbar. *(Regel + aktuelles Datum statt nur Datum, damit eine Terminänderung nicht außerhalb der Einwilligung liegt – I11-10.)*
+- [ ] Server speichert nur bei gesetzter Einwilligung: verschlüsselte Werte, `consent_at`, **Version und Sprache des Einwilligungstextes** (Nachweis Art. 7 Abs. 1 DSGVO), Zustand *freigegeben*. Ohne Häkchen: Fehler nach W20, nichts gespeichert.
+- [ ] **Ablehnen** («Ich kläre das direkt mit {Name}») in A und C möglich, ohne Begründung, ohne Eingabe. Gespeichert wird nur der Zustand *klärt es direkt*; „Bucht“ und Orga sehen nur diesen Zustand. «Doch freigeben» führt zu Schritt 1.
+- [ ] Nach Freigabe: Snackbar «Freigegeben an {Name}» (ohne Werte), zurück zu W20 D; V4 aktualisiert.
+
+**I11-07 Eigene Freigabe ansehen, ändern, zurückziehen; Zugriffsprotokoll**
+**Als** Mitreisende **möchte ich** sehen, ob und wann die „Bucht“-Person meine Angaben angesehen hat, und sie jederzeit zurückziehen, **damit** ich ihr nicht blind vertrauen muss.
+- [ ] W20 D: eigene Werte im Klartext (nur für die Person selbst), Löschdatum, Liste **Zugriffe** («{Name} hat deine Angaben {Datum/relativ} angesehen.» / «… „{Feld}“ … kopiert.»), neueste zuerst, gruppiert bei Wiederholungen (Wortlaut UX).
+- [ ] **Ändern:** Schritt 1 vorbelegt → Schritt 2 mit erneuter Einwilligung (neue `consent_at`). „Bucht“ sieht «geändert am {Datum}» an der Person.
+- [ ] **Zurückziehen:** Bestätigung nach W20 → Werte und Zugriffsprotokoll dieser Freigabe werden **sofort hart gelöscht** (kein weiches Löschen, kein Papierkorb); Antwort wieder *offen* (Anfrage bleibt bestehen, V4 wieder „dran“). Snackbar ohne Rückgängig.
+- [ ] Zugriffe werden **nur** für Anzeigen/Kopieren durch die „Bucht“-Person protokolliert, nicht für Aufrufe der Person selbst. Das Protokoll enthält: wer, wann, Aktion (`view` / `copy`), bei `copy` der Feld-Code – **nie** Werte.
+
+**I11-08 Sicht „Bucht“: Status, Maskierung, Anzeigen, Kopieren, Re-Authentifizierung**
+**Als** „Bucht“-Person **möchte ich** die Angaben aller Freigaben bequem ins Buchungsformular übertragen, **damit** die Buchung schnell geht – ohne dass jemand über meine Schulter mitliest.
+- [ ] W20 E: je eigene Anfrage Karte mit Zweck, Feldern, «{n} von {m} haben freigegeben», je Person Status-Chip; Felder **maskiert**. Die Maskierung entsteht **auf dem Server**: Die Seite liefert initial **keine** Klartexte aus (auch nicht versteckt im HTML/RSC-Payload). Maskenregeln: Name erster Buchstabe + «•••»; Datum «••.••.••••»; Dokumentnummer erstes und letztes Zeichen; Länder-/Art-/Geschlechtsfelder dürfen unmaskiert sein (geringes Risiko, Developer kann maskieren).
+- [ ] **«Anzeigen»** (je Person) ruft eine Server-Aktion auf, die die Klartexte **dieser** Person liefert und einen Protokolleintrag `view` schreibt; sichtbar bis zum Verlassen der Seite (nur Seitenzustand). **«Kopieren»** (je Feld) holt den Wert serverseitig, schreibt `copy` + Feld-Code und legt ihn in die Zwischenablage; Snackbar «Kopiert – bitte nicht in Chats weiterleiten.» (ohne Wert).
+- [ ] **Re-Authentifizierung (F-054):** Anzeigen oder Kopieren einer Person **mit Dokumentnummer** verlangt eine frische Bestätigung, wenn die aktuelle Sitzung nicht innerhalb der letzten **12 h** per **Code oder Magic Link** angemeldet bzw. bestätigt wurde (Passwort-Anmeldung zählt nicht – gleiche Begründung wie `src/server/auth/reauth.ts`). Bestätigung über das vorhandene Code-Sheet (W02/Flow I.2); eigener Marker je Sitzung, gültig 12 h. Ohne Dokumentnummer: keine Re-Authentifizierung.
+- [ ] Verantwortungs-Hinweis für „Bucht“ (Wortlaut F-054/W20) oben im Bereich. Kein Sammel-Export, kein CSV, kein Druck-Layout, keine Taste «Alle anzeigen».
+- [ ] Antworten des Bereichs mit `Cache-Control: no-store`; Seitentitel, URLs, Snackbars und `aria-live`-Meldungen enthalten **nie** Werte; `autocomplete="off"` in der „Bucht“-Sicht.
+
+**I11-09 Anfrage verwalten, erinnern, abschließen**
+**Als** „Bucht“-Person **möchte ich** Nachzügler erinnern und die Anfrage nach dem Buchen abschließen, **damit** die Daten nicht länger als nötig liegen.
+- [ ] **Empfänger:innen ergänzen** (z. B. neues Mitglied seit der Anfrage): Liste der noch nicht gefragten Mitglieder/offenen Platzhalter; neue Personen sehen die Anfrage sofort. **Entfernen** einer Person löscht deren Freigabe sofort (Bestätigung, wenn freigegeben). Neue Mitglieder werden **nicht** automatisch hinzugefügt.
+- [ ] **Platzhalter** als Empfänger:in: Löst die Person ihren Platzhalter ein (F-007), übernimmt sie die offene Anfrage (V4 „dran“). Wird der Platzhalter gelöscht, entfällt die Empfänger-Zeile.
+- [ ] **Erinnern** über das vorhandene `RemindSheet` (F-015), Anlass `travel-data` mit dem Text aus W16 v2.8 (DE/EN): `single` an eine offene Person, `all` an alle offenen; Text enthält Name, Zweck und Link auf `/travel-data` – **nie** Felder oder Werte. Platzhalter nur über ihren persönlichen Link (wie V2).
+- [ ] **«Erledigt – Daten löschen»** (W20 E) schließt die Anfrage: Bestätigung, dann alle Freigaben und Protokolle **sofort gelöscht**, Antworten *erloschen*, V4 für „Bucht“ erledigt «Erledigt – Daten gelöscht». Gefragte sehen «{Name} hat fertig gebucht – deine Angaben wurden gelöscht.» (Wortlaut UX).
+- [ ] Keine weiteren Erinnern-Anlässe in Stufe 1: Mitglieder erinnern „Bucht“ nicht; Orga ohne „Bucht“ erinnert nicht (die Anfrage gehört „Bucht“, W16 v2.4).
+
+**I11-10 Lebenszyklus & Löschung (Q31)**
+**Als** Mitreisende **möchte ich**, dass meine Ausweisdaten automatisch verschwinden, sobald sie niemand mehr braucht, **damit** kein Datenleck Jahre später passieren kann.
+- [ ] **Hart gelöscht** (verschlüsselte Werte **und** Zugriffsprotokoll; Antwort *erloschen* bzw. *offen*) – jeweils sofort im auslösenden Vorgang, in derselben Transaktion:
+  | Auslöser | Was wird gelöscht |
+  |---|---|
+  | Widerruf durch die Person | ihre Freigabe für diese Anfrage (Antwort wieder *offen*) |
+  | Person wird als Empfänger:in entfernt | ihre Freigabe für diese Anfrage |
+  | «Erledigt – Daten löschen» | alle Freigaben der Anfrage |
+  | Markierung „Bucht“ entzogen | alle Freigaben aller Anfragen dieser Person; Anfragen *erloschen* |
+  | Anfragende Person verlässt die Reise / wird entfernt / löscht ihr Konto | wie Entzug; Anfrage bleibt nur als Hülle (Zweck, Zustand) mit «ehemaliges Mitglied» |
+  | Gefragte Person verlässt die Reise / wird entfernt / löscht ihr Konto | alle ihre Freigaben und Antworten in dieser Reise (bzw. allen Reisen) |
+  | **Löschdatum erreicht** (Abreise + 7 Tage) | alle Freigaben der Reise; Anfragen *erloschen*; D3 erledigt |
+  | Festlegung aufgehoben und **30 Tage** keine neue Festlegung | alle Freigaben der Reise |
+  | Reise gelöscht (F-013) | alles (Kaskade) |
+- [ ] **Löschjob** (`POST /api/internal/retention`, täglich; Vorschau: Vercel-Cron) löscht fällige Freigaben (Löschdatum, 30-Tage-Regel) und dient als **Sicherheitsnetz** für alle Fälle oben (z. B. Freigaben, deren anfragende Person nicht mehr „Bucht“-Mitglied ist). **Zusätzlich** liefert der Lese-Pfad **nie** Werte nach dem Löschdatum oder ohne aktive Markierung aus, auch wenn der Job noch nicht gelaufen ist (Test).
+- [ ] **Termin geändert** (neue Festlegung mit anderem Zeitraum): Freigaben bleiben bestehen, das Löschdatum wird neu berechnet; Gefragte sehen in W20 D das neue Datum und einmalig «Eure Reise hat neue Daten – deine Angaben werden jetzt am {Datum} gelöscht. Du kannst die Freigabe jederzeit zurückziehen.» (Wortlaut UX). „Bucht“ sieht einen Hinweis, dass Buchungen ggf. neu nötig sind (analog R.7 «gebucht» zurückgesetzt). Der Einwilligungstext deckt das über die Regel ab (I11-06).
+- [ ] **Festlegung aufgehoben:** Bereich nicht erreichbar (wie Kosten/Unterkünfte), Daten bleiben bis zu 30 Tage; Banner nach W16 «… Reisedaten … bleiben erhalten» ergänzt um «… höchstens 30 Tage» (Wortlaut UX).
+- [ ] Anfrage-**Hüllen** (Zweck, Felder-Liste, Zustände, Zeitstempel – ohne Werte, ohne Protokoll) bleiben bis zur Löschung der Reise (90 Tage, F-013), damit D3 und «… wurden gelöscht»-Hinweise funktionieren. Der Zweck ist kein sensibles Datum; Hinweis im UI «Keine persönlichen Daten in den Zweck schreiben» (Wortlaut UX).
+- [ ] **Aufbewahrung Zugriffsprotokoll:** genau so lange wie die zugehörige Freigabe (wird mit ihr gelöscht, F-054) – kein getrenntes Sicherheitsprotokoll mit Personenbezug. Betriebs-Logs enthalten höchstens anonyme Zähler (z. B. „travel_data.reveal ok“), **keine** IDs von Personen, Anfragen oder Feldern.
+
+**I11-11 Datenexport, Konto löschen, Reise verlassen**
+**Als** Mitglied **möchte ich** meine eigenen Reisedaten exportieren können und sicher sein, dass niemand über den Export an fremde kommt, **damit** meine Rechte gewahrt sind.
+- [ ] **Datenexport (F-013/F-043, Q23)** je Reise: eigene **gespeicherte Freigaben** (Zweck, Empfänger:in mit Name – Art. 15 Abs. 1 lit. c, Felder mit **Klartext**, `consent_at`, Löschdatum) und das **Zugriffsprotokoll über die eigenen Angaben**; eigene Antworten *klärt es direkt*. Als „Bucht“: eigene Anfragen (Zweck, Felder, Zeitpunkte, Anzahl Antworten je Zustand) – **keine** Werte, Namen oder Zustände anderer Personen. Die Orga erhält **nichts** Zusätzliches.
+- [ ] Enthält der Export eine Dokumentnummer, gilt dieselbe Re-Authentifizierung wie I11-08 (Should – Schutz bei übernommener Sitzung).
+- [ ] **Konto löschen (F-043):** Warn-Schritt nennt zusätzlich «Deine freigegebenen Reisedaten werden sofort gelöscht» bzw. für „Bucht“ «Deine offenen Anfragen werden geschlossen und alle Freigaben gelöscht» (Wortlaut UX). Löschung nach I11-10 vor dem Löschen des Kontos, im selben Ablauf.
+- [ ] **Reise verlassen / entfernt werden:** Hinweiszeile im bestehenden Bestätigungsdialog, wenn Freigaben oder eigene Anfragen bestehen (Wortlaut UX). Keine zusätzliche Sperre.
+
+**I11-12 Demo-/Vorschau-Schutz und Gate G1b (technisch abgesichert)**
+**Als** Betreiber **möchte ich**, dass vor G1b niemand echte Ausweisdaten einträgt und der Bereich in Produktion erst nach G1b aufgeht, **damit** keine echten Ausweisdaten bei einem US-Anbieter oder ohne Schutzpaket landen.
+- [ ] **Feature-Schalter** `TRAVEL_DATA_ENABLED`: in `development`, `ci`, `demo`, `preview` standardmäßig **an**; in `staging` und `production` standardmäßig **aus**. Aus = keine V4/D3/Kachel, Routen 404, Server-Aktionen abgelehnt; die Markierung „Bucht“ und ihre Rechte aus I11-02 funktionieren trotzdem. Einschalten in `production` erst nach dokumentierter G1b-Abnahme (`docs/ops/compliance-checklist.md`).
+- [ ] **Startschutz** (wie `APP_ENV=production`-Prüfung in `src/lib/app-env.ts`): `TRAVEL_DATA_ENABLED=true` in `staging`/`production` **ohne** eigenen Schlüssel (`TRAVEL_DATA_KEYS`) → Start verweigert. Auf Vercel (immer `preview`) bleibt es bei Fantasiedaten.
+- [ ] **Demo und Vorschau:** Hinweis «Demo – bitte keine echten Ausweisdaten eingeben.» (W20) in Schritt 1, Schritt 2, neue Anfrage und „Bucht“-Sicht – nicht wegklickbar; **Dokumentnummern müssen mit `DEMO` beginnen** (Server-Validierung, Meldung «In der Demo nur Fantasie-Nummern, die mit DEMO beginnen.»), damit echte Pass-/Ausweisnummern technisch ausgeschlossen sind. Namen/Geburtsdaten sind nicht technisch unterscheidbar – dafür gelten Hinweis, „Demo zurücksetzen“ (löscht alles) und die normalen Löschfristen.
+- [ ] Verschlüsselung ist auch in Demo/Vorschau **aktiv** (derselbe Code-Pfad; nur der Schlüssel-Ursprung unterscheidet sich, s. unten).
+
+**I11-13 Querschnitt (Abnahme)**
+- [ ] 360 × 640, 390 × 844, 320 px, 200 % Schrift, Dark Mode, DE/EN (Datumsformat je Sprache), Desktop ≥ 960 px (W20 Desktop); vollständig per Tastatur und Screenreader (Barrierefreiheit W20: Maske hat zugänglichen Namen «verborgen», Kopieren-Tasten «{Feld} von {Name} kopieren», Einwilligungstext = Label, Schalter `role=switch`).
+- [ ] Reduzierte Bewegung: nur Überblenden; kein Konfetti in diesem Bereich.
+- [ ] Abnahme-Fälle: Orga markiert sich/andere (Grenze 3, Platzhalter nicht markierbar) · „Bucht“ bearbeitet Infos und markiert «gebucht» · Anfrage Name + Geburtsdatum an alle inkl. Platzhalter · Mitglied gibt frei (ohne Häkchen → Fehler) · Mitglied lehnt ab und gibt später doch frei · „Bucht“ zeigt an/kopiert → Protokoll beim Mitglied sichtbar · Anfrage mit Dokumentnummer + Re-Authentifizierung nach > 12 h · Orga ohne „Bucht“ sieht nur Status (auch per direkter Server-Aktion mit fremder Request-ID: abgelehnt) · Widerruf → sofort weg bei „Bucht“ · Entzug der Markierung → Freigaben weg, Hinweis beim Mitglied · Mitglied/„Bucht“ verlässt die Reise · Platzhalter tritt bei und übernimmt die Anfrage · neue Festlegung mit anderem Zeitraum → neues Löschdatum + Hinweis · Löschdatum erreicht → D3 + Leerzustand · Datenexport Mitglied (eigene Werte) und „Bucht“ (keine fremden) · Vorschau: Dokumentnummer ohne `DEMO` abgelehnt.
+
+#### Verschlüsselung & Schlüssel (Pflicht – Reviewer prüft mit Tests)
+1. **Verfahren:** AES-256-GCM über Node `crypto` (keine neue Abhängigkeit), je Freigabe **ein** verschlüsselter JSON-Datensatz der angefragten Felder (Feldnamen + Werte), 96-Bit-Zufalls-Nonce je Verschlüsselung (nie wiederverwenden, auch nicht beim Ändern), 128-Bit-Tag. **Zusatzdaten (AAD)** = Reise-ID + Anfrage-ID + Personen-ID + Schema-Version – ein Chiffrat lässt sich so nicht in eine andere Zeile/Person kopieren (Test: vertauschte Zeile → Entschlüsselung schlägt fehl).
+2. **Schlüssel außerhalb der DB:** `TRAVEL_DATA_KEYS` als Umgebungs-Secret, Liste `kid:base64(32 Byte)`, erster Eintrag = aktueller Schlüssel. Jede Zeile speichert `key_id`. Getrennt von `BETTER_AUTH_SECRET`, `RETENTION_TOKEN` und der Datenbank-URL; nie im Repository (CLAUDE.md), nie im Client-Bundle (`server-only`).
+3. **Rotation:** neuen Schlüssel voranstellen → neue/geänderte Freigaben nutzen ihn → Skript `pnpm travel-data:rotate` verschlüsselt Bestandszeilen um (idempotent, batchweise) → alten Schlüssel entfernen. Runbook bei Schlüsselverlust (Daten unlesbar → alle Freigaben löschen, Anfragen erloschen, Hinweis an Betroffene) und bei Schlüsselleck (rotieren, betroffene Freigaben bewerten, Meldepflicht Art. 33 prüfen) liefert Operations für G1b.
+4. **Demo/Vorschau/Entwicklung:** Fehlt `TRAVEL_DATA_KEYS`, wird **nur** in `development`, `ci`, `demo`, `preview` ein Schlüssel per HKDF aus `BETTER_AUTH_SECRET` mit festem Kontext („travel-data-demo-v1“) abgeleitet – damit braucht die Vercel-Vorschau **keine neue Variable** und der Auftraggeber nichts nachzutragen. Fehlt auch das, ist der Bereich aus (fail closed). In `staging`/`production` ist die Ableitung verboten (Startschutz I11-12).
+5. **Nie im Klartext außerhalb des Entschlüsselungs-Moments:** keine Werte in Logs, Fehlermeldungen, Fehler-Tracking, Analytics, URLs/Query-Strings, Mails, Teilen-/Erinnern-Texten, Seitentiteln, Snackbars, Cookies, `localStorage`, Server-Caches (`unstable_cache`, `fetch`-Cache) oder im RSC-Payload der Erstansicht. Server-Aktionen loggen keine Argumente. Test: Logs/Antworten eines kompletten Ablaufs werden auf die Demo-Werte durchsucht (keine Treffer außer den erlaubten Antworten).
+6. **Zugriffsprüfung vor dem Entschlüsseln:** Entschlüsselt wird nur in zwei Funktionen (eigene Freigabe für die Person selbst; Anzeigen/Kopieren für die anfragende „Bucht“-Person inkl. Protokolleintrag) – beide prüfen Mitgliedschaft, Markierung, Anfrage-Zustand, Löschdatum und ggf. Re-Authentifizierung **in derselben Abfrage/Transaktion**. Alle IDs werden gegen `trip_id` geprüft (keine reiseübergreifenden Zugriffe).
+
+#### Sicherheit (Pflicht – Reviewer prüft mit Tests, Security-Review laut G1b)
+1. **Rechte** aus der Tabelle serverseitig, Tests je Zeile – insbesondere: Orga ohne „Bucht“ bekommt über **keinen** Weg Inhalte (Seite, Server-Aktion, Export); „Bucht“ sieht nur **eigene** Anfragen (nicht die einer zweiten „Bucht“-Person); Mitglieder sehen keine Antworten anderer; Platzhalter/ehemalige Mitglieder handeln nie.
+2. **Einwilligung** nur mit gesetztem Häkchen serverseitig (nicht nur Client); Einwilligungs-Version + Sprache gespeichert.
+3. **Löschung** hart und vollständig (Werte + Protokoll) in jedem Fall aus I11-10 – Test je Zeile der Tabelle; Lese-Pfad liefert nach Fristablauf nichts (Test mit verschobener Uhr).
+4. **Eingaben nur als Text:** Zweck und Felder ohne HTML/Markdown, Steuerzeichen entfernt, Normalisierung vor dem Verschlüsseln.
+5. **Re-Authentifizierung** für Dokumentnummern (I11-08) – Test „Sitzung älter als 12 h / Passwort-Anmeldung → Code nötig“.
+6. **Keine neuen Drittanbieter, keine ausgehenden Verbindungen**, keine Mails in Stufe 1; `Cache-Control: no-store` auf allen Antworten des Bereichs; `Referrer-Policy` mindestens wie bisher.
+7. **Fehlerfälle** zeigen generische Meldungen («Das hat nicht geklappt – bitte neu laden.»), nie Inhalte oder Krypto-Details.
+
+**Rate-Limits** (pro **Konto**, Mechanismus `src/server/rate-limit.ts`; Werte als Vorgabe, Developer darf begründet anpassen):
+| Aktion | Limit |
+|---|---|
+| Anfrage erstellen | 10 / h je Konto |
+| Empfänger:innen ändern, Anfrage abschließen | 30 / 10 min je Konto |
+| Freigeben / ändern / ablehnen / zurückziehen | 30 / 10 min je Konto |
+| Anzeigen + Kopieren (zusammen) | 120 / 10 min je Konto (Schutz gegen automatisiertes Absaugen; Überschreitung: bestehende Limit-Meldung) |
+| Markierung „Bucht“ ändern | wie andere Schreibaktionen der Orga |
+| Re-Authentifizierung (Code) | bestehende Code-Limits (F-041) |
+Technische Obergrenzen: 3 offene Anfragen je „Bucht“-Person, 50 Empfänger:innen je Anfrage, Zugriffsprotokoll max. 1 000 Einträge je Freigabe (ältere werden zusammengefasst).
+
+#### Datenhaltung (Vorgabe für Developer, Bewertung durch Reviewer)
+| Was | Wo (Empfehlung) | Löschung / Datenschutz |
+|---|---|---|
+| Markierung „Bucht“ | an der Mitgliedschaft: `trip_member.booker_since` (null = nicht markiert), `trip_member.booker_set_by` (FK Konto `SET NULL`); Grenze 3 in der App unter Sperre der Reise | Endet mit der Mitgliedschaft. |
+| Standard-Markierung erledigt | `trip.booker_defaulted_at` (gesetzt bei der ersten Festlegung bzw. Migration) | – |
+| Festlegung aufgehoben seit | `trip.unfixed_at` (gesetzt bei «Festlegung aufheben», null bei neuer Festlegung) – falls nicht schon vorhanden | Grundlage der 30-Tage-Regel. |
+| Anfragen | neue Tabelle `travel_data_request`: `id`, `trip_id` (FK `CASCADE`), `requester_id` (FK Konto `SET NULL`), `purpose` (1–60), `fields` (`text[]`, nur erlaubte Codes, Prüfung per `check`), `created_at`, `closed_at`, `closed_reason` (`done` · `booker_revoked` · `requester_left` · `expired` · `unfixed`, null = offen), `idempotency_key` | Hülle bleibt bis zur Reise-Löschung (90 Tage); keine Werte. |
+| Antworten / Empfänger:innen | neue Tabelle `travel_data_recipient`: `id`, `request_id` (FK `CASCADE`), `trip_id`, `user_id` (null) **oder** `placeholder_id` (null, FK `CASCADE`) – genau eins; zusammengesetzter FK (`trip_id`, `user_id`) → `trip_member` **`ON DELETE CASCADE`** (Verlassen/Entfernen/Konto löschen räumt automatisch ab, wie `availability`); `state` (`open` · `released` · `declined` · `expired`), `responded_at`, `updated_at`; eindeutig (`request_id`, `user_id`) bzw. (`request_id`, `placeholder_id`) | Kaskade mit Anfrage, Mitgliedschaft, Platzhalter. |
+| Freigabe (verschlüsselt) | neue Tabelle `travel_data_release`: `recipient_id` (PK + FK `CASCADE`), `ciphertext` (`bytea`), `nonce` (`bytea`, 12 Byte), `key_id`, `schema_version`, `consent_at`, `consent_version`, `consent_locale`, `created_at`, `updated_at` | **Hart** gelöscht nach I11-10; Kaskade mit der Antwort. Backups enthalten nur Chiffrat (R.4: Backups max. 30 Tage). |
+| Zugriffsprotokoll | neue Tabelle `travel_data_access`: `id`, `recipient_id` (FK → `travel_data_release` **`CASCADE`**), `actor_id` (FK Konto `SET NULL`), `action` (`view` · `copy`), `field` (null oder Feld-Code), `at` | Lebt genau so lange wie die Freigabe. |
+| Re-Authentifizierung 12 h | Marker je Sitzung in `verification` (Muster `reauth.ts`, eigener Bezeichner, TTL 12 h) | Verfällt automatisch. |
+| Nur im Browser | Formularwerte Schritt 1/2, angezeigte Klartexte („Anzeigen“) | Kein Speicher im Browser, kein Cache. |
+
+Migrationen: eine Migration (`0012`) für die vier Tabellen, Spalten an `trip_member` und `trip`, einmalige Standard-Markierung für bestehende Reisen in Phase `fixed`. Löschjob erweitern (Löschdatum, 30-Tage-Regel, Sicherheitsnetz verwaiste Freigaben). Neue Umgebungsvariablen (optional in Demo/Vorschau): `TRAVEL_DATA_ENABLED`, `TRAVEL_DATA_KEYS` → `docs/ops/deployment.md` §4 (Operations). Keine neuen Drittanbieter, kein Dateispeicher.
+
+#### Demo-Seed (`seed.ts`, „Demo zurücksetzen“)
+Alle Namen, Geburtsdaten und Nummern sind Fantasie; Dokumentnummern beginnen mit `DEMO`. Freigaben werden beim Seed **verschlüsselt** geschrieben (gleicher Code-Pfad).
+- **„Kroatien 2027“** (*Vorbereitung*, Ben Orga): Ben gibt die Markierung an **David** und entzieht sie sich selbst → Ben ist **Orga ohne „Bucht“** (sieht nur Status). David fragt «Fähre Split – Hvar» (Name + Geburtsdatum) an alle inkl. Platzhalter Lotte; Carla hat freigegeben, **Anna offen** → bei Anna V4 **«du bist dran»** an erster Stelle unter Heute; Emma «klärt es direkt».
+- **„Familientreffen Harz“** (*Vorbereitung*, Anna Orga + Standard-„Bucht“): Anfrage «Bahntickets Hannover – Braunlage» (Name + Geburtsdatum); Hanna **freigegeben** (mit 2 Protokolleinträgen), Greta offen, Opa Klaus «noch nicht dabei» → Anna sieht die „Bucht“-Sicht mit Maskierung, Anzeigen/Kopieren, `[Erinnern]`, «Erledigt – Daten löschen».
+- **„Roadtrip Schottland“** (*Unterwegs*, Ben Orga + „Bucht“): Anfrage «Flüge nach Edinburgh» **mit Dokument** (Art + Nummer, Ablaufdatum, Ausstellungsland, Staatsangehörigkeit); Anna und Carla freigegeben, Emma freigegeben mit Ablaufdatum **vor** dem Löschdatum (Hinweis nur bei Emma). Ben braucht beim Anzeigen Re-Authentifizierung (Demo-Sitzung älter als 12 h oder per Passwort – Developer stellt das vorführbar her). Anna sieht die Kachel «Freigegeben an Ben · gelöscht am …» und Bens Zugriffe.
+- **„Gardasee“** (*Danach*, Abreise vor 9 Tagen): Felix hatte angefragt, Anna freigegeben → Löschdatum vorbei, **D3 erledigt** «Reisedaten gelöscht», Leerzustand W20 G.
+- **„Kroatien Segeln“**, „Malle 2026“: keine Anfragen → V4 für Mitglieder nicht sichtbar, für die Orga (Standard-„Bucht“) «als Nächstes».
+
+#### Hinweise an UI/UX (W20/W16 angleichen)
+1. Einwilligungstext mit **Regel + aktuellem Datum** («7 Tage nach der Reise, derzeit am …»), Hinweis bei Terminänderung (I11-06, I11-10).
+2. Kachel „Reisedaten“ auch für Personen **mit eigener Freigabe** (I11-03, Art. 7 Abs. 3) – Abweichung von W16 v2.6.
+3. D3 vor dem Löschdatum «als Nächstes» mit Datum (I11-03).
+4. Mehrere „Bucht“-Personen: Texte V3/V4/Erinnern mit bis zu 3 Namen; zweite Anfrage-Karte in W20 E; Zustand „Orga ohne Markierung, niemand bucht“.
+5. Vorschau-Regel `DEMO`-Präfix für Dokumentnummern inkl. Meldung (I11-12).
+6. «Markierung entfernen» mit Lösch-Bestätigung; Hinweiszeilen in „Reise verlassen“ und „Konto löschen“ (I11-01, I11-11).
+7. Hinweis «Keine persönlichen Daten in den Zweck schreiben» bei der neuen Anfrage (I11-10).
+
+#### Nicht in Inkrement 11 (Abgrenzung)
+| Kommt mit | Inhalt |
+|---|---|
+| **Inkrement 12** (F-055) | Reiseunterlagen/Tickets, Station V5, Datei-Infrastruktur. Reisedaten bleiben **getrennt** (UX-2) – keine Dateien, keine Scans in Reisedaten. |
+| **Gate G1b** (vor echter Nutzung) | Produktiv-Schlüssel + Rotation + Runbook, DSFA-Schwellwert/DSFA, VVT/TOM/Löschkonzept, Datenschutzerklärung (Einwilligung F-054, Empfänger, Fristen), rechtliche Kurzprüfung Ausweis-/Passnummern (PAuswG), Security-Review, dann `TRAVEL_DATA_ENABLED=true` in Produktion. |
+| v1 (mit F-014) | Mail «{Name} bittet um deine Reisedaten» (ohne Zweck-Details/Felder/Werte, opt-in). |
+| später (Q30, nach Sicherheitsreview) | «Für künftige Reisen in meinem Konto merken», reiseübergreifendes Übernehmen, Vielfliegernummern, Prüfziffer-/MRZ-Plausibilisierung, Export für Gruppenbuchungen, automatische Anfrage an später Beitretende, Erinnern durch Mitglieder an „Bucht“, Live-Updates, Push. |
+| nie | Ausweis-Scans/-Fotos, Adresse, Freitext-/Gesundheitsangaben, Sonderzugriff der Orga, Reisedaten hinter einer Bezahlschranke (Q36), Ende-zu-Ende-Verschlüsselung in Stufe 1 (R.4 – ohne Nutzergeheimnis nicht sinnvoll). |
+
+Aufwand: **M (≈ 1 Inkrement)** + Security-Review. Risiko: **hoch** (Ausweisdaten) – beherrscht durch Datensparsamkeit, Need-to-know-Rechte mit Tests je Zeile, Verschlüsselung mit AAD, harte Löschung mit Sicherheitsnetz und den Vorschau-Schutz; echte Daten erst nach G1b.
 
 ---
 
