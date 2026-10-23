@@ -1,6 +1,6 @@
 # Design-System – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v1.1: Unterkünfte §9.21) · Verantwortlich: Designer · Status: **v1.0 – verbindlich für die Umsetzung** (Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“, Auftraggeber PRD §12 Q18; Q17 Bewegung/Feier/Vibration; CEO-Entscheidungen 2026-10-08 zu D-20–D-35)
+Stand: 2026-10-23 (v1.2: Kosten §9.22; v1.1: Unterkünfte §9.21) · Verantwortlich: Designer · Status: **v1.0 – verbindlich für die Umsetzung** (Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“, Auftraggeber PRD §12 Q18; Q17 Bewegung/Feier/Vibration; CEO-Entscheidungen 2026-10-08 zu D-20–D-35)
 Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md), [abstimmung-design.md](../ux/abstimmung-design.md) · Motion: [motion-system.md](../motion/motion-system.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md) · Entwurf (Archiv): [richtungen/b/richtung-b.md](richtungen/b/richtung-b.md)
 
 > Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), Bewegung das [Motion-System](../motion/motion-system.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar ux-spec §10.2. **B ändert die Optik, nicht Funktionen, Texte und Barrierefreiheitsregeln.**
@@ -156,7 +156,8 @@ Dunkel-Regeln: Ebenen über hellere Flächen statt Schatten; gewählte Karte üb
 
 ### 4.4 Farbregeln
 - Haupt-Taste (Indigo-Fläche hell, Minze dunkel und im Cockpit) **höchstens einmal** pro Bildschirm.
-- Sonne nur für Platz 1, Krone, aktueller Schritt, Logo, Zur Not/Vielleicht und Warnung.
+- Sonne nur für Platz 1, Krone, aktueller Schritt, Logo, Zur Not/Vielleicht und Warnung – seit v1.2 zusätzlich als **Bereichsfarbe Kosten** (nur Icon-Kachel, §9.22).
+- **Geld:** Schulden nie Kirsche/Koralle/Amber und nie mit Minuszeichen – „schuldet“ in Tinte, „bekommt/ausgeglichen“ in Minze-Text (§9.22).
 - Koralle nur Feiertag und To-do-Hinweis („du bist dran“) – nie Fehler.
 - **Avatare:** 8 Pastelltöne `#FFD3C7` `#C9DBFF` `#D4F2B0` `#DCD3FF` `#FFE7A3` `#BDEFE0` `#FFCFE6` `#EADFCF` (`--ww-avatar-1…8`), in beiden Modi gleich, bedeutungslos (Hash der Mitglieds-ID); Initialen Tinte ≥ 10 : 1.
 
@@ -437,6 +438,76 @@ Struktur, Texte, Zustände: W18 E / W17 F (gelten vor diesem Abschnitt). Antwort
 
 **Kontraste (gerechnet):** Domain-Chip ≥ 7,3 · ♥-Stempel 8,7 · ✕-Stempel 16,5 · Platzhalter-Text `text-muted` auf Streifen hell ≥ 6,0, dunkel ≥ 8,9 · Bett-Icon 6,8 / 7,3 · ♥-Icon auf `vote-yes-bg` 4,9 / 7,6 · ♥-Rahmen `accent-strong` gegen `surface` 5,5 / 10,2 · ✕-Rahmen `border-strong` ≥ 3,1 (beide Modi) · Rang 1 11,2 / 12,4 · Chips §9.14.
 
+### 9.22 Kosten (F-035/F-036, Inkrement 10 – v1.2, 2026-10-23)
+Struktur, Texte, Zustände: W19 D / W16 v2.15 (gelten vor diesem Abschnitt). Antworten auf D-56 – D-63: [abstimmung-ux.md](abstimmung-ux.md) §12. Tokens `--ww-cost-*` (tokens.css v1.2, hell + beide Dunkel-Blöcke). Icons v1.2 (§11). **Grundregeln:** (1) Richtung immer als Wort – «Du bekommst 42,00 €» / «Du schuldest 86,00 €» / «Du bist ausgeglichen ✓» –, **nie Minuszeichen**, nie nur Farbe. (2) **Schulden nie Kirsche, nie Koralle, nie Amber** – „schuldet“ steht in Tinte (`cost-owe-fg`), „bekommt“ und „ausgeglichen“ in Minze-Text (`cost-get-fg`/`cost-even-fg`). (3) Amber (`warning-*`) nur für die Live-Zeile „zu verteilen / zu viel verteilt“ und Konflikt-Hinweise. (4) Kein Konfetti in diesem Bereich; die Zahlen zählen nicht hoch (§8.3).
+
+**Bereichsfarbe (D-56): Sonne** (`cost-area-bg/-fg` = Sonne-100 / Sonne-700, 6,2; dunkel 9,6) mit Icon `wallet` – für Kachel „Kosten“, Kopf-Icon und Icon-Kachel in A1/D1. Bedeutung „Reisekasse, Urlaubsgeld“ (Sonne = Freude, §4.4 um „Bereich Kosten“ erweitert). Nur als **Icon-Kachel**, nie als Fläche hinter Beträgen – so verwechselt niemand die Bereichsfarbe mit dem Amber der Hinweise. Die Koralle-Kante der Aufgabe A1/D1 „du bist dran“ bleibt (Koralle = *Aufgabe*, W16/D-38); der Betrag darin steht in Tinte.
+
+**Betrags-Typografie:** Alle Beträge `font-variant-numeric: var(--ww-cost-numeric)` (tabular + lining), rechtsbündig in Spalten, Währung über `Intl.NumberFormat` in **einem** Textknoten (Symbol nicht abgesetzt oder verkleinert – Screenreader liest den Betrag am Stück). Skala:
+
+| Wo | Größe / Schrift | Token |
+|---|---|---|
+| Saldo-Satz „Dein Stand“, Betrag im Detail-Sheet | 26 / Jakarta 800, −0,02 em | `--ww-cost-amount-hero` |
+| Betragsfeld im Formular | 28 / Jakarta 800, Feld 56 px | `--ww-cost-amount-input`, `--ww-cost-input-h` |
+| Ausgleichszeile «Du → Kemal 86,00 €» | 17 / Figtree 800 | `--ww-text-lg` |
+| Ausgaben-Zeile, Salden-Zeile | 16 / Figtree 800 | `--ww-cost-amount-row` |
+| «dein Anteil 25,00 €», Tagessumme | 13 / Figtree 600 `text-muted` | `--ww-cost-amount-meta` |
+
+Ziffernbreite in Jakarta gemäß §5.1 prüfen; fehlt `tnum`, gilt für die 26/28-px-Beträge Figtree 800.
+
+**Ausgaben-Zeile (W19 D.4.2):** Zeile = `<button>`, min. 64 px (`cost-row-min-h`), Polster 12/0, Trenner `border-subtle` in der Karte (§9.6, Radius 24, Polster 4/16). Raster `36px 1fr auto`, Lücke 12: **Kategorie-Kachel** 36 (Radius 12, Icon 20) · Titel 16/700 `text` einzeilig „…“ (+ `comment` 16 `text-subtle` bei Notiz) · Zeile 2 14/500 `text-muted`, max. 2 Zeilen · rechts Betrag 16/800 `text` und darunter 13/600 `text-muted` «dein Anteil 25,00 €» bzw. «nicht dabei». Chip «nach Beträgen» (§9.14, `vote-no-*`, Höhe 22, 12/700) hinter Zeile 2. Hover `surface-sunken`-Hauch (Pseudo-Element), Gedrückt `scale-press`, Fokus `--ww-focus-ring` innen (Zeile in Karte). Neu angelegt: Tönung `accent-tint` → transparent (Motion UM-18). Container < 22 em / 200 %: Betrag unter den Titel (links), Anteil eigene Zeile. Tages-Überschrift: Datum 14/800 `text` links, Tagessumme 13/600 `text-muted` rechts, Abstand oben 20.
+
+| Kategorie (R.8) | Icon | Hell Kachel / Icon | Dunkel | Kontrast |
+|---|---|---|---|---|
+| `accommodation` Unterkunft | `bed` | Lavendel-100 / Lavendel-600 | `#2E2566` / `#C3B8FF` | 5,6 / 7,3 |
+| `travel` Anreise | `plane` (Empfehlung `car`, U-35) | Lavendel-200 / Indigo | Violett / Weiß | 9,3 / 6,5 |
+| `food` Essen & Trinken | `food` | Sonne-100 / Sonne-700 | `#3A3113` / `#FFDB73` | 6,2 / 9,6 |
+| `activities` Aktivitäten | `sparkle` (Empfehlung `ticket`, U-35) | Minze-100 / Minze-700 | `#133C3B` / Minze | 4,9 / 7,6 |
+| `other` Sonstiges | `tag` | Nebel vertieft / Tinte 2 | `#2A2458` / `#B9B4DC` | 6,0 / 7,1 |
+| ohne Kategorie | `receipt` | wie `other` | wie `other` | 6,0 / 7,1 |
+
+Tokens `--ww-cost-cat-{accommodation|travel|food|activities|other}-bg/-fg`. Keine Koralle, keine Kirsche. Die Farbe ist Zusatz – die Kategorie steht im Detail-Sheet als Text.
+
+**„Dein Stand“ – Saldo-Karte (D-57):** Karte §9.6 (Radius 24, Polster 16, `shadow-1`). Eyebrow «DEIN STAND» 12/800 Versalien, Sperrung 0,06 em, `text-muted`. Darunter Raster `40px 1fr`, Lücke 12: links Icon-Kachel 40 (`cost-stand-tile`, Radius 13) bzw. Siegel, rechts Saldo-Satz 26/800 (balance) + 2 Erklärzeilen 14/500 `text-muted` («Dein Anteil 112,00 € · bezahlt 26,00 €», «Ausgaben gesamt 456,00 €») + Text-Taste «So gleichst du aus ›» (`link`, ≥ 44 px). Drei Zustände, gleiche Form – nur Icon und Textfarbe wechseln:
+
+| Zustand | Links | Satz | Kontrast hell / dunkel |
+|---|---|---|---|
+| bekommt | Kachel `cost-get-tile-*` (Minze-100 / Minze-700) + `wallet` | «Du bekommst **42,00 €**» – Betrag in `cost-get-fg` | 5,5 / 10,2 |
+| schuldet | Kachel `cost-owe-tile-*` (neutral) + `transfer` | «Du schuldest **86,00 €**» – ganz in `cost-owe-fg` (Tinte) | 16,5 / 14,5 |
+| ausgeglichen | **Siegel 40** (`seal.svg`, statisch; Pop nur bei eigener Aktion, UM-16) | «Du bist ausgeglichen ✓» in `cost-even-fg` | 5,5 / 10,2 |
+
+Abgeschlossen: Chip «Abrechnung abgeschlossen» mit `lock` (§9.14, `vote-no-*`) oben rechts in der Karte.
+
+**Salden-Liste (D-57):** Zeile 56 px: Avatar 32 · Name 15/700 (+ Chip «Platzhalter») · rechts Saldo 16/800 als Wort («bekommt 64,00 €» in `cost-get-fg`, «schuldet 22,00 €» in `cost-owe-fg`, «ausgeglichen ✓» in `cost-even-fg`). **Balken ja (Tricount-Stil), aber leise:** unter Name/Saldo eine Spur 6 px (`cost-bar-track`, Pille) mit **Mittelachse** 1 px (`cost-bar-axis`); „bekommt“ wächst von der Mitte nach **rechts** in `cost-bar-get` (Minze-700 / dunkel Minze), „schuldet“ nach **links** in `cost-bar-owe` (Tinte 4 / dunkel `#7D77AD`, 3,4 / 3,9 – neutral). Länge = |Saldo| ÷ größter |Saldo| der Reise, min. 4 px bei ≠ 0; ausgeglichen = nur Achse. `aria-hidden`, Text trägt alles. Bei 200 % oder Container < 20 em entfallen die Balken. Wachsen per `scaleX` (Motion, reduziert sofort).
+
+**Avatar „ehemaliges Mitglied“ (D-59):** Kreis wie §9.17 in `cost-former-bg` mit Icon `user` (60 % der Avatargröße) in `cost-former-fg` (6,0 / 7,1), **ohne** Initialen, **ohne** gestrichelten Rand (gestrichelt = „noch offen“). Nummer nur im Text.
+
+**Ausgleichszeile (D-62):** in einer Karte (§9.6), Zeilen getrennt durch `border-subtle`, Polster 14/0. Zeile 1: Avatar 24 A · Name A 17/800 · Pfeil `arrow-right` 16 in `cost-arrow-fg` (`aria-hidden`, sr «an») · Avatar 24 B · Name B · rechts Betrag 17/800 tabular. Zeile 2 (Zahlungsinfo des Empfängers, 14/500 `text-muted`, Icon-los):
+- **IBAN maskiert:** «IBAN DE89 •••• •••• •••• •••• 3000» – Vierergruppen mit normalen Leerzeichen + `word-spacing: var(--ww-cost-iban-gap)`, Ziffern tabular (keine Monospace-Schrift – Figtree tabular reicht und bleibt im System), Punkte `•` in `cost-mask-fg` (5,1 / 5,9). Daneben Text-Tasten `[Anzeigen]` (`eye`/`eye-off` 16 + Wort) und `[Kopieren]` (`copy` 16 + Wort), je ≥ 44 px; bei < 22 em unter der IBAN. Angezeigt: alle Zeichen in `text`, gleiche Gruppen. `overflow-wrap: anywhere` erst zwischen Gruppen (`white-space: nowrap` je Gruppe).
+- **Anderer Weg** (Freitext): eigene Zeile, reiner Text in `text`, nie als Link gestaltet, + `[Kopieren]`.
+- Ohne Info: 14 `text-muted` «Kemal hat keine Zahlungsinfo hinterlegt …».
+Zeile 3: «Als bezahlt markieren» / «Als erhalten markieren» mit `check` 20 – **Primär** (Indigo, §9.1) nur für die erste eigene Schuld, sonst **Sekundär klein** (44 px); daneben `[Kemal erinnern]` Sekundär klein mit `remind`. Für Unbeteiligte statt Tasten 13/500 `text-muted` «Markieren können Jonas oder Kemal.». **Markiert:** Taste wird zum Chip «✓ Bezahlt · 86,00 €» (`cost-paid-*`, Höhe 28, 13/800, Icon `check`) + Text-Taste «Zurücknehmen»; Zeile bleibt stehen (UM-15). „Bereits bezahlt (n)“: Kopfzeile 48 px mit Chevron (wie D-40), Einträge 14/700 + Meta 13 `text-muted`, keine Avatare.
+
+**Karte „Alles ausgeglichen“ (D-63):** Fläche `cost-settled-bg` (Minze-100 / dunkel `#133C3B`), Radius 24, Polster 20, **keine** Schatten-Hervorhebung, Inhalt zentriert: **Siegel 40** (`seal.svg`; Ring = `--ww-seal-ring` – hell Weiß, hebt das Siegel von der Minze-Fläche ab) · h3 «Alles ausgeglichen ✓» Jakarta 19/800 `cost-settled-fg` · 14/500 «Niemand schuldet jemandem etwas.» `cost-settled-muted` (6,4 / 6,1). Orga *Danach*: darunter `[Abrechnung abschließen]` Sekundär. **Siegel klein** (20 px) in „Dein Stand“ ersetzt im Zustand „ausgeglichen“ die Icon-Kachel bei < 22 em (sonst 40). Eigene Siegel-Datei ist nicht nötig: dieselbe Form wie Beitritt/Abgabe = „kleiner Meilenstein erreicht“ (§8.3 Regel 2); Funkel nur bei 64 px.
+
+**Formular „Ausgabe“ (D-61):**
+- **Betragsfeld:** Input §9.7, aber 56 px hoch, Jakarta 28/800 tabular, Text linksbündig; Währungszeichen als Deko (`aria-hidden`) 20/700 `text-muted` innen – DE rechts (Polster rechts 44), EN links (Polster links 40). Platzhalter «0,00» in `text-subtle`.
+- **Kategorie-Chips:** interaktive Chips §9.10 (sichtbar 40, Trefferfläche 44, Pille, `surface` + 1,5 px `border-strong`, Icon 18 in der **Kategorie-Farbe** `cost-cat-*-fg` + Label 14/700). Gedrückt: `primary-tint` + **2 px `selected`** + Häkchen 16 vorn statt Kategorie-Icon + Label 800 – erkennbar über Rahmenstärke + Häkchen, nicht nur Farbe.
+- **Für-wen-Chips:** gleiche Maße; Avatar 24 vorn, Name, bei Platzhaltern « · Platzhalter» 13 `text-muted`. Gewählt: `primary-tint` + 2 px `selected` + `check` 16 am Ende; nicht gewählt: Häkchen-Platz leer (Breite springt nicht), Avatar voll farbig.
+- **Aufteilung:** Segment wie §9.10. „Gleich“: Live-Zeile 14/600 `text`. „Nach Beträgen“: je Person Zeile Avatar 24 · Name · Betragsfeld 44 px hoch, max. 128 px breit, rechtsbündig, 16/700 tabular.
+- **Live-Zeile:** Rest ≠ 0 → Icon `info` 16 + Text 14/700 in `warning-text` (Amber, 6,9 auf Weiß / dunkel 12,1 auf Fläche) – **nicht Rot**, kein Rahmen um die Felder; Rest = 0 → `check` 16 + «Passt genau» in `accent-text`. Beim Absenden mit Fehlsumme: Feldrahmen 2 px `danger` nur am ersten Betragsfeld (echter Fehlerfall nach §9.7).
+- 360 px: Betrag, Wofür?, erste Chip-Zeile über der Tastaturkante; 200 %: Chips umbrechen, Segment-Labels einzeilig.
+
+**Hinweise im Bereich (D-62, §9.18):** „Abrechnung abgeschlossen“ Info + `lock` (+ Siegel 20 nach eigener Aktion); „… hat 86,00 € an dich als bezahlt markiert“ Info + `wallet` + Schließen 44; Konflikt/„Salden haben sich geändert“ Amber + `warning`; Fehler nur echte Fehler (Kirsche).
+
+**Kachel „Kosten“ im Cockpit (§9.5/D-41):** Icon-Kachel 32 `cost-area-*` + `wallet`; Titel «Kosten»; Statuszeile 14/500 `text-muted` mit fettem Teil: «Gesamt 456,00 € · **du schuldest 86,00 €**» (fetter Teil `cost-owe-fg`), «… · **du bekommst 42,00 €**» (`cost-get-fg`), «**ausgeglichen ✓**» (`cost-even-fg`), «Noch keine Ausgaben» (`text-muted`). Kopf-Tasten: `[+ Ausgabe]` Minze mit `plus`, `[Ausgleichen]` Kontur mit `wallet` (W16 v2.1).
+
+**Leerzustand:** `illustrations/empty-costs.svg` (max. 160 px hoch, mittig) + h2 + Text + Primär `[Ausgabe hinzufügen]` + Währungszeile 14 `text-muted` mit Text-Taste «Ändern» (Orga).
+
+**Desktop ≥ 960 px:** wie §9.21 (`minmax(0,600px) minmax(0,340px)`, Lücke 40, rechte Spalte sticky `top: 16px`): links Ausgaben, rechts „Dein Stand“ · Ausgleich · Salden · Zahlungsinfo. Detail-Sheet als Dialog 480.
+
+**Kontraste (gerechnet, hell / dunkel):** bekommt/ausgeglichen 5,5 (Nebel 5,0) / 10,2 · schuldet 16,5 / 14,5 · Bereich Sonne 6,2 / 9,6 · Kategorie-Kacheln ≥ 4,9 / ≥ 6,5 · Dein-Stand-Kacheln 4,9 bzw. 6,0 / 7,6 bzw. 7,1 · Karte „Alles ausgeglichen“ Text 14,6 / 10,8, Text 2 6,4 / 6,1 · Chip „Bezahlt“ 4,9 / 7,6 · IBAN-Punkte 5,1 / 5,9 · Pfeil 5,1 / 5,9 · Balken bekommt 5,5 / 10,2, schuldet 3,4 / 3,9 (Grafik ≥ 3 : 1) · Live-Zeile Amber ≥ 6,2 / 9,6 · Avatar „ehemalig“ 6,0 / 7,1.
+
 ## 10. i18n-robuste Layouts (DE/EN)
 
 Regeln aus v0.5 gelten unverändert: keine fixen Textbreiten (nur `min-width` 44 und `max-width`); Layouts mit dem längeren Text, Pseudo-Locale +40 % testen; Umbruch erlauben (Tasten, Chips zweizeilig; Tabs scrollen statt kürzen; `line-clamp` nur für Nutzerinhalte); `lang` korrekt setzen, `hyphens: auto` in schmalen Spalten; `overflow-wrap: anywhere` + `min-width: 0` für Nutzerinhalte; keine Texte in Grafiken (außer Wortmarke); ICU-Plural und `Intl`-Formate; Wochentags-Kürzel zweistellig aus den Übersetzungen (Mo Di Mi … / Mo Tu We …; en-US So-Start), Wochenende bleibt Sa/So; Datumsbereiche über `formatRange` mit Halbgeviertstrich; Reisedauer in Nächten.
@@ -459,7 +530,7 @@ Textlängen in B (geprüft, D-35):
 
 ## 11. Ikonografie & Illustration
 
-**Icons** (`assets/icons/icons.svg`, 50 Symbole): 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6, Chevrons 2,25), runde Enden, `currentColor`, weiche Duoton-Füllung 16 % bei Flächen-Icons. Größen 16/20/24, in Kacheln 22. Alle IDs aus v0.5 gültig; neu `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login`. Weitere bei Bedarf im selben Stil oder aus Lucide (ISC) mit Duoton ergänzen.
+**Icons** (`assets/icons/icons.svg`, 61 Symbole; v1.1 `bed`, `heart`, `heart-filled`, `external`; **v1.2 Kosten:** `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`): 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6, Chevrons 2,25), runde Enden, `currentColor`, weiche Duoton-Füllung 16 % bei Flächen-Icons. Größen 16/20/24, in Kacheln 22. Alle IDs aus v0.5 gültig; neu `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login`. Weitere bei Bedarf im selben Stil oder aus Lucide (ISC) mit Duoton ergänzen.
 
 **Illustrationen** (`assets/illustrations/`): flach, **ohne Kontur**, Lavendel-Kachel (Radius 32) als Grund, max. 5 Palettenfarben, Lichtflecken als halbtransparente Kreise, wiederkehrende Motive Sonne (Kreis + Schein), Minze-Wellen, konzentrische Bögen, Vier-Zack-Funkel, Konfetti als abgerundete Rechtecke. **Produkt als Illustration** (Hero = Übersichtskarte). Keine Figuren, keine Gesichter, kein Maskottchen, keine Texte. Dunkel: eigene Werte über `--ww-illu-*`. Alle dekorativ. Animierbare Ebenen `data-anim` (M-D3) – Liste in [assets/README.md](assets/README.md).
 
@@ -474,6 +545,8 @@ Textlängen in B (geprüft, D-35):
 | `code-sent.svg` | W02/W03 Code gesendet |
 | `empty-trips.svg` · `empty-nobody.svg` · `no-matches.svg` · `submitted.svg` · `vote-waiting.svg` · `error.svg` · `goodbye.svg` | Leerzustände und Momente (W04, W07/W09, W09, W08, W10, W14) |
 | `empty-stays.svg` (v1.1) | Leerzustand „Noch keine Unterkünfte“ (W18 E.3) |
+| `empty-costs.svg` (v1.2) | Leerzustand „Noch keine Ausgaben“ (W19 D.4.4) – Reisekasse, Beleg, Sonnen-Münzen, ohne Koralle |
+| `seal.svg` 20/40 | auch Siegel „Alles ausgeglichen“ (§9.22, D-63) |
 
 **Unterkünfte (`assets/unterkuenfte/`, v1.1):** `stay-placeholder.svg` (kein Vorschaubild, hell/dunkel) und acht **Demo-Bilder** `demo-*.svg` (400 × 300, 4:3, je < 7 KB, selbst gezeichnet, keine fremden Assets) – „Foto-Ersatz“ im Illustrationsstil: flach, ohne Kontur, Palette B0 plus wenige Erdtöne (Holz `#B9734A`/`#8E5638`, Stein `#EADFCF`/`#D9CBB4`), keine Figuren, keine Texte, keine Theme-Umschaltung. Motiv in der sicheren Mitte x 50–350 / y 38–262 (passt für 16:10, 16:9 und 1:1). Kopie für den Demo-Seed: `public/demo/stays/`. Details: [assets/README.md](assets/README.md).
 
@@ -511,6 +584,7 @@ Textlängen in B (geprüft, D-35):
 5. Aufräumen (CEO/Developer): `logo-mark-a-sonnenkalender.svg` (Alias), `logo-mark-b-weghaken.svg`, `logo-mark-c-treffpunkt.svg` (Archiv) können gelöscht werden.
 
 ### Changelog
+- **v1.2 (2026-10-23):** Inkrement 10 „Kosten teilen“ (F-035/F-036): §9.22 (Bereichsfarbe Sonne, Betrags-Typografie, Ausgaben-Zeile, Kategorie-Kacheln, „Dein Stand“ in drei Zuständen, Salden mit Mittelachsen-Balken, Ausgleichszeile mit maskierter IBAN, Karte/Siegel „Alles ausgeglichen“, Formular, Kachel, Desktop), §4.4 Geld-Regel, Antworten D-56–D-63; Tokens `--ww-cost-*`; Icons `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`; `empty-costs.svg`. **Developer:** `node scripts/sync-design-assets.ts` + `ICON_NAMES` ergänzen.
 - **v1.1 (2026-10-23):** Inkrement 9 „Unterkünfte“ (F-031): §9.21 (Swipe-Karte, Stempel zweistufig, Bewertungstasten, Vorschlags-/Ranglisten-Zeile, „Eure Unterkunft“, Hinweise, Kachel, Desktop), Antworten D-46–D-55; Tokens `--ww-stay-*`, `--ww-stamp-*`, `--ww-pattern-stay-placeholder`; Icons `bed`, `heart`, `heart-filled`, `external`; `empty-stays.svg`; Platzhalter + 8 Demo-Bilder (`assets/unterkuenfte/`).
 - **v1.0 (2026-10-08):** Richtung B „Reise-Cockpit“ mit Palette B0 als verbindliches System (Q18). Neu: Leitidee, Prinzipien (Zahl zuerst, keine Konturen, Minze nie Text auf Hell, keine hochzählenden Zahlen), Palette hell/dunkel mit Kontrasten, Cockpit-Farben, Plus Jakarta Sans + Figtree selbst gehostet, Indigo-Heatmap, Komponenten Cockpit-Kopf (voll/kompakt), Kennzahl-Box, Tabs, Kacheln, Karten (Einladungs-Reisekarte ohne Initialen, Ergebnis-Karte mit Countdown-Text und Orga-Variante), Code-Feld, Werkzeugleiste 150 px, Vorschlag-Leiste, Abstimmungs-Segmente, Vorfreude-Ring, Fortschritt, Toast, Sheet, Avatare, Phasen-Punkt, Darstellung-Schalter. Motion-Tokens aus dem Motion-System übernommen (M-D1–M-D9), `data-motion`, Vibration (Q17). CEO-Entscheidungen D-20–D-35 eingearbeitet (Touch ≥ 44, Fokus am aktiven Tab, Kalender 8 px/4 px nach U-1, Werkzeugleiste ≤ 150 px ohne Griff, Lichtflecken nur oben, Countdown als Text, Feier = Vorfreude-Ring). Assets komplett auf B0 umgestellt. v0.5-Abschnitte zu Lagune-Palette, Systemschrift-Fließtext, Logo-A-Farben, Unterstrich-Tabs, Pillen-/12er-Tasten und Teller-Illustrationen ersetzt.
 - v0.5 (2026-10-08): Auftraggeber-Entscheidungen Marke (zwei Namen), Logo A, Dark Mode nur System, Figtree.

@@ -2,6 +2,7 @@
    Wir wollen weg / When do we go? – Design Tokens
    Version 1.0 · 2026-10-08 · Verantwortlich: Designer
    v1.1 · 2026-10-23: Unterkünfte F-031 (§2 --ww-stay-*, --ww-stamp-*; §5 --ww-pattern-stay-placeholder) – nur Ergänzungen
+   v1.2 · 2026-10-23: Kosten teilen F-035/F-036 (§2 Maße --ww-cost-*; §3/§4 Farben --ww-cost-*) – nur Ergänzungen
    Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“ (Auftraggeber, PRD §12 Q18)
    Dokumentation: docs/design/design-system.md (v1.0)
 
@@ -313,6 +314,23 @@
   --ww-stamp-ring: rgb(255 255 255 / 0.9);
   --ww-stamp-radius: 14px;
   --ww-stamp-tilt: 8deg;                     /* ♥ −8°, ✕ +8° */
+
+  /* ---------------- Kosten F-035/F-036 (v1.2, 2026-10-23, design-system §9.22) ----------------
+     Beträge immer tabellarisch (gleich breite Ziffern), nie mit Minus-Zeichen – die Richtung
+     steht als Wort da („du bekommst / du schuldest / ausgeglichen ✓“). */
+  --ww-cost-numeric: tabular-nums lining-nums;  /* font-variant-numeric für ALLE Beträge */
+  --ww-cost-amount-hero: 1.625rem;       /* 26 – Saldo-Satz „Dein Stand“, Betrag im Detail-Sheet (Jakarta 800) */
+  --ww-cost-amount-input: 1.75rem;       /* 28 – Betragsfeld im Formular (Jakarta 800) */
+  --ww-cost-amount-row: 1rem;            /* 16 – Betrag in Ausgaben-/Ausgleichszeile (Figtree 800) */
+  --ww-cost-amount-meta: 0.8125rem;      /* 13 – „dein Anteil 25,00 €“, Tagessumme */
+  --ww-cost-input-h: 56px;               /* Betragsfeld */
+  --ww-cost-row-min-h: 64px;             /* Ausgaben-Zeile */
+  --ww-cost-tile: 36px;                  /* Kategorie-Kachel in der Zeile */
+  --ww-cost-tile-radius: 12px;
+  --ww-cost-tile-icon: 20px;
+  --ww-cost-stand-tile: 40px;            /* Icon-Kachel bzw. Siegel in „Dein Stand“ */
+  --ww-cost-bar-h: 6px;                  /* Saldo-Balken je Person (D-57), aria-hidden */
+  --ww-cost-iban-gap: 0.3em;             /* Abstand der Vierergruppen in der IBAN */
 }
 
 /* --------------------------------------------------------------------------
@@ -556,6 +574,42 @@
   --ww-route-today-halo: var(--ww-indigo-800);
   --ww-route-coin: var(--ww-mint-500);                 /* Münzstapel am Erledigt-Marker */
 
+  /* ---------------- Kosten F-035/F-036 (v1.2, design-system §9.22) ----------------
+     Schulden sind kein Fehler: NIE Kirsche/Koralle für „schuldet“. Kontraste gegen surface / bg. */
+  --ww-cost-area-bg: var(--ww-sun-100);                /* Bereichsfarbe Kosten (Kachel, A1, D1): Icon 6,2 */
+  --ww-cost-area-fg: var(--ww-sun-700);
+  --ww-cost-get-fg: var(--ww-mint-700);                /* „bekommt“ 5,5 / 5,0 */
+  --ww-cost-owe-fg: var(--ww-ink-900);                 /* „schuldet“ neutral in Tinte 16,5 / 14,9 */
+  --ww-cost-even-fg: var(--ww-mint-700);               /* „ausgeglichen ✓“ 5,5 / 5,0 */
+  --ww-cost-get-tile-bg: var(--ww-mint-100);           /* „Dein Stand“ bekommt: Icon 4,9 */
+  --ww-cost-get-tile-fg: var(--ww-mint-700);
+  --ww-cost-owe-tile-bg: var(--ww-mist-150);           /* „Dein Stand“ schuldet: Icon 6,0 – neutral */
+  --ww-cost-owe-tile-fg: var(--ww-ink-700);
+  --ww-cost-settled-bg: var(--ww-mint-100);            /* Karte „Alles ausgeglichen“: Tinte 14,6 · Tinte 2 6,4 */
+  --ww-cost-settled-fg: var(--ww-ink-900);
+  --ww-cost-settled-muted: var(--ww-ink-700);
+  --ww-cost-paid-bg: var(--ww-mint-100);               /* Chip „✓ Bezahlt“ 4,9 */
+  --ww-cost-paid-fg: var(--ww-mint-700);
+  --ww-cost-bar-get: var(--ww-mint-700);               /* Saldo-Balken bekommt 5,5 */
+  --ww-cost-bar-owe: var(--ww-ink-500);                /* Saldo-Balken schuldet 3,4 – neutral */
+  --ww-cost-bar-track: var(--ww-mist-150);
+  --ww-cost-bar-axis: var(--ww-ink-500);               /* Mittelachse 1 px */
+  --ww-cost-mask-fg: var(--ww-ink-600);                /* „••••“ der maskierten IBAN 5,1 */
+  --ww-cost-arrow-fg: var(--ww-ink-600);               /* Pfeil A → B 5,1 */
+  --ww-cost-former-bg: var(--ww-mist-150);             /* Avatar „ehemaliges Mitglied“ (D-59): Icon 6,0 */
+  --ww-cost-former-fg: var(--ww-ink-700);
+  /* Kategorien (Icon-Kachel 36): accommodation · travel · food · activities · other/ohne */
+  --ww-cost-cat-accommodation-bg: var(--ww-lavender-100); /* 5,6 – wie Kachel „Unterkunft“ */
+  --ww-cost-cat-accommodation-fg: var(--ww-lavender-600);
+  --ww-cost-cat-travel-bg: var(--ww-lavender-200);       /* 9,3 */
+  --ww-cost-cat-travel-fg: var(--ww-indigo-800);
+  --ww-cost-cat-food-bg: var(--ww-sun-100);              /* 6,2 */
+  --ww-cost-cat-food-fg: var(--ww-sun-700);
+  --ww-cost-cat-activities-bg: var(--ww-mint-100);       /* 4,9 */
+  --ww-cost-cat-activities-fg: var(--ww-mint-700);
+  --ww-cost-cat-other-bg: var(--ww-mist-150);            /* 6,0 – auch „ohne Kategorie“ (receipt) */
+  --ww-cost-cat-other-fg: var(--ww-ink-700);
+
   /* ---------------- Illustrationen (inline-SVG) ---------------- */
   --ww-illu-plate: var(--ww-lavender-100);
   --ww-illu-paper: var(--ww-mist-0);
@@ -791,6 +845,39 @@
     --ww-route-today-halo: var(--ww-mint-400);
     --ww-route-coin: var(--ww-mint-500);
 
+    --ww-cost-area-bg: var(--ww-sun-900);          /* 9,6 */
+    --ww-cost-area-fg: var(--ww-sun-200);
+    --ww-cost-get-fg: var(--ww-mint-400);          /* 10,2 / 11,5 */
+    --ww-cost-owe-fg: var(--ww-ink-50);            /* 14,5 / 16,3 */
+    --ww-cost-even-fg: var(--ww-mint-400);
+    --ww-cost-get-tile-bg: var(--ww-mint-900);     /* 7,6 */
+    --ww-cost-get-tile-fg: var(--ww-mint-400);
+    --ww-cost-owe-tile-bg: var(--ww-night-800);    /* 7,1 */
+    --ww-cost-owe-tile-fg: var(--ww-ink-200);
+    --ww-cost-settled-bg: var(--ww-mint-900);      /* Text 10,8 · Text 2 6,1 */
+    --ww-cost-settled-fg: var(--ww-ink-50);
+    --ww-cost-settled-muted: var(--ww-ink-200);
+    --ww-cost-paid-bg: var(--ww-mint-900);         /* 7,6 */
+    --ww-cost-paid-fg: var(--ww-mint-400);
+    --ww-cost-bar-get: var(--ww-mint-400);
+    --ww-cost-bar-owe: var(--ww-night-500);        /* 3,9 */
+    --ww-cost-bar-track: var(--ww-night-800);
+    --ww-cost-bar-axis: var(--ww-night-500);
+    --ww-cost-mask-fg: var(--ww-ink-300);          /* 5,9 */
+    --ww-cost-arrow-fg: var(--ww-ink-300);
+    --ww-cost-former-bg: var(--ww-night-800);      /* 7,1 */
+    --ww-cost-former-fg: var(--ww-ink-200);
+    --ww-cost-cat-accommodation-bg: var(--ww-night-760); /* 7,3 */
+    --ww-cost-cat-accommodation-fg: var(--ww-lavender-400);
+    --ww-cost-cat-travel-bg: var(--ww-indigo-500);       /* 6,5 */
+    --ww-cost-cat-travel-fg: var(--ww-mist-0);
+    --ww-cost-cat-food-bg: var(--ww-sun-900);            /* 9,6 */
+    --ww-cost-cat-food-fg: var(--ww-sun-200);
+    --ww-cost-cat-activities-bg: var(--ww-mint-900);     /* 7,6 */
+    --ww-cost-cat-activities-fg: var(--ww-mint-400);
+    --ww-cost-cat-other-bg: var(--ww-night-800);         /* 7,1 */
+    --ww-cost-cat-other-fg: var(--ww-ink-200);
+
     --ww-illu-plate: var(--ww-night-820);
     --ww-illu-paper: var(--ww-night-750);
     --ww-illu-ink: var(--ww-ink-50);
@@ -1017,6 +1104,39 @@
   --ww-route-wait: var(--ww-lavender-400);
   --ww-route-today-halo: var(--ww-mint-400);
   --ww-route-coin: var(--ww-mint-500);
+
+  --ww-cost-area-bg: var(--ww-sun-900);
+  --ww-cost-area-fg: var(--ww-sun-200);
+  --ww-cost-get-fg: var(--ww-mint-400);
+  --ww-cost-owe-fg: var(--ww-ink-50);
+  --ww-cost-even-fg: var(--ww-mint-400);
+  --ww-cost-get-tile-bg: var(--ww-mint-900);
+  --ww-cost-get-tile-fg: var(--ww-mint-400);
+  --ww-cost-owe-tile-bg: var(--ww-night-800);
+  --ww-cost-owe-tile-fg: var(--ww-ink-200);
+  --ww-cost-settled-bg: var(--ww-mint-900);
+  --ww-cost-settled-fg: var(--ww-ink-50);
+  --ww-cost-settled-muted: var(--ww-ink-200);
+  --ww-cost-paid-bg: var(--ww-mint-900);
+  --ww-cost-paid-fg: var(--ww-mint-400);
+  --ww-cost-bar-get: var(--ww-mint-400);
+  --ww-cost-bar-owe: var(--ww-night-500);
+  --ww-cost-bar-track: var(--ww-night-800);
+  --ww-cost-bar-axis: var(--ww-night-500);
+  --ww-cost-mask-fg: var(--ww-ink-300);
+  --ww-cost-arrow-fg: var(--ww-ink-300);
+  --ww-cost-former-bg: var(--ww-night-800);
+  --ww-cost-former-fg: var(--ww-ink-200);
+  --ww-cost-cat-accommodation-bg: var(--ww-night-760);
+  --ww-cost-cat-accommodation-fg: var(--ww-lavender-400);
+  --ww-cost-cat-travel-bg: var(--ww-indigo-500);
+  --ww-cost-cat-travel-fg: var(--ww-mist-0);
+  --ww-cost-cat-food-bg: var(--ww-sun-900);
+  --ww-cost-cat-food-fg: var(--ww-sun-200);
+  --ww-cost-cat-activities-bg: var(--ww-mint-900);
+  --ww-cost-cat-activities-fg: var(--ww-mint-400);
+  --ww-cost-cat-other-bg: var(--ww-night-800);
+  --ww-cost-cat-other-fg: var(--ww-ink-200);
 
   --ww-illu-plate: var(--ww-night-820);
   --ww-illu-paper: var(--ww-night-750);

@@ -63,6 +63,10 @@ Wortmarken liegen als `<text>` in **Plus Jakarta Sans 800, 28 px, −0,02 em** v
 | `sparkle` | Vorschlag | `chart` | Übersicht / Kennzahl |
 | `plane` | Reise | `bed` | Unterkunft (v1.1) |
 | `heart` / `heart-filled` | Gefällt mir – Kontur / gewählt (v1.1) | `external` | Öffnet neuen Tab, ↗ (v1.1) |
+| `wallet` | Bereich Kosten: Kachel, A1/D1, Kopf `[Ausgleichen]` (v1.2) | `transfer` | Ausgleich / Überweisung, optional (v1.2) |
+| `receipt` | Ausgabe ohne Kategorie (v1.2) | `food` | Kategorie Essen & Trinken (v1.2) |
+| `car` | Kategorie Anreise – Alternative zu `plane`, U-35 (v1.2) | `ticket` | Kategorie Aktivitäten – Alternative zu `sparkle`, U-35 (v1.2) |
+| `tag` | Kategorie Sonstiges (v1.2) | | |
 
 Einzeldateien (Ansicht, gleiche Formen): `calendar`, `share`, `vote`, `crown`, `check`, `maybe`, `cross`, `language`, `calendar-download`, `copy`, `holiday`, `link`, `all-available`. Maßgeblich ist das Sprite.
 
@@ -99,6 +103,9 @@ Stil B: flach, **ohne Kontur**, Kachel (abgerundetes Quadrat, Radius 32) statt T
 | `goodbye.svg` | Konto gelöscht W14 | `plate`, `sun`, `sea`, `plane` |
 
 Neu in v1.1 (2026-10-23): `empty-stays.svg` – Leerzustand „Noch keine Unterkünfte“ (W18 E.3), Ebenen `plate`, `sun`, `sea`, `house`, `card`, `sparks`. Icons v1.1: `bed`, `heart`, `heart-filled`, `external` im Sprite.
+
+Neu in v1.2 (2026-10-23, Kosten F-035/F-036): `empty-costs.svg` – Leerzustand „Noch keine Ausgaben“ (W19 D.4.4, D-60), Ebenen `plate`, `sun`, `sea`, `receipt`, `wallet`, `coins`, `sparks` (IDs `wwec-`). Icons v1.2: `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`. Siegel „Alles ausgeglichen“ = `seal.svg` (20/40, D-63) – keine eigene Datei.
+**Developer:** `node scripts/sync-design-assets.ts` ausführen (erzeugt `public/icons.svg` und `illustrations.json` neu) und `ICON_NAMES` in `src/components/ui/icon-names.ts` um die sieben IDs ergänzen – sonst schlägt `scripts/design-assets.test.ts` fehl.
 
 ## Unterkünfte (`unterkuenfte/`, v1.1, F-031)
 

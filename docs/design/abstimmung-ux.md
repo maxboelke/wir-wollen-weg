@@ -278,7 +278,31 @@ Grundlage: `docs/ux/abstimmung-design.md` §14, W18 E, W17 F, W16 v2.14. Spezifi
 | U-33 | **♥-Taste unter dem Stapel getönt** (`vote-yes-bg` + Minze-Rahmen) statt gefüllter Minze wie im Prototyp (`.swipe-btns .like`) – gleiche Gewichtung wie ✕, passt zu U-25. |
 | U-34 | **Kachel nach Festlegung mit Unterkunftsbild** statt Bett-Icon – bestätigen (Bild ist dekorativ, Titel steht als Text). |
 
+## 12. Runde 6 – Inkrement 10 Kosten: Antworten auf D-56 – D-63 (2026-10-23)
+
+Grundlage: `docs/ux/abstimmung-design.md` §15, W19 D, W16 v2.15, features.md R.8. Optik: [design-system.md §9.22](design-system.md). Tokens: tokens.css v1.2 (`--ww-cost-*`, hell + beide Dunkel-Blöcke). Saldo-Wortlaut übernommen: «Du bekommst / Du schuldest / Du bist ausgeglichen ✓», kein Minuszeichen, Schulden nie Rot/Koralle/Amber; Amber nur für den Rest bei „Nach Beträgen“.
+
+| ID | Antwort Design | Status |
+|---|---|---|
+| **D-56** Bereichsfarbe | **Sonne bestätigt** (`cost-area-*`, 6,2 / 9,6) + `wallet` – nur als Icon-Kachel (Kachel, Kopf, A1/D1), nie als Fläche hinter Beträgen, damit sie nicht mit dem Amber der Hinweise verwechselt wird. Keine Koralle, keine Minze-Fläche. Kategorie-Kacheln eigene Töne (s. §9.22): Unterkunft Lavendel, Anreise Lavendel-200/Indigo, Essen Sonne, Aktivitäten Minze-*Tönung* (Kachel, keine Primärfläche – passt zu U-25), Sonstiges/ohne neutral. | erledigt |
+| **D-57** Dein Stand + Salden | Karte mit Eyebrow, Icon-Kachel 40 bzw. Siegel 40 links, Saldo-Satz 26/800 tabular, 2 Erklärzeilen 14. Drei Zustände nur über Icon + Textfarbe (bekommt Minze-Text, schuldet Tinte, ausgeglichen Minze-Text + Siegel). **Balken: ja, leise** – Spur 6 px mit Mittelachse, bekommt nach rechts (Minze-700 / dunkel Minze), schuldet nach links (Tinte 4, neutral, 3,4 / 3,9), Länge relativ zum größten Saldo, `aria-hidden`, entfällt bei 200 % / < 20 em. | erledigt |
+| **D-58** Icons | **Im Sprite ergänzt** (icons.svg v1.2): `wallet`, `food`, `tag`, `receipt` + zusätzlich `transfer` (Ausgleich, optional für „Dein Stand – schuldet“), `car`, `ticket` (Kategorie-Alternativen, s. U-35). Kein `euro`-Icon: Reisen haben auch GBP/CHF/… – `wallet` ist währungsneutral. **Developer:** `node scripts/sync-design-assets.ts` ausführen und `ICON_NAMES` (`src/components/ui/icon-names.ts`) um `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag` ergänzen – sonst schlägt `scripts/design-assets.test.ts` fehl. | erledigt |
+| **D-59** Avatar ehemalig | Kreis `cost-former-bg` (vertieft) + Icon `user` 60 % in Tinte 2 (6,0 / 7,1), keine Initialen, **kein** gestrichelter Rand (gestrichelt = „noch offen“). Nummer nur im Text. | erledigt |
+| **D-60** Leerzustand | `illustrations/empty-costs.svg` (240 × 180, Stil B): Reisekasse in Indigo, Beleg dahinter, Sonnen-Münzen, Sonne + Minze-Wellen; ohne Text, ohne Koralle; Ebenen `plate`, `sun`, `sea`, `receipt`, `wallet`, `coins`, `sparks`. Wird per Sync in `illustrations.json` übernommen. | erledigt |
+| **D-61** Formular | Betragsfeld 56 px, Jakarta 28/800, Währungszeichen dekorativ (DE rechts / EN links). Kategorie-Chips: Icon in Kategorie-Farbe; gedrückt = `primary-tint` + 2 px `selected` + Häkchen statt Icon + 800. Für-wen-Chips: Avatar 24, Häkchen am Ende (Platz reserviert). Segment wie W09. Live-Zeile Amber + `info` (nicht Rot), «Passt genau» Minze-Text + `check`. Felder je Person 44 px, rechtsbündig, max. 128 px. | erledigt |
+| **D-62** Ausgleichszeile | «Du → Kemal 86,00 €» 17/800, Pfeil `arrow-right` in Tinte 3. IBAN maskiert in Vierergruppen mit `•` – **Figtree tabular statt Monospace** (bleibt im Schrift-System, Ziffern stehen trotzdem bündig); Gruppen `nowrap`; Anzeigen (`eye`/`eye-off`) + Kopieren als Text-Tasten 44 px, bei < 22 em darunter. Anderer Weg als reiner Text. Tasten: Primär nur erste eigene Schuld, sonst Sekundär klein; markiert → Chip «✓ Bezahlt · 86,00 €» (`cost-paid-*`) + «Zurücknehmen». Hinweise: abgeschlossen Info + Schloss, „an dich bezahlt“ Info + `wallet`, Konflikt Amber. Dunkel alle ≥ 5,9. | erledigt |
+| **D-63** Siegel klein | **Vorhandenes `seal.svg`** in 20 px („Dein Stand“ bei schmalem Container) und 40 px („Dein Stand“ ausgeglichen, Karte «Alles ausgeglichen ✓») – keine neue Datei: gleiche Bedeutung „kleiner Meilenstein“, gleiche Motion (`disc`/`check`), schon im Code. Karte «Alles ausgeglichen» auf `cost-settled-bg` (Minze-100 / `#133C3B`), Siegel-Ring in Flächenfarbe trennt es von der Tönung. Kein Konfetti. | erledigt |
+
+### 12.1 Offen für UI/UX (bitte bestätigen oder anpassen)
+| Nr. | Punkt |
+|---|---|
+| U-35 | **Kategorie-Icons Anreise/Aktivitäten:** `plane` bedeutet in der App „Reise“ (Reisekarte, Einladung), `sparkle` „Vorschlag“ (W09). Empfehlung Design: Anreise = **`car`**, Aktivitäten = **`ticket`** (beide jetzt im Sprite). Wenn UX bei `plane`/`sparkle` bleibt, ist das baubar – bitte festlegen, Developer mappt nur in einer Tabelle. |
+| U-36 | **A1/D1 mit Koralle-Kante:** Die Aufgabe «Du schuldest Kemal 86,00 €» trägt die To-do-Kante (Koralle = *du bist dran*), der Betrag selbst steht in Tinte. Design hält das für richtig (eine Aufgabenoptik im ganzen Cockpit); falls CEO/UX „Schulden nie Koralle“ auch auf die Kante beziehen, Kante für A1 in `cost-area-fg` (Sonne-700) – bitte entscheiden. |
+| U-37 | **Zahlungsinfo:** R.8 und UX §15 sprechen von IBAN-Feld + „anderer Weg“ (Freitext); W19 D.8.4 beschreibt noch **ein** Freitextfeld. Optik §9.22 geht von zwei Feldern aus (IBAN maskiert, Freitext als Text) – bitte W19 D.8.4 angleichen. |
+| U-38 | **Balken in den Salden** (D-57) sind spezifiziert, aber optional – UX entscheidet, ob sie in Inkrement 10 gebaut werden (Empfehlung Design: ja, ab 3 Personen in der Abrechnung). |
+
 ## Changelog
+- 2026-10-23 (Runde 6, Inkrement 10): §12 – Antworten D-56–D-63, offene Punkte U-35–U-38; Icons v1.2, `empty-costs.svg`, Tokens v1.2 `--ww-cost-*`, design-system §9.22.
 - 2026-10-23 (Runde 5, Inkrement 9): §11 – Antworten D-46–D-55, offene Punkte U-31–U-34; Icons, Platzhalter, Demo-Bilder, Leerzustand, Tokens v1.1, design-system §9.21.
 - 2026-10-22 (Runde 4b): §10 C v2 „Reiseverlauf“ – Mockup `mockups/cockpit-reiseverlauf/`, Antworten D-36–D-45, Motion-Umsetzung UM-1–UM-7, Token-Vorschlag, offene Punkte U-23–U-30. UX-8/UX-9 als bestätigt umgesetzt.
 - 2026-10-22 (Runde 4): §9 Cockpit-Varianten A–E (Mockup `mockups/cockpit-varianten/`), Prüfpunkte U-17–U-22 für UI/UX.
