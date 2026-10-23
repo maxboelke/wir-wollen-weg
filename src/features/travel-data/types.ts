@@ -96,6 +96,11 @@ export interface TravelRemindPerson {
   key: string;
   name: string;
   texts: Record<Locale, string>;
+  /**
+   * Open placeholder and the viewer is NOT the organiser: the text goes to the organiser
+   * («{orga} Bescheid geben») – personal links only reach the organiser (F-007, R-082, R-083).
+   */
+  viaOrga?: string;
 }
 
 export interface TravelRemindData {
@@ -105,7 +110,7 @@ export interface TravelRemindData {
     purpose: string;
     open: TravelRemindPerson[];
     declined: { key: string; name: string }[];
-    /** Open placeholders – personal link, not in «Alle erinnern». */
+    /** Open placeholders – personal link (organiser) or «{orga} Bescheid geben», not in «Alle erinnern». */
     pending: TravelRemindPerson[];
     allTexts: Record<Locale, string> | null;
   }[];

@@ -1,7 +1,14 @@
 import { expect, test, type Page } from "@playwright/test";
 import en from "../../messages/en.json" with { type: "json" };
 import { expectNoSeriousAxeViolations } from "./helpers/axe";
-import { addAccountToTrip, addPlaceholder, seedTrip, setFixedDates } from "./helpers/db";
+import {
+  addAccountToTrip,
+  addPlaceholder,
+  placeholderToken,
+  seedTrip,
+  setFixedDates,
+  tripRow,
+} from "./helpers/db";
 import { waitForCodeMail, mailIds } from "./helpers/mailpit";
 import { expireTravelReauth, setBookerMark } from "./helpers/travel";
 import { newPerson, type Person } from "./helpers/trips";
@@ -147,6 +154,15 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
       await c.lena.page.request.get(`/trips/${c.publicId}/travel-data`)
     ).text();
     expect(lenaHtml).not.toContain(FAMILY);
+    // … also not in the RSC payload (client navigation) – neither values nor masks.
+    for (const path of [`/trips/${c.publicId}/travel-data`, `/trips/${c.publicId}`]) {
+      const rsc = await (await c.lena.page.request.get(path, { headers: { RSC: "1" } })).text();
+      expect(rsc).not.toContain(FAMILY);
+      expect(rsc).not.toContain(GIVEN);
+      expect(rsc).not.toContain("1990");
+      // Masks (first letter + «•••») exist only in the asking «Bucht» person's view.
+      if (path.endsWith("/travel-data")) expect(rsc).not.toContain("•••");
+    }
     await c.lena.page.goto(`/trips/${c.publicId}/travel-data`);
     await expect(main(c.lena.page).locator("[data-travel-count]")).toBeVisible();
     await expect(main(c.lena.page).getByRole("button", { name: /Show/ })).toHaveCount(0);
@@ -244,6 +260,62 @@ test.describe("W20 H.2 – «Wer bucht?» in the cockpit", () => {
     // … Max (member without the marking) lands on the info page without an error (W22 C).
     await c.max.page.goto(edit);
     await expect(c.max.page).toHaveURL(new RegExp(`/trips/${c.publicId}/info$`));
+    for (const p of [c.lena, c.sara, c.max]) await p.context.close();
+  });
+});
+
+test.describe("R-083 – personal placeholder links only for the organiser (F-007)", () => {
+  test("«Bucht» without the organiser role gets «Let Lena know», the organiser the link", async ({
+    browser,
+  }) => {
+    test.setTimeout(180_000);
+    const c = await crew(browser);
+    const purpose = "Train tickets";
+    await askNameAndBirth(c.sara.page, c.publicId, purpose);
+    const personal = await placeholderToken(c.publicId, "Mia");
+    const general = (await tripRow(c.publicId))?.invite_token;
+    if (!personal || !general) throw new Error("no invite tokens");
+    // No invite link for Sara – page HTML and RSC payload of the area and the cockpit.
+    const leak = new RegExp(`/i/|${personal}|${general}`);
+    for (const path of [`/trips/${c.publicId}/travel-data`, `/trips/${c.publicId}`]) {
+      expect(await (await c.sara.page.request.get(path)).text()).not.toMatch(leak);
+      const rsc = await c.sara.page.request.get(path, { headers: { RSC: "1" } });
+      expect(await rsc.text()).not.toMatch(leak);
+    }
+    await c.sara.page.goto(`/trips/${c.publicId}/travel-data`);
+    await hydrated(c.sara.page);
+    await main(c.sara.page)
+      .getByRole("button", { name: fill(t.mine.remindName, { purpose }) })
+      .click();
+    const sheet = c.sara.page.getByRole("dialog");
+    await sheet
+      .getByRole("button", { name: fill(t.remind.nudgeOrgaName, { orga: "Lena", name: "Mia" }) })
+      .click();
+    await expect(
+      sheet.getByText(fill(en.remind.placeholderText, { name: "Mia", orga: "Lena" })),
+    ).toBeVisible();
+    const area = sheet.getByRole("textbox", { name: en.remind.messageLabel });
+    const nudge = en.share.remind.nudgePlaceholder;
+    const expected = fill(nudge.split(" {trip}")[0] ?? nudge, { orga: "Lena", name: "Mia" });
+    await expect.poll(() => area.inputValue()).toContain(expected);
+    const body = await area.inputValue();
+    expect(body).not.toMatch(leak);
+    expect(body).toContain(`/trips/${c.publicId}`);
+
+    // The organiser with the marking still reminds Mia with her personal link.
+    await setBookerMark(c.tripId, c.lena.email, true);
+    await askNameAndBirth(c.lena.page, c.publicId, "Hotel");
+    await c.lena.page.goto(`/trips/${c.publicId}/travel-data`);
+    await hydrated(c.lena.page);
+    await main(c.lena.page)
+      .getByRole("button", { name: fill(t.mine.remindName, { purpose: "Hotel" }) })
+      .click();
+    const orgaSheet = c.lena.page.getByRole("dialog");
+    await orgaSheet
+      .getByRole("button", { name: fill(en.remind.remindName, { name: "Mia" }) })
+      .click();
+    const orgaArea = orgaSheet.getByRole("textbox", { name: en.remind.messageLabel });
+    await expect.poll(() => orgaArea.inputValue()).toContain(`/i/${personal}`);
     for (const p of [c.lena, c.sara, c.max]) await p.context.close();
   });
 });

@@ -11,7 +11,8 @@ import type { TravelRemindData } from "../types";
 /**
  * Reminder `travel-data` / `travel-data-join` (W16 v2.16, W20 H.7): step `status` («Wer fehlt
  * noch?» – open members with WhatsApp each, «Klärt es direkt» WITHOUT a button, open
- * placeholders with their personal link) → `single` / `all`. Texts never contain fields or
+ * placeholders with their personal link – organiser only, otherwise «{orga} Bescheid geben»,
+ * R-083) → `single` / `all`. Texts never contain fields or
  * values – only name, purpose and the link to the area.
  */
 export interface TravelRemindStep {
@@ -28,6 +29,7 @@ export function useTravelRemindTitle(data: TravelRemindData | null) {
     if (!request || !step.key) return t("title");
     if (step.key === "all") return t("allShort");
     const person = [...request.open, ...request.pending].find((p) => p.key === step.key);
+    if (person?.viaOrga !== undefined) return tRemind("placeholderTitle", { name: person.name });
     return person ? tRemind("remindName", { name: person.name }) : t("title");
   };
 }
@@ -73,12 +75,14 @@ export function TravelRemindBody({
           <p className={styles.muted}>
             {open
               ? t("context", { name: person.name, purpose: request.purpose })
-              : t("contextJoin", { name: person.name })}
+              : person.viaOrga !== undefined
+                ? tRemind("placeholderText", { name: person.name, orga: person.viaOrga })
+                : t("contextJoin", { name: person.name })}
           </p>
           <RemindMessage
             texts={person.texts}
             defaultLocale={data.defaultLocale}
-            footer={tRemind("footer", { name: person.name })}
+            footer={tRemind("footer", { name: person.viaOrga ?? person.name })}
           />
         </div>
       );
@@ -153,13 +157,19 @@ export function TravelRemindBody({
                         variant="secondary"
                         size="sm"
                         icon="remind"
-                        aria-label={tRemind("remindName", { name: p.name })}
+                        aria-label={
+                          p.viaOrga !== undefined
+                            ? t("nudgeOrgaName", { orga: p.viaOrga, name: p.name })
+                            : tRemind("remindName", { name: p.name })
+                        }
                         data-remind-row={p.key}
                         onClick={() => {
                           onStep({ requestId: r.requestId, key: p.key });
                         }}
                       >
-                        {tRemind("remind")}
+                        {p.viaOrga !== undefined
+                          ? tRemind("orgaTitle", { orga: p.viaOrga })
+                          : tRemind("remind")}
                       </Button>
                     }
                   />

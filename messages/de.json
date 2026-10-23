@@ -2751,7 +2751,8 @@
       "allShort": "Alle erinnern",
       "context": "{name} hat für „{purpose}“ noch nicht geantwortet.",
       "contextAll": "Erinnert alle, die für „{purpose}“ noch nicht geantwortet haben.",
-      "contextJoin": "{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link."
+      "contextJoin": "{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link.",
+      "nudgeOrgaName": "{orga} Bescheid geben, dass {name} noch nicht dabei ist"
     },
     "visibleTag": "sichtbar"
   }
