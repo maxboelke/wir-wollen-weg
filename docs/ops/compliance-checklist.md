@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.8 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.8: §13 an W23 angeglichen – Kurzfassung §13.6, Beta-/Einladungs-Pass-Cookies, Feedback, kein Lösch-Versprechen zum Beta-Ende; v0.7: **Gate G0 – geschlossene Freundes-Beta §13** (Pflichtpunkte, Kurzbewertung Vercel/Neon/Lettermint, Impressum-Einschätzung, Entwurf Beta-Datenschutzhinweis, Speicher/Löschung PWA), Einträge §3; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.9 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.9: **Reiseunterlagen/Dateien (F-055)** – G1b-Prüfpunkte §12.8 (Speicher, Virenscan, Upload-Härtung, DSA-Meldeweg, Datenschutz-Abschnitt), Beta-Entscheidung E-G0-10 §13.7, Einträge §3/§6 – Technik deployment.md §0.13; v0.8: §13 an W23 angeglichen – Kurzfassung §13.6, Beta-/Einladungs-Pass-Cookies, Feedback, kein Lösch-Versprechen zum Beta-Ende; v0.7: **Gate G0 – geschlossene Freundes-Beta §13** (Pflichtpunkte, Kurzbewertung Vercel/Neon/Lettermint, Impressum-Einschätzung, Entwurf Beta-Datenschutzhinweis, Speicher/Löschung PWA), Einträge §3; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -149,6 +149,9 @@ Quelle: features.md R.8 (I10-03, I10-07, I10-08, I10-09, I10-10), PRD Q35/Q31/Q2
 | ☐ | Banken/Zahlungsdienste (Kosten teilen, F-035/F-036) – **keine Empfänger**: keine Anbindung, keine Zahlungsabwicklung (§2b); kein AVV | – | – | – |
 | ☐ | Unterkunfts-Portale (Link-Vorschau, F-031) – **keine Empfänger** personenbezogener Daten: Abruf durch unseren Server ohne Nutzerdaten (§2a); kein AVV | – | – | – |
 | ☐ | **G0 Beta:** Vercel Inc. (Hosting App, USA, DPF) – AVV-Geltung für Hobby unklar, Entscheidung E-G0-1; Neon (DB, Frankfurt, US-Unternehmen) – DPA in AGB + PDF; Lettermint (Mails, NL) – DPA in AGB (§13.2) | alle Beta-Daten | siehe §13.2 | G0 |
+| ☐ | **Unterlagen-Speicher Vorschau:** Cloudflare, Inc. (R2, Bucket mit EU-Jurisdiktion; US-Unternehmen, DPF) – nur **Fantasie-Dateien** | keine echten personenbezogenen Daten | Cloudflare-DPA gilt über die Self-Serve-AGB (PDF trotzdem ablegen) | mit Inkrement 12 |
+| ☐ | **Unterlagen-Speicher Beta** – nur bei E-G0-10 = B: Cloudflare R2 (EU) **oder** Scaleway SAS (FR) | echte Tickets (Namen, Buchungscodes) | DPA des Anbieters ablegen, Unterauftragsverarbeiter prüfen | G0 (falls B) |
+| ☐ | **Unterlagen-Speicher Produktion:** Hetzner Object Storage – vom Hetzner-AVV (erste Zeile) abgedeckt; Prüfen, dass der AVV Object Storage einschließt. ClamAV selbst gehostet → **kein** weiterer Empfänger. Falls stattdessen eine Scan-API (z. B. attachmentAV): eigener AVV + Unterauftragsverarbeiter | Reiseunterlagen | Hetzner-AVV | G1b |
 | ☐ | Ablage aller AVVs (PDF + Datum) außerhalb des Repos; Liste hier pflegen | – | – | M1 |
 
 ## 4. Cookies & Endgerätezugriff (§ 25 TDDDG) – Banner nötig?
@@ -229,6 +232,9 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Reisedaten-Anfragen (Hülle: Zweck, Feldliste, Zustände, Zeitstempel – ohne Werte) | mit der Reise (90 Tage, F-013) | `travel_data_request` Cascade | ☐ |
 | Markierung „Bucht“ | endet mit der Mitgliedschaft | Spalte an `trip_member` | ☐ |
 | Reisedaten in Backups | nur Chiffrat; verschwindet mit der Backup-Rotation (max. 30 Tage); ohne Schlüssel unlesbar (deployment.md §0.11.5) | – | ☐ |
+| **Reiseunterlagen** (Dateien + Titel, Kategorie, Datum, Sichtbarkeit; F-055) | sofort beim Löschen durch Hochladende/Orga (Datensatz **und** Objekt im Speicher); beim Verlassen nach Abfrage (Standard: löschen, wenn nur für einen selbst sichtbar); mit Reise/Konto; automatisch **30 Tage nach Reiseende** (Q31, `APP_TIME_ZONE`) mit Cockpit-Hinweis vorher | Transaktion + Speicher-Löschung, Lösch-Auftrag bei Fehler wird wiederholt; Löschjob täglich inkl. Abgleich (Objekte ohne Datensatz, `pending` > 24 h) – deployment.md §0.13.4 Nr. 8 | ☐ |
+| Unterlagen: abgebrochene/abgelehnte Uploads (`incoming/`) | abgelehnt → sofort; abgebrochen → Lifecycle-Regel nach 1 Tag | Bucket-Lifecycle + Löschjob | ☐ |
+| Unterlagen in Backups | **werden nicht gesichert** (bewusst, deployment.md §0.13.4 Nr. 9); Bucket ohne Versionierung → Löschen ist endgültig | Bucket-Einstellung prüfen | ☐ |
 | *v1:* Kalender-Rohdaten | nie speichern, nur im Arbeitsspeicher (F-006) | Code-Review | ☐ |
 | *v1:* gespeicherte Kalender-URLs/CalDAV-Passwörter | bei Trennen, Festlegung der Reise (Sync-Ende), Konto-Löschung | verschlüsselt, Cascade | ☐ |
 
@@ -315,7 +321,7 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 
 ## 12. Gate G1b – persönliche Reisedaten (F-054 Stufe 1 + F-056, Inkrement 11)
 
-Quelle: features.md **R.9** (I11-10, I11-12, „Verschlüsselung & Schlüssel“, „Sicherheit“, „Datenhaltung“), roadmap.md „Gate G1b“, PRD §8 NFR „Sensible Reisedaten & Dateien“, Q28–Q31, Q36. **G1b kommt zusätzlich zu G1** (go-live.md Stufe 2): Erst wenn die App mit echten Daten auf EU-Hosting läuft **und** alle Punkte unten ☑ sind, darf `TRAVEL_DATA_ENABLED=true` in `production` gesetzt werden (deployment.md §0.11.1). Bis dahin: Demo und Vorschau nur mit Fantasiedaten. Die dateibezogenen G1b-Punkte (Objektspeicher, Virenscan, Upload-Härtung, DSA-Meldeweg – F-055, Inkrement 12) werden mit Inkrement 12 hier ergänzt.
+Quelle: features.md **R.9** (I11-10, I11-12, „Verschlüsselung & Schlüssel“, „Sicherheit“, „Datenhaltung“), roadmap.md „Gate G1b“, PRD §8 NFR „Sensible Reisedaten & Dateien“, Q28–Q31, Q36. **G1b kommt zusätzlich zu G1** (go-live.md Stufe 2): Erst wenn die App mit echten Daten auf EU-Hosting läuft **und** alle Punkte unten ☑ sind, darf `TRAVEL_DATA_ENABLED=true` in `production` gesetzt werden (deployment.md §0.11.1). Bis dahin: Demo und Vorschau nur mit Fantasiedaten. Die dateibezogenen G1b-Punkte (Objektspeicher, Virenscan, Upload-Härtung, DSA-Meldeweg – F-055, Inkrement 12) stehen in **§12.8**; sie gelten für `DOCUMENTS_ENABLED=true` in `production` (deployment.md §0.13.6).
 
 **Entwurf, keine Rechtsberatung** – die rechtlichen Punkte (§12.2, §12.3) gehören in die Rechtsprüfung (Q16).
 
@@ -409,6 +415,35 @@ Einschätzung Operations: Reisedaten sind keine besonderen Kategorien (Art. 9), 
 | ☐ | Rotationsrhythmus (jährlich + anlassbezogen) und Runbooks A (Verlust) / B (Leck) übernommen; Runbook B im Datenpannen-Prozess (§7) verlinkt | Operations |
 | ☐ | Zugriff auf Server/Secret-Datei nur für benannte Personen mit 2FA/SSH-Schlüssel | Operations |
 
+### 12.8 Reiseunterlagen – Dateien (F-055 Stufe 1, F-031 Stufe 2, Inkrement 12)
+
+Technik: [deployment.md §0.13](deployment.md). Erst wenn alle Punkte ☑ sind, darf `DOCUMENTS_ENABLED=true` in `production` gesetzt werden (Startschutz verlangt zusätzlich `FILES_SCAN=clamav`).
+
+| ☐ | Prüfpunkt | Wer |
+|---|---|---|
+| ☐ | **Speicher:** Hetzner Object Storage am Standort der VM, Bucket **privat**, keine öffentliche URL, **keine Versionierung**, CORS nur `APP_URL`, Lifecycle `incoming/` 1 Tag; Verschlüsselung at rest geklärt (falls nicht standardmäßig: SSE-C oder in den TOM begründen); Zugangsschlüssel nur in `/opt/wir-wollen-weg/production/.env` | Operations |
+| ☐ | **Virenscan:** `clamd` im Compose, `freshclam`-Updates täglich und überwacht (Alarm bei Signaturen > 48 h alt), fail closed getestet (Scanner gestoppt → Upload abgelehnt), EICAR-Testdatei wird abgelehnt | Operations, Reviewer |
+| ☐ | **Upload-Härtung** (Schutzpaket Stufe 1): Typ über Magic Bytes, Bilder neu kodiert (EXIF/GPS weg – Testbild mit GPS), PDF ohne JavaScript/Anhänge/XFA/Launch, Öffnen-Passwort abgelehnt, Größe vom Speicher erzwungen (signiertes `Content-Length`), Kontingent 100 MB/50 Dateien je Reise | Reviewer (Abnahmefälle deployment.md §0.13.4 Nr. 11) |
+| ☐ | **Auslieferung:** nur nach Login + Mitgliedschaft + Sichtbarkeit, vorsignierte GET-URL ≤ 60 s von der Speicher-Origin, nie geloggt; ausgeschlossene Person/fremde Reise → 404 | Reviewer |
+| ☐ | **Löschung** nach §6 (inkl. 30 Tage nach Reiseende, Verlassen, Konto/Reise) mit verschobener Uhr getestet; nach dem Löschen `HEAD` auf das Objekt → 404 | Reviewer |
+| ☐ | **Logs** nur Zähler – keine Dateinamen, Titel, vorsignierten URLs (§12.5 sinngemäß) | Reviewer |
+| ☐ | **DSFA (§12.2) um Dateien erweitert:** Tickets enthalten Name + Buchungscode (damit lassen sich Buchungen ändern/stornieren), ggf. Daten Dritter (Mitreisende); Risiken Fehl-Sichtbarkeit, Kontoübernahme, Schadsoftware; Maßnahmen Sichtbarkeit „nur ausgewählte Personen“ + Hinweis beim Hochladen (F-055), Scan, kurze Löschfrist | Operations |
+| ☐ | **DSA (Digital Services Act) – Hosting-Dienst:** Wir speichern von Nutzern bereitgestellte Inhalte → Pflichten für Hosting-Dienste prüfen lassen: Kontaktstelle für Behörden und Nutzer (Art. 11, 12), Angaben zur Inhaltemoderation in den Nutzungsbedingungen (Art. 14), **Melde- und Abhilfeverfahren** (Art. 16, z. B. Meldeformular/Mail „Inhalt melden“ mit Begründung), Begründung bei Entfernung (Art. 17), Meldung von Straftaten mit Gefahr für Leib/Leben (Art. 18). Einschätzung Operations: Unterlagen werden nur innerhalb geschlossener Reisegruppen geteilt, nicht öffentlich verbreitet → voraussichtlich **keine „Online-Plattform“** mit deren Zusatzpflichten; Ausnahmen für Klein-/Kleinstunternehmen beachten. **Keine Rechtsberatung** | Rechtsprüfung (Q16), Operations bereitet vor |
+| ☐ | **Nutzungsbedingungen** (M2, §9): keine rechtswidrigen Inhalte, Hochladende verantwortlich, nur eigene bzw. für die Gruppe bestimmte Unterlagen; Löschung nach Frist, **kein Backup** – Nutzer sichern selbst | Operations → Rechtsprüfung |
+| ☐ | **Datenschutzerklärung:** Abschnitt „Reiseunterlagen“ (Platzhalter unten) DE + EN; bis G1b in Demo/Vorschau nur Platzhalter-Gliederung (§0a); Empfänger Hetzner (Speicher), keine Weitergabe | Developer (Platzhalter), Operations → Rechtsprüfung |
+| ☐ | VVT-Eintrag (§5) und TOM (§7: Speicher privat, Scan, Neukodierung, kurzlebige Links, Löschung ohne Backup-Nachlauf) ergänzt | Operations |
+| ☐ | Lizenzhinweise (F-051): `heic-to` (LGPL-3.0, eigener Chunk), `sharp`/libvips, `pdfjs-dist`, `file-type`, S3-Bibliothek | Developer, Reviewer |
+
+**Platzhaltertext (Stichpunkte, Entwurf):**
+
+> **Reiseunterlagen (Tickets, Buchungsbestätigungen)**
+> - **Wozu:** Mitglieder einer Reise können Unterlagen hochladen, damit die Gruppe sie griffbereit hat.
+> - **Was:** die Datei (PDF, JPG, PNG; HEIC wird auf deinem Gerät in JPG umgewandelt), Titel, Kategorie, optional Datum, Sichtbarkeit. Bei Bildern entfernen wir Metadaten wie Aufnahmeort und Kamera. Unterlagen enthalten oft Namen und Buchungscodes – auch von Mitreisenden; lade nur hoch, was die Gruppe braucht, und teile persönliche Tickets nur mit der Person.
+> - **Rechtsgrundlage:** Vertrag/Nutzung der App (Art. 6 Abs. 1 lit. b DSGVO); Prüfung auf Schadsoftware zum Schutz aller Nutzer (Art. 6 Abs. 1 lit. f) `[PLATZHALTER: Rechtsprüfung, insb. Daten Dritter auf Tickets]`.
+> - **Wer sie sieht:** alle Mitglieder der Reise oder nur die ausgewählten Personen. Abruf nur über kurzlebige, persönliche Links.
+> - **Speicherort:** privater Speicher bei `[PLATZHALTER: Hetzner Online GmbH, Deutschland]`.
+> - **Löschung:** durch dich oder die Orga jederzeit; automatisch **30 Tage nach Reiseende** (die App erinnert vorher ans Herunterladen), mit der Reise oder deinem Konto. Unterlagen werden **nicht** in Sicherungskopien aufbewahrt.
+
 ## 13. Gate G0 – geschlossene Freundes-Beta „Stufe B“ (Vercel + Neon, echte Daten)
 
 Entscheidung CEO + Auftraggeber 2026-10-23: private, nicht-kommerzielle Beta für einen **geschlossenen Freundeskreis** (Beta-Code, Kontenobergrenze) mit **echten** Namen, E-Mail-Adressen, Verfügbarkeiten, Abstimmungen, Unterkünften und Kosten – auf **Vercel Hobby + Neon Free**, Mails über **Lettermint** (NL). Persönliche Reisedaten (F-054) bleiben **aus** (G1b), Inkrement 12 (Dateien) kommt nach der Beta. Technik: [deployment.md §0.12](deployment.md), Einrichtung: [beta-anleitung.md](beta-anleitung.md), Gate: [go-live.md – Gate G0](go-live.md).
@@ -432,6 +467,7 @@ Entscheidung CEO + Auftraggeber 2026-10-23: private, nicht-kommerzielle Beta fü
 | ☐ | Lettermint: Domain verifiziert (SPF, DKIM, Return-Path), DMARC `p=none` gesetzt, **Öffnungs-/Klick-Tracking aus**; Mail-Log-Aufbewahrung beim Anbieter so kurz wie möglich | Auftraggeber, Operations prüft per Testmail (Header: `dkim=pass`, `spf=pass`, `dmarc=pass`) |
 | ☐ | Eigene Neon-Datenbank `wir-wollen-weg-beta` (Frankfurt), getrennt von der Vorschau; eigener `BETTER_AUTH_SECRET`/`CRON_SECRET` | Auftraggeber |
 | ☐ | `TRAVEL_DATA_ENABLED=false`, Startschutz verweigert `true` | Developer, Reviewer |
+| ☐ | Reiseunterlagen: `DOCUMENTS_ENABLED=false` (Standard in beta), **außer** der Auftraggeber entscheidet E-G0-10 = B – dann alle Punkte §13.7 | Developer, Reviewer, Auftraggeber |
 | ☐ | Löschjob läuft täglich (Vercel Cron, erster Lauf im Log sichtbar: nur Anzahlen) | Operations, Auftraggeber zeigt Log |
 | ☐ | **Hinweis an Tester** verschickt (Vorlage beta-anleitung.md §8, W23 A.1 + Datenschutz-Zeilen): private Beta, US-Hosting-Bezug, keine sensiblen Angaben in Freitexten, Konto jederzeit löschbar, normale Löschfristen | Auftraggeber |
 | ☐ | **Feedback-Kanal** nur über Env-Variablen (`FEEDBACK_WHATSAPP_NUMBER`, `FEEDBACK_EMAIL`), nicht im Repo; vorausgefüllter Text ohne Reisenamen/IDs/Namen/E-Mail (W23 D.2) | Auftraggeber, Reviewer prüft Text |
@@ -526,8 +562,20 @@ W23 hat die Kurzfassung als UX-Entwurf geliefert und Operations um die Hosting-Z
 
 Häkchen-Glyph bleibt dekorativ (W23 F). Der Link „Alles Weitere: Datenschutzhinweis“ zeigt auf die Fassung §13.4 (Version `beta-1`). Mail-Footer in beta: „Private Test-Version von Wir wollen weg · Datenschutz: {APP_URL}/datenschutz“ / „Private test version of When do we go? · Privacy: {APP_URL}/privacy“.
 
+### 13.7 Reiseunterlagen in der Beta? (Entscheidung E-G0-10)
+
+Ausgangslage: Unterlagen sind wie Reisedaten an Gate **G1b** gebunden („echte Dateien erst auf EU-Hosting“, PRD §6b/§8); Inkrement 12 wird ohnehin erst nach dem Beta-Start gebaut. Technik und Kosten: deployment.md §0.13.5.
+
+| Option | Kosten | Pro | Contra |
+|---|---|---|---|
+| **A: aus bis G1b** *(Empfehlung, konsistent mit Reisedaten)* | 0 € | keine echten Tickets bei US-Anbietern, kein Scan-Restrisiko, kein Zusatzaufwand bei G0 | Tester sehen den Bereich nicht (in der Vorschau weiter vorführbar) |
+| B: an mit Schutzpaket Stufe 1, ohne Signatur-Scan | 0 € (R2 EU) bzw. < 0,10 €/Monat (Scaleway) | Feedback zu einem Kernnutzen schon in der Beta | **Ausnahme von G1b** nötig; Tickets (Name + Buchungscode) bei einem weiteren Dienstleister; Restrisiko Schadsoftware (deployment.md §0.13.2) |
+
+**Pflichtpunkte nur bei Option B:** Auftraggeber beschließt die Ausnahme schriftlich (Status-Board); Speicher-AVV/DPA abgelegt (§3); Beta-Datenschutzhinweis → Version `beta-2` mit Kurzabschnitt „Reiseunterlagen“ (Platzhaltertext §12.8, Speicherort „Cloudflare (Speicherort EU, US-Unternehmen)“ bzw. „Scaleway (Frankreich)“, „ohne Virenscanner – wir prüfen Dateityp und Inhalt“); Hinweis an Tester „nur Unterlagen hochladen, die ihr auch in WhatsApp teilen würdet“; alle Upload-/Auslieferungs-/Löschpunkte aus §12.8 außer ClamAV und DSA-Prüfung; Ablehnungs-Test mit echten Ticket-PDFs.
+
 ## Quellen (Abruf 2026-10-08)
 
+- **Dateien F-055 (Abruf 2026-10-23):** Anbieter-, Preis- und Technikquellen siehe [deployment.md §0.13](deployment.md) (Quellenblock am Ende des Abschnitts); [Cloudflare DPA](https://www.cloudflare.com/dpa). DSA-Pflichten für Hosting-Dienste (Art. 11–18 VO (EU) 2022/2065) aus Fachwissen – bei Rechtsprüfung bestätigen.
 - **G0 (Abruf 2026-10-23, über Websuche):** [Vercel – DPF](https://vercel.com/kb/guide/is-vercel-certified-under-dpf), [Vercel DPA](https://vercel.com/legal/dpa), [Vercel Terms](https://vercel.com/legal/terms), [Vercel ToS-Update März 2026 (KI-Training Hobby)](https://vercel.com/changelog/updates-to-terms-of-service-march-2026), [ComplyDog – Vercel DPA nur Pro/Enterprise](https://complydog.com/blog/is-vercel-gdpr-compliant-the-dpa-and-your-deployment), [Neon DPA](https://neon.com/dpa), [Neon – GDPR](https://neon.com/blog/gdpr-compliance-and-neon), [Lettermint DPA](https://lettermint.co/dpa), [Lettermint – Sitz NL](https://lettermint.co/compare/amazon-ses-alternative). Haushaltsausnahme, § 5 DDG, Art. 45 DSGVO/DPF aus Fachwissen – bei Rechtsprüfung bestätigen.
 
 - BFSG/Kleinstunternehmen: [IHK – Barrierefreiheitsstärkungsgesetz](https://www.ihk.de/karlsruhe/fachthemen/recht/internetrecht/fallback1433495812828/bfsg-6348406), [Händlerbund – Ausnahme Kleinstunternehmen](https://ohn.haendlerbund.de/recht/rechtsfragen/kleinstunternehmen-bfsg-ausnahme), [e-recht24 – BFSG](https://www.e-recht24.de/ecommerce/13236-barrierefreiheitsstaerkungsgesetz.html)
