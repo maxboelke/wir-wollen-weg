@@ -769,7 +769,7 @@ Schnellweg, Validierung, Konflikte unverändert.
 «{Kategorie} · {Datum} · **Lena hat ausgelegt**» · h3 **«So wird geteilt»** (statt «Aufteilung») · je Person «Lena 25,00 €» (ich: «Du 25,00 €») · Fuß «**Gleich geteilt** / **Eigene Beträge** · eingetragen von Kemal am 1. Mai» · Rechte-Satz «Ändern können Kemal und die Orga.» (bleibt).
 
 ### E.9 Kachel, Hinweise, Erinnern (Wortlaut-Angleich)
-- **Kachel „Kosten“** (W16 v2.17 regelt *wann*): Status nur noch das eigene Ergebnis, ohne Gruppensumme: «Noch keine Ausgaben» · «Du zahlst noch {amount} zurück» · «Du bekommst noch {amount} zurück» · «Du bist quitt ✓» · «Alle sind quitt ✓» · abgeschlossen: «Abgeschlossen · alle quitt ✓» / «Abgeschlossen · du zahlst noch {amount} zurück». EN: «No expenses yet» · «You owe {amount}» · «You get {amount} back» · «You're all square ✓» · «Everyone's square ✓» · «Closed · …».
+- **Kachel „Kosten“** (W16 v2.17 regelt *wann*; *Unterwegs*/*Danach* zusätzlich Link-Zeile **«Alle Ausgaben ansehen ›»** / «See all expenses ›», Fassung 2): Status nur noch das eigene Ergebnis, ohne Gruppensumme: «Noch keine Ausgaben» · «Du zahlst noch {amount} zurück» · «Du bekommst noch {amount} zurück» · «Du bist quitt ✓» · «Alle sind quitt ✓» · abgeschlossen: «Abgeschlossen · alle quitt ✓» / «Abgeschlossen · du zahlst noch {amount} zurück». EN: «No expenses yet» · «You owe {amount}» · «You get {amount} back» · «You're all square ✓» · «Everyone's square ✓» · «Closed · …».
 - **Erinnern-Texte** (D.11, W16 v2.15): «Hey {name}, bei {trip} bekomme ich laut App noch {amount} von dir zurück. Danke! {link}» · EN unverändert. Orga `settle-all`: «… sind noch {count} Überweisungen offen …».
 - **Verlassen-Dialog** (D.10): «Du zahlst noch 86,00 € zurück. …» / «Du bekommst noch 42,00 € zurück. …»; «Zum Ausgleich» → «Zum Ausgleichen».
 - **Konto löschen** (D.10): «In {n} Reisen bist du noch nicht quitt:» + «Kroatien 2027 – du zahlst noch 86,00 € zurück».
@@ -834,5 +834,6 @@ Entfallen: `costs.tabs`, `costs.mine.detail*`, `costs.mine.total`, `costs.day.su
 Max zahlt (eine Überweisung, Primär «Hab ich überwiesen», IBAN Kopieren) · Lena bekommt von 3 (Sekundär-Tasten, Erinnern, Karte «Wohin soll das Geld?» ohne/mit Zahlungsinfo) · Orga-Block nur bei Platzhalter ↔ ehemalig · „Ausgleiche der anderen“ eingeklappt, Satz immer sichtbar, Zeilen ohne Tasten/IBAN · Netzwerk-Tab: keine fremden Zahlungsinfos/Salden für Mitglieder · «So rechnen wir» mit/ohne Überweisungen, Summe = Hauptsatz · Glossar: kein «bezahlt», «Salden», «Ausgaben gesamt», «schuldest» mehr in DE-Oberfläche (Suche in `de.json`) · Snackbar nach Speichern nennt neues Ergebnis · Alle quitt / abgeschlossen · 320 px, 200 %, Dark Mode, DE/EN.
 
 ### E.15 Offene Fragen an den Auftraggeber (über den CEO)
-- **K-1 Kosten-Leiste unterwegs** (W16 v2.17): Variante C „Leiste unten“ (Empfehlung) oder A „Karte unter dem Kopf“? – im Mockup umschaltbar.
-- **K-2 „quitt“** als Wort für „ausgeglichen“: Empfehlung **ja** (Alltagssprache, nicht verwechselbar mit „Ausgleichen“). Nur fragen, falls der CEO unsicher ist.
+- ~~K-1 Kosten-Leiste unterwegs~~ – **entschieden (2026-10-23): Variante C**, mit Änderungen des Auftraggebers → W16 v2.17 „Fassung 2“: Leiste ist nur **Abkürzung**, blendet aus, sobald die Kachel „Kosten“ (mit «Alle Ausgaben ansehen ›») unten sichtbar wird; linke Hälfte «Kosten · Verlauf ›» als eigenes, deutlich tippbares Ziel; Taste rechts kompakter.
+- ~~K-2 „quitt“~~ – **bestätigt** vom Auftraggeber (2026-10-23).
+- Neu, aus derselben Runde: **App startet in der laufenden Reise** → W16 v2.18.

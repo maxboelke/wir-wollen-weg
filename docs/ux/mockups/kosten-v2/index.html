@@ -1635,11 +1635,20 @@ h2.sec small{font-family:var(--ww-font-sans);font-size:.8125rem;color:var(--ww-c
 
 /* Kosten-Leiste (Variante C) */
 .dock{position:absolute;left:0;right:0;bottom:0;z-index:8;background:var(--ww-color-surface-raised);border-radius:var(--ww-radius-xl) var(--ww-radius-xl) 0 0;
-  box-shadow:var(--ww-shadow-sticky-bottom);padding:12px 14px calc(12px + 14px) 16px;display:flex;align-items:center;gap:10px;border-top:var(--ww-border-forced)}
-.dock .stand{flex:1;min-width:0;min-height:48px;border:0;background:none;text-align:left;cursor:pointer;padding:2px 0;display:flex;flex-direction:column;justify-content:center}
-.dock .eyebrow{font-size:.6875rem;font-weight:800;letter-spacing:.08em;color:var(--ww-color-text-muted);display:flex;align-items:center;gap:2px}
-.dock .s{font-weight:800;font-size:.9375rem;line-height:1.25}
-.dock .btn{flex:none}
+  box-shadow:var(--ww-shadow-sticky-bottom);padding:10px 12px calc(10px + 14px) 12px;display:flex;align-items:center;gap:10px;border-top:var(--ww-border-forced)}
+.dock{transition:transform var(--ww-duration-base) var(--ww-ease-exit,ease-in),opacity var(--ww-duration-base),visibility 0s linear var(--ww-duration-base)}
+.dock.off{transform:translateY(105%);opacity:0;visibility:hidden}
+.dock:not(.off){transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.dock{transition:none}}
+[data-motion="reduce"] .dock{transition:none}
+.dock .stand{flex:1;min-width:0;min-height:56px;border:1.5px solid var(--ww-color-border-subtle);background:var(--ww-color-surface-sunken);border-radius:var(--ww-radius-md);
+  text-align:left;cursor:pointer;padding:8px 10px;display:flex;align-items:center;gap:10px}
+.dock .stand:active{transform:scale(.98)}
+.dock .stand .txt{display:flex;flex-direction:column;min-width:0}
+.dock .eyebrow{font-size:.8125rem;font-weight:800;color:var(--ww-color-link);display:flex;align-items:center;gap:2px}
+.dock .s{font-weight:700;font-size:.875rem;line-height:1.25}
+.dock .btn{flex:none;box-shadow:var(--ww-shadow-1);padding:0 14px}
+.tile .lnk{color:var(--ww-color-link);font-weight:700;font-size:.8125rem;margin-top:auto}
 /* Variante A (Karte unter dem Kopf) */
 .dockcard{margin:16px 16px 0;background:var(--ww-color-surface);border-radius:var(--ww-radius-lg);box-shadow:var(--ww-shadow-2);padding:14px 16px 16px}
 .dockcard .stand{display:flex;width:100%;border:0;background:none;text-align:left;padding:0 0 12px;cursor:pointer;flex-direction:column}
@@ -1763,11 +1772,15 @@ h2.sec small{font-family:var(--ww-font-sans);font-size:.8125rem;color:var(--ww-c
     <div class="ctl"><p class="ctl-label" id="l-th">Darstellung</p>
       <div class="seg" role="group" aria-labelledby="l-th"><button data-set="theme:light">Hell</button><button data-set="theme:dark">Dunkel</button></div></div>
     <div class="ctl"><p class="ctl-label">Gehe zu</p>
-      <div class="seg" role="group" aria-label="Ansicht"><button data-go="cockpit">Cockpit</button><button data-go="costs">Kosten</button><button data-go="balances">Ausgleich</button></div></div>
+      <div class="seg" role="group" aria-label="Ansicht"><button data-go="trips">Reisen</button><button data-go="cockpit">Cockpit</button><button data-go="costs">Kosten</button><button data-go="balances">Ausgleich</button></div></div>
+    <div class="ctl"><p class="ctl-label" id="l-st">App-Start (W16 v2.18)</p>
+      <div class="seg" role="group" aria-labelledby="l-st"><button data-set="running:one">1 laufende Reise</button><button data-set="running:two">2 überlappend</button></div>
+      <button class="btn secondary sm" id="appstart" style="margin-top:8px;width:100%">App über Home-Symbol öffnen</button></div>
     <div class="ctl"><button class="tbtn" id="reset">Beispieldaten zurücksetzen</button></div>
     <div class="note"><b>So lesen</b>Max zahlt Lena noch zurück, Lena (Orga) bekommt von drei Personen. Mia ist Platzhalter, ein ehemaliges Mitglied hat den Mietwagen ausgelegt – „Mia → ehemaliges Mitglied“ darf nur die Orga abhaken.</div>
     <ul>
-      <li>Nachher: Kosten-Leiste unterwegs/danach, ein Satz statt vier Zahlen, „So rechnen wir“ auf Wunsch.</li>
+      <li>Nachher: Kosten-Leiste unterwegs/danach als Abkürzung – blendet aus, sobald unten die Kachel „Kosten“ sichtbar wird; ein Satz statt vier Zahlen, „So rechnen wir“ auf Wunsch.</li>
+      <li>App-Start: Nachher öffnet sich bei genau einer laufenden Reise (Unterwegs) direkt das Cockpit; bei zwei überlappenden „Meine Reisen“ mit „Läuft gerade“.</li>
       <li>Ausgleichen: eigene Überweisungen ausführlich, die der anderen kompakt und eingeklappt, keine Salden-Liste.</li>
       <li>Texte nur DE; EN in W19 E.12.</li>
     </ul>
@@ -1818,7 +1831,7 @@ function seedExpenses(){return [
   {id:'e8',t:'Eis',payer:'kemal',c:2400,for:ALL6,cat:'food',d:'2027-06-14',by:'kemal'}
 ];}
 const S={ver:'after',role:'max',phase:'on',dock:'C',theme:'light',screen:'cockpit',from:'cockpit',
-  exp:seedExpenses(),pay:[],fresh:new Set(),open:{},sheet:null,snack:null,form:null,hl:null,shown:new Set()};
+  exp:seedExpenses(),pay:[],fresh:new Set(),open:{},sheet:null,snack:null,form:null,hl:null,shown:new Set(),running:'one',startHint:false};
 function seedPayments(){S.pay = S.phase==='after' ? [{id:'p0',from:'jonas',to:'kemal',c:9000,by:'kemal',at:'20. Juni'},{id:'p1',from:'jonas',to:'lena',c:800,by:'jonas',at:'21. Juni'}] : [];}
 
 /* ---------------- Rechnen (R.8) ---------------- */
@@ -1866,6 +1879,7 @@ function render(keepScroll){
   else if(S.screen==='costs'){[html,chrome]=costs(st,tr);}
   else if(S.screen==='balances'){[html,chrome]=balances(st,tr);}
   else if(S.screen==='new'){[html,chrome]=form(st);}
+  else if(S.screen==='trips'){[html,chrome]=tripsScreen();}
   sc.className='screen'+(chrome.includes('class="dock')?' has-dock':'')+(chrome.includes('actionbar')?' has-bar':'');
   sc.innerHTML=html;
   let ov=chrome;
@@ -1874,6 +1888,22 @@ function render(keepScroll){
     ov+=`<div class="snack" role="status" style="bottom:${bottom}px"><span>${S.snack.text}</span>${S.snack.act?`<button data-act="${S.snack.act}">${S.snack.label}</button>`:''}</div>`;}
   $('#overlay').innerHTML=ov;
   sc.scrollTop=keepScroll?y:0;
+  setupDockObserver();
+}
+/* Leiste blendet aus, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird (W16 v2.17 Fassung 2) */
+let dockObs=null;
+function setupDockObserver(){
+  if(dockObs){dockObs.disconnect();dockObs=null;}
+  const dock=$('#dock'),tile=$('#cost-tile');if(!dock||!tile)return;
+  const hBar=dock.offsetHeight;
+  dockObs=new IntersectionObserver(es=>{for(const e of es){
+    const hide=e.isIntersecting;
+    if(hide&&dock.contains(document.activeElement))continue; // Fokus-Schutz
+    dock.classList.toggle('off',hide);
+    if(hide)dock.setAttribute('inert','');else dock.removeAttribute('inert');
+    const sn=document.querySelector('.snack');if(sn)sn.style.bottom=(hide?20:hBar+8)+'px';
+  }},{root:$('#screen'),rootMargin:`0px 0px -${hBar}px 0px`,threshold:0});
+  dockObs.observe(tile);
 }
 
 /* ---------- Cockpit ---------- */
@@ -1889,7 +1919,7 @@ function cockpit(st,tr){
   const m=me(),b=st.bal[m],on=S.phase==='on';
   const myOut=tr.filter(t=>t.from===m),myIn=tr.filter(t=>t.to===m);
   const showDock=after()&&(on||b!==0);
-  let h=topbar('Kroatien 2027',on?'Unterwegs · Tag 3 von 8':(tr.length?'Zurück · Kosten ausgleichen':'Zurück · alle quitt'));
+  let h=topbar('Kroatien 2027',on?'Unterwegs · Tag 3 von 8':(tr.length?'Zurück · Kosten ausgleichen':'Zurück · alle quitt'),{back:'trips'}).replace('aria-label="Zurück"','aria-label="Meine Reisen"');
   h+=`<div class="ticket">${ring(on)}<p class="dates">Sa., 12. – Sa., 19. Juni 2027</p><div class="tear" aria-hidden="true"></div>
    <div class="crew"><span class="avs">${av('lena')}${av('max')}${av('kemal')}<span class="av" style="background:var(--ww-cockpit-control-bg);color:#fff">+3</span></span>6 dabei · 7 Nächte`;
   if(!after()){ if(on)h+=`<button class="headbtn" data-nav="new">${ic.plus} Ausgabe</button>`; else if(tr.length)h+=`<button class="headbtn" data-nav="balances">${ic.wallet} Ausgleichen</button>`; }
@@ -1900,8 +1930,8 @@ function cockpit(st,tr){
     const btn=on?`<button class="btn primary${S.dock==='A'?' full':''}" data-nav="new" aria-label="Ausgabe eintragen">${ic.plus} Ausgabe${S.dock==='A'?' eintragen':''}</button>`
                 :`<button class="btn primary${S.dock==='A'?' full':''}" data-nav="balances">${ic.wallet} Ausgleichen</button>`;
     const s=S.exp.length?standSentence(b,{short:true}):'Noch keine Ausgaben';
-    if(S.dock==='A')h+=`<aside class="dockcard" aria-labelledby="dk"><button class="stand" data-nav="costs"><span class="eyebrow" id="dk">KOSTEN ›</span><span class="s ${tone(b)}">${s}</span></button>${btn}</aside>`;
-    else chrome=`<aside class="dock" aria-labelledby="dk"><button class="stand" data-nav="costs" aria-label="Kosten: ${s.replace(/<[^>]+>/g,'')}"><span class="eyebrow" id="dk">KOSTEN ${ic.chev}</span><span class="s ${tone(b)}">${s}</span></button>${btn}</aside>`;
+    if(S.dock==='A')h+=`<aside class="dockcard" aria-label="Kosten – Abkürzung"><button class="stand" data-nav="costs"><span class="eyebrow" style="color:var(--ww-color-link)">Kosten · Verlauf ›</span><span class="s ${tone(b)}">${s}</span></button>${btn}</aside>`;
+    else chrome=`<aside class="dock" id="dock" aria-label="Kosten – Abkürzung"><button class="stand" data-nav="costs" aria-label="Kosten-Verlauf: ${s.replace(/<[^>]+>/g,'')}"><span class="itile it-cost" style="width:32px;height:32px">${ic.wallet}</span><span class="txt"><span class="eyebrow">Kosten · Verlauf ${ic.chev}</span><span class="s ${tone(b)}">${s}</span></span></button>${btn}</aside>`;
   }
   // Weg
   h+=`<div class="content"><h2 class="sec">${on?'Eure Reise, Tag für Tag':'Nach der Reise'}<small>${on?'Tag 3 von 8':(tr.length?'0 von 1 geschafft':'1 von 1 geschafft')}</small></h2><div class="route">`;
@@ -1939,10 +1969,10 @@ function cockpit(st,tr){
   h+=`</div>`;
   // Kacheln
   const tiles=[`<button class="tile"><span class="itile it-lav">${ic.bed}</span><b>Unterkunft</b><span>Kamena Kuća · gebucht ✓</span></button>`];
-  const costTileVisible= on ? !(after()&&showDock) : !tr.length;
-  if(costTileVisible){const s=!S.exp.length?'Noch keine Ausgaben':after()?(tr.length?standSentence(b,{short:true}):'Alle sind quitt ✓'):
+  const costTileVisible= on ? true : (after()&&showDock) || !tr.length;
+  if(costTileVisible){const s=!S.exp.length?'Noch keine Ausgaben':after()?(tr.length||b?standSentence(b,{short:true}):'Alle sind quitt ✓'):
       `${fmt(st.total)} gesamt · ${b<0?'du schuldest '+fmt(-b):b>0?'du bekommst '+fmt(b):'alles ausgeglichen ✓'}`;
-    tiles.push(`<button class="tile" data-nav="costs"><span class="itile it-cost">${ic.wallet}</span><b>Kosten</b><span>${s}</span></button>`);}
+    tiles.push(`<button class="tile" id="cost-tile" data-nav="costs"><span class="itile it-cost">${ic.wallet}</span><b>Kosten</b><span>${s}</span>${after()&&(on||showDock)?'<span class="lnk">Alle Ausgaben ansehen ›</span>':''}</button>`);}
   tiles.push(`<button class="tile"><span class="itile it-lav">${ic.info}</span><b>Infos</b><span>Treffpunkt steht · Adresse da</span></button>`);
   h+=`<h2 class="sec">Immer griffbereit</h2><div class="tiles">${tiles.join('')}</div>
   <h2 class="sec">Mehr zur Reise</h2><div class="card" style="padding:4px 16px"><div class="more-row"><span class="itile it-lav">${ic.users}</span><b>Wer ist dabei? (6)</b></div></div>
@@ -2145,6 +2175,29 @@ function sheet(){
   <p class="small muted">${old?'Gleich aufgeteilt · Angelegt von ':'Gleich geteilt · eingetragen von '}${e.by===m?(old?'dir':'dir'):PEOPLE[e.by].name}</p></div>`;
 }
 
+/* ---------- Meine Reisen (für v2.18 App-Start) ---------- */
+function tripsScreen(){
+  const on=S.phase==='on';const two=S.running==='two';
+  const card=(n,sub,nav,tone)=>`<button class="tile" style="width:100%;min-height:84px;margin-bottom:12px;flex-direction:row;align-items:center;gap:12px" ${nav?`data-nav="${nav}"`:''}><span class="itile ${tone}">${ic.sun}</span><span style="display:flex;flex-direction:column;flex:1"><b>${n}</b><span>${sub}</span></span><span class="muted">${ic.chev}</span></button>`;
+  let h=`<header class="top round"><div class="t" style="padding-left:6px"><b>Meine Reisen</b></div><button class="iconbtn" aria-label="Konto">${ic.users}</button></header><div class="content">`;
+  const running=[];if(on)running.push(card('Kroatien 2027','Unterwegs · Tag 3 von 8','cockpit','it-cost'));
+  if(two)running.push(card('Familie im Harz','Unterwegs · Tag 1 von 3',null,'it-mint'));
+  if(after()&&running.length)h+=`<h2 class="sec">Läuft gerade</h2>`+running.join('')+`<h2 class="sec">Weitere Reisen</h2>`;
+  else{h+=`<h2 class="sec">Deine Reisen</h2>`+running.join('');}
+  if(!on)h+=card('Kroatien 2027','Zurück · Kosten ausgleichen','cockpit','it-cost');
+  h+=card('Lissabon 2028','Tage sammeln · 4 von 6 dabei',null,'it-lav');
+  h+=`<p class="mock-hint">Mockup: „Meine Reisen“ nur angedeutet.</p></div>`;
+  return [h,''];
+}
+function appStart(){
+  S.pay.forEach(p=>delete p.fresh);S.sheet=null;S.snack=null;S.form=null;
+  const running=S.phase==='on'?(S.running==='two'?2:1):0;
+  if(after()&&running===1){S.screen='cockpit';S.from='cockpit';
+    if(!S.startHint){S.startHint=true;snack('Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.','go:trips','Meine Reisen');}}
+  else S.screen='trips';
+  render();
+}
+
 /* ---------------- Aktionen ---------------- */
 let snackTimer;
 function snack(text,act,label){S.snack={text,act,label};clearTimeout(snackTimer);snackTimer=setTimeout(()=>{S.snack=null;render(true)},6000);}
@@ -2161,6 +2214,7 @@ document.addEventListener('click',ev=>{
   const t=ev.target.closest('button,[data-close]');if(!t)return;
   if(t.dataset.set){const [k,v]=t.dataset.set.split(':');S[k]=v;if(k==='phase'){seedPayments();}if(k==='phase'||k==='role'||k==='ver'){S.shown=new Set(['p0']);}if(k==='ver'||k==='role'||k==='phase'){S.open={};}S.sheet=null;S.snack=null;render();return;}
   if(t.dataset.go){S.from='cockpit';go(t.dataset.go);return;}
+  if(t.id==='appstart'){appStart();return;}
   if(t.id==='reset'){S.exp=seedExpenses();seedPayments();S.shown=new Set(['p0']);S.open={};S.snack=null;S.sheet=null;render();return;}
   if(t.dataset.nav){ev.preventDefault();go(t.dataset.nav==='home'?'cockpit':t.dataset.nav);return;}
   if(t.dataset.toggle){const k=t.dataset.toggle;S.open[k]=!S.open[k];render(true);const b=document.querySelector(`[data-toggle="${k}"]`);b&&b.focus();return;}
@@ -2172,7 +2226,7 @@ document.addEventListener('click',ev=>{
       :`Als bezahlt markiert: ${nm(from)} → ${PEOPLE[to].former?'ehemaliges Mitglied':nm(to)}, ${fmt(+c)}.`;
     snack(txt,'undo:'+id,'Rückgängig');render(true);const u=document.querySelector(`[data-undo="${id}"]`);u&&u.focus();return;}
   if(t.dataset.undo){S.pay=S.pay.filter(p=>p.id!==t.dataset.undo);snack(after()?'Zurückgenommen.':'Zahlung zurückgenommen.');render(true);return;}
-  if(t.dataset.act){const [a,id]=t.dataset.act.split(':');if(a==='undo'){S.pay=S.pay.filter(p=>p.id!==id);}if(a==='view'){S.snack=null;go('costs');return;}S.snack=null;render(true);return;}
+  if(t.dataset.act){const [a,id]=t.dataset.act.split(':');if(a==='undo'){S.pay=S.pay.filter(p=>p.id!==id);}if(a==='view'){S.snack=null;go('costs');return;}if(a==='go'){S.snack=null;go(id);return;}S.snack=null;render(true);return;}
   if(t.dataset.remind){snack(`WhatsApp-Text an ${PEOPLE[t.dataset.remind].name} (RemindSheet) – im Mockup nicht geöffnet.`);render(true);return;}
   if(t.dataset.copy){snack(`${t.dataset.copy} kopiert`);render(true);return;}
   if(t.dataset.snack){snack(t.dataset.snack);render(true);return;}

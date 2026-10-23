@@ -550,7 +550,7 @@ Struktur, Texte und Regeln: [W19 E](wireframes/w19-kosten.md) (gilt vor W19 D), 
 ### 18.1 Punkte an den Designer (D-81 – D-87)
 | ID | Thema | Bitte | Bezug |
 |---|---|---|---|
-| **D-81** | **Kosten-Leiste** (Cockpit *Unterwegs*/*Danach*) | Fixierte Leiste unten: Fläche `surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Safe-Area-Abstand. Links Eyebrow «KOSTEN ›» + Stand-Satz (14–15/800, Farbe je Lage `cost-get-fg`/`cost-owe-fg`/`cost-even-fg`), rechts Primär-Taste `[+ Ausgabe]` bzw. `[Ausgleichen]`. Bitte Feinschliff (Höhe ≤ 76 px + Safe Area, Dark Mode, Forced Colors) und die **statische Form** (Variante A: Karte unter dem Ticket-Kopf, Taste volle Breite) als Rückfall. **Blockierend** (klein, mit Tokens baubar). | W16 v2.17 |
+| **D-81** | **Kosten-Leiste** (Cockpit *Unterwegs*/*Danach*) – **Fassung 2** (Auftraggeber 2026-10-23: „+ Ausgabe“ zu dominant, Leiste nur als Abkürzung) | Fixierte Leiste unten (`surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Safe Area). **Links** eigenes Tap-Ziel als Fläche (`surface-sunken`, Radius `md`, Rahmen `border-subtle`, ≥ 56 px): Icon-Kachel `wallet` + «Kosten · Verlauf ›» (Link-Farbe) + Stand-Satz. **Rechts** Primär-Taste kompakt (48 px, ohne Glow-Schatten). Beide Hälften sollen gleichrangig wirken. Dazu Kachel „Kosten“ mit Link-Zeile «Alle Ausgaben ansehen ›». Leiste blendet aus, sobald die Kachel sichtbar wird. Statische Form (Variante A) als Rückfall. **Blockierend** (klein). | W16 v2.17 Fassung 2 |
 | **D-82** | **„Dein Stand“ v2** | Getönte Karte statt weißer Karte: zurückzahlen = `primary-tint`, bekommen = `accent-tint`, Rahmen `border-subtle`, ohne Schatten (Abgrenzung zur Gruppen-Ebene). Satz 24/800 Jakarta. Innen: Kurzsatz 14/700, Sekundär-Taste volle Breite, Text-Taste «So rechnen wir ▾» und Rechenweg-Box (weiße Fläche, `<dl>` zweispaltig, Summenlinie `border-strong`). Bitte bestätigen oder Alternative – Bedingung: **Ich-Ebene** und **Gruppen-Ebene** müssen auch ohne Farbe unterscheidbar sein (Eyebrow + Abstand `space-8`). | W19 E.3, E.4 |
 | **D-83** | **Ausgaben-Zeile v2** | Tagessumme und Chip «nach Beträgen» entfallen; Tages-Trenner als 12/800 Versal `text-muted`. Rechte Spalte «auf dich 25,00 €» / «ohne dich» 12–13 px. Bitte prüfen, ob die Zeile damit ruhiger genug ist. | W19 E.3 |
 | **D-84** | **Eigene Überweisung** | Karte je Überweisung: «An Lena · 64,00 €» (17/800), Zahlungsinfo-Block, Taste «Hab ich überwiesen» (Primär, erste) bzw. «Ist angekommen» (Sekundär) + Text-Taste «{Name} erinnern» **in einer Zeile** (bei 360 px; bei 200 % untereinander). Erledigt-Chip «✓ Erledigt» (`cost-paid-*`). | W19 E.5 Block 2 |
@@ -562,7 +562,7 @@ Struktur, Texte und Regeln: [W19 E](wireframes/w19-kosten.md) (gilt vor W19 D), 
 ### 18.2 Punkte an den Motion Designer (UM-26 – UM-27, über den CEO)
 | ID | Moment | Vorschlag UX | Reduziert |
 |---|---|---|---|
-| **UM-26** | Kosten-Leiste | **keine** Ein-/Ausblende-Bewegung beim Scrollen (Daumenziel bleibt stabil), kein Eintritt beim Laden; Stand-Wechsel = UM-14 (Überblenden). | – |
+| **UM-26** | Kosten-Leiste – **Fassung 2** | Ausblenden, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird: nach unten gleiten + ausblenden (`base`, `ease-exit`); Einblenden beim Hochscrollen (`base`, `ease-enter`); Hysterese 24 px; nie ausblenden, solange der Fokus in der Leiste liegt. Kein Eintritt beim Laden; Stand-Wechsel = UM-14. | sofort (kein Gleiten, kein Fade) |
 | **UM-27** | Akkordeons «So rechnen wir», «Ausgleiche der anderen», «Erledigt» | Standard-Akkordeon `base`, Chevron dreht `base`. UM-16/UM-17 feiern jetzt «Du bist quitt ✓» / «Alle sind quitt ✓» (gleiches Verhalten). | sofort |
 
 ### 18.3 Abstimmungsstand Runde 9
@@ -571,10 +571,13 @@ Struktur, Texte und Regeln: [W19 E](wireframes/w19-kosten.md) (gilt vor W19 D), 
 | D-81 | neu, **blockierend** | Designer |
 | D-82 – D-87 | neu (mit Tokens baubar) | Designer |
 | UM-26, UM-27 | neu (Bestätigung) | Motion Designer |
-| K-1 Leiste C vs. Karte A | Empfehlung C, Mockup umschaltbar | Auftraggeber (über CEO) |
+| K-1 Leiste C vs. Karte A | **entschieden: C**, Fassung 2 (Abkürzung, blendet aus) | – |
+| K-2 „quitt“ | **bestätigt** | – |
+| App startet in laufender Reise (W16 v2.18) | spezifiziert, keine Design-Bitte (nutzt Snackbar und „Meine Reisen“-Karten) | – |
 | Abweichungen von R.8 (Sichtbarkeit, Salden-Liste, Segment) | Hinweis | PM / CEO |
 
 ## Changelog
+- 2026-10-23 (Runde 9b): D-81/UM-26 auf Fassung 2 (Leiste als Abkürzung, blendet aus; linke Hälfte eigenes Tap-Ziel); K-1/K-2 entschieden; W16 v2.18 App-Start.
 - 2026-10-23 (Runde 9, Kosten v2): §18 – Feedback Auftraggeber zu Inkrement 10: Punkte D-81–D-87, UM-26–UM-27; W19 E, W16 v2.17, Mockup `mockups/kosten-v2/`.
 - 2026-10-23 (Runde 8): §17 – Beta „Stufe B“ & installierte Web-App (W23): Punkte D-72 – D-80, UM-25.
 - 2026-10-23 (Runde 7, Inkrement 11): §16 – Punkte D-64–D-71 (Designer), UM-20–UM-24 (Motion), M-U14 bestätigt; W20 H, W16 v2.16, W22 E, W18 E.16 (an R.9 angeglichen).

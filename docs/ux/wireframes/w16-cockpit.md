@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
 Stand: 2026-10-23 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16. Kosten nach Reisebeginn (Kosten-Leiste, Wortlaut; Auftraggeber-Feedback): v2.17 – gilt vor v2.15.**
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16. Kosten nach Reisebeginn (Kosten-Leiste, Wortlaut; Auftraggeber-Feedback): v2.17 – gilt vor v2.15. App startet in der laufenden Reise: v2.18.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -720,7 +720,60 @@ Gilt vor v2.15 (Kopf-Tasten, A1, D1, Kachel) und v2.5/v2.6, soweit unten genannt
 | Muster bekannt aus | – | Splitwise/Tricount (Plus-Taste) | Banking-/Lieferdienst-Apps (Warenkorb-/Saldo-Leiste) | – |
 **Empfehlung C.** Der Auftraggeber kennt das Muster aus Finanzguru (Inspiration Richtung B): ein Stand, immer da, eine Aktion. **A ist der Rückfall** für Fälle, in denen eine fixierte Leiste zu viel Platz nähme (200 %, Querformat, s. unten) – damit sind beide Varianten ohnehin zu bauen, A aber nur als statische Form derselben Komponente.
 
-### Kosten-Leiste – Regeln
+### Kosten-Leiste – Regeln (Fassung 2, nach Mockup-Feedback des Auftraggebers 2026-10-23)
+**Feedback:** «Variante C gefällt, aber der Ausgabe-Button ist so präsent, dass nicht ersichtlich ist, dass man durch Tippen auf ‚Kosten‘ alle Kosten-Verläufe sieht. Die Leiste soll nur so lange da sein, bis man nach ganz unten gescrollt hat, wo der Punkt Kosten sowieso schon vorher war – quasi nur als Shortcut.» → Die Leiste ist ein **Shortcut** zur Kachel „Kosten“, kein Ersatz. Die Kachel bleibt der feste Ort.
+
+**Sichtbar:**
+| Teilphase | Bedingung | Leiste links (Link → `/costs`) | Leiste rechts (Taste) | Kachel „Kosten“ unten |
+|---|---|---|---|---|
+| *Vorbereitung* | – | **keine Leiste** | – | wie v2.15, Texte W19 E.9 |
+| *Unterwegs* | nicht abgeschlossen | Icon `wallet` + «Kosten · Verlauf ›» + Stand-Satz | **`[+ Ausgabe]`** → `/costs/new?date=today&from=cockpit` | **ja** (Fassung 2 – kommt zurück) |
+| *Unterwegs* | abgeschlossen | keine Leiste | – | ja, «Abgeschlossen · …» |
+| *Danach* | eigenes Ergebnis ≠ 0, nicht abgeschlossen | wie oben | **`[Ausgleichen]`** → `/costs/balances?from=cockpit` | **ja** (neben D1 – Anker der Leiste, s. u.) |
+| *Danach* | Ergebnis = 0 oder abgeschlossen | keine Leiste | – | nach v2.15 (nur ohne sichtbare D1) |
+
+**Kachel „Kosten“ (Unterwegs/Danach, Fassung 2):** Titel «Kosten», Statuszeile = Stand-Satz (W19 E.9), darunter **Link-Zeile «Alle Ausgaben ansehen ›»** (14/700, Link-Farbe) – sagt ausdrücklich, dass hier der Verlauf liegt. Ganze Kachel ein Link → `/costs`; zugänglicher Name «Kosten. {Stand}. Alle Ausgaben ansehen». Reihenfolge in „Immer griffbereit“ unverändert (Unterkunft · Unterlagen · **Kosten** · Infos · Reisedaten). Bewusste Ausnahme (d) zum Grundsatz „ein Einstieg je Bereich“ (v2.1): Leiste = Abkürzung zum selben Ziel, nie gleichzeitig mit der Kachel sichtbar (Ausblende-Regel).
+
+**Aufbau der Leiste – Gewichtung neu (D-81, Fassung 2):**
+```
+┌──────────────────────────────────────────────┐
+│ ┌──────────────────────────────┐ ┌─────────┐ │
+│ │(▣) Kosten · Verlauf        › │ │ + Aus-  │ │   links: eigenes Tap-Ziel als Fläche
+│ │    Du zahlst noch 64,00 €    │ │  gabe   │ │   (surface-sunken, Radius md, ≥ 56 px hoch)
+│ │    zurück                    │ │         │ │   rechts: Taste 48 px, schmal (Icon + 1 Wort)
+│ └──────────────────────────────┘ └─────────┘ │
+└──────────────────────────────────────────────┘
+```
+- **Links** = sichtbar eigene Fläche (Hintergrund `surface-sunken`, Radius `radius-md`, Rahmen `border-subtle`, Hover/Press wie Kachel), Icon-Kachel 32 `wallet` (Bereichsfarbe Kosten), Zeile 1 **«Kosten · Verlauf ›»** (13/800, Link-Farbe, Chevron), Zeile 2 Stand-Satz (14/700, Farbe je Lage). Breite ≈ 60–65 %.
+- **Rechts** = `[+ Ausgabe]` bzw. `[Ausgleichen]`: Primär-**Füllung**, aber kompakt (48 px hoch, Breite nach Inhalt, kein Schatten-Glow `shadow-button`, nur `shadow-1`). Damit dominiert sie nicht mehr allein; beide Hälften wirken als zwei gleichrangige Ziele.
+- **Tasten-Text:** «+ Ausgabe» (Name «Ausgabe eintragen») / «+ Expense» («Add an expense») · «Ausgleichen» / «Settle up».
+- Fläche `surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Innenabstand 10/12 px + `env(safe-area-inset-bottom)`; Höhe ≈ 80 px + Safe Area.
+
+**Ausblenden, sobald die Kachel erscheint (Shortcut-Logik):**
+- `IntersectionObserver` auf die **Kachel „Kosten“** mit `rootMargin` unten = −(Leistenhöhe) – die Leiste blendet aus, sobald die Kachel **oberhalb der Leiste** sichtbar wird (also bevor die Leiste sie verdeckt). Sie blendet wieder ein, sobald die Kachel den sichtbaren Bereich nach unten verlässt (Hochscrollen).
+- **Hysterese** 24 px (Einblenden erst, wenn die Kachel 24 px weiter unten ist als beim Ausblenden) – kein Flackern beim Stehenbleiben an der Grenze. Nur IntersectionObserver, keine Scroll-Listener.
+- **Bewegung (UM-26, neu):** Ausblenden = nach unten gleiten + Ausblenden (`base` 220 ms, `ease-exit`, Weg = Leistenhöhe), Einblenden = `base`, `ease-enter`. **Reduzierte Bewegung: sofort** (kein Gleiten, kein Fade).
+- Ausgeblendet = `visibility:hidden` nach der Transition + `inert` → nicht fokussierbar, nicht vorgelesen.
+- **Fokus-Schutz:** Liegt der Tastaturfokus **in** der Leiste, blendet sie nicht aus (sonst Fokusverlust). Wird sie ausgeblendet, während die Snackbar über ihr steht, rutscht die Snackbar an den unteren Rand (Abstand 16 px + Safe Area).
+- `main` behält `padding-bottom` = Leistenhöhe nur, solange die Leiste sichtbar sein **kann** (Unterwegs/Danach); `scroll-padding-bottom` ebenso (WCAG 2.4.11).
+- Seite kürzer als ein Bildschirm (Kachel sofort sichtbar): Leiste erscheint gar nicht.
+
+**DOM-, Fokus- und Screenreader-Reihenfolge (geprüft):**
+- Die Leiste steht im DOM **direkt nach dem Ticket-Kopf** als `<aside aria-label="Kosten – Abkürzung">` (DE) / «Expenses – shortcut» (EN). Tastatur- und Screenreader-Nutzende erreichen den häufigsten Bereich also früh, unabhängig vom Scrollstand (sie bewegen sich oft ohne zu scrollen). Reihenfolge darin: **zuerst** Link «Kosten · Verlauf» (Name «Kosten-Verlauf: Du zahlst noch 64,00 € zurück»), **dann** Taste «Ausgabe eintragen».
+- Ausblenden per Scroll betrifft nur Sehende; da `inert` erst greift, wenn die Kachel sichtbar ist, finden Screenreader-Nutzende den Bereich weiterhin über die Kachel (gleiches Ziel, gleicher Name „Kosten“).
+- Kein `aria-live` für das Ein-/Ausblenden (wäre geschwätzig).
+- **200 % / Querformat / Höhe < 560 px (Rückfall = Variante A):** Wäre die Leiste höher als 20 % der Fensterhöhe, steht sie **nicht fixiert** als Karte direkt unter dem Ticket-Kopf (links Link-Fläche volle Breite, darunter Taste volle Breite) – **kein** Ausblenden nötig, die Kachel unten bleibt. DOM-Position ist in beiden Formen dieselbe (nach dem Kopf), daher keine Änderung der Fokus-Reihenfolge beim Umschalten.
+- **Desktop ≥ 960 px:** keine fixierte Leiste; Variante A (Karte unter dem Kopf).
+
+**Wechselwirkungen (unverändert gegenüber Fassung 1, außer Kachel):**
+- **Primär-Regel:** Die Leisten-Taste ist die einzige gefüllte Primär-Taste; Heute-Karten zeigen ihre Tasten sekundär (Unterwegs/Danach mit Leiste). Ist die Leiste ausgeblendet (unten angekommen), ist keine Primär-Taste sichtbar – gewollt, unten ist Nachschlagen.
+- **Entfallen** weiterhin: Kopf-Tasten `[+ Ausgabe]`/`[Ausgleichen]` (v2.15) und **A1 in *Unterwegs*** (A1 nur *Vorbereitung*). D1 bleibt *Danach* als Station ohne eigene Taste.
+- **Snackbar** über der Leiste (8 px Abstand); nach Speichern aus der Leiste zurück ins Cockpit, Fokus auf `[+ Ausgabe]`, Snackbar «Gespeichert. Du zahlst jetzt noch 44,00 € zurück.» + «Ansehen».
+- **Mini-Ring** im sticky Kopf (v2.8) bleibt; Leiste und Kopf zusammen ≤ 30 % der Höhe bei 360 × 640.
+
+<details><summary>Fassung 1 (überholt, 2026-10-23) – nur zur Nachvollziehbarkeit</summary>
+
+#### Kosten-Leiste – Regeln (Fassung 1)
 **Sichtbar:**
 | Teilphase | Bedingung | Links (Link → Ziel) | Rechts (Taste) |
 |---|---|---|---|
@@ -747,12 +800,16 @@ Gilt vor v2.15 (Kopf-Tasten, A1, D1, Kachel) und v2.5/v2.6, soweit unten genannt
 
 **DOM-Reihenfolge & Barrierefreiheit:** `<aside aria-labelledby="dock-title">` (sichtbarer Eyebrow «Kosten» = Name) steht im DOM **direkt nach dem Ticket-Kopf** (vor dem Weg) – Tastatur und Screenreader erreichen den häufigsten Bereich früh; visuell unten fixiert. Kein `role="toolbar"`. Stand-Link zugänglicher Name «Kosten: Du zahlst noch 64,00 € zurück». Kontraste aus Tokens; Forced Colors: Rahmen oben `--ww-border-forced`.
 
-**Motion (UM-26, an Motion Designer):** Leiste erscheint beim Seitenaufbau ohne Bewegung (sie ist „immer schon da“); kein Ein-/Ausblenden beim Scrollen (würde Daumen-Ziel verschieben). Stand-Wechsel = UM-14.
+**Motion (UM-26, Fassung 1 – überholt):** Leiste erscheint beim Seitenaufbau ohne Bewegung (sie ist „immer schon da“); kein Ein-/Ausblenden beim Scrollen (würde Daumen-Ziel verschieben). Stand-Wechsel = UM-14.
+
+
+</details>
 
 ### Danach – „Kosten ausgleichen“ prominent
 - Ergebnis ≠ 0: Leiste mit `[Ausgleichen]` (oben) **plus** D1 als erste Station unter Heute (ohne Taste). Damit ist Ausgleichen in *Danach* doppelt präsent – Leiste = Aktion, D1 = Ort im Ablauf (bewusste Ausnahme (d) zum Grundsatz gegen Doppelungen, v2.1: Status ≠ Aufgabe, wie Ausnahme (c)).
 - Ergebnis = 0, andere offen: keine Leiste; D1 «wartet» (Mitglied) bzw. Orga mit `[Erinnern]` wie v2.15 Zeile 5.
 - Alle quitt: D1 erledigt / Orga Zeile 6, Kachel «Alle sind quitt ✓».
+- **Fassung 2:** Solange die Leiste in *Danach* sichtbar sein kann, steht auch die Kachel „Kosten“ (mit «Alle Ausgaben ansehen ›») unten – sie ist der Anker der Ausblende-Regel und der Weg zum Verlauf.
 
 ### Texte Cockpit (Wortlaut-Angleich an W19 E.2)
 | Stelle | Vorher | Nachher DE | Nachher EN |
@@ -768,10 +825,59 @@ Gilt vor v2.15 (Kopf-Tasten, A1, D1, Kachel) und v2.5/v2.6, soweit unten genannt
 | Kachel | {total} gesamt · du schuldest {amount} … | W19 E.9 (ohne Gruppensumme) | W19 E.9 |
 
 ### `trip-route.ts` (Vorschlag)
-`headActions` ohne `"addExpense" | "settle"`; neu `costDock: { kind: "add" | "settle"; myBalanceCents: number; hasExpenses: boolean } | null` (Regeln oben); `tiles` ohne `costs`, wenn `costDock` gesetzt; A1 nur `subphase === "prep"`; D1-Karten mit `primary: null`, wenn `costDock` gesetzt; Heute-Karten `buttonTone: "secondary"` bei `costDock`. Unit-Tests: Leiste je Teilphase × Ergebnis (< 0, 0, > 0, keine Ausgaben, abgeschlossen) × Rolle; keine Kachel/Kopf-Taste/A1 bei Leiste; Primär-Zählung = 1.
+`headActions` ohne `"addExpense" | "settle"`; neu `costDock: { kind: "add" | "settle"; myBalanceCents: number; hasExpenses: boolean } | null` (Regeln oben); `tiles` **mit** `costs`, wenn `costDock` gesetzt (Fassung 2: Kachel ist Anker, Status + `linkLabel: "allExpenses"`); A1 nur `subphase === "prep"`; D1-Karten mit `primary: null`, wenn `costDock` gesetzt; Heute-Karten `buttonTone: "secondary"` bei `costDock`. Unit-Tests: Leiste je Teilphase × Ergebnis (< 0, 0, > 0, keine Ausgaben, abgeschlossen) × Rolle; Kachel **vorhanden** bei Leiste, keine Kopf-Taste/A1; Primär-Zählung = 1.
 
 ### Abnahme UX
-Unterwegs Tag 3 (Max zahlt zurück, Lena bekommt, 0 Ausgaben) · Leiste → `[+ Ausgabe]` → speichern → Cockpit, Snackbar mit neuem Ergebnis über der Leiste · Termin-Karte jetzt Sekundär · keine A1 unterwegs · Danach mit Ergebnis ≠ 0 (Leiste `[Ausgleichen]`, D1 ohne Taste) / = 0 (keine Leiste) · abgeschlossen (keine Leiste) · 200 % und 360 × 560 → Leiste statisch unter dem Kopf · iPhone-Web-App: Leiste über dem Home-Indikator · Tastatur: Leiste direkt nach dem Kopf erreichbar, Fokus nie verdeckt · Dark Mode.
+Unterwegs Tag 3 (Max zahlt zurück, Lena bekommt, 0 Ausgaben) · Leiste → `[+ Ausgabe]` → speichern → Cockpit, Snackbar mit neuem Ergebnis über der Leiste · Termin-Karte jetzt Sekundär · keine A1 unterwegs · Danach mit Ergebnis ≠ 0 (Leiste `[Ausgleichen]`, D1 ohne Taste) / = 0 (keine Leiste) · abgeschlossen (keine Leiste) · 200 % und 360 × 560 → Leiste statisch unter dem Kopf · iPhone-Web-App: Leiste über dem Home-Indikator · **Fassung 2:** Leiste blendet aus, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird, und beim Hochscrollen wieder ein (reduziert: sofort); Fokus in der Leiste verhindert Ausblenden; Kachel zeigt «Alle Ausgaben ansehen ›»; linke Leistenfläche als eigenes Tap-Ziel erkennbar · Tastatur: Leiste direkt nach dem Kopf erreichbar, Fokus nie verdeckt · Dark Mode.
+
+## v2.18 App startet in der laufenden Reise (Auftraggeber-Wunsch, 2026-10-23)
+
+**Auftrag:** «Die App soll sich immer in der Reise öffnen, die gerade läuft, damit ich nicht erst aus der Reiseauswahl wählen muss – ich kann ja ohnehin nur auf einer Reise gleichzeitig sein.» Gilt ergänzend zu sitemap §4 (`/` → angemeldet: `/trips`) und ux-spec §15 (installierte Web-App, `start_url: "/"`).
+
+### Was ist ein „App-Start“?
+Die Weiterleitung greift **nur** an der Einstiegs-Route **`/`** (angemeldet). `/` ist bereits heute der Einstieg für:
+| Einstieg | heute | neu |
+|---|---|---|
+| Home-Bildschirm-Symbol (PWA, `start_url: "/"`), Lesezeichen/Eingabe der Domain | `/` → `/trips` | `/` → **laufende Reise** (Regeln unten), sonst `/trips` |
+| nach Login **ohne** `next`-Ziel (Code/Magic-Link, Standardziel) | `/trips` | Standardziel wird **`/`** → gleiche Regel |
+| „Meine Reisen“ (`/trips`) über ← aus einer Reise, Wortmarke im Header, Konto-Seite, Browser-Zurück | `/trips` | **unverändert** – `/trips` leitet **nie** weiter |
+| Deep-Links: Einladung `/i/{token}`, Platzhalter-Link, Mail-/Erinnern-Links `/trips/{id}/…`, Login mit `next` | Ziel | **unverändert – haben Vorrang** |
+Die Wortmarke/„Home“ im App-Header muss auf **`/trips`** zeigen (nicht `/`), damit „Meine Reisen“ immer erreichbar bleibt. Wiederaufnahme der PWA aus dem Hintergrund lädt keine Seite neu → keine Weiterleitung (gewollt: man bleibt, wo man war).
+
+### Regel (serverseitig in `/`, eine reine Funktion `startTrip(trips, today)`)
+1. Kandidaten = Reisen, in denen ich **Mitglied** bin, Phase `fixed`, Teilphase heute = ***Unterwegs*** (Anreise ≤ heute ≤ Abreise, Zeitzone wie Teilphase: `APP_TIME_ZONE`). Platzhalter-Zugänge zählen nicht (haben kein Konto).
+2. **Genau ein Kandidat** → 307 auf `/trips/{id}` (Cockpit).
+3. **Kein Kandidat** → `/trips` (wie heute).
+4. **Zwei oder mehr** (überlappende Reisen, z. B. Familien-Wochenende innerhalb des Sommerurlaubs) → **keine** automatische Wahl; `/trips` zeigt oben einen Abschnitt **«Läuft gerade»** (h2) mit diesen Reisen als große Karten (Reisename, «Unterwegs · Tag 3 von 8», Pfeil) – ein Tipp öffnet die Reise. Raten wäre schlimmer als ein Tipp mehr.
+5. **Abreisetag** ist Tag 1 von *Unterwegs* → zählt (dort läuft die Feier „Heute geht's los“, UX-8).
+6. **Tag vorher: nein** (Empfehlung). Begründung: Vorbereitung hat noch eigene Aufgaben in mehreren Reisen; ein Sprung am Vortag überrascht und „Meine Reisen“ zeigt die Reise ohnehin oben mit «Morgen geht's los». Sollte der Auftraggeber es wünschen, ist es ein Parameter (`startWindowDaysBefore = 0 | 1`).
+7. **Danach: nein** (Empfehlung). Nach der Rückkehr ist die Reise nicht mehr „laufend“; der Ausgleich wird über Erinnern-Links (Deep-Link) und „Meine Reisen“ erreicht.
+8. Kein Konto-Schalter in Stufe 1 (nicht nötig, da die Weiterleitung nur am Start greift und ein Tipp auf ← sie aufhebt). Später optional unter Konto: «Beim Start die laufende Reise öffnen» (an).
+
+### Weg zurück zu „Meine Reisen“
+- Zeile 1 des Cockpits: ← führt **immer** auf `/trips` (nicht `history.back()` – nach dem Start gibt es keinen Verlauf). Zugänglicher Name «Meine Reisen» (statt «Zurück»), Tooltip ebenso.
+- **Einmaliger Hinweis** beim ersten automatischen Öffnen je Reise (Snackbar, 6 s, `role="status"`): «Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.» + Aktion **«Meine Reisen»** (→ `/trips`). Merker je Reise im `localStorage` (nur Reise-ID). EN: «Your current trip opened right away. All trips are at the top left.» · «My trips».
+- Kein Fokus-Sprung durch den Hinweis; Fokus wie bei normalem Seitenaufbau (h1/Zeile 1).
+
+### Sonderfälle
+| Fall | Verhalten |
+|---|---|
+| Reise endet heute um Mitternacht / Zeitzonen-Grenze | Regel nach `APP_TIME_ZONE` (wie Teilphase, R-072) |
+| Laufende Reise, aber ich habe sie heute verlassen / wurde entfernt | kein Kandidat → `/trips` |
+| Festlegung der laufenden Reise aufgehoben (Phase 2) | kein Kandidat |
+| Beta-/Login-Seiten, Einladung angenommen | Ziel der Einladung (Vorrang), danach normale Regeln |
+| Offline-Start der PWA | Offline-Seite (ux-spec §15); keine Weiterleitung möglich |
+| Sprache | Weiterleitung behält die Sprache (Cookie), Ziel `/trips/{id}` ohne Sprach-Präfix wie alle App-Routen |
+
+### Texte DE / EN
+| Schlüssel | DE | EN |
+|---|---|---|
+| `start.hint` / `.action` | Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links. · Meine Reisen | Your current trip opened right away. All trips are at the top left. · My trips |
+| `trips.runningNow` | Läuft gerade | Happening now |
+| `cockpit.backToTrips` (Name ←) | Meine Reisen | My trips |
+
+### Abnahme UX
+PWA-Start mit genau einer laufenden Reise → Cockpit + einmaliger Hinweis (zweiter Start: kein Hinweis) · ← → `/trips` · `/trips` leitet nie weiter · zwei überlappende → `/trips` mit «Läuft gerade» · keine laufende → `/trips` · Abreisetag zählt, Vortag/Danach nicht · Einladungs-/Erinnern-Link hat Vorrang · Login ohne `next` → Regel, mit `next` → Ziel · Zeitzone · Screenreader: Hinweis einmal angesagt, ← heißt «Meine Reisen».
 
 ---
 

@@ -49,7 +49,7 @@ Direkte URLs auf einen Tab werden in Phase 1/2 immer respektiert (kein Umleiten)
 └── Impressum                        /de/impressum · /en/imprint     F-046
 
 Angemeldet
-├── Meine Reisen (Start)             /trips               F-044
+├── Meine Reisen (Start)             /trips               F-044   ← Einstieg `/` (PWA-Start, nach Login ohne Ziel) öffnet stattdessen die **laufende Reise**, wenn es genau eine gibt (W16 v2.18); `/trips` selbst leitet nie weiter
 ├── Neue Reise planen                /trips/new           F-001 (auch ohne Login startbar)
 │   └── Einladen (nach Anlage)       /trips/{id}/invite   F-002
 ├── Reise                            /trips/{id}          Tab „Übersicht“ (F-007, F-012-Ergebnis, F-015)
