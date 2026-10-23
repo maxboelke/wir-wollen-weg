@@ -1,6 +1,6 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.3 (v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v1.4 (v1.4: **Gate G1b – persönliche Reisedaten** (Inkrement 11) + Prüfpunkt „Reisedaten in Produktion aus“; v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
@@ -66,6 +66,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | **Egress-Härtung** des App-Containers (nur `tcp/443` ins Internet, interne Netze + Metadaten `169.254.169.254` gesperrt); SSRF-Tests der Link-Vorschau grün | Operations (OPS-1), Reviewer | deployment.md §0.8, §5.1 |
 | ☐ | **In-App-Browser-Gerätetest T2** (WhatsApp, Instagram; iOS + Android) über Staging bestanden | Developer + Reviewer | tech-stack.md §11 |
 | ☐ | Demo-Seed-Daten **nicht** in Produktion (Seed-Skript verweigert `APP_ENV=production`) | Developer, Reviewer | deployment.md §0.4 |
+| ☐ | **Persönliche Reisedaten in Produktion aus** (`TRAVEL_DATA_ENABLED` leer bzw. `false`), solange G1b nicht freigegeben ist – Route `/trips/{id}/travel-data` liefert 404 | Operations, Reviewer | deployment.md §0.11.1, Gate G1b unten |
 | ☐ | Reviewer-Freigabe ✅ für alle Features des Meilensteins (DE und EN) | Reviewer | CLAUDE.md |
 
 ## Stufe 3 – zusätzlich vor öffentlichem Launch (M2)
@@ -80,6 +81,26 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 
 ---
 
+## Gate G1b – persönliche Reisedaten (F-054/F-056, ab Inkrement 11)
+
+**Zusätzlich zu Stufe 1 + 2**, unabhängig von Stufe 3. Solange G1b nicht freigegeben ist, läuft die App in Produktion **ohne** den Bereich Reisedaten (`TRAVEL_DATA_ENABLED` aus); Markierung „Bucht“, Infoseite, Unterkünfte und Kosten funktionieren trotzdem. Details und Abhak-Listen: [compliance-checklist.md §12](compliance-checklist.md), Schlüssel: [deployment.md §0.11](deployment.md). Dateibezogene Punkte (F-055, Inkrement 12) werden ergänzt.
+
+| ☐ | Pflichtpunkt | Wer | Bezug |
+|---|---|---|---|
+| ☐ | **DSFA** (schlanke Datenschutz-Folgenabschätzung, Art. 35) für Reisedaten abgeschlossen und abgelegt | Operations → Rechtsprüfung | compliance §12.2 |
+| ☐ | **Rechtliche Prüfung PAuswG/PassG** (Speicherung von Ausweis-/Passnummern) dokumentiert; falls unzulässig: Feld Dokumentnummer in Produktion deaktiviert | Rechtsprüfung (Q16) | compliance §12.3 |
+| ☐ | **Datenschutzerklärung** um Abschnitt „Persönliche Reisedaten“ ergänzt (Einwilligung, nur anfragende Person, Verschlüsselung, Zugriffsprotokoll, Fristen, Widerruf), Einwilligungstext DE/EN mit Version; VVT + TOM ergänzt | Operations (Entwurf), Rechtsprüfung | compliance §12.3, §5, §7 |
+| ☐ | **Löschkonzept** Reisedaten getestet: Widerruf, Entzug „Bucht“, Verlassen/Entfernen, Konto löschen, Reiseende + 7 Tage, Festlegung aufgehoben + 30 Tage; Löschjob täglich in Produktion | Reviewer, Operations | compliance §6, §12.4 |
+| ☐ | **Log-Regeln:** Logs/Fehler-Tracking enthalten nur anonyme Zähler, keine IDs/Werte – Suchtest mit Demo-Werten auf Staging bestanden | Reviewer, Operations | compliance §12.5 |
+| ☐ | **Schlüssel:** eigener `TRAVEL_DATA_KEYS` für Produktion, getrennt von DB-Zugang und Backups abgelegt, Sicherungskopie beim Betreiber; Startschutz, Rotation und Runbook A auf Staging geübt | Operations, Auftraggeber | deployment.md §0.11 |
+| ☐ | **Security-Review Reisedaten** (Rechte, Löschung, Re-Authentifizierung, keine Werte in Logs/Mails/URLs) bestanden | Reviewer | features.md R.9 „Sicherheit“ |
+| ☐ | **Prüfpunkt Vorschau:** Dokumentnummern ohne `DEMO`-Präfix werden in der Vorschau abgelehnt; Hinweis „keine echten Ausweisdaten“ sichtbar | Reviewer, CEO | compliance §12.6 |
+| ☐ | Datenpannen-Prozess (Art. 33/34) inkl. Runbook B „Schlüsselleck“ steht | Operations | compliance §7, deployment.md §0.11.8 |
+
+Erst nach Freigabe (Tabelle unten) setzt Operations `TRAVEL_DATA_ENABLED=true` in Produktion und startet die App neu.
+
+---
+
 ## Freigabe
 
 | Stufe | Freigegeben durch Auftraggeber am | Notiz |
@@ -87,5 +108,6 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | 1 – Staging | – | |
 | 2 – Beta (M1) | – | |
 | 3 – Launch (M2) | – | |
+| G1b – persönliche Reisedaten | – | erst danach `TRAVEL_DATA_ENABLED=true` in Produktion |
 
 Der CEO trägt die Freigabe hier und im [Status-Board](status.md) ein.

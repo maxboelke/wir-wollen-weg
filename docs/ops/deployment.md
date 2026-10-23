@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.6 (v0.6: Löschjob-Umfang inkl. endgültiger Löschung weich gelöschter Ausgaben nach 24 h, §0.10 – Inkrement 10; v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.7 (v0.7: persönliche Reisedaten – Schlüssel-Konzept `TRAVEL_DATA_KEYS`, Rotation, Runbooks, Startschutz, Feature-Schalter `TRAVEL_DATA_ENABLED` §0.11 + §4 – Inkrement 11; v0.6: Löschjob-Umfang inkl. endgültiger Löschung weich gelöschter Ausgaben nach 24 h, §0.10 – Inkrement 10; v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -117,6 +117,7 @@ Seit 2026-10-20 prüft derselbe Startschutz (`src/instrumentation.ts`, Regeln in
 - `APP_ENV=preview` startet nur mit `PREVIEW_ACCESS_PASSWORD` (≥ 10 Zeichen); Platzhalter in den Rechtstexten blockieren dort **nicht** (Demo-Banner bleibt sichtbar).
 - `APP_ENV=production` und `staging` starten nie mit `MAIL_TRANSPORT=inbox` (Demo-Postfach; erlaubt nur `development`, `ci`, `demo`, `preview` – Review 2026-10-20: `staging` hätte ohne Basic Auth alle Login-Codes öffentlich gezeigt).
 - Auf Vercel (`VERCEL=1`) starten `development`, `ci` und `demo` nicht; fehlt `APP_ENV` dort, gilt `preview` (also: ohne Passwort zu).
+- **Ab Inkrement 11 (Anforderung):** `staging`/`production` mit eingeschalteten Reisedaten (`TRAVEL_DATA_ENABLED=true`) starten nur mit eigenem, gültigem `TRAVEL_DATA_KEYS`; keine Ableitung aus `BETTER_AUTH_SECRET` (Details §0.11.3).
 
 ### 0.7 Private Live-Vorschau: Vercel (Hobby) + Neon (Free) – PRD Q25
 
@@ -308,6 +309,131 @@ Anforderungen an die Erweiterung (Developer, Inkrement 10):
 
 **Hinweis Taktung:** Der Job läuft einmal täglich. „Nach 24 h“ heißt damit in der Praxis **24–48 h** nach dem Löschen (auf Vercel Hobby zusätzlich bis zu 1 h Versatz). Für die Datenschutzerklärung genügt die Angabe „spätestens nach 2 Tagen endgültig gelöscht“ (compliance-checklist.md §2b); ein häufigerer Lauf ist nicht nötig. Aus **Backups** verschwinden die Daten wie alles andere spätestens nach 30 Tagen (§6.1).
 
+### 0.11 Persönliche Reisedaten – Schlüssel-Konzept und Feature-Schalter (Inkrement 11, F-054, features.md R.9)
+
+Gilt für die Feldverschlüsselung der Freigaben (`travel_data_release.ciphertext`) – AES-256-GCM über Node `crypto`, AAD = Reise-ID + Anfrage-ID + Personen-ID + Schema-Version (R.9 „Verschlüsselung & Schlüssel“ Nr. 1). Dieser Abschnitt regelt **Variable, Format, Erzeugung, Ablage, Rotation, Startschutz und Runbooks**. Für Demo und Vorschau ist er ein **Entwurf, der reicht** – verbindlich wird er mit der G1b-Abnahme ([go-live.md](go-live.md) Stufe G1b, [compliance-checklist.md §12](compliance-checklist.md)).
+
+#### 0.11.1 Feature-Schalter `TRAVEL_DATA_ENABLED`
+
+| `APP_ENV` | Standard (Variable leer) | Darf auf `true`? | Schlüssel-Ursprung |
+|---|---|---|---|
+| `development`, `ci` | **an** | ja | `TRAVEL_DATA_KEYS`, sonst HKDF-Ableitung aus `BETTER_AUTH_SECRET` |
+| `demo` (Docker-Demo) | **an** | ja | wie oben – `.env.demo` braucht **keinen** neuen Eintrag |
+| `preview` (Vercel) | **an** | ja | wie oben – **keine neue Variable in Vercel** (Auftraggeber muss nichts nachtragen) |
+| `staging` | **aus** | ja, nur mit eigenem `TRAVEL_DATA_KEYS` (synthetische Daten, Test vor G1b) | **nur** `TRAVEL_DATA_KEYS`, Ableitung verboten |
+| `production` | **aus** | **erst nach dokumentierter G1b-Abnahme** (Freigabe-Tabelle in go-live.md) | **nur** `TRAVEL_DATA_KEYS`, Ableitung verboten |
+
+- Erlaubte Werte: `true` / `false` / leer (= Standard der Umgebung). Jeder andere Wert → **Start verweigert** (kein stilles „aus“ bei Tippfehlern wie `ture`).
+- **Aus** heißt: keine Station V4/D3, keine Kachel, Routen `/trips/{id}/travel-data*` antworten 404, Server-Aktionen werden abgelehnt. Die Markierung „Bucht“ und ihre übrigen Rechte (Infoseite, «gebucht ✓») funktionieren weiter (R.9 I11-12).
+- **Bestehende Freigaben bei „aus“:** werden nicht angezeigt, aber vom Löschjob weiter nach Frist gelöscht (der Löschjob braucht keinen Schlüssel – er löscht Zeilen, entschlüsselt nicht).
+- Das Einschalten in `production` ist eine **organisatorische** Freigabe (G1b); technisch verhindert der Startschutz nur „an ohne eigenen Schlüssel“.
+
+#### 0.11.2 Variable `TRAVEL_DATA_KEYS` – Format
+
+```
+TRAVEL_DATA_KEYS=<kid>:<base64-32-Byte>[,<kid>:<base64-32-Byte>…]
+# Beispiel (Platzhalter, KEINE echten Werte):
+TRAVEL_DATA_KEYS=t202701:AAAA…(44 Zeichen)…=,t202606:BBBB…=
+```
+
+| Regel | Vorgabe (Developer prüft beim Start, Fehler → Start verweigert) |
+|---|---|
+| Trennzeichen | Einträge mit `,`, Kennung und Schlüssel mit dem **ersten** `:`; Leerzeichen am Rand werden entfernt |
+| Kennung (`kid`) | `^[a-z0-9-]{1,16}$`, eindeutig in der Liste; Empfehlung `t` + Jahr + Monat der Erzeugung (z. B. `t202701`). Die Kennung `demo` ist **reserviert** für den abgeleiteten Schlüssel und in `TRAVEL_DATA_KEYS` verboten |
+| Schlüssel | Standard-Base64, dekodiert **genau 32 Byte**; doppelte Schlüssel unter verschiedenen Kennungen → Fehler |
+| Reihenfolge | **erster Eintrag = aktiver Schlüssel** (verschlüsselt alles Neue und jede Änderung); weitere Einträge nur zum Entschlüsseln (Rotation) |
+| Länge | 1–3 Einträge (mehr deutet auf vergessenes Aufräumen hin → Warnung im Start-Log, nur Anzahl) |
+| Speicherung je Zeile | Spalte `key_id` = Kennung; Zeile mit unbekannter Kennung → generischer Fehler im UI, Zähler `travel_data.decrypt_unknown_key` im Log (ohne IDs) |
+| Nie | im Repository, in `.env.example` (dort nur leerer Eintrag mit Kommentar), im Client-Bundle (`server-only`), in Logs/Fehlermeldungen/Bugsink, in GitHub-Actions-Secrets (CI braucht keinen echten Schlüssel) |
+
+**Abgeleiteter Schlüssel (nur `development`, `ci`, `demo`, `preview`; CEO bestätigt 2026-10-23):** Fehlt `TRAVEL_DATA_KEYS`, wird ein Schlüssel per `hkdfSync("sha256", BETTER_AUTH_SECRET, "", "travel-data-demo-v1", 32)` abgeleitet, Kennung `demo` (eigenes Info-Label – Domänentrennung wie bei den Limits pro E-Mail und dem Vorschau-Token, tech-stack.md §3.2, §0.8). Fehlt auch `BETTER_AUTH_SECRET`, ist der Bereich **aus** (fail closed). Folge: Wird `BETTER_AUTH_SECRET` in der Vorschau geändert, sind bestehende Demo-Freigaben unlesbar → **„Demo zurücksetzen“** (vorschau-anleitung.md §7). In `staging`/`production` ist die Ableitung verboten.
+
+#### 0.11.3 Startschutz (Erweiterung von `src/lib/app-env.ts`, wie §0.6)
+
+| Fall | Ergebnis |
+|---|---|
+| `TRAVEL_DATA_ENABLED` ungültiger Wert (alle Umgebungen) | Start verweigert |
+| `TRAVEL_DATA_KEYS` gesetzt, aber fehlerhaft (Format, Länge, doppelte/reservierte Kennung) – alle Umgebungen | Start verweigert (kein stiller Rückfall auf die Ableitung) |
+| `staging`/`production` **und** Bereich an **und** `TRAVEL_DATA_KEYS` fehlt | **Start verweigert** – Meldung nennt nur den Variablennamen, nie Werte |
+| `staging`/`production` und Bereich aus, `TRAVEL_DATA_KEYS` fehlt | Start ok (Bereich aus) |
+| `development`/`ci`/`demo`/`preview`, `TRAVEL_DATA_KEYS` fehlt, `BETTER_AUTH_SECRET` vorhanden | Start ok, Ableitung (Kennung `demo`) |
+| `development`/`ci`/`demo`/`preview`, beides fehlt | Start ok, Bereich aus (fail closed) – in `demo`/`preview` bricht der Start ohnehin schon wegen `BETTER_AUTH_SECRET` ab (R-028) |
+| Schlüssel identisch mit `BETTER_AUTH_SECRET` bzw. dessen Base64 (Fehlkonfiguration) | Start verweigert in `staging`/`production` |
+
+Tests (Reviewer): je Zeile ein Unit-Test analog `app-env.test.ts`.
+
+#### 0.11.4 Erzeugung
+
+Je Umgebung ein **eigener** Schlüssel (staging ≠ production), nie wiederverwenden, nie aus anderen Secrets ableiten.
+
+```bash
+# Linux/macOS (auf dem Server oder offline)
+printf 't%s:%s\n' "$(date +%Y%m)" "$(openssl rand -base64 32)"
+```
+```powershell
+# Windows PowerShell
+$b = New-Object byte[] 32; [Security.Cryptography.RandomNumberGenerator]::Fill($b); "t$(Get-Date -Format yyyyMM):$([Convert]::ToBase64String($b))"
+```
+
+Die Ausgabe direkt in die Secret-Datei schreiben (unten), nicht in Chat, Ticket, Mail oder Shell-History (`HISTCONTROL=ignorespace`, Befehl mit führendem Leerzeichen).
+
+#### 0.11.5 Ablage (ab staging/production)
+
+Ziel: **Wer nur die Datenbank oder ein Backup hat, kann nichts lesen.** Deshalb Schlüssel getrennt von DB-Zugang und Backups:
+
+| Was | Wo | Wer |
+|---|---|---|
+| Laufender Schlüsselring | eigene Datei `/opt/wir-wollen-weg/<env>/secrets/travel-data.env` (Eigentümer root, Rechte `600`), **nur** per `env_file` an den Dienst `app` (und einmalig an `tools` für `travel-data:rotate`) – **nicht** an `db`, `backup`, `jobs`, `bugsink`. Nicht in der allgemeinen `.env` mit `DATABASE_URL` | Operations |
+| Sicherungskopie | Passwort-Manager des Betreibers (Eintrag „TRAVEL_DATA_KEYS <env>“, 2FA), **nicht** im Off-site-Backup-Bucket. Hinweis: Das Hetzner-VM-Image-Backup (§6.1, 7 Tage) enthält die Secret-Datei zwangsläufig mit – Zugriff nur über die Console mit 2FA; akzeptiertes Restrisiko, im TOM dokumentieren | Betreiber (Auftraggeber) |
+| Nicht | Repository, GitHub Secrets, CI-Logs, Bugsink, Vercel (die Vorschau braucht keinen), `age`-Backup-Dumps | – |
+
+Der Löschjob und die Backups brauchen den Schlüssel **nicht**. Backups enthalten nur Chiffrat (max. 30 Tage, §6.1).
+
+#### 0.11.6 Rotation – `pnpm travel-data:rotate`
+
+Anlass: **planmäßig jährlich**, außerdem sofort bei Personalwechsel mit Server-Zugang, Verdacht oder Leck (Runbook B). Da Freigaben ohnehin höchstens bis Reiseende + 7 Tage leben, ist der Bestand klein; die Rotation dauert Sekunden.
+
+1. Neuen Schlüssel erzeugen (§0.11.4) und **vorne** einfügen: `TRAVEL_DATA_KEYS=t202701:NEU,t202606:ALT`.
+2. App neu starten (`docker compose up -d app`) → neue und geänderte Freigaben nutzen `t202701`.
+3. Bestand umschlüsseln: `docker compose run --rm --env-file secrets/travel-data.env tools pnpm travel-data:rotate`.
+4. Prüfen: Skript meldet `remaining_old_keys=0` (Ausgabe nur Anzahlen je Kennung).
+5. Alten Schlüssel aus der Liste **entfernen**, App neu starten.
+6. Alten Schlüssel im Passwort-Manager als „zurückgezogen <Datum>“ markieren und **nach 30 Tagen löschen** (Backup-Fenster §6.1: so bleibt ein Restore der letzten 30 Tage lesbar; danach ist altes Chiffrat in Backups unlesbar = gewollt). **Ausnahme Leck:** sofort vernichten.
+
+Anforderungen an das Skript (Developer, Inkrement 11):
+- liest alle Zeilen mit `key_id ≠ aktiver Schlüssel`, entschlüsselt mit dem alten, verschlüsselt mit dem aktiven Schlüssel **neu** (neue 96-Bit-Nonce, gleiche AAD, gleiche `schema_version`), schreibt `ciphertext`, `nonce`, `key_id`; Werte nie ins Log;
+- **batchweise** (z. B. 200 Zeilen je Transaktion, `FOR UPDATE SKIP LOCKED`), **idempotent** (zweiter Lauf ändert nichts), nebenläufig sicher (Freigaben, die währenddessen geändert/gelöscht werden, werden übersprungen bzw. sind schon neu);
+- Option `--dry-run` (nur zählen); Exit-Code ≠ 0, wenn Zeilen mit unbekannter Kennung oder Entschlüsselungsfehler existieren (Zähler, keine IDs);
+- verweigert die Ausführung, wenn der aktive Schlüssel die Kennung `demo` hat und `APP_ENV` `staging`/`production` ist;
+- Test: Bestand mit zwei Kennungen → nach Lauf nur noch eine, alle Werte unverändert lesbar; vertauschte AAD bleibt unlesbar.
+
+#### 0.11.7 Runbook A – Schlüsselverlust (Daten unlesbar)
+
+Auslöser: Schlüssel weg (Secret-Datei gelöscht, keine Sicherungskopie) oder Entschlüsselung schlägt für alle Zeilen einer Kennung fehl.
+1. Bereich sofort aus: `TRAVEL_DATA_ENABLED=false`, App neu starten (verhindert Fehlermeldungen in Serie).
+2. Prüfen, ob die Kennung im Passwort-Manager liegt → wenn ja, wiederherstellen, fertig.
+3. Sonst: neuen Schlüssel erzeugen und als einzigen Eintrag setzen.
+4. **Alle Freigaben mit der verlorenen Kennung löschen** (Skript-Option `pnpm travel-data:rotate --purge-unreadable`, Developer liefert): Zeilen + Zugriffsprotokoll hart löschen, Antworten → *offen*, damit Gefragte neu freigeben können. Anfragen bleiben bestehen.
+5. Hinweis an Betroffene: im UI Hinweis „Deine Angaben mussten aus technischen Gründen gelöscht werden – bitte gib sie bei Bedarf neu frei“ (Wortlaut UX), an „Bucht“-Personen „Freigaben wurden zurückgesetzt“. Keine Mail mit Inhalten.
+6. Bewertung Datenpanne: Verlust der Verfügbarkeit ohne Offenlegung → nach Art. 33 DSGVO voraussichtlich **nicht meldepflichtig** (kein Risiko für die Betroffenen, die Daten können neu eingegeben werden); dennoch intern dokumentieren (Art. 33 Abs. 5).
+7. Bereich wieder einschalten, Ursache beheben (z. B. Sicherungskopie anlegen).
+
+#### 0.11.8 Runbook B – Schlüsselleck (Schlüssel möglicherweise bekannt)
+
+Auslöser: Secret-Datei/Passwort-Manager kompromittiert, Schlüssel in Log/Chat/Repo gelandet, Server-Einbruch.
+1. **Sofort rotieren** (§0.11.6 Schritte 1–5), alten Schlüssel **sofort** vernichten (keine 30 Tage).
+2. Prüfen, ob **zusätzlich** DB oder Backups abgeflossen sind – nur dann sind Inhalte tatsächlich offengelegt (Schlüssel allein reicht nicht). Zeitraum eingrenzen, betroffene Freigaben bestimmen (Anzahl, Reisen, Felder; Dokumentnummern ja/nein).
+3. Bei Leck von Schlüssel **und** Chiffrat: betroffene Freigaben vorsorglich **löschen** (wie Runbook A Schritt 4) und Betroffene informieren; Meldepflicht **Art. 33 DSGVO binnen 72 h** prüfen (Ausweisnummern → Risiko Identitätsmissbrauch, Meldung wahrscheinlich nötig), Benachrichtigung Betroffener nach Art. 34 prüfen. Datenpannen-Prozess compliance-checklist.md §7.
+4. Wenn Schlüssel über das Repository geleakt ist: Commit entfernen reicht nicht – rotieren ist die Maßnahme; zusätzlich GitHub-Secret-Scanning-Meldung prüfen.
+5. Ursache beheben, Nachbereitung im Status-Board (ohne Details mit Personenbezug).
+
+#### 0.11.9 Logs und Betrieb
+
+- Betriebs-Logs nur **anonyme Zähler** (z. B. `travel_data.release ok`, `travel_data.reveal ok`, `travel_data.reveal denied`, `travel_data.decrypt_failed`, `travel_data.retention purged=n`) – **keine** IDs von Personen, Reisen, Anfragen, Feldern, keine Kennungen von Schlüsseln mit Bezug zu Zeilen, keine Werte (R.9 I11-10, compliance-checklist.md §12).
+- Server-Aktionen des Bereichs loggen keine Argumente; Bugsink: Formularwerte und Request-Bodies des Bereichs nie als Breadcrumb/Extra.
+- `Cache-Control: no-store` auf allen Antworten des Bereichs; kein CDN-/Server-Cache.
+- **Vorschau (Vercel):** nur Fantasiedaten, Dokumentnummern technisch mit Präfix `DEMO` (R.9 I11-12); Vercel-Funktionslogs enthalten dieselben anonymen Zähler.
+
 ---
 
 > **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
@@ -402,12 +528,14 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
 | `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails; ab Inkrement 10 zusätzlich weich gelöschte Ausgaben > 24 h, §0.10). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
+| `TRAVEL_DATA_ENABLED` | nein | Feature-Schalter persönliche Reisedaten (F-054, Inkrement 11): `true` \| `false` \| leer = Standard der Umgebung (**an** in `development`/`ci`/`demo`/`preview`, **aus** in `staging`/`production`). In `production` erst nach dokumentierter **G1b-Abnahme** auf `true` (go-live.md). Ungültiger Wert → Start verweigert (§0.11.1) | leer |
+| `TRAVEL_DATA_KEYS` | ja, wenn Reisedaten in `staging`/`production` an | Schlüsselring der Feldverschlüsselung (AES-256-GCM): `kid:base64(32 Byte)`, kommagetrennt, **erster Eintrag aktiv**; eigene Datei `secrets/travel-data.env`, getrennt von `DATABASE_URL` und Backups; fehlt er bei eingeschaltetem Bereich in `staging`/`production` → Start verweigert. In `development`/`ci`/`demo`/`preview` optional – sonst HKDF-Ableitung aus `BETTER_AUTH_SECRET` (Kennung `demo`), **Vercel braucht keine neue Variable**. Rotation `pnpm travel-data:rotate`, Runbooks §0.11 | leer (Kommentar: nie echte Werte) |
 | *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: Schlüssel des (AES-256-GCM-verschlüsselten, R-076) Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
 | `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |
 | `BACKUP_AGE_RECIPIENT` | ja (prod) | öffentlicher `age`-Schlüssel zur Verschlüsselung der Dumps (privater Schlüssel **offline** beim Betreiber) | – |
-| *später v1:* `DATA_ENCRYPTION_KEYS` | v1.1 | Schlüsselring (AES-256-GCM) für Kalender-URLs/CalDAV-Passwörter (F-019, F-048) | – |
+| *später v1:* `DATA_ENCRYPTION_KEYS` | v1.1 | Schlüsselring (AES-256-GCM) für Kalender-URLs/CalDAV-Passwörter (F-019, F-048) – gleiches Format wie `TRAVEL_DATA_KEYS`, aber **eigener** Ring (Trennung der Zwecke) | – |
 | *später v1:* `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET` | v1.1 | Social Login (F-045) / Kalender (F-020) | – |
 | *später v1:* `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, `APPLE_PRIVATE_KEY` | v1.1 | Sign in with Apple (F-045) | – |
 | *später v1:* `MICROSOFT_CLIENT_ID`, `MICROSOFT_CLIENT_SECRET` | v1.2 | F-021 | – |
@@ -415,7 +543,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 
 GitHub-Secrets für Deployment (Environment `staging`/`production`): `DEPLOY_SSH_HOST`, `DEPLOY_SSH_USER`, `DEPLOY_SSH_PRIVATE_KEY`, `DEPLOY_SSH_KNOWN_HOSTS`. Container-Registry: GitHub Container Registry mit dem automatischen `GITHUB_TOKEN` (Images enthalten keine personenbezogenen Daten).
 
-Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; `BETTER_AUTH_SECRET`-Rotation meldet alle Nutzer ab (bewusst einplanen).
+Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; `BETTER_AUTH_SECRET`-Rotation meldet alle Nutzer ab (bewusst einplanen) und macht in Demo/Vorschau die abgeleiteten Reisedaten-Freigaben unlesbar (→ „Demo zurücksetzen“, §0.11.2); `TRAVEL_DATA_KEYS` nur nach §0.11.6 rotieren (neuen Schlüssel voranstellen, nie einfach ersetzen – sonst Runbook A).
 
 ## 5. Deployment-Ablauf (ab Go-Live)
 

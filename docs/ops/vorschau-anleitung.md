@@ -1,6 +1,6 @@
 # Vorschau-Anleitung – private Live-Vorschau auf Vercel + Neon
 
-Stand: 2026-10-23 (Ergänzung Inkrement 9 „Unterkünfte“: Kapitel 6 Nr. 6, Fall I) · Gepflegt von: Operations Manager · Zielgruppe: Auftraggeber (Windows-PC + Handy, keine Programmierkenntnisse nötig) · Entscheidung: PRD Q25 · Technische Referenz: [deployment.md §0.7](deployment.md)
+Stand: 2026-10-23 (Ergänzung Inkrement 11 „Reisedaten“: Kapitel 6 Nr. 7; Inkrement 9 „Unterkünfte“: Kapitel 6 Nr. 6, Fall I) · Gepflegt von: Operations Manager · Zielgruppe: Auftraggeber (Windows-PC + Handy, keine Programmierkenntnisse nötig) · Entscheidung: PRD Q25 · Technische Referenz: [deployment.md §0.7](deployment.md)
 
 Mit dieser Anleitung bekommt die App eine **feste Internet-Adresse** (z. B. `https://wir-wollen-weg.vercel.app`), die du am PC und am Handy öffnen kannst – ohne Download, ohne Docker. Die Adresse ist mit einem **Zugangspasswort** geschützt, das du selbst festlegst.
 
@@ -217,6 +217,7 @@ Das Demo-Postfach erreichst du jederzeit auch über den Link im gelben Demo-Balk
    - **Oft erscheint nur die gestreifte Platzhalterkarte.** Große Portale (Airbnb, Booking & Co.) lassen solche Abrufe häufig nicht zu. Das ist normal und kein Fehler – Titel einfach selbst eintippen.
    - Bitte nur **öffentliche Angebots-Links** einfügen, **nie** Links aus Buchungsbestätigungen, Postfächern oder persönliche Freigabe-Links – die können Namen oder Buchungsnummern enthalten (Regel „keine echten Daten“).
    - Die Bilder kommen über die App, nicht direkt vom Portal; sie werden nicht dauerhaft gespeichert.
+7. **Reisedaten (ab Inkrement 11):** Im Bereich „Reisedaten“ (Name laut Ausweis, Geburtsdatum, ggf. Ausweis- oder Passnummer) **nur Fantasiedaten** eingeben – nie echte Ausweisdaten, auch nicht die eigenen. **Dokumentnummern müssen mit `DEMO` beginnen** (z. B. `DEMO12345`); andere Nummern lehnt die Vorschau ab. Auch hier gilt: In Vercel ist **nichts** einzustellen, es gibt keine neue Variable. Wird das Geheimnis `BETTER_AUTH_SECRET` einmal geändert, sind gespeicherte Demo-Reisedaten nicht mehr lesbar – dann einfach „Demo zurücksetzen“ (Kapitel 7).
 
 ---
 

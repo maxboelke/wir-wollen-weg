@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.5 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.6 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -75,6 +75,7 @@ Seit 14.05.2024 gilt das **Digitale-Dienste-Gesetz (DDG)** statt TMG – im Impr
 | ☐ | Keine automatisierte Entscheidung i. S. d. Art. 22 (Kandidaten-Vorschläge sind unverbindliche Vorschläge, die Gruppe entscheidet) | M1 |
 | ☐ | **Unterkünfte & Link-Vorschau** (F-031, Inkrement 9): Abschnitt nach §2a (Platzhaltertext vorgemerkt) | M1 |
 | ☐ | **Kosten teilen & Zahlungsinfo** (F-035/F-036, Inkrement 10): Abschnitt nach §2b (Platzhaltertext vorgemerkt) – IBAN/Zahlungsinfo personenbezogen, für die Reise sichtbar, beim Verlassen gelöscht; keine Zahlungsabwicklung | M1 |
+| ☐ | **Persönliche Reisedaten** (F-054/F-056, Inkrement 11): Abschnitt nach §12.3 (Platzhaltertext vorgemerkt) – Einwilligung nur an die anfragende „Bucht“-Person, verschlüsselt, Zugriffsprotokoll, Löschung 7 Tage nach Reiseende; **Pflicht erst mit G1b** | G1b |
 | ☐ | Hinweis für Organisatoren: Platzhalter-Namen (F-007) sind Daten Dritter → Hinweis „nur Vornamen/Spitznamen verwenden“ in UI und Erklärung | M1 |
 | ☐ | Englische Fassung mit Hinweis „Translation – the German version is legally binding“ | M2 |
 | ☐ | Kurzfassung („Datenschutz auf einen Blick“) auf Registrierungs- und Beitrittsseite verlinkt (F-013) | M1 |
@@ -142,6 +143,7 @@ Quelle: features.md R.8 (I10-03, I10-07, I10-08, I10-09, I10-10), PRD Q35/Q31/Q2
 | ☐ | Fehler-Tracking: Bugsink selbst gehostet → **kein** AVV; bei Sentry SaaS: DPA + SCC/DPF | – | – | M1 |
 | ☐ | GitHub (Code, CI) – **keine** Nutzerdaten in Repo/CI/Logs (nur synthetische Testdaten) → kein AVV nötig; Regel im Reviewer-Check | – | – | laufend |
 | ☐ | Uptime-Dienst – ruft nur Health-Endpunkt auf, keine personenbezogenen Daten | – | – | – |
+| ☐ | Airlines, Bahn, Unterkünfte (persönliche Reisedaten, F-054) – **keine Empfänger durch uns**: die „Bucht“-Person überträgt die Angaben selbst außerhalb der App; die App hat keine Buchungsschnittstelle (§12.3) | – | – | – |
 | ☐ | Banken/Zahlungsdienste (Kosten teilen, F-035/F-036) – **keine Empfänger**: keine Anbindung, keine Zahlungsabwicklung (§2b); kein AVV | – | – | – |
 | ☐ | Unterkunfts-Portale (Link-Vorschau, F-031) – **keine Empfänger** personenbezogener Daten: Abruf durch unseren Server ohne Nutzerdaten (§2a); kein AVV | – | – | – |
 | ☐ | Ablage aller AVVs (PDF + Datum) außerhalb des Repos; Liste hier pflegen | – | – | M1 |
@@ -183,6 +185,7 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 |---|---|---|
 | ☐ | Kontoverwaltung & Anmeldung (F-040–F-043) | M1 |
 | ☐ | Reiseplanung: Reisen, Mitgliedschaften, Verfügbarkeiten, Abstimmungen (F-001–F-013); **Reise managen:** Infoseite (F-033), Unterkünfte inkl. Link-Vorschau (F-031), **Kosten teilen inkl. freiwilliger Zahlungsinfo (F-035/F-036)** | M1 |
+| ☐ | **Persönliche Reisedaten** (F-054/F-056): eigene Tätigkeit – Zweck Buchung durch eine Person der Gruppe, Rechtsgrundlage Einwilligung (Art. 6 Abs. 1 lit. a, Art. 7), Empfänger nur die anfragende Person, Löschung nach §6/§12.4, TOM §7/§12.5 | G1b |
 | ☐ | Versand von Transaktionsmails | M1 |
 | ☐ | Sicherheit: Rate-Limiting, Logs, Fehler-Tracking | M1 |
 | ☐ | Backups | M1 |
@@ -190,7 +193,7 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | ☐ | Aggregierte Nutzungsstatistik (ohne Personenbezug – dokumentieren, warum) | M1 |
 | ☐ | Je Tätigkeit: Zweck, Kategorien Betroffener/Daten, Empfänger, Drittland (nein), Löschfristen (§6), TOMs (§7) | M1 |
 
-**DSFA (Art. 35):** Für das MVP voraussichtlich nicht erforderlich (keine besonderen Kategorien, kein Profiling, keine systematische Überwachung) – Schwellwertanalyse kurz dokumentieren. **Neu bewerten vor F-048** (Speicherung von Drittanbieter-Zugangsdaten) und vor OAuth-Kalenderanbindungen.
+**DSFA (Art. 35):** Für das MVP voraussichtlich nicht erforderlich (keine besonderen Kategorien, kein Profiling, keine systematische Überwachung) – Schwellwertanalyse kurz dokumentieren. **Neu bewerten vor F-048** (Speicherung von Drittanbieter-Zugangsdaten) und vor OAuth-Kalenderanbindungen. **Für persönliche Reisedaten (F-054) und Reiseunterlagen (F-055): schlanke DSFA durchführen** (Pflichtpunkt G1b, §12.2) – Ausweisnummern sind Daten mit hohem Missbrauchsrisiko (Identitätsdiebstahl).
 
 ## 6. Löschkonzept (F-013, F-043, PRD §8)
 
@@ -219,6 +222,10 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Weich gelöschte Ausgaben (`deleted_at`) | endgültig **24 h** nach dem Löschen (praktisch 24–48 h, täglicher Lauf), spätestens mit der Reise | Löschjob `POST /api/internal/retention` (deployment.md §0.10) – **Developer setzt um**, Test mit simulierter Zeit | ☐ |
 | Zahlungsinfo (IBAN, Freitext ≤ 100 Zeichen) | sofort bei Verlassen/Entfernen, Konto-Löschung, durch die Person selbst; mit der Reise. Gelöscht, nicht ausgeblendet | Spalten an `trip_member` → verschwinden mit der Mitgliedschaft | ☐ |
 | Idempotenz-Schlüssel der Ausgaben-Formulare | 24 h eindeutig je Reise; mit der Ausgabe gelöscht | Spalte `trip_expense.idempotency_key` | ☐ |
+| **Persönliche Reisedaten – Freigabe** (verschlüsselte Werte, `travel_data_release`) + **Zugriffsprotokoll** (`travel_data_access`) (F-054) | **hart** gelöscht, jeweils sofort im auslösenden Vorgang: Widerruf durch die Person · Entfernen als Empfänger:in · «Erledigt – Daten löschen» · Entzug der Markierung „Bucht“ · anfragende oder gefragte Person verlässt die Reise / wird entfernt / löscht ihr Konto · **Reiseende + 7 Tage** (23:59 `APP_TIME_ZONE`; Terminänderung verschiebt das Datum) · **Festlegung aufgehoben + 30 Tage** ohne neue Festlegung · Reise gelöscht. Protokoll lebt genau so lange wie die Freigabe | Transaktion im Vorgang + FK-Kaskaden; Löschjob täglich als Sicherheitsnetz; Lese-Pfad liefert nach Frist nie Werte (features.md R.9 I11-10) | ☐ |
+| Reisedaten-Anfragen (Hülle: Zweck, Feldliste, Zustände, Zeitstempel – ohne Werte) | mit der Reise (90 Tage, F-013) | `travel_data_request` Cascade | ☐ |
+| Markierung „Bucht“ | endet mit der Mitgliedschaft | Spalte an `trip_member` | ☐ |
+| Reisedaten in Backups | nur Chiffrat; verschwindet mit der Backup-Rotation (max. 30 Tage); ohne Schlüssel unlesbar (deployment.md §0.11.5) | – | ☐ |
 | *v1:* Kalender-Rohdaten | nie speichern, nur im Arbeitsspeicher (F-006) | Code-Review | ☐ |
 | *v1:* gespeicherte Kalender-URLs/CalDAV-Passwörter | bei Trennen, Festlegung der Reise (Sync-Ende), Konto-Löschung | verschlüsselt, Cascade | ☐ |
 
@@ -237,8 +244,9 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 | ☐ | **SSRF-Schutz** für ausgehende Abrufe (Link-Vorschau/Bild-Proxy, F-031): nur `https`/443, DNS-Pinning, private Netze gesperrt, Limits, kein offener Proxy (features.md R.7); ab Go-Live zusätzlich Egress-Sperre auf dem Host (deployment.md §0.8, §5.1) | mit Inkrement 9 / M1 |
 | ☐ | **Kosten teilen – nichts in Logs/Mails/Teilen-Texten (F-035/F-036, Inkrement 10):** Ausgaben-**Titel**, **Beträge**, **IBAN** und **Freitext der Zahlungsinfo** erscheinen nie in Server-/Zugriffs-Logs, Fehler-Tracking (Bugsink-Scrubbing, keine Formularwerte in Breadcrumbs), Analytics/Statistik, Mails (Lösch-Hinweis nur „{n} Ausgleiche offen“), URLs/Query-Parametern oder Meta-Tags. Teilen-/Erinnern-Texte (I10-08/I10-09) nur mit Namen, Ausgleichsbeträgen und Link – **nie** IBAN, Freitext, Titel oder Einzelausgaben. Prüfpunkt Reviewer: Code-Suche nach `console.*`/Logger-Aufrufen in Kosten-Modulen, Fehlermeldungen ohne Eingabewerte, E2E-Prüfung Teilen-Text und Mail-Inhalt (Demo-Postfach) | mit Inkrement 10 / laufend |
 | ☐ | **Kosten teilen – Eingaben & Zugriff:** IBAN nur nach Prüfung (Format, Länderlänge, Mod 97) gespeichert, Freitext/Titel nur als Text (kein HTML, keine Auto-Links); Zahlungsinfo nur an Mitglieder der Reise, nie auf Einladungsseite/Vorschau; Rechte und Abschluss serverseitig geprüft; Konfliktschutz (`version`) und Idempotenz gegen Doppelbuchungen; Rate-Limits nach R.8 | mit Inkrement 10 |
+| ☐ | **Persönliche Reisedaten (F-054, Inkrement 11):** anwendungsseitige Feldverschlüsselung AES-256-GCM mit AAD, Schlüssel außerhalb der DB (`TRAVEL_DATA_KEYS`, getrennte Ablage, Rotation, Runbooks – deployment.md §0.11); Rechte serverseitig (Orga ohne „Bucht“ nie Inhalte); Maskierung serverseitig, Klartext nur per protokolliertem Anzeigen/Kopieren; Re-Authentifizierung für Dokumentnummern; `Cache-Control: no-store`; Werte nie in Logs, Mails, URLs, Fehler-Tracking, Browser-Speichern; Betriebs-Logs nur anonyme Zähler (§12.5) | Inkrement 11 / G1b |
 | ☐ | **Content-Security-Policy**: Stufe 1 (`img-src 'self'` u. a.) mit Inkrement 9, Stufe 2 (Nonce) vor M1 (deployment.md §0.9) | Inkrement 9 / M1 |
-| ☐ | **Datenpannen-Prozess** (Art. 33/34): Erkennen → bewerten → Meldung an Aufsichtsbehörde binnen 72 h → ggf. Betroffene informieren; Kontaktdaten der Behörde notieren | M2 |
+| ☐ | **Datenpannen-Prozess** (Art. 33/34): Erkennen → bewerten → Meldung an Aufsichtsbehörde binnen 72 h → ggf. Betroffene informieren; Kontaktdaten der Behörde notieren; **vorgezogen auf G1b**, falls Reisedaten vor M2 eingeschaltet werden (Runbook B, deployment.md §0.11.8) | M2 / G1b |
 | ☐ | `security.txt` mit Kontakt für Sicherheitsmeldungen | M2 |
 
 ### 7a. Dokumentierte Ausnahme: Einladungs-Token im Klartext (R-037)
@@ -302,8 +310,104 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 
 ---
 
+## 12. Gate G1b – persönliche Reisedaten (F-054 Stufe 1 + F-056, Inkrement 11)
+
+Quelle: features.md **R.9** (I11-10, I11-12, „Verschlüsselung & Schlüssel“, „Sicherheit“, „Datenhaltung“), roadmap.md „Gate G1b“, PRD §8 NFR „Sensible Reisedaten & Dateien“, Q28–Q31, Q36. **G1b kommt zusätzlich zu G1** (go-live.md Stufe 2): Erst wenn die App mit echten Daten auf EU-Hosting läuft **und** alle Punkte unten ☑ sind, darf `TRAVEL_DATA_ENABLED=true` in `production` gesetzt werden (deployment.md §0.11.1). Bis dahin: Demo und Vorschau nur mit Fantasiedaten. Die dateibezogenen G1b-Punkte (Objektspeicher, Virenscan, Upload-Härtung, DSA-Meldeweg – F-055, Inkrement 12) werden mit Inkrement 12 hier ergänzt.
+
+**Entwurf, keine Rechtsberatung** – die rechtlichen Punkte (§12.2, §12.3) gehören in die Rechtsprüfung (Q16).
+
+### 12.1 Abnahme vor dem Einschalten in Produktion
+
+| ☐ | Pflichtpunkt | Wer | Bezug |
+|---|---|---|---|
+| ☐ | G1 (go-live.md Stufe 1 + 2) bestanden – Produktion auf EU-Hosting, echte Rechtstexte, Backups mit Restore-Test | Auftraggeber, Operations | go-live.md |
+| ☐ | Alle Punkte §12.2–§12.7 ☑ | Operations | – |
+| ☐ | **Security-Review Reisedaten** durch den Reviewer bestanden (Rechte je Zeile der R.9-Rechtetabelle, „Orga ohne Bucht nie Inhalte“ auch per direkter Server-Aktion, Löschung je Auslöser mit verschobener Uhr, Re-Authentifizierung, keine Werte in Logs/Antworten – Suchtest mit Demo-Werten) | Reviewer | R.9 „Sicherheit“ |
+| ☐ | Test auf **Staging** mit eigenem `TRAVEL_DATA_KEYS` und synthetischen Daten: Startschutz (an ohne Schlüssel → kein Start), eine Rotation `pnpm travel-data:rotate` und Runbook A als Trockenübung durchgespielt, Ergebnis im Status-Board | Operations, Developer | deployment.md §0.11 |
+| ☐ | Abnahme durch den Auftraggeber dokumentiert (Freigabe-Tabelle go-live.md, Zeile G1b) – **erst danach** `TRAVEL_DATA_ENABLED=true` in `production` | Auftraggeber, CEO | go-live.md |
+
+### 12.2 Datenschutz-Folgenabschätzung (DSFA, Art. 35 DSGVO)
+
+Einschätzung Operations: Reisedaten sind keine besonderen Kategorien (Art. 9), aber **Ausweis-/Passnummern** sind Daten mit hohem Missbrauchsrisiko (Identitätsdiebstahl, Buchungsbetrug), dazu Geburtsdaten und Staatsangehörigkeit, Verarbeitung innerhalb privater Gruppen. Das trifft mindestens das Kriterium „vertrauliche/höchstpersönliche Daten“ der Art.-29-Leitlinien (WP 248); ob ein zweites Kriterium greift, ist strittig. **Empfehlung: schlanke DSFA durchführen** statt nur Schwellwertanalyse – Aufwand klein, Nutzen hoch (Nachweis, Vertrauen).
+
+| ☐ | Inhalt | Wer |
+|---|---|---|
+| ☐ | Systematische Beschreibung: Zweck (Buchung durch eine Person der Gruppe), Datenarten (Feldliste R.9), Betroffene (Mitreisende), Empfänger (nur anfragende „Bucht“-Person), Fristen (§12.4), Ablauf Anfrage → Einwilligung → Anzeigen/Kopieren → Löschung | Operations |
+| ☐ | Notwendigkeit/Verhältnismäßigkeit: Datensparsamkeit (Standard nur Name laut Ausweis + Geburtsdatum, weitere Felder nur auf ausdrückliche Anfrage mit Warnhinweis, nie Scans/Fotos/Adresse/Freitext – Q29), Einwilligung je Zweck und Empfänger:in, Widerruf jederzeit, kurze Löschfrist | Operations |
+| ☐ | Risiken: Leck (DB + Schlüssel), Missbrauch durch die „Bucht“-Person (Weitergabe), Social Engineering (falsche Anfrage in der Gruppe), Kontoübernahme der „Bucht“-Person, Fehlbedienung (falsche Person markiert), Daten in Logs/Backups | Operations |
+| ☐ | Maßnahmen je Risiko: Feldverschlüsselung + getrennter Schlüssel, Zugriffsprotokoll für die betroffene Person, Re-Authentifizierung für Dokumentnummern, Rate-Limits gegen Absaugen, Maskierung, Löschregeln, Log-Regeln (§12.5), Backups ≤ 30 Tage | Operations, Developer |
+| ☐ | Restrisiko bewertet; ggf. Konsultation der Aufsichtsbehörde (Art. 36) – voraussichtlich nicht nötig | Operations → Rechtsprüfung |
+| ☐ | DSFA vor dem Einschalten abgeschlossen, Ablage außerhalb des Repos (oder `docs/ops/dsfa-reisedaten.md` ohne personenbezogene Daten), Überprüfung bei Änderungen (z. B. neue Felder, F-055) | Operations |
+
+### 12.3 Rechtliche Prüfung und Datenschutzerklärung
+
+| ☐ | Punkt | Wer | Fällig |
+|---|---|---|---|
+| ☐ | **Ausweis- und Passnummern – PAuswG/PassG:** prüfen lassen, ob und wie die Seriennummer (Dokumentnummer) gespeichert werden darf. Nach unserem Verständnis verbieten § 20 PAuswG bzw. § 16 PassG v. a., die Seriennummer zum **Abruf** personenbezogener Daten aus Dateien oder zur **Verknüpfung** von Dateien zu verwenden; das Ablichten/Speichern von Ausweisen ist nur eingeschränkt erlaubt. Unser Entwurf ist darauf ausgerichtet: Nummer nur verschlüsselt im Datensatz der Freigabe, **kein Index, keine Suche, kein Abgleich** zwischen Reisen/Personen, kein Hash zur Wiedererkennung, keine Scans, Zweck nur Buchung, kurze Löschfrist. Ergebnis der Prüfung dokumentieren; falls unzulässig → Feld `document` in `production` deaktivieren (nur Name + Geburtsdatum) | Rechtsprüfung (Q16), Operations bereitet vor | G1b |
+| ☐ | **Einwilligung** (Art. 6 Abs. 1 lit. a, Art. 7): Wortlaut DE/EN mit Version; Löschregel statt festem Datum („7 Tage nach der Reise, derzeit {Datum}“) als zulässig bestätigen; Widerruf so leicht wie Erteilung (Kachel, W20 D); Mindestalter 16 (Art. 8) – Registrierung ab 16 deckt das ab | Rechtsprüfung | G1b |
+| ☐ | **Datenschutzerklärung:** Abschnitt „Persönliche Reisedaten“ (Platzhaltertext unten) in DE (verbindlich) + EN; bis G1b in Demo/Vorschau nur als Platzhalter-Gliederung (§0a) | Developer (Platzhalter mit Inkrement 11), Operations → Rechtsprüfung (Endfassung) | Platzhalter: Inkrement 11; Endfassung: G1b |
+| ☐ | Nutzungsbedingungen (M2, §9): Pflichten der „Bucht“-Person (Daten nur für die angefragte Buchung verwenden, nicht weitergeben, nach Buchung «Erledigt – Daten löschen») | Operations → Rechtsprüfung | G1b bzw. M2 |
+| ☐ | VVT-Eintrag (§5) und TOM (§7) ergänzt | Operations | G1b |
+
+**Platzhaltertext (Stichpunkte, Entwurf):**
+
+> **Persönliche Reisedaten (z. B. für Flug- oder Bahntickets)**
+> - **Wozu:** Für eine Buchung kann eine Person eurer Gruppe, die die Orga als „Bucht“ markiert hat, bei dir gezielt die nötigen Angaben anfragen – damit sie nicht im Gruppenchat landen.
+> - **Welche Angaben:** standardmäßig nur **Name laut Ausweis** und **Geburtsdatum**. Nur wenn die anfragende Person es ausdrücklich auswählt, zusätzlich `[PLATZHALTER: Dokumentart und -nummer, Ablaufdatum, Ausstellungsland, Staatsangehörigkeit – Feldliste final nach Rechtsprüfung PAuswG/PassG]`. Wir speichern **nie** Ausweis-Scans oder -Fotos, keine Adresse und keinen Freitext.
+> - **Rechtsgrundlage:** deine **Einwilligung** (Art. 6 Abs. 1 lit. a DSGVO). Du entscheidest je Anfrage, ob du deine Angaben freigibst; ablehnen ist ohne Nachteil möglich („Ich kläre das direkt“).
+> - **Wer sie sieht:** **nur** die Person, die angefragt hat – nicht die Orga (sofern sie nicht selbst angefragt hat), nicht die übrigen Mitglieder, nicht wir als Betreiber im normalen Betrieb. Die Angaben werden in der App gekürzt angezeigt; vollständig sieht sie die anfragende Person nur durch bewusstes Anzeigen oder Kopieren. Für Dokumentnummern muss sie sich dafür frisch anmelden.
+> - **Zugriffsprotokoll:** Du siehst, wann die anfragende Person deine Angaben angezeigt oder kopiert hat. Das Protokoll wird zusammen mit deinen Angaben gelöscht.
+> - **Sicherheit:** Die Angaben werden zusätzlich zur Verschlüsselung der Datenbank **einzeln verschlüsselt** gespeichert; der Schlüssel liegt getrennt von der Datenbank.
+> - **Weitergabe:** Wir geben die Angaben an niemanden weiter. Die anfragende Person nutzt sie selbst für die Buchung bei einem Anbieter (z. B. Airline, Bahn, Unterkunft) – für diese Übermittlung ist sie bzw. der Anbieter verantwortlich `[PLATZHALTER: Rollenverteilung/Verantwortlichkeit – Rechtsprüfung]`.
+> - **Löschung:** spätestens **7 Tage nach dem Ende der Reise** (ändert sich der Reisezeitraum, verschiebt sich das Datum – du wirst darauf hingewiesen). **Sofort**, wenn du deine Freigabe zurückziehst, die anfragende Person „fertig“ meldet, ihr die Markierung „Bucht“ entzogen wird, du oder sie die Reise verlasst oder das Konto löscht, oder wenn die Reise gelöscht wird; 30 Tage nach einer aufgehobenen Festlegung ohne neuen Termin. Aus Sicherungskopien verschwinden die (verschlüsselten) Daten spätestens nach 30 Tagen.
+> - **Widerruf:** jederzeit in der App unter „Reisedaten“ – mit sofortiger Löschung. Die Rechtmäßigkeit der bis dahin erfolgten Verarbeitung bleibt unberührt (Art. 7 Abs. 3).
+> - **Auskunft/Export:** Der Datenexport enthält deine eigenen Freigaben im Klartext samt Zugriffsprotokoll; als „Bucht“-Person nur deine Anfragen ohne Angaben anderer.
+
+### 12.4 Löschkonzept Reisedaten – Prüfpunkte (Tabelle §6)
+
+| ☐ | Auslöser | Ergebnis | Nachweis |
+|---|---|---|---|
+| ☐ | **Widerruf** durch die Person | ihre Freigabe + Protokoll sofort hart gelöscht, Antwort wieder *offen* | Test |
+| ☐ | **Entzug** der Markierung „Bucht“ | alle Freigaben aller Anfragen dieser Person gelöscht, Anfragen *erloschen* | Test |
+| ☐ | **Verlassen / Entfernen** (anfragende oder gefragte Person) | wie Entzug bzw. alle Freigaben der gefragten Person in der Reise | Test |
+| ☐ | **Konto löschen** (F-043) | wie Verlassen, in allen Reisen, vor der Konto-Löschung im selben Ablauf | Test |
+| ☐ | **Reiseende + 7 Tage** (23:59 `APP_TIME_ZONE`) | alle Freigaben der Reise; Lese-Pfad liefert schon vor dem Löschjob nichts mehr | Test mit verschobener Uhr |
+| ☐ | **Festlegung aufgehoben + 30 Tage** ohne neue Festlegung | alle Freigaben der Reise | Test mit verschobener Uhr |
+| ☐ | «Erledigt – Daten löschen», Empfänger:in entfernt, Reise gelöscht | wie §6 | Test |
+| ☐ | Löschjob läuft täglich (Produktion: Timer `jobs`, deployment.md §5.2) und braucht keinen Schlüssel | Lauf geloggt nur mit Anzahlen | Staging-Lauf |
+| ☐ | Restore-Runbook: nach Restore Löschungen der letzten 30 Tage erneut anwenden – für Reisedaten genügt ein Löschjob-Lauf direkt nach dem Restore (Fristen + Sicherheitsnetz) | Runbook | OPS-4 |
+
+### 12.5 Log-Regeln (nur anonyme Zähler)
+
+| ☐ | Regel | Prüfung |
+|---|---|---|
+| ☐ | App-/Funktions-Logs zum Bereich enthalten **nur anonyme Zähler** (z. B. `travel_data.release ok`, `travel_data.reveal ok/denied`, `travel_data.decrypt_failed`, `travel_data.retention purged=n`) – **keine** IDs von Personen, Reisen, Anfragen oder Feldern, keine Namen, keine Werte, keinen Zweck-Text | Code-Suche (`console.*`, Logger) in den Modulen; E2E-Lauf mit Demo-Werten, Logs auf die Werte durchsuchen (keine Treffer) |
+| ☐ | Server-Aktionen loggen keine Argumente; Fehlermeldungen generisch, ohne Inhalte/Krypto-Details | Review |
+| ☐ | Bugsink: keine Request-Bodies/Formularwerte des Bereichs, Breadcrumbs ohne Werte; Pfade `/trips/{id}/travel-data/{requestId}` dürfen IDs enthalten, aber keine Werte | Test-Ereignis |
+| ☐ | Caddy-Zugriffslog: nur Pfad (IDs, keine Werte – Werte stehen nie in URLs/Query) | Abnahmetest wie R-037 |
+| ☐ | Keine Werte in Mails (Stufe 1: keine Mails des Bereichs), Teilen-/Erinnern-Texten, Seitentiteln, Snackbars, Cookies, `localStorage`/`sessionStorage`, Server-Caches, RSC-Payload der Erstansicht | Review + E2E |
+| ☐ | Zugriffsprotokoll ist **kein** Sicherheitslog – es lebt nur so lange wie die Freigabe; kein separates Audit-Log mit Personenbezug | Review |
+
+### 12.6 Demo und Vorschau (bis G1b)
+
+| ☐ | Prüfpunkt | Wer |
+|---|---|---|
+| ☐ | **DEMO-Präfix in der Vorschau:** Auf der Vercel-Vorschau wird eine Dokumentnummer ohne `DEMO`-Präfix serverseitig abgelehnt («In der Demo nur Fantasie-Nummern, die mit DEMO beginnen.»); gilt auch für Docker-Demo, `development`, `ci`. Test sowohl per UI als auch per direkter Server-Aktion | Reviewer (Abnahmefall R.9), CEO prüft einmal live in der Vorschau |
+| ☐ | Hinweis «Demo – bitte keine echten Ausweisdaten eingeben.» nicht wegklickbar in Schritt 1, Schritt 2, neuer Anfrage und „Bucht“-Sicht | Reviewer |
+| ☐ | Demo-Seed nur mit Fantasie-Namen/-Geburtsdaten, Dokumentnummern mit `DEMO`; „Demo zurücksetzen“ löscht alle Reisedaten | Reviewer |
+| ☐ | In `staging`/`production` ist der Bereich standardmäßig **aus**; Ableitung des Schlüssels aus `BETTER_AUTH_SECRET` dort verboten (Startschutz) | Reviewer (Unit-Tests `app-env`) |
+| ☐ | Vorschau-Anleitung enthält die Regel „nur Fantasiedaten, Dokumentnummern mit DEMO“ (vorschau-anleitung.md §6 Nr. 7) | Operations ☑ (2026-10-23) |
+
+### 12.7 Schlüssel und Betrieb
+
+| ☐ | Prüfpunkt | Wer |
+|---|---|---|
+| ☐ | `TRAVEL_DATA_KEYS` für `production` erzeugt, in `secrets/travel-data.env` (600, nur Dienst `app`) und als Sicherungskopie im Passwort-Manager des Betreibers; nicht im Repo, nicht in GitHub Secrets, nicht im Off-site-Backup | Operations, Auftraggeber |
+| ☐ | Rotationsrhythmus (jährlich + anlassbezogen) und Runbooks A (Verlust) / B (Leck) übernommen; Runbook B im Datenpannen-Prozess (§7) verlinkt | Operations |
+| ☐ | Zugriff auf Server/Secret-Datei nur für benannte Personen mit 2FA/SSH-Schlüssel | Operations |
+
 ## Quellen (Abruf 2026-10-08)
 
 - BFSG/Kleinstunternehmen: [IHK – Barrierefreiheitsstärkungsgesetz](https://www.ihk.de/karlsruhe/fachthemen/recht/internetrecht/fallback1433495812828/bfsg-6348406), [Händlerbund – Ausnahme Kleinstunternehmen](https://ohn.haendlerbund.de/recht/rechtsfragen/kleinstunternehmen-bfsg-ausnahme), [e-recht24 – BFSG](https://www.e-recht24.de/ecommerce/13236-barrierefreiheitsstaerkungsgesetz.html)
 - Widerrufsbutton: [Noerr – Umsetzungsgesetz veröffentlicht](https://www.noerr.com/de/insights/umsetzungsgesetz-zum-widerrufsbutton-veroeffentlicht), [Bitkom-Praxisleitfaden](https://www.bitkom.org/sites/main/files/2026-05/bitkom-praxisleitfaden-zur-umsetzung-des-widerrufsbuttons.pdf), [EVZ – Widerrufsbutton](https://www.evz.de/themen/einkaufen-digitales/online-handel/widerrufsbutton/)
-- Übrige Angaben (DDG, TDDDG, DSGVO, BDSG, OS-Plattform) aus Fachwissen, nicht tagesaktuell recherchiert – bei der rechtlichen Prüfung bestätigen lassen.
+- Übrige Angaben (DDG, TDDDG, DSGVO, BDSG, OS-Plattform, PAuswG, PassG, Art.-29-Leitlinien WP 248 zur DSFA) aus Fachwissen, nicht tagesaktuell recherchiert – bei der rechtlichen Prüfung bestätigen lassen.
