@@ -125,6 +125,12 @@ export async function LegalPage({ kind, locale }: { kind: Kind; locale: Locale }
                 })}
               </p>
               <p>
+                {t.rich("imprint.linkPreview", {
+                  hp: external("https://github.com/fb55/htmlparser2"),
+                  undici: external("https://github.com/nodejs/undici"),
+                })}
+              </p>
+              <p>
                 {t.rich("imprint.fonts", {
                   ofl: external("https://openfontlicense.org"),
                 })}

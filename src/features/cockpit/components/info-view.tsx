@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Tile } from "@/components/ui/card";
@@ -38,11 +39,14 @@ export async function InfoView({
   info,
   canEdit,
   editHref,
+  stayHref = null,
 }: {
   view: TripView;
   info: TripInfoView | null;
   canEdit: boolean;
   editHref: string;
+  /** A place to stay is picked (W22 D): «Zur Unterkunft ›» on the card «Unterkunft». */
+  stayHref?: string | null;
 }) {
   const t = await getTranslations("tripInfo");
   const { trip, format } = view;
@@ -157,6 +161,11 @@ export async function InfoView({
               </div>
             ) : null}
           </dl>
+          {stayHref && info.stayName ? (
+            <Link className={styles.mapLink} href={stayHref}>
+              {`${t("toStay")} ›`}
+            </Link>
+          ) : null}
         </section>
       ) : null}
       {info.meetingPoint ? (

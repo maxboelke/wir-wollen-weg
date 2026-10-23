@@ -58,6 +58,10 @@ describe("remind texts (ux-spec §14.1, §14.2)", () => {
     trip: TRIP,
     link: LINK,
     deadline: "Fr., 14. Mai",
+    // Places to stay (Increment 9, W16 v2.14): `stay-rate` / `stay-book`.
+    count: 3,
+    booker: "Lena",
+    stay: "Kamena Kuća – Steinhaus",
   };
 
   it("name the person, carry the link and stay ≤ 300 characters (typical trip name)", () => {

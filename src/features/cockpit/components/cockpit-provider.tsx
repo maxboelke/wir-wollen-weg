@@ -11,6 +11,13 @@ import { useToast } from "@/components/ui/toast";
 import { PersonRow } from "@/features/trips/components/person-row";
 import { RemindMessage } from "@/features/trips/components/remind-message";
 import { SharePanel } from "@/features/trips/components/share-panel";
+import { stayWithoutAppAction } from "@/features/stays/actions";
+import { StayWithoutAppConfirm } from "@/features/stays/components/without-app-confirm";
+import {
+  StayRemindBody,
+  useStayRemindTitle,
+  type StayRemindStep,
+} from "@/features/stays/components/stay-remind";
 import { announcedAction, withoutAppAction } from "../actions";
 import type { CockpitAction, CockpitSheetData, SheetPlaceholder } from "../types";
 import styles from "./sheets.module.css";
@@ -19,7 +26,11 @@ type Open =
   | { kind: "members" }
   | { kind: "decided" }
   | { kind: "announce" }
-  | { kind: "remind"; occasion: "placeholder" | "orga"; keys: string[]; key?: string | undefined };
+  | { kind: "remind"; occasion: "placeholder" | "orga"; keys: string[]; key?: string | undefined }
+  /** Places to stay (W16 v2.14): reminders `stay-rate` / `stay-fix` / `stay-book`. */
+  | { kind: "stay"; step: StayRemindStep }
+  /** UX-9 V3 «Unterkunft ohne App erledigt?» (W18 E.7.5) – confirmation first. */
+  | { kind: "stayWithoutApp" };
 
 interface CockpitContextValue {
   data: CockpitSheetData;
@@ -54,6 +65,7 @@ export function CockpitProvider({
   const tCommon = useTranslations("common");
   const tRemind = useTranslations("remind");
   const tResult = useTranslations("poll.result");
+  const tStays = useTranslations("stays");
   const router = useRouter();
   const toast = useToast();
   const [sheet, setSheet] = useState<Open | null>(null);
@@ -97,9 +109,36 @@ export function CockpitProvider({
     [data.publicId, router, t, toast],
   );
 
+  const stayWithoutApp = useCallback(
+    (on: boolean) => {
+      setPending(true);
+      void stayWithoutAppAction(data.publicId, on)
+        .then((result) => {
+          if (result.ok) {
+            setSheet(null);
+            toast({ message: t(on ? "v3.withoutAppDone" : "v3.withoutAppUndone") });
+            router.refresh();
+          } else {
+            toast({ message: t("toast.error") });
+          }
+        })
+        .catch(() => {
+          toast({ message: t("toast.error") });
+        })
+        .finally(() => {
+          setPending(false);
+        });
+    },
+    [data.publicId, router, t, toast],
+  );
+
   const run = useCallback(
     (action: CockpitAction) => {
       switch (action.kind) {
+        case "stayWithoutApp":
+          if (action.on) setSheet({ kind: "stayWithoutApp" });
+          else stayWithoutApp(false);
+          return;
         case "sheet":
           setSheet({ kind: action.sheet });
           return;
@@ -113,12 +152,13 @@ export function CockpitProvider({
           router.push(action.href);
       }
     },
-    [router, withoutApp],
+    [router, withoutApp, stayWithoutApp],
   );
 
   const value = useMemo(() => ({ data, open: setSheet, run, pending }), [data, run, pending]);
 
   const placeholder = (key: string | undefined) => data.placeholders.find((p) => p.id === key);
+  const stayTitle = useStayRemindTitle(data.stayRemind ?? EMPTY_STAY_REMIND);
   const title = (() => {
     switch (shown.kind) {
       case "members":
@@ -127,6 +167,10 @@ export function CockpitProvider({
         return t("decided.title");
       case "announce":
         return tResult("tellEveryone");
+      case "stay":
+        return stayTitle(shown.step);
+      case "stayWithoutApp":
+        return tStays("withoutApp.title");
       case "remind": {
         const subject = placeholder(
           shown.key ?? (shown.keys.length === 1 ? shown.keys[0] : undefined),
@@ -145,7 +189,11 @@ export function CockpitProvider({
         onClose={close}
         title={title}
         closeLabel={tCommon("close")}
-        focusKey={shown.kind + (shown.kind === "remind" ? (shown.key ?? "list") : "")}
+        focusKey={
+          shown.kind +
+          (shown.kind === "remind" ? (shown.key ?? "list") : "") +
+          (shown.kind === "stay" ? shown.step.occasion + (shown.step.key ?? "") : "")
+        }
         back={
           shown.kind === "remind" && shown.key && shown.keys.length > 1
             ? {
@@ -154,7 +202,14 @@ export function CockpitProvider({
                   setSheet({ ...shown, key: undefined });
                 },
               }
-            : undefined
+            : shown.kind === "stay" && shown.step.occasion === "stay-rate" && shown.step.key
+              ? {
+                  label: tRemind("back"),
+                  onClick: () => {
+                    setSheet({ kind: "stay", step: { occasion: "stay-rate" } });
+                  },
+                }
+              : undefined
         }
       >
         {!opened ? null : (
@@ -164,6 +219,10 @@ export function CockpitProvider({
             pending={pending}
             onOpen={setSheet}
             onWithoutApp={withoutApp}
+            onStayWithoutApp={() => {
+              stayWithoutApp(true);
+            }}
+            onCancel={close}
             onShared={() => {
               if (announced.current) return;
               announced.current = true;
@@ -182,6 +241,8 @@ function SheetBody({
   pending,
   onOpen,
   onWithoutApp,
+  onStayWithoutApp,
+  onCancel,
   onShared,
 }: {
   shown: Open;
@@ -189,9 +250,25 @@ function SheetBody({
   pending: boolean;
   onOpen: (sheet: Open) => void;
   onWithoutApp: (id: string, name: string, on: boolean) => void;
+  onStayWithoutApp: () => void;
+  onCancel: () => void;
   onShared: () => void;
 }) {
   switch (shown.kind) {
+    case "stay":
+      return data.stayRemind ? (
+        <StayRemindBody
+          data={data.stayRemind}
+          step={shown.step}
+          onStep={(step) => {
+            onOpen({ kind: "stay", step });
+          }}
+        />
+      ) : null;
+    case "stayWithoutApp":
+      return (
+        <StayWithoutAppConfirm pending={pending} onConfirm={onStayWithoutApp} onCancel={onCancel} />
+      );
     case "members":
       return (
         <MembersBody data={data} pending={pending} onOpen={onOpen} onWithoutApp={onWithoutApp} />
@@ -212,6 +289,20 @@ function SheetBody({
       return <RemindBody shown={shown} data={data} onOpen={onOpen} />;
   }
 }
+
+const EMPTY_STAY_REMIND: NonNullable<CockpitSheetData["stayRemind"]> = {
+  tripName: "",
+  orgaName: "",
+  isOrganizer: false,
+  defaultLocale: "en",
+  swipeHref: "",
+  progress: { done: 0, total: 0 },
+  open: [],
+  done: [],
+  allTexts: null,
+  fix: null,
+  book: null,
+};
 
 function MembersBody({
   data,

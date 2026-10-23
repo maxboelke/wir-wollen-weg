@@ -2,6 +2,7 @@ import type { TileTone } from "@/components/ui/card";
 import type { IconName } from "@/components/ui/icon";
 import type { Locale } from "@/i18n/config";
 import type { StationState } from "@/lib/trip-route";
+import type { StayRemindData } from "../stays/remind-types";
 
 /**
  * Serialisable view model of the «Reiseverlauf» cockpit (W16 v2): every text is resolved on
@@ -16,7 +17,11 @@ export type CockpitLink = { kind: "sheet"; sheet: CockpitSheet } | { kind: "path
 export type CockpitAction =
   | CockpitLink
   | { kind: "announce" }
-  | { kind: "withoutApp"; placeholderId: string; name: string; on: boolean };
+  | { kind: "withoutApp"; placeholderId: string; name: string; on: boolean }
+  /** UX-9 for V3 «Haben wir schon / brauchen wir nicht» – on: confirm dialog first. */
+  | { kind: "stayWithoutApp"; on: boolean };
+
+export type RemindOccasion = "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book";
 
 export interface StationView {
   id: string;
@@ -32,7 +37,11 @@ export interface StationView {
   icon: IconName;
   tone: Exclude<TileTone, "brand">;
   primary?: { label: string; action: CockpitAction; variant: "primary" | "secondary" };
-  remind?: { occasion: "placeholder" | "orga"; keys: string[]; label: string; name: string };
+  remind?: { occasion: RemindOccasion; keys: string[]; label: string; name: string };
+  /** Expanded status of the first «Heute» card (W16 v2.14). */
+  detail?: string;
+  /** Decorative progress bar (0–1). */
+  progress?: number;
   textActions?: { label: string; action: CockpitAction }[];
   offline?: boolean;
   unused?: boolean;
@@ -140,4 +149,6 @@ export interface CockpitSheetData {
   decided: DecidedView;
   inviteHref: string | null;
   manageHref: string | null;
+  /** Stay reminders (W16 v2.14) – null when the area has nothing to remind. */
+  stayRemind: StayRemindData | null;
 }

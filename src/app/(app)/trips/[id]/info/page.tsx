@@ -10,6 +10,7 @@ import { loadTripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { canEditTripInfo } from "@/lib/trip-info";
 import { getTripInfo } from "@/server/cockpit";
+import { listStays } from "@/server/stays/db";
 
 type Params = PageProps<"/trips/[id]/info">;
 
@@ -32,7 +33,12 @@ export default async function TripInfoPage({ params }: Params) {
   const view = await loadTripView(id, `/trips/${id}/info`);
   const { trip } = view;
   if (trip.phase !== "fixed") redirect(tripPath(trip.publicId));
-  const [t, info] = await Promise.all([getTranslations("tripInfo"), getTripInfo(trip.id)]);
+  const [t, info, stays] = await Promise.all([
+    getTranslations("tripInfo"),
+    getTripInfo(trip.id),
+    listStays(trip.id),
+  ]);
+  const stayPicked = stays.some((s) => s.chosenAt !== null);
   const canEdit = canEditTripInfo(view.me);
   const editHref = `${tripPath(trip.publicId)}/info/edit`;
   return (
@@ -50,7 +56,13 @@ export default async function TripInfoPage({ params }: Params) {
       }
     >
       <h1 className="visually-hidden">{`${t("title")} · ${trip.name}`}</h1>
-      <InfoView view={view} info={info} canEdit={canEdit} editHref={editHref} />
+      <InfoView
+        view={view}
+        info={info}
+        canEdit={canEdit}
+        editHref={editHref}
+        stayHref={stayPicked ? `${tripPath(trip.publicId)}/stays` : null}
+      />
     </TripShell>
   );
 }

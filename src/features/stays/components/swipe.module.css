@@ -1,0 +1,410 @@
+/* «Unterkünfte bewerten» – W18 E.5, design-system §9.21, motion W18-A / W18-01 – W18-18 */
+.deck {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  width: 100%;
+  max-width: var(--ww-stay-card-max-w);
+  margin-inline: auto;
+  overflow-x: clip;
+  container-type: inline-size;
+}
+
+.counter {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.banner {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  margin: 0;
+  padding: var(--ww-space-2) var(--ww-space-3);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-info-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+/* ---------------- stack ---------------- */
+.stack {
+  display: grid;
+  overscroll-behavior-x: contain;
+}
+
+.stack[hidden] {
+  display: none;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  grid-area: 1 / 1;
+  overflow: hidden;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-stay-card-radius);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-2);
+  transform-origin: 50% 100%;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.top {
+  z-index: 2;
+  cursor: grab;
+}
+
+.top[data-dragging] {
+  box-shadow: var(--ww-shadow-3);
+  cursor: grabbing;
+}
+
+/* The second card: 95 %, 8 px lower, full opacity – fixed values (layout, not motion). */
+.back {
+  z-index: 1;
+  box-shadow: var(--ww-shadow-1);
+  transform: translateY(8px) scale(0.95);
+}
+
+.flying {
+  z-index: 3;
+  pointer-events: none;
+}
+
+.media {
+  position: relative;
+  display: block;
+}
+
+.media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ww-stay-image-scrim);
+  pointer-events: none;
+}
+
+.image {
+  aspect-ratio: var(--ww-stay-image-ratio);
+  width: 100%;
+  max-height: var(--ww-stay-image-max-h);
+}
+
+@container (max-width: 22em) {
+  .image {
+    max-height: var(--ww-stay-image-max-h-narrow);
+  }
+}
+
+@container (max-width: 20em) {
+  .image,
+  .media::after {
+    display: none;
+  }
+
+  .media {
+    min-height: 56px;
+  }
+}
+
+.source {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 1;
+  max-width: calc(100% - 24px);
+  padding: 4px 10px;
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-stay-source-bg);
+  color: var(--ww-stay-source-fg);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  overflow-wrap: anywhere;
+}
+
+/* Stamps (D-47): icon + word, tilted, opacity follows the drag (aria-hidden). */
+.stamp {
+  position: absolute;
+  top: 20px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 60%;
+  min-height: 40px;
+  padding: 6px 14px;
+  border-radius: var(--ww-stamp-radius);
+  font-family: var(--ww-font-display);
+  font-size: 1.0625rem;
+  font-weight: var(--ww-font-weight-display);
+  line-height: 1.2;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.stampLike {
+  left: 16px;
+  background: var(--ww-stamp-like-bg);
+  box-shadow: 0 0 0 3px var(--ww-stamp-ring);
+  color: var(--ww-stamp-like-fg);
+  transform: rotate(calc(-1 * var(--ww-stamp-tilt)));
+}
+
+.stampNope {
+  right: 16px;
+  border: 2.5px solid var(--ww-stamp-nope-border);
+  background: var(--ww-stamp-nope-bg);
+  color: var(--ww-stamp-nope-fg);
+  transform: rotate(var(--ww-stamp-tilt));
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px 16px 16px;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: 1.3125rem;
+  font-weight: var(--ww-font-weight-display);
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+  overflow-wrap: anywhere;
+}
+
+.title:focus {
+  outline: none;
+}
+
+.title:focus-visible {
+  outline: var(--ww-focus-ring);
+}
+
+.price {
+  margin: 0;
+  font-size: 0.9375rem;
+  font-weight: var(--ww-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.note {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-medium);
+  overflow-wrap: anywhere;
+}
+
+.note:empty {
+  display: none;
+}
+
+.link {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 4px;
+  min-height: 44px;
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.saving {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  text-align: center;
+}
+
+/* ---------------- fixed button bar (M-U13) ---------------- */
+/* Room for the fixed bar below the page (incl. footer) – nothing hides behind it (2.4.11). */
+:global(body:has([data-swipe-bar])) {
+  padding-bottom: calc(176px + env(safe-area-inset-bottom));
+  scroll-padding-bottom: calc(176px + env(safe-area-inset-bottom));
+}
+
+.bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ww-space-1);
+  padding: var(--ww-space-3) var(--ww-space-4) calc(var(--ww-space-3) + env(safe-area-inset-bottom));
+  background: var(--ww-color-bg);
+  box-shadow: var(--ww-shadow-sticky-bottom);
+}
+
+.buttons {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 24px;
+}
+
+@container (max-width: 22em) {
+  .buttons {
+    gap: 12px;
+  }
+}
+
+.buttonCell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  max-width: 6.5rem;
+}
+
+.rateButton {
+  display: grid;
+  place-items: center;
+  width: var(--ww-stay-rate-btn);
+  height: var(--ww-stay-rate-btn);
+  border-radius: 50%;
+  box-shadow: var(--ww-shadow-1);
+  cursor: pointer;
+  transition: transform var(--ww-duration-instant) var(--ww-ease-standard);
+}
+
+.rateButton:active,
+.armed {
+  transform: scale(var(--ww-motion-scale-press));
+}
+
+.rateButton:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.nope {
+  border: 2px solid var(--ww-color-border-strong);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+}
+
+.like {
+  border: 2px solid var(--ww-color-accent-strong);
+  background: var(--ww-vote-yes-bg);
+  color: var(--ww-vote-yes-fg);
+}
+
+/* W18-02: «scharf» – the matching button looks pressed (no vibration, works reduced too). */
+.nope.armed {
+  border-width: 3px;
+  background: var(--ww-vote-no-bg);
+}
+
+.like.armed {
+  border-width: 3px;
+  box-shadow: 0 0 0 3px var(--ww-color-accent-tint);
+}
+
+.undo {
+  width: var(--ww-stay-undo-btn);
+  height: var(--ww-stay-undo-btn);
+  margin-top: 8px;
+  border: 0;
+  background: var(--ww-btn-tool-bg);
+  color: var(--ww-btn-tool-fg);
+}
+
+.rateButton[aria-disabled="true"] {
+  color: var(--ww-color-disabled-text);
+  cursor: not-allowed;
+}
+
+.buttonLabel {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  text-align: center;
+}
+
+.hint {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  text-align: center;
+}
+
+.hintWide {
+  display: none;
+}
+
+@media (min-width: 600px) {
+  .hintWide {
+    display: inline;
+  }
+
+  .hintTouch {
+    display: none;
+  }
+}
+
+/* ---------------- end of stack (W18-08) ---------------- */
+.end {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ww-space-3);
+  padding: var(--ww-space-6) var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+  text-align: center;
+}
+
+.endSeal svg {
+  display: block;
+}
+
+.endTitle {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-2xl);
+  font-weight: var(--ww-font-weight-display);
+}
+
+.endTitle:focus {
+  outline: none;
+}
+
+.endText {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+}
+
+.textButton {
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

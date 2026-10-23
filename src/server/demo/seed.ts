@@ -24,6 +24,12 @@
 // organises – «Allen Bescheid geben» still due, placeholder Opa Klaus, infos filled),
 // «Roadtrip Schottland» (Unterwegs, today is the arrival day – small celebration UX-8 and the
 // meeting point as today's plan), «Gardasee» (Danach, back for 9 days, with infos).
+// Increment 9 (F-031 «Unterkünfte», features.md R.7 Demo-Seed): «Kroatien 2027» (Vorbereitung,
+// Ben organises, Anna is a member with 2 of 6 rated → V3 «du bist dran», ranking locked; one
+// suggestion without image, one by a former member, notes), «Familientreffen Harz» (Anna
+// organises, everybody rated 4 suggestions → V3 «Festlegen», favourite «Ferienhaus
+// Brockenblick»), «Roadtrip Schottland» (picked and booked → tile), «Gardasee» (V3 «ohne App
+// erledigt»). Images: our own demo images under /demo/stays, links on `*.example` (RFC 2606).
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
 import { addDays, todayIso } from "../../lib/dates.ts";
@@ -120,6 +126,25 @@ interface MemberSeed {
   celebratedRange?: [string, string];
 }
 
+/** A suggested place to stay (F-031) – demo images of our own, links on `*.example`. */
+interface StaySeed {
+  title: string;
+  url: string;
+  site?: string;
+  /** Total price in whole currency units. */
+  price?: number;
+  note?: string;
+  /** File name under /public/demo/stays (without .svg) – none = placeholder card. */
+  image?: string;
+  /** Person key of the author – null = «ehemaliges Mitglied». */
+  by: string | null;
+  /** Days ago the suggestion was made. */
+  daysAgo: number;
+  ratings: Record<string, "like" | "nope">;
+  chosen?: boolean;
+  booked?: boolean;
+}
+
 interface TripSeed {
   name: string;
   description?: string;
@@ -156,6 +181,10 @@ interface TripSeed {
     emergencyPhone?: string;
     notes?: string;
   };
+  /** Places to stay (F-031, Increment 9). */
+  stays?: StaySeed[];
+  /** UX-9: V3 «ohne App erledigt» set by this person. */
+  stayWithoutAppBy?: string;
 }
 
 const TRIPS: TripSeed[] = [
@@ -306,6 +335,46 @@ const TRIPS: TripSeed[] = [
       notes:
         "Bettwäsche ist dabei, Handtücher bitte selbst mitbringen.\nWanderkarte: https://www.harzinfo.de",
     },
+    stays: [
+      {
+        title: "Ferienhaus Brockenblick",
+        url: "https://ferienhaus.example/harz/brockenblick",
+        site: "Ferienhaus Example",
+        price: 980,
+        note: "Sauna im Keller, Platz für alle",
+        image: "demo-chalet-berge",
+        by: "anna",
+        daysAgo: 5,
+        ratings: { anna: "like", hanna: "like", greta: "like" },
+      },
+      {
+        title: "Blockhaus am Oderteich",
+        url: "https://unterkunft.example/blockhaus-oderteich",
+        price: 860,
+        image: "demo-holzhuette-see",
+        by: "hanna",
+        daysAgo: 4,
+        ratings: { anna: "like", hanna: "like", greta: "nope" },
+      },
+      {
+        title: "Pension Harzblick",
+        url: "https://booking.example/hotel/pension-harzblick",
+        site: "Booking Example",
+        price: 720,
+        by: "greta",
+        daysAgo: 4,
+        ratings: { anna: "nope", hanna: "like", greta: "nope" },
+      },
+      {
+        title: "Mobilheim am Kurpark",
+        url: "https://camping.example/kurpark/mobilheim-7",
+        price: 540,
+        image: "demo-mobilheim-camping",
+        by: "anna",
+        daysAgo: 3,
+        ratings: { anna: "nope", hanna: "nope", greta: "nope" },
+      },
+    ],
     members: [
       {
         person: "anna",
@@ -465,6 +534,29 @@ const TRIPS: TripSeed[] = [
         "Treffpunkt 7:30 Uhr · Flughafen Edinburgh, Mietwagen-Schalter\nBen holt den Wagen.",
       notes: "Linksverkehr! Regenjacke einpacken.",
     },
+    stays: [
+      {
+        title: "Glen Coe Cottages",
+        url: "https://cottages.example/glencoe",
+        site: "Cottages Example",
+        price: 1650,
+        image: "demo-holzhuette-see",
+        by: "ben",
+        daysAgo: 35,
+        ratings: { ben: "like", anna: "like", carla: "like", emma: "like" },
+        chosen: true,
+        booked: true,
+      },
+      {
+        title: "Highland Lodge Fort William",
+        url: "https://booking.example/hotel/highland-lodge",
+        price: 1920,
+        image: "demo-chalet-berge",
+        by: "carla",
+        daysAgo: 34,
+        ratings: { ben: "nope", anna: "like", carla: "like", emma: "nope" },
+      },
+    ],
     members: [
       { person: "ben", organizer: true, submitted: true, voted: true, celebrated: true },
       { person: "anna", submitted: true, voted: true, celebrated: true },
@@ -490,10 +582,94 @@ const TRIPS: TripSeed[] = [
       checkIn: "15:00",
       checkOut: "10:00",
     },
+    stayWithoutAppBy: "felix",
     members: [
       { person: "felix", organizer: true, submitted: true, voted: true, celebrated: true },
       { person: "anna", submitted: true, voted: true, celebrated: true },
       { person: "greta", submitted: true, voted: true, celebrated: true },
+    ],
+  },
+  // Increment 9 (F-031): Anna is a member, 2 of 6 places rated – V3 «du bist dran», ranking
+  // locked; Ben organises. Placeholder Lotte counts for «≈ … pro Person» (Q35).
+  {
+    name: "Kroatien 2027",
+    description: "Eine Woche Sonne, Meer und Altstadt – wer bucht was?",
+    rangeStart: day(30),
+    rangeEnd: day(100),
+    minNights: 7,
+    country: "DE",
+    locale: "de",
+    phase: "fixed",
+    fixedStart: day(60),
+    fixedEnd: day(67),
+    fixedDaysAgo: 12,
+    options: [[day(60), day(67)]],
+    placeholders: ["Lotte"],
+    members: [
+      { person: "ben", organizer: true, submitted: true, votes: ["yes"], celebrated: true },
+      { person: "anna", submitted: true, votes: ["yes"], celebrated: true },
+      { person: "carla", submitted: true, votes: ["yes"], celebrated: true },
+      { person: "david", submitted: true, votes: ["yes"], celebrated: true },
+      { person: "emma", submitted: true, votes: ["yes"], celebrated: true },
+    ],
+    stays: [
+      {
+        title: "Villa Mare mit Pool",
+        url: "https://booking.example/hotel/hr/villa-mare",
+        site: "Booking Example",
+        price: 2380,
+        image: "demo-villa-pool",
+        by: "ben",
+        daysAgo: 9,
+        ratings: { ben: "like", anna: "like", carla: "like", david: "nope" },
+      },
+      {
+        title: "Apartment Lavanda – Altstadt",
+        url: "https://ferienwohnung.example/split/lavanda",
+        price: 1690,
+        image: "demo-altstadtwohnung",
+        by: "carla",
+        daysAgo: 8,
+        ratings: { ben: "nope", anna: "nope", carla: "like", david: "like" },
+      },
+      {
+        title: "Kamena Kuća – Steinhaus",
+        url: "https://unterkunft.example/rooms/kamena-kuca",
+        price: 2050,
+        note: "5 Min. zum Zlatni Rat",
+        by: "david",
+        daysAgo: 4,
+        ratings: { ben: "like", carla: "like", david: "like" },
+      },
+      {
+        title: "Casa Azul am Hafen",
+        url: "https://booking.example/hotel/hr/casa-azul",
+        site: "Booking Example",
+        image: "demo-apartment-hafen",
+        by: "ben",
+        daysAgo: 3,
+        ratings: { ben: "like", carla: "nope" },
+      },
+      {
+        title: "Ferienwohnung Bačvice",
+        url: "https://ferienwohnung.example/split/bacvice",
+        price: 1420,
+        image: "demo-strandhaus-duenen",
+        by: null,
+        daysAgo: 3,
+        ratings: { ben: "nope", carla: "like" },
+      },
+      {
+        title: "Haus Galeb – Meerblick & Terrasse",
+        url: "https://ferienhaus.example/hr/haus-galeb",
+        site: "Ferienhaus Example",
+        price: 1840,
+        note: "Terrasse mit Grill, 2 Bäder",
+        image: "demo-steinhaus-meerblick",
+        by: "emma",
+        daysAgo: 1,
+        ratings: { ben: "like" },
+      },
     ],
   },
   // Increment 6 (F-043): Ida organises a trip with others and a solo trip.
@@ -615,6 +791,15 @@ export async function seedDemo(
         ],
       );
       const tripId = row.rows[0]?.id;
+      // Currency from the holiday region (R.7), last fixed range for «Termin geändert» (W18 E.8).
+      await client.query(
+        `update trip set currency = case holiday_country when 'GB' then 'GBP' when 'CH' then 'CHF'
+           when 'US' then 'USD' else 'EUR' end,
+           last_fixed_range = case when fixed_start is not null
+             then fixed_start::text || '/' || fixed_end::text end
+         where id = $1`,
+        [tripId],
+      );
       const optionIds: string[] = [];
       for (const [position, [start, end]] of (seed.options ?? []).entries()) {
         const option = await client.query<{ id: string }>(
@@ -701,6 +886,53 @@ export async function seedDemo(
         await client.query(
           `insert into trip_placeholder (trip_id, display_name, invite_token) values ($1, $2, $3)`,
           [tripId, name, inviteToken()],
+        );
+      }
+      for (const stay of seed.stays ?? []) {
+        const orgaKey = seed.members.find((m) => m.organizer)?.person;
+        const inserted = await client.query<{ id: string }>(
+          `insert into trip_stay (trip_id, url, url_normalized, title, price_cents, currency, note,
+             preview_image_url, preview_site_name, preview_status, created_by, created_at, updated_at,
+             chosen_at, chosen_by, booked_at, booked_by)
+           select $1, $2, $3, $4, $5, t.currency, $6, $7, $8, $9, $10,
+             now() - make_interval(days => $11), now() - make_interval(days => $11),
+             case when $12::boolean then now() - interval '2 days' end,
+             case when $12::boolean then $13::uuid end,
+             case when $14::boolean then now() - interval '1 day' end,
+             case when $14::boolean then $13::uuid end
+           from trip t where t.id = $1
+           returning id`,
+          [
+            tripId,
+            stay.url,
+            stay.url.replace(/^https:\/\/(www\.)?/, ""),
+            stay.title,
+            stay.price === undefined ? null : stay.price * 100,
+            stay.note ?? null,
+            stay.image ? `/demo/stays/${stay.image}.svg` : null,
+            stay.site ?? null,
+            stay.image || stay.site ? "ok" : "none",
+            stay.by ? (ids.get(stay.by) ?? null) : null,
+            stay.daysAgo,
+            stay.chosen === true,
+            orgaKey ? (ids.get(orgaKey) ?? null) : null,
+            stay.booked === true,
+          ],
+        );
+        const stayId = inserted.rows[0]?.id;
+        for (const [person, value] of Object.entries(stay.ratings)) {
+          await client.query(
+            `insert into trip_stay_rating (stay_id, trip_id, user_id, value, rated_at)
+             values ($1, $2, $3, $4, now() - make_interval(days => $5) + interval '2 hours')`,
+            [stayId, tripId, ids.get(person), value, stay.daysAgo],
+          );
+        }
+      }
+      if (seed.stayWithoutAppBy) {
+        await client.query(
+          `insert into trip_station_marks (trip_id, station, set_by, set_at)
+           values ($1, 'V3', $2, now() - interval '20 days')`,
+          [tripId, ids.get(seed.stayWithoutAppBy)],
         );
       }
       const orga = seed.members.find((m) => m.organizer)?.person ?? "?";

@@ -1,0 +1,251 @@
+/* W17 F «Unterkunft vorschlagen» / «Vorschlag bearbeiten» – form like W22 (info.module.css) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+  max-width: var(--ww-size-content-narrow);
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.intro {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
+.label {
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.input {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-sans);
+  font-size: var(--ww-text-md);
+  line-height: var(--ww-leading-snug);
+}
+
+.textarea {
+  resize: vertical;
+  field-sizing: content;
+  min-height: calc(var(--ww-size-control-md) * 2);
+}
+
+.input:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border: var(--ww-border-thick) solid var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.invalid,
+.invalid:focus-visible {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+.suffixed {
+  position: relative;
+  display: block;
+}
+
+.suffixed .input {
+  padding-inline-end: calc(var(--ww-space-4) * 2.5);
+}
+
+.suffix {
+  position: absolute;
+  top: 50%;
+  right: var(--ww-space-4);
+  color: var(--ww-color-text-muted);
+  font-weight: var(--ww-font-weight-bold);
+  transform: translateY(-50%);
+}
+
+.count,
+.perPerson {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.perPerson {
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.lockedLink {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.duplicate {
+  margin: 0;
+  padding: var(--ww-space-2) var(--ww-space-3);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-warning-tint);
+  color: var(--ww-color-warning-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.duplicate a {
+  color: inherit;
+  font-weight: var(--ww-font-weight-bold);
+}
+
+/* Preview card (W17 F.1) – placeholder is a normal state, never red. */
+.previewSlot:empty {
+  display: none;
+}
+
+.preview {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  overflow: hidden;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+  container-type: inline-size;
+}
+
+.previewImage {
+  aspect-ratio: var(--ww-stay-image-ratio);
+  width: 100%;
+  max-height: var(--ww-stay-image-max-h);
+}
+
+@container (max-width: 20em) {
+  .previewImage,
+  .media::after {
+    display: none;
+  }
+
+  .chip {
+    position: static;
+    display: inline-block;
+    margin: var(--ww-space-3) var(--ww-space-3) 0;
+  }
+}
+
+.media {
+  position: relative;
+  display: block;
+}
+
+.media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--ww-stay-image-scrim);
+  pointer-events: none;
+}
+
+.chip {
+  position: absolute;
+  bottom: var(--ww-space-3);
+  left: var(--ww-space-3);
+  max-width: calc(100% - var(--ww-space-6));
+  padding: 4px 10px;
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-stay-source-bg);
+  color: var(--ww-stay-source-fg);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-bold);
+  overflow-wrap: anywhere;
+  z-index: 1;
+}
+
+.previewTitle {
+  margin: 0;
+  padding: 0 var(--ww-space-4);
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-md);
+  font-weight: var(--ww-font-weight-display);
+  overflow-wrap: anywhere;
+}
+
+.previewText,
+.loading {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+  min-height: 24px;
+  margin: 0;
+  padding: 0 var(--ww-space-4) var(--ww-space-4);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.loading {
+  padding-top: var(--ww-space-4);
+}
+
+.textButton {
+  align-self: flex-start;
+  min-height: 44px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--ww-color-link);
+  font: inherit;
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* Fixed action bar at the bottom while scrolling – at the form end with an open keyboard
+   (sticky ends with the form, never covers the active field, 2.4.11). */
+.submit {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  padding: var(--ww-space-3) 0 calc(var(--ww-space-3) + env(safe-area-inset-bottom));
+  background: var(--ww-color-bg);
+}
+
+.submitHelp {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.confirm p {
+  margin: 0;
+}
+
+.confirmActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ww-space-2);
+}

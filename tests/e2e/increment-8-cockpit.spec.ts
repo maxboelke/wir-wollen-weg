@@ -75,7 +75,8 @@ test.describe("W16 v2 – Vorbereitung", () => {
     await expect(page.getByRole("button", { name: en.poll.result.addToCalendar })).toBeVisible();
 
     await expect(page.getByRole("heading", { level: 2, name: r.way.before })).toBeVisible();
-    await expect(page.getByText(fill(r.meta.done, { done: 1, total: 2 }))).toBeVisible();
+    // Increment 9: station V3 «Place to stay» counts too (W16 v2.14 «{done} von 3 geschafft»).
+    await expect(page.getByText(fill(r.meta.done, { done: 1, total: 3 }))).toBeVisible();
     await expect(
       page.getByText("Nothing for you right now. You’re waiting on: Mia to join."),
     ).toBeVisible();
@@ -103,15 +104,11 @@ test.describe("W16 v2 – Vorbereitung", () => {
       page.getByRole("link", { name: "Info. Still empty – Lena Berg will add it" }),
     ).toBeVisible();
     await expect(page.getByRole("heading", { level: 2, name: r.moreTitle })).toBeVisible();
-    // W16 v2.13: no teasers for areas that are not built (increments 9–12).
+    // W16 v2.13: no teasers for areas that are not built (increments 10–12); V3 «Place to stay»
+    // is built since Increment 9 and stands «Up next» without suggestions (W16 v2.14 rule 9).
+    await expect(page.getByRole("link", { name: /^Up next: Place to stay\./ })).toBeVisible();
     const main = page.locator("main");
-    for (const word of [
-      /place to stay/i,
-      /costs?\b/i,
-      /documents/i,
-      /tickets/i,
-      /travel details/i,
-    ]) {
+    for (const word of [/costs?\b/i, /documents/i, /tickets/i, /travel details/i]) {
       await expect(main.getByText(word)).toHaveCount(0);
     }
     await expectNoSeriousAxeViolations(page, "cockpit member");

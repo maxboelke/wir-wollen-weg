@@ -173,7 +173,7 @@
   color: var(--ww-ink-900);
 }
 
-/* UM-3: pulse 3 × 1.6 s (< 5 s, WCAG 2.2.2), only on the first build-up of the session */
+/* UM-3 / W16-03 (M-X8 a): pulse 3 × 1.4 s, ends at 4.68 s (< 5 s, WCAG 2.2.2), only on the first build-up of the session */
 .marker-today::after {
   content: "";
   position: absolute;
@@ -185,7 +185,7 @@
 }
 
 .pulse::after {
-  animation: route-pulse 1.6s var(--ww-ease-standard) 480ms 3;
+  animation: route-pulse 1.4s var(--ww-ease-standard) 480ms 3;
 }
 
 @keyframes route-pulse {
@@ -716,7 +716,7 @@ button.card:active,
   display: grid;
   grid-template-rows: 0fr;
   margin-inline: calc(-1 * var(--ww-space-1));
-  transition: grid-template-rows var(--ww-duration-base) var(--ww-ease-standard);
+  /* W16-05 (M-X8 c): no height animation – the layout jumps, only the entries fade in. */
 }
 
 .open {
@@ -727,12 +727,10 @@ button.card:active,
   min-height: 0;
   overflow: hidden;
   visibility: hidden;
-  transition: visibility 0s linear var(--ww-duration-base);
 }
 
 .open > .expandInner {
   visibility: visible;
-  transition-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -957,4 +955,28 @@ button.card:active,
   .plan::before {
     background: CanvasText;
   }
+}
+
+/* V3 «Du hast 2 von 5 bewertet» – decorative progress bar (W16 v2.14, aria-hidden). */
+.progress {
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  max-width: 220px;
+  height: 6px;
+  margin-top: var(--ww-space-1);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface-sunken);
+}
+
+.progressFill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--ww-color-accent);
+  transform-origin: left center;
+}
+
+:global([dir="rtl"]) .progressFill {
+  transform-origin: right center;
 }

@@ -205,11 +205,35 @@ export const trip = pgTable(
     fixedAnnouncedAt: timestamp("fixed_announced_at", { withTimezone: true }),
     /** Automatic deletion (F-013): the organiser was told 14 days before (notice mail). */
     deletionNoticeSentAt: timestamp("deletion_notice_sent_at", { withTimezone: true }),
+    /**
+     * Currency of the trip (ISO 4217, features.md R.7) – from the holiday region at creation
+     * (EUR, GBP, CHF, USD …). Stays store their own copy; the organiser can change it with
+     * Increment 10 (F-035).
+     */
+    currency: text("currency").notNull().default("EUR"),
+    /** «Für wie viele rechnet ihr?» (W18 E.6.2, Should): 1–50, null = automatic. */
+    partySizeOverride: integer("party_size_override"),
+    /**
+     * Range of the latest fixing («2027-06-12/2027-06-19») – kept through «Festlegung aufheben»
+     * so a new fixing can tell whether the dates really changed (W18 E.8 / E.14).
+     */
+    lastFixedRange: text("last_fixed_range"),
+    /** Dates were fixed anew with ANOTHER range while stays existed (W18 E.8 notice). */
+    stayDatesChangedAt: timestamp("stay_dates_changed_at", { withTimezone: true }),
+    /** The organiser closed the «Euer Termin hat sich geändert» notice (for everyone). */
+    stayDateNoticeDismissedAt: timestamp("stay_date_notice_dismissed_at", { withTimezone: true }),
+    /** «gebucht» was reset by that change – second sentence of the notice, V3 «neu buchen». */
+    stayBookingReset: boolean("stay_booking_reset").notNull().default(false),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
   (table) => [
     check("trip_phase_check", sql`${table.phase} in ('collecting', 'voting', 'fixed')`),
+    check("trip_currency_check", sql`${table.currency} ~ '^[A-Z]{3}$'`),
+    check(
+      "trip_party_size_check",
+      sql`${table.partySizeOverride} is null or ${table.partySizeOverride} between 1 and 50`,
+    ),
     check("trip_range_check", sql`${table.rangeEnd} > ${table.rangeStart}`),
     check("trip_nights_check", sql`${table.minNights} between 1 and 30`),
     check(
@@ -484,6 +508,145 @@ export const tripInfo = pgTable(
       sql`(${table.checkIn} is null or ${table.checkIn} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')
         and (${table.checkOut} is null or ${table.checkOut} ~ '^([01][0-9]|2[0-3]):[0-5][0-9]$')`,
     ),
+  ],
+);
+
+// ---------------------------------------------------------------------------
+// Places to stay (F-031 stage 1, Increment 9 – features.md R.7, W17/W18)
+// ---------------------------------------------------------------------------
+
+export const STAY_PREVIEW_STATES = ["pending", "ok", "none"] as const;
+export type StayPreviewState = (typeof STAY_PREVIEW_STATES)[number];
+
+/**
+ * Suggested places to stay of a fixed trip (F-031). Trip content – title, note, links and
+ * image URLs never go to logs or mails. Only the image URL is stored, never the image (Q34).
+ * The picked place («Das wird's») and «gebucht» are columns of the suggestion; a partial unique
+ * index guarantees at most one picked place per trip (R.7 Datenhaltung, developer's choice).
+ * Deleted with the trip (cascade, F-013); the author becomes «ehemaliges Mitglied» when the
+ * account is deleted (set null) or the membership ends (cleared by `removeMember`).
+ */
+export const tripStay = pgTable(
+  "trip_stay",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    url: text("url").notNull(),
+    /** Duplicate detection (R.7 I9-02): host without www., no fragment/tracking parameters. */
+    urlNormalized: text("url_normalized").notNull(),
+    title: text("title").notNull(),
+    /** Total price in cents of `currency`; null = no price. */
+    priceCents: integer("price_cents"),
+    currency: text("currency").notNull(),
+    note: text("note"),
+    /**
+     * `https://…` from a signed link preview – or a demo image of our own under
+     * `/demo/stays/…` (demo seed only, served statically, no proxy).
+     */
+    previewImageUrl: text("preview_image_url"),
+    previewSiteName: text("preview_site_name"),
+    previewStatus: text("preview_status", { enum: STAY_PREVIEW_STATES })
+      .notNull()
+      .default("pending"),
+    createdBy: uuid("created_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+    /** «Das wird's» (organiser) – at most one per trip. */
+    chosenAt: timestamp("chosen_at", { withTimezone: true }),
+    chosenBy: uuid("chosen_by").references(() => user.id, { onDelete: "set null" }),
+    /** «gebucht ✓» (organiser in Increment 9) – only for the picked place. */
+    bookedAt: timestamp("booked_at", { withTimezone: true }),
+    bookedBy: uuid("booked_by").references(() => user.id, { onDelete: "set null" }),
+  },
+  (table) => [
+    index("trip_stay_trip_idx").on(table.tripId, table.createdAt),
+    uniqueIndex("trip_stay_trip_url_idx").on(table.tripId, table.urlNormalized),
+    // Target of the composite foreign key of trip_stay_rating (rating and stay share the trip).
+    uniqueIndex("trip_stay_id_trip_idx").on(table.id, table.tripId),
+    uniqueIndex("trip_stay_one_chosen_idx")
+      .on(table.tripId)
+      .where(sql`${table.chosenAt} is not null`),
+    check(
+      "trip_stay_length_check",
+      sql`char_length(${table.url}) <= 2048 and ${table.url} like 'https://%'
+        and char_length(${table.title}) between 1 and 80
+        and coalesce(char_length(${table.note}), 0) <= 200
+        and coalesce(char_length(${table.previewSiteName}), 0) <= 80`,
+    ),
+    check(
+      "trip_stay_price_check",
+      sql`${table.priceCents} is null or ${table.priceCents} between 1 and 100000000`,
+    ),
+    check("trip_stay_currency_check", sql`${table.currency} ~ '^[A-Z]{3}$'`),
+    check(
+      "trip_stay_image_check",
+      sql`${table.previewImageUrl} is null or (char_length(${table.previewImageUrl}) <= 2048
+        and (${table.previewImageUrl} like 'https://%'
+          or ${table.previewImageUrl} ~ '^/demo/stays/[a-z0-9-]+[.]svg$'))`,
+    ),
+    check("trip_stay_preview_check", sql`${table.previewStatus} in ('pending', 'ok', 'none')`),
+    check(
+      "trip_stay_booked_check",
+      sql`${table.bookedAt} is null or ${table.chosenAt} is not null`,
+    ),
+  ],
+);
+
+export const STAY_RATINGS = ["like", "nope"] as const;
+export type StayRating = (typeof STAY_RATINGS)[number];
+
+/**
+ * One rating per member and suggestion (♥ «Gefällt mir» / ✕ «Eher nicht», F-031). «Offen» = no
+ * row. The composite key on the membership deletes the ratings when someone leaves, is removed
+ * or deletes the account (R.7 I9-10); the composite key on the suggestion keeps a rating in
+ * the trip of its suggestion and deletes it with the suggestion.
+ */
+export const tripStayRating = pgTable(
+  "trip_stay_rating",
+  {
+    stayId: uuid("stay_id").notNull(),
+    tripId: uuid("trip_id").notNull(),
+    userId: uuid("user_id").notNull(),
+    value: text("value", { enum: STAY_RATINGS }).notNull(),
+    ratedAt: timestamp("rated_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.stayId, table.userId] }),
+    index("trip_stay_rating_trip_user_idx").on(table.tripId, table.userId),
+    foreignKey({
+      name: "trip_stay_rating_stay_fk",
+      columns: [table.stayId, table.tripId],
+      foreignColumns: [tripStay.id, tripStay.tripId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "trip_stay_rating_member_fk",
+      columns: [table.tripId, table.userId],
+      foreignColumns: [tripMember.tripId, tripMember.userId],
+    }).onDelete("cascade"),
+    check("trip_stay_rating_value_check", sql`${table.value} in ('like', 'nope')`),
+  ],
+);
+
+/** Stations the organiser can tick «ohne App erledigt» (UX-9) – V3 from Increment 9. */
+export const STATION_MARKS = ["V3"] as const;
+export type StationMark = (typeof STATION_MARKS)[number];
+
+/** UX-9 per station (W16 v2.7, R.6/R.7): «Haben wir schon / brauchen wir nicht». */
+export const tripStationMark = pgTable(
+  "trip_station_marks",
+  {
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    station: text("station", { enum: STATION_MARKS }).notNull(),
+    setBy: uuid("set_by").references(() => user.id, { onDelete: "set null" }),
+    setAt: timestamp("set_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.tripId, table.station] }),
+    check("trip_station_marks_station_check", sql`${table.station} in ('V3')`),
   ],
 );
 

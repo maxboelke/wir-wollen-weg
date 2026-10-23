@@ -19,6 +19,24 @@ const PRIVATE_ROUTES = [
  */
 const TOKEN_ROUTES = ["/i/:path*", "/auth/:path*"];
 
+/**
+ * CSP stage 1 (deployment.md §0.9, features.md R.7 I9-04): no `script-src`/`default-src` – the
+ * Next.js scripts stay untouched – but third-party images, plugins, foreign form targets and
+ * framing are blocked. Global, except for the image proxy, which sends its own
+ * `default-src 'none'; sandbox` (a later headers() entry with the same key would overwrite it).
+ * Stage 2 (nonce-based script-src) follows before go-live G1.
+ */
+const CSP_STAGE_1 = [
+  "img-src 'self' data: blob:",
+  "font-src 'self'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+].join("; ");
+/** Every path except the image proxy (`/api/stays/image`, own CSP). */
+const CSP_SOURCE = "/((?!api/stays/image).*)";
+
 const nextConfig: NextConfig = {
   // Self-hosting in Docker (docs/ops/deployment.md): the image build (OPS-3) sets
   // NEXT_OUTPUT_STANDALONE=1 and runs `node .next/standalone/server.js`.
@@ -51,6 +69,7 @@ const nextConfig: NextConfig = {
     ];
     return Promise.resolve([
       { source: "/:path*", headers: base },
+      { source: CSP_SOURCE, headers: [{ key: "Content-Security-Policy", value: CSP_STAGE_1 }] },
       ...PRIVATE_ROUTES.map((source) => ({
         source,
         headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],

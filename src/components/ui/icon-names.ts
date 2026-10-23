@@ -49,6 +49,10 @@ export const ICON_NAMES = [
   "sparkle",
   "chart",
   "plane",
+  "bed",
+  "heart",
+  "heart-filled",
+  "external",
   "all-available",
 ] as const;
 

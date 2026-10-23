@@ -8,6 +8,7 @@ import { googleCalendarUrl } from "@/lib/ics";
 import { nightsOf } from "@/lib/poll";
 import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
+import { stayRemindData } from "../stays/remind";
 import { nameList, nightsText, rangeText } from "../trips/format";
 import type { TripView } from "../trips/load";
 import { tripPath } from "../trips/paths";
@@ -71,6 +72,7 @@ function longDate(date: IsoDate, intl: string): string {
 const LOOK: Record<string, { icon: IconName; tone: Exclude<TileTone, "brand"> }> = {
   V1: { icon: "vote", tone: "lavender" },
   V2: { icon: "users", tone: "mint" },
+  V3: { icon: "bed", tone: "lavender" },
   A2: { icon: "info", tone: "lavender" },
   "T-meet": { icon: "users", tone: "lavender" },
 };
@@ -85,6 +87,12 @@ function link(view: TripView, target: RouteTarget): CockpitLink {
       return { kind: "path", href: `${tripPath(id)}/info/edit` };
     case "newTrip":
       return { kind: "path", href: "/trips/new" };
+    case "stays":
+      return { kind: "path", href: `${tripPath(id)}/stays` };
+    case "staysSwipe":
+      return { kind: "path", href: `${tripPath(id)}/stays/swipe` };
+    case "staysRanking":
+      return { kind: "path", href: `${tripPath(id)}/stays#ranking` };
   }
 }
 
@@ -101,6 +109,8 @@ function action(view: TripView, value: RouteTarget | RouteAction): CockpitAction
         name: value.name,
         on: false,
       };
+    case "stayWithoutApp":
+      return { kind: "stayWithoutApp", on: value.on };
     default:
       return link(view, value);
   }
@@ -129,6 +139,7 @@ function station(ctx: Ctx, view: TripView, value: TripStation): StationView {
   const label = stateWord(ctx, value);
   const title = text(ctx, value.title);
   const status = text(ctx, value.status);
+  const detail = value.detail ? text(ctx, value.detail) : null;
   const look = LOOK[value.id] ?? { icon: "info", tone: "lavender" };
   return {
     id: value.id,
@@ -170,6 +181,8 @@ function station(ctx: Ctx, view: TripView, value: TripStation): StationView {
       : {}),
     ...(value.offline ? { offline: true } : {}),
     ...(value.unused ? { unused: true } : {}),
+    ...(detail ? { detail } : {}),
+    ...(value.progress !== undefined ? { progress: value.progress } : {}),
   };
 }
 
@@ -236,7 +249,7 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       status,
       ariaLabel: sentence(title, status),
       href: path(view, tile.href),
-      icon: "info",
+      icon: tile.area === "stay" ? "bed" : "info",
       tone: "lavender",
     };
   });
@@ -436,5 +449,6 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
     inviteHref:
       isOrganizer || (trip.joinOpen && !view.full) ? tripPath(trip.publicId, "invite") : null,
     manageHref: isOrganizer ? `${tripPath(trip.publicId, "invite")}#placeholders` : null,
+    stayRemind: data.stay.total > 0 ? await stayRemindData(view, data.staysRaw) : null,
   };
 }

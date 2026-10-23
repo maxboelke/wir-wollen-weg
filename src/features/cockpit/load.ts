@@ -3,9 +3,10 @@ import { fromUtcDate, isoDateInZone, type IsoDate } from "@/lib/dates";
 import { compareTallies, rankOptions, tallyOf, type Tally } from "@/lib/poll";
 import { effectiveDeletionDate, TRIP_NOTICE_DAYS, tripDeletionDate } from "@/lib/retention";
 import { firstLine } from "@/lib/trip-info";
-import { tripRoute, type InfoStatus, type TripRoute } from "@/lib/trip-route";
+import { tripRoute, type InfoStatus, type StayStatus, type TripRoute } from "@/lib/trip-route";
 import { getTripInfo, type TripInfoView } from "@/server/cockpit";
 import { listOptions, listVotes } from "@/server/poll";
+import { loadStaysRaw, stayStatus, type StaysRaw } from "../stays/load";
 import type { TripView } from "../trips/load";
 import { orgaName } from "../trips/remind";
 
@@ -20,6 +21,9 @@ export interface DecidedPlace {
 
 export interface CockpitData {
   route: TripRoute;
+  /** Places to stay (W16 v2.14) – for the remind sheets. */
+  stay: StayStatus;
+  staysRaw: StaysRaw;
   info: TripInfoView | null;
   /** Places 1 and 2 of the vote (fixed range first if it is not place 1). */
   places: DecidedPlace[];
@@ -46,11 +50,13 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
   const { trip, me, members, placeholders, today, isOrganizer } = view;
   const start = trip.fixedStart ?? today;
   const end = trip.fixedEnd ?? today;
-  const [info, options, votes] = await Promise.all([
+  const [info, options, votes, staysRaw] = await Promise.all([
     getTripInfo(trip.id),
     listOptions(trip.id),
     listVotes(trip.id),
+    loadStaysRaw(trip.id),
   ]);
+  const stay = stayStatus(view, staysRaw);
   const tallies = options.map((option) => ({
     ...option,
     tally: tallyOf(votes.filter((vote) => vote.optionId === option.id)),
@@ -104,11 +110,14 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
         })),
       },
       info: infoStatus(info),
+      stay,
     },
     today,
   );
   return {
     route,
+    stay,
+    staysRaw,
     info,
     places,
     fixedOn,

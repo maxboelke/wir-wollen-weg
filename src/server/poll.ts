@@ -1,9 +1,9 @@
 import "server-only";
-import { and, asc, count, eq, inArray, sql } from "drizzle-orm";
+import { and, asc, count, eq, inArray, isNotNull, sql } from "drizzle-orm";
 import type { Period, PollOptionData, VoteChoice, VoteRow } from "@/lib/poll";
 import { MAX_OPTIONS, periodKey, reopenNoticeAfterUnfix } from "@/lib/poll";
 import { db } from "./db/client";
-import { pollOption, pollVote, trip, tripMember } from "./db/schema";
+import { pollOption, pollVote, trip, tripMember, tripStay } from "./db/schema";
 
 /**
  * Vote data access (F-010, F-011, F-012). Like src/server/trips.ts every function takes the
@@ -210,6 +210,33 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
       .where(and(eq(pollOption.tripId, tripId), eq(pollOption.id, optionId)));
     if (!option) return { ok: false, reason: "unknownOption" } as const;
     const now = new Date();
+    const range = `${option.start}/${option.end}`;
+    const [previous] = await tx
+      .select({ range: trip.lastFixedRange })
+      .from(trip)
+      .where(eq(trip.id, tripId));
+    // Places to stay (W18 E.8, R.7 I9-09): fixed anew with ANOTHER range while suggestions
+    // exist → «gebucht» is reset (the booking was for the old dates) and the notice «Euer
+    // Termin hat sich geändert» appears. The same range again changes nothing.
+    const datesChanged = previous?.range != null && previous.range !== range;
+    const staysExist = datesChanged
+      ? (
+          await tx
+            .select({ id: tripStay.id })
+            .from(tripStay)
+            .where(eq(tripStay.tripId, tripId))
+            .limit(1)
+        ).length > 0
+      : false;
+    let bookingReset = false;
+    if (staysExist) {
+      const reset = await tx
+        .update(tripStay)
+        .set({ bookedAt: null, bookedBy: null })
+        .where(and(eq(tripStay.tripId, tripId), isNotNull(tripStay.bookedAt)))
+        .returning({ id: tripStay.id });
+      bookingReset = reset.length > 0;
+    }
     await tx
       .update(trip)
       .set({
@@ -219,6 +246,14 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
         fixedAt: now,
         // A new fixing → «Allen Bescheid geben» is due again (V1, I8-03).
         fixedAnnouncedAt: null,
+        lastFixedRange: range,
+        ...(staysExist
+          ? {
+              stayDatesChangedAt: now,
+              stayDateNoticeDismissedAt: null,
+              stayBookingReset: bookingReset,
+            }
+          : {}),
         updatedAt: now,
       })
       .where(eq(trip.id, tripId));

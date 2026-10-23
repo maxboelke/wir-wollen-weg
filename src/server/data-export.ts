@@ -11,6 +11,8 @@ import {
   trip,
   tripInfo,
   tripMember,
+  tripStay,
+  tripStayRating,
   user,
 } from "./db/schema";
 
@@ -63,6 +65,16 @@ export interface DataExport {
      * content, not personal data of the exporting person, features.md R.6).
      */
     infoLastChangedByMeAt: string | null;
+    /** F-031 (Increment 9): the places to stay THIS person suggested (R.7 I9-10). */
+    myStaySuggestions: {
+      link: string;
+      title: string;
+      price: { amount: number; currency: string } | null;
+      note: string | null;
+      createdAt: string;
+    }[];
+    /** Own ratings only (♥ «like» / ✕ «nope») – never ratings of other people. */
+    myStayRatings: { title: string; rating: "like" | "nope"; ratedAt: string }[];
   }[];
 }
 
@@ -71,48 +83,76 @@ const iso = (date: Date | null) => (date ? date.toISOString() : null);
 export async function exportUserData(userId: string, now = new Date()): Promise<DataExport | null> {
   const [account] = await db().select().from(user).where(eq(user.id, userId));
   if (!account) return null;
-  const [sessions, memberships, days, votes, passwordSet, infoEdits] = await Promise.all([
-    db()
-      .select({
-        createdAt: session.createdAt,
-        expiresAt: session.expiresAt,
-        ipAddress: session.ipAddress,
-        userAgent: session.userAgent,
-      })
-      .from(session)
-      .where(eq(session.userId, userId))
-      .orderBy(asc(session.createdAt)),
-    db()
-      .select({ trip, member: tripMember })
-      .from(tripMember)
-      .innerJoin(trip, eq(trip.id, tripMember.tripId))
-      .where(eq(tripMember.userId, userId))
-      .orderBy(asc(tripMember.joinedAt)),
-    db()
-      .select({ tripId: availability.tripId, day: availability.day, state: availability.state })
-      .from(availability)
-      .where(eq(availability.userId, userId))
-      .orderBy(asc(availability.day)),
-    db()
-      .select({
-        tripId: pollVote.tripId,
-        start: pollOption.startDate,
-        end: pollOption.endDate,
-        choice: pollVote.choice,
-      })
-      .from(pollVote)
-      .innerJoin(
-        pollOption,
-        and(eq(pollOption.id, pollVote.optionId), eq(pollOption.tripId, pollVote.tripId)),
-      )
-      .where(eq(pollVote.userId, userId))
-      .orderBy(asc(pollOption.startDate)),
-    hasPassword(userId),
-    db()
-      .select({ tripId: tripInfo.tripId, updatedAt: tripInfo.updatedAt })
-      .from(tripInfo)
-      .where(eq(tripInfo.updatedBy, userId)),
-  ]);
+  const [sessions, memberships, days, votes, passwordSet, infoEdits, stays, stayRatings] =
+    await Promise.all([
+      db()
+        .select({
+          createdAt: session.createdAt,
+          expiresAt: session.expiresAt,
+          ipAddress: session.ipAddress,
+          userAgent: session.userAgent,
+        })
+        .from(session)
+        .where(eq(session.userId, userId))
+        .orderBy(asc(session.createdAt)),
+      db()
+        .select({ trip, member: tripMember })
+        .from(tripMember)
+        .innerJoin(trip, eq(trip.id, tripMember.tripId))
+        .where(eq(tripMember.userId, userId))
+        .orderBy(asc(tripMember.joinedAt)),
+      db()
+        .select({ tripId: availability.tripId, day: availability.day, state: availability.state })
+        .from(availability)
+        .where(eq(availability.userId, userId))
+        .orderBy(asc(availability.day)),
+      db()
+        .select({
+          tripId: pollVote.tripId,
+          start: pollOption.startDate,
+          end: pollOption.endDate,
+          choice: pollVote.choice,
+        })
+        .from(pollVote)
+        .innerJoin(
+          pollOption,
+          and(eq(pollOption.id, pollVote.optionId), eq(pollOption.tripId, pollVote.tripId)),
+        )
+        .where(eq(pollVote.userId, userId))
+        .orderBy(asc(pollOption.startDate)),
+      hasPassword(userId),
+      db()
+        .select({ tripId: tripInfo.tripId, updatedAt: tripInfo.updatedAt })
+        .from(tripInfo)
+        .where(eq(tripInfo.updatedBy, userId)),
+      db()
+        .select({
+          tripId: tripStay.tripId,
+          url: tripStay.url,
+          title: tripStay.title,
+          priceCents: tripStay.priceCents,
+          currency: tripStay.currency,
+          note: tripStay.note,
+          createdAt: tripStay.createdAt,
+        })
+        .from(tripStay)
+        .where(eq(tripStay.createdBy, userId))
+        .orderBy(asc(tripStay.createdAt)),
+      db()
+        .select({
+          tripId: tripStayRating.tripId,
+          title: tripStay.title,
+          value: tripStayRating.value,
+          ratedAt: tripStayRating.ratedAt,
+        })
+        .from(tripStayRating)
+        .innerJoin(
+          tripStay,
+          and(eq(tripStay.id, tripStayRating.stayId), eq(tripStay.tripId, tripStayRating.tripId)),
+        )
+        .where(eq(tripStayRating.userId, userId))
+        .orderBy(asc(tripStayRating.ratedAt)),
+    ]);
   return {
     format: "wir-wollen-weg/data-export",
     version: 1,
@@ -153,6 +193,25 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
         .map((row) => ({ start: row.start, end: row.end, answer: row.choice })),
       departureCelebratedOn: member.departureCelebratedOn,
       infoLastChangedByMeAt: iso(infoEdits.find((row) => row.tripId === t.id)?.updatedAt ?? null),
+      myStaySuggestions: stays
+        .filter((row) => row.tripId === t.id)
+        .map((row) => ({
+          link: row.url,
+          title: row.title,
+          price:
+            row.priceCents === null
+              ? null
+              : { amount: row.priceCents / 100, currency: row.currency },
+          note: row.note,
+          createdAt: row.createdAt.toISOString(),
+        })),
+      myStayRatings: stayRatings
+        .filter((row) => row.tripId === t.id)
+        .map((row) => ({
+          title: row.title,
+          rating: row.value,
+          ratedAt: row.ratedAt.toISOString(),
+        })),
     })),
   };
 }
