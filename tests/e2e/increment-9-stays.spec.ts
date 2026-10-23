@@ -175,6 +175,8 @@ test.describe("Q33 – ranking visibility (server-side)", () => {
     // The cockpit shows no favourite to a locked member either.
     const cockpit = await (await page.request.get(`/trips/${trip.publicId}`)).text();
     expect(cockpit).not.toMatch(/Villa Mare \(\d ♥\)/);
+    // … nor who has rated how much (remind lists only once the ranking is free, Q33).
+    expect(cockpit).not.toMatch(/\\?"left\\?":\d/);
     await expectNoSeriousAxeViolations(page, "stays locked");
   });
 

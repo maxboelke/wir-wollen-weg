@@ -828,3 +828,54 @@ Geprüft: ux-spec §14.1–14.5, W06/W07/W09/W10/W11, Sicherheit (Platzhalter-To
 - «Zuletzt geändert …» formatiert `updatedAt` als UTC-Tag (wie bisher bei „geändert am“) – Änderung um 00:30 MESZ zeigt den Vortag; mit R-072 mitlösen. → **behoben – bitte prüfen** (mit R-072, `isoDateInZone`). **Verifiziert** (Reviewer 2026-10-22).
 - `telHref` macht aus «+49 (0) 30 1234» `tel:+49030…` (falsch gewählt) – entspricht W22 C („nur + und Ziffern“); ggf. „(0)“ nach Ländervorwahl entfernen. → **behoben – bitte prüfen** (Developer 2026-10-22): `src/lib/trip-info.ts` entfernt „(0)“ direkt nach `+`/`00` + Ländervorwahl (sonst unverändert), Tests in `src/lib/trip-info.test.ts`. **Verifiziert** (Reviewer 2026-10-22).
 - Reisebeschreibung ist in Phase 3 für Mitglieder nirgends mehr sichtbar (W16 v2 sieht sie nicht vor) – UX entscheiden lassen, z. B. im Sheet „So habt ihr entschieden“. → **behoben – bitte prüfen** (CEO-Entscheidung 2026-10-22): Beschreibung als Zitatzeile oben im Sheet „So habt ihr entschieden“ (`DecidedView.description`, `cockpit-provider.tsx`, Stil `.quote` aus ux-spec §14.4 nach `sheets.module.css` verschoben), E2E-Prüfung im Sheet-Test. **Verifiziert** (Reviewer 2026-10-22).
+
+## Review Inkrement 9 – Unterkünfte F-031 (Reviewer 2026-10-23, Commit f292f76)
+
+### R-073: Swipen – schnelles «Rückgängig» lässt die Karte als «entfernt» verschwinden
+- Schwere: mittel
+- Datei: src/features/stays/components/swipe-deck.tsx:176 (`save` → `mergeOpen`)
+- Problem / Reproduktion: Stapel Villa Mare / Casa Azul / Haus Galeb. → (♥), ← (✕ Casa Azul), sofort Strg+Z. Die Antwort der ✕-Bewertung kommt erst NACH dem lokalen Rückgängig an und enthält den Stapel von damals (ohne Casa Azul) → `mergeOpen` zählt Casa Azul als «removed»: Banner/Live-Region «A suggestion was removed.», Zähler «Place 2 of 2», Casa Azul ist bis zum Neuladen nicht mehr bewertbar (Server-Stand korrekt: unbewertet). Gefunden als E2E-Fehlschlag `increment-9-swipe.spec.ts:59` (mobile-chromium, Snapshot zeigt genau diesen Zustand); auf langsamen Mobilnetzen der Normalfall.
+- Erwartetes Verhalten: Nur die Antwort der zuletzt abgeschickten Bewertung gleicht den Stapel ab; die zurückgeholte Karte bleibt.
+- Vorschlag: Laufende Nummer je Bewertung, Abgleich nur bei `seq === lastSeq` (auch bei Retries die ursprüngliche Nummer).
+- Status: verifiziert (Reviewer 2026-10-23, selbst behoben): `lastSeq`-Ref in `swipe-deck.tsx`, Retries tragen ihre Nummer weiter. `increment-9-swipe.spec.ts` 5× wiederholt (desktop + mobile) grün.
+
+### R-074: Cockpit liefert gesperrten Mitgliedern die Bewertungs-Fortschritte pro Person (Q33)
+- Schwere: mittel
+- Datei: src/features/cockpit/view.ts:452 (`stayRemind`)
+- Problem / Reproduktion: Kai (Mitglied, 0 von 2 bewertet, Rangliste gesperrt) lädt `/trips/{id}` (HTML und `RSC: 1`). Der Payload enthält `stayRemind` mit `"done":[{"name":"Lena Berg",…,"left":0}]`, `"open":[{"name":"Member 1",…,"left":2}]` – wer fertig ist und wie viel jede Person noch offen hat. `/stays` hält genau diese Namen bewusst zurück (`openNames: null`); R.7 I9-06 erlaubt gesperrten Mitgliedern nur die eigenen Bewertungen und die Fortschrittszahl. Der Test `increment-9-stays.spec.ts` „member with open suggestions …“ prüfte im Cockpit nur den Favoriten.
+- Erwartetes Verhalten: Erinnern-Daten (Namen/Restzahlen) erst, wenn die Rangliste für die Person frei ist (Orga, alles bewertet oder festgelegt) – V3 bietet gesperrten Mitgliedern ohnehin kein `[Erinnern]` an.
+- Vorschlag: `stayRemind` nur bei `rankingVisible(...)` berechnen.
+- Status: verifiziert (Reviewer 2026-10-23, selbst behoben): Bedingung in `view.ts` (gleiche Regel wie `staysModel`), Regressions-Assertion `expect(cockpit).not.toMatch(/\\?"left\\?":\d/)` im genannten E2E-Test; increment-8/9 + feedback-1 grün.
+
+### R-075: Next.js 16.4.0 mit bekannten Sicherheitslücken (2 kritisch, 1 hoch) – Patch 16.4.2 verfügbar
+- Schwere: hoch (vor jedem weiteren Vorschau-Deploy)
+- Datei: package.json (`"next": "16.4.0"`), pnpm-lock.yaml
+- Problem / Reproduktion: `pnpm audit --prod`: GHSA-2464-fhr4-w9xw (kritisch, RCE im Image-Optimizer mit SVG), GHSA-673q-mjm6-r5xr (kritisch, RCE in `use cache` mit Typed Arrays), GHSA-p3m5-59mp-jv5r (hoch, DoS über Server Actions im App Router) – alle `>=16.0.0 <=16.4.0`, behoben ab 16.4.1. Für uns relevant ist sicher der Server-Actions-DoS (die App nutzt Server Actions überall, die Vorschau ist öffentlich erreichbar); `/_next/image` ist standardmäßig aktiv; `use cache` wird nicht verwendet. `next build` bricht in Agenten-Sitzungen zusätzlich einmalig mit `SecurityFatalError` ab (Upgrade-Hinweis, zweiter Lauf geht durch) – in CI nicht beobachtet, aber ein weiterer Grund für das Update. Außerdem (nur dev, kein Handlungsbedarf jetzt): `braces` über eslint-config-next, `esbuild` über drizzle-kit.
+- Erwartetes Verhalten: `pnpm audit --prod` ohne kritische/hohe Treffer.
+- Vorschlag: Patch-Upgrade `next` 16.4.0 → **16.4.2** (gleiche Minor-Version; `eslint-config-next` mitziehen), danach volle Prüfkette inkl. E2E. Zusätzlich `images: { unoptimized: true }` erwägen, da `next/image` nicht verwendet wird (kleinere Angriffsfläche).
+- Status: offen
+
+### R-076: Vorschau-Token im Bild-URL legt Link und Bild-URL in Zugriffs-Logs offen
+- Schwere: niedrig (vor Go-Live, wie R-037)
+- Datei: src/app/api/stays/preview/route.ts:78, src/server/stays/preview-token.ts:37
+- Problem / Reproduktion: Vor dem Speichern lädt der Browser `/api/stays/image?t=<token>`. Das Token ist nur signiert, nicht verschlüsselt: `base64url(JSON)` mit normalisierter Unterkunfts-URL, Bild-URL und Site-Name. Jeder Proxy-/Plattform-Zugriffslog (Vercel Request-Logs, Caddy/Nginx auf Hetzner) speichert damit Link und Bild-URL im Klartext (Base64). R.7 I9-10: „Titel, Links und Bild-URLs erscheinen nie in Logs“.
+- Erwartetes Verhalten: Keine Inhalte der Vorschau in URLs.
+- Vorschlag: Token-Inhalt mit AES-256-GCM verschlüsseln (Schlüssel per HKDF wie bisher, eigenes Label) – oder für das Bild nur einen kurzen HMAC der Bild-URL + Trip-ID in der URL und die Bild-URL serverseitig aus dem verschlüsselten Token holen. Alternativ mit R-037 gemeinsam über Log-Maskierung von `?t=` lösen.
+- Status: offen
+
+### R-077: Link-Vorschau auch nach Festlegung der Unterkunft / bei 30 Vorschlägen abrufbar
+- Schwere: niedrig
+- Datei: src/app/api/stays/preview/route.ts:46
+- Problem / Reproduktion: Reise mit festgelegter Unterkunft; Mitglied sendet `POST /api/stays/preview {trip, url}` (gleiche Origin) → der Server ruft die fremde Seite ab und liefert Titel/Token. Rechte-Tabelle R.7: „Unterkunft vorschlagen, Link-Vorschau abrufen – keine Unterkunft festgelegt; < 30 Vorschläge“. Speichern lehnt `createStay` korrekt ab, der ausgehende Abruf passiert trotzdem (Rate-Limit begrenzt ihn).
+- Erwartetes Verhalten: Neutrale Antwort `{ ok: false }` ohne Abruf, wenn festgelegt oder Limit erreicht.
+- Vorschlag: Vor dem Abruf `chosen`/Anzahl prüfen (z. B. kleine `stayGate(tripId)`-Abfrage in `db.ts`), E2E-/Unit-Fall ergänzen.
+- Status: offen
+
+#### Hinweise ohne Finding (Inkrement 9)
+- **SSRF-Prüfung (adversarial) bestanden:** zusätzlich geprüft (temporäre Unit-Tests, wieder entfernt): `0:0:0:0:0:ffff:7f00:1`, `::ffff:0.0.0.0`, `::127.0.0.1`, `64:ff9b::169.254.169.254`, `64:ff9b:1::a00:1`, 6to4 `2002:7f00:1::`, Teredo, `fd12::`, `100.100.100.200`, `fe80::1%eth0` → gesperrt; Ziel-URLs `https://0x7f.1/`, `127.1`, `%31%32%37.0.0.1`, Vollbreiten-Ziffern `１２７.０.０.１`, `[::1]:443`, `localhost.`, `foo.localhost`, `0`, `router.home.arpa` → abgewiesen; DNS-Antwort mit einer öffentlichen + einer privaten Adresse → `unsafe` bei genau einer Auflösung. Pinning (undici `connect.lookup`), Redirect-Neuprüfung, Gesamt-Zeitlimit per `AbortSignal` (deckt Slowloris im Body ab), Größenlimit nach Dekompression, keine Cookies/Header-Weitergabe sind durch `safe-fetch.test.ts` belegt. Produktion: `defaultSafeFetcher()` ohne Optionen, keine Env-Hintertür.
+- Nicht gesperrt (unkritisch, nicht global geroutet): IPv6-Dokumentationspräfix `3fff::/20` (RFC 9637) und `5f00::/16` (SRv6) – bei Gelegenheit in `V6_BLOCKED` ergänzen.
+- `readLimited`: Ein Timeout während der Dekompression wird als `bad_type` statt `timeout` geloggt – nur Log-Kategorie.
+- Bild-Proxy: HMAC-Vergleich `timingSafeEqual` nach Längenprüfung, Ablauf ≤ 30 min (+1 min Toleranz), Token an Reise gebunden + Mitgliedschaft geprüft; `?s=` per Join auf `trip_member` (keine IDOR); Magic Bytes, kein SVG, `nosniff`, `default-src 'none'; sandbox`, CORP same-origin, `private, max-age=86400`. Globale CSP Stufe 1 aktiv (Seiten, Vorschau-Basic-Auth-401, Proxy ausgenommen) – E2E inkl. Vorschau grün.
+- `safe-fetch.test.ts` braucht `openssl` (≥ 1.1.1 wegen `-addext`) – in GitHub-Runnern vorhanden; unter Windows ohne Git-Bash/OpenSSL schlägt `pnpm test` lokal fehl → ggf. in `docs/UEBERGABE.md` erwähnen oder Zertifikat als Test-Fixture einchecken.
+- Selbst behoben (Test-Robustheit): `increment-9-swipe.spec.ts` „pointer gesture“ – der Wisch-Flick über drei CDP-Mausbewegungen war unter Last flaky (2 von 8 Läufen: Freigabe außerhalb des 80-ms-Geschwindigkeitsfensters → Rückfedern). Flick jetzt als zeitlich gesteuerte Pointer-Events im Browser (8 ms Abstand), 20/20 grün. Der Test läuft weiterhin nur in Chromium (WebKit-Weg über Tasten/Tastatur).
+- WebKit (iPhone 15) lokal nicht installiert – die neuen Specs nutzen sichtbare Elemente und `expect.poll`; CI-Lauf abwarten.

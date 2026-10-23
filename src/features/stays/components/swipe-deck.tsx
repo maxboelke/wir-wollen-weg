@@ -176,10 +176,19 @@ export function SwipeDeck({
   );
 
   const saveRef = useRef<
-    (item: StayItem, value: StayRatingValue | null, dir: Dir, attempt?: number) => void
+    (
+      item: StayItem,
+      value: StayRatingValue | null,
+      dir: Dir,
+      attempt?: number,
+      seq?: number,
+    ) => void
   >(() => undefined);
+  /** Number of the latest rating sent – only ITS answer may reconcile the stack. */
+  const lastSeq = useRef(0);
   const save = useCallback(
-    (item: StayItem, value: StayRatingValue | null, dir: Dir, attempt = 0) => {
+    (item: StayItem, value: StayRatingValue | null, dir: Dir, attempt = 0, seq?: number) => {
+      const mySeq = seq ?? ++lastSeq.current;
       if (attempt === 0) setPendingSaves((n) => n + 1);
       const finish = () => {
         setPendingSaves((n) => n - 1);
@@ -188,7 +197,9 @@ export function SwipeDeck({
         .then((result) => {
           if (result.ok) {
             setBanner((current) => (current === t("offline") ? null : current));
-            mergeOpen(result.open);
+            // An older answer (e.g. the ✕ before a fast «Rückgängig») still lists the stack as
+            // it was then – merging it would drop the card that just came back as «removed».
+            if (mySeq === lastSeq.current) mergeOpen(result.open);
             finish();
             return;
           }
@@ -224,7 +235,7 @@ export function SwipeDeck({
           }
           setBanner(t("offline"));
           window.setTimeout(() => {
-            saveRef.current(item, value, dir, attempt + 1);
+            saveRef.current(item, value, dir, attempt + 1, mySeq);
           }, wait);
         });
     },

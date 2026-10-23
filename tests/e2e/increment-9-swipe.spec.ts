@@ -222,12 +222,30 @@ test.describe("W18-A – pointer gesture (Chromium)", () => {
         "Villa Mare": "like",
       });
 
-    // Fling to the left (fast, short) → pass.
-    await page.mouse.move(x, y);
-    await page.mouse.down();
-    await page.mouse.move(x - 20, y);
-    await page.mouse.move(x - 50, y);
-    await page.mouse.up();
+    // Fling to the left (fast, short) → pass. Dispatched in the page with 8 ms between the
+    // moves: through CDP every move costs a round trip, and under load the release then falls
+    // outside the 80 ms velocity window (flaky). The handlers are the same as for real input.
+    await page.waitForLoadState("networkidle");
+    await page.evaluate(
+      async ({ px, py }) => {
+        const at = (clientX: number) => ({
+          bubbles: true,
+          pointerId: 41,
+          pointerType: "mouse",
+          isPrimary: true,
+          button: 0,
+          clientX,
+          clientY: py,
+        });
+        document.elementFromPoint(px, py)?.dispatchEvent(new PointerEvent("pointerdown", at(px)));
+        for (const dx of [-15, -30, -45, -60]) {
+          await new Promise((resolve) => setTimeout(resolve, 8));
+          window.dispatchEvent(new PointerEvent("pointermove", at(px + dx)));
+        }
+        window.dispatchEvent(new PointerEvent("pointerup", at(px - 60)));
+      },
+      { px: x, py: y },
+    );
     await expect(topCard(page).getByRole("heading", { name: "Haus Galeb" })).toBeVisible();
     await expect
       .poll(async () => (await ratingsOf(trip.tripId, trip.email))["Casa Azul"])

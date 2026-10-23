@@ -6,6 +6,7 @@ import { locales, type Locale } from "@/i18n/config";
 import { formatDate, formatDateRange, toUtcDate, type IsoDate } from "@/lib/dates";
 import { googleCalendarUrl } from "@/lib/ics";
 import { nightsOf } from "@/lib/poll";
+import { rankingVisible } from "@/lib/stays";
 import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
 import { stayRemindData } from "../stays/remind";
@@ -449,6 +450,16 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
     inviteHref:
       isOrganizer || (trip.joinOpen && !view.full) ? tripPath(trip.publicId, "invite") : null,
     manageHref: isOrganizer ? `${tripPath(trip.publicId, "invite")}#placeholders` : null,
-    stayRemind: data.stay.total > 0 ? await stayRemindData(view, data.staysRaw) : null,
+    // Who has rated (names + open counts) only when the viewer's ranking is free – the same
+    // rule as `openNames` on /stays (Q33, R.7 I9-06: a locked member gets the progress number).
+    stayRemind:
+      data.stay.total > 0 &&
+      rankingVisible({
+        organizer: isOrganizer,
+        done: data.stay.myUnrated === 0,
+        chosen: data.stay.chosen !== null,
+      })
+        ? await stayRemindData(view, data.staysRaw)
+        : null,
   };
 }
