@@ -110,7 +110,9 @@ describe("preview token (R.7 I9-03, R-076 encrypted)", () => {
     const token = signPreviewToken(key, claims);
     expect(token).toMatch(/^[A-Za-z0-9_-]+$/);
     const decoded = Buffer.from(token, "base64url").toString("latin1");
-    for (const secret of ["booking.com", "cdn.example.com", "Booking.com", "trip-1", "exp"]) {
+    // Only markers long enough that random ciphertext cannot contain them by chance
+    // (a bare "exp" showed up in ~5 % of random tokens).
+    for (const secret of ["booking.com", "cdn.example.com", "Booking.com", "trip-1", '"exp":']) {
       expect(token).not.toContain(secret);
       expect(decoded).not.toContain(secret);
     }
