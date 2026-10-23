@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
 Stand: 2026-10-22 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13.**
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -456,6 +456,76 @@ Vorbereitung, Max (Mitglied), alles erledigt        Vorbereitung, Lena (Orga), d
 Länge Inkrement 8: Kopf ≈ 330 · Weg ≈ 300–520 · Kachel ≈ 130 · Mehr ≈ 150 → **≈ 0,9–1,3 Bildschirme** (390 × 844).
 
 **Abnahme UX Inkrement 8** (zusätzlich zu v2.10, soweit ohne spätere Bereiche möglich): Max Vorbereitung alles erledigt (H-3) · Max mit offenem Platzhalter (H-2, `[Lena Bescheid geben]`) · Lena direkt nach Festlegung (V1 dran, Primär) · Lena „Mia macht ohne App mit“ + Rückgängig in der Erledigt-Gruppe · Lena ≤ 21 Tage mit leeren Infos (A2) · Unterwegs Tag 1 mit/ohne Treffpunkt (H-7, UM-7 einmal je Person) · Unterwegs Tag 3 (H-4) · Danach (H-5b, «Zurück seit 9 Tagen») · Infos-Kachel leer/gefüllt je Rolle · 200 % (Schiene) · Dark Mode · Prüfung, dass **kein** Text, Menüpunkt oder Platzhalter die Bereiche aus Inkr. 9–12 erwähnt.
+
+## v2.14 Inkrement-9-Schnitt – Station V3 „Unterkunft“, Kachel, Erinnern (2026-10-23)
+
+Gilt vor v2.4 (V3-Tabelle) und v2.6 für Inkrement 9. Bereich: [W18 E](w18-unterkunft-swipen.md), Vorschlagen: [W17 F](w17-unterkunft-vorschlagen.md), Daten/Rechte: [`features.md` R.7](../../product/features.md). „Bucher“ = **Orga** (Markierung „Bucht“ erst Inkr. 11 – Spalte „bucht“ der v2.4-Tabelle entfällt bis dahin, keine Erwähnung in Texten).
+
+**Adapter** `stayStatus()` → `areas.stay` (Vorschlag für den Vertrag v2.10): `{ total, myUnrated, myNew, membersDone, membersTotal, favourite: { titles: string[]; likes: number } | null /* nur Orga oder wenn freigegeben */, chosen: { title } | null, booked: boolean, rebook: boolean /* „gebucht“ wegen neuem Termin zurückgesetzt, Hinweis nicht geschlossen */, withoutApp: boolean }`. `null` = Bereich nicht gebaut (vor Inkr. 9). Für Mitglieder, deren Rangliste gesperrt ist, liefert der Server `favourite = null` (Q33).
+
+### V3 – Zustände (erste passende Regel gilt; Zählbasis `membersTotal` = Mitglieder ohne Platzhalter)
+| # | Lage | Mitglied | Orga |
+|---|---|---|---|
+| 1 | **erledigt**: festgelegt **und** gebucht · oder UX-9 gesetzt | erledigt «{Titel} · gebucht ✓» bzw. «Ohne App erledigt» (Chip wie V2) | dto.; bei UX-9 in der aufgeklappten Erledigt-Gruppe Text-Taste «Rückgängig» |
+| 2 | Teilphase *Unterwegs*/*Danach*, nicht erledigt | in der Erledigt-Gruppe **ohne Häkchen** («nicht genutzt»): festgelegt → «{Titel} · nicht als gebucht markiert», sonst «nicht genutzt – keine Unterkunft festgelegt» | dto. |
+| 3 | ich habe unbewertete Vorschläge, nichts festgelegt | **dran** – Rang 3 (eigener Beitrag) | **dran** – Rang 3; zusätzlich Text-Taste «Schon festlegen» (→ `/stays#ranking`) |
+| 4 | Orga: alle Mitglieder fertig, nichts festgelegt | – | **dran** – Rang 1 (blockiert andere) |
+| 5 | Orga: festgelegt, nicht gebucht | – | **dran** – Rang 2 (Frist) |
+| 6 | ich fertig, andere nicht, nichts festgelegt | **wartet** + `[Erinnern]` (`stay-rate`) | **wartet** + `[Erinnern]` + Text-Tasten «Schon festlegen», «Haben wir schon / brauchen wir nicht …» |
+| 7 | alle fertig, nichts festgelegt | **wartet** + `[{Orga} Bescheid geben]` (`stay-fix`) | (→ Regel 4) |
+| 8 | festgelegt, nicht gebucht | **wartet** + `[{Orga} Bescheid geben]` (`stay-book`) | (→ Regel 5) |
+| 9 | 0 Vorschläge | **als Nächstes** (bzw. später) | dto. + Text-Taste «Haben wir schon / brauchen wir nicht …» |
+
+Regel 3 vor 4: Hat die Orga selbst noch offen, bleibt sie „dran – bewerten“; Festlegen erreicht sie über «Schon festlegen». Nach einem neuen Vorschlag fällt jede Person mit offenem Vorschlag zurück auf Regel 3 (W18 E.5.6). UX-9 ist nur in Regeln 6 und 9 und beim Bewerten der Orga (3) als Text-Taste erreichbar, nie wenn festgelegt.
+
+### V3 – Texte (Titel immer «Unterkunft» / «Place to stay», Icon `bed`, Ton Lavendel)
+| Regel | Statuszeile / Text DE | EN | Taste |
+|---|---|---|---|
+| 3 kompakt | Du hast {rated} von {total} bewertet (+ Balken, `aria-hidden`) | You've rated {rated} of {total} | – |
+| 3 ausgeklappt | {count, plural, one {Eine Unterkunft wartet} other {# Unterkünfte warten}} auf deine Bewertung. Du hast {rated} von {total} bewertet. · mit Neuen: {count, plural, one {1 neue Unterkunft} other {# neue Unterkünfte}} seit deinem letzten Swipen – danach siehst du das Ranking wieder. | {count, plural, one {One place is} other {# places are}} waiting for your rating. You've rated {rated} of {total}. · {count, plural, one {1 new place} other {# new places}} since you last swiped – rate them to see the ranking again. | Primär «Jetzt swipen» / «Start swiping» → `/stays/swipe` |
+| 4 | Unterkunft festlegen – Favorit: {title} ({likes} ♥) · Gleichstand: Unterkunft festlegen – gleichauf: {titles} · ohne ♥: Unterkunft festlegen – noch kein klarer Favorit | Pick the place – favourite: {title} ({likes} ♥) · Pick the place – tied: {titles} · Pick the place – no clear favourite yet | Primär «Festlegen» / «Pick one» → `/stays#ranking` (Fokus h2 «Rangliste») |
+| 5 | {title} buchen – danach als gebucht markieren. · nach Termin-Änderung: Neuer Termin – {title} neu buchen und als gebucht markieren. | Book {title} – then mark it as booked. · New dates – rebook {title} and mark it as booked. | Primär «Zur Unterkunft» / «Go to the place» → `/stays` |
+| 6 Mitglied | {done} von {total} haben bewertet | {done} of {total} have rated | `[Erinnern]` (Name «Alle erinnern, die noch nicht bewertet haben») |
+| 6 Orga | {done} von {total} haben bewertet · Favorit: {title} ({likes} ♥) | {done} of {total} have rated · favourite: {title} ({likes} ♥) | wie oben + Text-Tasten |
+| 7 | Alle haben bewertet – {orga} legt fest. | Everyone's rated – {orga} will pick one. | `[{orga} Bescheid geben]` |
+| 8 | {orga} bucht {title}. · nach Termin-Änderung: Neuer Termin – {orga} bucht {title} neu. | {orga} is booking {title}. · New dates – {orga} is rebooking {title}. | `[{orga} Bescheid geben]` |
+| 9 | Noch keine Vorschläge – schlag die erste vor, ein Link reicht. | No suggestions yet – suggest the first one, a link is all it takes. | – (ganze Karte → `/stays`) |
+| Text-Tasten | Schon festlegen · Haben wir schon / brauchen wir nicht … | Pick one now · Already sorted / don't need one … | |
+
+**Kurzformen für H-2** («Ihr wartet auf: …»): Regel 6 «Bewertungen für die Unterkunft» / «ratings for the place to stay» · Regel 7 «{orga} legt die Unterkunft fest» / «{orga} to pick the place» · Regel 8 «{orga} bucht {title}» / «{orga} to book {title}».
+
+**Heute-Sortierung:** Der Rang hängt jetzt vom **Zustand** ab, nicht nur von der Station (V3 kann Rang 1, 2 oder 3 haben). Vorschlag für `trip-route.ts`: `TripStation.rank` je Eintrag statt der festen `RANK`-Tabelle je ID; Reihenfolge bei gleichem Rang = Katalog (V1, V2, V3, A2). Gesamt: V1 Bescheid geben (1) · V3 festlegen (1) · V3 buchen (2) · A2 (2) · V3 bewerten (3).
+
+**Gruppen und Meta:** „Als Nächstes“ kommt mit Inkr. 9 erstmals vor (Regel 9; ist V2 noch offen und V3 ohne Vorschläge, steht V3 unter „Als Nächstes“). Weg-Meta Vorbereitung «{done} von 3 geschafft». Ziel V6 unverändert (Check-in kommt aus den Infos, nicht aus der Unterkunft).
+
+### Kachel „Unterkunft“ (v2.6, erste in der Reihenfolge)
+Erscheint, wenn V3 **erledigt** ist (alle Teilphasen) **oder** in *Unterwegs*/*Danach*, sobald es ≥ 1 Vorschlag gibt (V3 steht dann „nicht genutzt“ in der Erledigt-Gruppe; die Kachel ist der Einstieg zum Nachschlagen, R.7 I9-08). Ziel `/stays`.
+
+| Lage | Statuszeile DE | EN |
+|---|---|---|
+| festgelegt + gebucht | {title} · gebucht ✓ | {title} · booked ✓ |
+| UX-9 | Ohne App erledigt | Sorted outside the app |
+| Unterwegs/Danach, festgelegt, nicht gebucht | {title} | {title} |
+| Unterwegs/Danach, nichts festgelegt | {count, plural, one {1 Vorschlag} other {# Vorschläge}} · keiner festgelegt | {count, plural, one {1 suggestion} other {# suggestions}} · none picked |
+
+Zugänglicher Name = «Unterkunft. {Status}». Max. 2 Zeilen, Titel mit „…“ gekürzt. Kein Chip.
+
+### Erinnern (RemindSheet, ux-spec §14.2) – Anlässe in Inkrement 9
+| Anlass | Einstieg | Schritt | Inhalt |
+|---|---|---|---|
+| `stay-rate` | V3 Regel 6 `[Erinnern]`; W18 Hinweis «Basiert auf …» | `status` → `single`/`all` | `status`: h2 «Wer hat bewertet?» / «Who has rated?» · Gruppen «Fehlt noch ({n})» / «Still missing ({n})» und «Fertig ({n})» / «Done ({n})» · Statuszeilen «noch {count} offen» / «{count} left» bzw. «alles bewertet» / «all rated» · nur Mitglieder, keine Platzhalter · eigene Zeile (falls offen) Link «Jetzt swipen» · Fußleiste «Alle erinnern ({n})». Text `single`: DE «Hey {name}, bei {trip} {count, plural, one {wartet eine Unterkunft} other {warten # Unterkünfte}} auf deine Bewertung – dauert eine Minute: {link}» · EN «Hey {name}, {count, plural, one {one place is} other {# places are}} waiting for your rating in {trip} – takes a minute: {link}». `all`: DE «Hey ihr, bei {trip} warten noch Unterkünfte auf eure Bewertung – dauert eine Minute: {link}» · EN «Hey all, there are places waiting for your rating in {trip} – takes a minute: {link}». |
+| `stay-fix` | V3 Regel 7 | `orga` | Kontext «Alle haben bewertet. Sag {orga} kurz, dass es ans Festlegen geht.» / «Everyone's rated. Give {orga} a nudge to pick one.» · Text v2.8 |
+| `stay-book` | V3 Regel 8 | `orga` | Kontext «{title} steht fest. Sag {orga} kurz, dass es ans Buchen geht.» / «{title} is picked. Give {orga} a nudge to book it.» · Text v2.8 (`{booker}` = Orga) |
+
+`{link}` = `/trips/{id}/stays` (dort sieht man je nach Lage die Swipe-Aufforderung oder „Eure Unterkunft“). Texte nennen nie Preise oder Notizen. Orga erinnert Platzhalter hier nicht (sie bewerten nicht).
+
+### Sonstiges
+- **Reisemenü `⋯`:** keine Änderung (kein Menüpunkt „Unterkünfte“ – ein Einstieg je Bereich).
+- **Termin aufgehoben → Phase 2:** V3/Kachel verschwinden mit dem Weg; nach neuer Festlegung zurück (W18 E.8). Bei anderem Zeitraum steht die Orga sofort in Regel 5 („neu buchen“).
+- **„Neu erledigt“ (v2.7):** gilt für V3 ebenso («Neu erledigt: Unterkunft»).
+- **Kopf-Tasten:** keine neue.
+
+**Abnahme UX (zusätzlich zu W18 E.15):** Max Vorbereitung mit 3 offenen (V3 dran, Rang nach V1-Orga-Fällen, Primär «Jetzt swipen») · Max fertig, andere offen (wartet, Erinnern → `status` ohne Platzhalter) · Max alle fertig (wartet, «Lena Bescheid geben» → `stay-fix`) · Lena alle fertig (dran Rang 1 «Festlegen») · Lena Gleichstand / kein ♥ · Lena festgelegt nicht gebucht (dran) · gebucht → Kachel «… · gebucht ✓» + «Neu erledigt» · UX-9 + Rückgängig · keine Vorschläge (Als Nächstes) · Unterwegs ohne Festlegung mit Vorschlägen (nicht genutzt + Kachel) · Termin anders neu festgelegt (Regel 5 „neu buchen“) · H-2-Kurzformen · 200 % (Schiene) · Dark Mode · kein Text, Chip oder Menüpunkt erwähnt die Markierung „Bucht“ (das Verb in «Lena bucht …» ist gemeint und richtig).
 
 ---
 

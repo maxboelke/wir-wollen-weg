@@ -394,7 +394,49 @@ Geprüft gegen das Mockup [`cockpit-reiseverlauf/index.html`](../design/mockups/
 | UM-1 – UM-7 | aus UX-Sicht abgenommen (UM-4 mit Bedingungen) | Motion Designer: Gegenprüfung |
 | UX-1, UX-2, UX-8, UX-9 | entschieden (Auftraggeber 2026-10-22): ja | – |
 
+## 14. Runde 5 – Inkrement 9 „Unterkünfte“ (W17/W18, 2026-10-23)
+
+Struktur, Zustände und Texte: [W18 E](wireframes/w18-unterkunft-swipen.md), [W17 F](wireframes/w17-unterkunft-vorschlagen.md), Cockpit [W16 v2.14](wireframes/w16-cockpit.md), Infos [W22 D](wireframes/w22-infoseite.md). Prototyp-Stand: [`mockups/reise-managen/index.html`](mockups/reise-managen/index.html) `#/stay`, `#/stay/swipe`, `#/stay/new` (Ort-Zeile dort ist überholt, entfällt). Alle Punkte sind mit vorhandenen Tokens baubar; die Bitten betreffen Feinschliff und fehlende Assets. **Blockierend für den Bau sind nur D-52 (Icons) und D-53 (Demo-Bilder + Platzhalter), weil R.7 sie als Voraussetzung nennt.**
+
+### 14.1 Punkte an den Designer (D-46 – D-55)
+| ID | Thema | Bitte |
+|---|---|---|
+| **D-46** | **Swipe-Karte** | Anatomie: Bild 16:10 (max. 34 svh), Domain-Chip auf dem Bild mit Verlauf darunter (lesbar hell/dunkel), h2 Titel, Preiszeile, Notiz-Zitat mit Name, Text-Link «Auf … ansehen ↗». Zweite Karte dahinter (95 %, 8 px versetzt). Radius/Schatten passend zu §9.6. |
+| **D-47** | **Stempel** «♥ Gefällt mir» / «✕ Eher nicht» | Icon + Text, schräg wie Stempel? Farbe: ♥ – Vorschlag Minze-Ton **nur als Stempel/Taste**, ✕ neutral (`text-muted`/`border-strong`), **nie Rot/Koralle** (Ablehnung ist kein Fehler). Bitte mit U-25 abgleichen (Minze sonst Ring/Linie/erledigt) – falls Minze hier nicht passt, Lavendel vorschlagen. |
+| **D-48** | **Platzhalterkarte / -bild** (keine Vorschau) | Gestreiftes Feld + Bett-Icon + Domain, freundlich, kein Fehlerton; Varianten 64 px (Zeile), Karte 16:10, „Eure Unterkunft“ 16:9; hell/dunkel. |
+| **D-49** | **Bewertungstasten** | Swipe: 64 · 48 · 64 px rund mit Label darunter; Liste: Paar `[✕][♥]` je 44 px, gedrückt (`aria-pressed`) klar unterscheidbar ohne Farbe allein (gefülltes Icon vs. Kontur), Zustand „offen“ mit Wort. |
+| **D-50** | **Ranglisten-Zeile** | Rang-Kreis 32 px, Chip «Gleichauf», Sonnen-Chip «Platz 1» (wie W10), «♥ 5 · ✕ 0», Namenszeile, `[Das wird's]` `btn-sm` sekundär; bei 200 % Paar unter dem Titel. |
+| **D-51** | **„Eure Unterkunft“** | große Karte mit Bild 16:9, Chips «◷ noch nicht gebucht» (Amber) / «✓ gebucht» (Minze) + Zeile «am … von …», Primär `[Als gebucht markieren]`, Text-Tasten. |
+| **D-52** | **Icons** (fehlen im Sprite) | `bed` (Unterkunft, Kachel/Station/Platzhalter), `heart` (♥, gefüllt + Kontur), `external` (↗ für Portal-Links); prüfen, ob `cross` für ✕ reicht. **Blockierend.** |
+| **D-53** | **Demo-Bilder + Leerzustand** | 6–8 eigene Demo-Bilder für Unterkünfte (R.7 Demo-Seed, keine fremden Fotos) und Illustration Leerzustand «Noch keine Unterkünfte». **Blockierend (Demo).** |
+| **D-54** | **Hinweise im Bereich** | Sperrhinweis (Schloss, ohne Platzhalter-Balken), Hinweis «Basiert auf …» (Info, wie U-20), Hinweis «Termin hat sich geändert» (Amber, mit `×` nur für Orga), Hinweis „ohne App erledigt“ (Info). |
+| **D-55** | **Desktop ≥ 960 px** | `/stays` zweispaltig (links Aufforderung/„Eure Unterkunft“ + Liste, rechts Rangliste); `/stays/swipe` Stapel 420 px zentriert **ohne** Rangliste daneben (Abweichung vom alten W18-Entwurf, bewusst: unbeeinflusst). Kachel „Unterkunft“ im Cockpit: Ton Lavendel (wie R4-Bereichsfarben). |
+
+### 14.2 Punkte an den Motion Designer (UM-8 – UM-13, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-8** | Ziehen + Stempel | Karte folgt dem Finger, Rotation dx/18° (max. 12°), Stempel-Deckkraft ∝ Distanz; Start ab 8 px, nicht in 16 px Randzone | folgt dem Finger ohne Rotation |
+| **UM-9** | Auslösen / Ausfliegen + nächste Karte | Flug mit Restgeschwindigkeit (`base`, `ease-exit`); nächste Karte 95 → 100 % (`base`, `spring-soft`); nächste Karte sofort bedienbar | Überblenden 140 ms |
+| **UM-10** | Zurückfedern + Rückgängig | Zurückfedern `slow`/`spring-soft`; Rückgängig: Karte kommt aus ihrer Ausflugrichtung zurück | sofort / Überblenden |
+| **UM-11** | Stapel-Ende «Geschafft!» | Siegel-Plopp (`spring-bouncy`, erlaubt – Siegel), danach Rangliste beim ersten Aufruf gestaffelt (`stagger-card`, ≤ 400 ms) | statisch |
+| **UM-12** | Festlegen / gebucht | Siegel-Plopp an „Eure Unterkunft“ bzw. am Chip + Snackbar; **kein Konfetti** (Termin bleibt der große Moment) | statisch |
+| **UM-13** | Haptik | **keine** zusätzliche Vibration (Q17: nur zwei Stellen) – bitte bestätigen oder begründet als Q17-Erweiterung vorschlagen | – |
+
+### 14.3 Frage an den Auftraggeber (über den CEO, nicht blockierend)
+| Nr. | Frage | Empfehlung UX |
+|---|---|---|
+| **UX-10** | Bewertung beim Swipen nur **zweistufig** (♥ Gefällt mir / ✕ Eher nicht) – oder zusätzlich „Vielleicht“? | **Zweistufig** (so in F-031 freigegeben): zwei Richtungen sind eindeutig und gelernt, eine dritte (hoch wischen) ist schwer zu entdecken; „Vielleicht“ würde zur Ausweichstufe und die Rangliste verwässern; „Eher nicht“ ist schon weich. Gebaut wird zweistufig, solange nichts anderes entschieden ist. |
+
+### 14.4 Abstimmungsstand Runde 5
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-46 – D-51, D-54, D-55 | neu (Feinschliff, Bau mit vorhandenen Tokens möglich) | Designer |
+| D-52, D-53 | neu, **blockierend** (Icons, Demo-Bilder) | Designer |
+| UM-8 – UM-13 | neu | Motion Designer |
+| UX-10 | Bestätigung | Auftraggeber über CEO (nicht blockierend) |
+
 ## Changelog
+- 2026-10-23 (Runde 5, Inkrement 9): §14 – Punkte D-46–D-55 (Designer), UM-8–UM-13 (Motion), Frage UX-10; W17 F, W18 E, W16 v2.14, W22 D.
 - 2026-10-22 (Runde 4b): §13 – Antworten U-23–U-30, Bewertung UM-4, Abnahme D-36–D-45; W16 v2.12/v2.13 (Inkrement-8-Schnitt), W22 baureif.
 - 2026-10-22 (Runde 4): §12 – Auswahl Variante C, Antworten R4-U-17–R4-U-22, neue Punkte D-36–D-45 (Designer) und UM-1–UM-7 (Motion), Fragen UX-8/UX-9; Konzept in W16 v2.
 - 2026-10-20 (Feedback-Runde 1): §11 Punkte U-17–U-21 (WhatsApp-Taste, Kennzahl-Box als Button, Personen-Zeilen, Hinweis „Basiert auf x von n“, Phase 3 ohne Tabs + Reise-Hub).
