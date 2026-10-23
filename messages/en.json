@@ -1729,6 +1729,7 @@
       "openCount": "{count, plural, one {One payment} other {# payments}} still open",
       "remind": "Remind",
       "remindOne": "Remind {name}",
+      "nudgeOrgaName": "Let {orga} know that {name} hasn’t joined yet",
       "remindMineName": "Remind everyone who still owes you",
       "remindAllName": "Remind about open payments",
       "closeEarly": "Close …",
@@ -2270,6 +2271,7 @@
     "remindAll": "Remind everyone",
     "remindContext": "According to the expenses, {name} still owes you {amount}.",
     "remindOther": "{from} → {to}: {amount}",
+    "nudgeOrgaName": "Let {orga} know that {name} hasn’t joined yet",
     "usually": "This usually happens after the trip."
   },
   "payInfo": {

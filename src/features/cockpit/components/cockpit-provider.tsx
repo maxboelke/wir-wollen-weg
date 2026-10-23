@@ -388,6 +388,7 @@ function SheetBody({
 
 const EMPTY_COST_REMIND: NonNullable<CockpitSheetData["costRemind"]> = {
   tripName: "",
+  orgaName: "",
   defaultLocale: "en",
   mine: [],
   all: [],

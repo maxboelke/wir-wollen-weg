@@ -200,6 +200,21 @@ describe("D1 «Kosten ausgleichen» (Danach) – one test per row and role", () 
     });
     expect(d1(formerOnly, MEMBER)?.remind).toBeUndefined();
   });
+  it("row 4, R-082: a single placeholder debtor → members tell the organiser, orga reminds", () => {
+    const lotte = costs({
+      myBalanceCents: 3_000,
+      owedToMe: [person("Lotte", 3_000, { placeholder: true })],
+    });
+    expect(d1(lotte, MEMBER)?.remind).toMatchObject({
+      occasion: "settle",
+      keys: ["party-Lotte"],
+      label: { key: "v2.nudgeOrga", values: { orga: "Lena" } },
+      name: { key: "costs.nudgeOrgaName", values: { orga: "Lena", name: "Lotte" } },
+    });
+    expect(d1(lotte, ORGA)?.remind).toMatchObject({
+      label: { key: "costs.remindOne", values: { name: "Lotte" } },
+    });
+  });
   it("row 5: I am square, others open → waiting; organiser «settle-all» + «Abschließen …»", () => {
     const c = costs({ openTransfers: 3 });
     expect(d1(c, MEMBER)).toMatchObject({

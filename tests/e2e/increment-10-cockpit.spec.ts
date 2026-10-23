@@ -3,7 +3,15 @@ import en from "../../messages/en.json" with { type: "json" };
 import { expectNoSeriousAxeViolations } from "./helpers/axe";
 import { signUp } from "./helpers/auth";
 import { addExpense, costRows, setPayInfo } from "./helpers/costs";
-import { addAccountToTrip, makeOrganizer, seedTrip, setFixedDates } from "./helpers/db";
+import {
+  addAccountToTrip,
+  addPlaceholder,
+  makeOrganizer,
+  placeholderToken,
+  seedTrip,
+  setFixedDates,
+  tripRow,
+} from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
 
 // Increment 10 – cockpit (W16 v2.15, features.md R.8 I10-09): A1 at the threshold, the tile,
@@ -133,6 +141,105 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
     ).toBeVisible();
     await expect(sheet.getByText(/DE89/)).toHaveCount(0);
     await expect(sheet.getByText(/PayPal/)).toHaveCount(0);
+  });
+
+  test("R-082: member owed by a placeholder → «Let Lena Berg know», never an invite link", async ({
+    page,
+  }) => {
+    const trip = await cockpitTrip(page, [-10, -3]);
+    await addPlaceholder(trip.tripId, "Lotte");
+    await addExpense(trip.tripId, {
+      title: "Dinner",
+      amount: 3000,
+      payer: "Kai",
+      shares: { Lotte: 3000 },
+    });
+    await setPayInfo(trip.tripId, "Kai", "DE89370400440532013000", "PayPal: kai");
+    const personal = await placeholderToken(trip.publicId, "Lotte");
+    const general = (await tripRow(trip.publicId))?.invite_token;
+    if (!personal || !general) throw new Error("no invite tokens");
+    // Neither the personal nor the general invite link reaches the member (HTML, RSC).
+    const leak = new RegExp(`/i/|${personal}|${general}`);
+    for (const path of [`/trips/${trip.publicId}`, `/trips/${trip.publicId}/costs/balances`]) {
+      expect(await (await page.request.get(path)).text()).not.toMatch(leak);
+      expect(await (await page.request.get(path, { headers: { RSC: "1" } })).text()).not.toMatch(
+        leak,
+      );
+    }
+
+    const nudge = en.share.remind.nudgePlaceholder;
+    const message = fill(nudge.split(" {link}")[0] ?? nudge, {
+      orga: "Lena Berg",
+      name: "Lotte",
+      trip: trip.name,
+    });
+    const expectNudgeSheet = async () => {
+      const sheet = page.getByRole("dialog", {
+        name: fill(en.remind.placeholderTitle, { name: "Lotte" }),
+      });
+      await expect(
+        sheet.getByText(fill(en.remind.placeholderText, { name: "Lotte", orga: "Lena Berg" })),
+      ).toBeVisible();
+      const area = sheet.getByRole("textbox", { name: en.remind.messageLabel });
+      await expect.poll(() => area.inputValue()).toContain(message);
+      const body = await area.inputValue();
+      expect(body).not.toMatch(/\/i\/|€|DE89|PayPal/);
+      expect(body).toContain(`/trips/${trip.publicId}`);
+      await page.keyboard.press("Escape");
+      await expect(sheet).toBeHidden();
+    };
+
+    // Cockpit D1: the single debtor is a placeholder → the organiser is told.
+    await page.goto(`/trips/${trip.publicId}`);
+    await hydrated(page);
+    await main(page)
+      .getByRole("button", {
+        name: fill(r.costs.nudgeOrgaName, { orga: "Lena Berg", name: "Lotte" }),
+      })
+      .first()
+      .click();
+    await expectNudgeSheet();
+
+    // Balances: no «Remind Lotte», but «Let Lena Berg know» in the row.
+    await page.goto(`/trips/${trip.publicId}/costs/balances`);
+    await hydrated(page);
+    await expect(
+      main(page).getByRole("button", { name: fill(en.balances.remind, { name: "Lotte" }) }),
+    ).toHaveCount(0);
+    const button = main(page).getByRole("button", {
+      name: fill(en.balances.nudgeOrgaName, { orga: "Lena Berg", name: "Lotte" }),
+    });
+    await expect(button).toHaveText(fill(en.remind.orgaTitle, { orga: "Lena Berg" }));
+    await button.click();
+    await expectNudgeSheet();
+  });
+
+  test("R-082: organiser reminds a placeholder with the personal link", async ({ page }) => {
+    const trip = await cockpitTrip(page, [-10, -3], "organizer");
+    await addPlaceholder(trip.tripId, "Lotte");
+    await addExpense(trip.tripId, {
+      title: "Dinner",
+      amount: 3000,
+      payer: "Kai",
+      shares: { Lotte: 3000 },
+    });
+    const personal = await placeholderToken(trip.publicId, "Lotte");
+    const general = (await tripRow(trip.publicId))?.invite_token;
+    if (!personal || !general) throw new Error("no invite tokens");
+    await page.goto(`/trips/${trip.publicId}`);
+    await hydrated(page);
+    await main(page)
+      .getByRole("button", { name: fill(r.costs.remindOne, { name: "Lotte" }) })
+      .first()
+      .click();
+    const sheet = page.getByRole("dialog");
+    const area = sheet.getByRole("textbox", { name: en.remind.messageLabel });
+    await expect
+      .poll(() => area.inputValue())
+      .toMatch(/according to the .* expenses you still owe me €30\.00/);
+    const body = await area.inputValue();
+    expect(body).toContain(`/i/${personal}`);
+    expect(body).not.toContain(general);
   });
 
   test("Danach, organiser, all square: «close the expenses?» (secondary) → done, H-5", async ({

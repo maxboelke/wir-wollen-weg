@@ -174,6 +174,17 @@
   letter-spacing: -0.02em;
   line-height: 1.2;
   font-variant-numeric: var(--ww-cost-numeric);
+  /* R-081: long words («schuldest») at 200 % text – break instead of sticking out */
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* R-081: very large text (≈ 200 % on a phone) – tile above the text, the sentence gets the
+   full card width. Normal text sizes keep the tile beside the text. */
+@container (max-width: 15em) {
+  .stand {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }
 
 .owed {
@@ -450,6 +461,7 @@
   flex-direction: column;
   align-items: flex-end;
   gap: var(--ww-space-0-5);
+  min-width: 0;
 }
 
 .rowAmount {
@@ -459,12 +471,14 @@
   white-space: nowrap;
 }
 
+/* R-081: may wrap between words at large text sizes – the amount itself stays together
+   (Intl puts a no-break space between number and currency). */
 .rowShare {
   color: var(--ww-color-text-muted);
   font-size: var(--ww-cost-amount-meta);
   font-weight: var(--ww-font-weight-semibold);
   font-variant-numeric: var(--ww-cost-numeric);
-  white-space: nowrap;
+  text-align: end;
 }
 
 .tagChip {
@@ -495,6 +509,10 @@
   .rowRight {
     grid-column: 2;
     align-items: flex-start;
+  }
+
+  .rowShare {
+    text-align: start;
   }
 }
 

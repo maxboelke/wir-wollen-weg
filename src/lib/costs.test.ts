@@ -6,6 +6,7 @@ import {
   canUndoSettlement,
   checkIban,
   computeBalances,
+  costReminderChannel,
   COST_CURRENCIES,
   currencyChoices,
   debtThresholdCents,
@@ -626,5 +627,23 @@ describe("people order and former numbers (W19 D.10, I10-05)", () => {
         "me",
       ).map((t) => t.cents),
     ).toEqual([2, 3, 1]);
+  });
+});
+
+describe("costReminderChannel (W16 v2.15, R-082)", () => {
+  const member = { kind: "member" as const, me: false };
+  const placeholder = { kind: "placeholder" as const, me: false };
+  it("members with an account get the balances link – for everyone", () => {
+    expect(costReminderChannel(member, false)).toBe("balances");
+    expect(costReminderChannel(member, true)).toBe("balances");
+  });
+  it("placeholders: personal link only for the organiser, members tell the organiser", () => {
+    expect(costReminderChannel(placeholder, true)).toBe("personal");
+    expect(costReminderChannel(placeholder, false)).toBe("orga");
+  });
+  it("former members, the viewer and unknown parties cannot be reminded", () => {
+    expect(costReminderChannel({ kind: "former", me: false }, true)).toBeNull();
+    expect(costReminderChannel({ kind: "member", me: true }, false)).toBeNull();
+    expect(costReminderChannel(undefined, true)).toBeNull();
   });
 });

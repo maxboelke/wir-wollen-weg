@@ -8,6 +8,7 @@ import {
   addPlaceholder,
   makeOrganizer,
   seedTrip,
+  setAccountLocale,
   setFixedDates,
 } from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
@@ -29,9 +30,12 @@ const fill = (text: string, values: Record<string, string | number>) =>
 const hydrated = (page: Page) => page.waitForLoadState("networkidle");
 
 /** Kai (signed in) in Lena Berg's fixed trip (Vorbereitung) with «Member 1». */
-async function costTrip(page: Page, options: { role?: "member" | "organizer" } = {}) {
+async function costTrip(
+  page: Page,
+  options: { role?: "member" | "organizer"; extraMembers?: number } = {},
+) {
   const name = `Costs ${String(Date.now())}`;
-  const trip = await seedTrip(name, { extraMembers: 1 });
+  const trip = await seedTrip(name, { extraMembers: options.extraMembers ?? 1 });
   const email = await signUp(page, "Kai", uniqueEmail("kai"));
   await addAccountToTrip(trip.tripId, email, "Kai");
   if (options.role === "organizer") await makeOrganizer(trip.tripId, email);
@@ -40,6 +44,26 @@ async function costTrip(page: Page, options: { role?: "member" | "organizer" } =
 }
 
 const main = (page: Page) => page.locator("main");
+
+/** 200 % text: nothing in `main` reaches beyond 360 px (WCAG 1.4.10, I10-11). */
+async function expectNothingSticksOut(page: Page) {
+  await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
+  // Nothing in the area sticks out (1.4.10) – the footer's language switch is out of scope.
+  await expect
+    .poll(() =>
+      page.evaluate(() =>
+        [...document.querySelectorAll("main *")]
+          // The fixed action bar spans the layout viewport (widened by the footer).
+          .filter(
+            (element) =>
+              element.getBoundingClientRect().right > 361 &&
+              getComputedStyle(element).position !== "fixed",
+          )
+          .map((element) => `${element.tagName}.${element.className}: ${element.textContent}`),
+      ),
+    )
+    .toEqual([]);
+}
 
 test.describe("W19 D – expenses", () => {
   test("empty → add equally with a rest cent → list, «Dein Stand», detail", async ({ page }) => {
@@ -278,27 +302,35 @@ test.describe("W19 D.14 – a11y, 320 px, 200 %, reduced motion", () => {
       ).toBe(0);
     }
     await page.setViewportSize({ width: 360, height: 640 });
-    for (const path of ["costs/balances", "costs/new"]) {
+    // R-081: the list («your share …», «Dein Stand») too, not only balances and the form.
+    for (const path of ["costs", "costs/balances", "costs/new"]) {
       await page.goto(`/trips/${trip.publicId}/${path}`);
       await hydrated(page);
-      await page.addStyleTag({ content: "html { font-size: 200% !important; }" });
-      // Nothing in the area sticks out (1.4.10) – the footer's language switch is out of scope.
-      await expect
-        .poll(() =>
-          page.evaluate(
-            () =>
-              [...document.querySelectorAll("main *")].filter(
-                // The fixed action bar spans the layout viewport (widened by the footer).
-                (element) =>
-                  element.getBoundingClientRect().right > 361 &&
-                  getComputedStyle(element).position !== "fixed",
-              ).length,
-          ),
-        )
-        .toBe(0);
+      await expectNothingSticksOut(page);
     }
     await page.goto(`/trips/${trip.publicId}/costs/balances`);
     await hydrated(page);
     await expectNoSeriousAxeViolations(page, "balances 200 %");
+  });
+
+  test("R-081: German list at 360 px / 200 % – «dein Anteil …» and «Du schuldest» wrap", async ({
+    page,
+  }) => {
+    const trip = await costTrip(page, { extraMembers: 2 });
+    await addExpense(trip.tripId, {
+      title: "Ferienhaus",
+      amount: 184050,
+      payer: "Lena Berg",
+      shares: { "Lena Berg": 46013, "Member 1": 46013, "Member 2": 46012, Kai: 46012 },
+    });
+    await setAccountLocale(trip.email, "de");
+    await page.setViewportSize({ width: 360, height: 640 });
+    await page.goto(`/trips/${trip.publicId}/costs`);
+    await hydrated(page);
+    await expect(main(page).getByText(/dein Anteil 460,12\s€/)).toBeVisible();
+    await expect(main(page).locator("[data-balance-sentence]")).toHaveText(
+      /Du schuldest 460,12\s€/,
+    );
+    await expectNothingSticksOut(page);
   });
 });

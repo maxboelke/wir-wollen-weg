@@ -391,6 +391,22 @@ export function whoMarks(from: SettleSide, to: SettleSide): "both" | "from" | "t
   return "orga";
 }
 
+/**
+ * How a debtor can be reminded (W16 v2.15, R-082): members with an account → text with the
+ * balances link; placeholders → their PERSONAL link, but only for the organiser (F-007) –
+ * everyone else gets «{orga} Bescheid geben» (ux-spec §14.2). Never the trip's general invite
+ * link: joining through it would create a second person and lose the placeholder's balance.
+ * Former members and the viewer themself cannot be reminded.
+ */
+export function costReminderChannel(
+  debtor: { kind: "member" | "placeholder" | "former"; me: boolean } | undefined,
+  isOrganizer: boolean,
+): "balances" | "personal" | "orga" | null {
+  if (!debtor || debtor.kind === "former" || debtor.me) return null;
+  if (debtor.kind === "member") return "balances";
+  return isOrganizer ? "personal" : "orga";
+}
+
 /* ------------------------------------------------------------------------------------------ */
 /* IBAN (R.8 I10-07, ISO 13616)                                                                 */
 /* ------------------------------------------------------------------------------------------ */

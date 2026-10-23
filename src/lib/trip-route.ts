@@ -719,7 +719,11 @@ export function a1Task(costs: CostStatus): TripStation | null {
 }
 
 /** D1 «Kosten ausgleichen» (Danach, ≥ 1 expense) – W16 v2.15 table, first matching row wins. */
-export function d1Station(costs: CostStatus, viewer: RouteViewer): TripStation | null {
+export function d1Station(
+  costs: CostStatus,
+  viewer: RouteViewer,
+  orgaName = "",
+): TripStation | null {
   if (costs.expenseCount === 0) return null;
   const orga = viewer.role === "organizer";
   const base = {
@@ -796,10 +800,19 @@ export function d1Station(costs: CostStatus, viewer: RouteViewer): TripStation |
             remind: {
               occasion: "settle" as const,
               keys: remindable.map((p) => p.key),
-              label: single ? msg("costs.remindOne", { name: single.name }) : msg("costs.remind"),
-              name: single
-                ? msg("costs.remindOne", { name: single.name })
-                : msg("costs.remindMineName"),
+              // R-082: members cannot remind a placeholder – they tell the organiser.
+              label:
+                single?.placeholder && !orga
+                  ? msg("v2.nudgeOrga", { orga: orgaName })
+                  : single
+                    ? msg("costs.remindOne", { name: single.name })
+                    : msg("costs.remind"),
+              name:
+                single?.placeholder && !orga
+                  ? msg("costs.nudgeOrgaName", { orga: orgaName, name: single.name })
+                  : single
+                    ? msg("costs.remindOne", { name: single.name })
+                    : msg("costs.remindMineName"),
             },
           }
         : {}),
@@ -891,7 +904,7 @@ export function tripRoute(
 
   const stay = areas.stay ?? null;
   const costs = areas.costs ?? null;
-  const d1 = costs && sub === "after" ? d1Station(costs, viewer) : null;
+  const d1 = costs && sub === "after" ? d1Station(costs, viewer, trip.orgaName) : null;
   const stations = [
     v1Station(trip, viewer, today, sub),
     v2Station(trip, viewer, areas, sub),

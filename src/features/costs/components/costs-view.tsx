@@ -526,7 +526,14 @@ export function CostsView({
   const detail =
     shown.kind === "detail" ? model.expenses.find((e) => e.id === shown.id) : undefined;
   const remindTitle = useCostRemindTitle(
-    remind ?? { tripName: "", defaultLocale: "en", mine: [], all: [], allTexts: null },
+    remind ?? {
+      tripName: "",
+      orgaName: "",
+      defaultLocale: "en",
+      mine: [],
+      all: [],
+      allTexts: null,
+    },
   );
 
   const segment = (
@@ -1258,6 +1265,7 @@ function Balances({
   focusOnLoad: boolean;
 }) {
   const tb = useTranslations("balances");
+  const tRemind = useTranslations("remind");
   const t = useTranslations("costs");
   const tClose = useTranslations("closeCosts");
   const { me } = model;
@@ -1347,6 +1355,7 @@ function Balances({
             : tb("whoOrga");
     const iPay = row.from === viewerParty;
     const toMe = row.to === viewerParty;
+    const remindRow = toMe ? remind?.mine.find((m) => m.key === row.from) : undefined;
     const primary = section === "yours" && index === primaryIndex && iPay;
     return (
       <li key={key} data-transfer={key}>
@@ -1374,10 +1383,7 @@ function Balances({
             >
               {toMe ? tb("markReceived") : tb("markPaid")}
             </Button>
-            {toMe &&
-            from &&
-            from.kind !== "former" &&
-            remind?.mine.some((m) => m.key === row.from && m.texts) ? (
+            {toMe && from && from.kind !== "former" && remindRow?.texts ? (
               <Button
                 variant="secondary"
                 size="sm"
@@ -1388,6 +1394,20 @@ function Balances({
                 }}
               >
                 {tb("remind", { name: name(row.from) })}
+              </Button>
+            ) : toMe && from && remindRow?.orgaTexts && remind ? (
+              // R-082: members cannot remind a placeholder – the organiser has the link.
+              <Button
+                variant="secondary"
+                size="sm"
+                icon="remind"
+                aria-haspopup="dialog"
+                aria-label={tb("nudgeOrgaName", { orga: remind.orgaName, name: name(row.from) })}
+                onClick={() => {
+                  onRemind(row.from);
+                }}
+              >
+                {tRemind("orgaTitle", { orga: remind.orgaName })}
               </Button>
             ) : null}
           </div>

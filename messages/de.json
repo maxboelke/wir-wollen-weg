@@ -1729,6 +1729,7 @@
       "openCount": "Noch {count, plural, one {ein Ausgleich} other {# Ausgleiche}} offen",
       "remind": "Erinnern",
       "remindOne": "{name} erinnern",
+      "nudgeOrgaName": "{orga} Bescheid geben, dass {name} noch nicht dabei ist",
       "remindMineName": "Alle erinnern, die dir noch etwas schulden",
       "remindAllName": "An offene Ausgleiche erinnern",
       "closeEarly": "Abschließen …",
@@ -2270,6 +2271,7 @@
     "remindAll": "Alle erinnern",
     "remindContext": "{name} schuldet dir laut Abrechnung noch {amount}.",
     "remindOther": "{from} → {to}: {amount}",
+    "nudgeOrgaName": "{orga} Bescheid geben, dass {name} noch nicht dabei ist",
     "usually": "Üblich ist das nach der Reise."
   },
   "payInfo": {

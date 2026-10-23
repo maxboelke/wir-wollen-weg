@@ -17,7 +17,7 @@ export interface CostRemindStep {
 /** First step for an entry point: one debtor → the text directly, several → the list. */
 export function firstCostStep(data: CostRemindData, occasion: CostOccasion): CostRemindStep {
   if (occasion === "settle") {
-    const rows = data.mine.filter((row) => row.texts);
+    const rows = data.mine.filter((row) => row.texts ?? row.orgaTexts);
     return rows.length === 1 && rows[0] ? { occasion, key: rows[0].key } : { occasion };
   }
   return { occasion };
@@ -30,6 +30,7 @@ export function useCostRemindTitle(data: CostRemindData) {
     if (step.key === "all") return tRemind("allTitle");
     const rows = step.occasion === "settle" ? data.mine : data.all;
     const row = rows.find((r) => r.key === step.key);
+    if (row && !row.texts && row.orgaTexts) return tRemind("placeholderTitle", { name: row.name });
     if (row) return tRemind("remindName", { name: row.name });
     return step.occasion === "settle" ? t("remindTitle") : t("remindAllTitle");
   };
@@ -39,6 +40,7 @@ export function useCostRemindTitle(data: CostRemindData) {
  * Body of the cost reminders (W16 v2.15, W19 D.11): `settle` – «Wer schuldet dir noch?» with one
  * row per own debtor (each text names its own amount, no «Alle erinnern»); `settle-all`
  * (organiser) – «Offene Ausgleiche» with «Alle erinnern». Texts never contain payment details.
+ * Members and placeholder debtors: «{orga} Bescheid geben» instead of a reminder (R-082).
  */
 export function CostRemindBody({
   data,
@@ -65,7 +67,21 @@ export function CostRemindBody({
       </div>
     );
   }
-  const row = rows.find((r) => r.key === step.key && r.texts);
+  const row = rows.find((r) => r.key === step.key && (r.texts ?? r.orgaTexts));
+  if (row && !row.texts && row.orgaTexts) {
+    // R-082: a member cannot remind a placeholder (no personal link, F-007) – the organiser can.
+    return (
+      <div className={styles.body}>
+        <p className={styles.muted}>{t("remindContext", { name: row.name, amount: row.amount })}</p>
+        <p>{tRemind("placeholderText", { name: row.name, orga: data.orgaName })}</p>
+        <RemindMessage
+          texts={row.orgaTexts}
+          defaultLocale={data.defaultLocale}
+          footer={tRemind("footer", { name: data.orgaName })}
+        />
+      </div>
+    );
+  }
   if (row?.texts) {
     return (
       <div className={styles.body}>
@@ -103,7 +119,20 @@ export function CostRemindBody({
                   : t("remindOther", { from: r.name, to: r.to, amount: r.amount })
               }
               actions={
-                r.texts ? (
+                r.orgaTexts && !r.texts ? (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon="remind"
+                    aria-label={t("nudgeOrgaName", { orga: data.orgaName, name: r.name })}
+                    data-remind-row={r.key}
+                    onClick={() => {
+                      onStep({ occasion: step.occasion, key: r.key });
+                    }}
+                  >
+                    {tRemind("orgaTitle", { orga: data.orgaName })}
+                  </Button>
+                ) : r.texts ? (
                   <Button
                     variant="secondary"
                     size="sm"

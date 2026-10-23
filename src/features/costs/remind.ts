@@ -1,11 +1,12 @@
 import "server-only";
 import { getTranslations } from "next-intl/server";
 import { locales, type Locale } from "@/i18n/config";
-import { formatExact } from "@/lib/costs";
+import { costReminderChannel, formatExact } from "@/lib/costs";
 import { shareTextIntl } from "@/lib/share-text";
 import type { CostsRaw } from "@/server/costs/db";
 import type { TripView } from "../trips/load";
-import { costsPath } from "../trips/paths";
+import { costsPath, tripPath } from "../trips/paths";
+import { orgaName } from "../trips/remind";
 import { inviteLink, tripLink } from "../trips/share-texts";
 import { costsModel, proposalOf, type CostPersonView } from "./load";
 import type { CostRemindData, CostRemindRow } from "./remind-types";
@@ -28,9 +29,10 @@ export async function personNameIn(locale: Locale, person: CostPersonView | unde
 /**
  * Texts of the cost reminders (W16 v2.15): `settle` – the viewer reminds the people who owe
  * them (own amount only); `settle-all` – the organiser sees all open rows. Never IBAN/payment
- * details, titles or single expenses (R.8 I10-09). Placeholders: their personal link – only for
- * the organiser (F-007: personal links never reach member views); members send the trip's
- * invite link instead.
+ * details, titles or single expenses (R.8 I10-09). Placeholders (R-082): their personal link –
+ * only for the organiser (F-007: personal links never reach member views). Members never get a
+ * link for a placeholder – joining through the general invite link would create a second
+ * person and lose the balance – but «{orga} Bescheid geben» (`orgaTexts`, ux-spec §14.2).
  */
 export async function costRemindData(
   view: TripView,
@@ -43,12 +45,15 @@ export async function costRemindData(
   if (transfers.length === 0) return null;
   const byKey = new Map(model.people.map((p) => [p.key, p]));
   const balancesLink = tripLink(costsPath(trip.publicId, "balances"));
-  const linkFor = (person: CostPersonView | undefined) => {
-    if (person?.kind !== "placeholder") return balancesLink;
-    const placeholder = isOrganizer
-      ? placeholders.find((p) => p.id === person.avatarId)
-      : undefined;
-    return placeholder ? inviteLink(placeholder.inviteToken) : inviteLink(trip.inviteToken);
+  const overviewLink = tripLink(tripPath(trip.publicId));
+  const orga = orgaName(view);
+  /** Link of a reminder text – null when no text may be rendered for the viewer. */
+  const linkFor = (person: CostPersonView | undefined): string | null => {
+    const channel = costReminderChannel(person, isOrganizer);
+    if (channel === "balances") return balancesLink;
+    if (channel !== "personal") return null;
+    const placeholder = placeholders.find((p) => p.id === person?.avatarId);
+    return placeholder ? inviteLink(placeholder.inviteToken) : null;
   };
   const row = async (
     from: string,
@@ -58,13 +63,14 @@ export async function costRemindData(
   ): Promise<CostRemindRow> => {
     const debtor = byKey.get(from);
     const recipient = byKey.get(to);
-    const canRemind = debtor !== undefined && debtor.kind !== "former" && !debtor.me;
+    const link = linkFor(debtor);
+    const toOrga = costReminderChannel(debtor, isOrganizer) === "orga";
     return {
       key: from,
       name: await personNameIn(format.locale, debtor),
       to: await personNameIn(format.locale, recipient),
       amount: formatExact(cents, trip.currency, format.intl),
-      texts: canRemind
+      texts: link
         ? await perLocale(async (locale) => {
             const t = await getTranslations({ locale, namespace: "share.remind" });
             const amount = formatExact(cents, trip.currency, shareTextIntl(locale, format.country));
@@ -75,9 +81,21 @@ export async function costRemindData(
                   trip: trip.name,
                   amount,
                   to: await personNameIn(locale, recipient),
-                  link: linkFor(debtor),
+                  link,
                 })
-              : t("settle", { name, trip: trip.name, amount, link: linkFor(debtor) });
+              : t("settle", { name, trip: trip.name, amount, link });
+          })
+        : null,
+      // No amounts, no payment details – just «please send {name} the personal link».
+      orgaTexts: toOrga
+        ? await perLocale(async (locale) => {
+            const t = await getTranslations({ locale, namespace: "share.remind" });
+            return t("nudgePlaceholder", {
+              orga,
+              name: await personNameIn(locale, debtor),
+              trip: trip.name,
+              link: overviewLink,
+            });
           })
         : null,
     };
@@ -99,6 +117,7 @@ export async function costRemindData(
     : [];
   return {
     tripName: trip.name,
+    orgaName: orga,
     defaultLocale: format.locale,
     mine,
     all,
