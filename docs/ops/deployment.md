@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-20 · Verantwortlich: Operations Manager · Status: v0.4 (v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.5 (v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -173,6 +173,118 @@ Nicht setzen: `BETTER_AUTH_URL` (= `APP_URL`), `AUTH_IP_HEADER`/`AUTH_TRUSTED_PR
 - **Basic Auth:** In-App-Browser (WhatsApp, Instagram) und Link-Vorschauen fragen ebenfalls nach dem Passwort bzw. zeigen keine Vorschau; eine zum Home-Bildschirm hinzugefügte Web-App kann erneut fragen.
 - **Nur die Haupt-URL benutzen:** Deployment-eigene URLs (`…-git-main-….vercel.app`) sind durch Vercels Deployment Protection gesperrt bzw. nicht als Origin vertraut (Anmelden scheitert).
 
+### 0.8 Ausgehende Abrufe (Egress) – Link-Vorschau und Bild-Proxy (Inkrement 9, F-031, features.md R.7)
+
+**Neu ab Inkrement 9:** Der Server ruft zum ersten Mal **fremde Webseiten** ab (Open-Graph-Daten + ein Vorschaubild je Unterkunfts-Link) und reicht Bilder über einen eigenen Endpunkt an den Browser durch (Q34). Bisher gab es nur ausgehende Verbindungen zu fest konfigurierten Zielen (Datenbank, SMTP/Mailpit, optional HIBP). Verbindliche Sicherheitsregeln: [features.md R.7 „Sicherheit“](../product/features.md) – dieser Abschnitt bewertet nur den **Betrieb** und gibt dem Developer Umsetzungshinweise.
+
+**Bewertung je Umgebung (Stand 2026-10-23)**
+
+| Umgebung | Ausgehende HTTPS-Verbindungen | Bewertung | Was ist nötig |
+|---|---|---|---|
+| **preview** – Vercel Hobby, Region `fra1`, Node-Runtime | frei möglich (keine Egress-Sperre auf Hobby), Absender-IP = dynamische AWS-Adresse in `eu-central-1`, keine feste IP | **funktioniert.** Viele Portale (Airbnb, Booking …) blocken Rechenzentrums-IPs bzw. Bots → **Platzhalterkarte ist der Normalfall**, kein Fehler (R.7 „Risiko“). Nicht umgehen (kein Browser-User-Agent, keine Proxys) | Node-Runtime erzwingen, `maxDuration` setzen (unten). Kein neues Konto, keine neue Variable |
+| **demo** – Docker Compose (`scripts/demo.sh` / `demo.ps1`, `docker/compose.demo.yml`) | Standard-Bridge-Netz mit NAT → frei möglich, **solange der Laptop Internet hat**; offline → Platzhalter (gewollt, Demo-Seed nutzt eigene Bilder unter `public/` und `*.example`-Links) | **funktioniert ohne Änderung** an Compose/Caddy. Achtung: Der `app`-Container erreicht `db:5432`, `mailpit:1025/8025`, `proxy`, das Docker-Host-Gateway und das **Heim-WLAN** (`192.168.x.x`, Router-Oberfläche) – genau das verhindert der SSRF-Schutz | nichts an Docker; SSRF-Schutz zusätzlich: **Hostnamen ohne Punkt** (`db`, `mailpit`, `app`, `proxy`) vorab abweisen (Ergänzung zu R.7 Nr. 2, `localhost`/`*.local`/`*.internal` stehen dort schon; `host.docker.internal` fällt unter `*.internal`) |
+| **dev** (Laptop, `pnpm dev`) | frei | funktioniert | – |
+| **Claude-Code-Cloud-Sitzungen** | nur über den Agent-Proxy (`HTTPS_PROXY`); Node nutzt den nicht von selbst, direkte DNS-Auflösung schlägt teils fehl | echte Vorschauen **nicht** verfügbar → Platzhalter | Tests dürfen kein Internet brauchen (unten). **Nicht** `NODE_USE_ENV_PROXY`/`EnvHttpProxyAgent` für den Vorschau-Abruf verwenden – ein Proxy würde das DNS-Pinning aushebeln |
+| **ci** (GitHub Actions) | frei | funktioniert, aber Tests gegen echte Portale wären instabil und unhöflich | Unit-/Integrationstests mit lokalem TLS-Testserver + eingespeistem Resolver; E2E nur mit Seed-Daten bzw. `*.example`-Links (lösen nicht auf → „keine Vorschau“, deterministisch) |
+| **staging/prod** (Hetzner, ab G1) | frei | funktioniert. **Hetzner Cloud hat einen Metadaten-Dienst unter `169.254.169.254`** (Cloud-Init-Daten) → SSRF-Schutz ist Pflicht, zusätzlich Netzwerksperre (unten) | Egress-Härtung auf dem Host (Go-Live-Gate Stufe 2b) |
+
+**Kosten:** 0 €. Vercel Hobby (Stand Juli 2026, vor Einrichtung prüfen): Function-Laufzeit Standard = Maximum **300 s**, 2 GB RAM, **1 Mio. Aufrufe**, **4 h Active CPU**, **100 GB Fast Data Transfer**, **10 GB Fast Origin Transfer** pro Monat. Ein Vorschau-Abruf wartet überwiegend auf das Netz (zählt kaum als Active CPU). Bild-Proxy grob: 30 Vorschläge × ~300 KB × 10 Personen ≈ 90 MB pro Reise beim ersten Laden, danach Browser-Cache → für die Freundes-Vorschau weit unter den Grenzen.
+
+**Wichtige Vercel-Grenze – Antwortgröße 4,5 MB:** Gepufferte Function-Antworten über **4,5 MB** scheitern auf Vercel (`FUNCTION_RESPONSE_PAYLOAD_TOO_LARGE`); nur gestreamte Antworten sind ausgenommen. R.7 erlaubt Bilder bis **5 MB**. **Empfehlung Operations:** Bild-Limit einheitlich auf **4 MB** senken (Vorschaubilder `og:image` sind fast immer < 1 MB; einfacher als Streaming mit Abbruch mitten in der Antwort). Alternative: Bild nach Magic-Byte-Prüfung streamen und bei Überschreitung abbrechen (kaputtes Bild → Platzhalter). → Entscheidung CEO/PM, R.7 ggf. anpassen.
+
+**Route-Konfiguration (Developer)** – für den Vorschau-Endpunkt und den Bild-Proxy (Pfade nach Wahl des Developers):
+
+```ts
+export const runtime = "nodejs";      // nie Edge: dns, net/tls, undici, node:zlib nötig (R.7 „Node-Runtime“)
+export const dynamic = "force-dynamic";
+export const maxDuration = 15;        // Sekunden: 5 s Abruf-Budget + DB + Kaltstart; begrenzt Ausreißer
+```
+
+- `runtime = "nodejs"` ist in Next.js 16 ohnehin Standard für Route Handler und `src/proxy.ts`; explizit setzen, damit ein späteres Umstellen auf Edge auffällt. Modul mit `import "server-only"`.
+- **Server Action „Vorschlag speichern“ mit Hintergrund-Abruf über `after()`** (R.7 I9-02, wie R-067 `src/server/background.ts`): `after()` läuft innerhalb der `maxDuration` der **Seite**, die die Action enthält → auf `/trips/[id]/stays/new` ebenfalls `export const maxDuration = 20` setzen.
+- In Docker/Hetzner hat `maxDuration` keine Wirkung; dort begrenzt allein das 5-s-Gesamt-Zeitlimit des Abrufs (`AbortSignal.timeout(5000)` über alle Weiterleitungen).
+- `src/proxy.ts` (Basic Auth in `preview`) schützt auch die neuen Endpunkte – der Matcher nimmt sie bereits mit, Bild-Anfragen sind same-origin und tragen die Basic-Auth-Zugangsdaten automatisch. Nicht in `isOpenPath` aufnehmen.
+- **Kein `next/image` für Vorschaubilder** und **`images.remotePatterns` bleibt leer:** Der Next-/Vercel-Bildoptimierer würde fremde Bilder selbst abrufen (ohne unseren SSRF-Schutz) und auf dem CDN speichern – Widerspruch zu Q34. Vorschaubilder als `<img src="/…eigener Endpunkt…" alt="">`; die eigenen Demo-Bilder unter `public/` direkt (`<img>` oder `next/image` mit `unoptimized`, damit kein Optimierungskontingent verbraucht wird).
+- Bild-Proxy-Antwort mit `Cache-Control: private, max-age=86400` (R.7) – Vercels CDN cacht `private` nicht (gewollt, Q34). Zusätzlich empfohlen: `Cross-Origin-Resource-Policy: same-origin`.
+- **Kein neues Secret:** Den HMAC-Schlüssel des Vorschau-Tokens (R.7 I9-03) per HKDF aus `BETTER_AUTH_SECRET` ableiten (eigener `info`-String, wie die Rate-Limit-Schlüssel, tech-stack.md §3.2) → der Auftraggeber muss in Vercel nichts nachtragen. Folge: Rotation von `BETTER_AUTH_SECRET` macht offene Vorschau-Tokens ungültig (≤ 30 min, unkritisch).
+
+**Hinweise zum DNS-Pinning in Node (Developer, Reviewer prüft mit Tests)**
+
+1. **HTTP-Client:** das npm-Paket **`undici`** (MIT, Version pinnen) mit `request()` und **eigenem `Agent`** – nicht das globale `fetch`: Next.js patcht `fetch` (Cache-Semantik), und ein `dispatcher` aus dem npm-`undici` an Nodes eingebautes `fetch` zu übergeben ist versionsabhängig fragil. `request()` folgt keinen Weiterleitungen (gewollt, R.7 Nr. 3 manuell) und speichert keine Cookies.
+2. **Pinning über `connect.lookup`:** `new Agent({ connect: { lookup: safeLookup, timeout: 3000 }, headersTimeout: 5000, bodyTimeout: 5000, keepAliveTimeout: 1000 })`. Node ruft `lookup(hostname, options, callback)` beim Verbindungsaufbau auf und verbindet sich **genau mit den zurückgegebenen Adressen** – so geht die Verbindung an die geprüfte IP, ohne zweite Auflösung (Schutz gegen DNS-Rebinding). TLS-Zertifikatsprüfung und SNI laufen weiter gegen den **Hostnamen** (undici setzt `servername` aus der URL); nie `rejectUnauthorized: false`.
+3. **`safeLookup`:** `dns.promises.lookup(hostname, { all: true, order: "ipv4first" })` → **jede** Adresse prüfen; ist **eine** gesperrt, gesamten Abruf abbrechen (nicht herausfiltern). Rückgabe an Node: bei `options.all` das ganze geprüfte Array, sonst `(null, address, family)` der ersten. Node ≥ 20 verbindet mit `autoSelectFamily` (Happy Eyeballs) und ruft dabei `lookup` mit `all: true` auf – deshalb beide Formen unterstützen. `ipv4first`, weil Docker-Standardnetze und Vercel-Functions in der Regel **kein IPv6-Egress** haben.
+4. **Adressprüfung:** Nodes eingebautes `net.BlockList` (`addSubnet` für alle Bereiche aus R.7 Nr. 2, IPv4 + IPv6) oder `ipaddr.js` (MIT). **IPv4-gemappte/-eingebettete IPv6-Adressen** (`::ffff:a.b.c.d`, `64:ff9b::/96`, `2002::/16` 6to4) vorher **selbst** in IPv4 umrechnen und gegen die IPv4-Liste prüfen – nicht auf implizites Verhalten der Bibliothek verlassen. Zusätzlich sperren: `fd00:ec2::254` (AWS-IPv6-Metadaten, liegt in `fc00::/7`). IP-Literale in der URL (auch `[::1]`, `0x7f.1`, `2130706433` – der WHATWG-URL-Parser normalisiert diese zu IPv4) vorab abweisen.
+5. **Vor dem Abruf:** Schema `https:`, Port leer oder `443`, keine Zugangsdaten, Hostname enthält einen Punkt und endet nicht auf `.local`/`.internal`/`.localhost`, Länge ≤ 2 048. Dieselbe Prüfung für **jede** Weiterleitungs-URL (`Location` relativ zur aktuellen URL auflösen, max. 3) und für die `og:image`-URL.
+6. **Grenzen beim Streamen:** Body mit `for await` lesen und Bytes zählen, bei Überschreitung `signal`/Body abbrechen. `accept-encoding: identity` senden; kommt trotzdem `content-encoding: gzip|br|deflate`, über `node:zlib` dekomprimieren und die **dekomprimierten** Bytes zählen (Kompressionsbombe), unbekannte Kodierung → „keine Vorschau“.
+7. **Ausgehende Header nur:** `user-agent: WirWollenWeg-LinkPreview/1.0`, `accept`, `accept-language` (Reisesprache), `accept-encoding`. Nichts aus der Nutzeranfrage durchreichen.
+8. **HTML-Parser:** z. B. `htmlparser2` (MIT, streamend, führt nichts aus); nur `<title>` und `<meta>` im `<head>` auswerten, nach `</head>` abbrechen; Entities dekodieren (`entities`, kommt mit htmlparser2). Lizenz in der Lizenzseite (F-051) nachtragen.
+9. **Testbarkeit ohne Internet und ohne Hintertür:** Abruf-Funktion als Fabrik, z. B. `createSafeFetcher({ lookup, ca })` – Produktion nutzt die Standardwerte; Tests spielen einen **Fake-Resolver** ein (liefert private/gemappte Adressen → muss blocken; liefert erst öffentlich, dann privat → Verbindung geht an die erste, geprüfte Adresse) und für den Gut-Fall einen lokalen HTTPS-Testserver mit eigenem Test-CA. **Keine Umgebungsvariable, die den SSRF-Schutz lockert** (auch nicht für E2E) – Reviewer prüft, dass die Produktions-Verdrahtung keine Test-Parameter übergibt.
+10. **Logs:** höchstens Hostname + Kategorie (`ok`/`blocked`/`timeout`/`unsafe`/`too_large`/`no_meta`), nie Pfad, Query, Titel oder Bild-URL (R.7 I9-10). Vercel-Function-Logs sind für den Auftraggeber sichtbar – dort gilt dieselbe Regel.
+
+**Ab Go-Live (Hetzner, Stufe 2b): Egress-Härtung als zweite Verteidigungslinie** – zusätzlich zum SSRF-Schutz im Code auf dem Host Regeln in der `DOCKER-USER`-Kette: dem App-Container ausgehend nur `tcp/443` ins Internet erlauben (plus DB/Mail-Relay im internen Compose-Netz und DNS); `169.254.0.0/16`, `10.0.0.0/8`, `172.16.0.0/12` (außer dem eigenen Compose-Netz), `192.168.0.0/16`, `100.64.0.0/10` sperren. Runbook mit OPS-1.
+
+### 0.9 Content-Security-Policy (CSP) – Ist-Stand und Vorschlag (Umsetzung: Developer)
+
+**Ist-Stand (2026-10-23):** **keine CSP.** `next.config.ts` setzt `X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`, `X-Frame-Options: DENY`, `X-Robots-Tag`; tech-stack.md §8 kündigt „CSP mit Nonces“ an. Bestandsaufnahme für eine CSP:
+
+| Quelle | Befund | Folge für die CSP |
+|---|---|---|
+| Next.js-Framework-Skripte | Inline-Skripte für den RSC-Payload (`self.__next_f.push(…)`), je Seite verschieden | `script-src` ohne `'unsafe-inline'` geht **nur mit Nonce** (dynamisches Rendern) |
+| eigenes Inline-Skript | `src/components/document-head.tsx` – `MOTION_BOOTSTRAP_SCRIPT` (setzt `data-motion` vor dem ersten Paint), Inhalt statisch | per Nonce **oder** SHA-256-Hash erlaubbar |
+| Inline-Styles | `style={{…}}` in ~10 Komponenten (Ring, Skeleton, Code-Feld, Illustrationen …) – im SSR-HTML als `style`-Attribut | `style-src 'self' 'unsafe-inline'` (geringes Risiko; ohne `'unsafe-inline'` bräche das Layout) |
+| Schriften, Icons, Bilder | alles selbst gehostet (`/fonts`, `/favicon.*`, `public/`), keine externen URLs gefunden | `font-src 'self'`, `img-src 'self' data: blob:` sofort möglich |
+| Formulare | Server Actions und Better Auth posten an die eigene Origin | `form-action 'self'` |
+| Vercel-Toolbar (`vercel.live`) | wird nur in Vercel-**Preview**-Deployments eingeblendet; unsere Vorschau ist das **Production**-Deployment von `main`, Branch-Deployments sind abgeschaltet (`vercel.json`) | keine Ausnahme nötig. Falls je Branch-Deployments eingeschaltet werden: Toolbar in den Projekteinstellungen abschalten, **nicht** die CSP aufweichen |
+| Demo im WLAN über `http://192.168…` | kein TLS | **kein** `upgrade-insecure-requests` (würde den Handy-Test brechen); HSTS kommt ab Go-Live über Caddy |
+
+**Stufe 1 – jetzt mit Inkrement 9 (Pflicht, klein, ohne Risiko für Next.js):** eine **globale** CSP **ohne** `script-src`/`default-src` – damit bleibt das Laden der Next-Skripte unberührt, aber Drittbilder, Plugins, fremde Formziele und Einbetten werden blockiert. In `next.config.ts` → `headers()` in die Liste `base` aufnehmen (gilt für alle Umgebungen inkl. dev, weil kein Skript-/Verbindungs-Teil enthalten ist):
+
+```ts
+{
+  key: "Content-Security-Policy",
+  value: [
+    "img-src 'self' data: blob:",
+    "font-src 'self'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+  ].join("; "),
+},
+```
+
+- **Global statt nur `/trips/*/stays*`:** erfüllt I9-04 (Should) vollständig und vermeidet eine Falle: Setzen mehrere `headers()`-Einträge denselben Schlüssel, **überschreibt der spätere den früheren** – eine routenspezifische CSP müsste die globale komplett wiederholen.
+- **Bild-Proxy-Antwort:** Der Route Handler setzt selbst `Content-Security-Policy: default-src 'none'; sandbox` (R.7 I9-04). Damit die globale Regel diese nicht überschreibt, den Proxy-Pfad aus der globalen Quelle ausnehmen (z. B. `source: "/((?!api/stays/image).*)"` – Pfad nach Wahl des Developers) **oder** per Test absichern. Test (Pflicht): Antwort des Bild-Proxys enthält `default-src 'none'` und `sandbox`; eine Unterkunftsseite enthält `img-src 'self' data: blob:`.
+- **Abnahme:** E2E-Fixture, die Konsolenmeldungen mit „Content Security Policy“ als Fehler wertet (alle bestehenden Specs laufen grün), plus ein Test, der ein `<img src="https://…">` auf einer Unterkunftsseite einschleust bzw. prüft, dass keine Anfrage an fremde Hosts geht (`page.on("request")`).
+- Aufwand: ca. 1–2 h inkl. Tests.
+
+**Stufe 2 – vor Go-Live G1 (Pflichtpunkt in [go-live.md](go-live.md) Stufe 2b): strikte CSP mit Nonce** über `src/proxy.ts` (läuft dann in **allen** Umgebungen; Basic Auth bleibt auf `preview` beschränkt):
+
+```
+default-src 'self';
+script-src 'self' 'nonce-{NONCE}' 'strict-dynamic';
+style-src 'self' 'unsafe-inline';
+img-src 'self' data: blob:;
+font-src 'self';
+connect-src 'self';
+worker-src 'self' blob:;
+manifest-src 'self';
+object-src 'none';
+base-uri 'self';
+form-action 'self';
+frame-ancestors 'none'
+```
+
+- Nonce je Anfrage (`Buffer.from(crypto.randomUUID()).toString("base64")`), im Proxy als **Request-Header** `Content-Security-Policy` (Next.js liest den Nonce daraus und versieht seine Framework-Skripte automatisch damit) und `x-nonce` setzen sowie als Response-Header ausliefern.
+- `DocumentHead`: Nonce per `(await headers()).get("x-nonce")` an das Inline-Skript geben – oder dessen SHA-256-Hash in `script-src` aufnehmen (Hash per Unit-Test aus `MOTION_BOOTSTRAP_SCRIPT` berechnen, damit er nicht veraltet).
+- Nur in `NODE_ENV=development` ergänzen: `'unsafe-eval'` in `script-src` und `ws:` in `connect-src` (React-Dev-Tools/HMR).
+- Matcher: statische Assets ausnehmen (wie heute) und Prefetch-Anfragen (`next-router-prefetch`, `purpose: prefetch`) überspringen, wie in der Next.js-Doku zu CSP empfohlen.
+- **Folge:** Nonces erzwingen **dynamisches Rendern** aller HTML-Seiten – die statisch vorgerenderten Startseiten `/de`, `/en` werden pro Anfrage gerendert. Auf Hetzner egal; auf Vercel etwas mehr Function-Aufrufe (bei unserer Größe unerheblich).
+- **Einführung in zwei Schritten:** ein Inkrement lang als `Content-Security-Policy-Report-Only` (kein externer Report-Endpunkt – Datenschutz; Prüfung über die E2E-Konsolen-Fixture), danach scharf schalten. Alternative ohne Nonce (`script-src 'self' 'unsafe-inline'`) bringt kaum Schutz gegen XSS – nicht empfohlen.
+- Aufwand: ca. 0,5–1 Tag inkl. Tests; Zeitpunkt: mit Inkrement 10 oder spätestens im Go-Live-Paket.
+
+Nachzutragen bei Umsetzung: tech-stack.md §8 (Security-Header) – Operations.
+
 ---
 
 > **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
@@ -267,6 +379,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
 | `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
+| *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: HMAC-Schlüssel des Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
 | `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |
@@ -290,6 +403,7 @@ Regeln: Secrets je Umgebung verschieden; Rotation bei Personalwechsel/Verdacht; 
 4. Docker Engine + Compose-Plugin; Verzeichnisse `/opt/wir-wollen-weg/{production,staging}` mit `compose.yml` und `.env`.
 5. Caddy als Reverse-Proxy: automatische TLS-Zertifikate (Let's Encrypt), HTTP→HTTPS, HSTS, Kompression, Zugriffslogs **ohne Tokens** – weder im Pfad (`/i/<token>`, `/auth/*`) noch in Query-Strings oder `Referer` – und mit 7 Tagen Aufbewahrung (Caddyfile-Baustein §5.4, R-037).
 6. DNS-Einträge (§7), Mail-Domain beim Anbieter verifizieren.
+7. **Egress-Härtung** für den App-Container (`DOCKER-USER`-Regeln: nur `tcp/443` ins Internet, interne/Link-Local-Netze inkl. Metadaten `169.254.169.254` gesperrt) – zweite Verteidigungslinie neben dem SSRF-Schutz der Link-Vorschau (§0.8).
 
 ### 5.2 Compose-Dienste (prod)
 `caddy` (80/443; ohne `trusted_proxies`, ersetzt also einen vom Client gesendeten `X-Forwarded-For` durch die echte Absender-IP – Grundlage der Rate-Limits, `AUTH_IP_HEADER=x-forwarded-for`, R-005) → `app` (Next.js standalone, Port 3000 **nur intern**, nie direkt veröffentlichen) → `db` (PostgreSQL 18, Volume, nur internes Netz) · `bugsink` (Fehler-Tracking, eigene Subdomain mit Login) · `backup` (Cron-Container: `pg_dump` + `age` + Upload) · `jobs` (Cron: Lösch-/Inaktivitäts-Jobs F-013/F-043, täglich 03:00 UTC, ruft `pnpm job:retention` im `tools`-Image auf – das Standalone-App-Image hat keine Skripte; Alternative bei OPS-3: Job als eigenes Node-Bundle ins App-Image).
@@ -410,6 +524,8 @@ Ausgelagert und erweitert als Gate: **[go-live.md](go-live.md)** (Stufe 1 Stagin
 ---
 
 ## Quellen (Abruf 2026-10-08)
+
+- Vercel (Abruf 2026-10-23, für §0.8): [Limits-Übersicht](https://vercel.com/docs/limits), [Functions – Limitations (4,5 MB Payload)](https://vercel.com/docs/functions/limitations), [Body-Size-Limit umgehen (Streaming)](https://vercel.com/kb/guide/how-to-bypass-vercel-body-size-limit-serverless-functions), [FUNCTION_RESPONSE_PAYLOAD_TOO_LARGE](https://vercel.com/docs/errors/function_response_payload_too_large)
 
 - Hetzner: [Preisanpassung Juni 2026 (Analyse)](https://privatedevops.com/news/hetzner-june-2026-cloud-price-increase-what-to-do), [Findstack – Hetzner price increase 2026](https://findstack.com/resources/hetzner-price-increase-2026), [Cloud Pricing Comparison 2026-08](https://kimmo.suominen.com/stuff/cpc-2026-08.txt), [Hetzner CX23 (whtop)](https://www.whtop.com/amp/plans/hetzner.com/144086), [Hetzner Object Storage (whtop)](https://www.whtop.com/amp/plans/hetzner.com/144077), [Sliplane – Object Storage Europa](https://sliplane.io/blog/cheap-object-storage-providers-europe), [Hetzner Pricing Breakdown (Backups 20 %)](https://deployhandbook.com/pricing/hetzner)
 - Netcup: [valebyte – netcup review 2026](https://valebyte.com/en/blog/netcup-review-2026-the-price-performance-king-and-its-fine-print/)
