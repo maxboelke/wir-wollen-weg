@@ -532,7 +532,7 @@ Vier Verbesserungen aus dem Test der privaten Vorschau. Der Auftraggeber legt be
 **Grundregeln**
 1. Die Karte beantwortet in genau dieser Reihenfolge: **Wo stehen wir? → Wer ist jetzt dran? → Was kann ich tun?** Der „Wer ist dran?“-Teil nennt immer eine Person: «du», «{orga}» oder die Fehlenden.
 2. Die Namen der Fehlenden stehen schon in der Kennzahl-Box darüber. Die Karte wiederholt die Liste nicht. Ausnahme: Es fehlt nur noch eine Person (die Orga oder man selbst).
-3. Es gibt höchstens **eine** Primäraktion. In Warte-Zuständen von Mitgliedern gibt es keine Primäraktion (nur sekundär bzw. Text-Taste) – Mitglieder sollen nicht zu einer Handlung gedrängt werden, die gerade nicht nötig ist.
+3. Es gibt höchstens **eine** Primäraktion. In Warte-Zuständen von Mitgliedern gibt es keine Primäraktion (nur sekundär bzw. Text-Taste) – Mitglieder sollen nicht zu einer Handlung gedrängt werden, die gerade nicht nötig ist. **Ausnahme Kosten-Leiste (2026-10-23, W16 v2.17):** Im Cockpit *Unterwegs* und *Danach* (eigenes Ergebnis ≠ 0) trägt die fixierte Kosten-Leiste die einzige Primär-Taste (`[+ Ausgabe]` bzw. `[Ausgleichen]`); Heute-Karten zeigen ihre Tasten dann sekundär.
 4. `{orga}` = Anzeigename der Orga in dieser Reise (wie in der Mitgliederliste). Ist der Betrachter selbst Orga, gilt die Orga-Zeile („du“).
 5. „Fertig“ heißt: Phase 1 eingetragen, Phase 2 abgestimmt. „Andere offen“ zählt in Phase 1 **Mitglieder und offene Platzhalter** (Q20), in Phase 2 nur Mitglieder (Platzhalter können nicht abstimmen). Den Betrachter selbst zählt es nie mit.
 6. Frist: Phase 1 = `trip.deadline` (Eintragen), Phase 2 = `trip.pollDeadline`. „Vorbei“ heißt: Frist < heute. Eine Frist blockiert nichts.

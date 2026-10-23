@@ -543,7 +543,39 @@ Struktur, Abläufe und Texte: [W23](wireframes/w23-beta-und-installation.md), Re
 | UM-25 | neu (Bestätigung) | Motion Designer |
 | B-E2 (Einladung ersetzt Beta-Code), Löschversprechen, Feedback-Kanal, Beta-Code-Modell | Empfehlung | CEO / Operations |
 
+## 18. Runde 9 – Kosten v2 nach Auftraggeber-Feedback (W19 E, W16 v2.17, 2026-10-23)
+
+Struktur, Texte und Regeln: [W19 E](wireframes/w19-kosten.md) (gilt vor W19 D), Cockpit [W16 v2.17](wireframes/w16-cockpit.md) (gilt vor v2.15). Klickbarer Vorher/Nachher-Vergleich (Tokens 1:1 aus `tokens.css`): [`mockups/kosten-v2/index.html`](mockups/kosten-v2/index.html). Anlass: Auftraggeber findet Kosten unterwegs schwer erreichbar, die Kosten-Seite überladen und Begriffe („bezahlt“, „Ausgaben gesamt“) missverständlich; beim Ausgleich sollen die eigenen Überweisungen ausführlich, die der anderen nur kompakt erscheinen.
+
+### 18.1 Punkte an den Designer (D-81 – D-87)
+| ID | Thema | Bitte | Bezug |
+|---|---|---|---|
+| **D-81** | **Kosten-Leiste** (Cockpit *Unterwegs*/*Danach*) | Fixierte Leiste unten: Fläche `surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Safe-Area-Abstand. Links Eyebrow «KOSTEN ›» + Stand-Satz (14–15/800, Farbe je Lage `cost-get-fg`/`cost-owe-fg`/`cost-even-fg`), rechts Primär-Taste `[+ Ausgabe]` bzw. `[Ausgleichen]`. Bitte Feinschliff (Höhe ≤ 76 px + Safe Area, Dark Mode, Forced Colors) und die **statische Form** (Variante A: Karte unter dem Ticket-Kopf, Taste volle Breite) als Rückfall. **Blockierend** (klein, mit Tokens baubar). | W16 v2.17 |
+| **D-82** | **„Dein Stand“ v2** | Getönte Karte statt weißer Karte: zurückzahlen = `primary-tint`, bekommen = `accent-tint`, Rahmen `border-subtle`, ohne Schatten (Abgrenzung zur Gruppen-Ebene). Satz 24/800 Jakarta. Innen: Kurzsatz 14/700, Sekundär-Taste volle Breite, Text-Taste «So rechnen wir ▾» und Rechenweg-Box (weiße Fläche, `<dl>` zweispaltig, Summenlinie `border-strong`). Bitte bestätigen oder Alternative – Bedingung: **Ich-Ebene** und **Gruppen-Ebene** müssen auch ohne Farbe unterscheidbar sein (Eyebrow + Abstand `space-8`). | W19 E.3, E.4 |
+| **D-83** | **Ausgaben-Zeile v2** | Tagessumme und Chip «nach Beträgen» entfallen; Tages-Trenner als 12/800 Versal `text-muted`. Rechte Spalte «auf dich 25,00 €» / «ohne dich» 12–13 px. Bitte prüfen, ob die Zeile damit ruhiger genug ist. | W19 E.3 |
+| **D-84** | **Eigene Überweisung** | Karte je Überweisung: «An Lena · 64,00 €» (17/800), Zahlungsinfo-Block, Taste «Hab ich überwiesen» (Primär, erste) bzw. «Ist angekommen» (Sekundär) + Text-Taste «{Name} erinnern» **in einer Zeile** (bei 360 px; bei 200 % untereinander). Erledigt-Chip «✓ Erledigt» (`cost-paid-*`). | W19 E.5 Block 2 |
+| **D-85** | **Kompaktzeile „Ausgleiche der anderen“** | Eine Zeile 44 px: Avatar 20 · Name → Avatar 20 · Name · Betrag 14/800 rechts · Status «offen» (muted) / «✓ erledigt» (`cost-paid-fg`). Keine Karte je Zeile, Trennlinien `border-subtle`, nicht antippbar (kein Hover/Chevron). Akkordeon-Kopf als h2-Button mit Chevron. | W19 E.5 Block 6 |
+| **D-86** | **Karte „Wohin soll das Geld?“** und **„Für dich als Orga“** | Ruhige Karten (keine Koralle – es sind keine „du bist dran“-Aufgaben). Orga-Zeilen wie Kompaktzeile + Text-Taste «Als erledigt markieren». | W19 E.5 Block 3, 5 |
+| D-87 | **Salden-Balken** | Entfallen (D-57 optionaler Teil). Tokens `--ww-cost-bar-*` können bleiben oder als „ungenutzt“ markiert werden – Entscheidung Designer. | W19 E.5 |
+**Glossar** (W19 E.2) gilt auch für Illustrations-Texte/Alt-Texte und Mockups des Designers: kein «bezahlt», «Salden», «Ausgaben gesamt», «schuldest» mehr; neu «ausgelegt», «zurückzahlen», «Überweisung», «quitt».
+
+### 18.2 Punkte an den Motion Designer (UM-26 – UM-27, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-26** | Kosten-Leiste | **keine** Ein-/Ausblende-Bewegung beim Scrollen (Daumenziel bleibt stabil), kein Eintritt beim Laden; Stand-Wechsel = UM-14 (Überblenden). | – |
+| **UM-27** | Akkordeons «So rechnen wir», «Ausgleiche der anderen», «Erledigt» | Standard-Akkordeon `base`, Chevron dreht `base`. UM-16/UM-17 feiern jetzt «Du bist quitt ✓» / «Alle sind quitt ✓» (gleiches Verhalten). | sofort |
+
+### 18.3 Abstimmungsstand Runde 9
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-81 | neu, **blockierend** | Designer |
+| D-82 – D-87 | neu (mit Tokens baubar) | Designer |
+| UM-26, UM-27 | neu (Bestätigung) | Motion Designer |
+| K-1 Leiste C vs. Karte A | Empfehlung C, Mockup umschaltbar | Auftraggeber (über CEO) |
+| Abweichungen von R.8 (Sichtbarkeit, Salden-Liste, Segment) | Hinweis | PM / CEO |
+
 ## Changelog
+- 2026-10-23 (Runde 9, Kosten v2): §18 – Feedback Auftraggeber zu Inkrement 10: Punkte D-81–D-87, UM-26–UM-27; W19 E, W16 v2.17, Mockup `mockups/kosten-v2/`.
 - 2026-10-23 (Runde 8): §17 – Beta „Stufe B“ & installierte Web-App (W23): Punkte D-72 – D-80, UM-25.
 - 2026-10-23 (Runde 7, Inkrement 11): §16 – Punkte D-64–D-71 (Designer), UM-20–UM-24 (Motion), M-U14 bestätigt; W20 H, W16 v2.16, W22 E, W18 E.16 (an R.9 angeglichen).
 - 2026-10-23 (Runde 6, Inkrement 10): §15 – Punkte D-56–D-63 (Designer), UM-14–UM-19 (Motion), CEO-Fragen Notiz/„Als Ausgabe eintragen“; W19 D, W16 v2.15 (an R.8 und CEO-Entscheidungen a/b angeglichen).

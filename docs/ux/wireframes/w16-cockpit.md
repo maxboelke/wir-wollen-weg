@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
 Stand: 2026-10-23 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16.**
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16. Kosten nach Reisebeginn (Kosten-Leiste, Wortlaut; Auftraggeber-Feedback): v2.17 – gilt vor v2.15.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -701,6 +701,77 @@ Jetzt für **Orga und „Bucht“** (v2.4 wie ursprünglich vorgesehen); mehrere
 
 ### Abnahme UX (zusätzlich zu W20 H.18)
 Max gefragt (V4 dran Rang 1, Primär «Angaben freigeben» → Formular) · Max nach Freigabe (V4 erledigt, «Neu erledigt», Kachel «Freigegeben an Lena ✓ · gelöscht am 26. Juni») · Lena „Bucht“ ohne Anfrage (später-Zeile, Weg-Meta ohne V4) · Lena Anfrage läuft (wartet, Erinnern `travel-data` mit „Klärt es direkt“ ohne Taste) · Lena alle geantwortet (dran Rang 2 → einmal Anzeigen → erledigt + Kachel) · Lena gefragt von Sara **und** eigene Anfrage (Zeile 1 gewinnt) · Orga ohne „Bucht“ bei Saras Anfrage (wartet ohne Erinnern, keine Werte im Netzwerk-Tab) · Unterwegs Tag 3 mit offener Anfrage (nach Terminen) · Danach D3 später → nach Löschjob erledigt · V3 mit Sara als Bucherin (Sara dran «buchen», Lena wartet mit `[Sara Bescheid geben]`, Max «Sara bucht …») · 0 „Bucht“ → V3 wie Inkrement 9 · Reisemenü «Wer bucht? …» nur Orga · Sheet „Wer ist dabei?“ mit Chips · H-2-Kurzformen · `travelData = null` (Produktion vor G1b): keine V4/D3/Kachel, „Bucht“-Chips und V3-Bucher trotzdem da · 200 % · Dark Mode.
+
+## v2.17 Kosten nach Reisebeginn – Kosten-Leiste, Danach, Wortlaut (Auftraggeber-Feedback, 2026-10-23)
+
+Gilt vor v2.15 (Kopf-Tasten, A1, D1, Kachel) und v2.5/v2.6, soweit unten genannt. Bereich: [W19 E](w19-kosten.md) (Glossar E.2 gilt auch hier). Mockup Vorher/Nachher: [`../mockups/kosten-v2/index.html`](../mockups/kosten-v2/index.html).
+
+**Auftrag:** «Die Kosten müssten in der Reise-Übersicht nach Reisebeginn einfacher zu erreichen sein – das wird während der Reise sehr oft genutzt.» Heute (Screenshots 07, 11): Kontur-Taste `[+ Ausgabe]` im Ticket-Kopf unter der Crew und Kachel „Kosten“ unter dem Weg – bei 390 × 844 erst nach ~1,5 Bildschirmen Scrollen; der Stand ist nur in der Kachel lesbar.
+
+### Varianten
+| | A „Kosten-Karte unter dem Kopf“ | B „Schwebende Taste (FAB)“ | **C „Kosten-Leiste unten“ (empfohlen)** | D „Status quo, Taste größer“ |
+|---|---|---|---|---|
+| Aufbau | Karte direkt unter dem Ticket, vor dem Weg: «Du zahlst noch 64,00 € zurück ›» + `[+ Ausgabe eintragen]` | runde Taste „+“ unten rechts, Stand weiter in der Kachel | fixierte Leiste am unteren Rand: links Stand als Link (2 Zeilen), rechts `[+ Ausgabe]` | Kopf-Taste gefüllt, Kachel nach oben |
+| Erreichbar beim Scrollen | nein (nur oben) | ja | **ja** | nein |
+| Daumenbereich | nein (Bildmitte/oben) | ja | **ja** | nein |
+| Stand sichtbar | ja | nein | **ja** | nur Kachel |
+| Weg/„Heute“ im ersten Bildschirm | wird ~120 px nach unten geschoben | ja | **ja** (Leiste deckt ~76 px unten; Seite bekommt Innenabstand) | ja |
+| Risiken | verdrängt „Heute“ (Kernidee Variante C des Cockpits) | Icon-only-Taste (Bedeutung raten), verdeckt Inhalte rechts, kein Stand | zweite fixierte Fläche neben Snackbar (Abstand regeln), 200 % (Rückfall) | löst das Problem nicht |
+| Muster bekannt aus | – | Splitwise/Tricount (Plus-Taste) | Banking-/Lieferdienst-Apps (Warenkorb-/Saldo-Leiste) | – |
+**Empfehlung C.** Der Auftraggeber kennt das Muster aus Finanzguru (Inspiration Richtung B): ein Stand, immer da, eine Aktion. **A ist der Rückfall** für Fälle, in denen eine fixierte Leiste zu viel Platz nähme (200 %, Querformat, s. unten) – damit sind beide Varianten ohnehin zu bauen, A aber nur als statische Form derselben Komponente.
+
+### Kosten-Leiste – Regeln
+**Sichtbar:**
+| Teilphase | Bedingung | Links (Link → Ziel) | Rechts (Taste) |
+|---|---|---|---|
+| *Vorbereitung* | – | **keine Leiste** (Kachel wie v2.15, neue Texte W19 E.9) | – |
+| *Unterwegs* | nicht abgeschlossen | Eyebrow «KOSTEN» + Stand-Satz → `/costs` | **`[+ Ausgabe]`** (Primär) → `/costs/new?date=today&from=cockpit` |
+| *Unterwegs* | abgeschlossen | keine Leiste; Kachel «Abgeschlossen · …» | – |
+| *Danach* | eigenes Ergebnis ≠ 0, nicht abgeschlossen | Eyebrow «KOSTEN» + Stand-Satz → `/costs` | **`[Ausgleichen]`** (Primär) → `/costs/balances?from=cockpit` |
+| *Danach* | eigenes Ergebnis = 0 oder abgeschlossen | keine Leiste – D1 (v2.15) bzw. Kachel übernimmt | – |
+
+**Stand-Satz** (14/700, max. 2 Zeilen; Betrag tabular; Farben wie W19 E.4): «Du zahlst noch 64,00 € zurück» · «Du bekommst noch 206,00 € zurück» · «Du bist quitt ✓» · 0 Ausgaben: «Noch keine Ausgaben». EN: «You owe €64.00» · «You get €206.00 back» · «You're all square ✓» · «No expenses yet». Eyebrow «KOSTEN» / «EXPENSES» 11/800 Versal + Chevron.
+**Tasten-Text:** «+ Ausgabe» (zugänglicher Name «Ausgabe eintragen») / «+ Expense» («Add an expense») · «Ausgleichen» / «Settle up» (Icon `wallet`).
+
+**Aussehen (Designer D-81):** Fläche `surface-raised`, Radius oben `radius-xl`, Schatten `shadow-sticky-bottom`, Innenabstand 12/16 px + `env(safe-area-inset-bottom)` (installierte Web-App auf dem iPhone!). Höhe ≈ 72 px + Safe Area. Linke Hälfte ist **ein** Link (44 px+, ganze Fläche), rechte Taste Primär 48 px.
+
+**Wechselwirkungen:**
+- **Primär-Regel (bewusste Anpassung von ux-spec §1.1 / v2.5):** Ist die Leiste sichtbar, trägt **ihre** Taste die einzige Primär-Optik der Seite. Heute-Karten (Termin «Infos öffnen», V4, D1 …) zeigen ihre Tasten dann **sekundär**. Begründung: Unterwegs ist „Ausgabe eintragen“ die mit Abstand häufigste Handlung (mehrmals täglich); Termine und Aufgaben sind Einzelfälle, die durch Position (Heute) und Koralle/Lavendel-Kante genug Gewicht haben. Zwei gleich laute Primärtasten würden die Leiste entwerten. *Danach* gilt dasselbe für `[Ausgleichen]`.
+- **Ein Einstieg je Bereich (v2.1):** Solange die Leiste sichtbar ist, **entfallen** Kachel „Kosten“, Kopf-Tasten `[+ Ausgabe]`/`[Ausgleichen]` (v2.15) und **A1 in *Unterwegs*** (A1 nur noch in *Vorbereitung*). D1 bleibt in *Danach* als **Station** (Weg-Logik, Meta „0 von 1 geschafft“), aber **ohne eigene Taste**: Karte = Link «Kosten ausgleichen ›» mit Status (W19-E-Wortlaut, z. B. «Du zahlst Felix noch 235,00 € zurück.» / «Du bekommst noch 630,00 € zurück – von Anna und ehemaligem Mitglied.»), `[{Name} erinnern]` bleibt (Zeile 4), Orga-Zeilen 5/6 unverändert.
+- **Heute-Satz:** H-1-Zählung ohne A1 unterwegs; sonst unverändert.
+- **Snackbar** erscheint **über** der Leiste (Abstand 8 px); nach Speichern aus der Leiste: zurück ins Cockpit, Fokus auf `[+ Ausgabe]`, Snackbar «Gespeichert. Du zahlst jetzt noch 44,00 € zurück.» + «Ansehen» (→ `/costs`); der Stand-Satz der Leiste wechselt per Überblenden (UM-14).
+- **Seitenende:** `main` erhält `padding-bottom` = Leistenhöhe; `scroll-padding-bottom` ebenso (WCAG 2.4.11 – Fokus nie verdeckt). Footer bleibt darunter erreichbar.
+- **Rückfall statisch (= Variante A):** Wenn die Leiste höher als **20 % der Fensterhöhe** wäre (200 % Text, Querformat, kleine Geräte < 560 px Höhe) – gemessen per `ResizeObserver`/Media-Query –, steht sie **nicht fixiert** direkt unter dem Ticket-Kopf (vor dem Weg) als Karte mit gleicher Reihenfolge (Stand-Link, Taste volle Breite).
+- **Mini-Ring** im sticky Kopf (v2.8) bleibt; Leiste und Kopf zusammen ≤ 30 % der Höhe bei 360 × 640.
+- **Desktop ≥ 960 px:** keine fixierte Leiste; dieselbe Komponente als Karte oben in der rechten Spalte bzw. unter dem Kopf (Variante A), da Platz kein Problem ist.
+
+**DOM-Reihenfolge & Barrierefreiheit:** `<aside aria-labelledby="dock-title">` (sichtbarer Eyebrow «Kosten» = Name) steht im DOM **direkt nach dem Ticket-Kopf** (vor dem Weg) – Tastatur und Screenreader erreichen den häufigsten Bereich früh; visuell unten fixiert. Kein `role="toolbar"`. Stand-Link zugänglicher Name «Kosten: Du zahlst noch 64,00 € zurück». Kontraste aus Tokens; Forced Colors: Rahmen oben `--ww-border-forced`.
+
+**Motion (UM-26, an Motion Designer):** Leiste erscheint beim Seitenaufbau ohne Bewegung (sie ist „immer schon da“); kein Ein-/Ausblenden beim Scrollen (würde Daumen-Ziel verschieben). Stand-Wechsel = UM-14.
+
+### Danach – „Kosten ausgleichen“ prominent
+- Ergebnis ≠ 0: Leiste mit `[Ausgleichen]` (oben) **plus** D1 als erste Station unter Heute (ohne Taste). Damit ist Ausgleichen in *Danach* doppelt präsent – Leiste = Aktion, D1 = Ort im Ablauf (bewusste Ausnahme (d) zum Grundsatz gegen Doppelungen, v2.1: Status ≠ Aufgabe, wie Ausnahme (c)).
+- Ergebnis = 0, andere offen: keine Leiste; D1 «wartet» (Mitglied) bzw. Orga mit `[Erinnern]` wie v2.15 Zeile 5.
+- Alle quitt: D1 erledigt / Orga Zeile 6, Kachel «Alle sind quitt ✓».
+
+### Texte Cockpit (Wortlaut-Angleich an W19 E.2)
+| Stelle | Vorher | Nachher DE | Nachher EN |
+|---|---|---|---|
+| A1/D1 Titel (ich zahle) | Du schuldest {name} {amount} | **Du zahlst {name} noch {amount} zurück** (2: «… {total} zurück – an {n1} und {n2}», ≥ 3: «… – an {n1} und {count} weitere») | You owe {name} {amount} (unverändert) |
+| A1/D1 Status | Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich. | **Überweisen und dann «Hab ich überwiesen» tippen – die Kontodaten stehen beim Ausgleichen.** | Send it, then tap “I've sent it” – the payment details are on the settle-up page. |
+| D1 Zeile 4 | Du bekommst noch {amount} von {name} | **Du bekommst noch {amount} zurück – von {name}** | You get {amount} back – from {name} |
+| D1 Zeile 5 | Noch {count} Ausgleiche offen | **Noch {count} Überweisungen offen** | {count} transfers still open |
+| D1 Zeile 1/6 | Alles ausgeglichen ✓ | **Alle sind quitt ✓** | Everyone's square ✓ |
+| Phasenzeile *Danach* | Zurück · Kosten ausgleichen / alles ausgeglichen | **Zurück · Kosten ausgleichen** / **Zurück · alle quitt** | Back · settling up / Back · all square |
+| H-5 | Alles ausgeglichen – schön war's! | **Alle quitt – schön war's!** | All square – what a trip! |
+| H-2 Kurzform | Ausgleiche der anderen | **Überweisungen der anderen** | the others' transfers |
+| Kachel | {total} gesamt · du schuldest {amount} … | W19 E.9 (ohne Gruppensumme) | W19 E.9 |
+
+### `trip-route.ts` (Vorschlag)
+`headActions` ohne `"addExpense" | "settle"`; neu `costDock: { kind: "add" | "settle"; myBalanceCents: number; hasExpenses: boolean } | null` (Regeln oben); `tiles` ohne `costs`, wenn `costDock` gesetzt; A1 nur `subphase === "prep"`; D1-Karten mit `primary: null`, wenn `costDock` gesetzt; Heute-Karten `buttonTone: "secondary"` bei `costDock`. Unit-Tests: Leiste je Teilphase × Ergebnis (< 0, 0, > 0, keine Ausgaben, abgeschlossen) × Rolle; keine Kachel/Kopf-Taste/A1 bei Leiste; Primär-Zählung = 1.
+
+### Abnahme UX
+Unterwegs Tag 3 (Max zahlt zurück, Lena bekommt, 0 Ausgaben) · Leiste → `[+ Ausgabe]` → speichern → Cockpit, Snackbar mit neuem Ergebnis über der Leiste · Termin-Karte jetzt Sekundär · keine A1 unterwegs · Danach mit Ergebnis ≠ 0 (Leiste `[Ausgleichen]`, D1 ohne Taste) / = 0 (keine Leiste) · abgeschlossen (keine Leiste) · 200 % und 360 × 560 → Leiste statisch unter dem Kopf · iPhone-Web-App: Leiste über dem Home-Indikator · Tastatur: Leiste direkt nach dem Kopf erreichbar, Fokus nie verdeckt · Dark Mode.
 
 ---
 
