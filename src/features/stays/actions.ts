@@ -28,6 +28,7 @@ import {
 import { fetchLinkPreview, previewKey } from "@/server/stays/preview";
 import { verifyPreviewToken } from "@/server/stays/preview-token";
 import { findMembership, type Membership } from "@/server/trips";
+import { canBook } from "../trips/bookers";
 import { loadTripView } from "../trips/load";
 import { loadStaysRaw, staysModel, type StayItem } from "./load";
 
@@ -265,10 +266,15 @@ export async function unchooseStayAction(publicId: string): Promise<StayResult> 
   return (await unchooseStay(found.trip.id)) ? { ok: true } : { ok: false, error: "gone" };
 }
 
-/** «Als gebucht markieren» / «Doch nicht gebucht» (organiser in Increment 9). */
+/**
+ * «Als gebucht markieren» / «Doch nicht gebucht» (W18 E.16, R.9 I11-02): organiser OR «Bucht»;
+ * picking/unpicking stays organiser-only. `booked_by` = the person acting.
+ */
 export async function setBookedAction(publicId: string, booked: unknown): Promise<StayResult> {
-  const found = await organizer(publicId);
+  const found = await fixedMembership(publicId);
   if ("error" in found) return { ok: false, error: found.error };
+  if (!canBook(found.member)) return { ok: false, error: "notAllowed" };
+  if (await limited(WRITE_LIMIT, found.member.userId)) return { ok: false, error: "limited" };
   if (typeof booked !== "boolean") return { ok: false, error: "invalid" };
   const done = await setBooked(found.trip.id, booked ? found.member.userId : null);
   return done ? { ok: true } : { ok: false, error: "gone" };

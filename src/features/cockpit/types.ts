@@ -26,7 +26,14 @@ export type CockpitAction =
   | { kind: "reopenCosts" };
 
 export type RemindOccasion =
-  "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book" | "settle" | "settle-all";
+  | "placeholder"
+  | "orga"
+  | "stay-rate"
+  | "stay-fix"
+  | "stay-book"
+  | "settle"
+  | "settle-all"
+  | "travel-data";
 
 export interface StationView {
   id: string;

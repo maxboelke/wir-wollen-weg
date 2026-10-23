@@ -5,6 +5,8 @@
  * (may run outside the Node.js runtime on a CDN), `src/server/env.ts`, scripts and unit tests.
  */
 
+import { travelDataEnabled, travelDataStartupProblems } from "./travel-data-keys";
+
 export const APP_ENVS = ["development", "demo", "ci", "staging", "preview", "production"] as const;
 export type AppEnv = (typeof APP_ENVS)[number];
 
@@ -65,6 +67,11 @@ export interface StartupInput {
   onVercel: boolean;
   /** `[PLATZHALTER` markers left in the legal texts (only evaluated for production). */
   placeholders: readonly string[];
+  /**
+   * Environment for the travel-data rules (TRAVEL_DATA_ENABLED, TRAVEL_DATA_KEYS,
+   * BETTER_AUTH_SECRET – deployment.md §0.11.3). Omitted = nothing set.
+   */
+  env?: Env | undefined;
 }
 
 /**
@@ -97,6 +104,7 @@ export function startupProblems(input: StartupInput): string[] {
       `APP_ENV=${appEnv} must send real mails – MAIL_TRANSPORT=inbox is only for the local demo and the password-protected preview`,
     );
   }
+  problems.push(...travelDataStartupProblems(appEnv, input.env ?? {}));
   if (appEnv === "production" && input.placeholders.length > 0) {
     const shown = input.placeholders.slice(0, 5).join(", ");
     problems.push(
@@ -148,4 +156,12 @@ export function previewTrustedOrigins(
   const own = requestHost?.trim().toLowerCase();
   if (own && /^[a-z0-9-]+(\.[a-z0-9-]+)*\.vercel\.app$/.test(own)) hosts.push(own);
   return [...new Set(hosts.filter((h): h is string => Boolean(h)).map((h) => `https://${h}`))];
+}
+
+/**
+ * Personal travel details (F-054, R.9 I11-12): switched on (TRAVEL_DATA_ENABLED, default by
+ * mode) AND a key is available – otherwise the area does not exist (404, no station, no tile).
+ */
+export function travelDataOn(env: Env = process.env): boolean {
+  return travelDataEnabled(resolveAppEnv(env), env);
 }

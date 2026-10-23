@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.7 (v0.7: persönliche Reisedaten – Schlüssel-Konzept `TRAVEL_DATA_KEYS`, Rotation, Runbooks, Startschutz, Feature-Schalter `TRAVEL_DATA_ENABLED` §0.11 + §4 – Inkrement 11; v0.6: Löschjob-Umfang inkl. endgültiger Löschung weich gelöschter Ausgaben nach 24 h, §0.10 – Inkrement 10; v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.8 (v0.8: **geschlossene Freundes-Beta `APP_ENV=beta` + PWA, Gate G0** – Mail-Dienst/Registrar-Empfehlung, Beta-Code, Startschutz, Service Worker, CSP, Rechtstexte §0.12, §3, §4; v0.7: persönliche Reisedaten – Schlüssel-Konzept `TRAVEL_DATA_KEYS`, Rotation, Runbooks, Startschutz, Feature-Schalter `TRAVEL_DATA_ENABLED` §0.11 + §4 – Inkrement 11; v0.6: Löschjob-Umfang inkl. endgültiger Löschung weich gelöschter Ausgaben nach 24 h, §0.10 – Inkrement 10; v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0) + private Vorschau (§0.7); geplant: geschlossene Freundes-Beta (§0.12, Gate G0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -11,6 +11,8 @@ Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-ch
 ## 0. Aktueller Betriebsmodus: Offline-Demo (gültig seit 2026-10-08)
 
 **Entscheidung Auftraggeber (PRD §12 Q14–Q16):** Bis auf Weiteres läuft „Wir wollen weg“ / „When do we go?“ **nur lokal** als Demo. **Kein Hosting, keine Domain, keine Konten oder Abos** (Hetzner, Lettermint, Postfach, Generator usw.). Impressum und Datenschutz sind **Platzhalter** (Privatperson). Alles in §2–§7 ist der vorbereitete Plan **ab Go-Live**; der Übergang ist ein Gate: [go-live.md](go-live.md).
+
+> **Fortschreibung:** Seit 2026-10-20 zusätzlich private Vorschau mit Demo-Daten (§0.7, Q25). **Ab 2026-10-23 geplant:** geschlossene Freundes-Beta mit echten Daten auf Vercel + Neon, eigene Domain + EU-Mail-Dienst (§0.12, **Gate G0** in [go-live.md](go-live.md)) – die Domain und das Mail-Konto aus Q15 werden dafür vorgezogen; Hetzner/G1 bleibt der Zielbetrieb.
 
 ### 0.1 Was die Demo umfasst
 
@@ -117,6 +119,7 @@ Seit 2026-10-20 prüft derselbe Startschutz (`src/instrumentation.ts`, Regeln in
 - `APP_ENV=preview` startet nur mit `PREVIEW_ACCESS_PASSWORD` (≥ 10 Zeichen); Platzhalter in den Rechtstexten blockieren dort **nicht** (Demo-Banner bleibt sichtbar).
 - `APP_ENV=production` und `staging` starten nie mit `MAIL_TRANSPORT=inbox` (Demo-Postfach; erlaubt nur `development`, `ci`, `demo`, `preview` – Review 2026-10-20: `staging` hätte ohne Basic Auth alle Login-Codes öffentlich gezeigt).
 - Auf Vercel (`VERCEL=1`) starten `development`, `ci` und `demo` nicht; fehlt `APP_ENV` dort, gilt `preview` (also: ohne Passwort zu).
+- **Ab Beta G0 (Anforderung, §0.12.4):** `APP_ENV=beta` startet nur mit `https://`-Basis-URL, echtem SMTP, `BETA_ACCESS_CODES`, `LEGAL_OPERATOR_NAME` + `CONTACT_EMAIL`, aktivem Löschjob, ohne Reisedaten und ohne `[PLATZHALTER` in den Beta-Texten.
 - **Ab Inkrement 11 (Anforderung):** `staging`/`production` mit eingeschalteten Reisedaten (`TRAVEL_DATA_ENABLED=true`) starten nur mit eigenem, gültigem `TRAVEL_DATA_KEYS`; keine Ableitung aus `BETTER_AUTH_SECRET` (Details §0.11.3).
 
 ### 0.7 Private Live-Vorschau: Vercel (Hobby) + Neon (Free) – PRD Q25
@@ -320,6 +323,7 @@ Gilt für die Feldverschlüsselung der Freigaben (`travel_data_release.ciphertex
 | `development`, `ci` | **an** | ja | `TRAVEL_DATA_KEYS`, sonst HKDF-Ableitung aus `BETTER_AUTH_SECRET` |
 | `demo` (Docker-Demo) | **an** | ja | wie oben – `.env.demo` braucht **keinen** neuen Eintrag |
 | `preview` (Vercel) | **an** | ja | wie oben – **keine neue Variable in Vercel** (Auftraggeber muss nichts nachtragen) |
+| `beta` (Freundes-Beta, Vercel, §0.12) | **aus** | **nein** – `true` → Start verweigert (G1b setzt EU-Hosting voraus) | keiner (Ableitung verboten) |
 | `staging` | **aus** | ja, nur mit eigenem `TRAVEL_DATA_KEYS` (synthetische Daten, Test vor G1b) | **nur** `TRAVEL_DATA_KEYS`, Ableitung verboten |
 | `production` | **aus** | **erst nach dokumentierter G1b-Abnahme** (Freigabe-Tabelle in go-live.md) | **nur** `TRAVEL_DATA_KEYS`, Ableitung verboten |
 
@@ -434,6 +438,196 @@ Auslöser: Secret-Datei/Passwort-Manager kompromittiert, Schlüssel in Log/Chat/
 - `Cache-Control: no-store` auf allen Antworten des Bereichs; kein CDN-/Server-Cache.
 - **Vorschau (Vercel):** nur Fantasiedaten, Dokumentnummern technisch mit Präfix `DEMO` (R.9 I11-12); Vercel-Funktionslogs enthalten dieselben anonymen Zähler.
 
+### 0.12 Geschlossene Freundes-Beta „Stufe B“ – `APP_ENV=beta` + PWA (Gate G0, 2026-10-23)
+
+**Entscheidung CEO + Auftraggeber (2026-10-23):** Vor dem Go-Live G1 (Hetzner) läuft eine **geschlossene Freundes-Beta mit echten Daten** auf der bestehenden Infrastruktur **Vercel Hobby + Neon Free**, als **eigenes** Vercel-Projekt mit **eigener** Neon-Datenbank und eigener Domain (`app.<domain>`). Echte Login-Mails über einen EU-Mail-Dienst, kein Demo-Postfach, kein „Demo zurücksetzen“, kein Demo-Seed, persönliche Reisedaten (F-054) **aus**, Löschjob aktiv. Statt Basic Auth (funktioniert in iOS-Home-Bildschirm-Apps schlecht) ein **Beta-Code bei der Registrierung**. Die App soll auf dem iPhone als **installierte Web-App (PWA)** laufen; Login dort per **6-stelligem Code** (Magic Link öffnet Safari statt der PWA). Kurzer Datenschutzhinweis mit dem Auftraggeber als Verantwortlichem + Zustimmung der Tester. **Inkrement 12 (Unterlagen) kommt nach der Beta.**
+
+Klick-Anleitung für den Auftraggeber: [beta-anleitung.md](beta-anleitung.md) · Recht/Datenschutz: [compliance-checklist.md §13](compliance-checklist.md) · Gate: [go-live.md – Gate G0](go-live.md). Umsetzung: Developer (Status-Board **P1-B0**), Abnahme Reviewer.
+
+#### 0.12.1 Empfehlung Mail-Dienst und Domain-Registrar (Recherche 2026-10-23)
+
+> Abruf über Websuche; die Anbieterseiten selbst waren aus der Arbeitsumgebung nicht direkt abrufbar – **Preise/Tarife vor Abschluss live prüfen**. Quellen am Ende dieses Dokuments.
+
+**Mail-Dienst (Transaktionsmails: Login-Codes, Hinweise)**
+
+| Anbieter | Sitz / Daten | Kostenloser Tarif | SPF / DKIM / DMARC, eigene Domain | AVV | Bewertung für G0 |
+|---|---|---|---|---|---|
+| **Lettermint** (Lettermint B.V., NL) | Niederlande, keine US-Mutter; Mail-Daten laut Anbieter nur in der EU auf eigener Infrastruktur; ISO 27001 laut Anbieter | **„Developer“: 300 Mails/Monat**, 1 Absender-Domain, 1 Nutzer, **ohne Kreditkarte**, kein Tageslimit mehr (Changelog); danach Starter **10 €/Monat** (10 000 Mails) | ja: DKIM, SPF, Custom Return-Path; DMARC setzt der Domain-Inhaber | **ja**, DPA als Teil der AGB (Stand der DPA-Fassung 2026-04-09: Vertragspartner Lettermint B.V.); einzelne Unterauftragsverarbeiter (Support-Tools) in den USA | **Empfehlung** – identisch mit dem Plan für G1 (tech-stack.md §6), SMTP `smtp.lettermint.co` (465 implizites TLS / 587 STARTTLS, Benutzer `lettermint`, Passwort = Projekt-Token) → kein Code-Umbau |
+| Brevo (FR) | Frankreich, Rechenzentren EU | **300 Mails/Tag** inkl. SMTP-Relay und Transaktions-API | ja | ja (im Konto abschließbar, laut Sekundärquellen) | **Ausweichoption** bei Kontingentproblemen; Nachteil: Marketing-Fokus, Brevo-Branding im Free-Plan (laut Reviews), geteilte IPs |
+| Scaleway TEM (FR, Iliad) | Frankreich | **300 Mails/Monat** frei, danach 0,25 € / 1 000 | ja | ja (in den AGB) | gute Ausweichoption für G1; für Laien sperriger (Cloud-Konsole, Zahlungsmittel bei Kontoanlage) |
+| Mailjet (FR, Sinch-Gruppe SE) | Frankreich/EU | ca. 6 000/Monat (200/Tag), Branding | ja | ja | möglich, nicht nötig |
+| Resend, Postmark, SendGrid, Amazon SES | USA | teils großzügig | ja | DPA/SCC | **nein** – Drittland, widerspricht PRD |
+
+**Mengenschätzung G0:** 10–30 Testpersonen × (1 Registrierungsmail + 1–3 Login-Codes/Monat, da Sitzungen bis 90 Tage halten) + wenige Hinweis-/Lösch-Mails ≈ **50–150 Mails/Monat** → Lettermint Free reicht. Bei > 250/Monat: Lettermint Starter (10 €/Monat) oder Wechsel zu Brevo Free – nur Env-Variablen (`SMTP_*`), kein Code.
+
+**Domain-Registrar**
+
+| Registrar | Sitz | `.de` pro Jahr | DNS / DNSSEC / 2FA | Bewertung |
+|---|---|---|---|---|
+| **INWX** | Berlin | Werbepreis auf der INWX-Seite **5,02 €** (Tracker: Verlängerung ca. 4 $ netto) | DNS-Editor inklusive, DNSSEC, 2FA | **Empfehlung** – übersichtlicher DNS-Editor, kein Paketzwang |
+| Hetzner (konsoleH) | Gunzenhausen | **5,38 €** (seit Preissenkung Okt. 2025, bei Bestellung über konsoleH) | DNS kostenlos, 2FA | gleichwertig; passt, falls G1 ohnehin zu Hetzner geht (dann alles bei einem Anbieter) |
+| netcup | Karlsruhe | Aktionspreise ab ca. 0,13 €/Monat + 2 € Einrichtung (Deal-Portale) | DNS inkl. | günstig, Oberfläche für Laien sperriger |
+| IONOS, Strato | DE | 1. Jahr oft ~1 €, danach deutlich teurer | – | nicht empfohlen (Verlängerungspreise, Upselling) |
+| Vercel Domains, Porkbun, Namecheap, Spaceship | USA | teils sehr günstig | – | **nein** – US-Anbieter, DNS läge nicht in der EU |
+
+Domain-Budget des Auftraggebers (~10 €/Jahr) reicht für eine `.de`. Für die Beta genügt **eine** Domain; App unter **`app.<domain>`**, Absender **`login@mail.<domain>`** (Subdomain schützt die Reputation der Hauptdomain, identisch mit §7.2). Die Hauptdomain bleibt für G1 frei.
+
+#### 0.12.2 Aufbau: zweites Vercel-Projekt, eigene Neon-Datenbank, Release-Zweig `beta`
+
+| Thema | Vorschau (bleibt) | **Beta (neu)** |
+|---|---|---|
+| Vercel-Projekt | `wir-wollen-weg` | **`wir-wollen-weg-beta`** (gleiches Repo) |
+| Production-Branch | `main` | **`beta`** – nur geprüfte Stände; Team (Developer auf Anweisung CEO) spult `beta` per Fast-Forward auf einen freigegebenen `main`-Commit vor |
+| Neon | Projekt „wispy-tooth-98738747“ | **eigenes Projekt** `wir-wollen-weg-beta` (Frankfurt, PG 18) – **kein** Branch des Vorschau-Projekts: getrennte Zugangsdaten, kein Kontakt mit Demo-Daten/„Demo zurücksetzen“, eigenes Kontingent (Neon Free: 0,5 GB + 100 CU-h **pro Projekt**/Monat, 10 Branches), Beta-Ende = Projekt löschen |
+| Domain | `*.vercel.app` | `app.<domain>` (CNAME auf Vercel), `*.vercel.app` per Vercel-Redirect + App-Redirect (§0.12.4 Nr. 9) |
+| Zugang | Basic Auth | Beta-Code bei der Registrierung (§0.12.5) |
+| Mails | Demo-Postfach | SMTP Lettermint |
+| Daten | synthetisch, Seed | **echt**, kein Seed |
+| Reisedaten F-054 | an (Fantasiedaten, `DEMO`-Präfix) | **aus** (Start verweigert bei `true`) |
+| Löschjob | Vercel Cron, `CRON_SECRET` | gleich (eigenes `CRON_SECRET`) |
+
+**Änderungen an Build/Konfiguration (Developer):**
+
+1. `vercel.json` → `git.deploymentEnabled`: zusätzlich `"beta": true`.
+2. **`ignoreCommand`** in `vercel.json` (z. B. `node scripts/vercel-ignore.ts`): Exit 0 (= überspringen), wenn das Projekt nicht zu seinem Zweig passt – `APP_ENV=preview` baut nur `VERCEL_GIT_COMMIT_REF=main`, `APP_ENV=beta` nur `beta`. Sonst entstünden in jedem Projekt fehlschlagende Fremd-Deployments (Rauschen, verwirrt den Auftraggeber).
+3. `scripts/vercel-build.ts`: `APP_ENV` `preview` **oder** `beta`; bei `beta` **kein** Seed-Schritt; Migrationen wie bisher (`DATABASE_URL_UNPOOLED`). Zusätzlich bei `beta`: Abbruch, wenn `VERCEL_GIT_COMMIT_REF` ≠ `beta`.
+4. `scripts/seed-demo.ts`: verweigert `APP_ENV=beta` (bisher erlaubt: demo/development/preview – so lassen, Test ergänzen).
+5. Cron: `vercel.json` gilt für beide Projekte → je ein täglicher Lauf. **Hinweis:** Vercel Hobby erlaubt laut Doku 2 Cron-Jobs (Ausführung irgendwann in der angegebenen Stunde) – mit zwei Projekten à 1 Job ist die Grenze erreicht; keine weiteren Crons anlegen.
+6. **Migrationen mit echten Daten:** Jede Migration, die in `beta` geht, muss rückwärtskompatibel mit der laufenden Version sein (Deployment-Wechsel ist nicht atomar) und darf keine Daten verwerfen. Vor Migrationen mit Datenumbau: CEO bittet den Auftraggeber um einen Neon-Sicherungs-Branch (beta-anleitung.md §9). Neon Free hat nur ein kurzes Wiederherstellungsfenster (laut Neon-FAQ 6 h PITR) – kein Ersatz für Backups (Risiko akzeptiert für G0, §0.12.10).
+
+#### 0.12.3 Umgebungsvariablen `APP_ENV=beta` (Vercel, Umgebung „Production“ des Beta-Projekts)
+
+Werte setzt nur der Auftraggeber (beta-anleitung.md §4); **nie** ins Repo, auch nicht `LEGAL_OPERATOR_NAME` (das Repository ist **öffentlich**).
+
+| Variable | Wert / Regel | geheim |
+|---|---|---|
+| `APP_ENV` | `beta` | nein |
+| `APP_URL` | `https://app.<domain>` (Pflicht, `https://`) | nein |
+| `BETTER_AUTH_SECRET` | eigener Zufallswert ≥ 32 Zeichen, **≠ Vorschau** | ja |
+| `DATABASE_URL`, `DATABASE_URL_UNPOOLED` | Neon-Projekt `wir-wollen-weg-beta` | ja |
+| `MAIL_TRANSPORT` | `smtp` (Pflicht; `inbox` verboten) | nein |
+| `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER` | `smtp.lettermint.co`, `465`, `true`, `lettermint` (Fallback 587 + `SMTP_SECURE=false`, dann `requireTLS`) | nein |
+| `SMTP_PASSWORD` | Lettermint-Projekt-Token | ja |
+| `MAIL_FROM` | `login@mail.<domain>` | nein |
+| `MAIL_FROM_NAME_DE`, `MAIL_FROM_NAME_EN` | optional (Standard: Produktname je Sprache) | nein |
+| `MAIL_REPLY_TO` | optional, z. B. Adresse des Auftraggebers | nein |
+| `CONTACT_EMAIL` | **Pflicht in beta**: Kontakt im Datenschutzhinweis/Kontaktseite/Hilfe; nicht `example.org` | nein |
+| **`LEGAL_OPERATOR_NAME`** *(neu)* | **Pflicht in beta**: Vor- und Nachname des Verantwortlichen (2–100 Zeichen) | nein (aber nicht ins Repo) |
+| **`BETA_ACCESS_CODES`** *(neu)* | **Pflicht in beta**: 1–5 Codes, kommagetrennt, **erster = aktueller**, weitere = Übergang bei Rotation; je ≥ 12 Zeichen nach Normalisierung | ja |
+| **`BETA_MAX_ACCOUNTS`** *(neu, optional)* | Obergrenze Konten (Standard **50**); erreicht → neue Registrierungen freundlich abgelehnt | nein |
+| `CRON_SECRET` | eigener Zufallswert ≥ 32 Zeichen (Pflicht in beta) | ja |
+| `TRAVEL_DATA_ENABLED` | `false` (leer = aus; `true` → Start verweigert) | nein |
+| **`PWA_SW_ENABLED`** *(neu, optional)* | Standard an in `beta`/`production`; `false` = Notschalter: App registriert keinen Service Worker, `/sw.js` meldet sich selbst ab (§0.12.6) | nein |
+| `PASSWORD_BREACH_CHECK` | `off` (Empfehlung für G0, Entscheidung bleibt G1) | nein |
+| nicht setzen | `PREVIEW_ACCESS_PASSWORD` (wird in beta ignoriert, Warnung im Log), `BETTER_AUTH_URL`, `AUTH_IP_HEADER`, `AUTH_TRUSTED_PROXIES`, `RETENTION_TOKEN`, `RATE_LIMIT_ENABLED`, `TRAVEL_DATA_KEYS` | – |
+
+#### 0.12.4 Startschutz und Verhalten von `APP_ENV=beta` (Erweiterung `src/lib/app-env.ts`, `src/instrumentation.ts`)
+
+`beta` ist ein **internetöffentlicher Modus mit echten Daten ohne Basic Auth** – die Regeln sind deshalb näher an `production` als an `preview`. Jede Verletzung von 1–8 → **Start verweigert** (Meldung nennt Variable + diesen Abschnitt; fail closed).
+
+| # | Regel | Vergleich preview / production |
+|---|---|---|
+| 1 | `APP_ENVS` um `beta` erweitern; `beta` ∈ `HTTPS_ENVS`; **darf** auf Vercel laufen (nicht in `LOCAL_ONLY_ENVS`) | wie preview |
+| 2 | `MAIL_TRANSPORT=smtp` Pflicht; `inbox` verboten (`beta` **nicht** in `INBOX_ENVS`); `SMTP_HOST` ≠ `localhost`/`127.0.0.1`/`mailpit`; `SMTP_USER` + `SMTP_PASSWORD` gesetzt; `MAIL_FROM` nicht auf `example.org`/`.test`/`.invalid` | wie production |
+| 3 | `BETA_ACCESS_CODES`: 1–5 Einträge, je ≥ 12 Zeichen nach Normalisierung (§0.12.5), keine Duplikate | nur beta |
+| 4 | `LEGAL_OPERATOR_NAME` (2–100 Zeichen) und `CONTACT_EMAIL` (gültige Adresse, nicht `example.org`) gesetzt | nur beta |
+| 5 | Löschjob aktiv: `CRON_SECRET` **oder** `RETENTION_TOKEN` gesetzt | production: Pflicht ab Go-Live |
+| 6 | `TRAVEL_DATA_ENABLED=true` → verweigert (bis G1b, das EU-Hosting voraussetzt); **keine** HKDF-Ableitung eines Reisedaten-Schlüssels in beta (§0.11.1-Tabelle um Zeile `beta`: Standard **aus**, `true` **nein**) | strenger als production |
+| 7 | `RATE_LIMIT_ENABLED=false` → verweigert | wie production |
+| 8 | **Platzhalter-Schutz:** die in beta ausgelieferten Rechtstexte (Beta-Datenschutzhinweis, Kontaktseite, Mail-Footer) enthalten keinen `[PLATZHALTER`-Marker; die vollständigen Platzhalter-Seiten der Demo werden in beta **nicht** ausgeliefert (§0.12.8) | wie production, aber nur für die Beta-Texte |
+| 9 | **Kanonischer Host:** Proxy leitet jede Anfrage, deren Host ≠ Host von `APP_URL`, per **308** auf `APP_URL` um – **außer** `/api/internal/retention` und `/api/health` (Vercel Cron ruft ggf. die `*.vercel.app`-Adresse auf und folgt Umleitungen nicht verlässlich). `previewTrustedOrigins()` liefert in beta **nichts** (nur `APP_URL` ist vertrauenswürdige Origin) | strenger als preview |
+| 10 | Kein Basic Auth (`src/proxy.ts`: beta wie production behandeln, aber Regel 9 und `X-Robots-Tag: noindex, nofollow` auf jeder Antwort; `robots.txt` = `Disallow: /` – ist für Nicht-production schon so, Test ergänzen) | – |
+| 11 | Demo-Funktionen aus: `/demo/postfach` 404, kein „Demo zurücksetzen“, **kein** Demo-Banner „keine echten Daten“ (würde der echten Nutzung widersprechen). Stattdessen dezentes **„Beta“-Kennzeichen** neben der Wortmarke + Link „Feedback/Kontakt“ (Text/Platzierung: UI/UX) | – |
+| 12 | `seed-demo.ts` verweigert beta (§0.12.2 Nr. 4) | wie production |
+| 13 | `PREVIEW_ACCESS_PASSWORD` gesetzt → nur Warnung im Start-Log („ignored in beta“) | – |
+
+Tests (Pflicht): Unit-Tests für `startupProblems()` je Regel (positiv/negativ), E2E-Projekt `beta-chromium` analog `preview-chromium` (zweiter `next start` mit `APP_ENV=beta`, Mailpit als SMTP **nur in CI** über eine Test-Ausnahme `E2E_ALLOW_LOCAL_SMTP=1`, die außerhalb `CI=true` wirkungslos ist): Registrierung mit/ohne Beta-Code, kein Demo-Banner, `/demo/postfach` 404, Redirect fremder Host, Datenschutzhinweis ohne Platzhalter, Service Worker (§0.12.6).
+
+#### 0.12.5 Beta-Code bei der Registrierung (serverseitig)
+
+**Grundsatz:** Ein **neues Konto** entsteht nur mit gültigem Beta-Code **und** Zustimmung zum Beta-Datenschutzhinweis. Bestehende Konten melden sich ohne Code an. Und: **Ohne gültigen Beta-Code verschickt die App an unbekannte Adressen keine Mail** – sonst könnte jeder über das offene Formular Mails an beliebige Adressen auslösen (Spam, Kontingent 300/Monat).
+
+Ablauf (Konten entstehen heute durch Code-/Link-Anmeldung, `emailAndPassword.disableSignUp` ist bereits `true`):
+
+1. Login-Seite (nur beta): unter dem E-Mail-Feld aufklappbar **„Zum ersten Mal hier?“** mit Feld **Beta-Code** und Pflicht-Häkchen „Ich habe den [Datenschutzhinweis](/datenschutz) gelesen und bin einverstanden.“ (+ Hinweis Mindestalter 16). Texte DE/EN: UI/UX.
+2. Server-Action „Code senden“:
+   - Adresse hat ein Konto → wie heute (Beta-Code wird ignoriert).
+   - Keine Konto-Adresse **und** gültiger Beta-Code **und** Häkchen → **Beta-Pass** anlegen (serverseitig in `verification`: `identifier = beta-pass:<HMAC(normalisierte E-Mail)>`, Ablauf 30 Min., Wert = Version des Datenschutzhinweises, z. B. `beta-1`) → Code-Mail wie heute.
+   - Keine Konto-Adresse, Code fehlt/ungültig → **keine Mail**, aber **dieselbe Antwort und dieselbe Code-Seite** wie in den anderen Fällen (Schutz gegen Konten-Ermittlung, R-021 bleibt gültig). Die Code-Seite zeigt in beta den Zusatz „Keine Mail bekommen? Beim ersten Mal brauchst du den Beta-Code.“ Ungültige Codes zählen in das Limit unten.
+3. **Durchsetzung an der einzigen Stelle, an der Konten entstehen:** `databaseHooks.user.create.before` prüft in beta, dass ein gültiger Beta-Pass für die (normalisierte) Adresse existiert, verbraucht ihn und setzt `betaConsentVersion` + `betaConsentAt` am Konto (neue Spalten, Migration); sonst `APIError FORBIDDEN` (fail closed). Damit sind alle Wege abgedeckt (Code, Magic Link, Einladungsflow, Platzhalter-Übernahme per persönlichem Link F-007, künftige Wege).
+4. **`BETA_MAX_ACCOUNTS`** (Standard 50) im selben Hook prüfen (Zählung `user`, transaktional/Advisory-Lock); erreicht → freundliche Meldung „Die Beta ist gerade voll“.
+5. **Vergleich:** Normalisierung `NFKC` → trim → Kleinbuchstaben → Leerzeichen und `-` entfernen; Vergleich der SHA-256-Digests mit `timingSafeEqual` gegen **alle** konfigurierten Codes (keine frühe Rückkehr). Codes nie loggen, nie an den Client, nie in Fehlermeldungen.
+6. **Rate-Limits (IP, wie bestehende Limits pro /64 bei IPv6, R-005-Logik):** max. **5 Fehlversuche / 15 Min.** und **20 / Tag** pro IP; zusätzlich global **200 Fehlversuche / Tag** → danach Registrierung für 1 h für alle geschlossen (Bestandskonten unberührt). Gültige Codes zählen nicht. Bestehende Limits pro E-Mail (5 Codes/h) bleiben. Log nur Zähler `beta_code.invalid`, `beta_code.ok`, `beta_code.locked` (ohne IP, ohne Adresse).
+7. **Rotation:** neuer Code vorn in `BETA_ACCESS_CODES`, alter dahinter, Redeploy; nach Übergangszeit alten entfernen (beta-anleitung.md §9). Rotation ändert nichts an bestehenden Konten/Sitzungen.
+8. **Einladungslinks:** Entscheidungsstand 2026-10-23 = Beta-Code bei **jeder** Registrierung, auch im Einladungsflow (Option A). Option B (gültiger Einladungslink ersetzt den Beta-Code) ist bequemer, öffnet aber die Beta für jeden, an den ein Link weitergeleitet wird → offen beim CEO (Status-Board E-G0-2). Der Code oben ist so zu bauen, dass B später nur eine Bedingung im Hook ist.
+
+#### 0.12.6 PWA – installierbare Web-App (iPhone „Zum Home-Bildschirm“, Android „App installieren“)
+
+**Ist-Stand:** `public/manifest-de.webmanifest`/`-en` (`display: standalone`, `start_url: /`, `scope: /`, `theme_color #2B2266`, `background_color #F4F2FB`, Icons 192/512 + maskable), `apple-touch-icon.png` 180×180 (RGB, ohne Transparenz ✓), `themeColor` und Manifest-Link in `src/components/document-head.tsx`. **Kein** Service Worker. Push bleibt F-038 (später); hier nur Installierbarkeit + Offline-Hinweis. *(Hinweis an PM: F-038 in „PWA-Basis (G0)“ und „Push (später)“ aufteilen.)*
+
+**Anforderungen (Developer, P1-B0):**
+
+| # | Thema | Vorgabe |
+|---|---|---|
+| 1 | Manifest | `id: "/"` ergänzen; `start_url` muss angemeldete Personen ohne Umweg zu „Meine Reisen“ führen (heute `/` – prüfen, sonst `/trips`); `display: standalone`; Namen je Sprache (DE „Wir wollen weg“, EN „When do we go?“, Q11); `Content-Type: application/manifest+json`; ohne Anmeldung abrufbar. Maskable-Icon: Designer prüft Schutzzone (80 %) |
+| 2 | iOS-Meta | Next.js-Metadata `appleWebApp: { capable: true, title: <Produktname je Sprache>, statusBarStyle: "default" }` (erzeugt `mobile-web-app-capable`, `apple-mobile-web-app-title`); `apple-touch-icon` bleibt |
+| 3 | Theme-Farbe | `themeColor` je Farbschema (`media: (prefers-color-scheme: light/dark)`) aus `tokens.css` (Designer liefert Dark-Wert) |
+| 4 | Safe Area | `viewport-fit=cover` (`viewport.viewportFit = "cover"`) **und** `env(safe-area-inset-*)`-Abstände für Kopfzeile, untere Leisten, Bottom-Sheets, Toasts – im Standalone-Modus gibt es keine Safari-Leisten mehr. Abnahme auf iPhone mit Dynamic Island + Home-Indikator (hell/dunkel) |
+| 5 | Splash | iOS erzeugt aus dem Manifest keinen Splash; ohne `apple-touch-startup-image` erscheint kurz die Hintergrundfarbe. **Für G0 nicht nötig** (optional später, Designer). `background_color` = Seitenhintergrund, damit es nicht blitzt |
+| 6 | Login in der PWA | Erkennung Standalone (`matchMedia("(display-mode: standalone)")` oder `navigator.standalone`) → Code-Seite betont **„Code aus der Mail hier eintippen“**, Hinweis „Der Link in der Mail öffnet Safari“; Code-Feld `inputmode="numeric"`, `autocomplete="one-time-code"`. „Angemeldet bleiben“ in der PWA vorausgewählt (90 Tage, F-040). Mail-Text in beta: Code zuerst und groß, Link als zweite Option mit Satz „Nutzt du die App vom Home-Bildschirm? Dann gib bitte den Code ein.“ |
+| 7 | Sitzung übernehmen | iOS kopiert beim Hinzufügen zum Home-Bildschirm die Cookies aus Safari einmalig in die Web-App (danach getrennte Speicher). UX-Empfehlung: Install-Hinweis erst **nach** erfolgreicher Anmeldung zeigen (optional, Hinweiskarte nur in iOS-Safari, nicht standalone, wegklickbar, Cookie-/Storage-frei oder als Eintrag in compliance §4) |
+| 8 | Einladungen | Links aus WhatsApp öffnen auf iOS Safari, nie die PWA. Beitritt in Safari funktioniert; in der PWA zusätzlich der bestehende Weg **Einladungscode eingeben** gut auffindbar machen (UI/UX) |
+| 9 | Externe Links / Downloads | Portal-Links, Google-Kalender, WhatsApp-Teilen öffnen außerhalb (ok). **ICS-Download** und Datenexport im iOS-Standalone-Modus auf dem Gerät testen (Downloads verhalten sich dort anders); Fallback „In Safari öffnen“ |
+
+**Service Worker (nur App-Shell + Offline-Hinweis, keine personenbezogenen Daten):**
+
+| # | Vorgabe |
+|---|---|
+| 1 | Datei `/sw.js` (statisch aus `public/` oder Route), Scope `/`, Header `Cache-Control: no-cache` (Updates sofort sichtbar), `Content-Type: text/javascript`. Registrierung durch eine kleine Client-Komponente nach `load`, **nur** wenn `APP_ENV` ∈ {`beta`, `production`} und `PWA_SW_ENABLED` ≠ `false`; **nie** in `development`/`ci`/`demo`/`preview` (Basic Auth, Cache-Verwirrung beim Entwickeln). Ausnahme für E2E: Projekt `beta-chromium` |
+| 2 | **Precache bei `install`:** nur `/offline` (statische Seite DE/EN ohne Personenbezug, ohne Anmeldung, im Design der App, „Keine Verbindung – bitte später erneut versuchen“) samt ihrer CSS-/Font-/Icon-Dateien, Logo. Cache-Name versioniert mit der Build-ID (`ww-shell-<buildId>`) |
+| 3 | **`fetch`-Regeln:** nur `GET` und gleiche Origin anfassen. Navigationen (`request.mode === "navigate"`): **Netzwerk**, bei Netzfehler die gecachte `/offline`-Seite. `/_next/static/*` (gehashte, unveränderliche Dateien ohne Personenbezug): cache-first erlaubt. **Alles andere wird nicht beantwortet und nicht gecacht**, ausdrücklich: HTML aller App-Seiten, RSC-Anfragen (Header `RSC: 1`, Parameter `_rsc`), Server Actions (`POST`, Header `Next-Action`), `/api/*` (inkl. Bild-Proxy `/api/stays/image`), `/auth/*`, `/i/*`, `/trips/*`, `/account/*`, `/demo/*`, ICS-/Export-Downloads |
+| 4 | `activate`: alte `ww-shell-*`-Caches löschen, `clients.claim()`; `skipWaiting()` bei neuer Version (unkritisch, da keine Daten im Cache) |
+| 5 | **Kein** Push, kein Background Sync, kein IndexedDB/`localStorage` durch den SW, keine Analytics |
+| 6 | Abmelden und Konto löschen: Antwort mit `Clear-Site-Data: "cache"` (leert Browser-/Cache-Storage der Origin; Cookies regelt Better Auth) |
+| 7 | **Notschalter** `PWA_SW_ENABLED=false`: keine Registrierung; `/sw.js` liefert einen Worker, der alle `ww-*`-Caches löscht und sich mit `self.registration.unregister()` abmeldet |
+| 8 | **Offline-Anzeige in der laufenden App:** `online`/`offline`-Ereignisse → dezenter Balken „Keine Verbindung – Änderungen werden gespeichert, sobald du wieder online bist“ **nur dort, wo das stimmt** (Autosave „Meine Tage“ mit Wiederholung); sonst „… werden nicht gespeichert“. Texte: UI/UX |
+| 9 | **Abnahme (E2E, Pflicht):** (a) SW registriert in beta, nicht in preview/dev; (b) `context.setOffline(true)` → Navigation zeigt `/offline`; (c) nach einem Rundgang (Login, Reise öffnen, Kalender, Kosten) enthalten `caches.keys()`/Einträge **nur** `/offline`, deren Assets und `/_next/static/*` – kein `/trips`, kein `/api`, kein `_rsc`, keine E-Mail-Adresse im Cache-Inhalt; (d) Notschalter meldet den SW ab. Manuell: iPhone (iOS aktuell) installieren, anmelden per Code, Offline-Hinweis, Safe Area, Dunkelmodus |
+
+#### 0.12.7 CSP-Anpassung
+
+Stufe 1 (`next.config.ts`, `CSP_STAGE_1`) um **`worker-src 'self'`** und **`manifest-src 'self'`** ergänzen (ohne `script-src`/`default-src` wäre beides ohnehin erlaubt – explizit, damit Stufe 2 nichts bricht). `/sw.js` und `/offline` bekommen dieselbe CSP. Stufe 2 (§0.9) enthält beide Direktiven bereits. **Keine** externen Quellen (kein CDN-Workbox, keine Analytics, keine externen Fonts). `connect-src` bleibt bei Stufe 2 `'self'` (SMTP läuft serverseitig).
+
+#### 0.12.8 Rechtstexte in beta – was minimal nötig ist (Einschätzung, keine Rechtsberatung)
+
+| Text | In beta | Inhalt / Quelle |
+|---|---|---|
+| **Beta-Datenschutzhinweis** (`/datenschutz`, `/privacy`) | **Pflicht** | Kurzfassung nach Art. 13 DSGVO mit `LEGAL_OPERATOR_NAME` + `CONTACT_EMAIL` aus Env; Entwurf in [compliance-checklist.md §13.4](compliance-checklist.md). Versioniert (`beta-1`), Version wird mit der Zustimmung am Konto gespeichert (§0.12.5 Nr. 3). DE Pflicht, EN als Übersetzung (falls EN-sprachige Tester – Entscheidung E-G0-6) |
+| **Anbieter & Kontakt** (`/impressum`, `/imprint`) | **empfohlen** (statt Platzhalter-Impressum) | „Private, nicht-kommerzielle Test-Version für einen geschlossenen Freundeskreis. Verantwortlich: {Name}. Kontakt: {E-Mail}.“ **Keine** Anschrift. Begründung: compliance §13.3 |
+| Volle Platzhalter-Seiten der Demo | **nicht ausliefern** | in beta durch die beiden Beta-Texte ersetzt; Startschutz §0.12.4 Nr. 8 |
+| Mail-Footer | Pflicht | „Private Beta von Wir wollen weg · Datenschutz: {APP_URL}/datenschutz“ (ohne Platzhalter) |
+| Hilfe/Lizenzen (F-051) | bleibt | Kontakt = `CONTACT_EMAIL` |
+| Nutzungsbedingungen | nicht nötig | erst M2 |
+
+#### 0.12.9 Mail-Transport
+
+- **SMTP über Nodemailer** (bestehend, `src/server/mail/transport.ts`) – kein neuer Code-Pfad nötig. Ergänzen: Timeouts (`connectionTimeout` 10 s, `greetingTimeout` 10 s, `socketTimeout` 20 s – Vercel-Funktionen sollen nicht hängen), bei `SMTP_SECURE=false` und nicht-lokalem Host `requireTLS: true`, kein Pooling (serverlos).
+- Versand läuft bereits über `after()` (R-067); Fehler nur als Zähler `mail.send_failed` loggen (keine Adresse, kein Code), Nutzer kann „Neuen Code senden“.
+- Ports: 465 (implizites TLS, Empfehlung) oder 587 (STARTTLS); Port 25 ist bei Cloud-Anbietern üblicherweise gesperrt. **Abnahme:** erster Versand aus dem Beta-Projekt auf Vercel. Falls ausgehendes SMTP von Vercel scheitert: Fallback **Lettermint-HTTP-API** als weiterer Transport (`MAIL_TRANSPORT=lettermint-api`, Token in `LETTERMINT_API_TOKEN`) – nur bauen, wenn nötig.
+- Keine Tracking-Pixel, keine umgeschriebenen Links (beim Anbieter abgeschaltet, beta-anleitung.md §2 Nr. 9).
+- Absender `login@mail.<domain>`; Reply-To optional (Adresse des Auftraggebers); SPF/DKIM über Lettermint, DMARC `p=none` → nach 2–4 Wochen `quarantine` (§7.2).
+
+#### 0.12.10 Grenzen und Risiken der Beta (bewusst akzeptiert bzw. offen)
+
+| Risiko | Bewertung / Maßnahme |
+|---|---|
+| Vercel = US-Anbieter, AVV für **Hobby** unklar (DPA-Text nennt Pro/Enterprise), KI-Training bei Hobby standardmäßig an | Opt-out Pflicht (beta-anleitung.md §5.1), Hinweis an Tester, Datenminimierung; Alternative Vercel Pro (20 $/Monat) – compliance §13.2, Entscheidung E-G0-1 |
+| Keine echten Backups (Neon Free: kurzes PITR-Fenster) | manuelle Neon-Sicherungs-Branches vor Migrationen; Datenverlust wäre ärgerlich, aber für eine Beta tragbar – Testern so kommunizieren |
+| Vercel-Funktionslogs enthalten Pfade (`/i/<token>`) – kein Caddy-Filter wie §5.4 | Hobby-Logs werden laut Vercel nur kurz aufbewahrt und sind nur im Konto des Auftraggebers sichtbar; App loggt selbst keine Tokens/Adressen; vor G1 entfällt das Thema (Hetzner + Caddy-Filter) |
+| Kontingente (Mails 300/Monat, Neon 100 CU-h, Vercel Hobby) | Obergrenze `BETA_MAX_ACCOUNTS` 50; Auftraggeber schaut monatlich ins Lettermint-Dashboard |
+| Beta-Code wird weitergegeben | Rotation, Kontenobergrenze, Fremde sehen keine Reisen ohne Einladung |
+| Konten-Ermittlung | wie bisher neutral (§0.12.5 Nr. 2) |
+| R-035 (Konto-Adresse als Variante), R-037 (Token-Pfade in Logs), Proxy-Rate-Limit `/i/*` | bleiben Go-Live-Punkte (G1); für G0 als bekannt akzeptiert – **CEO entscheidet**, ob R-035 vor G0 behoben wird (Empfehlung: ja, wenn klein) |
+
 ---
 
 > **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
@@ -486,6 +680,7 @@ Skalierung: Bei > 70 % CPU/RAM-Auslastung über Tage → größere VM (Hetzner: 
 | Umgebung | Zweck | Wo | Daten | Mails | Zugriff |
 |---|---|---|---|---|---|
 | **preview** (seit 2026-10-20, PRD Q25) | private Online-Vorschau ohne Download | Vercel Hobby (`fra1`) + Neon Free (Frankfurt), §0.7 | synthetisch (Seed beim ersten Build, „Demo zurücksetzen“) | Demo-Postfach `/demo/postfach` (`MAIL_TRANSPORT=inbox`) | HTTP-Basic-Auth vor allem (`PREVIEW_ACCESS_PASSWORD`), `noindex` |
+| **beta** *(Gate G0, geplant – §0.12)* | geschlossene Freundes-Beta mit echten Daten, als PWA auf dem iPhone | Vercel Hobby, **eigenes** Projekt `wir-wollen-weg-beta` (Branch `beta`, `fra1`) + **eigenes** Neon-Projekt (Frankfurt), `app.<domain>` | **echt** (Freundeskreis), kein Seed; Reisedaten F-054 aus | Lettermint (SMTP), `login@mail.<domain>` | öffentlich erreichbar, **Beta-Code bei der Registrierung**, `noindex`, Kontenobergrenze |
 | **demo** (aktuell) | Vorführung, Handy-Test im WLAN | Laptop: `docker compose -f docker/compose.demo.yml` (App-Prod-Build + PostgreSQL + Mailpit), §0 | synthetisch (`db:seed:demo`) | Mailpit (`:8025`) | lokal/WLAN; optional kurzzeitig per Tunnel (§0.5) |
 | **dev** | lokale Entwicklung | Laptop/Cloud-Session: `docker compose -f docker/compose.dev.yml up` (PostgreSQL 18 + Mailpit), App per `pnpm dev` | synthetisch (Seed-Skript) | Mailpit (`localhost:8025`) | lokal |
 | **ci** | automatische Prüfung | GitHub Actions, Service-Container | synthetisch, flüchtig | Mailpit | – |
@@ -501,10 +696,14 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | Variable | Pflicht | Beschreibung | Beispiel/Platzhalter in `.env.example` |
 |---|---|---|---|
 | `NODE_ENV` | ja | `production` in demo/staging/prod | `development` |
-| `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `preview` \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Zugangsschutz, Startschutz §0.6). Auf Vercel ohne Wert: `preview` | `development` |
+| `APP_ENV` | ja | `development` \| `ci` \| `demo` \| `staging` \| `preview` \| `beta` (Freundes-Beta, §0.12) \| `production` (steuert Mail-Transport, noindex, Logging, Demo-Banner, Zugangsschutz, Startschutz §0.6). Auf Vercel ohne Wert: `preview` | `development` |
 | `APP_URL` | ja | öffentliche Basis-URL ohne Slash am Ende; `preview`/`staging`/`production` nur mit `https://` (R-064). Auf Vercel ohne Wert: `https://$VERCEL_PROJECT_PRODUCTION_URL` | `http://localhost:3000` |
 | `APP_TIME_ZONE` | nein | IANA-Zeitzone, die „heute“ für Reisen bestimmt (Countdown, Phasen, Fristen, Abreisetag-Feier – R-072). Leer/ungültig = `Europe/Berlin`. Wird beim **Build** eingelesen (auch für den Browser) – Änderung erst nach neuem Build/Deployment wirksam. Später ggf. Zeitzone pro Reise | leer |
 | `PREVIEW_ACCESS_PASSWORD` | nur preview | Passwort der HTTP-Basic-Auth (≥ 10 Zeichen, Benutzername beliebig); fehlt es, startet die Vorschau nicht bzw. antwortet 503 (§0.7) | leer |
+| `BETA_ACCESS_CODES` | nur beta (Pflicht) | Beta-Code(s) für **neue** Konten: 1–5, kommagetrennt, erster = aktueller, je ≥ 12 Zeichen nach Normalisierung; Vergleich zeitkonstant, Rate-Limit (§0.12.5). Nie ins Repo/Log | leer |
+| `BETA_MAX_ACCOUNTS` | nein | nur beta: Obergrenze Konten (Standard 50) | leer |
+| `LEGAL_OPERATOR_NAME` | nur beta (Pflicht); ab G1 durch echte Rechtstexte ersetzt | Name des Verantwortlichen im Beta-Datenschutzhinweis/Kontaktseite – absichtlich als Env-Variable, weil das Repository öffentlich ist | leer |
+| `PWA_SW_ENABLED` | nein | Service Worker (App-Shell + Offline-Hinweis) in `beta`/`production` an; `false` = Notschalter, `/sw.js` meldet sich selbst ab (§0.12.6) | leer |
 | `DATABASE_URL` | ja | PostgreSQL-Verbindung (Neon: Pooled-Endpunkt `…-pooler…`) | `postgres://app:app@localhost:5432/wirwollenweg` |
 | `DATABASE_URL_UNPOOLED` | nein | Neon (preview): direkte Verbindung – Migrationen und Seed nutzen sie, wenn gesetzt | – |
 | `DATABASE_POOL_MAX` | nein | Verbindungen pro Server-Instanz (Standard 10, auf Vercel 3) | leer |
@@ -526,12 +725,12 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `LOG_LEVEL` | nein | `info` (prod), `debug` (dev) | `debug` |
 | `RATE_LIMIT_ENABLED` | nein | in E2E-Tests gezielt abschaltbar (nie in prod); betrifft nur die IP-Limits – die Limits pro E-Mail-Adresse (Inkrement 1) sind immer aktiv | `true` |
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
-| `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
+| `CONTACT_EMAIL` | ja (beta, Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails; ab Inkrement 10 zusätzlich weich gelöschte Ausgaben > 24 h, §0.10). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
 | `TRAVEL_DATA_ENABLED` | nein | Feature-Schalter persönliche Reisedaten (F-054, Inkrement 11): `true` \| `false` \| leer = Standard der Umgebung (**an** in `development`/`ci`/`demo`/`preview`, **aus** in `staging`/`production`). In `production` erst nach dokumentierter **G1b-Abnahme** auf `true` (go-live.md). Ungültiger Wert → Start verweigert (§0.11.1) | leer |
 | `TRAVEL_DATA_KEYS` | ja, wenn Reisedaten in `staging`/`production` an | Schlüsselring der Feldverschlüsselung (AES-256-GCM): `kid:base64(32 Byte)`, kommagetrennt, **erster Eintrag aktiv**; eigene Datei `secrets/travel-data.env`, getrennt von `DATABASE_URL` und Backups; fehlt er bei eingeschaltetem Bereich in `staging`/`production` → Start verweigert. In `development`/`ci`/`demo`/`preview` optional – sonst HKDF-Ableitung aus `BETTER_AUTH_SECRET` (Kennung `demo`), **Vercel braucht keine neue Variable**. Rotation `pnpm travel-data:rotate`, Runbooks §0.11 | leer (Kommentar: nie echte Werte) |
 | *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: Schlüssel des (AES-256-GCM-verschlüsselten, R-076) Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
-| `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
+| `CRON_SECRET` | preview, beta | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |
 | `BACKUP_AGE_RECIPIENT` | ja (prod) | öffentlicher `age`-Schlüssel zur Verschlüsselung der Dumps (privater Schlüssel **offline** beim Betreiber) | – |
@@ -676,6 +875,13 @@ Ausgelagert und erweitert als Gate: **[go-live.md](go-live.md)** (Stufe 1 Stagin
 
 ## Quellen (Abruf 2026-10-08)
 
+- **Beta G0 (Abruf 2026-10-23, über Websuche; Anbieterseiten aus der Arbeitsumgebung nicht direkt abrufbar – vor Abschluss live prüfen):**
+  - Lettermint: [Preise](https://lettermint.co/pricing), [Changelog „Developer plan without daily limit“](https://lettermint.co/changelog/developer-plan-now-without-daily-limit), [DPA](https://lettermint.co/dpa), [SMTP-Doku](https://docs.lettermint.co/guides/send-email-with-smtp), [Vergleich Amazon SES (Sitz NL)](https://lettermint.co/compare/amazon-ses-alternative)
+  - Brevo: [Free SMTP](https://www.brevo.com/free-smtp-server), [TechRadar-Review (Branding)](https://www.techradar.com/pro/software-services/brevo-review) · Scaleway TEM: [Preise](https://scaleway.com/en/pricing/managed-services), [FAQ](https://www.scaleway.com/en/docs/transactional-email/faq/)
+  - Domains: [INWX .de](https://www.inwx.de/en/de-domain), [domainoffer.net – INWX .de](https://domainoffer.net/tld/de/inwx), [Hetzner .de-Preissenkung](https://www.hetzner.com/de/news/de-domain-pricedrop/), [mydealz – netcup .de](https://www.mydealz.de/deals/netcup-de-domain-013eur-pro-monat-2694935)
+  - Vercel: [DPF-Zertifizierung](https://vercel.com/kb/guide/is-vercel-certified-under-dpf), [DPA](https://vercel.com/legal/dpa), [Terms](https://vercel.com/legal/terms), [ToS-Update März 2026 (KI-Training Hobby, Opt-out)](https://vercel.com/changelog/updates-to-terms-of-service-march-2026), [Cron-Kontingente](https://vercel.com/docs/cron-jobs/usage-and-pricing), [ComplyDog – Vercel DPA-Geltungsbereich](https://complydog.com/blog/is-vercel-gdpr-compliant-the-dpa-and-your-deployment)
+  - Neon: [Free-Plan-Grenzen](https://neon.com/faqs/free-plan-limits-and-quotas), [DPA](https://neon.com/dpa), [GDPR-Blog](https://neon.com/blog/gdpr-compliance-and-neon)
+  - iOS-Web-Apps: [WWDC23 „What's new in web apps“ (getrennte Cookies, OTP statt Magic Link)](https://wwdcnotes.com/notes/wwdc23/10120), [WebKit Bug 181849](https://bugs.webkit.org/show_bug.cgi?id=181849)
 - Vercel (Abruf 2026-10-23, für §0.8): [Limits-Übersicht](https://vercel.com/docs/limits), [Functions – Limitations (4,5 MB Payload)](https://vercel.com/docs/functions/limitations), [Body-Size-Limit umgehen (Streaming)](https://vercel.com/kb/guide/how-to-bypass-vercel-body-size-limit-serverless-functions), [FUNCTION_RESPONSE_PAYLOAD_TOO_LARGE](https://vercel.com/docs/errors/function_response_payload_too_large)
 
 - Hetzner: [Preisanpassung Juni 2026 (Analyse)](https://privatedevops.com/news/hetzner-june-2026-cloud-price-increase-what-to-do), [Findstack – Hetzner price increase 2026](https://findstack.com/resources/hetzner-price-increase-2026), [Cloud Pricing Comparison 2026-08](https://kimmo.suominen.com/stuff/cpc-2026-08.txt), [Hetzner CX23 (whtop)](https://www.whtop.com/amp/plans/hetzner.com/144086), [Hetzner Object Storage (whtop)](https://www.whtop.com/amp/plans/hetzner.com/144077), [Sliplane – Object Storage Europa](https://sliplane.io/blog/cheap-object-storage-providers-europe), [Hetzner Pricing Breakdown (Backups 20 %)](https://deployhandbook.com/pricing/hetzner)

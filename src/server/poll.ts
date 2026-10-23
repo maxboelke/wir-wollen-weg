@@ -4,6 +4,7 @@ import type { Period, PollOptionData, VoteChoice, VoteRow } from "@/lib/poll";
 import { MAX_OPTIONS, periodKey, reopenNoticeAfterUnfix } from "@/lib/poll";
 import { db } from "./db/client";
 import { pollOption, pollVote, trip, tripMember, tripStay } from "./db/schema";
+import { onDatesFixed } from "./travel-data/db";
 
 /**
  * Vote data access (F-010, F-011, F-012). Like src/server/trips.ts every function takes the
@@ -212,7 +213,11 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
     const now = new Date();
     const range = `${option.start}/${option.end}`;
     const [previous] = await tx
-      .select({ range: trip.lastFixedRange })
+      .select({
+        range: trip.lastFixedRange,
+        bookerDefaultedAt: trip.bookerDefaultedAt,
+        unfixedAt: trip.unfixedAt,
+      })
       .from(trip)
       .where(eq(trip.id, tripId));
     // Places to stay (W18 E.8, R.7 I9-09): fixed anew with ANOTHER range while suggestions
@@ -262,6 +267,18 @@ export async function fixDates(tripId: string, optionId: string): Promise<FixRes
       .update(tripMember)
       .set({ reopenNoticeDue: false })
       .where(eq(tripMember.tripId, tripId));
+    // Travel details (R.9 I11-01/I11-10): default «Bucht» at the first fixing, 30-day rule,
+    // a moved deletion date is announced.
+    await onDatesFixed(
+      tx,
+      tripId,
+      {
+        bookerDefaultedAt: previous?.bookerDefaultedAt ?? null,
+        unfixedAt: previous?.unfixedAt ?? null,
+        rangeChanged: datesChanged,
+      },
+      now,
+    );
     return { ok: true, period: option } as const;
   });
 }
@@ -288,6 +305,8 @@ export async function unfixDates(tripId: string): Promise<{ ok: boolean }> {
         fixedEnd: null,
         fixedAt: null,
         fixedAnnouncedAt: null,
+        // Travel details stay at most 30 days without a new fixing (R.9 I11-10).
+        unfixedAt: new Date(),
         updatedAt: new Date(),
       })
       .where(eq(trip.id, tripId));

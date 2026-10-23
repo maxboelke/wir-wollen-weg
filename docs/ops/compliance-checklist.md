@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.6 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.7 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.7: **Gate G0 – geschlossene Freundes-Beta §13** (Pflichtpunkte, Kurzbewertung Vercel/Neon/Lettermint, Impressum-Einschätzung, Entwurf Beta-Datenschutzhinweis, Speicher/Löschung PWA), Einträge §3; v0.6: **Gate G1b – persönliche Reisedaten §12** (Abnahme, DSFA, PAuswG/PassG, Datenschutz-Abschnitt, Löschregeln, Log-Regeln, DEMO-Präfix), Einträge §2/§3/§5/§6/§7 – Inkrement 11, F-054/F-056; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -23,6 +23,8 @@ Legende: ☐ offen · ◐ in Arbeit · ☑ erledigt · **M1** = vor Beta · **M2
 | ☐ | Gewerbeanmeldung/steuerliche Erfassung spätestens mit Gewinnerzielungsabsicht (Freemium) klären (Steuerberatung). | P |
 
 ## 0a. Platzhalter-Regel für die Offline-Demo (gilt bis zum Go-Live-Gate)
+
+> Gilt für Demo und Vorschau. Für die **geschlossene Freundes-Beta (G0)** gelten stattdessen die Mindesttexte aus §13 (Beta-Datenschutzhinweis mit echtem Namen, Seite „Anbieter & Kontakt“) – ohne Platzhalter.
 
 Begründung: Solange die App nur lokal (eigener Laptop, eigenes WLAN, ggf. kurzzeitiger Test-Tunnel mit Demo-Daten) läuft, gibt es kein öffentliches Angebot und keine Verarbeitung echter Nutzerdaten. Die Seiten werden trotzdem **gebaut**, damit Struktur, Links und Barrierefreiheit von Anfang an geprüft werden.
 
@@ -146,6 +148,7 @@ Quelle: features.md R.8 (I10-03, I10-07, I10-08, I10-09, I10-10), PRD Q35/Q31/Q2
 | ☐ | Airlines, Bahn, Unterkünfte (persönliche Reisedaten, F-054) – **keine Empfänger durch uns**: die „Bucht“-Person überträgt die Angaben selbst außerhalb der App; die App hat keine Buchungsschnittstelle (§12.3) | – | – | – |
 | ☐ | Banken/Zahlungsdienste (Kosten teilen, F-035/F-036) – **keine Empfänger**: keine Anbindung, keine Zahlungsabwicklung (§2b); kein AVV | – | – | – |
 | ☐ | Unterkunfts-Portale (Link-Vorschau, F-031) – **keine Empfänger** personenbezogener Daten: Abruf durch unseren Server ohne Nutzerdaten (§2a); kein AVV | – | – | – |
+| ☐ | **G0 Beta:** Vercel Inc. (Hosting App, USA, DPF) – AVV-Geltung für Hobby unklar, Entscheidung E-G0-1; Neon (DB, Frankfurt, US-Unternehmen) – DPA in AGB + PDF; Lettermint (Mails, NL) – DPA in AGB (§13.2) | alle Beta-Daten | siehe §13.2 | G0 |
 | ☐ | Ablage aller AVVs (PDF + Datum) außerhalb des Repos; Liste hier pflegen | – | – | M1 |
 
 ## 4. Cookies & Endgerätezugriff (§ 25 TDDDG) – Banner nötig?
@@ -406,7 +409,103 @@ Einschätzung Operations: Reisedaten sind keine besonderen Kategorien (Art. 9), 
 | ☐ | Rotationsrhythmus (jährlich + anlassbezogen) und Runbooks A (Verlust) / B (Leck) übernommen; Runbook B im Datenpannen-Prozess (§7) verlinkt | Operations |
 | ☐ | Zugriff auf Server/Secret-Datei nur für benannte Personen mit 2FA/SSH-Schlüssel | Operations |
 
+## 13. Gate G0 – geschlossene Freundes-Beta „Stufe B“ (Vercel + Neon, echte Daten)
+
+Entscheidung CEO + Auftraggeber 2026-10-23: private, nicht-kommerzielle Beta für einen **geschlossenen Freundeskreis** (Beta-Code, Kontenobergrenze) mit **echten** Namen, E-Mail-Adressen, Verfügbarkeiten, Abstimmungen, Unterkünften und Kosten – auf **Vercel Hobby + Neon Free**, Mails über **Lettermint** (NL). Persönliche Reisedaten (F-054) bleiben **aus** (G1b), Inkrement 12 (Dateien) kommt nach der Beta. Technik: [deployment.md §0.12](deployment.md), Einrichtung: [beta-anleitung.md](beta-anleitung.md), Gate: [go-live.md – Gate G0](go-live.md).
+
+**G0 ersetzt G1 nicht.** Die Platzhalter-Regel §0a gilt für Demo und Vorschau weiter; für die Beta gelten die Mindestanforderungen dieses Abschnitts. Alles mit M1/M2 bleibt für den Echtbetrieb auf EU-Hosting offen.
+
+**Entwurf, keine Rechtsberatung.** Die Einschätzungen unten sind eine Betriebssicht für eine kleine private Beta; bei Unsicherheit (insb. §13.2 Vercel-AVV, §13.3 Impressum, Rechtsgrundlage in §13.4) fachkundig prüfen lassen.
+
+### 13.1 Pflichtpunkte vor dem Einladen der ersten Testperson
+
+| ☐ | Pflichtpunkt | Wer |
+|---|---|---|
+| ☐ | Beta-Modus gebaut und vom Reviewer freigegeben (P1-B0: `APP_ENV=beta`, Startschutz, Beta-Code, Zustimmung mit Version, PWA/Service Worker ohne personenbezogene Daten im Cache, Rechtstexte ohne Platzhalter) | Developer → Reviewer |
+| ☐ | **Verantwortlicher benannt:** Auftraggeber (Name in `LEGAL_OPERATOR_NAME`, Kontakt in `CONTACT_EMAIL`) – **nicht** im öffentlichen Repository | Auftraggeber |
+| ☐ | **Beta-Datenschutzhinweis** (§13.4) online, mit Name + Kontakt, versioniert; Häkchen bei der Registrierung speichert Version + Zeitpunkt | Developer, CEO prüft Text |
+| ☐ | Seite **„Anbieter & Kontakt“** statt Platzhalter-Impressum (§13.3) | Developer |
+| ☐ | **AVV/DPA abgelegt** (PDF mit Datum, außerhalb des Repos): Lettermint, Neon; **Vercel: Entscheidung E-G0-1 dokumentiert** (§13.2) | Auftraggeber |
+| ☐ | **Vercel: KI-Training/Weitergabe zu Trainingszwecken abgeschaltet** (Team → Settings → Data Preferences) | Auftraggeber |
+| ☐ | **2FA** auf GitHub (= Vercel-Login), Neon, Lettermint, Registrar | Auftraggeber |
+| ☐ | Lettermint: Domain verifiziert (SPF, DKIM, Return-Path), DMARC `p=none` gesetzt, **Öffnungs-/Klick-Tracking aus**; Mail-Log-Aufbewahrung beim Anbieter so kurz wie möglich | Auftraggeber, Operations prüft per Testmail (Header: `dkim=pass`, `spf=pass`, `dmarc=pass`) |
+| ☐ | Eigene Neon-Datenbank `wir-wollen-weg-beta` (Frankfurt), getrennt von der Vorschau; eigener `BETTER_AUTH_SECRET`/`CRON_SECRET` | Auftraggeber |
+| ☐ | `TRAVEL_DATA_ENABLED=false`, Startschutz verweigert `true` | Developer, Reviewer |
+| ☐ | Löschjob läuft täglich (Vercel Cron, erster Lauf im Log sichtbar: nur Anzahlen) | Operations, Auftraggeber zeigt Log |
+| ☐ | **Hinweis an Tester** verschickt (Vorlage beta-anleitung.md §8): private Beta, US-Hosting-Bezug, keine sensiblen Angaben in Freitexten, Konto jederzeit löschbar, was am Beta-Ende passiert | Auftraggeber |
+| ☐ | Kurzer **VVT-Eintrag „Freundes-Beta“** (eine Seite, außerhalb des Repos oder `docs/ops/vvt.md` ohne Personenbezug): Zwecke, Kategorien, Empfänger (Vercel, Neon, Lettermint), Drittland USA (DPF/SCC), Fristen §6, TOM §7 | Operations (Entwurf) → Auftraggeber |
+| ☐ | **Datenpannen-Mini-Prozess** notiert: wer merkt was, Auftraggeber entscheidet binnen 72 h über Meldung an die Aufsichtsbehörde (Art. 33), Kontakt der zuständigen Landesbehörde (Wohnsitz des Auftraggebers) notiert | Operations → Auftraggeber |
+| ☐ | **Beta-Ende festgelegt** (Zeitpunkt oder Kriterium) und angekündigt: Daten löschen **oder** nach Ankündigung mit Widerspruchsmöglichkeit in den Echtbetrieb (G1, Hetzner) übernehmen | CEO + Auftraggeber |
+
+### 13.2 Datenschutz-Kurzbewertung der Dienstleister (Stand 2026-10-23)
+
+**Gilt die DSGVO überhaupt?** Für rein persönliche/familiäre Tätigkeiten gilt die DSGVO nicht (Art. 2 Abs. 2 lit. c, „Haushaltsausnahme“). Eine Web-App für den eigenen Freundeskreis *könnte* darunter fallen – die Ausnahme wird aber eng ausgelegt; hier sprechen Internet-Dienst, Einladungslinks über den engsten Kreis hinaus, externe Dienstleister und die geplante spätere Produktnutzung dagegen. **Empfehlung: so handeln, als gelte die DSGVO** – der Mehraufwand ist klein (dieser Abschnitt).
+
+| Dienstleister | Rolle / Daten | Ort / Drittland | Vertrag (AVV, Art. 28) | Bewertung für G0 |
+|---|---|---|---|---|
+| **Vercel Inc.** (Hosting App, Funktionen, CDN, Logs) | Auftragsverarbeiter; **alle** Anfragen laufen durch Vercel: IP, Cookies, Seiteninhalte (Namen, Verfügbarkeiten, Kosten, IBAN maskiert/auf Klick), kurzlebige Funktions-Logs mit Pfaden | US-Unternehmen; Funktionen in `fra1` (Frankfurt), CDN global → **Drittlandbezug**. Vercel ist laut eigener Doku unter dem **EU-U.S. Data Privacy Framework** zertifiziert → Übermittlung auf Basis des Angemessenheitsbeschlusses (Art. 45). Zugriff US-Behörden (CLOUD Act) bleibt theoretisch möglich | **Unklar für Hobby:** Die AGB verweisen für die Verarbeitung personenbezogener Daten auf das Vercel-DPA, der DPA-Text nennt aber als Geltungsbereich Kunden in **Pro und Enterprise**. Zusätzlich erlauben die Hobby-Bedingungen (Stand März 2026) standardmäßig die Nutzung von Inhalten für **KI-Training** (Opt-out in den Team-Einstellungen; wirkt nur für die Zukunft) | **Vertretbar für eine kleine private Beta mit Maßnahmen** (Opt-out, Hinweis an Tester, Datenminimierung, keine Ausweisdaten, Beta-Ende), aber **formale Lücke beim AVV** → Entscheidung **E-G0-1** (unten) |
+| **Neon** (Neon Inc., Teil von Databricks) – PostgreSQL | Auftragsverarbeiter; **alle** gespeicherten Daten der Beta | US-Unternehmen; Speicherort AWS `eu-central-1` (Frankfurt). DPF-Listung von Neon/Databricks **nicht verifiziert** → auf dataprivacyframework.gov prüfen; sonst greifen die Standardvertragsklauseln des DPA | DPA laut Neon **in die Nutzungsbedingungen einbezogen** und zusätzlich zum Unterzeichnen/Herunterladen; Geltung für den Free-Plan nicht ausdrücklich bestätigt | vertretbar; PDF ablegen, DPF-Status prüfen |
+| **Lettermint B.V.** (NL) – Transaktionsmails | Auftragsverarbeiter; E-Mail-Adresse, Mailinhalt (Code, Link, Reisename), Zustell-Logs | EU, eigene Infrastruktur laut Anbieter; einzelne Unterauftragsverarbeiter (Support-/Kommunikationstools) in den USA | DPA Teil der AGB (Fassung 2026-04-09) | **gut** – Tracking abschalten |
+| INWX (Registrar) | nur Daten des Auftraggebers (Domain-Inhaber) | DE | kein AVV nötig (eigener Vertrag) | – |
+| GitHub | Code, CI – **keine** Nutzerdaten | USA | kein AVV nötig, solange keine Echtdaten in Repo/Issues/CI | Regel bleibt (Reviewer) |
+
+**E-G0-1 – Vercel-Tarif (Entscheidung Auftraggeber, Empfehlung Operations):**
+
+| Option | Kosten | Pro | Contra |
+|---|---|---|---|
+| **A: Hobby + Maßnahmen** *(Empfehlung für G0)* | 0 € | sofort, keine Kosten; DPF deckt die Übermittlung | AVV-Geltung für Hobby unklar; Hobby nur für private, nicht-kommerzielle Nutzung (passt zur Beta, nicht mehr zu M1/M2) |
+| B: Vercel Pro | 20 $/Monat (je Teammitglied) | DPA gilt ausdrücklich; KI-Training standardmäßig aus; höhere Kontingente | laufende Kosten für eine Übergangslösung |
+| C: Beta erst auf EU-Hosting (G1-Infrastruktur Hetzner) | ca. 10–40 €/Monat + ~1 Woche Arbeit Operations | kein Drittlandbezug, Plan ohnehin nötig | verzögert die Beta deutlich |
+
+**Maßnahmen bei Option A (Pflicht):** KI-Training-Opt-out; Hinweis an Tester inkl. USA-Bezug; keine Ausweis-/Gesundheitsdaten (Reisedaten aus, Hinweis zu Freitexten); Kontenobergrenze; Beta zeitlich begrenzen; App loggt keine personenbezogenen Daten (bestehende Log-Regeln §7); Vercel-Konto mit 2FA nur beim Auftraggeber.
+
+**Daten mit erhöhter Sensibilität in der Beta:** IBAN/Zahlungsinfo (F-036, freiwillig, maskiert), Freitexte (Notizen, Infoseite, Kommentare). Keine besonderen Kategorien (Art. 9) vorgesehen → Hinweis an Tester „keine Gesundheits- oder Ausweisangaben in Notizen“. Persönliche Reisedaten (F-054) technisch aus.
+
+### 13.3 Impressum bei einer rein privaten Freundes-Beta? (Einschätzung)
+
+§ 5 DDG verlangt ein Impressum für **geschäftsmäßige, in der Regel gegen Entgelt** angebotene digitale Dienste. Eine **private, unentgeltliche, nicht beworbene** Test-Version für einen **geschlossenen** Freundeskreis (Zugang nur mit Beta-Code, `noindex`) ist nach Betriebssicht **eher nicht impressumspflichtig**. Risiken: „geschäftsmäßig“ wird weit ausgelegt, und das Projekt ist auf ein späteres (Freemium-)Angebot angelegt. **Empfehlung:** statt Impressum eine Seite **„Anbieter & Kontakt“** mit Name und E-Mail (ohne Anschrift) – deckt die Transparenz ab, kostet nichts, keine Privatadresse im Netz. Ein vollständiges Impressum (ladungsfähige Anschrift) ist Pflichtpunkt für G1/M1 (§1). Bei Zweifeln vor G0 fachkundig prüfen lassen.
+
+### 13.4 Entwurf Beta-Datenschutzhinweis (DE, Version `beta-1`)
+
+Platzhalter in geschweiften Klammern füllt die App aus Env-Variablen (`{name}` = `LEGAL_OPERATOR_NAME`, `{kontakt}` = `CONTACT_EMAIL`, `{datum}` = Stand des Textes). **Keine** `[PLATZHALTER`-Marker. Developer übernimmt den Text in die i18n-Dateien; EN als Übersetzung mit Hinweis „Translation – the German version applies“ (E-G0-6).
+
+> **Datenschutzhinweis zur privaten Beta von „Wir wollen weg“** (Version beta-1, Stand {datum})
+>
+> **1. Wer ist verantwortlich?** {name} (Privatperson). Kontakt: {kontakt}. Die Beta ist ein privates, nicht-kommerzielles Testprojekt für einen geschlossenen Freundeskreis.
+>
+> **2. Welche Daten verarbeiten wir?** *Konto:* E-Mail-Adresse, Anzeigename, Sprache, Region, optional ein Passwort (nur als sicherer Hash). *Reisen:* Mitgliedschaften und Rollen, deine freien und belegten Tage, Kommentare, Stimmen, Inhalte der Infoseite, Unterkunftsvorschläge und Bewertungen, Ausgaben und Salden, freiwillig hinterlegte Zahlungsinfo (z. B. IBAN). *Technik:* IP-Adresse, Zeitpunkt und Art der Anfrage in kurzlebigen Server-Protokollen, ein Anmelde-Cookie.
+>
+> **3. Wofür und auf welcher Rechtsgrundlage?** Damit die App für dich und deine Reisegruppen funktioniert (Art. 6 Abs. 1 lit. b DSGVO) und um sie vor Missbrauch zu schützen, z. B. durch Begrenzung von Anmeldeversuchen (Art. 6 Abs. 1 lit. f DSGVO). Die Teilnahme ist freiwillig; bei der Registrierung bestätigst du, diesen Hinweis gelesen zu haben.
+>
+> **4. Wer sieht deine Daten?** Die Mitglieder einer Reise sehen innerhalb dieser Reise deinen Namen, deine Verfügbarkeiten, Stimmen, Vorschläge und Ausgaben – sonst niemand. Keine Werbung, kein Tracking, kein Verkauf von Daten.
+>
+> **5. Dienstleister:** *Vercel Inc.* (USA) betreibt die App (Server-Region Frankfurt); dabei können Daten in die USA übermittelt werden – Vercel ist unter dem EU-US Data Privacy Framework zertifiziert. *Neon* (USA, Teil von Databricks) speichert die Datenbank in Frankfurt (Amazon Web Services). *Lettermint B.V.* (Niederlande) verschickt die Anmelde-Mails. Diese Dienstleister verarbeiten Daten nur in unserem Auftrag.
+>
+> **6. Cookies und Speicher auf deinem Gerät:** nur technisch notwendige (Anmeldung, Sprache, Darstellung). Installierst du die App auf dem Home-Bildschirm, speichert sie eine Offline-Seite und Programmdateien – keine persönlichen Daten.
+>
+> **7. Wie lange?** Dein Konto, bis du es löschst, spätestens nach 24 Monaten ohne Anmeldung (mit Hinweis-Mail vorher). Reisen 90 Tage nach dem Reiseende bzw. 12 Monate nach der letzten Aktivität. Server-Protokolle nur wenige Tage. **Ende der Beta:** Wir löschen die Daten oder übernehmen sie – nur nach vorheriger Ankündigung, mit der Möglichkeit zu widersprechen – in den regulären Betrieb.
+>
+> **8. Deine Rechte:** Auskunft (auch als Datenexport in der App), Berichtigung, Löschung (Konto löschen in der App), Einschränkung, Widerspruch und Datenübertragbarkeit. Schreib dafür an {kontakt}. Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren, z. B. der deines Wohnorts.
+>
+> **9. Pflicht zur Angabe?** Ohne E-Mail-Adresse kein Konto; alles andere ist freiwillig. Es gibt keine automatisierten Entscheidungen.
+
+Prüfpunkte für den Text: Abschnitte §2a (Link-Vorschau: unser Server ruft die verlinkte Seite ohne deine Daten ab) und §2b (Kosten/Zahlungsinfo) in Kurzform ergänzen, falls die Rechtsprüfung das verlangt; HIBP nur erwähnen, wenn eingeschaltet (für G0 aus).
+
+### 13.5 Ergänzungen Cookies/Speicher (§4) und Löschung (§6) für G0
+
+| Speicherung / Daten | Zweck | Bewertung |
+|---|---|---|
+| **Service Worker + Cache Storage** `ww-shell-<buildId>` (nur `beta`/`production`) | Offline-Hinweisseite, App-Shell, gehashte Programmdateien (`/_next/static`) | technisch erforderlich für die vom Nutzer gewählte Installation/Offline-Anzeige (§ 25 Abs. 2 Nr. 2 TDDDG); **keine** personenbezogenen Daten, keine Kennung; Abmelden/Konto löschen sendet `Clear-Site-Data: "cache"` |
+| Beta-Pass (serverseitig, `verification`, ≤ 30 Min.) | Beta-Code + Zustimmung bis zur Kontoanlage festhalten | kein Endgerätezugriff; HMAC der Adresse statt Klartext; verfällt bzw. wird bei Kontoanlage verbraucht |
+| `betaConsentVersion`, `betaConsentAt` am Konto | Nachweis der Zustimmung zum Beta-Hinweis | Löschung mit dem Konto |
+| Install-Hinweis „Zum Home-Bildschirm“ (optional, UX) | Hinweis nur einmal zeigen | nur falls gespeichert: Eintrag in §4 nachtragen (Reviewer prüft) |
+| Neon-Sicherungs-Branches (manuell vor Migrationen) | Wiederherstellung | **innerhalb von 30 Tagen löschen** (wie Backup-Rotation §6); bei Konto-/Reiselöschungen in der Zwischenzeit gilt dasselbe wie für Backups |
+| Lettermint-Zustell-Logs | Zustellnachweis, Fehleranalyse | Aufbewahrung laut Anbieter, möglichst kurz einstellen |
+| Vercel-Funktionslogs | Betrieb | laut Vercel bei Hobby nur kurz aufbewahrt; App schreibt keine Adressen/Tokens/Inhalte hinein |
+
 ## Quellen (Abruf 2026-10-08)
+
+- **G0 (Abruf 2026-10-23, über Websuche):** [Vercel – DPF](https://vercel.com/kb/guide/is-vercel-certified-under-dpf), [Vercel DPA](https://vercel.com/legal/dpa), [Vercel Terms](https://vercel.com/legal/terms), [Vercel ToS-Update März 2026 (KI-Training Hobby)](https://vercel.com/changelog/updates-to-terms-of-service-march-2026), [ComplyDog – Vercel DPA nur Pro/Enterprise](https://complydog.com/blog/is-vercel-gdpr-compliant-the-dpa-and-your-deployment), [Neon DPA](https://neon.com/dpa), [Neon – GDPR](https://neon.com/blog/gdpr-compliance-and-neon), [Lettermint DPA](https://lettermint.co/dpa), [Lettermint – Sitz NL](https://lettermint.co/compare/amazon-ses-alternative). Haushaltsausnahme, § 5 DDG, Art. 45 DSGVO/DPF aus Fachwissen – bei Rechtsprüfung bestätigen.
 
 - BFSG/Kleinstunternehmen: [IHK – Barrierefreiheitsstärkungsgesetz](https://www.ihk.de/karlsruhe/fachthemen/recht/internetrecht/fallback1433495812828/bfsg-6348406), [Händlerbund – Ausnahme Kleinstunternehmen](https://ohn.haendlerbund.de/recht/rechtsfragen/kleinstunternehmen-bfsg-ausnahme), [e-recht24 – BFSG](https://www.e-recht24.de/ecommerce/13236-barrierefreiheitsstaerkungsgesetz.html)
 - Widerrufsbutton: [Noerr – Umsetzungsgesetz veröffentlicht](https://www.noerr.com/de/insights/umsetzungsgesetz-zum-widerrufsbutton-veroeffentlicht), [Bitkom-Praxisleitfaden](https://www.bitkom.org/sites/main/files/2026-05/bitkom-praxisleitfaden-zur-umsetzung-des-widerrufsbuttons.pdf), [EVZ – Widerrufsbutton](https://www.evz.de/themen/einkaufen-digitales/online-handel/widerrufsbutton/)

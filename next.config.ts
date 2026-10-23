@@ -18,6 +18,11 @@ const PRIVATE_ROUTES = [
  * Better Auth (found by the E2E spike, see docs/ops/spike-auth.md).
  */
 const TOKEN_ROUTES = ["/i/:path*", "/auth/:path*"];
+/**
+ * Personal travel details (F-054, R.9 I11-08): no browser or proxy cache may keep a page or an
+ * action answer of the area – back/forward must not restore decrypted values.
+ */
+const NO_STORE_ROUTES = ["/trips/:id/travel-data", "/trips/:id/travel-data/:path*"];
 
 /**
  * CSP stage 1 (deployment.md §0.9, features.md R.7 I9-04): no `script-src`/`default-src` – the
@@ -80,6 +85,10 @@ const nextConfig: NextConfig = {
       ...TOKEN_ROUTES.map((source) => ({
         source,
         headers: [{ key: "Referrer-Policy", value: "same-origin" }],
+      })),
+      ...NO_STORE_ROUTES.map((source) => ({
+        source,
+        headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }],
       })),
     ]);
   },

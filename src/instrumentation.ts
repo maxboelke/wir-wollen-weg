@@ -30,6 +30,7 @@ export async function register(): Promise<void> {
     mailTransport: process.env.MAIL_TRANSPORT || undefined,
     onVercel: onVercel(),
     placeholders,
+    env: process.env,
   });
   if (problems.length > 0) throw new Error(`Start refused: ${problems.join(" · ")}`);
 }

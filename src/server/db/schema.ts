@@ -3,6 +3,7 @@ import {
   bigint,
   boolean,
   check,
+  customType,
   date,
   foreignKey,
   index,
@@ -230,6 +231,21 @@ export const trip = pgTable(
      */
     costsClosedAt: timestamp("costs_closed_at", { withTimezone: true }),
     costsClosedBy: uuid("costs_closed_by").references(() => user.id, { onDelete: "set null" }),
+    /**
+     * «Bucht» (F-056, R.9 I11-01): the organiser got the marking automatically at the FIRST
+     * fixing (or by migration 0012) – never again automatically afterwards.
+     */
+    bookerDefaultedAt: timestamp("booker_defaulted_at", { withTimezone: true }),
+    /**
+     * «Festlegung aufheben» happened at this time and no new fixing since (R.9 I11-10): shared
+     * travel details are deleted after 30 days. Cleared by every fixing.
+     */
+    unfixedAt: timestamp("unfixed_at", { withTimezone: true }),
+    /**
+     * Fixed anew with ANOTHER range while travel-data requests existed (R.9 I11-10): the
+     * deletion date moved – one-off notice for the people asked and for «Bucht» (W20 H.6/H.11).
+     */
+    travelDatesChangedAt: timestamp("travel_dates_changed_at", { withTimezone: true }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -303,6 +319,18 @@ export const tripMember = pgTable(
     paymentIban: text("payment_iban"),
     paymentNote: text("payment_note"),
     paymentUpdatedAt: timestamp("payment_updated_at", { withTimezone: true }),
+    /**
+     * Marking «Bucht» (F-056, R.9 Datenhaltung): null = not marked. Ends with the membership
+     * (leaving, removal, account deletion). At most 3 per trip – checked under the trip lock.
+     */
+    bookerSince: timestamp("booker_since", { withTimezone: true }),
+    bookerSetBy: uuid("booker_set_by").references(() => user.id, { onDelete: "set null" }),
+    /** The marking was taken away at this time – one-off notice in /travel-data (W20 H.9). */
+    bookerRevokedAt: timestamp("booker_revoked_at", { withTimezone: true }),
+    /** Closed the one-off notice «… hat dich als „Bucht“ markiert» / «… nicht mehr markiert». */
+    bookerHintSeenAt: timestamp("booker_hint_seen_at", { withTimezone: true }),
+    /** Closed the one-off notice «Eure Reise hat neue Daten …» (W20 H.6/H.11). */
+    travelDatesHintSeenAt: timestamp("travel_dates_hint_seen_at", { withTimezone: true }),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
@@ -840,6 +868,207 @@ export const tripSettlement = pgTable(
     check(
       "trip_settlement_values_check",
       sql`${table.fromPartyId} <> ${table.toPartyId} and ${table.amountCents} between 1 and 2000000000`,
+    ),
+  ],
+);
+
+// ---------------------------------------------------------------------------
+// Personal travel details (F-054 stage 1 + F-056, Increment 11 – features.md R.9, W20 H)
+// ---------------------------------------------------------------------------
+
+const bytea = customType<{ data: Buffer; driverData: Buffer }>({
+  dataType: () => "bytea",
+});
+
+/** Field codes of a request (R.9 «Felder», closed list of stage 1). */
+export const TRAVEL_FIELD_CODES = [
+  "legal_name",
+  "birth_date",
+  "sex",
+  "nationality",
+  "document",
+  "document_expiry",
+  "issuing_country",
+] as const;
+export type TravelFieldCode = (typeof TRAVEL_FIELD_CODES)[number];
+
+/** Why a request was closed (null = open). */
+export const TRAVEL_CLOSED_REASONS = [
+  "done",
+  "booker_revoked",
+  "requester_left",
+  "expired",
+  "unfixed",
+] as const;
+export type TravelClosedReason = (typeof TRAVEL_CLOSED_REASONS)[number];
+
+export const TRAVEL_RECIPIENT_STATES = ["open", "released", "declined", "expired"] as const;
+export type TravelRecipientState = (typeof TRAVEL_RECIPIENT_STATES)[number];
+
+/** Values that can be copied one by one (access log `field`, W20 H.7). */
+export const TRAVEL_COPY_FIELDS = [
+  "given_name",
+  "family_name",
+  "birth_date",
+  "sex",
+  "nationality",
+  "document_type",
+  "document_number",
+  "document_expiry",
+  "issuing_country",
+] as const;
+export type TravelCopyField = (typeof TRAVEL_COPY_FIELDS)[number];
+
+/**
+ * A request of a «Bucht» person for one purpose (R.9 Datenhaltung). Holds no values – only the
+ * hull (purpose, field codes, states, times) that stays until the trip is deleted (D3, «… wurden
+ * gelöscht» notices). `used_at`: «Bucht» viewed/copied while everybody had answered (V4 row 2).
+ */
+export const travelDataRequest = pgTable(
+  "travel_data_request",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    requesterId: uuid("requester_id").references(() => user.id, { onDelete: "set null" }),
+    purpose: text("purpose").notNull(),
+    fields: text("fields").array().notNull(),
+    createdAt: createdAt(),
+    closedAt: timestamp("closed_at", { withTimezone: true }),
+    closedReason: text("closed_reason", { enum: TRAVEL_CLOSED_REASONS }),
+    usedAt: timestamp("used_at", { withTimezone: true }),
+    idempotencyKey: text("idempotency_key"),
+  },
+  (table) => [
+    index("travel_data_request_trip_idx").on(table.tripId, table.createdAt),
+    uniqueIndex("travel_data_request_id_trip_idx").on(table.id, table.tripId),
+    uniqueIndex("travel_data_request_idempotency_idx")
+      .on(table.tripId, table.idempotencyKey)
+      .where(sql`${table.idempotencyKey} is not null`),
+    check(
+      "travel_data_request_purpose_check",
+      sql`char_length(${table.purpose}) between 1 and 60
+        and coalesce(char_length(${table.idempotencyKey}), 0) <= 64`,
+    ),
+    check(
+      "travel_data_request_fields_check",
+      sql`${table.fields} <@ array['legal_name', 'birth_date', 'sex', 'nationality', 'document', 'document_expiry', 'issuing_country']::text[]
+        and 'legal_name' = any(${table.fields})
+        and (not ('document_expiry' = any(${table.fields}) or 'issuing_country' = any(${table.fields})) or 'document' = any(${table.fields}))`,
+    ),
+    check(
+      "travel_data_request_closed_check",
+      sql`(${table.closedAt} is null) = (${table.closedReason} is null)
+        and (${table.closedReason} is null or ${table.closedReason} in ('done', 'booker_revoked', 'requester_left', 'expired', 'unfixed'))`,
+    ),
+  ],
+);
+
+/**
+ * One person asked by a request and their answer (R.9). Exactly one of `user_id` (member) or
+ * `placeholder_id` (open placeholder – becomes the member when it is claimed). The composite key
+ * on the membership deletes the answer (and its release) when the person leaves, is removed or
+ * deletes the account – like `availability`.
+ */
+export const travelDataRecipient = pgTable(
+  "travel_data_recipient",
+  {
+    id: id(),
+    requestId: uuid("request_id").notNull(),
+    tripId: uuid("trip_id").notNull(),
+    userId: uuid("user_id"),
+    placeholderId: uuid("placeholder_id").references(() => tripPlaceholder.id, {
+      onDelete: "cascade",
+    }),
+    state: text("state", { enum: TRAVEL_RECIPIENT_STATES }).notNull().default("open"),
+    respondedAt: timestamp("responded_at", { withTimezone: true }),
+    updatedAt: updatedAt(),
+    /** «Ausblenden» of the card «… deine Angaben wurden gelöscht» (W20 H.6). */
+    dismissedAt: timestamp("dismissed_at", { withTimezone: true }),
+  },
+  (table) => [
+    index("travel_data_recipient_trip_user_idx").on(table.tripId, table.userId),
+    uniqueIndex("travel_data_recipient_user_idx")
+      .on(table.requestId, table.userId)
+      .where(sql`${table.userId} is not null`),
+    uniqueIndex("travel_data_recipient_placeholder_idx")
+      .on(table.requestId, table.placeholderId)
+      .where(sql`${table.placeholderId} is not null`),
+    foreignKey({
+      name: "travel_data_recipient_request_fk",
+      columns: [table.requestId, table.tripId],
+      foreignColumns: [travelDataRequest.id, travelDataRequest.tripId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "travel_data_recipient_member_fk",
+      columns: [table.tripId, table.userId],
+      foreignColumns: [tripMember.tripId, tripMember.userId],
+    }).onDelete("cascade"),
+    check(
+      "travel_data_recipient_kind_check",
+      sql`(${table.userId} is null) <> (${table.placeholderId} is null)`,
+    ),
+    check(
+      "travel_data_recipient_state_check",
+      sql`${table.state} in ('open', 'released', 'declined', 'expired')`,
+    ),
+  ],
+);
+
+/**
+ * The encrypted values of one release (AES-256-GCM, R.9 «Verschlüsselung»): one JSON record of
+ * the requested fields, bound to trip + request + person + schema version by the AAD. Hard
+ * deleted in every case of R.9 I11-10; never readable without the key outside the database.
+ * `consent_*` is the proof of the consent (Art. 7 Abs. 1 DSGVO).
+ */
+export const travelDataRelease = pgTable(
+  "travel_data_release",
+  {
+    recipientId: uuid("recipient_id")
+      .primaryKey()
+      .references(() => travelDataRecipient.id, { onDelete: "cascade" }),
+    ciphertext: bytea("ciphertext").notNull(),
+    nonce: bytea("nonce").notNull(),
+    keyId: text("key_id").notNull(),
+    schemaVersion: integer("schema_version").notNull(),
+    consentAt: timestamp("consent_at", { withTimezone: true }).notNull(),
+    consentVersion: integer("consent_version").notNull(),
+    consentLocale: text("consent_locale").notNull(),
+    createdAt: createdAt(),
+    updatedAt: updatedAt(),
+  },
+  (table) => [
+    check(
+      "travel_data_release_values_check",
+      sql`octet_length(${table.nonce}) = 12 and octet_length(${table.ciphertext}) between 17 and 8192
+        and ${table.keyId} ~ '^[a-z0-9-]{1,16}$' and ${table.consentLocale} in ('de', 'en')`,
+    ),
+  ],
+);
+
+/**
+ * Access log of a release (R.9 I11-07): who viewed/copied what and when – never the value.
+ * Lives exactly as long as the release (cascade); at most 1 000 rows per release.
+ */
+export const travelDataAccess = pgTable(
+  "travel_data_access",
+  {
+    id: id(),
+    recipientId: uuid("recipient_id")
+      .notNull()
+      .references(() => travelDataRelease.recipientId, { onDelete: "cascade" }),
+    actorId: uuid("actor_id").references(() => user.id, { onDelete: "set null" }),
+    action: text("action", { enum: ["view", "copy"] }).notNull(),
+    field: text("field", { enum: TRAVEL_COPY_FIELDS }),
+    at: timestamp("at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("travel_data_access_recipient_idx").on(table.recipientId, table.at),
+    check(
+      "travel_data_access_values_check",
+      sql`(${table.action} = 'view' and ${table.field} is null)
+        or (${table.action} = 'copy' and ${table.field} in ('given_name', 'family_name', 'birth_date', 'sex', 'nationality', 'document_type', 'document_number', 'document_expiry', 'issuing_country'))`,
     ),
   ],
 );

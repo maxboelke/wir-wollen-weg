@@ -988,10 +988,13 @@ function ChosenCard({
             </span>
           )}
         </div>
-        {!booked && !model.isOrganizer ? (
-          <p className={styles.muted}>{t("chosen.waitMember", { orga: model.orgaName })}</p>
+        {!booked && !model.canBook ? (
+          <p className={styles.muted}>{t("chosen.waitMember", { bookers: model.bookers })}</p>
         ) : null}
-        {model.isOrganizer ? (
+        {!booked && model.orgaNotBooking ? (
+          <p className={styles.small}>{t("chosen.orgaCanBook", { bookers: model.bookers })}</p>
+        ) : null}
+        {model.canBook ? (
           booked ? (
             <button
               ref={unmarkRef}

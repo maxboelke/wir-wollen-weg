@@ -26,6 +26,7 @@ import {
 import { purgeDemoInbox } from "./mail/demo-inbox";
 import { sendLocalizedMail } from "./mail/transport";
 import { tripLastActivity } from "./trips";
+import { purgeTravelData } from "./travel-data/db";
 
 /**
  * Daily retention job (F-013, F-043, compliance-checklist §6). Triggered by POST
@@ -47,6 +48,8 @@ export interface RetentionReport {
   demoMailsDeleted: number;
   /** Soft-deleted expenses older than 24 hours (deployment.md §0.10). */
   expensesPurged: number;
+  /** Travel-detail releases deleted (deletion date, 30-day rule, safety net – R.9 I11-10). */
+  travelDataPurged: number;
 }
 
 const appUrl = () => serverEnv().APP_URL.replace(/\/$/, "");
@@ -206,7 +209,10 @@ export async function runRetention(now = new Date()): Promise<RetentionReport> {
     mailErrors: 0,
     demoMailsDeleted: 0,
     expensesPurged: 0,
+    travelDataPurged: 0,
   };
+  // Travel details first: the deletion date (trip end + 7) comes long before the trip goes.
+  report.travelDataPurged = await purgeTravelData(now);
   await tripPass(now, report);
   report.expensesPurged = await purgeDeletedExpenses(now);
   await accountPass(now, report);

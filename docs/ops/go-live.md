@@ -1,10 +1,10 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v1.4 (v1.4: **Gate G1b – persönliche Reisedaten** (Inkrement 11) + Prüfpunkt „Reisedaten in Produktion aus“; v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v1.5 (v1.5: **Gate G0 – geschlossene Freundes-Beta** auf Vercel + Neon mit echten Daten, vor Stufe 1; v1.4: **Gate G1b – persönliche Reisedaten** (Inkrement 11) + Prüfpunkt „Reisedaten in Produktion aus“; v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
-> **Auftrag an den CEO:** Bevor die App für irgendjemanden außerhalb des Teams **dauerhaft über das Internet erreichbar** wird (Staging für Testpersonen, Beta M1, Launch M2), legt der CEO dem Auftraggeber diese Checkliste vor und erinnert ihn an die zurückgestellten Entscheidungen Q14 (Betreiber/Impressum), Q15 (Domain, Hosting-/Mail-Konten) und Q16 (Rechtstexte-Weg). **Ohne Freigabe aller Pflichtpunkte von Stufe 1 und 2 kein Go-Live.**
+> **Auftrag an den CEO:** Bevor die App für irgendjemanden außerhalb des Teams **dauerhaft über das Internet erreichbar** wird (Staging für Testpersonen, Beta M1, Launch M2), legt der CEO dem Auftraggeber diese Checkliste vor und erinnert ihn an die zurückgestellten Entscheidungen Q14 (Betreiber/Impressum), Q15 (Domain, Hosting-/Mail-Konten) und Q16 (Rechtstexte-Weg). **Ohne Freigabe aller Pflichtpunkte von Stufe 1 und 2 kein Go-Live.** Ausnahme mit eigenem, leichterem Gate: die **geschlossene Freundes-Beta G0** (unten) auf Vercel + Neon.
 >
 > **Wann erinnern?** Spätestens **6 Wochen vor dem gewünschten Beta-Start**, sonst automatisch beim ersten dieser Auslöser: (a) Inkrement 5 (Abstimmung & Festlegung, P1-5) ist begonnen, (b) jemand möchte Testpersonen außerhalb des eigenen WLANs einladen, (c) der In-App-Browser-Gerätetest (T2) soll über eine dauerhafte Staging-URL laufen.
 >
@@ -19,6 +19,28 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | Domain registrieren, DNS, Mail-Domain verifizieren | 1–2 Tage |
 | DMARC von `p=none` über `quarantine` auf `reject` (deployment.md §7) | 2–4 Wochen Beobachtung |
 | Server-Einrichtung, Staging, Backups, Restore-Test (OPS-1, OPS-3, OPS-4) | ca. 1 Woche Arbeit Operations |
+
+---
+
+## Gate G0 – geschlossene Freundes-Beta „Stufe B“ (Vercel + Neon, echte Daten im Freundeskreis)
+
+**Neu seit 2026-10-23 (CEO + Auftraggeber).** Ein **eigenes, leichteres Gate vor Stufe 1**: private, nicht-kommerzielle Beta für einen geschlossenen Freundeskreis (Beta-Code, max. 50 Konten) auf **Vercel Hobby + Neon Free**, eigene Domain `app.<domain>`, echte Login-Mails über **Lettermint**, installierbar als **PWA** auf dem iPhone. **G0 ersetzt weder G1 noch G1b:** Echtbetrieb für Menschen außerhalb des Freundeskreises, öffentliche Beta M1 und persönliche Reisedaten bleiben an Stufe 1/2 bzw. G1b gebunden. Technik: [deployment.md §0.12](deployment.md) · Recht: [compliance-checklist.md §13](compliance-checklist.md) · Einrichtung: [beta-anleitung.md](beta-anleitung.md).
+
+**Vom Auftraggeber zu liefern (Q15 teilweise vorgezogen):** Domain (~5 €/Jahr, `.de` bei INWX), Lettermint-Konto (Free), zweites Neon- und Vercel-Projekt (Free), **sein Name** und eine Kontakt-Adresse für den Datenschutzhinweis, ein Beta-Code, Entscheidung E-G0-1 (Vercel Hobby vs. Pro).
+
+| ☐ | Pflichtpunkt | Wer | Bezug |
+|---|---|---|---|
+| ☐ | **Beta-Modus P1-B0 vom Reviewer freigegeben** (✅/⚠️ ohne offene hohe Findings): `APP_ENV=beta` mit Startschutz, Beta-Code serverseitig (Rate-Limit, rotierbar, keine Mail an unbekannte Adressen ohne Code), Zustimmung mit Version, kein Demo-Postfach/-Seed/-Banner, kanonischer Host, Reisedaten aus, PWA (Manifest, iOS-Meta, Safe Area, Code-Login in der PWA), Service Worker ohne personenbezogene Daten im Cache, CSP `worker-src`/`manifest-src` | Developer → Reviewer | deployment.md §0.12.4–§0.12.7 |
+| ☐ | **Rechtstexte Beta** online ohne Platzhalter: Beta-Datenschutzhinweis mit Name + Kontakt des Auftraggebers, Seite „Anbieter & Kontakt“, Mail-Footer | Developer, CEO prüft Text | compliance §13.3, §13.4 |
+| ☐ | **Entscheidung E-G0-1 Vercel-Tarif** getroffen und dokumentiert (Empfehlung: Hobby + Maßnahmen); **KI-Training in Vercel abgeschaltet** | Auftraggeber | compliance §13.2 |
+| ☐ | AVV/DPA-PDFs Lettermint + Neon abgelegt (außerhalb des Repos); DPF-Status Neon/Databricks geprüft | Auftraggeber, Operations | compliance §13.1 |
+| ☐ | Domain registriert (EU-Registrar, 2FA); `app.<domain>` mit Vercel verbunden, `*.vercel.app` leitet um | Auftraggeber | beta-anleitung.md §1, §6 |
+| ☐ | Mail: Domain bei Lettermint verifiziert, DMARC `p=none`, Tracking aus; **Testmail an Gmail + iCloud + GMX/web.de** kommt im Posteingang an, Header `spf=pass dkim=pass dmarc=pass` | Auftraggeber, Operations wertet aus | beta-anleitung.md §2, deployment.md §7.2 |
+| ☐ | Eigene Neon-DB `wir-wollen-weg-beta` (Frankfurt, PG 18), eigene Secrets (`BETTER_AUTH_SECRET`, `CRON_SECRET`) ≠ Vorschau | Auftraggeber | deployment.md §0.12.2 |
+| ☐ | Release-Weg steht: Zweig `beta`, `ignoreCommand`, Build ohne Seed; erster Aufbau grün, Löschjob-Lauf im Log (nur Anzahlen) | Developer, Auftraggeber | deployment.md §0.12.2 |
+| ☐ | **Gerätetest iPhone** (aktuelles iOS): Registrierung mit Beta-Code in Safari → „Zum Home-Bildschirm“ → angemeldet; Neuanmeldung in der PWA per Code; Offline-Hinweis; Safe Area hell/dunkel; Einladungslink aus WhatsApp; ICS-Download. Android-Kurztest | Reviewer + Auftraggeber | deployment.md §0.12.6 |
+| ☐ | Hinweis an Tester verschickt, Beta-Ende festgelegt, Mini-Datenpannen-Prozess + VVT-Eintrag | CEO, Auftraggeber, Operations | compliance §13.1 |
+| ☐ | Bekannte Go-Live-Findings bewusst akzeptiert oder behoben: R-035 (Konto-Adresse als Variante – Empfehlung: vor G0 beheben, falls klein), R-037 (Token-Pfade in Vercel-Logs – akzeptiert für G0), Proxy-Rate-Limit `/i/*` (akzeptiert, App-Limits greifen) | CEO | status.md |
 
 ---
 
@@ -105,6 +127,7 @@ Erst nach Freigabe (Tabelle unten) setzt Operations `TRAVEL_DATA_ENABLED=true` i
 
 | Stufe | Freigegeben durch Auftraggeber am | Notiz |
 |---|---|---|
+| G0 – Freundes-Beta (Vercel + Neon) | – | erst danach Testpersonen einladen; Entscheidung E-G0-1 hier notieren |
 | 1 – Staging | – | |
 | 2 – Beta (M1) | – | |
 | 3 – Launch (M2) | – | |

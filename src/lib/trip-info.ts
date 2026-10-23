@@ -161,11 +161,14 @@ function isSafeHttps(url: string): boolean {
 }
 
 /**
- * Who may edit the infos (W22 C, R.1): in Increment 8 the organiser; Increment 11 (F-056)
- * adds people marked «bucht». Checked on the server for every save.
+ * May edit the infos (F-033 + R.9 I11-02): the organiser or a «Bucht» person – checked on the
+ * server at every save, never only by hiding the button.
  */
-export function canEditTripInfo(member: { role: "organizer" | "member" }): boolean {
-  return member.role === "organizer";
+export function canEditTripInfo(member: {
+  role: "organizer" | "member";
+  bookerSince?: Date | null | undefined;
+}): boolean {
+  return member.role === "organizer" || (member.bookerSince ?? null) !== null;
 }
 
 /** «15:00» in the viewer's format («15:00» / «3:00 PM») – the stored value is HH:MM. */

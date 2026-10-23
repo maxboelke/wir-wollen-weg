@@ -21,6 +21,8 @@ import {
   type RatingRow,
   type StayData,
 } from "@/server/stays/db";
+import { bookersOf, canBook } from "../trips/bookers";
+import { orList } from "../trips/format";
 import type { TripView } from "../trips/load";
 
 /**
@@ -97,6 +99,15 @@ export interface ChosenStay extends StayItem {
 export interface StaysModel {
   isOrganizer: boolean;
   orgaName: string;
+  /** May mark «gebucht ✓» (W18 E.16): organiser or «Bucht». */
+  canBook: boolean;
+  /**
+   * «Sara oder Kemal» – the «Bucher» (W16 v2.16): the «Bucht» people, else the organiser.
+   * Already formatted for the viewer.
+   */
+  bookers: string;
+  /** The organiser has no marking while others book – hint «… du kannst es auch selbst». */
+  orgaNotBooking: boolean;
   currency: string;
   total: number;
   myRated: number;
@@ -260,9 +271,14 @@ export function staysModel(view: TripView, raw: StaysRaw): StaysModel {
     trip.fixedAt !== null &&
     stays.some((s) => trip.fixedAt !== null && s.createdAt < trip.fixedAt);
 
+  const bookerNames = bookersOf(members).map((m) => m.displayName);
+  const orgaName = members.find((m) => m.role === "organizer")?.displayName ?? "";
   return {
     isOrganizer,
-    orgaName: members.find((m) => m.role === "organizer")?.displayName ?? "",
+    orgaName,
+    canBook: canBook(me),
+    bookers: orList(bookerNames.length > 0 ? bookerNames : [orgaName], format.locale),
+    orgaNotBooking: isOrganizer && bookerNames.length > 0 && me.bookerSince === null,
     currency: trip.currency,
     total: stays.length,
     myRated: stays.length - stays.filter((s) => !myRatedIds.has(s.id)).length,

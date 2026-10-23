@@ -12,9 +12,9 @@ import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
 import { costRemindData } from "../costs/remind";
 import { stayRemindData } from "../stays/remind";
-import { nameList, nightsText, rangeText } from "../trips/format";
+import { nameList, nightsText, orList, rangeText } from "../trips/format";
 import type { TripView } from "../trips/load";
-import { costsPath, tripPath } from "../trips/paths";
+import { costsPath, travelDataPath, tripPath } from "../trips/paths";
 import { orgaName } from "../trips/remind";
 import { inviteLink, resultShareTexts, tripLink } from "../trips/share-texts";
 import type { CockpitData } from "./load";
@@ -44,12 +44,21 @@ interface Ctx {
   more: (count: number) => string;
 }
 
+/** Labels of travel-detail fields inside way texts (`route.v4.field.*`). */
+function fieldNames(ctx: Ctx, keys: readonly string[]): string {
+  return new Intl.ListFormat(ctx.locale, { type: "conjunction", style: "long" }).format(
+    keys.map((key) => ctx.t(`v4.field.${key}`)),
+  );
+}
+
 /** Resolves a message of the way (`route.*`) with names, dates and times in the viewer's format. */
 function text(ctx: Ctx, msg: Msg): string {
   const values: Values = {};
   for (const [key, value] of Object.entries(msg.values ?? {})) {
     if (typeof value === "string" || typeof value === "number") values[key] = value;
     else if ("names" in value) values[key] = nameList([...value.names], ctx.locale, ctx.more);
+    else if ("or" in value) values[key] = orList([...value.or], ctx.locale);
+    else if ("fields" in value) values[key] = fieldNames(ctx, value.fields);
     else if ("date" in value) values[key] = formatDate(value.date, ctx.intl, { weekday: false });
     else if ("time" in value) values[key] = formatTime(value.time, ctx.intl);
     else if ("money" in value) {
@@ -83,6 +92,8 @@ const LOOK: Record<string, { icon: IconName; tone: Exclude<TileTone, "brand"> }>
   A2: { icon: "info", tone: "lavender" },
   A1: { icon: "wallet", tone: "sun" },
   D1: { icon: "wallet", tone: "sun" },
+  V4: { icon: "id-card", tone: "travel" },
+  D3: { icon: "id-card", tone: "travel" },
   "T-meet": { icon: "users", tone: "lavender" },
 };
 
@@ -108,6 +119,12 @@ function link(view: TripView, target: RouteTarget): CockpitLink {
       return { kind: "path", href: costsPath(id, "balances") };
     case "costsNew":
       return { kind: "path", href: `${costsPath(id, "new")}?date=today&from=cockpit` };
+    case "travelData":
+      return { kind: "path", href: travelDataPath(id) };
+    case "travelDataNew":
+      return { kind: "path", href: travelDataPath(id, "new") };
+    case "travelDataRequest":
+      return { kind: "path", href: travelDataPath(id, target.requestId) };
   }
 }
 
@@ -270,8 +287,15 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       status,
       ariaLabel: sentence(title, status),
       href: path(view, tile.href),
-      icon: tile.area === "stay" ? "bed" : tile.area === "costs" ? "wallet" : "info",
-      tone: tile.area === "costs" ? "sun" : "lavender",
+      icon:
+        tile.area === "stay"
+          ? "bed"
+          : tile.area === "costs"
+            ? "wallet"
+            : tile.area === "travelData"
+              ? "id-card"
+              : "info",
+      tone: tile.area === "costs" ? "sun" : tile.area === "travelData" ? "travel" : "lavender",
     };
   });
   const placeholders = view.placeholders.length;

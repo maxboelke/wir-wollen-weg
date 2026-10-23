@@ -17,6 +17,11 @@ export function useStayRemindTitle(data: StayRemindData) {
   const t = useTranslations("stays.remind");
   const tRemind = useTranslations("remind");
   return (step: StayRemindStep): string => {
+    if (step.occasion === "stay-book") {
+      const people = data.book?.bookers ?? [];
+      const person = people.find((p) => p.key === step.key) ?? (people.length === 1 ? people[0] : undefined);
+      return person ? tRemind("orgaTitle", { orga: person.name }) : t("bookersTitle");
+    }
     if (step.occasion !== "stay-rate") return tRemind("orgaTitle", { orga: data.orgaName });
     if (step.key === "all") return t("allTitle");
     const person = data.open.find((p) => p.key === step.key);
@@ -45,15 +50,61 @@ export function StayRemindBody({
   const tStays = useTranslations("stays");
   const id = useId();
 
-  if (step.occasion === "stay-fix" || step.occasion === "stay-book") {
-    const texts = step.occasion === "stay-fix" ? data.fix : (data.book?.texts ?? null);
+  if (step.occasion === "stay-book") {
+    const people = data.book?.bookers ?? [];
+    const person =
+      people.find((p) => p.key === step.key) ?? (people.length === 1 ? people[0] : undefined);
+    if (!person) {
+      // Several «Bucher» (W16 v2.16 rule 8): pick whom to tell – WhatsApp per row.
+      return (
+        <div className={styles.body}>
+          <p className={styles.muted}>{t("bookersContext", { title: data.book?.title ?? "" })}</p>
+          <ul className={styles.list}>
+            {people.map((p) => (
+              <PersonRow
+                key={p.key}
+                avatarId={p.key}
+                name={p.name}
+                state={null}
+                actions={
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    icon="remind"
+                    aria-label={tRemind("orgaTitle", { orga: p.name })}
+                    data-remind-row={p.key}
+                    onClick={() => {
+                      onStep({ occasion: "stay-book", key: p.key });
+                    }}
+                  >
+                    {tRemind("remind")}
+                  </Button>
+                }
+              />
+            ))}
+          </ul>
+        </div>
+      );
+    }
     return (
       <div className={styles.body}>
         <p className={styles.muted}>
-          {step.occasion === "stay-fix"
-            ? t("fixContext", { orga: data.orgaName })
-            : t("bookContext", { title: data.book?.title ?? "", orga: data.orgaName })}
+          {t("bookContext", { title: data.book?.title ?? "", orga: person.name })}
         </p>
+        <RemindMessage
+          texts={person.texts}
+          defaultLocale={data.defaultLocale}
+          footer={tRemind("footer", { name: person.name })}
+        />
+      </div>
+    );
+  }
+
+  if (step.occasion === "stay-fix") {
+    const texts = data.fix;
+    return (
+      <div className={styles.body}>
+        <p className={styles.muted}>{t("fixContext", { orga: data.orgaName })}</p>
         {texts ? (
           <RemindMessage
             texts={texts}
