@@ -108,8 +108,12 @@ var X=TXT[C.LANG];
 /* Kamerafahrten zwischen den Seiten (Seite 0 Hook, 1–4 Schritte, 5 Endkarte) */
 var TR=[[2300,3200,0,1],[14500,15400,1,2],[18300,19200,2,3],[22500,23400,3,4],[26600,27400,4,5]];
 var T0={paint:3200,heat:6200,vote:9200,party:11700,swipe:15400,costs:19200,settle:23400};
-var END=27400, DUR=30000;
-var SCENES=[0,T0.paint,T0.heat,T0.vote,T0.party,T0.swipe,T0.costs,T0.settle,END];
+var END=27400;
+/* Hook länger, damit der Chat lesbar ist: Bis HOLD läuft alles normal, dann steht die Zeit (nur der Chat läuft weiter),
+   danach läuft die Zeitleiste um HOOK_EXTRA verschoben weiter. */
+var HOLD=2000, HOOK_EXTRA=3600, DUR=30000+HOOK_EXTRA;
+function tl(t){return t<=HOLD?t:(t<HOLD+HOOK_EXTRA?HOLD:t-HOOK_EXTRA);}
+var SCENES=[0,T0.paint,T0.heat,T0.vote,T0.party,T0.swipe,T0.costs,T0.settle,END].map(function(x,i){return i?x+HOOK_EXTRA:0;});
 /* Überschriften: [Schlüssel, Seite, ein, aus] – die letzte je Seite bleibt stehen und fährt mit der Seite weg */
 var HEADS=[['hook',0,0,3200],['paint',1,2950,6000],['heat',1,6300,9000],['vote',1,9300,11550],['party',1,11800,15400],['swipe',2,15050,19200],['costs',3,18950,23400],['settle',4,23150,27400]];
 /* Etiketten: [Seite, Nummer (0 = Hook), ein] */
@@ -165,7 +169,7 @@ var tagEls=TAGS.map(function(tg){
 var headEls=HEADS.map(function(h){return add('c-head',X.head[h[0]],'top:'+(h[1]*PG+112)+'px');});
 
 /* Hook: Gruppenchat */
-var chat=PS.chat();var chatW=add('c-chat','');chatW.style.top='196px';chatW.appendChild(chat.el);
+var chat=PS.chat({start:300,gap:650,badge:4300});var chatW=add('c-chat','');chatW.style.top='196px';chatW.appendChild(chat.el);
 
 /* Handys je Station */
 function mkPhone(page,tapeHue){
@@ -215,14 +219,15 @@ function camY(t){
   return y;
 }
 function near(cy,page){return Math.abs(cy-page*PG)<PG+40;}
-function render(t){
+function render(rt){
+  var t=tl(rt);
   var cy=camY(t);
   W.style.transform='translateY('+(-cy).toFixed(2)+'px)';
 
   /* Route + Marker */
   var l=C.track(MK,t)[0];
   $('rDone').setAttribute('stroke-dasharray',l.toFixed(2)+' '+(RL+10).toFixed(2));
-  var mp=ptAt(l);S(mk,{x:mp[0],y:mp[1],s:1+.08*Math.sin(t/260)});
+  var mp=ptAt(l);S(mk,{x:mp[0],y:mp[1],s:1+.08*Math.sin(rt/260)});
   /* Stationen abhaken (beim Aufbruch zur nächsten) */
   for(var p=0;p<4;p++){var td=TR[p+1][0],kd=pr(t,td,160);
     C.swap(pins[p].children[0],pins[p].children[1],kd);S(pins[p],{s:1+.3*bump(t,td,380)});}
@@ -236,8 +241,8 @@ function render(t){
 
   /* Hook */
   if(near(cy,0)){
-    var cin=ez(t,40,460,E.emph),shk=(t>1750&&t<2100)?Math.sin((t-1750)/26)*2.6*(1-pr(t,1750,350)):0;
-    S(chat.el,{x:shk,y:mix(28,0,cin),s:mix(.96,1,cin),r:-2.5+shk*.5,o:pr(t,40,200)});chat.render(t);
+    var cin=ez(rt,40,460,E.emph),shk=(rt>4430&&rt<4780)?Math.sin((rt-4430)/26)*2.6*(1-pr(rt,4430,350)):0;
+    S(chat.el,{x:shk,y:mix(28,0,cin),s:mix(.96,1,cin),r:-2.5+shk*.5,o:pr(rt,40,200)});chat.render(rt);
   }
 
   /* Handys */

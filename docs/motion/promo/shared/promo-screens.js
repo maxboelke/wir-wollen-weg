@@ -204,7 +204,7 @@ function opt(id, top, data, res, bars) {
       var n = ['check', 'maybe', 'cross'][j];
       return '<div class="v" data-k="' + id + 'v' + j + '"><span class="fb"></span><span class="lb">' + ic(n, 10) + L.v[j] + '</span><span class="lb2">' + ic(n, 10) + L.v[j] + '</span><span class="tick">' + ic('check', 9) + '</span></div>';
     }).join('') +
-    '</div><div class="res"><span class="ph" data-k="' + id + 'ph">' + L.placeholder + '</span><span class="nums" data-k="' + id + 'nm">' + nums(res[0], res[1], res[2]) + '</span>' +
+    '</div><div class="res"><span class="vph" data-k="' + id + 'ph">' + L.placeholder + '</span><span class="nums" data-k="' + id + 'nm">' + nums(res[0], res[1], res[2]) + '</span>' +
     '<span class="bar">' + bars.map(function (b, i) { return '<i data-k="' + id + 'b' + i + '" style="width:' + b[0] + 'px;background:' + b[1] + '"></i>'; }).join('') + '</span></div></div>';
 }
 SCR.vote = function () {
@@ -385,14 +385,16 @@ SCR.settle = function () {
 
 /* ===== Hook: Gruppenchat-Karte (ohne Messenger-Marke) ===== */
 var NAMEC = { Anna: 'var(--ww-mint-700)', Ben: 'var(--ww-lavender-600)', Kemal: 'var(--ww-coral-700)', Mia: 'var(--ww-sun-700)' };
-function chat() {
+function chat(o) {
+  o = o || {};
+  var t0 = o.start != null ? o.start : 260, gap = o.gap || 225, tBadge = o.badge != null ? o.badge : 1620;
   var h = '<span class="badge" data-k="badge">' + L.badge + '</span>' +
     '<div class="ch-h"><span class="avs">' + av('A') + av('B') + av('K') + '</span><div><b>' + L.chatT + '</b><small>' + L.chatS + '</small></div></div>' +
     L.bubbles.map(function (b, i) { return '<div class="bub' + (b[0] ? '' : ' me') + '" data-k="bub' + i + '">' + (b[0] ? '<i style="color:' + NAMEC[b[0]] + '">' + b[0] + '</i>' : '') + '<span>' + b[1] + '</span></div>'; }).join('');
   var el = div('chat', h), k = keys(el);
   return { el: el, k: k, render: function (t) {
-    for (var b = 0; b < L.bubbles.length; b++) { var tb = 260 + b * 225, kb = ez(t, tb, 400, E.bouncy); S(k['bub' + b], { s: mix(.6, 1, kb), o: pr(t, tb, 120) }); }
-    var kbd = ez(t, 1620, 460, E.bouncy); S(k.badge, { s: mix(0, 1, kbd) * (1 + .12 * bump(t, 1900, 260)), o: pr(t, 1620, 100) });
+    for (var b = 0; b < L.bubbles.length; b++) { var tb = t0 + b * gap, kb = ez(t, tb, 400, E.bouncy); S(k['bub' + b], { s: mix(.6, 1, kb), o: pr(t, tb, 120) }); }
+    var kbd = ez(t, tBadge, 460, E.bouncy); S(k.badge, { s: mix(0, 1, kbd) * (1 + .12 * bump(t, tBadge + 280, 260)), o: pr(t, tBadge, 100) });
   } };
 }
 
