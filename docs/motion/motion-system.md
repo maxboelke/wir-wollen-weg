@@ -1,6 +1,6 @@
 # Motion-System – Wir wollen weg / When do we go?
 
-Stand: 2026-10-08 · Verantwortlich: Motion Designer · Status: **v1.0** (abgeglichen mit Design-System v1.0 „Reise-Cockpit“/B0 und den Antworten M-D1–M-D9, M-U1–M-U11)
+Stand: 2026-10-23 · Verantwortlich: Motion Designer · Status: **v1.1** (Ergänzung Cockpit/Unterkünfte; v1.0 abgeglichen mit Design-System v1.0 „Reise-Cockpit“/B0 und den Antworten M-D1–M-D9, M-U1–M-U11)
 Bezug: [PRD](../product/PRD.md) §5/§8, §12 Q17 · [Design-System](../design/design-system.md) §2 Nr. 11, §8, §9.6, §9.12, §9.20 · [tokens.css](../design/tokens.css) v1.0 §6 Motion · [UX-Spec](../ux/ux-spec.md) §4.2, §6, §7.5 · [User-Flows](../ux/user-flows.md) A.1, B.4, C.3, D.2, D.3 · Antworten: [design/abstimmung-ux.md §6](../design/abstimmung-ux.md), [ux/abstimmung-design.md §9](../ux/abstimmung-design.md) · Katalog: [interaktionen.md](interaktionen.md) · Prototypen: [prototypes/](prototypes/README.md) · Abstimmung: [abstimmung.md](abstimmung.md)
 
 > **Arbeitsteilung:** Aussehen → Designer (`docs/design/`), Struktur und Abläufe → UI/UX (`docs/ux/`), **Bewegung dazwischen → dieses Dokument**. Das Motion-System beschreibt Rollen (wer bewegt sich wann, wie schnell, wie gefedert), nicht Farben. Die gewählte Richtung B „Reise-Cockpit“ (Palette B0 „Indigo & Minze“, Q18) stimmt es nur über die Regler in §3.6; die Tokens stehen seit v1.0 in `tokens.css` §6.
@@ -42,7 +42,7 @@ Bezug: [PRD](../product/PRD.md) §5/§8, §12 Q17 · [Design-System](../design/d
 2. **Bewegung erklärt Herkunft und Folge.** Dinge erscheinen dort, wo sie herkommen, und verschwinden dorthin, wohin sie gehen: Das Vorschlag-Band „zeichnet“ den Zeitraum vom An- zum Abreisetag, der Toast steigt aus der Werkzeugleiste, das Tagesdetail kommt aus dem unteren Rand. Eine Bewegung, die nichts erklärt oder belohnt, wird gestrichen.
 3. **Weich gefedert, nie wackelig.** Bestätigungen (Tag gesetzt, Stimme gezählt, Häkchen) landen mit einer leichten Feder. Kräftige Federung ist für Belohnungen (Siegel) reserviert. Kein Element wackelt zweimal, nichts hüpft in Schleife.
 4. **Ruhe, wo Vertrauen zählt.** Formulare, Login/Code, Konto, Datenschutz, Löschen und Fehler bewegen sich nur durch Überblenden (Energie-Stufe 0). **Zahlen zählen nie hoch** – Kennzahlen, Stimmen, „x von n“ und der Countdown wechseln sofort (höchstens Überblenden; CEO-Entscheidung, design-system §2 Nr. 11). Fehler wackeln höchstens einmal (Code-Feld).
-5. **Ein großer Moment.** Das Bewegungs-Budget wird gespart für „Es geht los!“ (F-012): **Vorfreude-Ring** mit Ehrenrunde des Sonnenpunkts, Schein, fallendem Konfetti und einem kleinen Puff – einmal pro Person und Festlegung, abschaltbar, Kern ≤ 1 s, nach spätestens 2,6 s vorbei. Kleinere Meilensteine (Beitritt, Abgabe, alle haben abgestimmt) bekommen nur das **Siegel** (`seal.svg`, Minze mit Indigo-Häkchen).
+5. **Ein großer Moment.** Das Bewegungs-Budget wird gespart für „Es geht los!“ (F-012): **Vorfreude-Ring** mit Ehrenrunde des Sonnenpunkts, Schein, fallendem Konfetti und einem kleinen Puff – einmal pro Person und Festlegung, abschaltbar, Kern ≤ 1 s, nach spätestens 2,6 s vorbei. Kleinere Meilensteine (Beitritt, Abgabe, alle haben abgestimmt; seit v1.1 auch Station neu erledigt, Unterkünfte fertig bewertet, Unterkunft festgelegt/gebucht) bekommen nur das **Siegel** (`seal.svg`, Minze mit Indigo-Häkchen) – nie Konfetti. Konfetti bleibt dem Vorfreude-Ring vorbehalten (Feier, Antippen des Rings, Abreisetag).
 
 ## 3. Motion-Tokens
 
@@ -139,6 +139,8 @@ Staffeln laufen nur über **sichtbare** Elemente (Viewport); alles außerhalb er
 | `CELEBRATION_USABLE_MS` | 300 | spätestens ab hier sind Text und Tasten der Ergebnis-Karte voll sichtbar (tatsächlich 220 ms) |
 | `SUCCESS_HOLD_MAX_MS` | 450 | so lange darf eine Erfolgsanimation die Weiterleitung höchstens verzögern |
 | `HAPTIC_MS` | 10 (Ziehen) / 15 (Feier) | Vibration nur an diesen **zwei** Stellen (§6.4) |
+| `CONFETTI_ROUND_MS` / Sperre | 1200 / 3000 | kleine Konfetti-Runde am Ring (W16-01, W16-07) |
+| `SWIPE_*` (Karten-Geste) | Slop 8 px · Rand 16 px · Schwelle 0,3 × Breite (80–140 px) · Schwung 0,6 px/ms ab 24 px · Rotation tx/18, max. 12° · Ausflug 1,2 × Breite, ≥ 1,2 px/ms, 140–220 ms | [interaktionen.md W18-A](interaktionen.md#w18-a-geste--parameter-js-konstanten-motion-system-35) |
 
 ### 3.6 Regler – gesetzt für Richtung B „Reise-Cockpit“ (M-D6, Designer)
 
@@ -263,7 +265,7 @@ Vibration **nur auf Android, best effort** (`navigator.vibrate`, iOS hat keine A
 1. **Ziehen nach 300 ms Halten** startet (W08-02): `navigator.vibrate(10)`.
 2. **Feier-Abschluss**, wenn der Sonnenpunkt im Vorfreude-Ring einrastet (W11-02, t ≈ 780 ms): `navigator.vibrate(15)`.
 
-Keine Vibration bei Tippen, Stimme, Abgabe-Siegel, Fehlern oder Code-Eingabe.
+Keine Vibration bei Tippen, Stimme, Abgabe-Siegel, Fehlern oder Code-Eingabe – und **keine** beim Swipen von Unterkünften (Schwelle, Auslösen, Ende), bei der Konfetti-Runde am Ring und beim Festlegen/Buchen der Unterkunft (UM-13 bestätigt, 2026-10-23). Das „Einrasten“ beim Swipen zeigt sich optisch (Stempel nickt, Taste zeigt Gedrückt-Look, W18-02).
 
 ## 7. Performance-Regeln
 
@@ -318,6 +320,8 @@ Kurzfassung: **Plattform-first, keine Animationsbibliothek im MVP.** CSS + Token
 | **M-4 Gruppe** (F-008/F-009) | Heatmap-Aufbau, Vorschläge-Staffel, Filter-FLIP, „Im Kalender zeigen“/Vorschlag-Leiste (Prototyp b) | **umsetzungsreif** (Vorschlag-Leiste: Bewegung nach W09-13) |
 | **M-5 Abstimmen & Feier** (F-011/F-012) | Stimme, Ergebnis-Enthüllung, **kein Umsortieren auf der Seite (M-U3)**, **Vorfreude-Ring-Feier W11-02** inkl. Fokus-Regel und Server-Merker (Prototyp c) | **umsetzungsreif**; offen nur M-D10/M-D11 (Ring-Anteil bei der Feier, ruhende Teilchen bei späteren Besuchen) – ändern die Zeitleiste nicht |
 | **M-6 Landing** | Hero-Eintritt mit `hero.svg` v1.0, Scroll-Reveal, Parallax (Prototyp d); kein Sticky-CTA (M-U4) | **umsetzungsreif** |
+| **M-7 Cockpit „Reiseverlauf“** (F-053, Inkr. 8) | W16-01 … W16-07 – gebaut; Gegenprüfung: drei kleine Korrekturen (Puls-Dauer W16-03, Siegel-Pop ohne Schrumpfen W16-04, keine Höhen-Animation W16-05) | **gebaut**, Korrekturen niedrig priorisiert |
+| **M-8 Unterkünfte** (F-031, Inkr. 9) | Karten-Geste mit Parametern W18-A, Stempel, Ausfliegen, Nachrücken, Zurückfedern, Rückgängig, Ende-Siegel, Festlegen-/Gebucht-Siegel, Sonderfälle (Prototyp f) | **umsetzungsreif**; offen nur Optik der Stempel/Tasten (D-47/D-49), Siegel-Platz (M-D13) und fixierte Tastenleiste (M-U13) – ändern die Bewegung nicht |
 
 ## 10. Quellen
 - Next.js Doku `viewTransition` (16.x, experimentell): https://nextjs.org/docs/app/api-reference/config/next-config-js/viewTransition
@@ -330,5 +334,6 @@ Kurzfassung: **Plattform-first, keine Animationsbibliothek im MVP.** CSS + Token
 Browser-Versionsangaben aus Can-I-Use/Herstellerdokumentation, Stand Oktober 2026; vor Umsetzung durch Developer kurz gegenprüfen.
 
 ## Changelog
+- 2026-10-23 **v1.1:** Siegel-Einsatz erweitert (§2 Nr. 5), Konstanten Konfetti-Runde und Karten-Geste (§3.5), Haptik: keine Vibration beim Swipen/Festlegen (§6.4, UM-13), Übergabe-Pakete M-7 (Cockpit, gebaut) und M-8 (Unterkünfte) (§9).
 - 2026-10-08 **v1.0:** Abgleich mit Design-System v1.0 (Richtung B/B0) und den Antworten M-D1–M-D9 / M-U1–M-U11: Tokens als übernommen markiert, Regler B gesetzt (§3.6), Konfetti-Material und Farben `--ww-confetti-1…5`, `data-anim`-Ebenen v1.0 (§5.5: hero ohne `sea`, vote-done = kompakter Ring, invite = Reisekarte, Siegel Minze), Feier = Vorfreude-Ring (E4, §2 Nr. 5), kein Hochzählen, kein Umsortieren auf der Seite (§5.10), Server-Merker für die Feier (§5.8), Fokus-Regel Orga/Mitglied, Konto-Schalter entschieden (§6.3), Haptik nur an 2 Stellen (§6.4), Ring-Ausnahme `stroke-dash*` (§7).
 - 2026-10-08 v0.1: Erstfassung.
