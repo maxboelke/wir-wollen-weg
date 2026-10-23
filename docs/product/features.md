@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v0.9, Inkrement 11 „Bucht“ + Reisedaten zugeschnitten – R.9; v0.8: Inkrement 10 „Kosten teilen“ zugeschnitten – R.8; v0.7: Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
+Stand: 2026-10-23 (v0.10, Inkrement 12 „Reiseunterlagen“ neu zugeschnitten – R.10; v0.9: Inkrement 11 „Bucht“ + Reisedaten zugeschnitten – R.9; v0.8: Inkrement 10 „Kosten teilen“ zugeschnitten – R.8; v0.7: Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -19,6 +19,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.8 (2026-10-23):** Neu **R.8 Zuschnitt Inkrement 10 – Kosten teilen (F-035 + F-036 Stufe 1)** mit User Stories I10-01–I10-11, Rechte-Tabelle, verbindlichen **Rechenregeln** (Cent-Ganzzahlen, Rest-Cent an die ersten Personen in fester Reihenfolge, Ausgleich per „exakte Paare + Greedy“ mit Garantie ≤ n−1 Überweisungen, A1-Schwelle je Währung, erlaubte Währungen), Sicherheit (Konfliktschutz `version`, Idempotenz beim Anlegen, Salden-Prüfung beim Markieren), Datenhaltung (`trip_cost_party` – überlebt das Verlassen –, `trip_expense`, `trip_expense_share`, `trip_settlement`, Zahlungsinfo an `trip_member`), Demo-Seed und Abgrenzung. Festlegungen: Orga darf alle Ausgaben bearbeiten/löschen, markiert Ausgleiche zwischen zwei Konto-Mitgliedern aber nicht für andere; Zahlungsinfo getrennt in **geprüfte IBAN** (maskiert angezeigt) + Freitext ≤ 100; Abschließen auch mit offenen Salden (nach Warnung) sperrt Ausgaben und Ausgleiche; Platzhalter mit Beteiligung nicht löschbar; UI sagt nicht „minimal“. Steckbrief F-035/F-036 verweist auf R.8.
 
 **Änderungen v0.9 (2026-10-23):** Neu **R.9 Zuschnitt Inkrement 11 – „Bucht“ + persönliche Reisedaten (F-056 + F-054 Stufe 1)** mit User Stories I11-01–I11-13, abschließender Feldliste, Rechte-Tabelle (Orga ohne Markierung nie Inhalte), Lebenszyklus-/Löschtabelle, Verschlüsselung (AES-256-GCM mit AAD, `TRAVEL_DATA_KEYS`, Rotation, HKDF-Ableitung nur in Demo/Vorschau), Sicherheit, Rate-Limits, Datenhaltung (Migration 0012), Demo-Seed und Abgrenzung. Festlegungen: Standard-Markierung nur bei der **ersten** Festlegung; Zusatzrechte „Bucht“ für Infoseite und «gebucht ✓» (Festlegen bleibt Orga); Maskierung serverseitig, Klartext nur per protokolliertem Anzeigen/Kopieren; Re-Authentifizierung (12 h, Code/Magic Link) nur für Dokumentnummern; Einwilligung mit Löschregel statt festem Datum (Terminänderung verschiebt das Löschdatum); Kachel Reisedaten auch für Personen mit eigener Freigabe (Widerruf leicht erreichbar); Zugriffsprotokoll lebt so lange wie die Freigabe; **Feature-Schalter `TRAVEL_DATA_ENABLED`** (in Produktion aus bis G1b) und **`DEMO`-Präfix für Dokumentnummern in Demo/Vorschau**. Steckbriefe F-054/F-056 verweisen auf R.9.
+
+**Änderungen v0.10 (2026-10-23, Auftraggeber-Wunsch zu Reiseunterlagen):** Neu **R.10 Zuschnitt Inkrement 12 – Reiseunterlagen (F-055 Stufe 1, vereinfacht)** mit User Stories I12-01–I12-10, Rechte-Tabelle, Sicherheit für Dateien, **Speicher je Umgebung** (Demo/Vorschau/Freundes-Beta/Produktion, Optionen mit Kosten und Empfehlung), Datenhaltung, Demo-Seed und Abgrenzung. Vereinfachungen nach Auftraggeber: **jedes Mitglied lädt hoch, alle Mitglieder sehen alles** (Standard); nur **Name** Pflicht, **Kategorie optional** (Vorschlagsliste inkl. „Aktivität & Voucher“); kein Datum in Stufe 1 (dadurch keine Tages-Stationen T1…Tn); Auswahl „nur ausgewählte Personen“ entfällt – stattdessen höchstens ein Schalter **«Nur für mich»** (Q38 offen). Umbenennen/Kategorie ändern: Hochladende + Orga; Löschen: Hochladende + Orga. HEIC wird nicht serverseitig umgewandelt (iPhone liefert JPG). Screenshots für Unterkünfte (F-031 Stufe 2) aus Inkrement 12 herausgelöst (→ 12b). Neue offene Fragen **Q37–Q39** (PRD §12). Steckbrief F-055, R.4, R.5 angepasst.
 
 ## Übersicht
 
@@ -72,7 +74,7 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 | **F-052** | **Bewegung, Animationen & Haptik (Querschnitt, inkl. Schalter „Bewegung reduzieren“)** | **M** (Basis) | **MVP** (Motion-Prio „MVP+“ vor Beta, „später“ danach) | Free |
 | **F-053** | **Reise-Cockpit: Übersicht nach der Festlegung (Phase 3, Hub „Reise managen“)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 8) | Free |
 | **F-054** | **Persönliche Reisedaten (Name laut Ausweis, Geburtsdatum, optional Ausweisdaten) – Abfrage & Freigabe; eigener Bereich (UX-2)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11; echte Daten erst nach Gate G1b) | Free |
-| **F-055** | **Reiseunterlagen: Tickets & Dokumente sicher teilen (Dateien)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 12; echte Daten erst nach Gate G1b) | Free bis Kontingent · Premium? (mehr Speicher) |
+| **F-055** | **Reiseunterlagen: Tickets, Voucher & Dokumente für die Gruppe (Dateien) – Zuschnitt R.10** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 12, nach Freundes-Beta G0; echte Dateien nach G1b bzw. Q37) | Free bis Kontingent · Premium? (mehr Speicher) |
 | **F-056** | **Zuständigkeit „Bucht“ (buchende Person, von der Orga vergeben)** | **R** | **Ausbaustufe „Reise managen“** (Inkrement 11) | Free |
 
 **Prio R** = Ausbaustufe „Reise managen“ (nach dem MVP „Termin finden“; Einordnung gegenüber v1 siehe PRD Q26). Innerhalb der Ausbaustufe gilt je Feature ein eigener MVP-Schnitt („Stufe 1 / später“).
@@ -683,10 +685,12 @@ Abhängigkeiten: F-012, F-053, **F-056**; Operations (Schlüsselverwaltung, Gate
 Aufwand: **M** (≈ 1 Inkrement inkl. F-056) + Security-Review.
 
 ### F-055 Reiseunterlagen – Tickets & Dokumente sicher teilen
-**Als** buchende Person **möchte ich** Flugtickets, Buchungsbestätigungen und Aktivitäten-Tickets in der Reise ablegen, **damit** alle sie unterwegs griffbereit haben.
-**Als** Mitreisender **möchte ich** meine Tickets offline auf dem Handy öffnen können, **damit** ich am Gate nicht nach der Mail suchen muss.
+**Als** Mitglied **möchte ich** wichtige Unterlagen (Flugtickets, Buchungsbestätigungen, Voucher z. B. für GetYourGuide-Aktivitäten) mit nur einem Namen hochladen, **damit** alle in der Reise sie griffbereit haben.
+**Als** Mitreisender **möchte ich** meine Tickets auf dem Handy öffnen und sichern können, **damit** ich am Gate nicht nach der Mail suchen muss.
 
-Akzeptanzkriterien (Stufe 1 – Inkrement 12):
+> **Neu zugeschnitten 2026-10-23 (Auftraggeber-Wunsch): Für Inkrement 12 gilt R.10.** Gegenüber der Fassung unten: Sichtbarkeit standardmäßig **für alle Mitglieder**, Auswahl „nur ausgewählte Personen“ entfällt (höchstens Schalter «Nur für mich», Q38); Pflicht nur **Name**, **Kategorie optional** (neue Vorschlagsliste); **kein Datum** in Stufe 1 (keine Tages-Stationen T1…Tn, Q39); HEIC ohne Server-Umwandlung; Umbenennen durch Hochladende + Orga; Speicher je Umgebung nach R.10 (Q37). Die Kriterien unten bleiben als Planungsstand vom 2026-10-20 stehen – **bei Widerspruch gilt R.10**.
+
+Akzeptanzkriterien (Planungsstand 2026-10-20, ersetzt durch R.10):
 - [ ] **Verfügbar ab Phase 3.** Bereich `/trips/{id}/documents` (W21, kein Tab, UX-1; **ohne** Reisedaten – eigener Bereich, UX-2) + Cockpit-Kachel „Unterlagen“; Station V5 „Anreise & Tickets“ (Orga kann „Jede:r reist selbst an“ abhaken, UX-9), unterwegs Tage mit Terminen (T1…Tn) aus datierten Unterlagen, in *Danach* Station D2 «Unterlagen sichern».
 - [ ] **Hochladen (Q32):** alle Mitglieder. Je Unterlage: Datei, Titel (vorbelegt aus Dateiname), Kategorie (Flug/Anreise, Unterkunft, Aktivität, Sonstiges), optional Datum (für Sortierung «nächste zuerst» und Teilphase *Unterwegs*).
 - [ ] **Sichtbarkeit je Unterlage:** *alle in der Reise* (Standard für Gruppenbuchungen) oder *nur ausgewählte Personen* (z. B. persönliche Bordkarte). Hinweis beim Hochladen: «Tickets enthalten oft Buchungscode + Nachname – damit kann man eine Buchung ändern. Teile persönliche Tickets nur mit der Person.»
@@ -699,7 +703,7 @@ Akzeptanzkriterien (Stufe 1 – Inkrement 12):
 - [ ] **Löschung (Q31):** Hochladende und Orga können löschen (sofort, auch aus dem Speicher). Automatisch **30 Tage nach Reiseende**, sonst mit Reise/Konto. Cockpit zeigt in *Danach* «Unterlagen werden am <Datum> gelöscht – jetzt herunterladen». Beim **Verlassen** der Reise fragt die App: «Deine 3 Unterlagen für die Gruppe behalten oder löschen?» (Standard: löschen, wenn nur für einen selbst sichtbar).
 - [ ] Ansicht offline: Download/«Auf dem Handy speichern» ist möglich; echtes Offline-Caching in der App erst mit PWA (F-038).
 
-MVP-Schnitt: **Stufe 1** = Upload, zwei Sichtbarkeitsstufen, Kategorien, Scan, Auto-Löschung. **Später:** Wallet-Pässe (.pkpass), Unterlagen per E-Mail-Weiterleitung an eine Reise-Adresse, Vorschau-Thumbnails von PDFs, mehr Speicher (Premium-Kandidat), Belegfotos für F-035 und Screenshots für F-031 (nutzen dieselbe Datei-Infrastruktur – Screenshots F-031 bereits in Inkrement 12).
+MVP-Schnitt: **Stufe 1 (R.10)** = Upload durch alle, Name + optionale Kategorie, für alle sichtbar (+ ggf. «Nur für mich»), Ansehen/Teilen/Sichern, Umbenennen/Löschen, Auto-Löschung; Virenscan je Umgebung nach R.10. **Später:** Datum/Uhrzeit für Tages-Stationen unterwegs (Q39), Wallet-Pässe (.pkpass), Unterlagen per E-Mail-Weiterleitung an eine Reise-Adresse, Vorschau-Thumbnails von PDFs, mehr Speicher (Premium-Kandidat), Belegfotos für F-035 und Screenshots für F-031 (nutzen dieselbe Datei-Infrastruktur – Screenshots F-031 bereits in Inkrement 12).
 Abhängigkeiten: F-053, Datei-Infrastruktur (Operations: Speicher, Scan, Kosten), Gate G1b für echte Dateien; Nutzungsbedingungen (keine rechtswidrigen Inhalte, Hochladende verantwortlich) und Meldeweg für Inhalte (DSA-Pflichten für Hosting-Dienste prüfen, Operations).
 Aufwand: **L** (≈ 1,5–2 Inkremente inkl. Infrastruktur).
 
@@ -711,7 +715,7 @@ Aufwand: **L** (≈ 1,5–2 Inkremente inkl. Infrastruktur).
 | **9** | F-031 Unterkünfte Stufe 1 (Link, Vorschau, Swipe, Rangliste, Festlegen) | sehr hoch (Auftraggeber-Idee, chronologisch der erste Schritt nach dem Termin, Spaß-Faktor) | M–L (≈ 1–1,5) | mittel (Gesten, Link-Vorschau) | Kommt in der echten Reiseplanung direkt nach der Festlegung; kein Dateispeicher nötig, keine sensiblen Daten. |
 | **10** | F-035 + F-036 Kosten teilen Stufe 1 | sehr hoch (Bindung bis nach der Reise, starkes Premium-Umfeld) | M–L (≈ 1,5) | gering–mittel (Rechenlogik, gut testbar) | Großer Nutzen, keine sensiblen Daten, nicht an G1b gebunden → mit echten Gruppen ab Beta nutzbar. |
 | **11** | F-056 „Bucht“ + F-054 Reisedaten Stufe 1 | hoch (echtes Ärgernis), aber kleinere Nutzerzahl je Reise | M (≈ 1) + Security-Review | **hoch** (Ausweisdaten) | Braucht Verschlüsselung, Schlüsselverwaltung, rechtliche Prüfung – mit echten Daten erst nach G1b; in Demo/Vorschau voll vorführbar. |
-| **12** | F-055 Unterlagen Stufe 1 + Datei-Infrastruktur + F-031 Screenshots | hoch unterwegs | L (≈ 1,5–2) | **hoch** (Dateien, Scan, Kosten) | Größter Infrastruktur-Anteil (Speicher, Virenscan, Header-Härtung); bündelt alle Datei-Funktionen in einem Schritt. |
+| **12** | F-055 Unterlagen Stufe 1 (vereinfacht, R.10) + Datei-Infrastruktur; F-031 Screenshots als 12b | hoch unterwegs (Auftraggeber-Wunsch 2026-10-23) | M–L (≈ 1–1,5; durch Vereinfachung kleiner) | **hoch** (Dateien, Scan, Speicherort) | Größter Infrastruktur-Anteil (Speicher-Adapter, Header-Härtung, Scan in Produktion); Screenshots nutzen danach dieselbe Infrastruktur. |
 
 **Summe: ≈ 6–7 Inkremente** (Bezugsgröße: bisherige Inkremente 1–6). Alternative (Q27): Reisedaten (Inkrement 11) vor Kosten (10) ziehen, falls dem Auftraggeber die Chronologie der echten Reiseplanung wichtiger ist – technisch keine Abhängigkeit.
 
@@ -730,7 +734,7 @@ Hinweis Kosten: Speicher ist kein Kostentreiber (EU-Objektspeicher ca. 6–7 €
 ### R.4 Datenschutz & Sicherheit – Empfehlungen (Zusammenfassung für Operations/Reviewer)
 - **Klassifizierung:** Ausweis-/Passnummern, Geburtsdaten und Tickets mit Namen/Buchungscodes sind personenbezogene Daten mit **hohem Missbrauchsrisiko** (Identitätsdiebstahl, Buchungsmanipulation). Keine besondere Kategorie nach Art. 9 DSGVO – solange **kein Freitext** (Gesundheit/Ernährung/Religion) erhoben wird. Für F-054/F-055 eine **DSFA-Schwellwertanalyse**, voraussichtlich eine schlanke **DSFA**, vor echten Daten.
 - **Rechtsgrundlage:** F-054 per **Einwilligung** (Art. 6 Abs. 1 lit. a) je Freigabe, protokolliert, widerrufbar; F-055 und F-035/036 als Teil der Nutzung (Art. 6 Abs. 1 lit. b). Datenschutzerklärung ergänzen (neue Abschnitte, Empfänger Objektspeicher, Virenscan, Löschfristen).
-- **Sichtbarkeit:** Need-to-know – Reisedaten nur an die anfragende „Bucht“-Person; Unterlagen „alle“ oder „ausgewählte“; Orga ohne Sonderzugriff auf Inhalte.
+- **Sichtbarkeit:** Need-to-know – Reisedaten nur an die anfragende „Bucht“-Person; Unterlagen standardmäßig für alle Mitglieder der Reise, optional «Nur für mich» (R.10, Q38); Orga ohne Sonderzugriff auf Reisedaten-Inhalte und private Unterlagen.
 - **Verschlüsselung:** TLS; at rest (DB, Objektspeicher, Backups); **zusätzlich anwendungsseitig** für Reisedaten-Felder. Ende-zu-Ende-Verschlüsselung ist für Stufe 1 **nicht** empfohlen: passwortlose Konten haben kein Nutzergeheimnis für Schlüssel, Gerätewechsel/Wiederherstellung würde Daten unlesbar machen – erneut bewerten, falls „im Konto merken“ (Q30) kommt.
 - **Löschfristen (Q31):** Reisedaten 7 Tage nach Reiseende · Unterlagen 30 Tage nach Reiseende · übrige Reisedaten (Unterkünfte, Ausgaben) wie bisher 90 Tage (F-013) · Backups max. 30 Tage.
 - **Dateien:** Magic-Byte-Prüfung, Typ-Whitelist, Größenlimits, Virenscan, EXIF-Entfernung, keine öffentlichen URLs, Header-Härtung, Rate-Limits für Upload.
@@ -744,7 +748,7 @@ Hinweis Kosten: Speicher ist kein Kostentreiber (EU-Objektspeicher ca. 6–7 €
 | F-053, F-033, F-031, F-035/036 | ✔ voll (Fantasiedaten) | ✔ voll (Fantasiedaten) |
 | F-031 Link-Vorschau | ✔ (Abruf echter Portale ist unkritisch, nur öffentliche Seiten) | ✔, Bild-Proxy mit kurzem Cache |
 | F-054 Reisedaten | ✔ mit Fantasiedaten; Verschlüsselung aktiv (zum Testen) | ✔ nur mit Fantasiedaten; **deutlicher Hinweis im Formular „Demo – keine echten Ausweisdaten eingeben“**; „Demo zurücksetzen“ löscht alles |
-| F-055 Unterlagen | ✔ lokaler Dateispeicher, Scan optional (EICAR-Test) | ✔ nur Beispieldateien, Limit z. B. 2 MB/Datei, 20 Dateien gesamt; Speicher ohne neues Konto (z. B. in der Datenbank) – Entscheidung Operations; Hinweis „keine echten Tickets hochladen“ |
+| F-055 Unterlagen | ✔ Speicher in der Datenbank (gleicher Code-Pfad wie Vorschau), Scan optional (EICAR-Test) | ✔ nur Beispieldateien, Speicher in Neon (Frankfurt), ≤ 4 MB/Datei, 20 MB/Reise; Hinweis „keine echten Tickets hochladen“ – Details **R.10 „Speicher je Umgebung“**; Freundes-Beta siehe Q37 |
 | Echte Daten (echte Ausweisnummern, echte Tickets) | ✘ | ✘ – erst nach **G1 + G1b** |
 
 Begründung: Vercel ist ein US-Anbieter (Drittlandbezug); für Fantasiedaten unkritisch, für echte Ausweisdaten nicht vertretbar. Für echte Nutzung gilt die Go-Live-Planung (EU-Hosting).
@@ -1506,6 +1510,240 @@ Alle Namen, Geburtsdaten und Nummern sind Fantasie; Dokumentnummern beginnen mit
 | nie | Ausweis-Scans/-Fotos, Adresse, Freitext-/Gesundheitsangaben, Sonderzugriff der Orga, Reisedaten hinter einer Bezahlschranke (Q36), Ende-zu-Ende-Verschlüsselung in Stufe 1 (R.4 – ohne Nutzergeheimnis nicht sinnvoll). |
 
 Aufwand: **M (≈ 1 Inkrement)** + Security-Review. Risiko: **hoch** (Ausweisdaten) – beherrscht durch Datensparsamkeit, Need-to-know-Rechte mit Tests je Zeile, Verschlüsselung mit AAD, harte Löschung mit Sicherheitsnetz und den Vorschau-Schutz; echte Daten erst nach G1b.
+
+### R.10 Zuschnitt Inkrement 12 – Reiseunterlagen (F-055 Stufe 1, vereinfacht) (2026-10-23)
+
+**Auftraggeber-Wunsch (2026-10-23, sinngemäß):** «Ich möchte in der Reiseübersicht auch die Reiseunterlagen haben, wo **jeder** alles mögliche an wichtigen Unterlagen hochladen kann und **alle** darauf zugreifen können. **Nur Name und Kategorie** angeben, Kategorie optional. Z. B. Voucher für GetYourGuide-Aktivitäten.»
+
+**Ziel:** Jedes Mitglied legt Tickets, Buchungsbestätigungen und Voucher mit **einem Namen** (Kategorie optional) in der Reise ab; **alle Mitglieder** sehen sie, öffnen sie in der App, teilen/sichern sie auf dem Handy (iPhone-PWA) – statt sie im Gruppenchat zu suchen. Im Cockpit gibt es die Kachel **„Unterlagen“**, Station **V5 „Anreise & Tickets“** und in *Danach* **D2 „Unterlagen sichern“**. Unterlagen werden **30 Tage nach Reiseende** automatisch gelöscht (Q31). Dateien liegen **nie öffentlich**, werden streng geprüft und je Umgebung am passenden Ort gespeichert (Abschnitt „Speicher je Umgebung“). **Echte Dateien erst nach G1 + G1b – Ausnahme Freundes-Beta nur nach Entscheidung Q37.**
+
+**Gegenüber dem Planungsstand F-055 (2026-10-20) bewusst vereinfacht:**
+| Thema | bisher (F-055, W21) | neu (R.10) | Begründung |
+|---|---|---|---|
+| Sichtbarkeit | je Unterlage «alle» oder «nur ausgewählte Personen» (Personenauswahl) | **für alle Mitglieder der Reise** (Standard, fest); höchstens ein Schalter **«Nur für mich»** (Q38, Empfehlung ja) | Auftraggeber: «alle darauf zugreifen». Personenauswahl kostet Formular, Rechte-Matrix, Tests und Erklärung, wird selten gebraucht; «Nur für mich» deckt den Restfall (eigene Bordkarte, Versicherungsschein) mit einem Schalter ab. |
+| Pflichtangaben | Titel, Kategorie, optional Datum | **nur Name**; **Kategorie optional** | Auftraggeber. Ein Feld = Upload in Sekunden. |
+| Kategorien | Flug/Anreise, Unterkunft, Aktivität, Sonstiges | **Flug · Bahn & Bus · Mietwagen · Unterkunft · Aktivität & Voucher · Versicherung · Sonstiges** (optional) | Auftraggeber-Beispiel Voucher; Anreise-Arten getrennt, damit die Liste filterbar ist. |
+| Datum / Uhrzeit | optional, speist Tages-Stationen T1…Tn und Kennzahl-Box unterwegs | **entfällt in Stufe 1** (Q39, Empfehlung: später) | «Nur Name und Kategorie». Folge: keine T-Stationen; Unterwegs nur Kachel/Einstieg. |
+| HEIC | wird in JPG umgewandelt | **keine Server-Umwandlung**; Upload fordert JPG an (iPhone wandelt beim Auswählen selbst um) | Server-Umwandlung braucht eine HEVC-fähige Bildbibliothek (Lizenz/Plattform-Risiko); iOS liefert bei passendem `accept` JPG. Gerätetest Pflicht. |
+| Umbenennen | – | Hochladende **und Orga** | CEO-Vorgabe; Orga hält Ordnung. |
+| Reise verlassen | Dialog «behalten oder löschen?» | geteilte Unterlagen **bleiben** (Urheber «ehemaliges Mitglied»), private werden gelöscht; Löschen vorher jederzeit möglich | Weniger Entscheidungen im Abschied; die Gruppe verliert keine Tickets. |
+| Screenshots Unterkünfte (F-031 Stufe 2) | in Inkrement 12 | **12b** (direkt danach, gleiche Infrastruktur) | Inkrement 12 schlank halten; Auftraggeber-Fokus sind Unterlagen. |
+
+**Quellen (verbindlich):** F-055 (Steckbrief) · PRD §12 **Q31** (30 Tage nach Reiseende), **Q32** (alle Mitglieder laden hoch; Orga kann löschen – Sichtbarkeit hier vereinfacht), **Q34** (Screenshots erst mit Dateispeicher), **Q36** (bis 100 MB/Reise free) · PRD §8 NFR „Sensible Reisedaten & Dateien“ · R.0 Nr. 4, R.1, R.4, R.5 · W16 v2.3/v2.4 (V5, D2), v2.6 (Kachel Unterlagen), v2.10 (Adapter), v2.17 (Unterwegs-Erreichbarkeit/Kosten-Leiste), v2.18 (App-Start) · **W21** (wird von UI/UX auf R.10 umgestellt) · W23 B7 (Service Worker: keine personenbezogenen Daten im Cache) · `docs/ops/beta-anleitung.md`, deployment.md §0.12 (Beta). **Für UI, Texte, Zustände und Layout gilt die UX-Spec (W21/W16, sobald angeglichen); dieser Abschnitt regelt Rechte, Lebenszyklus, Sicherheit, Speicher, Datenhaltung, Abgrenzung und Akzeptanz.** R.10 präzisiert und ersetzt für Inkrement 12 den Steckbrief F-055.
+
+**Voraussetzung für den Start der Umsetzung:** Q37–Q39 entschieden (bzw. CEO entscheidet Q38/Q39 nach Empfehlung); W21 von UI/UX auf R.10 umgestellt und „baureif“ inkl. iPhone-PWA-Ablauf «Ansehen / Teilen / In Dateien sichern» und W16-Ergänzung (V5 ohne Datum, keine T-Stationen, Unterwegs-Einstieg); Designer liefert Kategorie-Icons (7), Datei-Typ-Symbole (PDF/Bild), Leer-Illustration «Noch keine Unterlagen»; Motion Designer: Upload-Fortschritt in der Taste, Eintritt neue Zeile (reduziert: ohne Bewegung; kein Konfetti); **Operations** bestätigt den Speicher je Umgebung (Abschnitt unten), Neon-Kontingente, Header-Konzept und – für Produktion – Objektspeicher + Virenscan (Teil von G1b).
+
+#### Im Umfang (Übersicht)
+| Baustein | UX-Quelle | Feature |
+|---|---|---|
+| Bereich `/trips/{id}/documents`: Liste, Kategorie-Filter, Speicheranzeige, Leerzustand, *Danach*-Banner | W21 A (angleichen) | F-055 |
+| Hochladen `/documents/upload`: Datei, Name (Pflicht), Kategorie (optional), ggf. «Nur für mich», Hinweis Buchungscode | W21 C (angleichen) | F-055 |
+| Detail: Ansehen (Bilder in der App, PDF im System-Viewer), Teilen / In Dateien sichern / Herunterladen | W21 B (angleichen) | F-055 |
+| Bearbeiten (Name, Kategorie, ggf. Sichtbarkeit), Löschen | W21 B (ergänzen) | F-055 |
+| Cockpit: Kachel **Unterlagen**, Station **V5**, Station **D2**, Unterwegs-Einstieg | W16 v2.3/v2.4/v2.6 (+ Ergänzung) | F-053 |
+| Lebenszyklus: 30 Tage nach Reiseende, Termin geändert, Festlegung aufgehoben, Verlassen, Konto/Reise löschen | – | F-055, F-013, F-043, Q31 |
+| Datei-Infrastruktur: Speicher-Adapter (`db` / `s3`), Typ-Prüfung, Bild-Neukodierung, Header-Härtung, Kontingente, Rate-Limits, Feature-Schalter, Virenscan-Anbindung (Produktion) | – | PRD §8, R.4 |
+| Datenexport (Liste eigener Unterlagen), Demo-Seed, Demo-/Vorschau-Hinweise | – | F-043, R.5 |
+
+#### Begriffe
+- **Unterlage:** eine Datei (PDF, JPG oder PNG) mit **Name** (Pflicht) und optionaler **Kategorie**, gehört zu genau einer Reise.
+- **Hochladende Person:** Mitglied mit Konto, das die Unterlage hochgeladen hat; nach Verlassen der Reise «ehemaliges Mitglied».
+- **Sichtbarkeit:** *Für alle* (alle aktuellen Mitglieder der Reise, Standard) · *Nur für mich* (nur die hochladende Person; nur falls Q38 = ja).
+- **Anreise-Kategorien:** Flug, Bahn & Bus, Mietwagen (für V5).
+- **Löschdatum** der Unterlagen einer Reise = `trip.fixed_end` + 30 Tage, 23:59 in `APP_TIME_ZONE` (wie R.9 Löschdatum); ändert sich mit dem Reisezeitraum.
+
+#### Felder & Grenzen
+| Feld / Grenze | Regel |
+|---|---|
+| **Name** | Pflicht, 1–80 Zeichen nach Trimmen, nur Text (Steuerzeichen entfernt, kein HTML/Markdown). Im Formular **vorbelegt** aus dem Dateinamen ohne Endung (Unterstriche/Bindestriche → Leerzeichen); der **Original-Dateiname wird nicht gespeichert** (enthält oft Namen/Buchungscodes – Datensparsamkeit). Hinweis unter dem Feld: «Alle in der Reise sehen den Namen.» |
+| **Kategorie** | optional, genau eine aus: `flight` Flug · `train_bus` Bahn & Bus · `car` Mietwagen · `stay` Unterkunft · `activity` Aktivität & Voucher · `insurance` Versicherung · `other` Sonstiges. Ohne Wahl = «Ohne Kategorie». Keine eigenen (Freitext-)Kategorien in Stufe 1. |
+| **Sichtbarkeit** | Standard *Für alle*; Schalter «Nur für mich» (falls Q38 = ja), Standard aus. *Could:* bei Kategorie Versicherung Hinweis «Persönliche Police? Dann „Nur für mich“.» |
+| **Dateitypen** | PDF, JPG, PNG – geprüft über den **Dateiinhalt** (Magic Bytes), Endung und Browser-Typ werden ignoriert. HEIC/HEIF, SVG, HTML, Office, Archive, ausführbare Dateien, `.pkpass` → abgelehnt (Meldung UX). |
+| **Größe je Datei** | Produktion **10 MB** (PRD §8); Vorschau und Beta mit Datenbank-Speicher **4 MB** (technische Grenze der Vercel-Functions ≈ 4,5 MB je Anfrage/Antwort). Fotos werden **vor dem Upload im Browser verkleinert** (längste Kante max. 2 560 px, JPG), damit typische Handy-Fotos (3–6 MB) die Grenze nicht reißen. |
+| **Kontingent je Reise** | Produktion **100 MB / 50 Dateien** (Q36); Vorschau 20 MB / 20 Dateien; Beta 25 MB / 30 Dateien (falls Q37 = B). Private Unterlagen zählen mit. Prüfung serverseitig unter Sperre der Reise. |
+| **Globale Obergrenze** (nur Datenbank-Speicher) | Vorschau 150 MB, Beta 300 MB (Neon-Free-Kontingent 0,5 GB je Projekt, Operations prüft); bei Erreichen Meldung «Der Speicher der Beta ist gerade voll – bitte melde dich beim Team.» (Wortlaut UX) und Zähler im Log. |
+
+#### Rechte in Inkrement 12 (serverseitig geprüft, ersetzt für diese Aktionen R.1)
+| Aktion | Mitglied | Orga | Bedingung |
+|---|---|---|---|
+| Bereich ansehen, **geteilte** Unterlagen sehen, ansehen, teilen/herunterladen | ✔ | ✔ | Phase `fixed`, Mitglied der Reise, vor dem Löschdatum, Status *bereit* |
+| Unterlage hochladen | ✔ | ✔ | Phase `fixed`, heute ≤ Löschdatum − 1 Tag, Kontingent frei, Feature an |
+| **Eigene** Unterlage: Name/Kategorie ändern, Sichtbarkeit ändern (Q38), löschen | ✔ | ✔ | – |
+| **Fremde geteilte** Unterlage: Name/Kategorie ändern, löschen | – | ✔ | nur *Für alle*; Sichtbarkeit fremder Unterlagen ändert die Orga **nie** |
+| **Private** Unterlage anderer sehen, ändern, löschen | – | – **nie** | Orga sieht weder Name noch Anzahl; nur die Gesamt-Speicheranzeige enthält sie |
+| Unterlagen geteilter Art einer Person, die die Reise verlassen hat, ändern/löschen | – | ✔ | Urheber «ehemaliges Mitglied» |
+| Station V5 „ohne App erledigt“ («Jede:r reist selbst an», UX-9) setzen/zurücknehmen | – | ✔ | wie V2/V3 |
+
+„Bucht“ (F-056) hat **keine** Zusatzrechte bei Unterlagen. Platzhalter und ehemalige Mitglieder handeln nie. Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseiten (I8-09); auch Datei-Endpunkte antworten 404 (nicht 403), damit keine IDs bestätigt werden.
+
+#### User Stories & Akzeptanzkriterien
+
+**I12-01 Bereich „Unterlagen“ – Liste**
+**Als** Mitglied **möchte ich** alle Unterlagen der Reise an einem Ort sehen, **damit** ich Tickets und Voucher nicht im Chat suchen muss.
+- [ ] Route `/trips/{id}/documents` (nur Mitglieder, nur Phase `fixed`), kein Tab (UX-1). Zeile je Unterlage: Kategorie-Icon (ohne Kategorie: Datei-Symbol), **Name**, Typ + Größe («PDF · 412 KB»), «von {Name}», Sichtbarkeit **als Text** («Für alle» / «Nur für dich»), ganze Zeile öffnet das Detail.
+- [ ] Sortierung: **neueste zuerst**. **Filter-Chips** nur für Kategorien, die in der Reise vorkommen, plus «Alle»; Deep-Link `?cat=travel` filtert auf die Anreise-Kategorien (Einstieg aus V5).
+- [ ] Unten Speicheranzeige «3,1 von 100 MB · 5 von 50 Dateien» (Grenzen der Umgebung); Hinweis «Dateien sind nie öffentlich – nur Mitglieder dieser Reise können sie öffnen.» In Demo/Vorschau zusätzlich, nicht wegklickbar: «Demo – bitte keine echten Tickets hochladen.»
+- [ ] **Leer:** Text + Primär-Taste `[Unterlage hochladen]` (Wortlaut UX, Beispiel Voucher erwähnen).
+- [ ] *Danach* (vor dem Löschdatum): Warnbanner «Am {Datum} werden alle Unterlagen gelöscht (30 Tage nach der Reise). Sichere, was du behalten willst.»
+- [ ] Unterlagen im Status *wird geprüft* (nur mit Virenscan) sieht nur die hochladende Person, mit Text «Wird geprüft …»; andere sehen sie erst ab *bereit*.
+
+**I12-02 Unterlage hochladen**
+**Als** Mitglied **möchte ich** eine Unterlage mit nur einem Namen hochladen, **damit** es schneller geht, als sie in den Chat zu schicken.
+- [ ] Route `/trips/{id}/documents/upload` (Taste in der Liste, in V5, in der Kachel; Wortlaut UX). Echtes `<input type="file">` mit sichtbarem Label, `accept="application/pdf,image/jpeg,image/png"`; auf dem iPhone stehen Fotos, Kamera und Dateien zur Wahl.
+- [ ] Felder: **Name** (Pflicht, vorbelegt), **Kategorie** (optional, Chips, keine Vorauswahl), ggf. Schalter **«Nur für mich»** (Q38). Hinweis (nicht wegklickbar, kurz): «Tickets enthalten oft Buchungscode und Nachname – damit kann man eine Buchung ändern. Lade nur hoch, was alle in der Reise sehen dürfen.» (bei «Nur für mich» entfällt der zweite Satz; Wortlaut UX).
+- [ ] Clientseitige Vorprüfung (Typ, Größe, Kontingent) mit Meldungen nach W21; **Server prüft alles erneut** (Abschnitt Sicherheit). Fotos werden vor dem Senden verkleinert (Felder & Grenzen).
+- [ ] Fortschritt in der Taste («Lädt hoch … 64 %»); bei Netzabbruch «Erneut versuchen», Formular bleibt ausgefüllt. Idempotenz-Schlüssel je Formular-Öffnung (Doppel-Tippen erzeugt keine Doppel-Unterlage).
+- [ ] Nach Erfolg: zurück zur Liste, Snackbar «„{Name}“ ist für alle da.» bzw. «… nur für dich gespeichert.»; mit Virenscan: «Hochgeladen – wird kurz geprüft.» und Statuswechsel beim Neuladen/Polling (UX).
+- [ ] Mehrere Dateien auf einmal: **nicht** in Stufe 1 (je Upload eine Datei).
+
+**I12-03 Ansehen, teilen, sichern (inkl. iPhone-PWA)**
+**Als** Mitreisende **möchte ich** einen Voucher am Eingang schnell zeigen und mein Ticket aufs Handy sichern, **damit** ich unterwegs auch ohne Netz drankomme.
+- [ ] Detail (Sheet oder Seite, UX): Name, Kategorie, Typ/Größe, «hochgeladen von {Name} am {Datum}», Sichtbarkeit, Löschdatum («Wird am {Datum} automatisch gelöscht»), Aktionen nach Recht.
+- [ ] **Ansehen – Bilder (JPG/PNG):** direkt in der App angezeigt (aus der geschützten Datei-Route, neu kodiert, s. Sicherheit), zoombar per Systemgeste, Zurück führt in die Liste.
+- [ ] **Ansehen – PDF:** öffnet im **System-Viewer** des Geräts (neuer Tab bzw. Vorschau), nie als eingebettetes Dokument im App-Ursprung. In der **installierten PWA auf dem iPhone** darf das Öffnen die App nicht „einsperren“ (kein Zurück): Developer wählt nach Gerätetest den Weg (bevorzugt **Teilen-Menü/Quick Look** über die Web-Share-API mit Datei, sonst neues Browserfenster) – Gerätetest Pflicht (iPhone PWA, iPhone Safari, Android Chrome, WhatsApp-In-App-Browser).
+- [ ] **Teilen / Sichern:** Wo das Gerät es kann (Web-Share-API mit Dateien – iOS, Android), Taste **«Teilen oder sichern»** → System-Teilen-Menü (u. a. «In Dateien sichern», AirDrop, Drucken, Öffnen in anderer App). Sonst (Desktop) **«Herunterladen»** (`Content-Disposition: attachment`, sicherer Dateiname aus dem Namen).
+- [ ] **Wallet:** in Stufe 1 **nicht** möglich (Apple Wallet nimmt nur `.pkpass`, die wir nicht annehmen) – kein Wallet-Versprechen in Texten; `.pkpass` → später.
+- [ ] **Offline:** Die App speichert Unterlagen **nicht** im Service-Worker-Cache (W23 B7, keine personenbezogenen Daten im Cache). Hinweis im Detail/Hilfe (F-051): «Für unterwegs ohne Netz: über „Teilen oder sichern“ in Dateien speichern.» Echtes Offline in der App erst später (F-038).
+- [ ] Jeder Datei-Abruf prüft Login, Mitgliedschaft, Sichtbarkeit, Status *bereit* und Löschdatum; Antworten mit `Cache-Control: private, no-store`.
+
+**I12-04 Unterlage bearbeiten**
+**Als** Hochladende **möchte ich** Name und Kategorie korrigieren, **damit** die Liste verständlich bleibt; **als** Orga **möchte ich** unklare Namen geteilter Unterlagen ordnen.
+- [ ] «Bearbeiten» im Detail: Name, Kategorie; Sichtbarkeit (nur hochladende Person, Q38). Gleiche Prüfregeln wie beim Hochladen. Die **Datei** selbst ist nicht ersetzbar (neu hochladen + alte löschen).
+- [ ] Rechte nach Tabelle; «Zuletzt geändert von {Name}, {Datum}» im Detail, wenn nicht von der hochladenden Person geändert.
+- [ ] Wechsel *Für alle* → *Nur für mich*: sofort für andere unsichtbar; *Nur für mich* → *Für alle*: Bestätigung mit Buchungscode-Hinweis (Wortlaut UX).
+- [ ] Konfliktschutz `version` wie Kosten (I10): gleichzeitige Änderung → Meldung «Inzwischen geändert – bitte neu laden.»
+
+**I12-05 Unterlage löschen**
+- [ ] «Unterlage löschen» (Hochladende; Orga für geteilte) mit Bestätigung «Sie wird sofort für alle gelöscht – auch aus dem Speicher.» Löschen ist **hart**: Metadaten und Datei im selben Ablauf; kein Papierkorb, kein Rückgängig.
+- [ ] Schlägt das Löschen im Speicher fehl (nur `s3`), wird die Unterlage sofort unsichtbar und der Löschjob räumt nach (Sicherheitsnetz, I12-07).
+
+**I12-06 Cockpit: Kachel, V5, D2, Unterwegs (F-053, Adapter W16 v2.10)**
+**Als** Mitglied **möchte ich** im Cockpit sehen, ob Tickets da sind, und unterwegs mit einem Tipp hinkommen, **damit** ich am Gate nicht suche.
+- [ ] **Kachel „Unterlagen“** (Reihenfolge W16 v2.6, nur wenn keine offene sichtbare Station den Bereich trägt): «{n} Unterlagen» / «Noch keine Unterlagen»; *Danach* «Werden am {Datum} gelöscht – jetzt sichern» (bis D2 übernimmt, W16 v2.6). Zählt nur für mich sichtbare Unterlagen.
+- [ ] **Station V5 „Anreise & Tickets“** (Vorbereitung) nach W16 v2.4, angepasst: **erledigt**, sobald ≥ 1 für mich sichtbare Unterlage einer **Anreise-Kategorie** vorliegt **oder** die Orga «Jede:r reist selbst an» gesetzt hat (UX-9); nie «du bist dran»; Text-Taste `[Hochladen]` (Einstieg mit Filter `?cat=travel`). Unterlagen **ohne Kategorie** erledigen V5 nicht – der Hochladen-Einstieg aus V5 erklärt das in einem Satz (Wortlaut UX).
+- [ ] **Keine Tages-Stationen T1…Tn** in Stufe 1 (kein Datum, Q39); T-Ziel «Heimreise» wie bisher ohne Unterlagen-Bezug (`/info`).
+- [ ] **Unterwegs leicht erreichbar:** UI/UX legt fest, wie Unterlagen unterwegs mit **einem** Tipp erreichbar sind (z. B. Kopf-Taste, Kachel oben oder Ergänzung der Kosten-Leiste W16 v2.17) – Anforderung PM: vom Cockpit ≤ 1 Tipp bis zur Liste in *Unterwegs*.
+- [ ] **D2 „Unterlagen sichern“** (*Danach*): sichtbar, wenn es für mich sichtbare Unterlagen gibt; «als Nächstes» mit «Werden am {Datum} gelöscht – jetzt sichern»; erledigt, wenn gelöscht. Weg-Meta *Danach* zählt D2 mit.
+- [ ] **Heute:** keine Pflicht-Aufgabe aus Unterlagen (die App weiß nicht, wer was hochladen muss). Kein Erinnern-Anlass in Stufe 1.
+- [ ] Unit-Tests je Zustand (V5 mit/ohne Anreise-Unterlage, privat/geteilt, ohne-App-erledigt; D2 vor/nach Löschdatum; Kachel-Regeln).
+
+**I12-07 Lebenszyklus & Löschung (Q31)**
+- [ ] **Hart gelöscht** (Metadaten + Datei):
+  | Auslöser | Was |
+  |---|---|
+  | Löschen durch Hochladende/Orga | diese Unterlage |
+  | **Löschdatum erreicht** (Reiseende + 30 Tage) | alle Unterlagen der Reise; D2 erledigt |
+  | Festlegung aufgehoben und **30 Tage** keine neue Festlegung (`trip.unfixed_at`, wie R.9) | alle Unterlagen der Reise |
+  | Person verlässt die Reise / wird entfernt | ihre **privaten** Unterlagen; geteilte bleiben («ehemaliges Mitglied») |
+  | Konto löschen (F-043) | private Unterlagen in allen Reisen; geteilte bleiben («ehemaliges Mitglied») – Hinweiszeile im Warn-Schritt (Wortlaut UX) |
+  | Reise gelöscht (F-013) | alles (Kaskade, inkl. Speicher) |
+  | Virenfund (nur mit Scan) | die Datei sofort; Hinweis nur an die hochladende Person |
+- [ ] **Termin geändert:** Löschdatum wird neu berechnet; Liste/Detail zeigen das neue Datum.
+- [ ] **Festlegung aufgehoben:** Bereich nicht erreichbar (wie Kosten/Unterkünfte), Banner nach W16 «… Unterlagen bleiben erhalten – höchstens 30 Tage» (Wortlaut UX).
+- [ ] **Löschjob** (`POST /api/internal/retention`, täglich; Vorschau/Beta: Vercel-Cron) löscht fällige Unterlagen und verwaiste Dateien im Speicher (Datei ohne Metadaten-Zeile älter als 24 h, z. B. abgebrochene Uploads). Der Lese-Pfad liefert **nie** Dateien nach dem Löschdatum aus, auch wenn der Job noch nicht gelaufen ist (Test mit verschobener Uhr).
+- [ ] Reise verlassen: Hinweiszeile im bestehenden Dialog, wenn die Person private oder geteilte Unterlagen hat («Deine 2 privaten Unterlagen werden gelöscht. Deine 3 geteilten Unterlagen bleiben für die Gruppe.» – Wortlaut UX). Keine zusätzliche Auswahl.
+
+**I12-08 Datenexport (F-043/F-013, Q23)**
+- [ ] Der Export je Reise enthält die **eigenen** Unterlagen als Liste (Name, Kategorie, Sichtbarkeit, Typ, Größe, Hochlade-/Änderungsdatum, Löschdatum) – **ohne Dateiinhalte** (Hinweis im Export: «Dateien kannst du in der App sichern.»). Fremde Unterlagen und private Unterlagen anderer: nie. Die Orga erhält nichts Zusätzliches.
+
+**I12-09 Umgebungen, Feature-Schalter, Demo-/Vorschau-Schutz**
+**Als** Betreiber **möchte ich**, dass echte Tickets nur dort landen, wo es entschieden ist, **damit** wir kein unnötiges Datenschutz-Risiko eingehen.
+- [ ] **Feature-Schalter `DOCUMENTS_ENABLED`**: an in `development`, `ci`, `demo`, `preview`; in `beta` **nach Q37** (A: aus und `true` → Start verweigert; B: an mit Datenbank-Speicher); in `staging`/`production` aus bis zur dokumentierten **G1b**-Abnahme. Aus = keine Kachel/V5/D2, Routen 404, Server-Aktionen abgelehnt.
+- [ ] **`DOCUMENTS_STORE`** = `db` | `s3` (Standard `db` außer `production`); **Startschutz:** `production` mit Unterlagen an verlangt `s3` + konfigurierten Virenscan (`DOCUMENTS_SCAN`); fehlerhafte Speicher-Konfiguration → Start verweigert (fail closed). Grenzen (Datei, Reise, global) kommen aus der Umgebung (Tabelle „Felder & Grenzen“), nicht aus dem Client.
+- [ ] **Demo/Vorschau:** Hinweis «Demo – bitte keine echten Tickets hochladen.» in Liste und Upload; „Demo zurücksetzen“ löscht alle Unterlagen inkl. Dateien; Seed-Dateien sind sichtbar als Fantasie gekennzeichnet (Wasserzeichen «DEMO»).
+- [ ] **Beta (falls Q37 = B):** Beta-Datenschutzhinweis nennt Unterlagen (Speicherort, Löschfrist, „ohne Virenscan“), neue Hinweis-Version (`beta-2`, compliance §13 – Operations); Hinweis beim ersten Upload «Lade nur hoch, was du auch in die Gruppe schicken würdest.»
+
+**I12-10 Querschnitt (Abnahme)**
+- [ ] 360 × 640, 390 × 844, 320 px, 200 % Schrift, Dark Mode, DE/EN (Größen-/Datumsformat je Sprache), Desktop ≥ 960 px (Liste 640 px, zusätzlich Drag & Drop auf die Auswahlfläche); vollständig per Tastatur und Screenreader (Dateiauswahl mit Label, Status als Text, Fortschritt als Live-Region, Sichtbarkeit nie nur Icon, Schalter `role=switch`).
+- [ ] Reduzierte Bewegung: nur Überblenden; kein Konfetti in diesem Bereich.
+- [ ] **Gerätetests** (W23-Muster): iPhone als PWA (Hochladen aus Fotos/Dateien, HEIC-Foto kommt als JPG an, PDF ansehen und zurück, «In Dateien sichern»), iPhone Safari, Android Chrome, WhatsApp-In-App-Browser (Upload und Öffnen), Desktop-Download.
+- [ ] Abnahme-Fälle: Mitglied lädt GetYourGuide-Voucher (PDF) nur mit Name hoch → alle sehen ihn · Foto mit GPS-EXIF hochladen → heruntergeladene Datei ohne EXIF · Datei mit falscher Endung (PNG als `.pdf`, HTML als `.jpg`) → abgelehnt · 11 MB bzw. 5 MB (Beta/Vorschau) → abgelehnt · Kontingent voll · «Nur für mich» unsichtbar für Orga und andere (auch per direkter Datei-URL mit fremder ID: 404) · Orga benennt fremde geteilte Unterlage um und löscht sie · Mitglied kann fremde nicht ändern · V5 erledigt durch Flug-Unterlage bzw. «Jede:r reist selbst an» · Löschdatum erreicht → D2 + Dateien weg (auch im Speicher) · Verlassen → private weg, geteilte bleiben · Nicht-Mitglied/abgemeldet → 404 bzw. Login · Vorschau-Hinweis sichtbar.
+
+#### Sicherheit (Pflicht – Reviewer prüft mit Tests; für Produktion Teil des Security-Reviews G1b)
+1. **Typ-Whitelist über Inhalt:** PDF (`%PDF-`), JPEG, PNG; alles andere abgelehnt. Der vom Client gemeldete Typ und die Endung werden ignoriert; ausgeliefert wird mit dem **serverseitig ermittelten** Typ.
+2. **Bilder neu kodieren** (z. B. `sharp`, läuft auch auf Vercel): Metadaten (EXIF inkl. GPS, XMP, ICC außer sRGB) entfernt, Pixel-Obergrenze gegen Dekompressionsbomben (z. B. 40 MP), Ausgabe JPG/PNG. Nur die neu kodierte Datei wird gespeichert.
+3. **PDF** wird unverändert gespeichert, aber **nie im App-Ursprung** gerendert. *Should (Pflicht, falls ohne Virenscan – Beta Q37 = B):* einfache Prüfung auf aktive Inhalte (`/JavaScript`, `/JS`, `/Launch`, `/EmbeddedFile`, `/RichMedia`) → Ablehnung mit Meldung «Diese PDF enthält aktive Inhalte und kann nicht hochgeladen werden.»; Reviewer bewertet Fehlalarme mit echten Voucher-/Ticket-PDFs (Fantasie-Kopien).
+4. **Auslieferung** nur über eine eigene, geprüfte Route bzw. (Produktion `s3`) über kurzlebige signierte Links (≤ 60 s) nach derselben Prüfung. Header: `Content-Disposition` (`attachment` für Download, `inline` nur für neu kodierte Bilder), `X-Content-Type-Options: nosniff`, `Content-Security-Policy: sandbox; default-src 'none'`, `Cross-Origin-Resource-Policy: same-origin`, `Cache-Control: private, no-store`, sicherer Dateiname (`filename*`, Steuerzeichen entfernt). **Keine öffentlichen URLs**, Bucket privat, IDs nicht erratbar – und trotzdem Rechteprüfung bei jedem Abruf.
+5. **Virenscan:** Produktion verpflichtend (ClamAV o. ä., selbst betrieben, G1b); Ablauf *wird geprüft* → *bereit* / verworfen. Demo optional (EICAR-Test). Vorschau ohne Scan (nur Beispieldateien). Beta nach Q37.
+6. **Keine Inhalte in Logs/Fehler-Tracking:** keine Namen von Unterlagen, Dateinamen, Inhalte oder IDs mit Personenbezug – nur Zähler (`documents.upload ok/rejected_type/too_large/quota`). Server-Aktionen loggen keine Argumente.
+7. **Service Worker** cacht keine Datei-Antworten und keine Unterlagen-Seiten (W23 B7 gilt unverändert; E2E-Test prüft den Cache-Inhalt).
+8. **CSP der App** bleibt `self`; Datei-Antworten bekommen die strengere Sandbox-CSP (Nr. 4). Keine neuen Drittanbieter im Browser.
+9. **Kontingente und Grenzen** serverseitig unter Sperre der Reise; Upload-Größe wird **vor** dem vollständigen Einlesen begrenzt (Stream-Limit), nicht erst danach.
+10. **Fehlerfälle** generisch («Das hat nicht geklappt – bitte neu laden.»), nie Speicher-/Pfad-Details.
+
+**Rate-Limits** (pro Konto, Mechanismus `src/server/rate-limit.ts`; Developer darf begründet anpassen):
+| Aktion | Limit |
+|---|---|
+| Hochladen | 30 / h je Konto, 100 / Tag je Reise |
+| Bearbeiten, Löschen | 60 / 10 min je Konto |
+| Ansehen/Teilen/Herunterladen | 200 / 10 min je Konto |
+
+#### Speicher je Umgebung – Anforderungen, Optionen, Empfehlung (Operations bestätigt)
+**Ausgangslage:** Echte Unterlagen (Tickets mit Namen und Buchungscode, Voucher, Versicherungsscheine) sind **personenbezogene Daten mit Missbrauchsrisiko** (Buchung ändern/stornieren). Vercel (Hosting der Vorschau und der Freundes-Beta) und Neon sind **US-Anbieter** mit Rechenzentrum in Frankfurt; jede Datei läuft – egal wo gespeichert – beim Hochladen/Prüfen durch Vercel-Functions. Vercel-Functions nehmen je Anfrage/Antwort nur ≈ 4,5 MB an (feste Grenze in allen Tarifen) – größere Dateien gehen nur per Direkt-Upload in einen Objektspeicher.
+
+**Anforderungen an den Speicher (alle Umgebungen):**
+- S-1 **Privat**: kein öffentlicher Zugriff, Zugriff nur über die App nach Rechteprüfung; keine dauerhaft gültigen Links.
+- S-2 **EU-Speicherort** (Rechenzentrum in der EU); für echte Daten nach G1b zusätzlich **EU-Anbieter** mit AVV (Empfehlung PRD §8, R.4).
+- S-3 **Verschlüsselung at rest** durch den Anbieter; TLS auf allen Wegen.
+- S-4 **Hartes Löschen** einzeln und nach Frist; Backups/Wiederherstellungsfenster ≤ 30 Tage (R.4).
+- S-5 **Austauschbar**: Speicher hinter einer Schnittstelle (`FileStore`: put · get/stream · delete · exists) mit den Implementierungen `db` (Tabelle mit `bytea`) und `s3` (S3-kompatibel); Wechsel ohne Produktänderung; Umzugsskript `db` → `s3` für den Umzug Beta → G1 (Daten-Übernahme nach E-G0-7).
+- S-6 **Kosten** im Rahmen der Free-Tarife bzw. ≤ ca. 10 €/Monat bis zum Launch.
+- S-7 **Kein neues Konto für den Auftraggeber** bis zur Freundes-Beta (Vorschau-/Beta-Einrichtung bleibt so, wie in den Anleitungen beschrieben).
+
+| Option | Ort / Anbieter | Kosten (Stand Websuche 2026-10-23, vor Bestellung prüfen) | Upload-Weg / Grenze | Bewertung |
+|---|---|---|---|---|
+| **1 Datenbank (Neon)** – Datei als `bytea` in eigener Tabelle | Frankfurt (AWS) · Neon/Databricks (US) – bereits im Einsatz | 0 € im Free-Tarif (0,5 GB je Projekt, teilt sich mit allen anderen Daten) | durch Vercel-Function → **≤ 4 MB/Datei** | Kein neues Konto, kein neuer Auftragsverarbeiter, einfachster Code-Pfad, Löschen = Zeile löschen. Grenze: Größe, Neon-Kontingent, Wiederherstellungsfenster von Neon beachten. **Empfehlung Vorschau + Beta.** |
+| **2 Datenbank (eigene Postgres auf Hetzner)** | Deutschland · Hetzner (EU) | 0 € extra (Plattenplatz der VM) | durch die App, 10 MB problemlos | Gute Ausweichlösung für Produktion bei kleinem Volumen; Backups wachsen mit. |
+| **3 Hetzner Object Storage** | Deutschland/Finnland · Hetzner (EU, gleicher AVV wie Hosting) | ab ca. **6,49 €/Monat** inkl. 1 TB Speicher + 1 TB Traffic | Direkt-Upload per signiertem Link, keine 4,5-MB-Grenze | **Empfehlung Produktion (G1/G1b)** – passt zum geplanten Hetzner-Hosting; vor Produktion ohnehin nötig (Off-site-Backups, deployment.md). Hinweis: Drittquellen berichten von Störungen im Juli 2026 – Operations prüft Status/Verfügbarkeit. |
+| **4 Scaleway Object Storage** | Frankreich/NL/PL · Scaleway (EU) | nutzungsabhängig, bei unserem Volumen Cent-Beträge; Freikontingent laut FAQ für ausgehenden Traffic (75 GB/Monat) | Direkt-Upload | EU-Alternative zu 3, falls nicht Hetzner; neues Konto nötig. |
+| **5 Cloudflare R2 mit EU-Jurisdiktion** | EU-Rechenzentren · Cloudflare (US) | 10 GB frei, danach ca. 0,015 $/GB-Monat, kein Traffic-Entgelt | Direkt-Upload | Günstig, aber **US-Anbieter** – für echte Tickets kein Gewinn gegenüber Option 1; zusätzlicher Auftragsverarbeiter. **Nicht empfohlen.** |
+| **6 Vercel Blob** | Vercel (US) | nutzungsabhängig | Direkt-Upload | Zusätzlicher US-Dienst ohne Vorteil gegenüber Option 1. **Nicht empfohlen.** |
+
+**Empfehlung je Umgebung:**
+| Umgebung | Speicher | Grenzen | Virenscan | Echte Dateien? |
+|---|---|---|---|---|
+| Offline-Demo (Docker) | Option 1-Code-Pfad (`db`, lokale Postgres) | wie Vorschau (für realistische Tests); Developer darf 10 MB zum Testen setzen | optional (ClamAV-Container, EICAR-Test) | nein |
+| Private Vorschau (Vercel + Neon) | **Option 1** (`db`) im Vorschau-Neon-Projekt | 4 MB/Datei · 20 MB/20 Dateien je Reise · 150 MB gesamt | nein (nur Beispieldateien) | **nein** (Hinweis + „Demo zurücksetzen“) |
+| Freundes-Beta (Stufe B) | **Q37:** A = Unterlagen aus · **B = Option 1** im eigenen Beta-Neon-Projekt · C = Option 3/4 + Scan außerhalb von Vercel | B: 4 MB/Datei · 25 MB/30 Dateien je Reise · 300 MB gesamt | B: nein, dafür Typ-Whitelist, Bild-Neukodierung, PDF-Prüfung auf aktive Inhalte, nie im App-Ursprung angezeigt | **nur bei B/C** – nach Entscheidung des Auftraggebers |
+| Produktion (Hetzner, nach G1 + G1b) | **Option 3** (Hetzner Object Storage, privat) – Ausweichlösung Option 2 | 10 MB/Datei · 100 MB/50 Dateien je Reise (Q36) | **ja** (ClamAV auf der VM, ca. 1–1,5 GB RAM – Operations dimensioniert) | ja |
+
+**Begründung der Beta-Empfehlung (Q37 = B):** Die Gruppe teilt Voucher und Tickets heute im Gruppenchat (ebenfalls US-Anbieter); in der Beta lägen sie stattdessen in Frankfurt, nur für eingeladene Mitglieder sichtbar und nach 30 Tagen gelöscht – für eine geschlossene Freundesgruppe ist das kein Rückschritt, und der Auftraggeber bekommt seinen Wunsch früh testbar. Der fehlende Virenscan ist bei Dateien, die nur Eingeladene hochladen, durch Whitelist, Neukodierung, PDF-Prüfung und Auslieferung als Download vertretbar; er bleibt Pflicht für Produktion. Ausweisdaten (F-054) bleiben in der Beta aus – sie sind sensibler und brauchen das volle G1b-Paket.
+
+#### Datenhaltung (Vorgabe für Developer, Bewertung durch Reviewer)
+| Was | Wo (Empfehlung) | Löschung / Datenschutz |
+|---|---|---|
+| Metadaten | neue Tabelle `trip_document`: `id` (UUID), `trip_id` (FK `CASCADE`), `uploader_id` (FK Konto `SET NULL`), `name` (1–80), `category` (Enum, null), `visibility` (`trip` · `private`), `content_type` (`application/pdf` · `image/jpeg` · `image/png`), `size_bytes`, `sha256`, `status` (`pending` · `ready`), `storage` (`db` · `s3`), `storage_key`, `version`, `created_at`, `updated_at`, `updated_by` (FK Konto `SET NULL`), `idempotency_key` | Hart gelöscht nach I12-07; Kaskade mit der Reise. **Kein** Original-Dateiname. |
+| Dateiinhalt (`db`) | eigene Tabelle `trip_document_blob`: `document_id` (PK + FK `CASCADE`), `bytes` (`bytea`) – getrennt, damit Listen nie Inhalte laden | Kaskade; Wiederherstellungsfenster des DB-Anbieters ≤ 30 Tage (R.4). |
+| Dateiinhalt (`s3`) | Bucket privat, Schlüssel `trips/{tripId}/{documentId}` (keine Namen im Pfad), Verschlüsselung at rest | Löschen im selben Ablauf + Löschjob als Sicherheitsnetz (verwaiste Objekte). |
+| V5 „ohne App erledigt“ | vorhandene `trip_station_marks` (R.7) mit Station `v5` | wie bisher. |
+| Festlegung aufgehoben seit | `trip.unfixed_at` (aus R.9) | Grundlage der 30-Tage-Regel. |
+
+Migrationen: eine Migration (nächste freie Nummer nach Inkrement 11 und den Folgeschritten) für beide Tabellen. Löschjob erweitern (Löschdatum, 30-Tage-Regel, verwaiste Dateien). Neue Umgebungsvariablen: `DOCUMENTS_ENABLED`, `DOCUMENTS_STORE`, Grenzen (`DOCUMENTS_MAX_FILE_MB`, `DOCUMENTS_MAX_TRIP_MB`, `DOCUMENTS_MAX_TOTAL_MB`), für `s3` Endpoint/Bucket/Zugang, `DOCUMENTS_SCAN` → `docs/ops/deployment.md` §4 (Operations). Für Vorschau und Beta mit `db` Ziel: **keine Pflicht-Variable neu** (Standards je `APP_ENV`), damit der Auftraggeber nichts nachtragen muss (außer Q37-Schalter in der Beta, falls nötig).
+
+#### Demo-Seed (`seed.ts`, „Demo zurücksetzen“)
+Alle Dateien sind kleine, selbst erzeugte Fantasie-PDFs/-Bilder mit Wasserzeichen «DEMO» (im Repository, je < 100 KB, keine echten Buchungscodes/Logos fremder Marken).
+- **„Kroatien 2027“** (*Vorbereitung*): Carla lädt «Voucher Bootstour Hvar» (Aktivität & Voucher, für alle), David «Fähre Split – Hvar» (**ohne Kategorie** – zeigt, dass sie optional ist), Anna «Meine Auslandskrankenversicherung» (**Nur für mich**) → V5 bei Anna «als Nächstes», bei Orga Ben Text-Taste «Jede:r reist selbst an».
+- **„Roadtrip Schottland“** (*Unterwegs*): «Flug MUC – EDI (Hinflug)» (Flug, für alle), «Mietwagen Edinburgh» (Mietwagen), eine Unterlage ohne Kategorie («Whisky-Tour Bestätigung») → V5 erledigt, Unterwegs-Einstieg vorführbar.
+- **„Gardasee“** (*Danach*, Abreise vor 9 Tagen): 3 Unterlagen, Löschdatum in 21 Tagen → D2 «jetzt sichern» + Banner.
+- **„Familientreffen Harz“**: keine Unterlagen → Leerzustand, Kachel «Noch keine Unterlagen».
+
+#### Hinweise an UI/UX (W21/W16 angleichen)
+1. W21 C: Personenauswahl entfernen; Felder Name (Pflicht) + Kategorie (optional, 7 Chips) + ggf. «Nur für mich»; **kein Datum** (Q39); Hinweistext nach I12-02.
+2. W21 A/B: Sortierung neueste zuerst + Filter-Chips; Sichtbarkeitstexte «Für alle» / «Nur für dich»; Detail mit «Teilen oder sichern» (iPhone/Android) bzw. «Herunterladen» (Desktop), «Bearbeiten», «Löschen»; Ablauf Ansehen in der iPhone-PWA (I12-03).
+3. W16: V5-Regel mit Anreise-Kategorien und Satz für Unterlagen ohne Kategorie; T1…Tn entfallen in Stufe 1; Unterwegs-Einstieg ≤ 1 Tipp (I12-06; Abstimmung mit Kosten-Leiste v2.17); UX-4 (Orga sieht private Unterlagen als Zähler) entfällt – Orga sieht private Unterlagen gar nicht.
+4. „Reise verlassen“ und „Konto löschen“: Hinweiszeilen statt Auswahl (I12-07).
+5. Beta-Hinweise (falls Q37 = B) und Meldung „Speicher der Beta voll“.
+
+#### Nicht in Inkrement 12 (Abgrenzung)
+| Kommt mit | Inhalt |
+|---|---|
+| **12b** (direkt danach) | Eigene Screenshots für Unterkünfte (F-031 Stufe 2, bis 3 je Vorschlag) auf derselben Infrastruktur. |
+| **Gate G1b** (vor echter Nutzung in Produktion) | Hetzner Object Storage mit AVV, Virenscan in Betrieb, DSFA-Schwellwert, VVT/TOM/Löschkonzept (30 Tage), Datenschutzerklärung (Empfänger Objektspeicher, Virenscan, Fristen), Nutzungsbedingungen (Upload-Regeln, Verantwortung der Hochladenden), Meldeweg für rechtswidrige Inhalte (DSA – Operations), Security-Review, dann `DOCUMENTS_ENABLED=true` in Produktion. |
+| später (Q39) | Datum/Uhrzeit je Unterlage → Tages-Stationen T1…Tn und «nächster Termin» unterwegs. |
+| später | Auswahl einzelner Personen als Sichtbarkeit, mehrere Dateien auf einmal, Datei ersetzen, PDF-Vorschaubilder, Ordner/Freitext-Kategorien, Wallet-Pässe (`.pkpass`), Unterlagen per Mail-Weiterleitung an eine Reise-Adresse, Offline in der App (F-038), Hinweis „neu“ je Person, Erinnern-Anlass, Melden-Funktion, Belegfotos für Kosten (F-035, Premium-Kandidat), mehr Speicher (Premium-Kandidat, Q36). |
+| nie | Öffentliche Datei-Links, Anzeige von PDFs im App-Ursprung, Ausweis-Scans als „Unterlage“ (Hinweis in der Hilfe: Ausweisdaten gehören in Reisedaten, F-054 – keine technische Erkennung), Unterlagen hinter einer Bezahlschranke innerhalb des Free-Kontingents. |
+
+Aufwand: **M–L (≈ 1–1,5 Inkremente)** – durch die Vereinfachung (keine Personenauswahl, kein Datum, keine HEIC-Umwandlung, Screenshots → 12b) kleiner als bisher geschätzt (L); Schwerpunkt Datei-Infrastruktur, Header-Härtung und Gerätetests iPhone-PWA. Risiko: **mittel–hoch** (Dateien, iOS-Verhalten beim Öffnen/Teilen, Speicherort) – beherrscht durch Typ-Whitelist, Neukodierung, keine öffentlichen URLs, Speicher-Adapter und klare Umgebungsregeln.
 
 ---
 
