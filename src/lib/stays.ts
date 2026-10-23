@@ -398,11 +398,6 @@ export function isDoneRating(stayIds: readonly string[], ratedIds: ReadonlySet<s
 }
 
 /**
- * Q33 – may this person see counts, names and the order of other people's ratings? The
- * organiser always; members once they rated all current suggestions; everybody once a place
- * is picked (swiping is over).
- */
-/**
  * May anyone suggest a place (and fetch a link preview) right now? R.7 rights table: phase
  * «fixed», no place picked yet, fewer than 30 suggestions. Checked by the preview route BEFORE
  * any outbound request (R-077); `createStay` repeats it under the trip lock.
@@ -411,6 +406,11 @@ export function canSuggestStay(state: { phase: string; chosen: boolean; count: n
   return state.phase === "fixed" && !state.chosen && state.count < STAY_LIMITS.perTrip;
 }
 
+/**
+ * Q33 – may this person see counts, names and the order of other people's ratings? The
+ * organiser always; members once they rated all current suggestions; everybody once a place
+ * is picked (swiping is over).
+ */
 export function rankingVisible(viewer: { organizer: boolean; done: boolean; chosen: boolean }) {
   return viewer.organizer || viewer.done || viewer.chosen;
 }
