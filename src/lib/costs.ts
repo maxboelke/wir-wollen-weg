@@ -229,6 +229,23 @@ export function computeBalances(
   return balances;
 }
 
+/**
+ * Stored shares grouped by expense in ONE pass (R.8 rule 6f). A `filter` per expense is
+ * quadratic: 10 000 expenses with 30 people each took ~30 s instead of milliseconds.
+ */
+export function sharesByExpense(
+  rows: readonly { expenseId: string; partyId: string; shareCents: number }[],
+): Map<string, Share[]> {
+  const grouped = new Map<string, Share[]>();
+  for (const row of rows) {
+    const share = { party: row.partyId, cents: row.shareCents };
+    const list = grouped.get(row.expenseId);
+    if (list) list.push(share);
+    else grouped.set(row.expenseId, [share]);
+  }
+  return grouped;
+}
+
 export interface Transfer {
   from: string;
   to: string;

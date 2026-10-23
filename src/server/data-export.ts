@@ -96,6 +96,8 @@ export interface CostExport {
     amount: number;
     currency: string;
     category: string | null;
+    /** Optional note of the expense (W19 D.5.1) – entered by the person who added or paid it. */
+    note: string | null;
     split: "equal" | "amounts";
     addedByMe: boolean;
     paidByMe: boolean;
@@ -122,6 +124,10 @@ async function costExport(
   if (!party && !hasPayment) return null;
   const raw = party ? await exportRows(tripId) : null;
   const unit = (cents: number) => cents / 100;
+  // One pass over the shares (a lookup per expense is quadratic on large trips).
+  const myShares = new Map(
+    (raw?.shares ?? []).filter((s) => s.partyId === party).map((s) => [s.expenseId, s]),
+  );
   return {
     currency,
     myPaymentDetails: hasPayment ? { iban: payment.iban, otherWay: payment.note } : null,
@@ -133,12 +139,13 @@ async function costExport(
         amount: unit(e.amountCents),
         currency: e.currency,
         category: e.category,
+        note: e.note,
         split: e.splitMode,
         addedByMe: e.createdBy === userId,
         paidByMe: e.payerPartyId === party,
       })),
     myShares: (raw?.expenses ?? []).flatMap((e) => {
-      const share = raw?.shares.find((s) => s.expenseId === e.id && s.partyId === party);
+      const share = myShares.get(e.id);
       return share
         ? [
             {

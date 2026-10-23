@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useLayoutEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/toast";
 import { ibanGroups, maskIban } from "@/lib/costs";
@@ -49,23 +49,24 @@ export function IbanLine({
       <span ref={ref} className={styles.iban} data-iban={visible ? "full" : "masked"}>
         {`${t("ibanLabel")} `}
         {visible ? (
+          // The spaces stay OUTSIDE the nowrap groups – the line may wrap between groups (200 %).
           ibanGroups(iban).map((group, i) => (
-            <span key={`${group}-${String(i)}`} className={styles.ibanGroup}>
+            <Fragment key={`${group}-${String(i)}`}>
               {i > 0 ? " " : ""}
-              {group}
-            </span>
+              <span className={styles.ibanGroup}>{group}</span>
+            </Fragment>
           ))
         ) : (
           <>
             <span aria-hidden="true">
               <span className={styles.ibanGroup}>{mask.head}</span>
               {Array.from({ length: mask.masked }, (_, i) => (
-                <span key={i} className={styles.ibanGroup}>
+                <Fragment key={i}>
                   {" "}
-                  <span className={styles.mask}>{"••••"}</span>
-                </span>
-              ))}
-              <span className={styles.ibanGroup}>{` ${mask.last4}`}</span>
+                  <span className={`${styles.ibanGroup} ${styles.mask}`}>{"••••"}</span>
+                </Fragment>
+              ))}{" "}
+              <span className={styles.ibanGroup}>{mask.last4}</span>
             </span>
             <span className="visually-hidden">{sr}</span>
           </>

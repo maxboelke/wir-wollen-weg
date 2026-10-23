@@ -8,6 +8,7 @@ import {
   COST_LIMITS,
   isCostCurrency,
   settlementAllowed,
+  sharesByExpense,
   validateExpense,
   type CostViewer,
   type ExpenseErrors,
@@ -432,14 +433,13 @@ async function balancesIn(tx: Tx, tripId: string) {
       .where(and(eq(tripExpense.tripId, tripId), isNull(tripExpense.deletedAt))),
     listSettlements(tx, tripId),
   ]);
+  const byExpense = sharesByExpense(shares);
   return computeBalances(
     parties.map((p) => p.id),
     expenses.map((e) => ({
       payer: e.payer,
       amountCents: e.amount,
-      shares: shares
-        .filter((s) => s.expenseId === e.id)
-        .map((s) => ({ party: s.partyId, cents: s.shareCents })),
+      shares: byExpense.get(e.id) ?? [],
     })),
     settlements.map((s) => ({ from: s.from, to: s.to, cents: s.amountCents })),
   );
@@ -844,14 +844,13 @@ export async function tripBalances(tripId: string) {
 }
 
 export function balancesOf(raw: Pick<CostsRaw, "parties" | "expenses" | "shares" | "settlements">) {
+  const byExpense = sharesByExpense(raw.shares);
   return computeBalances(
     raw.parties.map((p) => p.id),
     raw.expenses.map((e) => ({
       payer: e.payerPartyId,
       amountCents: e.amountCents,
-      shares: raw.shares
-        .filter((s) => s.expenseId === e.id)
-        .map((s) => ({ party: s.partyId, cents: s.shareCents })),
+      shares: byExpense.get(e.id) ?? [],
     })),
     raw.settlements.map((s) => ({ from: s.from, to: s.to, cents: s.amountCents })),
   );

@@ -6,6 +6,7 @@ import {
   expenseDateWindow,
   formerNumbers,
   settleUp,
+  sharesByExpense,
   type PartyInfo,
 } from "@/lib/costs";
 import { isoDateInZone, type IsoDate } from "@/lib/dates";
@@ -201,6 +202,7 @@ export function costsModel(view: TripView, raw: CostsRaw): CostsModel {
   const nameOfParty = new Map(people.map((p) => [p.key, p]));
   const start = trip.fixedStart ?? today;
   const end = trip.fixedEnd ?? today;
+  const byExpense = sharesByExpense(raw.shares);
   const expenses: CostExpenseView[] = raw.expenses.map((e) => {
     const editors = new Set<string>();
     const creator = members.find((m) => m.userId === e.createdBy);
@@ -219,9 +221,7 @@ export function costsModel(view: TripView, raw: CostsRaw): CostsModel {
       date: e.spentOn,
       payer: e.payerPartyId,
       mode: e.splitMode,
-      shares: raw.shares
-        .filter((s) => s.expenseId === e.id)
-        .map((s) => ({ party: s.partyId, cents: s.shareCents })),
+      shares: byExpense.get(e.id) ?? [],
       createdOn: created,
       createdByName: e.createdByName,
       edited: editedLater ? { on: isoDateInZone(e.updatedAt), byName: e.updatedByName } : null,

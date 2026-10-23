@@ -21,6 +21,7 @@ import {
   remainderCents,
   settlementAllowed,
   settleUp,
+  sharesByExpense,
   splitEqual,
   validateExpense,
   validatePayInfo,
@@ -319,6 +320,35 @@ describe("settleUp (R.8 rule 6)", () => {
     const transfers = settleUp(ps.map((p) => ({ ...p, cents: balances.get(p.id) ?? 0 })));
     const elapsed = performance.now() - started;
     expect(transfers.length).toBeLessThanOrEqual(29);
+    expect(elapsed).toBeLessThan(100);
+  });
+  it("groups stored share rows in one pass – the server path stays under 100 ms (R.8 6f)", () => {
+    const r = rng(7);
+    const ps = parties(30);
+    const ids = ps.map((p) => p.id);
+    // Rows as the database returns them: flat, 30 per expense (300 000 rows).
+    const rows: { expenseId: string; partyId: string; shareCents: number }[] = [];
+    const stored = Array.from({ length: 10_000 }, (_, i) => {
+      const amount = int(r, 1, 100_000);
+      for (const share of splitEqual(amount, ps)) {
+        rows.push({ expenseId: `e${String(i)}`, partyId: share.party, shareCents: share.cents });
+      }
+      return { id: `e${String(i)}`, payer: ids[int(r, 0, 29)] as string, amount };
+    });
+    const started = performance.now();
+    const grouped = sharesByExpense(rows);
+    const balances = computeBalances(
+      ids,
+      stored.map((e) => ({
+        payer: e.payer,
+        amountCents: e.amount,
+        shares: grouped.get(e.id) ?? [],
+      })),
+      [],
+    );
+    const elapsed = performance.now() - started;
+    expect(grouped.get("e0")?.length).toBe(30);
+    expect([...balances.values()].reduce((sum, v) => sum + v, 0)).toBe(0);
     expect(elapsed).toBeLessThan(100);
   });
 });
