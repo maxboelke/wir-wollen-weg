@@ -1,6 +1,8 @@
 # Roadmap – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v0.7; v0.6: Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+Stand: 2026-10-23 (v0.8; v0.7: Inkrement 8 erledigt; v0.6: Ausbaustufe „Reise managen“ entschieden; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [features.md](features.md)
+
+**Änderungen v0.8 (2026-10-23):** **Inkrement 9 erledigt** (Unterkünfte, PR #24 gemergt). **Inkrement 10 „Kosten teilen“ in Arbeit** – Zuschnitt features.md **R.8** (User Stories I10-01–I10-11, Rechte, Rechenregeln Cent/Rest-Cent/Ausgleich, Datenhaltung mit Migration 0011, Demo-Seed); UI/UX macht W19 parallel baureif.
 
 **Änderungen v0.7 (2026-10-23):** **Inkrement 8 erledigt** (Cockpit „Reiseverlauf“ + Infoseite, PR #23 gemergt). **Inkrement 9 „Unterkünfte“ in Arbeit** – Zuschnitt features.md **R.7** (User Stories I9-01–I9-11, Rechte, SSRF-Schutz, Datenhaltung, Demo-Seed); UI/UX macht W17/W18 parallel baureif.
 
@@ -132,8 +134,8 @@ Die übrigen „vor Go-Live“-Punkte (CLAUDE.md, compliance-checklist) bleiben 
 | Inkrement | Inhalt | Feature-IDs | Aufwand | Echte Daten ab |
 |---|---|---|---|---|
 | 8 ✅ | Reise-Cockpit „Reiseverlauf“ (W16 v2): Ticket-Kopf mit Ring + Konfetti, Weg-Gerüst (`tripRoute()`), Stationen V1 „Termin steht“ + V2 „Alle sind dabei“ (inkl. UX-9 „ohne App“), Heute, Ziel „Es geht los!“, Teilphasen Vorbereitung/Unterwegs/Danach, kleine Feier am Abreisetag (UX-8), Kachel Infos, Mehr zur Reise; Infoseite (Text/Links, Bearbeiten Orga) – **Zuschnitt features.md R.6** | F-053, F-033 | M (≈ 1) | G1 |
-| 9 🔄 in Arbeit | Unterkünfte Stufe 1: Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (Orga; „Bucht“ ab 11), Station V3 + Kachel + UX-9, Termin-Änderungs-Hinweis (+ Motion Swipe) – **Zuschnitt features.md R.7** | F-031 (+ F-053 V3) | M–L (≈ 1–1,5) | G1 |
-| 10 | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Abschluss | F-035, F-036 | M–L (≈ 1,5) | G1 |
+| 9 ✅ | Unterkünfte Stufe 1 (PR #24 gemergt 2026-10-23): Link + Vorschau (SSRF-sicher, Bild-Proxy), Swipe, Rangliste, Festlegen, „gebucht“ (Orga; „Bucht“ ab 11), Station V3 + Kachel + UX-9, Termin-Änderungs-Hinweis (+ Motion Swipe) – **Zuschnitt features.md R.7** | F-031 (+ F-053 V3) | M–L (≈ 1–1,5) | G1 |
+| 10 🔄 in Arbeit | Kosten teilen Stufe 1: Ausgaben (eine Währung, gleich/Beträge, Platzhalter), Salden, Ausgleichsvorschlag, als bezahlt markieren, Zahlungsinfo (IBAN geprüft/maskiert), Abschluss, Kachel Kosten + A1 + D1 – **Zuschnitt features.md R.8** | F-035, F-036 (+ F-053 A1/D1) | M–L (≈ 1,5) | G1 |
 | 11 | Zuständigkeit „Bucht“ + Reisedaten Stufe 1 (Anfrage → Einwilligung/Freigabe, Feldverschlüsselung, Maskierung, Zugriffsprotokoll, Widerruf, Auto-Löschung) + Security-Review | F-056, F-054 | M (≈ 1) | **G1 + G1b** |
 | 12 | Datei-Infrastruktur (EU-Objektspeicher, Virenscan, Header-Härtung) + Reiseunterlagen Stufe 1 + Screenshots für Unterkünfte | F-055, F-031 (Stufe 2) | L (≈ 1,5–2) | **G1 + G1b** |
 

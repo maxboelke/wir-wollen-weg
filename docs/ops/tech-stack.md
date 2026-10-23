@@ -317,6 +317,8 @@ Test-Secrets (z. B. `BETTER_AUTH_SECRET`) werden im Job zufällig erzeugt – ni
 
 **Dependabot** (`.github/dependabot.yml`): wöchentlich npm (gruppiert: Minor/Patch zusammen, Next.js/React separat) und GitHub Actions; Security-Updates sofort. Solange keine `package.json` existiert, meldet Dependabot für npm lediglich „keine Manifestdatei“ – ohne Einfluss auf PRs.
 
+**Audit-Routine (Stand 2026-10-23, nach Next.js 16.4.2, R-075):** `pnpm audit --prod` ohne Befund. `pnpm audit` (inkl. dev) meldet nur `braces` ≤ 3.0.3 (hoch, ReDoS/Stack-Überlauf, **kein Patch**, Pfad `eslint-config-next → @next/eslint-plugin-next → fast-glob → micromatch`) und `esbuild` ≤ 0.24.2 (mittel, nur Dev-Server von esbuild, Pfad `drizzle-kit → @esbuild-kit/*`). Beide laufen nur lokal/CI mit eigenen, vertrauenswürdigen Eingaben (Lint-Globs, Migrationen), nicht im Produktions-Bundle und ohne esbuild-Dev-Server → **kein Produktionsrisiko, akzeptiert**; kein `pnpm.overrides` (braces 3.x hat keinen Fix, ein Major-Override auf `@esbuild-kit` könnte drizzle-kit brechen). Auflösen über reguläre Updates von `eslint-config-next`/`drizzle-kit` (Dependabot). Empfehlung (OPS-17): CI-Schritt `pnpm audit --prod --audit-level=high` als blockierender Check; Dev-Audit nur informativ. Security-Advisories von Next.js weiterhin binnen 1 Woche einspielen.
+
 **Claude-Code-SessionStart-Hook (Empfehlung, Umsetzung durch CEO/Developer):** Sobald das Scaffold existiert, in `.claude/settings.json` einen `SessionStart`-Hook ergänzen, der in Cloud-Sessions `corepack enable && pnpm install --frozen-lockfile` ausführt, wenn `package.json` vorhanden ist – damit Lint/Tests sofort laufen. (Operations ändert `.claude/` nicht selbst.)
 
 ---

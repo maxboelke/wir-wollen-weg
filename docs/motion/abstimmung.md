@@ -1,6 +1,6 @@
 # Abstimmung Motion ↔ Design, UI/UX, Entwicklung
 
-Stand: 2026-10-23 (Runde 3) · Verantwortlich: Motion Designer · Status: **M-D1–M-D12, M-U1–M-U12 geklärt** (CEO 2026-10-08); **UM-1 – UM-13 beantwortet** (§4); neu offen: M-U13–M-U15, M-D13–M-D14, M-X8–M-X9
+Stand: 2026-10-23 (Runde 3) · Verantwortlich: Motion Designer · Status: **M-D1–M-D12, M-U1–M-U12 geklärt** (CEO 2026-10-08); **UM-1 – UM-13 beantwortet** (§4); **UM-14 – UM-19 beantwortet** (§5, Runde 4); offen: M-U13–M-U18, M-D13–M-D14, M-X8–M-X10
 Bezug: [motion-system.md](motion-system.md) · [interaktionen.md](interaktionen.md) · [prototypes/](prototypes/README.md) · Antworten Designer: [design/abstimmung-ux.md §6](../design/abstimmung-ux.md) · Antworten UI/UX: [ux/abstimmung-design.md §9](../ux/abstimmung-design.md)
 
 Der Motion Designer ändert keine Dateien in `docs/design/` oder `docs/ux/`. Wünsche stehen hier; Antworten bitte in den jeweiligen eigenen Abstimmungsdateien bzw. über den CEO.
@@ -116,6 +116,37 @@ Antworten auf [ux/abstimmung-design.md §12.3, §13 und §14.2](../ux/abstimmung
 | **M-X8** | **Kleine Cockpit-Korrekturen** (niedrig, z. B. im Pflege-Paket von Inkrement 9) | (a) `route.module.css` `.pulse::after`: `1.6s` → `1.4s` (W16-03). (b) `route-view.tsx` UM-4: Keyframes `scale(1) → scale(1.25) @0.35 → scale(1)`, ohne `delay`, Kurve `EASING.standard`, Dauer `moderate` (W16-04). (c) `route.module.css` `.expand`: `transition: grid-template-rows …` entfernen (Inhalt springt, `revealEntries` bleibt) – sofern der CEO keine Ausnahme beschließt (W16-05). | **offen** |
 | **M-X9** | **Karten-Geste ohne Bibliothek** | Pointer Events + WAAPI, Parameter W18-A als Konstanten neben `src/lib/motion.ts`; Unterbrechen per `commitStyles()` + `cancel()`; Siegel-Pop über eine wiederverwendbare `sealPop(el, size)` (20/40/64 px) statt Einzel-Code an drei Stellen. Tests: Playwright mit `reducedMotion: 'reduce'` (keine `transform`-Animation außer dem Finger-Folgen), Geste per `page.mouse` (Schwelle, Schwung, Zurückfedern), `event.repeat`, Fokus nach Bewertung. | **offen** (zur Kenntnis) |
 
+## 5. Runde 4 – Kosten teilen (Inkrement 10, 2026-10-23)
+
+Antworten auf [ux/abstimmung-design.md §15.2](../ux/abstimmung-design.md) (UM-14 – UM-19). Spezifikation: [interaktionen.md W19](interaktionen.md#w19--kosten-teilen-ausgaben-ausgleich-salden-f-035f-036-inkrement-10), Regel-Präzisierung motion-system §5.10 (v1.2). Kein neuer Prototyp – alle Bausteine existieren (`sealPop`, G-04, G-11, G-12, G-16).
+
+### 5.1 Antworten an UI/UX – UM-14 bis UM-19
+
+| # | Antwort Motion | Katalog | Status |
+|---|---|---|---|
+| **UM-14** Saldo/Summen ändern sich | **Übernommen.** Ganzer Satz wechselt im selben Frame, dann Überblenden `fade` 140 ms als Deckkraft **0,35 → 1** (nicht über 0 – das wirkt wie Blinken); nur Elemente, deren Text sich wirklich ändert. Farbe Tinte ↔ Minze wechselt sofort. Reduziert: sofort (wie UX vorschlägt). Beim Laden statisch. | W19-01 | **geklärt** |
+| **UM-15** Markieren → „Bereits bezahlt“ | **Entscheidung: UX-Vorschlag „Zeile bleibt an ihrem Platz“ gilt – ohne zeitgesteuertes Zuklappen nach der Snackbar.** Prüfung des Alternativ-Vorschlags (nach Snackbar-Ende `base` zuklappen): verstößt gegen §5.10 und ist nicht nötig. Gründe: (1) Das Zuklappen wäre **zeitgesteuert**, nicht direkte Folge einer Handlung – wer gerade die nächste Zeile «Als bezahlt markieren» antippen will, trifft nach 6 s die falsche (bei Geld besonders heikel). (2) Der Fokus liegt laut D.14 auf «Zurücknehmen» **in** dieser Zeile – sie müsste ihn beim Verschwinden wegschieben (Screenreader-Nutzer verlieren den Ort). (3) Die Snackbar pausiert bei Fokus/Hover – der Zeitpunkt wäre nicht vorhersehbar. (4) Höhe animieren ist ohnehin verboten; das „Zuklappen“ wäre ein Ausblenden mit springendem Layout. **Das von R.8 gewünschte „Wandern“ ist trotzdem sichtbar** – als Ergebnis statt als Flugbahn der Zeile: Zähler «Bereits bezahlt ({n})» springt sofort auf n + 1 (Überblenden), bei aufgeklappter Liste steht der Eintrag sofort oben darin (Tönung), beim nächsten Laden steht die Zahlung nur noch dort. **MVP+ „Beleg-Flug“:** ein Klon des ✓-Kreises fliegt vom Chip zur Zahl im Zähler, die einmal nickt – nur wenn der Zähler sichtbar ist und kein Siegel gleichzeitig läuft; nichts Echtes bewegt sich. Häkchen-Pop am Chip wie vorgeschlagen (`fast` · `spring-soft`), **kein** Siegel am Chip (Siegel gehört dem Saldo 0). Technisch wichtig (an Developer, M-X10): die Zeile muss aus Clientzustand kommen, sonst verschwindet sie beim `router.refresh()` nach der Server Action sofort. **Bitte an PM/UX:** R.8 „Eintrag wandert nach Bereits bezahlt“ als Ergebnis lesen („steht beim nächsten Laden dort“) – W19 D.8.1 sagt das bereits. | W19-A, W19-02 … W19-06 | **geklärt** (Entscheidung Motion; Bestätigung UX zu M-U16 erbeten) |
+| **UM-16** Eigener Saldo wird 0 | **Übernommen mit zwei Präzisierungen:** (a) Dauer **`moderate` 480 ms** statt `celebrate` – so ist `sealPop(el, 20)` gebaut (G-21: 20 px = `moderate`); 700 ms wirken bei 20 px träge. (b) Siegel erst **nach Server-Bestätigung** (§5.7), Satz «Du bist ausgeglichen ✓» aber sofort. Einmal je Ansicht; nicht beim Laden, nicht durch Aktionen anderer, nicht nach Speichern einer Ausgabe (Seitenwechsel → statisch). Liegt „Dein Stand“ außerhalb des Viewports: kein Scrollen, Pop beim ersten Wieder-Sichtbarwerden. Reduziert: statisch. | W19-07 | **geklärt** |
+| **UM-17** Alle ausgeglichen | **Übernommen, kein Konfetti.** Siegel 40 `sealPop(el, 40)`, Karte Fade + 8 px. **Wichtig wegen UM-15:** die Karte erscheint **unter** der letzten markierten Zeile (die mit «Zurücknehmen» bleibt unter dem Finger), beim nächsten Laden wie D.7 statt der Vorschläge. **Vorrang** vor UM-16 (eine E3 je Bildschirm): fällt beides zusammen, steht das Siegel 20 statisch. Fokus bleibt. Ansage siehe M-U17. | W19-08 | **geklärt** |
+| **UM-18** Neu / gelöscht / Rückgängig | **Neu: übernommen, aber 1200 ms statt `slow`** – die Tönung startet sichtbar (auch im Server-HTML, kein Blinken), hält bis 40 % und blendet aus; nach einem Seitenwechsel wären 320 ms vorbei, bevor man hinsieht. Kein Einfliegen, kein Auto-Scroll. **Löschen:** „klappt zu“ als **Ausblenden + FLIP** der folgenden Zeilen (keine Höhen-Animation, vgl. W16-05), Start 120 ms in den Sheet-Schluss; Rückgängig: Zeile blendet an alter Stelle ein, Nachbarn FLIP. Reduziert: sofort. | W19-09, W19-10 | **geklärt** |
+| **UM-19** Haptik | **Bestätigt: keine Vibration** im Bereich Kosten. Q17 bleibt bei zwei Stellen. | W19-16 | **geklärt** |
+
+Ergänzend spezifiziert (ohne UM-Punkt): Zurücknehmen in „Bereits bezahlt“ mit Ankerausgleich (W19-05), Fehler/Ablehnung (W19-06), Abschließen mit Siegel nur bei „alles ausgeglichen“ (W19-11), Formular E0 (W19-12), IBAN anzeigen ohne Ziffern-Effekt (W19-13), keine Listen-Staffel beim Laden (W19-14), optionale Saldo-Balken (W19-15, MVP+).
+
+### 5.2 Neu an UI/UX (Runde 4)
+
+| # | Thema | Frage / Vorschlag | Status |
+|---|---|---|---|
+| **M-U16** | **Fokus nach «Zurücknehmen» in „Bereits bezahlt“** | Der Eintrag verschwindet (direkte Folge, W19-05). Vorschlag: Fokus auf «Zurücknehmen» des nächsten Eintrags, sonst auf den Button «Bereits bezahlt ({n})». Außerdem bitte bestätigen: Nach dem Markieren wird die nächste offene eigene Zeile **nicht** nachträglich zur Primär-Taste (kein Stilwechsel unter dem Finger) – erst beim nächsten Laden. | **offen** |
+| **M-U17** | **Ansage „Alles ausgeglichen“** | Wenn meine Aktion die Gruppe ausgleicht, sieht man die Karte, Screenreader hören nur die Snackbar «Als bezahlt markiert …». Vorschlag: Snackbar-Text in diesem Fall ergänzen: «… Alles ausgeglichen ✓» bzw. «… – everyone's all square ✓» (eine Ansage, kein zweites `aria-live`). | **offen** |
+| **M-U18** | **Hinweis „an dich bezahlt“ verschiebt nach dem Laden den Inhalt** | Der Merker liegt im `localStorage` – der Server kennt ihn nicht, der Hinweis kommt erst nach Hydration und schiebt „Dein Stand“ nach unten (Layout-Verschiebung kurz nach dem Laden, ggf. unter dem Finger). Vorschläge: (a) Merker „gesehen“ serverseitig je Zahlung/Mitglied (wie M-X6), dann steht er im Server-HTML; oder (b) Hinweis **unter** „Dein Stand“ (über dem Segment) statt ganz oben – verschiebt nur die Liste. Motion animiert ihn in keinem Fall hinein (W19-14). | **offen** |
+
+### 5.3 An Developer (über den CEO)
+
+| # | Thema | Vorschlag | Status |
+|---|---|---|---|
+| **M-X10** | **Kosten-Bewegung ohne neue Bibliothek** | (a) Ausgleich-Ansicht hält `recentlyPaid` im Clientzustand und rendert diese Zeilen an ihrem alten Index – unabhängig vom Serverstand nach `revalidatePath`/`router.refresh()`, bis zum Unmount (W19-A). (b) Ankerausgleich als kleiner Helfer `keepAnchor(el, mutate)` (messen → ändern → `scrollBy(Δ)`), kein `overflow-anchor`. (c) Text-Überblenden als Helfer `refresh(el)` = `animate(el, [{opacity: 0.35}, {opacity: 1}], {duration: DURATION.fade})` (wird bei reduzierter Bewegung von `animate()` schon übersprungen). (d) Siegel ausschließlich über `sealPop(…, 20 | 40)`, Element erst nach Server-Bestätigung mounten, Pop im `useLayoutEffect`. (e) Löschen/FLIP ohne `transition` auf Höhe. Tests: Playwright – Markieren → `router.refresh()` → Zeile noch da, Fokus auf «Zurücknehmen»; 7 s warten → Zeile noch da; Segment wechseln → nur unter „Bereits bezahlt“; Neuladen mit Saldo 0 → `document.getAnimations()` leer; `reducedMotion: 'reduce'` → keine `transform`-Animation; kein `navigator.vibrate`. | **offen** (zur Umsetzung in Inkrement 10) |
+
 ## Entscheidungen des Auftraggebers (2026-10-08, Q17)
 - Schalter „Bewegung reduzieren“ im Konto (W13) zusätzlich zur Systemeinstellung: **ja**.
 - Feier für **alle** Mitglieder, einmal pro Person und Festlegung (F-012): **ja**.
@@ -126,6 +157,7 @@ Antworten auf [ux/abstimmung-design.md §12.3, §13 und §14.2](../ux/abstimmung
 - Die Feier F-012 ist der **Vorfreude-Ring** (`countdown-ring.svg`), nicht Siegel + Kalenderblatt.
 
 ## Changelog
+- 2026-10-23 Runde 4 (Inkrement 10): §5 – Antworten UM-14 – UM-19 (UM-15 entschieden: Zeile bleibt bis zum nächsten Laden, kein zeitgesteuertes Zuklappen; „Wandern“ über Zähler/aufgeklappte Liste, Beleg-Flug MVP+; UM-16 `moderate` statt `celebrate`; UM-18 Tönung 1200 ms, Löschen ohne Höhen-Animation; UM-19 bestätigt); neu M-U16 – M-U18, M-X10.
 - 2026-10-23 Runde 3: §4 – Antworten UM-1 – UM-7 (Gegenprüfung Cockpit-Code, drei kleine Korrekturen → M-X8) und UM-8 – UM-13 (Swipen, UM-13 bestätigt: keine Vibration); neu M-U13–M-U15, M-D13–M-D14, M-X8–M-X9; Prototyp f.
 - 2026-10-08 Runde 2: Status aller M-Punkte nach den Antworten von Designer (abstimmung-ux §6) und UI/UX (abstimmung-design §9) gesetzt; neu M-D10–M-D12, M-U12, M-X6–M-X7.
 - 2026-10-08 Runde 1: Erstfassung M-D1–M-D9, M-U1–M-U11, M-X1–M-X5.

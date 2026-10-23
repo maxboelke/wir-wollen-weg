@@ -228,13 +228,25 @@ export type PriceCheck = { ok: true; cents: number | null } | { ok: false; error
  * Total price as typed (W17 F.2): separators by the UI language – DE «1.840» = 1 840,
  * «1840,50»; EN «1,840», «1840.50». Currency signs and spaces are ignored. Empty → no price.
  * Stored as cents (integer). > 0, ≤ 1 000 000, at most two decimals.
+ *
+ * W19 D.5.2 (also for W17): a SINGLE separator that is the «other» one (DE «.», EN «,») with
+ * one or two digits at the end is the decimal separator – DE «12.5» = 12,50, EN «12,50» = 12.50
+ * (Android keyboards often only offer «.» for `inputmode=decimal`). With exactly three digits
+ * it stays a group separator («1.840» = 1 840).
  */
 export function parsePrice(input: unknown, locale: string): PriceCheck {
   if (input === null || input === undefined) return { ok: true, cents: null };
   if (typeof input !== "string") return { ok: false, error: "price" };
-  const value = input.replace(/[\s  €$£]|CHF|EUR|USD|GBP/gi, "");
+  let value = input.replace(
+    /[\s  €$£]|CHF|EUR|USD|GBP|DKK|SEK|NOK|PLN|CZK|HUF|CAD|AUD|kr|zł|Kč|Ft/gi,
+    "",
+  );
   if (value === "") return { ok: true, cents: null };
   const de = locale.startsWith("de");
+  const other = de ? "." : ",";
+  if (/^\d+[.,]\d{1,2}$/.test(value) && value.includes(other)) {
+    value = value.replace(other, de ? "," : ".");
+  }
   const group = de ? "." : ",";
   const groupRe = de ? "\\." : ",";
   const decimalRe = de ? "," : "\\.";

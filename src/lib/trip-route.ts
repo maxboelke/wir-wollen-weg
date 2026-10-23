@@ -18,7 +18,7 @@ export type StationState = "done" | "yours" | "waiting" | "next" | "later";
  * V1 «Termin steht», V2 «Alle sind dabei», A2 task «Infos eintragen», T-meet meeting point on
  * the first travel day (a plan, not a task), goals V6 / T-goal / D-goal.
  */
-export type StationId = "V1" | "V2" | "V3" | "A2" | "T-meet";
+export type StationId = "V1" | "V2" | "V3" | "A2" | "A1" | "D1" | "T-meet";
 export type GoalId = "V6" | "T-goal" | "D-goal";
 
 /** A value inside a message: formatted by the page (names as a list, dates, clock times). */
@@ -28,6 +28,8 @@ export type MsgValue =
   | { names: readonly string[] }
   | { date: IsoDate }
   | { time: string }
+  /** Money in cents of a currency – `exact` always shows two decimals (balances, W19 D.6). */
+  | { money: number; currency: string; exact?: boolean }
   | { msg: Msg };
 
 export interface Msg {
@@ -40,7 +42,16 @@ export type RouteTarget =
   | { kind: "sheet"; sheet: "decided" | "members" }
   | {
       kind: "page";
-      page: "info" | "infoEdit" | "newTrip" | "stays" | "staysSwipe" | "staysRanking";
+      page:
+        | "info"
+        | "infoEdit"
+        | "newTrip"
+        | "stays"
+        | "staysSwipe"
+        | "staysRanking"
+        | "costs"
+        | "costsBalances"
+        | "costsNew";
     };
 
 export type RouteAction =
@@ -48,7 +59,10 @@ export type RouteAction =
   | { kind: "withoutApp"; placeholderId: string; name: string }
   | { kind: "undoWithoutApp"; placeholderId: string; name: string }
   /** UX-9 for V3 «Haben wir schon / brauchen wir nicht» (on: dialog first) / undo. */
-  | { kind: "stayWithoutApp"; on: boolean };
+  | { kind: "stayWithoutApp"; on: boolean }
+  /** D1 (organiser): «Abrechnung abschließen» (dialog W19 D.9) / «wieder öffnen». */
+  | { kind: "closeCosts"; open: number }
+  | { kind: "reopenCosts" };
 
 /** «Erinnern» below a waiting station – opens the remind sheet of the cockpit. */
 export interface RouteRemind {
@@ -56,7 +70,15 @@ export interface RouteRemind {
    * `placeholder`: organiser → personal link(s); `orga`: member → «{orga} Bescheid geben»;
    * `stay-*`: places to stay (W16 v2.14) – rate (status list), fix/book (to the organiser).
    */
-  occasion: "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book";
+  occasion:
+    | "placeholder"
+    | "orga"
+    | "stay-rate"
+    | "stay-fix"
+    | "stay-book"
+    /** Costs (W16 v2.15): own debtors (`single`/status) – all open settlements (organiser). */
+    | "settle"
+    | "settle-all";
   /** Placeholder ids (one → single step, several → list). Empty for `orga`. */
   keys: string[];
   label: Msg;
@@ -79,8 +101,11 @@ export interface TripStation {
   progress?: number;
   /** Where the card leads (sheet or sub-page). */
   href: RouteTarget;
-  /** Main action – only shown on the first «Heute» card (the only primary of the page). */
-  primary?: { label: Msg; action: RouteTarget | RouteAction };
+  /**
+   * Main action – only shown on the first «Heute» card (the only primary of the page).
+   * `secondary`: never the page's primary (U-30 «Abschließen»).
+   */
+  primary?: { label: Msg; action: RouteTarget | RouteAction; secondary?: boolean };
   remind?: RouteRemind;
   /** Text buttons (e.g. «Mia macht ohne App mit», «Rückgängig» in the done list). */
   textActions?: { label: Msg; action: RouteAction | RouteTarget }[];
@@ -105,7 +130,7 @@ export interface TripGoal {
 }
 
 export interface TripTile {
-  area: "info" | "stay";
+  area: "info" | "stay" | "costs";
   title: Msg;
   /** Parts of the one status line, joined with « · ». */
   status: Msg[];
@@ -127,8 +152,11 @@ export interface TripRoute {
   ring: RingModel;
   /** Accessible name of the ring button («Vorfreude: noch 41 Tage»). */
   ringLabel: Msg;
-  /** Buttons in the ticket stub (W16 v2.2/v2.13): Vorbereitung «Kalender», else none. */
-  headActions: "calendar"[];
+  /**
+   * Buttons in the ticket stub (W16 v2.2/v2.15): Vorbereitung «Kalender», Unterwegs
+   * «+ Ausgabe», Danach «Ausgleichen» (only with open balances, not closed).
+   */
+  headActions: ("calendar" | "addExpense" | "settle")[];
   wayTitle: Msg;
   meta: Msg | null;
   /** Summary of the collapsed done row; null → «{n} erledigt: {titles}». */
@@ -206,12 +234,49 @@ export interface StayStatus {
   withoutApp: boolean;
 }
 
+/** A person in a cost task (name already resolved – «ehemaliges Mitglied» for former ones). */
+export interface CostPerson {
+  name: string;
+  cents: number;
+  /** Party id – reminder key. */
+  key: string;
+  placeholder: boolean;
+  former: boolean;
+}
+
+/**
+ * Status of the costs (F-035/F-036) – adapter `costStatus()` of W16 v2.15; null = not built.
+ * Amounts in cents of `currency`.
+ */
+export interface CostStatus {
+  /** Expenses that are not deleted. */
+  expenseCount: number;
+  totalCents: number;
+  currency: string;
+  myBalanceCents: number;
+  /** Proposal rows in which I pay (proposal order). */
+  myDebts: readonly CostPerson[];
+  /** Proposal rows in which I receive. */
+  owedToMe: readonly CostPerson[];
+  /** Proposal rows in total. */
+  openTransfers: number;
+  /** All balances 0. */
+  allSettled: boolean;
+  closed: boolean;
+  /** A1 threshold in cents (R.8 rule 7). */
+  threshold: number;
+  /** The first recipient of my debts has payment details (A1 status text). */
+  firstHasPayInfo: boolean;
+}
+
 export interface RouteAreas {
   group: { placeholders: readonly { id: string; name: string; withoutApp: boolean }[] };
   info: InfoStatus | null;
   /** Increment 9 – undefined/null: area not built (older callers and tests). */
   stay?: StayStatus | null;
-  // Increments 10–12 add `costs`, `travelData`, `documents` adapters here.
+  /** Increment 10 – undefined/null: area not built (older callers and tests). */
+  costs?: CostStatus | null;
+  // Increments 11–12 add `travelData`, `documents` adapters here.
 }
 
 /** A2 appears this many days before the arrival when the infos are still empty (W16 v2.4). */
@@ -223,9 +288,9 @@ export const ANNOUNCE_DAYS = 7;
  * Default urgency under «Heute» (W16 v2.5): what blocks others first (1), then dates/deadlines
  * (2), then own contributions (3). V3 sets its rank per state (W16 v2.14).
  */
-const RANK: Record<StationId, number> = { "T-meet": 0, V1: 1, A2: 2, V2: 3, V3: 3 };
-/** Catalogue order (W16 v2.3) – ties and every other group. */
-const ORDER: Record<StationId, number> = { "T-meet": 0, V1: 1, V2: 2, V3: 3, A2: 4 };
+const RANK: Record<StationId, number> = { "T-meet": 0, V1: 1, A2: 2, V2: 3, V3: 3, A1: 3, D1: 2 };
+/** Catalogue order (W16 v2.3/v2.15) – ties and every other group. */
+const ORDER: Record<StationId, number> = { "T-meet": 0, V1: 1, V2: 2, V3: 3, A2: 4, A1: 5, D1: 6 };
 
 export function subphaseOf(start: IsoDate, end: IsoDate, today: IsoDate): Subphase {
   if (today < start) return "before";
@@ -599,6 +664,222 @@ function stayTile(stay: StayStatus, sub: Subphase, v3: TripStation | undefined):
   return { area: "stay", title: msg("tiles.stay"), status: [status], href: STAYS };
 }
 
+/* ------------------------------------------------------------------------------------------ */
+/* Costs: A1, D1, tile (W16 v2.15, Increment 10)                                                */
+/* ------------------------------------------------------------------------------------------ */
+
+const COSTS: RouteTarget = { kind: "page", page: "costs" };
+const BALANCES: RouteTarget = { kind: "page", page: "costsBalances" };
+
+const money = (cents: number, currency: string): MsgValue => ({
+  money: Math.abs(cents),
+  currency,
+  exact: true,
+});
+
+/** «Du schuldest Kemal 23,50 €» / «… – an Lena und Kemal» / «… – an Lena und 2 weitere». */
+function debtTitle(costs: CostStatus): Msg {
+  const first = costs.myDebts[0];
+  const second = costs.myDebts[1];
+  const total = money(costs.myBalanceCents, costs.currency);
+  if (!first) return msg("costs.debtTitleOne", { name: "", amount: total });
+  if (costs.myDebts.length === 1) {
+    return msg("costs.debtTitleOne", {
+      name: first.name,
+      amount: money(first.cents, costs.currency),
+    });
+  }
+  if (costs.myDebts.length === 2 && second) {
+    return msg("costs.debtTitleTwo", { total, name1: first.name, name2: second.name });
+  }
+  return msg("costs.debtTitleMany", {
+    total,
+    name1: first.name,
+    count: costs.myDebts.length - 1,
+  });
+}
+
+function debtStatus(costs: CostStatus): Msg {
+  return costs.firstHasPayInfo ? msg("costs.debtStatus") : msg("costs.debtStatusNoInfo");
+}
+
+/** A1 «Du schuldest …» (Vorbereitung/Unterwegs): own balance ≤ −threshold, not closed. */
+export function a1Task(costs: CostStatus): TripStation | null {
+  if (costs.closed || costs.myBalanceCents > -costs.threshold) return null;
+  return {
+    id: "A1",
+    kind: "task",
+    state: "yours",
+    rank: 3,
+    title: debtTitle(costs),
+    status: debtStatus(costs),
+    href: BALANCES,
+    primary: { label: msg("costs.toSettle"), action: BALANCES },
+  };
+}
+
+/** D1 «Kosten ausgleichen» (Danach, ≥ 1 expense) – W16 v2.15 table, first matching row wins. */
+export function d1Station(
+  costs: CostStatus,
+  viewer: RouteViewer,
+  orgaName = "",
+): TripStation | null {
+  if (costs.expenseCount === 0) return null;
+  const orga = viewer.role === "organizer";
+  const base = {
+    id: "D1" as const,
+    kind: "station" as const,
+    title: msg("costs.d1Title"),
+    href: BALANCES,
+  };
+  const me = costs.myBalanceCents;
+  // 1 – all square and closed.
+  if (costs.allSettled && costs.closed) {
+    return {
+      ...base,
+      state: "done",
+      status: orga ? msg("costs.d1DoneClosed") : msg("costs.d1DoneSquare"),
+    };
+  }
+  // 2 – closed with open balances (info only, marking is locked).
+  if (costs.closed) {
+    const status =
+      me < 0
+        ? msg("costs.d1ClosedOwe", { amount: money(me, costs.currency) })
+        : me > 0
+          ? msg("costs.d1ClosedOwed", { amount: money(me, costs.currency) })
+          : msg("costs.d1Closed");
+    return {
+      ...base,
+      state: "done",
+      status,
+      ...(orga
+        ? {
+            textActions: [{ label: msg("costs.reopen"), action: { kind: "reopenCosts" } as const }],
+          }
+        : {}),
+    };
+  }
+  // 3 – I owe: my turn (rank 2).
+  if (me < 0) {
+    return {
+      ...base,
+      state: "yours",
+      rank: 2,
+      title: debtTitle(costs),
+      status: debtStatus(costs),
+      primary: { label: msg("costs.toSettle"), action: BALANCES },
+    };
+  }
+  // 4 – I am owed: waiting for the others (reminder «settle»).
+  if (me > 0) {
+    const [first, second] = costs.owedToMe;
+    const amount = money(me, costs.currency);
+    const status =
+      costs.owedToMe.length <= 1
+        ? msg("costs.owedOne", { amount, name: first?.name ?? "" })
+        : costs.owedToMe.length === 2
+          ? msg("costs.owedTwo", { amount, name1: first?.name ?? "", name2: second?.name ?? "" })
+          : msg("costs.owedMany", {
+              amount,
+              name1: first?.name ?? "",
+              count: costs.owedToMe.length - 1,
+            });
+    const remindable = costs.owedToMe.filter((p) => !p.former);
+    const single = remindable.length === 1 ? remindable[0] : undefined;
+    return {
+      ...base,
+      state: "waiting",
+      status,
+      short:
+        costs.owedToMe.length === 1 && first
+          ? msg("costs.shortOne", { name: first.name })
+          : msg("costs.shortMine"),
+      ...(remindable.length > 0
+        ? {
+            remind: {
+              occasion: "settle" as const,
+              keys: remindable.map((p) => p.key),
+              // R-082: members cannot remind a placeholder – they tell the organiser.
+              label:
+                single?.placeholder && !orga
+                  ? msg("v2.nudgeOrga", { orga: orgaName })
+                  : single
+                    ? msg("costs.remindOne", { name: single.name })
+                    : msg("costs.remind"),
+              name:
+                single?.placeholder && !orga
+                  ? msg("costs.nudgeOrgaName", { orga: orgaName, name: single.name })
+                  : single
+                    ? msg("costs.remindOne", { name: single.name })
+                    : msg("costs.remindMineName"),
+            },
+          }
+        : {}),
+    };
+  }
+  // 5 – I am square, others are not.
+  if (!costs.allSettled) {
+    return {
+      ...base,
+      state: "waiting",
+      status: msg("costs.openCount", { count: costs.openTransfers }),
+      short: msg("costs.shortOthers"),
+      ...(orga
+        ? {
+            remind: {
+              occasion: "settle-all" as const,
+              keys: [],
+              label: msg("costs.remind"),
+              name: msg("costs.remindAllName"),
+            },
+            textActions: [
+              {
+                label: msg("costs.closeEarly"),
+                action: { kind: "closeCosts", open: costs.openTransfers } as const,
+              },
+            ],
+          }
+        : {}),
+    };
+  }
+  // 6 – all square, not closed: done for members, «abschließen?» for the organiser (rank 4).
+  if (orga) {
+    return {
+      ...base,
+      state: "yours",
+      rank: 4,
+      title: msg("costs.d1CloseTitle"),
+      status: msg("costs.d1CloseStatus"),
+      primary: {
+        label: msg("costs.close"),
+        action: { kind: "closeCosts", open: 0 },
+        secondary: true,
+      },
+    };
+  }
+  return { ...base, state: "done", status: msg("costs.d1DoneSquare") };
+}
+
+/** Tile «Kosten» (W16 v2.15): status «… gesamt · du schuldest …», «Noch keine Ausgaben» … */
+function costsTile(costs: CostStatus): TripTile {
+  const parts: Msg[] = [];
+  if (costs.closed) parts.push(msg("tiles.costsClosed"));
+  if (costs.expenseCount === 0) {
+    parts.push(msg("tiles.costsEmpty"));
+  } else {
+    parts.push(
+      msg("tiles.costsTotal", { total: { money: costs.totalCents, currency: costs.currency } }),
+    );
+    const amount: MsgValue = { money: Math.abs(costs.myBalanceCents), currency: costs.currency };
+    if (costs.myBalanceCents < 0) parts.push(msg("tiles.costsOwe", { amount }));
+    else if (costs.myBalanceCents > 0) parts.push(msg("tiles.costsOwed", { amount }));
+    else if (!costs.allSettled) parts.push(msg("tiles.costsSquareMe"));
+    else parts.push(msg("tiles.costsSquare"));
+  }
+  return { area: "costs", title: msg("tiles.costs"), status: parts, href: COSTS };
+}
+
 const byCatalogue = (a: TripStation, b: TripStation) => ORDER[a.id] - ORDER[b.id];
 const rankOf = (s: TripStation) => s.rank ?? RANK[s.id];
 const byUrgency = (a: TripStation, b: TripStation) =>
@@ -622,12 +903,18 @@ export function tripRoute(
   const info = areas.info;
 
   const stay = areas.stay ?? null;
+  const costs = areas.costs ?? null;
+  const d1 = costs && sub === "after" ? d1Station(costs, viewer, trip.orgaName) : null;
   const stations = [
     v1Station(trip, viewer, today, sub),
     v2Station(trip, viewer, areas, sub),
     ...(stay ? [v3Station(trip, viewer, stay, sub)] : []),
+    ...(d1 ? [d1] : []),
   ];
-  const tasks = sub === "before" ? [infoTask(viewer, areas, daysToGo)] : [];
+  const tasks = [
+    ...(sub === "before" ? [infoTask(viewer, areas, daysToGo)] : []),
+    ...(costs && sub !== "after" ? [a1Task(costs)] : []),
+  ];
   const all: TripStation[] = [
     ...stations,
     ...tasks.filter((task): task is TripStation => task !== null),
@@ -658,10 +945,19 @@ export function tripRoute(
         ]
       : [];
   const items = [...plans, ...yours];
-  const sentence = heuteSentence(sub, index, plans.length, yours.length, waiting[0]);
+  const sentence = heuteSentence(
+    sub,
+    index,
+    plans.length,
+    yours.length,
+    waiting[0],
+    (costs?.expenseCount ?? 0) > 0,
+  );
 
   const doneStations = done.filter((s) => s.kind === "station");
   const countable = stations.length;
+  const d1Done = d1?.state === "done";
+  const costsOpen = costs !== null && costs.expenseCount > 0 && !costs.allSettled && !costs.closed;
   return {
     subphase: sub,
     day: { index, total },
@@ -670,7 +966,11 @@ export function tripRoute(
         ? msg("phase.before", { count: daysToGo })
         : sub === "during"
           ? msg("phase.during", { day: index, total })
-          : msg("phase.after", { count: daysBack }),
+          : costs && costs.expenseCount > 0
+            ? costsOpen
+              ? msg("phase.afterSettle")
+              : msg("phase.afterSquare")
+            : msg("phase.after", { count: daysBack }),
     srSentence:
       sub === "before"
         ? msg("sr.before", { count: daysToGo })
@@ -689,7 +989,16 @@ export function tripRoute(
         : sub === "during"
           ? msg("ring.during", { day: index, total })
           : msg("ring.after"),
-    headActions: sub === "before" ? ["calendar"] : [],
+    headActions:
+      sub === "before"
+        ? ["calendar"]
+        : sub === "during"
+          ? costs && !costs.closed
+            ? ["addExpense"]
+            : []
+          : costsOpen
+            ? ["settle"]
+            : [],
     wayTitle: msg(`way.${sub}`),
     meta:
       sub === "before"
@@ -698,12 +1007,16 @@ export function tripRoute(
           : null
         : sub === "during"
           ? msg("meta.day", { day: index, total })
-          : null,
+          : d1
+            ? msg("meta.done", { done: d1Done ? 1 : 0, total: 1 })
+            : null,
     doneSummary:
       sub === "during"
         ? msg("done.prep", { count: doneStations.filter((s) => !s.unused).length })
         : sub === "after"
-          ? msg("done.trip", { days: total })
+          ? d1Done
+            ? msg("done.tripSettled", { days: total })
+            : msg("done.trip", { days: total })
           : null,
     heute: {
       date: today,
@@ -728,6 +1041,8 @@ export function tripRoute(
             ),
           ]
         : []),
+      // Costs: always in Vorbereitung/Unterwegs; in Danach only without a visible D1 station.
+      ...(costs && (sub !== "after" || d1 === null || d1Done) ? [costsTile(costs)] : []),
       ...(info ? [infoTile(viewer, trip, info)] : []),
     ].filter((tile): tile is TripTile => tile !== null),
     departureDay: today === trip.start,
@@ -741,6 +1056,7 @@ function heuteSentence(
   plans: number,
   yours: number,
   firstWaiting: TripStation | undefined,
+  hasExpenses: boolean,
 ): Msg {
   if (sub === "during" && dayIndex === 1) return msg("sentence.h7");
   if (sub === "during" && plans > 0) {
@@ -752,8 +1068,8 @@ function heuteSentence(
   if (firstWaiting?.short) return msg("sentence.h2", { short: { msg: firstWaiting.short } });
   if (sub === "before") return msg("sentence.h3");
   if (sub === "during") return msg("sentence.h4");
-  // Danach: costs are not built yet → H-5b (H-5 «Alles ausgeglichen» comes with Increment 10).
-  return msg("sentence.h5b");
+  // Danach: H-5 «Alles ausgeglichen» with expenses, H-5b without (W16 v2.15).
+  return hasExpenses ? msg("sentence.h5") : msg("sentence.h5b");
 }
 
 function goalOf(

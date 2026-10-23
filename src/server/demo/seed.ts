@@ -30,6 +30,12 @@
 // organises, everybody rated 4 suggestions → V3 «Festlegen», favourite «Ferienhaus
 // Brockenblick»), «Roadtrip Schottland» (picked and booked → tile), «Gardasee» (V3 «ohne App
 // erledigt»). Images: our own demo images under /demo/stays, links on `*.example` (RFC 2606).
+// Increment 10 (F-035/F-036 «Kosten teilen», features.md R.8 Demo-Seed): «Kroatien 2027»
+// (Vorbereitung, 3 expenses incl. placeholder Lotte, «nach Beträgen» and a rest cent – Anna is
+// owed), «Roadtrip Schottland» (Unterwegs, GBP, 8 expenses – Emma owes ≥ 50 £ → A1, Ben with a
+// sample IBAN, Carla «PayPal: carla.demo»), «Gardasee» (Danach – Anna owes Felix → D1, Greta
+// already paid, a former member still owes Felix), «Kroatien Segeln» (all square and closed).
+// IBANs are well-known sample IBANs marked «(Demo)», never real accounts.
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
 import { addDays, todayIso } from "../../lib/dates.ts";
@@ -145,6 +151,33 @@ interface StaySeed {
   booked?: boolean;
 }
 
+/**
+ * Cost splitting (F-035/F-036). People: member keys, `ph:<placeholder name>` or `former<n>`
+ * (a member who left). Amounts in whole/decimal currency units (converted to cents).
+ */
+interface CostSeed {
+  /** Former members – parties without an account («ehemaliges Mitglied n»). */
+  formers?: number;
+  expenses: {
+    title: string;
+    amount: number;
+    payer: string;
+    /** «all» = every member, placeholder and former member of this seed. */
+    for: "all" | string[];
+    /** «nach Beträgen» (sum must equal the amount). */
+    amounts?: Record<string, number>;
+    category?: "accommodation" | "travel" | "food" | "activities" | "other";
+    /** Days relative to today. */
+    day: number;
+    note?: string;
+    /** Member key of the creator (default: payer, else the organiser). */
+    by?: string;
+  }[];
+  settlements?: { from: string; to: string; amount: number; by: string; daysAgo: number }[];
+  payInfo?: Record<string, { iban?: string; note?: string }>;
+  closedBy?: string;
+}
+
 interface TripSeed {
   name: string;
   description?: string;
@@ -185,6 +218,8 @@ interface TripSeed {
   stays?: StaySeed[];
   /** UX-9: V3 «ohne App erledigt» set by this person. */
   stayWithoutAppBy?: string;
+  /** Cost splitting (Increment 10). */
+  costs?: CostSeed;
 }
 
 const TRIPS: TripSeed[] = [
@@ -453,6 +488,28 @@ const TRIPS: TripSeed[] = [
       { person: "anna", organizer: true, submitted: true, voted: true, celebrated: true },
       { person: "hanna", submitted: true, voted: true, celebrated: true },
     ],
+    costs: {
+      expenses: [
+        {
+          title: "Bootscharter",
+          amount: 800,
+          payer: "anna",
+          for: "all",
+          category: "activities",
+          day: -87,
+        },
+        {
+          title: "Hafengebühren",
+          amount: 60,
+          payer: "hanna",
+          for: "all",
+          category: "travel",
+          day: -84,
+        },
+      ],
+      settlements: [{ from: "hanna", to: "anna", amount: 370, by: "hanna", daysAgo: 75 }],
+      closedBy: "anna",
+    },
   },
   // Feedback-Runde 1 (ux-spec §14.1): Anna is in, only the organiser is open (N1-11).
   {
@@ -563,6 +620,65 @@ const TRIPS: TripSeed[] = [
       { person: "carla", submitted: true, voted: true, celebrated: true },
       { person: "emma", submitted: true, voted: true, celebrated: true },
     ],
+    costs: {
+      expenses: [
+        {
+          title: "Glen Coe Cottages",
+          amount: 1650,
+          payer: "ben",
+          for: "all",
+          category: "accommodation",
+          day: -35,
+        },
+        {
+          title: "Mietwagen",
+          amount: 680,
+          payer: "anna",
+          for: "all",
+          category: "travel",
+          day: -20,
+          note: "Inkl. Zusatzfahrerin",
+        },
+        {
+          title: "Tankstelle Edinburgh",
+          amount: 68.4,
+          payer: "carla",
+          for: "all",
+          category: "travel",
+          day: 0,
+        },
+        { title: "Supermarkt", amount: 54.2, payer: "anna", for: "all", category: "food", day: 0 },
+        { title: "Parkgebühren", amount: 12, payer: "ben", for: "all", category: "other", day: 0 },
+        {
+          title: "Fish & Chips",
+          amount: 46.8,
+          payer: "emma",
+          for: "all",
+          category: "food",
+          day: 0,
+        },
+        {
+          title: "Fähre Isle of Skye",
+          amount: 96,
+          payer: "ben",
+          for: ["ben", "anna", "carla"],
+          category: "travel",
+          day: 0,
+        },
+        {
+          title: "Whisky-Tasting",
+          amount: 75,
+          payer: "carla",
+          for: ["carla", "emma"],
+          category: "activities",
+          day: 0,
+        },
+      ],
+      payInfo: {
+        ben: { iban: "GB82WEST12345698765432", note: "(Demo)" },
+        carla: { note: "PayPal: carla.demo" },
+      },
+    },
   },
   // Increment 8: back for 9 days («Danach», H-5b, deletion hint).
   {
@@ -588,6 +704,38 @@ const TRIPS: TripSeed[] = [
       { person: "anna", submitted: true, voted: true, celebrated: true },
       { person: "greta", submitted: true, voted: true, celebrated: true },
     ],
+    costs: {
+      formers: 1,
+      expenses: [
+        {
+          title: "Casa Limone",
+          amount: 1200,
+          payer: "felix",
+          for: "all",
+          category: "accommodation",
+          day: -16,
+        },
+        {
+          title: "Bootstour Limone",
+          amount: 160,
+          payer: "anna",
+          for: "all",
+          category: "activities",
+          day: -13,
+        },
+        {
+          title: "Abendessen am Hafen",
+          amount: 220,
+          payer: "greta",
+          for: "all",
+          category: "food",
+          day: -11,
+          note: "Inkl. Trinkgeld",
+        },
+      ],
+      settlements: [{ from: "greta", to: "felix", amount: 175, by: "greta", daysAgo: 5 }],
+      payInfo: { felix: { iban: "DE89370400440532013000", note: "(Demo)" } },
+    },
   },
   // Increment 9 (F-031): Anna is a member, 2 of 6 places rated – V3 «du bist dran», ranking
   // locked; Ben organises. Placeholder Lotte counts for «≈ … pro Person» (Q35).
@@ -612,6 +760,35 @@ const TRIPS: TripSeed[] = [
       { person: "david", submitted: true, votes: ["yes"], celebrated: true },
       { person: "emma", submitted: true, votes: ["yes"], celebrated: true },
     ],
+    costs: {
+      expenses: [
+        {
+          title: "Anzahlung Fähre",
+          amount: 180,
+          payer: "david",
+          for: "all",
+          category: "travel",
+          day: -5,
+        },
+        {
+          title: "Mietwagen-Anzahlung",
+          amount: 150,
+          payer: "anna",
+          for: ["ben", "anna", "carla", "david"],
+          amounts: { ben: 40, anna: 30, carla: 40, david: 40 },
+          category: "travel",
+          day: -3,
+        },
+        {
+          title: "Kleinkram",
+          amount: 10,
+          payer: "ben",
+          for: ["ben", "anna", "emma"],
+          category: "other",
+          day: -1,
+        },
+      ],
+    },
     stays: [
       {
         title: "Villa Mare mit Pool",
@@ -698,6 +875,111 @@ const TRIPS: TripSeed[] = [
     members: [{ person: "ida", organizer: true }],
   },
 ];
+
+/** «Gleich» (R.8 rule 3): rest cents to the first parties by seq (order of `parties`). */
+function splitEqualCents(amount: number, parties: string[]): Map<string, number> {
+  const base = Math.floor(amount / parties.length);
+  const rest = amount - base * parties.length;
+  return new Map(parties.map((p, i) => [p, base + (i < rest ? 1 : 0)]));
+}
+
+/** Parties (in fixed order), expenses with shares, settlements, payment details, closing. */
+async function seedCosts(
+  client: Pick<ClientBase, "query">,
+  tripId: string,
+  seed: TripSeed,
+  ids: Map<string, string>,
+  placeholderIds: Map<string, string>,
+): Promise<void> {
+  const costs = seed.costs;
+  if (!costs) return;
+  const orga = seed.members.find((m) => m.organizer)?.person ?? "";
+  const order = [
+    ...seed.members.map((m) => m.person),
+    ...(seed.placeholders ?? []).map((name) => `ph:${name}`),
+    ...Array.from({ length: costs.formers ?? 0 }, (_, i) => `former${String(i + 1)}`),
+  ];
+  const party = new Map<string, string>();
+  for (const [index, key] of order.entries()) {
+    const former = key.startsWith("former");
+    const row = await client.query<{ id: string }>(
+      `insert into trip_cost_party (trip_id, seq, user_id, placeholder_id, former_at, former_no)
+       values ($1, $2, $3, $4, case when $5::boolean then now() - interval '6 days' end, $6)
+       returning id`,
+      [
+        tripId,
+        index + 1,
+        key.startsWith("ph:") || former ? null : (ids.get(key) ?? null),
+        key.startsWith("ph:") ? (placeholderIds.get(key.slice(3)) ?? null) : null,
+        former,
+        former ? Number(key.slice(6)) : null,
+      ],
+    );
+    party.set(key, row.rows[0]?.id ?? "");
+  }
+  for (const [position, expense] of costs.expenses.entries()) {
+    const cents = Math.round(expense.amount * 100);
+    const members = expense.for === "all" ? order : order.filter((k) => expense.for.includes(k));
+    const shares = expense.amounts
+      ? new Map(Object.entries(expense.amounts).map(([k, v]) => [k, Math.round(v * 100)]))
+      : splitEqualCents(cents, members);
+    const by = expense.by ?? (ids.has(expense.payer) ? expense.payer : orga);
+    const row = await client.query<{ id: string }>(
+      `insert into trip_expense (trip_id, title, note, amount_cents, currency, category, spent_on,
+         payer_party_id, split_mode, created_by, updated_by, created_at, updated_at)
+       select $1, $2, $3, $4, t.currency, $5, $6, $7, $8, $9, $9,
+         now() - make_interval(mins => $10), now() - make_interval(mins => $10)
+       from trip t where t.id = $1 returning id`,
+      [
+        tripId,
+        expense.title,
+        expense.note ?? null,
+        cents,
+        expense.category ?? null,
+        day(expense.day),
+        party.get(expense.payer),
+        expense.amounts ? "amounts" : "equal",
+        ids.get(by) ?? null,
+        (costs.expenses.length - position) * 30,
+      ],
+    );
+    for (const [key, share] of shares) {
+      await client.query(
+        `insert into trip_expense_share (expense_id, trip_id, party_id, share_cents)
+         values ($1, $2, $3, $4)`,
+        [row.rows[0]?.id, tripId, party.get(key), share],
+      );
+    }
+  }
+  for (const s of costs.settlements ?? []) {
+    await client.query(
+      `insert into trip_settlement (trip_id, from_party_id, to_party_id, amount_cents, marked_by,
+         marked_at) values ($1, $2, $3, $4, $5, now() - make_interval(days => $6))`,
+      [
+        tripId,
+        party.get(s.from),
+        party.get(s.to),
+        Math.round(s.amount * 100),
+        ids.get(s.by),
+        s.daysAgo,
+      ],
+    );
+  }
+  for (const [key, info] of Object.entries(costs.payInfo ?? {})) {
+    await client.query(
+      `update trip_member set payment_iban = $3, payment_note = $4,
+         payment_updated_at = now() - interval '3 days' where trip_id = $1 and user_id = $2`,
+      [tripId, ids.get(key), info.iban ?? null, info.note ?? null],
+    );
+  }
+  if (costs.closedBy) {
+    await client.query(
+      `update trip set costs_closed_at = now() - interval '70 days', costs_closed_by = $2
+       where id = $1`,
+      [tripId, ids.get(costs.closedBy)],
+    );
+  }
+}
 
 /** True if at least one demo person exists (the build seeds only an empty preview). */
 export async function hasDemoData(client: Pick<ClientBase, "query">): Promise<boolean> {
@@ -882,11 +1164,17 @@ export async function seedDemo(
           ],
         );
       }
-      for (const name of seed.placeholders ?? []) {
-        await client.query(
-          `insert into trip_placeholder (trip_id, display_name, invite_token) values ($1, $2, $3)`,
-          [tripId, name, inviteToken()],
+      const placeholderIds = new Map<string, string>();
+      for (const [position, name] of (seed.placeholders ?? []).entries()) {
+        const inserted = await client.query<{ id: string }>(
+          `insert into trip_placeholder (trip_id, display_name, invite_token, created_at)
+           values ($1, $2, $3, now() - make_interval(secs => $4)) returning id`,
+          [tripId, name, inviteToken(), 100 - position],
         );
+        placeholderIds.set(name, inserted.rows[0]?.id ?? "");
+      }
+      if (seed.costs && tripId) {
+        await seedCosts(client, tripId, seed, ids, placeholderIds);
       }
       for (const stay of seed.stays ?? []) {
         const orgaKey = seed.members.find((m) => m.organizer)?.person;

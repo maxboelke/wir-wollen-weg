@@ -49,7 +49,7 @@ export default async function TripSettingsPage({ params }: Params) {
     deadline: trip.deadline ?? "",
     holidayRegion: regionValue(trip.holidayCountry, trip.holidaySubdivision),
   };
-  const context = sheetContext(view);
+  const context = await sheetContext(view);
 
   return (
     <TripShell view={view} tab={null} subtitle={t("title")}>

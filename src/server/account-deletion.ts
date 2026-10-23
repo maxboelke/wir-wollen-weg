@@ -7,6 +7,7 @@ import {
   type DeletionTripState,
 } from "@/lib/account-deletion";
 import { emailLimitKey } from "./auth/email-limit-store";
+import { retireAllParties } from "./costs/db";
 import { reauthIdentifier } from "./auth/reauth";
 import { db } from "./db/client";
 import {
@@ -180,6 +181,8 @@ export async function deleteAccount(
 
     // 3. Trips, then data that is not tied to the user row by a foreign key.
     for (const step of plan.steps) await applyStep(tx, userId, step);
+    // Costs (R.8 I10-04): parties stay with their amounts as «ehemaliges Mitglied».
+    await retireAllParties(tx, userId);
     await tx.delete(tripPlaceholder).where(eq(tripPlaceholder.claimedBy, userId));
     const sessions = await tx
       .select({ id: session.id })

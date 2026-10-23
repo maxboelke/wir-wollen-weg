@@ -11,6 +11,7 @@ import { Card } from "@/components/ui/card";
 import { Icon } from "@/components/ui/icon";
 import { RadioGroup } from "@/components/ui/radio-group";
 import type { DeletionChoice } from "@/lib/account-deletion";
+import { formatExact } from "@/lib/costs";
 import { formatDate, isoDateInZone } from "@/lib/dates";
 import { deleteAccountAction } from "../actions";
 import { ReauthStep } from "./reauth-step";
@@ -33,6 +34,8 @@ interface DeleteAccountFlowProps {
   /** Number of trips where the person is a member (not organiser). */
   memberOf: number;
   intl: string;
+  /** Trips with an open own balance (W19 D.10) – informs, does not block. */
+  openCosts?: { name: string; href: string; cents: number; currency: string }[] | undefined;
 }
 
 /**
@@ -48,10 +51,12 @@ export function DeleteAccountFlow({
   solo,
   memberOf,
   intl,
+  openCosts = [],
 }: DeleteAccountFlowProps) {
   const t = useTranslations("account.delete");
   const tAccount = useTranslations("account");
   const tCommon = useTranslations("common");
+  const tCosts = useTranslations("costsLeave");
   const router = useRouter();
   const id = useId();
   const [choices, setChoices] = useState<Record<string, DeletionChoice>>({});
@@ -108,6 +113,25 @@ export function DeleteAccountFlow({
         </h2>
         <p>{t("whatText")}</p>
         {memberOf > 0 ? <p className={styles.muted}>{t("memberOf", { count: memberOf })}</p> : null}
+        {openCosts.length > 0 ? (
+          <div data-open-costs="">
+            <p>{tCosts("accountTitle", { count: openCosts.length })}</p>
+            <ul>
+              {openCosts.map((trip) => {
+                const amount = formatExact(Math.abs(trip.cents), trip.currency, intl);
+                return (
+                  <li key={trip.href}>
+                    <Link href={trip.href}>
+                      {trip.cents < 0
+                        ? tCosts("accountOwe", { trip: trip.name, amount })
+                        : tCosts("accountOwed", { trip: trip.name, amount })}
+                    </Link>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        ) : null}
       </Card>
 
       {organized.length > 0 ? (

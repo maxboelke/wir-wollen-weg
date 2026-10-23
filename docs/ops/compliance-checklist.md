@@ -1,6 +1,6 @@
 # Compliance-Checkliste (DE/EU) – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.4 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: Entwurf v0.5 (Offline-Demo-Modus, Platzhalter-Regel §0a; v0.5: Kosten teilen & Zahlungsinfo §2b, Speicher-/Lösch-/TOM-Einträge – Inkrement 10, F-035/F-036; v0.4: Unterkünfte & Link-Vorschau §2a, Speicher-/Lösch-/TOM-Einträge – Inkrement 9, F-031; v0.3: Ausnahme Einladungs-Token im Klartext §7a, Logs ohne Tokens, R-037)
 
 > **Wichtiger Hinweis:** Diese Checkliste ist eine strukturierte Arbeitsgrundlage aus Betriebssicht und **ersetzt keine Rechtsberatung**. Vor dem öffentlichen Launch (M2) – spätestens vor Einführung von Bezahlfunktionen (F-050) – sollten Impressum, Datenschutzerklärung, Nutzungsbedingungen/AGB und die Bewertung von BFSG/TDDDG durch eine fachkundige Person (Anwalt/Anwältin für IT- und Datenschutzrecht oder ein seriöser Rechtstexte-Dienst mit Haftungsübernahme) geprüft werden.
 
@@ -74,6 +74,7 @@ Seit 14.05.2024 gilt das **Digitale-Dienste-Gesetz (DDG)** statt TMG – im Impr
 | ☐ | Pflicht zur Bereitstellung: E-Mail ist für das Konto erforderlich; ohne Konto keine Teilnahme (Q2) | M1 |
 | ☐ | Keine automatisierte Entscheidung i. S. d. Art. 22 (Kandidaten-Vorschläge sind unverbindliche Vorschläge, die Gruppe entscheidet) | M1 |
 | ☐ | **Unterkünfte & Link-Vorschau** (F-031, Inkrement 9): Abschnitt nach §2a (Platzhaltertext vorgemerkt) | M1 |
+| ☐ | **Kosten teilen & Zahlungsinfo** (F-035/F-036, Inkrement 10): Abschnitt nach §2b (Platzhaltertext vorgemerkt) – IBAN/Zahlungsinfo personenbezogen, für die Reise sichtbar, beim Verlassen gelöscht; keine Zahlungsabwicklung | M1 |
 | ☐ | Hinweis für Organisatoren: Platzhalter-Namen (F-007) sind Daten Dritter → Hinweis „nur Vornamen/Spitznamen verwenden“ in UI und Erklärung | M1 |
 | ☐ | Englische Fassung mit Hinweis „Translation – the German version is legally binding“ | M2 |
 | ☐ | Kurzfassung („Datenschutz auf einen Blick“) auf Registrierungs- und Beitrittsseite verlinkt (F-013) | M1 |
@@ -105,6 +106,31 @@ Quelle: features.md R.7 (I9-03, I9-04, I9-10), PRD Q33/Q34, deployment.md §0.8.
 > - **Löschung:** zusammen mit der Reise (`[PLATZHALTER: 90 Tage nach Reiseende]` bzw. wenn die Orga die Reise löscht). Verlässt du die Reise oder löschst dein Konto, werden deine Bewertungen gelöscht; deine Vorschläge bleiben für die Gruppe **ohne deinen Namen** („ehemaliges Mitglied“).
 > - **Auskunft/Export:** Der Datenexport enthält deine eigenen Vorschläge und Bewertungen.
 
+## 2b. Vorgemerkt: Abschnitt „Kosten teilen & Zahlungsinfo“ (F-035/F-036, Inkrement 10 – vor G1)
+
+Quelle: features.md R.8 (I10-03, I10-07, I10-08, I10-09, I10-10), PRD Q35/Q31/Q23, deployment.md §0.10. Gilt erst mit echter Nutzung (G1); in Demo/Vorschau nur als Platzhalter auf der Datenschutzseite (Gliederung §0a, Demo-Seed nur mit öffentlichen Beispiel-IBANs). **Entwurf, keine Rechtsberatung** – Wortlaut bei der Rechtsprüfung (Q16) final festlegen.
+
+| ☐ | Punkt | Wer | Fällig |
+|---|---|---|---|
+| ☐ | Überschrift „Kosten teilen & Zahlungsinfo“ als eigener Abschnitt in der Platzhalter-Datenschutzseite (DE/EN) anlegen, Inhalt = Stichpunkte unten mit `[PLATZHALTER: …]`-Markern | Developer (Inkrement 10) | mit Inkrement 10 |
+| ☐ | Endfassung DE (verbindlich) + EN nach Rechtsprüfung | Operations → Rechtsprüfung | M1 (EN: M2) |
+| ☐ | Bestätigen lassen: **keine Zahlungsdienstleistung** (ZAG) und keine Finanzdienstleistung – die App rechnet nur und zeigt Salden, es fließt kein Geld über den Betreiber, keine Anbindung an Banken/Zahlungsdienste (R.0 Nr. 6). Aus Betriebssicht unkritisch; bei späteren Funktionen (EPC-/GiroCode-QR, `paypal.me`-Links, Zahlungsauslösung) neu bewerten | Rechtsprüfung | M1 |
+| ☐ | Nutzungsbedingungen (M2, §9): Hinweis „Berechnungen ohne Gewähr, Ausgleich erfolgt zwischen den Mitgliedern“ | Operations → Rechtsprüfung | M2 |
+
+**Platzhaltertext (Stichpunkte, Entwurf):**
+
+> **Kosten teilen & Zahlungsinfo**
+> - **Wozu:** Sobald eure Reise festgelegt ist, könnt ihr gemeinsame Ausgaben eintragen. Die App rechnet aus, wer wem wie viel schuldet, und schlägt möglichst wenige Überweisungen vor.
+> - **Keine Zahlungsabwicklung:** Über die App fließt **kein Geld**. Wir führen keine Zahlungen aus, verbinden uns mit keiner Bank und keinem Zahlungsdienst und geben keine Daten an Banken oder Zahlungsdienste weiter. Überweisungen macht ihr selbst außerhalb der App.
+> - **Was wir speichern:** je Ausgabe Titel, Betrag, Währung, Kategorie, Datum, wer bezahlt hat, für wen und wie aufgeteilt wurde, wer sie angelegt bzw. zuletzt geändert hat; als bezahlt markierte Ausgleichszahlungen (von wem an wen, Betrag, wer markiert hat, wann); Abschluss der Abrechnung durch die Orga.
+> - **Zahlungsinfo (freiwillig):** Du kannst je Reise eine **IBAN** und/oder einen kurzen Freitext (z. B. „PayPal: …“) hinterlegen, damit andere dir Geld überweisen können. Die Angabe ist freiwillig; ohne sie funktioniert alles andere genauso. Die IBAN wird auf Gültigkeit geprüft (nur Rechenprüfung, keine Abfrage bei einer Bank). Sie gilt nur für diese Reise und wird nicht in andere Reisen oder dein Konto übernommen.
+> - **Wer es sieht:** alle Mitglieder derselben Reise – Ausgaben, Salden, Ausgleichsvorschlag und Zahlungsinfos sind für die Reise transparent. Die IBAN wird standardmäßig gekürzt angezeigt (Schutz vor Mitlesen), kann von Mitgliedern aber vollständig angezeigt und kopiert werden. Bitte trag nur Angaben ein, die die Gruppe sehen darf.
+> - **Wo sie nie erscheinen:** IBAN und Zahlungsinfo stehen nie in E-Mails, Teilen- oder Erinnerungs-Texten, Links oder technischen Protokollen. Teilen-Texte, die du selbst auslöst, enthalten nur Namen, Beträge der Ausgleiche und den Link zur Reise.
+> - **Rechtsgrundlage:** Art. 6 Abs. 1 lit. b DSGVO (Bereitstellung der von dir genutzten Funktion); für die freiwillige Zahlungsinfo zusätzlich deine bewusste Entscheidung, sie der Gruppe zu zeigen `[PLATZHALTER: Einordnung lit. b vs. lit. a – Rechtsprüfung]`.
+> - **Löschung:** Alles zu Kosten wird **mit der Reise** gelöscht (`[PLATZHALTER: 90 Tage nach Reiseende]` bzw. wenn die Orga die Reise löscht). Gelöschte Ausgaben kannst du kurz rückgängig machen; endgültig entfernt werden sie `[PLATZHALTER: spätestens nach 2 Tagen]`. Deine **Zahlungsinfo** kannst du jederzeit selbst löschen; sie wird außerdem gelöscht, wenn du die Reise verlässt, entfernt wirst oder dein Konto löschst. Ausgaben und Salden bleiben dann für die Gruppe erhalten, aber **ohne deinen Namen** („ehemaliges Mitglied“) – damit die Abrechnung der anderen stimmt `[PLATZHALTER: berechtigtes Interesse der übrigen Mitglieder, Art. 6 Abs. 1 lit. f – Rechtsprüfung]`. Aus Sicherungskopien verschwinden Daten spätestens nach 30 Tagen.
+> - **Platzhalter-Personen:** Für Personen ohne App (Platzhalter) speichern wir nur den von der Orga vergebenen Namen und ihre Beträge – keine Zahlungsinfo.
+> - **Auskunft/Export:** Der Datenexport enthält deine Zahlungsinfo, die Ausgaben, die du angelegt oder bezahlt hast, deinen Anteil an weiteren Ausgaben, deine Ausgleichszahlungen und deinen Saldo – ohne Namen oder Zahlungsinfos anderer.
+
 ## 3. Auftragsverarbeitung (Art. 28 DSGVO)
 
 | ☐ | Dienstleister | Daten | AVV | Fällig |
@@ -116,6 +142,7 @@ Quelle: features.md R.7 (I9-03, I9-04, I9-10), PRD Q33/Q34, deployment.md §0.8.
 | ☐ | Fehler-Tracking: Bugsink selbst gehostet → **kein** AVV; bei Sentry SaaS: DPA + SCC/DPF | – | – | M1 |
 | ☐ | GitHub (Code, CI) – **keine** Nutzerdaten in Repo/CI/Logs (nur synthetische Testdaten) → kein AVV nötig; Regel im Reviewer-Check | – | – | laufend |
 | ☐ | Uptime-Dienst – ruft nur Health-Endpunkt auf, keine personenbezogenen Daten | – | – | – |
+| ☐ | Banken/Zahlungsdienste (Kosten teilen, F-035/F-036) – **keine Empfänger**: keine Anbindung, keine Zahlungsabwicklung (§2b); kein AVV | – | – | – |
 | ☐ | Unterkunfts-Portale (Link-Vorschau, F-031) – **keine Empfänger** personenbezogener Daten: Abruf durch unseren Server ohne Nutzerdaten (§2a); kein AVV | – | – | – |
 | ☐ | Ablage aller AVVs (PDF + Datum) außerhalb des Repos; Liste hier pflegen | – | – | M1 |
 
@@ -135,6 +162,7 @@ Seit 14.05.2024 heißt das TTDSG **TDDDG**. § 25 erfasst jedes Speichern/Ausles
 | `ww-hm-legend` (Cookie, 12 Monate, nur nach Zuklappen der Legende im Gruppenkalender, Inkrement 4, U-6) | vom Nutzer gewählter Anzeigezustand, serverseitig im ersten HTML berücksichtigt; Wert nur `closed`, keine Kennung | erforderlich (Nutzerwunsch, funktional); Aufklappen löscht das Cookie |
 | `sessionStorage` `ww-anim:*`, `ww-tab-from` (Sitzungsende) | Einmal-Animationen nicht wiederholen, Tab-Richtung der Übergänge | erforderlich für die gewünschte Darstellung; keine Kennung, nichts verlässt das Gerät |
 | `sessionStorage` Unterkünfte (Inkrement 9, Schlüssel nach Wahl Developer, z. B. `ww-stays:*`): Stapel-Position, letzte Bewertung für „Rückgängig“, ausstehende Bewertungen bei Netzfehler | Swipen ohne Datenverlust, Rückgängig | erforderlich für die gewünschte Funktion; Sitzungsende, keine Kennung, nichts verlässt das Gerät außer der Bewertung selbst |
+| Formular-Entwurf Ausgabe (Inkrement 10, nur falls bei Netzfehler im `sessionStorage` gehalten, Schlüssel z. B. `ww-costs:*`) | eingegebene Ausgabe nicht verlieren | erforderlich für die gewünschte Funktion; Sitzungsende, keine Kennung. **IBAN/Zahlungsinfo nie in Cookies, `localStorage` oder `sessionStorage`** – „IBAN anzeigen“ ist reiner Seitenzustand (R.8) |
 | Browser-Cache Vorschaubilder (`Cache-Control: private`, ≤ 24 h) | Bilder nicht bei jedem Aufruf neu laden | normales HTTP-Caching, technisch erforderlich; keine Kennung |
 | Statistik | **serverseitig**, ohne Endgerätezugriff | nicht von § 25 erfasst |
 
@@ -154,7 +182,7 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | ☐ | Verarbeitungstätigkeit | Fällig |
 |---|---|---|
 | ☐ | Kontoverwaltung & Anmeldung (F-040–F-043) | M1 |
-| ☐ | Reiseplanung: Reisen, Mitgliedschaften, Verfügbarkeiten, Abstimmungen (F-001–F-013); **Reise managen:** Infoseite (F-033), Unterkünfte inkl. Link-Vorschau (F-031) | M1 |
+| ☐ | Reiseplanung: Reisen, Mitgliedschaften, Verfügbarkeiten, Abstimmungen (F-001–F-013); **Reise managen:** Infoseite (F-033), Unterkünfte inkl. Link-Vorschau (F-031), **Kosten teilen inkl. freiwilliger Zahlungsinfo (F-035/F-036)** | M1 |
 | ☐ | Versand von Transaktionsmails | M1 |
 | ☐ | Sicherheit: Rate-Limiting, Logs, Fehler-Tracking | M1 |
 | ☐ | Backups | M1 |
@@ -187,6 +215,10 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Mail-Anbieter-Logs | gemäß Anbieter (Aufbewahrung im AVV prüfen, möglichst ≤ 30 Tage einstellen) | Anbieter-Einstellung | ☐ |
 | Kontakt-/Betroffenenanfragen | 3 Jahre nach Abschluss (Nachweis), danach löschen – Frist prüfen lassen | Postfach | ☐ |
 | Aggregierte Statistik | unbegrenzt (kein Personenbezug) | – | ☐ |
+| Ausgaben, Anteile, Ausgleichszahlungen, Personen der Abrechnung (F-035/F-036) | mit der Reise (Q31, 90 Tage bzw. „Reise löschen“); beim Verlassen/Entfernen/Konto-Löschen bleiben die Beträge **ohne Namen und ohne Kontobezug** („ehemaliges Mitglied“) | `trip_expense`, `trip_expense_share`, `trip_settlement`, `trip_cost_party` Cascade; `user_id`/`created_by`/`updated_by`/`marked_by` → null | ☐ |
+| Weich gelöschte Ausgaben (`deleted_at`) | endgültig **24 h** nach dem Löschen (praktisch 24–48 h, täglicher Lauf), spätestens mit der Reise | Löschjob `POST /api/internal/retention` (deployment.md §0.10) – **Developer setzt um**, Test mit simulierter Zeit | ☐ |
+| Zahlungsinfo (IBAN, Freitext ≤ 100 Zeichen) | sofort bei Verlassen/Entfernen, Konto-Löschung, durch die Person selbst; mit der Reise. Gelöscht, nicht ausgeblendet | Spalten an `trip_member` → verschwinden mit der Mitgliedschaft | ☐ |
+| Idempotenz-Schlüssel der Ausgaben-Formulare | 24 h eindeutig je Reise; mit der Ausgabe gelöscht | Spalte `trip_expense.idempotency_key` | ☐ |
 | *v1:* Kalender-Rohdaten | nie speichern, nur im Arbeitsspeicher (F-006) | Code-Review | ☐ |
 | *v1:* gespeicherte Kalender-URLs/CalDAV-Passwörter | bei Trennen, Festlegung der Reise (Sync-Ende), Konto-Löschung | verschlüsselt, Cascade | ☐ |
 
@@ -203,6 +235,8 @@ Test: Retention-Job hat Unit- und E2E-Tests (Uhrzeit simuliert); Lauf wird gelog
 | ☐ | Least Privilege für Organisator-/Mitgliedsrechte, serverseitig geprüft (F-004) | M1 |
 | ☐ | Keine personenbezogenen Daten in Logs/CI/Issues; **keine Tokens in Zugriffs-/Fehler-Logs** – auch nicht im Pfad (`/i/<token>`, `/auth/*`) oder `Referer` (deployment.md §5.4, §6.2; R-037) | laufend |
 | ☐ | **SSRF-Schutz** für ausgehende Abrufe (Link-Vorschau/Bild-Proxy, F-031): nur `https`/443, DNS-Pinning, private Netze gesperrt, Limits, kein offener Proxy (features.md R.7); ab Go-Live zusätzlich Egress-Sperre auf dem Host (deployment.md §0.8, §5.1) | mit Inkrement 9 / M1 |
+| ☐ | **Kosten teilen – nichts in Logs/Mails/Teilen-Texten (F-035/F-036, Inkrement 10):** Ausgaben-**Titel**, **Beträge**, **IBAN** und **Freitext der Zahlungsinfo** erscheinen nie in Server-/Zugriffs-Logs, Fehler-Tracking (Bugsink-Scrubbing, keine Formularwerte in Breadcrumbs), Analytics/Statistik, Mails (Lösch-Hinweis nur „{n} Ausgleiche offen“), URLs/Query-Parametern oder Meta-Tags. Teilen-/Erinnern-Texte (I10-08/I10-09) nur mit Namen, Ausgleichsbeträgen und Link – **nie** IBAN, Freitext, Titel oder Einzelausgaben. Prüfpunkt Reviewer: Code-Suche nach `console.*`/Logger-Aufrufen in Kosten-Modulen, Fehlermeldungen ohne Eingabewerte, E2E-Prüfung Teilen-Text und Mail-Inhalt (Demo-Postfach) | mit Inkrement 10 / laufend |
+| ☐ | **Kosten teilen – Eingaben & Zugriff:** IBAN nur nach Prüfung (Format, Länderlänge, Mod 97) gespeichert, Freitext/Titel nur als Text (kein HTML, keine Auto-Links); Zahlungsinfo nur an Mitglieder der Reise, nie auf Einladungsseite/Vorschau; Rechte und Abschluss serverseitig geprüft; Konfliktschutz (`version`) und Idempotenz gegen Doppelbuchungen; Rate-Limits nach R.8 | mit Inkrement 10 |
 | ☐ | **Content-Security-Policy**: Stufe 1 (`img-src 'self'` u. a.) mit Inkrement 9, Stufe 2 (Nonce) vor M1 (deployment.md §0.9) | Inkrement 9 / M1 |
 | ☐ | **Datenpannen-Prozess** (Art. 33/34): Erkennen → bewerten → Meldung an Aufsichtsbehörde binnen 72 h → ggf. Betroffene informieren; Kontaktdaten der Behörde notieren | M2 |
 | ☐ | `security.txt` mit Kontakt für Sicherheitsmeldungen | M2 |

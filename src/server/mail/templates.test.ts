@@ -131,6 +131,28 @@ describe("privacy mails (F-013, F-043)", () => {
     expect(mail.text).toContain("am 25. Oktober 2026");
     expect(mail.text).toContain("90 Tagen");
     expect(mail.text.split("\n")).toContain("https://app.example/trips/abcdefghij");
+    expect(mail.text).not.toContain("Abrechnung");
+  });
+
+  it("names open settlements in the deletion notice – only the number (R.8 I10-10)", () => {
+    const mail = renderTripDeletionNoticeEmail({
+      locale: "de",
+      tripName: "Gardasee",
+      date: new Date("2026-10-25T00:00:00Z"),
+      reason: "afterTrip",
+      tripUrl: "https://app.example/trips/abcdefghij",
+      openSettlements: 3,
+    });
+    expect(mail.text).toContain("Achtung: In der Abrechnung sind noch 3 Ausgleiche offen.");
+    const en = renderTripDeletionNoticeEmail({
+      locale: "en",
+      tripName: "Gardasee",
+      date: new Date("2026-10-25T00:00:00Z"),
+      reason: "afterTrip",
+      tripUrl: "https://app.example/trips/abcdefghij",
+      openSettlements: 1,
+    });
+    expect(en.text).toContain("1 payment is still open");
   });
 
   it("warns an inactive account 30 days before with a sign-in link", () => {

@@ -28,6 +28,7 @@ import {
 import { freshlyDone } from "@/lib/trip-route";
 import { useWasServerPainted } from "@/lib/use-hydration";
 import type { CockpitAction, CockpitLink, RouteView, StationView } from "../types";
+import { firstCostStep } from "@/features/costs/components/cost-remind";
 import { useCockpit } from "./cockpit-provider";
 import styles from "./route.module.css";
 
@@ -155,7 +156,11 @@ function ActionButton({
       size={variant === "primary" ? "lg" : "sm"}
       block={variant === "primary"}
       aria-disabled={offline || (action.kind === "withoutApp" && pending) || undefined}
-      aria-haspopup={action.kind === "announce" || action.kind === "sheet" ? "dialog" : undefined}
+      aria-haspopup={
+        action.kind === "announce" || action.kind === "sheet" || action.kind === "closeCosts"
+          ? "dialog"
+          : undefined
+      }
       onClick={() => {
         if (!offline) cockpit?.run(action);
       }}
@@ -300,7 +305,8 @@ function StationCard({
             action={station.primary.action}
             sessionKey={sessionKey}
             returnKey={station.id}
-            variant="primary"
+            // U-30: «Abschließen» (D1) is never the page's primary.
+            variant={station.primary.variant}
             offline={offline}
           >
             {station.primary.label}
@@ -362,6 +368,9 @@ function StationActions({
             const { occasion, keys } = station.remind;
             if (occasion === "placeholder" || occasion === "orga") {
               cockpit?.open({ kind: "remind", occasion, keys });
+            } else if (occasion === "settle" || occasion === "settle-all") {
+              const data = cockpit?.data.costRemind;
+              if (data) cockpit.open({ kind: "cost", step: firstCostStep(data, occasion) });
             } else {
               cockpit?.open({ kind: "stay", step: { occasion } });
             }

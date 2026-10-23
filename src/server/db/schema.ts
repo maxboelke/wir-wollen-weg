@@ -224,6 +224,12 @@ export const trip = pgTable(
     stayDateNoticeDismissedAt: timestamp("stay_date_notice_dismissed_at", { withTimezone: true }),
     /** «gebucht» was reset by that change – second sentence of the notice, V3 «neu buchen». */
     stayBookingReset: boolean("stay_booking_reset").notNull().default(false),
+    /**
+     * «Abrechnung abschließen» (F-036, R.8 I10-08): expenses AND settlements are read-only while
+     * set; «wieder öffnen» clears both columns.
+     */
+    costsClosedAt: timestamp("costs_closed_at", { withTimezone: true }),
+    costsClosedBy: uuid("costs_closed_by").references(() => user.id, { onDelete: "set null" }),
     createdAt: createdAt(),
     updatedAt: updatedAt(),
   },
@@ -289,6 +295,14 @@ export const tripMember = pgTable(
      * arrival day celebrates again.
      */
     departureCelebratedOn: date("departure_celebrated_on", { mode: "string" }),
+    /**
+     * Voluntary payment details for THIS trip (F-036, Q35, R.8 I10-07): a checked, normalised
+     * IBAN and/or free text («PayPal: lena.k», ≤ 100). Visible to the members of the trip only,
+     * gone with the membership (leaving, removal, account deletion) – never in logs or mails.
+     */
+    paymentIban: text("payment_iban"),
+    paymentNote: text("payment_note"),
+    paymentUpdatedAt: timestamp("payment_updated_at", { withTimezone: true }),
   },
   (table) => [
     primaryKey({ columns: [table.tripId, table.userId] }),
@@ -303,6 +317,11 @@ export const tripMember = pgTable(
     check(
       "trip_member_comment_check",
       sql`${table.comment} is null or char_length(${table.comment}) <= 200`,
+    ),
+    check(
+      "trip_member_payment_check",
+      sql`(${table.paymentIban} is null or ${table.paymentIban} ~ '^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$')
+        and coalesce(char_length(${table.paymentNote}), 0) <= 100`,
     ),
     check(
       "trip_member_import_feedback_check",
@@ -647,6 +666,181 @@ export const tripStationMark = pgTable(
   (table) => [
     primaryKey({ columns: [table.tripId, table.station] }),
     check("trip_station_marks_station_check", sql`${table.station} in ('V3')`),
+  ],
+);
+
+// ---------------------------------------------------------------------------
+// Cost splitting (F-035 + F-036 stage 1, Increment 10 – features.md R.8, W19 D)
+// ---------------------------------------------------------------------------
+
+export const COST_CATEGORY_VALUES = [
+  "accommodation",
+  "travel",
+  "food",
+  "activities",
+  "other",
+] as const;
+export const SPLIT_MODE_VALUES = ["equal", "amounts"] as const;
+
+/**
+ * People of the settlement («Parteien», R.8 Begriffe): a member (user_id), an open placeholder
+ * (placeholder_id) or a former member (both null, `former_at` set). Created on first use under
+ * the trip lock. Deliberately NO foreign key to the membership – a party survives leaving with
+ * all its amounts. Names are never stored here (always live from membership/placeholder).
+ * `seq` = fixed order in the trip (rest cents, ties).
+ */
+export const tripCostParty = pgTable(
+  "trip_cost_party",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    seq: integer("seq").notNull(),
+    userId: uuid("user_id").references(() => user.id, { onDelete: "set null" }),
+    placeholderId: uuid("placeholder_id").references(() => tripPlaceholder.id, {
+      onDelete: "set null",
+    }),
+    formerAt: timestamp("former_at", { withTimezone: true }),
+    formerNo: integer("former_no"),
+    createdAt: createdAt(),
+  },
+  (table) => [
+    uniqueIndex("trip_cost_party_seq_idx").on(table.tripId, table.seq),
+    uniqueIndex("trip_cost_party_id_trip_idx").on(table.id, table.tripId),
+    uniqueIndex("trip_cost_party_user_idx")
+      .on(table.tripId, table.userId)
+      .where(sql`${table.userId} is not null`),
+    uniqueIndex("trip_cost_party_placeholder_idx")
+      .on(table.tripId, table.placeholderId)
+      .where(sql`${table.placeholderId} is not null`),
+    check(
+      "trip_cost_party_kind_check",
+      sql`not (${table.userId} is not null and ${table.placeholderId} is not null)`,
+    ),
+  ],
+);
+
+/**
+ * Expenses (R.8 Datenhaltung). Amounts in cents of the trip currency at creation; soft delete
+ * (`deleted_at`) for «Rückgängig», purged after 24 h by the retention job. `version` protects
+ * against silent overwrites (I10-03); `idempotency_key` prevents double bookings (I10-02).
+ * Trip content – title, note and amounts never go to logs or mails.
+ */
+export const tripExpense = pgTable(
+  "trip_expense",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    title: text("title").notNull(),
+    note: text("note"),
+    amountCents: integer("amount_cents").notNull(),
+    currency: text("currency").notNull(),
+    category: text("category", { enum: COST_CATEGORY_VALUES }),
+    spentOn: date("spent_on", { mode: "string" }).notNull(),
+    payerPartyId: uuid("payer_party_id").notNull(),
+    splitMode: text("split_mode", { enum: SPLIT_MODE_VALUES }).notNull(),
+    createdBy: uuid("created_by").references(() => user.id, { onDelete: "set null" }),
+    updatedBy: uuid("updated_by").references(() => user.id, { onDelete: "set null" }),
+    createdAt: createdAt(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
+    version: integer("version").notNull().default(1),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    deletedBy: uuid("deleted_by").references(() => user.id, { onDelete: "set null" }),
+    idempotencyKey: text("idempotency_key"),
+  },
+  (table) => [
+    index("trip_expense_trip_spent_idx").on(table.tripId, table.spentOn.desc()),
+    uniqueIndex("trip_expense_id_trip_idx").on(table.id, table.tripId),
+    uniqueIndex("trip_expense_idempotency_idx")
+      .on(table.tripId, table.idempotencyKey)
+      .where(sql`${table.idempotencyKey} is not null`),
+    index("trip_expense_deleted_idx")
+      .on(table.deletedAt)
+      .where(sql`${table.deletedAt} is not null`),
+    foreignKey({
+      name: "trip_expense_payer_fk",
+      columns: [table.payerPartyId, table.tripId],
+      foreignColumns: [tripCostParty.id, tripCostParty.tripId],
+    }),
+    check(
+      "trip_expense_values_check",
+      sql`char_length(${table.title}) between 1 and 60
+        and coalesce(char_length(${table.note}), 0) <= 200
+        and ${table.amountCents} between 1 and 100000000
+        and ${table.currency} ~ '^[A-Z]{3}$'
+        and ${table.version} >= 1
+        and coalesce(char_length(${table.idempotencyKey}), 0) <= 64`,
+    ),
+    check(
+      "trip_expense_category_check",
+      sql`${table.category} is null or ${table.category} in ('accommodation', 'travel', 'food', 'activities', 'other')`,
+    ),
+    check("trip_expense_split_check", sql`${table.splitMode} in ('equal', 'amounts')`),
+  ],
+);
+
+/**
+ * Shares per party, stored explicitly (R.8 rule 3: computed when saving). A deferred constraint
+ * trigger (migration 0011) checks «sum of shares = amount» at commit.
+ */
+export const tripExpenseShare = pgTable(
+  "trip_expense_share",
+  {
+    expenseId: uuid("expense_id").notNull(),
+    tripId: uuid("trip_id").notNull(),
+    partyId: uuid("party_id").notNull(),
+    shareCents: integer("share_cents").notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.expenseId, table.partyId] }),
+    index("trip_expense_share_party_idx").on(table.partyId),
+    foreignKey({
+      name: "trip_expense_share_expense_fk",
+      columns: [table.expenseId, table.tripId],
+      foreignColumns: [tripExpense.id, tripExpense.tripId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "trip_expense_share_party_fk",
+      columns: [table.partyId, table.tripId],
+      foreignColumns: [tripCostParty.id, tripCostParty.tripId],
+    }),
+    check("trip_expense_share_cents_check", sql`${table.shareCents} between 0 and 100000000`),
+  ],
+);
+
+/** Settlements «A → B: Betrag» (I10-06) – undo = delete the row. */
+export const tripSettlement = pgTable(
+  "trip_settlement",
+  {
+    id: id(),
+    tripId: uuid("trip_id")
+      .notNull()
+      .references(() => trip.id, { onDelete: "cascade" }),
+    fromPartyId: uuid("from_party_id").notNull(),
+    toPartyId: uuid("to_party_id").notNull(),
+    amountCents: integer("amount_cents").notNull(),
+    markedBy: uuid("marked_by").references(() => user.id, { onDelete: "set null" }),
+    markedAt: timestamp("marked_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    index("trip_settlement_trip_idx").on(table.tripId, table.markedAt),
+    foreignKey({
+      name: "trip_settlement_from_fk",
+      columns: [table.fromPartyId, table.tripId],
+      foreignColumns: [tripCostParty.id, tripCostParty.tripId],
+    }),
+    foreignKey({
+      name: "trip_settlement_to_fk",
+      columns: [table.toPartyId, table.tripId],
+      foreignColumns: [tripCostParty.id, tripCostParty.tripId],
+    }),
+    check(
+      "trip_settlement_values_check",
+      sql`${table.fromPartyId} <> ${table.toPartyId} and ${table.amountCents} between 1 and 2000000000`,
+    ),
   ],
 );
 

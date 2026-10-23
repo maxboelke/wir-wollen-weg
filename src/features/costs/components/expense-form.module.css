@@ -1,0 +1,375 @@
+/* Expense form – W19 D.5, design-system §9.22 «Formular „Ausgabe“» (D-61) */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-5);
+  max-width: 640px;
+  margin-inline: auto;
+  padding-bottom: var(--ww-space-16);
+  container-type: inline-size;
+}
+
+.field,
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.label {
+  padding: 0;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.legendRow {
+  padding: 0;
+}
+
+.hint {
+  margin: 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.input,
+.select {
+  width: 100%;
+  min-height: var(--ww-size-control-md);
+  padding: var(--ww-space-2) var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font: inherit;
+  font-size: var(--ww-text-md);
+}
+
+.input::placeholder,
+.amountInput::placeholder {
+  color: var(--ww-color-text-subtle);
+}
+
+.input:focus-visible,
+.select:focus-visible,
+.amountInput:focus-visible {
+  outline: var(--ww-focus-width) solid transparent;
+  border-color: var(--ww-color-selected);
+  box-shadow: var(--ww-focus-ring);
+}
+
+.invalid {
+  border: var(--ww-border-thick) solid var(--ww-color-danger);
+}
+
+/* Amount field: 56 px, Jakarta 28/800 tabular, currency sign as decoration */
+.amountBox {
+  position: relative;
+}
+
+.amountInput {
+  width: 100%;
+  height: var(--ww-cost-input-h);
+  padding: 0 var(--ww-space-4);
+  border: var(--ww-border-medium) solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-cost-amount-input);
+  font-weight: var(--ww-font-weight-display);
+  font-variant-numeric: var(--ww-cost-numeric);
+}
+
+.symbolAfter .amountInput {
+  padding-inline-end: 44px;
+}
+
+.symbolBefore .amountInput {
+  padding-inline-start: 40px;
+}
+
+.symbol {
+  position: absolute;
+  top: 50%;
+  color: var(--ww-color-text-muted);
+  font-size: 1.25rem;
+  font-weight: var(--ww-font-weight-bold);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.symbolAfter .symbol {
+  right: var(--ww-space-4);
+}
+
+.symbolBefore .symbol {
+  left: var(--ww-space-4);
+}
+
+/* Chips (§9.10): visible 40, hit area 44 */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2);
+}
+
+.chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-height: var(--ww-size-touch-min);
+  padding: 0 var(--ww-space-3);
+  border: 1.5px solid var(--ww-color-border-strong);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-surface);
+  color: var(--ww-color-text);
+  font: inherit;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.chip:focus-visible,
+.personChip:focus-within {
+  outline: var(--ww-focus-ring);
+  outline-offset: var(--ww-focus-offset);
+}
+
+.chipOn {
+  border: 2px solid var(--ww-color-selected);
+  background: var(--ww-color-primary-tint);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.chipIcon {
+  display: inline-flex;
+}
+
+.cat-accommodation {
+  color: var(--ww-cost-cat-accommodation-fg);
+}
+
+.cat-travel {
+  color: var(--ww-cost-cat-travel-fg);
+}
+
+.cat-food {
+  color: var(--ww-cost-cat-food-fg);
+}
+
+.cat-activities {
+  color: var(--ww-cost-cat-activities-fg);
+}
+
+.cat-other {
+  color: var(--ww-cost-cat-other-fg);
+}
+
+.personChip:has(.check:disabled) {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.check {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.chipCheck {
+  display: inline-flex;
+  width: 16px;
+}
+
+.chipExtra {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-medium);
+}
+
+.forHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+}
+
+.count {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-variant-numeric: var(--ww-cost-numeric);
+}
+
+/* Split segment */
+.segment {
+  display: flex;
+  gap: var(--ww-space-1);
+  padding: var(--ww-space-1);
+  border-radius: var(--ww-radius-segment);
+  background: var(--ww-color-surface-sunken);
+}
+
+.segmentItem {
+  display: inline-flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ww-size-touch-min);
+  border-radius: calc(var(--ww-radius-segment) - 4px);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  text-align: center;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.segmentItem:focus-within {
+  outline: var(--ww-focus-ring);
+  outline-offset: var(--ww-focus-offset);
+}
+
+.segmentOn {
+  background: var(--ww-color-surface);
+  box-shadow: var(--ww-shadow-1);
+  color: var(--ww-color-text);
+}
+
+.segmentRadio {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.amounts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.amountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-2);
+}
+
+.amountName {
+  flex: 1;
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.shareInput {
+  width: auto;
+  max-width: 128px;
+  min-height: var(--ww-size-touch-min);
+  font-weight: var(--ww-font-weight-bold);
+  font-variant-numeric: var(--ww-cost-numeric);
+  text-align: end;
+}
+
+.live {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-height: 1.5em;
+  margin: 0;
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+  font-variant-numeric: var(--ww-cost-numeric);
+}
+
+.liveWarn {
+  color: var(--ww-color-warning-text);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.liveOk {
+  color: var(--ww-color-accent-text);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.noteToggle {
+  align-self: flex-start;
+}
+
+.formerAvatar {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--ww-cost-former-bg);
+  color: var(--ww-cost-former-fg);
+}
+
+.conflict:focus {
+  outline: none;
+}
+
+.conflictText {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-1);
+}
+
+.conflictActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ww-space-2);
+  margin-top: var(--ww-space-2);
+}
+
+.bar {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  justify-content: center;
+  padding: var(--ww-space-3) var(--ww-space-4) calc(var(--ww-space-3) + env(safe-area-inset-bottom));
+  background: var(--ww-color-bg);
+  box-shadow: var(--ww-shadow-sticky-bottom);
+}
+
+.bar > * {
+  max-width: 640px;
+}
+
+@media (min-width: 960px) {
+  .bar {
+    position: static;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+}
+
+.sheetBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.sheetBody p {
+  margin: 0;
+}
+
+.sheetActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--ww-space-2);
+}

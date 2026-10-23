@@ -119,6 +119,13 @@ describe("parsePrice (W17 F.2)", () => {
     ["1840.50", "en", 184_050],
     ["£1,840.50", "en", 184_050],
     ["1.000.000", "de", 100_000_000],
+    // W19 D.5.2: one «other» separator with 1–2 digits at the end is the decimal separator.
+    ["18.5", "de", 1_850],
+    ["1840.50", "de", 184_050],
+    ["12,50", "en", 1_250],
+    ["12,5", "en", 1_250],
+    ["CHF 12.50", "de", 1_250],
+    ["kr 120", "en", 12_000],
   ])("%s (%s) → %i cents", (input, locale, cents) => {
     expect(parsePrice(input, locale)).toEqual({ ok: true, cents });
   });
@@ -128,8 +135,9 @@ describe("parsePrice (W17 F.2)", () => {
     expect(parsePrice(null, "en")).toEqual({ ok: true, cents: null });
   });
   it.each([
-    ["18.5", "de", "price"],
-    ["1840.50", "de", "price"],
+    ["1.840.50", "de", "price"],
+    ["12,505", "de", "price"],
+    ["1,840,50", "en", "price"],
     ["1,840.505", "en", "price"],
     ["0", "de", "price"],
     ["-5", "en", "price"],

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { formatExact } from "@/lib/costs";
 import { useId, useState, useTransition, type ReactNode } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
@@ -62,6 +63,17 @@ export interface TripSheetContext {
   canCancelPoll: boolean;
   /** Phase 1/2 with somebody else open: «Gruppe erinnern» for everyone (ux-spec §14.2). */
   canRemind: boolean;
+  /** Costs (W19 D.10): balances per member for the leave/remove warnings – null without costs. */
+  costs?:
+    | {
+        currency: string;
+        closed: boolean;
+        balances: Record<string, number>;
+        payInfo: boolean;
+        balancesHref: string;
+      }
+    | null
+    | undefined;
 }
 
 interface TripSheetProps extends TripSheetContext {
@@ -424,8 +436,12 @@ function LeaveStep({
   publicId,
   isOrganizer,
   members,
+  costs,
+  myUserId,
+  intl,
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
+  const tLeave = useTranslations("costsLeave");
   const { run, pending, error } = useResult();
   if (isOrganizer) {
     const alone = members.length <= 1;
@@ -460,9 +476,18 @@ function LeaveStep({
       </div>
     );
   }
+  const balance = costs && !costs.closed ? (costs.balances[myUserId] ?? 0) : 0;
+  const amount = costs ? formatExact(Math.abs(balance), costs.currency, intl) : "";
   return (
     <div className={styles.body}>
       <p>{t("leaveText")}</p>
+      {balance !== 0 ? (
+        <p data-leave-costs="">
+          {balance < 0 ? tLeave("owe", { amount }) : tLeave("owed", { amount })}{" "}
+          {costs ? <Link href={costs.balancesHref}>{tLeave("toBalances")}</Link> : null}
+        </p>
+      ) : null}
+      {costs?.payInfo ? <p>{tLeave("payInfo")}</p> : null}
       <ErrorLine error={error} />
       <Actions onCancel={onClose}>
         <Button
@@ -476,7 +501,7 @@ function LeaveStep({
             );
           }}
         >
-          {t("leaveConfirm")}
+          {balance !== 0 ? tLeave("anyway") : t("leaveConfirm")}
         </Button>
       </Actions>
     </div>
@@ -701,13 +726,31 @@ function RemoveStep({
   member,
   onClose,
   publicId,
+  costs,
+  intl,
 }: { member: SheetMember; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
+  const tLeave = useTranslations("costsLeave");
+  const removeBalance = costs && !costs.closed ? (costs.balances[member.userId] ?? 0) : 0;
   const { run, pending, error, toast } = useResult();
   const [renew, setRenew] = useState(false);
   return (
     <div className={styles.body}>
       <p>{t("removeText", { name: member.displayName })}</p>
+      {removeBalance !== 0 && costs ? (
+        <p data-remove-costs="">
+          {removeBalance < 0
+            ? tLeave("removeOwes", {
+                name: member.displayName,
+                amount: formatExact(-removeBalance, costs.currency, intl),
+              })
+            : tLeave("removeOwed", {
+                name: member.displayName,
+                amount: formatExact(removeBalance, costs.currency, intl),
+              })}{" "}
+          {tLeave("removeStay", { name: member.displayName })}
+        </p>
+      ) : null}
       <Checkbox
         label={t("removeRenew")}
         checked={renew}

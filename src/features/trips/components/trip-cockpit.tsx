@@ -40,7 +40,7 @@ interface TripCockpitProps {
  * pills. Phase line «Tage sammeln · 5/7 fertig» reads «5 von 7 fertig» to screen readers.
  */
 export async function TripCockpit({ view, tab, subtitle, kpi, hub, action }: TripCockpitProps) {
-  const t = await getTranslations("trip");
+  const [t, menuContext] = await Promise.all([getTranslations("trip"), sheetContext(view, tab)]);
   const { trip, phase, progress, members } = view;
   const tabs: TabLink[] = TAB_ORDER.map((key) => ({
     key,
@@ -97,7 +97,7 @@ export async function TripCockpit({ view, tab, subtitle, kpi, hub, action }: Tri
             </p>
           </div>
           {action}
-          <TripMenu label={t("menu")} {...sheetContext(view, tab)} />
+          <TripMenu label={t("menu")} {...menuContext} />
         </div>
         {tab && showTabs(trip) ? <TabNav tabs={tabs} current={tab} label={t("tabsLabel")} /> : null}
       </StickyHead>

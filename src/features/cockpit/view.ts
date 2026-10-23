@@ -6,13 +6,15 @@ import { locales, type Locale } from "@/i18n/config";
 import { formatDate, formatDateRange, toUtcDate, type IsoDate } from "@/lib/dates";
 import { googleCalendarUrl } from "@/lib/ics";
 import { nightsOf } from "@/lib/poll";
-import { rankingVisible } from "@/lib/stays";
+import { formatExact } from "@/lib/costs";
+import { formatMoney, rankingVisible } from "@/lib/stays";
 import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
+import { costRemindData } from "../costs/remind";
 import { stayRemindData } from "../stays/remind";
 import { nameList, nightsText, rangeText } from "../trips/format";
 import type { TripView } from "../trips/load";
-import { tripPath } from "../trips/paths";
+import { costsPath, tripPath } from "../trips/paths";
 import { orgaName } from "../trips/remind";
 import { inviteLink, resultShareTexts, tripLink } from "../trips/share-texts";
 import type { CockpitData } from "./load";
@@ -50,7 +52,11 @@ function text(ctx: Ctx, msg: Msg): string {
     else if ("names" in value) values[key] = nameList([...value.names], ctx.locale, ctx.more);
     else if ("date" in value) values[key] = formatDate(value.date, ctx.intl, { weekday: false });
     else if ("time" in value) values[key] = formatTime(value.time, ctx.intl);
-    else values[key] = text(ctx, value.msg);
+    else if ("money" in value) {
+      values[key] = value.exact
+        ? formatExact(value.money, value.currency, ctx.intl)
+        : formatMoney(value.money, value.currency, ctx.intl);
+    } else values[key] = text(ctx, value.msg);
   }
   return ctx.t(msg.key, values);
 }
@@ -75,6 +81,8 @@ const LOOK: Record<string, { icon: IconName; tone: Exclude<TileTone, "brand"> }>
   V2: { icon: "users", tone: "mint" },
   V3: { icon: "bed", tone: "lavender" },
   A2: { icon: "info", tone: "lavender" },
+  A1: { icon: "wallet", tone: "sun" },
+  D1: { icon: "wallet", tone: "sun" },
   "T-meet": { icon: "users", tone: "lavender" },
 };
 
@@ -94,6 +102,12 @@ function link(view: TripView, target: RouteTarget): CockpitLink {
       return { kind: "path", href: `${tripPath(id)}/stays/swipe` };
     case "staysRanking":
       return { kind: "path", href: `${tripPath(id)}/stays#ranking` };
+    case "costs":
+      return { kind: "path", href: costsPath(id) };
+    case "costsBalances":
+      return { kind: "path", href: costsPath(id, "balances") };
+    case "costsNew":
+      return { kind: "path", href: `${costsPath(id, "new")}?date=today&from=cockpit` };
   }
 }
 
@@ -112,6 +126,10 @@ function action(view: TripView, value: RouteTarget | RouteAction): CockpitAction
       };
     case "stayWithoutApp":
       return { kind: "stayWithoutApp", on: value.on };
+    case "closeCosts":
+      return { kind: "closeCosts", open: value.open };
+    case "reopenCosts":
+      return { kind: "reopenCosts" };
     default:
       return link(view, value);
   }
@@ -120,7 +138,9 @@ function action(view: TripView, value: RouteTarget | RouteAction): CockpitAction
 function stateWord(ctx: Ctx, station: TripStation): string {
   if (station.kind === "plan") return ctx.t("label.plan");
   if (station.kind === "task") {
-    return ctx.t("label.task", { area: ctx.t("label.areaInfo") });
+    return ctx.t("label.task", {
+      area: ctx.t(station.id === "A1" ? "label.areaCosts" : "label.areaInfo"),
+    });
   }
   switch (station.state) {
     case "done":
@@ -158,7 +178,7 @@ function station(ctx: Ctx, view: TripView, value: TripStation): StationView {
           primary: {
             label: text(ctx, value.primary.label),
             action: action(view, value.primary.action),
-            variant: "primary" as const,
+            variant: value.primary.secondary ? ("secondary" as const) : ("primary" as const),
           },
         }
       : {}),
@@ -250,8 +270,8 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       status,
       ariaLabel: sentence(title, status),
       href: path(view, tile.href),
-      icon: tile.area === "stay" ? "bed" : "info",
-      tone: "lavender",
+      icon: tile.area === "stay" ? "bed" : tile.area === "costs" ? "wallet" : "info",
+      tone: tile.area === "costs" ? "sun" : "lavender",
     };
   });
   const placeholders = view.placeholders.length;
@@ -328,6 +348,10 @@ export async function ticketView(view: TripView, data: CockpitData): Promise<Tic
       more: Math.max(0, members.length - 3),
       text: t("crew", { count: members.length, nights: nightsOf({ start, end }) }),
     },
+    addExpense: route.headActions.includes("addExpense")
+      ? `${costsPath(trip.publicId, "new")}?date=today&from=cockpit`
+      : null,
+    settle: route.headActions.includes("settle") ? costsPath(trip.publicId, "balances") : null,
     calendar: route.headActions.includes("calendar")
       ? {
           icsHref: `${tripPath(trip.publicId)}/event.ics`,
@@ -461,5 +485,6 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
       })
         ? await stayRemindData(view, data.staysRaw)
         : null,
+    costRemind: await costRemindData(view, data.costsRaw),
   };
 }

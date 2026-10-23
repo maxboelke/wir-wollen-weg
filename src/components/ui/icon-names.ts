@@ -53,6 +53,13 @@ export const ICON_NAMES = [
   "heart",
   "heart-filled",
   "external",
+  "wallet",
+  "transfer",
+  "receipt",
+  "food",
+  "car",
+  "ticket",
+  "tag",
   "all-available",
 ] as const;
 

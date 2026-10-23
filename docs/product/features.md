@@ -1,6 +1,6 @@
 # Features – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v0.7, Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
+Stand: 2026-10-23 (v0.8, Inkrement 10 „Kosten teilen“ zugeschnitten – R.8; v0.7: Inkrement 9 „Unterkünfte“ zugeschnitten – R.7; v0.6: Ausbaustufe „Reise managen“ entschieden, Inkrement 8 zugeschnitten; Entscheidungen Q1–Q6, Q11–Q36, UX-1, UX-2, UX-8, UX-9 eingearbeitet) · Verantwortlich: Product Manager · Bezug: [PRD.md](PRD.md), [roadmap.md](roadmap.md), [W16 v2](../ux/wireframes/w16-cockpit.md)
 
 Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should, **C** = Could (v1), **W** = Won't (jetzt nicht, später). Spalte „Phase“ siehe Roadmap. Spalte „Tarif“: geplante Zuordnung im Freemium-Modell (PRD §6) – **Free** = dauerhaft kostenlos, **Premium?** = Kandidat für Premium, Entscheidung offen (Q8). Im MVP ist alles kostenlos.
 
@@ -15,6 +15,8 @@ Priorisierung nach MoSCoW **bezogen auf das MVP**: **M** = Must, **S** = Should,
 **Änderungen v0.6 (2026-10-22, Auftraggeber „Ja zu allem“):** **Q26–Q36 entschieden wie empfohlen** – alle „(Q…)“-Angaben in der Ausbaustufe gelten jetzt als entschieden. **UX-1:** Phase 3 ohne Tabs, Cockpit als Hub. **UX-2:** Reisedaten eigener Bereich (F-054, F-055 angepasst). **F-053 neu gefasst nach W16 v2 „Reiseverlauf“** (Ticket-Kopf, Weg mit Stationen V1–V6/T/D, „Heute“ statt „Für dich zu tun“, Kacheln „Immer griffbereit“, Mehr zur Reise) inkl. **UX-8** (kleine Feier am Abreisetag) und **UX-9** („ohne App erledigt“ durch die Orga). F-031/F-035/F-055: „Tab“ → Station/Kachel + Bereichs-Unterseite. F-033: Bearbeiten in Inkrement 8 nur Orga („Bucht“ ab Inkrement 11). Neu **R.6 Zuschnitt Inkrement 8** mit User Stories, Akzeptanzkriterien, Abgrenzung und Datenhaltung. F-015 und F-017: Umsetzungsstand nachgetragen (Inkrement 7 wird aufgelöst, roadmap.md).
 
 **Änderungen v0.7 (2026-10-23):** Neu **R.7 Zuschnitt Inkrement 9 – Unterkünfte (F-031 Stufe 1)** mit User Stories I9-01–I9-11, Rechte-Tabelle (Bucher = Orga bis Inkrement 11), Sicherheit (SSRF-Schutz, Bild-Proxy ohne offene URL, Rate-Limits), Datenhaltung (`trip_stay`, `trip_stay_rating`, Festlegung/gebucht an der Reise, `trip_station_marks`, `trip.currency`), Demo-Seed und Abgrenzung zu 10–12. Festlegungen: Bereich außerhalb Phase 3 nicht erreichbar (Daten bleiben); neue Termin-Festlegung mit anderem Zeitraum setzt «gebucht» zurück; «Aus Unterkunft übernehmen» übernimmt nur den Titel, keine Adresse; ✕ nur als Zahl, ♥ namentlich.
+
+**Änderungen v0.8 (2026-10-23):** Neu **R.8 Zuschnitt Inkrement 10 – Kosten teilen (F-035 + F-036 Stufe 1)** mit User Stories I10-01–I10-11, Rechte-Tabelle, verbindlichen **Rechenregeln** (Cent-Ganzzahlen, Rest-Cent an die ersten Personen in fester Reihenfolge, Ausgleich per „exakte Paare + Greedy“ mit Garantie ≤ n−1 Überweisungen, A1-Schwelle je Währung, erlaubte Währungen), Sicherheit (Konfliktschutz `version`, Idempotenz beim Anlegen, Salden-Prüfung beim Markieren), Datenhaltung (`trip_cost_party` – überlebt das Verlassen –, `trip_expense`, `trip_expense_share`, `trip_settlement`, Zahlungsinfo an `trip_member`), Demo-Seed und Abgrenzung. Festlegungen: Orga darf alle Ausgaben bearbeiten/löschen, markiert Ausgleiche zwischen zwei Konto-Mitgliedern aber nicht für andere; Zahlungsinfo getrennt in **geprüfte IBAN** (maskiert angezeigt) + Freitext ≤ 100; Abschließen auch mit offenen Salden (nach Warnung) sperrt Ausgaben und Ausgleiche; Platzhalter mit Beteiligung nicht löschbar; UI sagt nicht „minimal“. Steckbrief F-035/F-036 verweist auf R.8.
 
 ## Übersicht
 
@@ -606,7 +608,7 @@ Aufwand: **M–L** (≈ 1–1,5 Inkremente; Risiko: Swipe-Gesten im In-App-Brows
 **Als** Mitglied **möchte ich** jederzeit meinen Saldo sehen («du bekommst 42 €»), **damit** ich weiß, wo ich stehe.
 **Als** Gruppe **wollen wir** am Ende mit möglichst wenigen Überweisungen ausgleichen, **damit** die Abrechnung keinen Streit auslöst.
 
-Akzeptanzkriterien F-035 Ausgaben (Stufe 1 – Inkrement 10):
+Akzeptanzkriterien F-035 Ausgaben (Stufe 1 – Inkrement 10; **Zuschnitt, Rechte, Rechenregeln, Datenhaltung und Sicherheit siehe R.8** – bei Widerspruch gilt R.8):
 - [ ] **Verfügbar ab Phase 3** (Q35). Einstieg im Cockpit als Kachel „Kosten“, Aufgabe A1 unter „Heute“ (eigene Schuld ≥ 50 €), in *Danach* Station D1 „Kosten ausgleichen“, unterwegs Kopf-Taste `[+ Ausgabe]` (W16 v2); Bereich `/trips/{id}/costs` (kein Tab, UX-1). Jedes Mitglied kann Ausgaben eintragen – **ohne Mengenlimit** (bewusste Abgrenzung zu Splitwise, dessen Gratis-Tarif Einträge pro Tag begrenzt).
 - [ ] **Eine Währung pro Reise** (Standard aus der Region der Orga, z. B. EUR; von der Orga änderbar, solange keine Ausgabe existiert). Fremdwährungen → F-037 (später).
 - [ ] Ausgabe: **Betrag** (Pflicht, > 0, max. 2 Nachkommastellen, intern in Cent als Ganzzahl), **Titel** (Pflicht, ≤ 60 Zeichen), **bezahlt von** (genau eine Person, Standard: ich), **für wen** (Standard: alle Reisenden; abwählbar), **Datum** (Standard heute bzw. Anreisetag), Kategorie optional (Unterkunft, Anreise, Essen, Aktivitäten, Sonstiges – mit Icon).
@@ -618,9 +620,9 @@ Akzeptanzkriterien F-035 Ausgaben (Stufe 1 – Inkrement 10):
 
 Akzeptanzkriterien F-036 Salden & Ausgleich (Stufe 1 – Inkrement 10):
 - [ ] **Saldo je Person** = bezahlt − eigener Anteil (+ erhaltene/geleistete Ausgleichszahlungen). Anzeige als Text «bekommt 42,00 €» / «schuldet 23,50 €» / «ausgeglichen ✓» (nie nur Farbe/Vorzeichen); Summe aller Salden = 0 (Test).
-- [ ] **Ausgleichsvorschlag:** minimale Zahl von Überweisungen (Greedy: größter Schuldner an größten Gläubiger; deterministisch, reine Funktion, testbar; 30 Personen < 100 ms). Darstellung «Kemal → Lena: 23,50 €».
+- [ ] **Ausgleichsvorschlag:** möglichst wenige Überweisungen (exakte Paare + Greedy: größter Schuldner an größten Gläubiger; höchstens n−1 Überweisungen; deterministisch, reine Funktion, testbar; 30 Personen < 100 ms – Details R.8 Rechenregel 6). Darstellung «Kemal → Lena: 23,50 €».
 - [ ] **«Als bezahlt markieren»** durch Zahlende **oder** Empfangende → wird als Ausgleichszahlung gebucht (rückgängig machbar); der Saldo aktualisiert sich.
-- [ ] **Zahlungshinweis (optional, Q35):** Jedes Mitglied kann für diese Reise freiwillig eine Zahlungsinfo hinterlegen (Freitext ≤ 100 Zeichen, z. B. PayPal-Name oder IBAN), sichtbar für Mitglieder der Reise, Hinweis «Alle in der Reise können das lesen»; Kopier-Button. **Keine** Zahlungsabwicklung, keine Bank-/PayPal-Anbindung.
+- [ ] **Zahlungshinweis (optional, Q35):** Jedes Mitglied kann für diese Reise freiwillig eine Zahlungsinfo hinterlegen (R.8: geprüfte **IBAN**, maskiert angezeigt, und/oder Freitext ≤ 100 Zeichen, z. B. PayPal-Name), sichtbar für Mitglieder der Reise, Hinweis «Alle in der Reise können das lesen»; Kopier-Button. **Keine** Zahlungsabwicklung, keine Bank-/PayPal-Anbindung.
 - [ ] **Abrechnung abschließen** (Orga, ab Teilphase *Danach* empfohlen): Kosten werden schreibgeschützt; Wiederöffnen möglich.
 - [ ] Teilen-Text «Abrechnung <Reise>: Kemal → Lena 23,50 € …» (für den Gruppenchat).
 - [ ] **Datenschutz & Löschung:** Ausgaben werden mit der Reise gelöscht (F-013, 90 Tage nach Reiseende). Hat die Reise **offene Salden**, nennt die Lösch-Hinweismail an die Orga dies ausdrücklich. **Reise verlassen mit offenem Saldo:** Warnung mit Betrag; nach Bestätigung bleiben die Ausgaben für die Gruppe korrekt erhalten, die Person erscheint darin als «ehemaliges Mitglied» (Name wird entfernt) (Q35).
@@ -1050,6 +1052,213 @@ Migrationen: eine Migration (`0010`) für `trip_stay`, `trip_stay_rating`, `trip
 | nie (Nicht-Ziel) | Buchung in der App, Preis-/Verfügbarkeitsabfrage bei Portalen, Affiliate-Links. |
 
 Aufwand: **M–L (≈ 1–1,5 Inkremente)**. Risiko: Link-Vorschau (viele Portale blocken → Platzhalter ist Normalfall, nicht Fehler), SSRF-Härtung (gemeinsame Funktion + Tests), Swipe im In-App-Browser (Tasten als gleichwertiger Weg).
+
+### R.8 Zuschnitt Inkrement 10 – Kosten teilen (F-035 + F-036 Stufe 1) (2026-10-23)
+
+**Ziel:** Ab der Festlegung trägt jede Person der Reise Ausgaben in Sekunden ein (wer hat bezahlt, für wen, gleich oder nach Beträgen), alle sehen jederzeit ihren Saldo, und am Ende gleicht die Gruppe mit möglichst wenigen Überweisungen aus – sichtbar im Cockpit als Kachel „Kosten“, Aufgabe **A1** unter „Heute“ und Station **D1 „Kosten ausgleichen“** in *Danach*. **Die App bewegt kein Geld** (R.0 Nr. 6): Sie rechnet und zeigt, wer wem was schuldet; Überweisungen passieren außerhalb. Keine Dateien, keine sensiblen Daten im Sinne von G1b → echte Nutzung ab **G1**.
+
+**Quellen (verbindlich):** F-035/F-036 (Steckbrief oben) · PRD §12 **Q35** (ab Festlegung; eine Währung pro Reise; gleich oder nach Beträgen; Platzhalter rechnen mit; freiwillige Zahlungsinfo sichtbar für die Reise; Verlassen mit offenem Saldo nur nach Warnung, Ausgaben bleiben mit «ehemaliges Mitglied»; Fremdwährungen/Belegfotos/Export/mehrere Zahler später) · **Q36** (unbegrenzte Ausgaben, alles hier Free) · **Q31** (Ausgaben werden mit der Reise gelöscht, 90 Tage) · **UX-3** in der Fassung W16 v2.4 (Schulden-Aufgabe A1 ab 50 € in *Vorbereitung* und *Unterwegs*, in *Danach* übernimmt D1) · W16 v2.1 (Kopf-Tasten `[+ Ausgabe]` / `[Ausgleichen]`), v2.4 (A1, D1-Tabelle, Phasenzeile *Danach*), v2.5 (Heute-Reihenfolge, H-5/H-5b), v2.6 (Kachel Kosten), v2.8 (Anlässe `settle`, `settle-all`), v2.10 (Adapter), v2.12 U-30 (`[Abschließen]` immer sekundär) · **W19** (Ausgaben, Formular, Salden & Ausgleich) – wird von UI/UX parallel baureif gemacht. **Für UI, Texte, Zustände und Layout gilt die UX-Spec (W16/W19); dieser Abschnitt regelt Daten, Rechte, Rechenregeln, Abgrenzung und Akzeptanz.** Bei Widerspruch in Rechten, Rechenregeln oder Datenhaltung gilt R.8; UI/UX gleicht W19 an. R.8 präzisiert den Steckbrief F-035/F-036 (dort u. a. „minimale Zahl von Überweisungen“ und „Zahlungshinweis Freitext“) – bei Widerspruch gilt R.8.
+
+**Voraussetzung für den Start der Umsetzung:** W19 „baureif“ von UI/UX (inkl. Währung ändern, Konfliktmeldung, IBAN-Feld mit Maskierung, Warnung beim Abschließen mit offenen Salden, Platzhalter-Löschsperre, Texte für mehrere ehemalige Mitglieder «ehemaliges Mitglied 1», «… 2»); Designer liefert 5 Kategorie-Icons, Leer-Illustration «Noch keine Ausgaben» und das kleine Siegel «Alles ausgeglichen»; Motion Designer liefert Saldo-Wechsel (Zahl zählt nicht hoch – nur Überblenden, reduziert: sofort), «Als bezahlt markieren» → Eintrag wandert nach „Bereits bezahlt“, Siegel «Alles ausgeglichen» (je mit reduzierter Variante; kein Konfetti).
+
+#### Im Umfang (Übersicht)
+| Baustein | UX-Quelle | Feature |
+|---|---|---|
+| Bereich `/trips/{id}/costs` (Dein Stand, Ausgaben nach Tag, Detail-Sheet, Leer-/Abgeschlossen-Zustand) | W19 A | F-035 |
+| Ausgabe hinzufügen/bearbeiten `/costs/new`, `/costs/{expenseId}/edit` (gleich / nach Beträgen, Platzhalter, Kategorie, Datum), Löschen mit Rückgängig | W19 B | F-035 |
+| Salden & Ausgleich `/costs/balances` (Ausgleichsvorschlag, «Als bezahlt markieren», „Bereits bezahlt“, Salden je Person) | W19 C | F-036 |
+| Zahlungsinfo je Person und Reise (IBAN geprüft + maskiert, Freitext z. B. PayPal-Name) | W19 C | F-036, Q35 |
+| Abrechnung abschließen / wieder öffnen (Orga), Teilen-Text «Abrechnung …» | W19 C | F-036 |
+| Währung der Reise ändern (Orga, solange keine Ausgabe existiert) | W19 (Ergänzung) | F-035 |
+| Cockpit: Kachel **Kosten**, Aufgabe **A1**, Station **D1**, Kopf-Tasten `[+ Ausgabe]` (*Unterwegs*) und `[Ausgleichen]` (*Danach*), Phasenzeile *Danach*, H-5/H-5b, Erinnern-Anlässe `settle`/`settle-all` | W16 v2.1, v2.4–v2.8 | F-053 |
+| Reise verlassen / entfernen / Konto löschen mit offenem Saldo (Warnung, «ehemaliges Mitglied») | W19 „Reise verlassen“ | F-013, F-004, F-043, Q35 |
+| Platzhalter übernehmen (Saldo geht mit), Platzhalter-Löschsperre | – | F-007 |
+| Datenexport, Löschung, Lösch-Hinweismail mit offenen Salden, Demo-Seed | – | F-013, F-043 |
+| *Could:* «Als Ausgabe eintragen» bei der gebuchten Unterkunft (Formular vorbelegt) | W18 D (Ergänzung) | F-031 → F-035 |
+
+#### Begriffe
+- **Person der Abrechnung** (technisch *Partei*): jede Person, die in Ausgaben oder Ausgleichen vorkommt – **Mitglied** (Konto), **offener Platzhalter** (F-007, nicht eingelöst; auch „ohne App“ markierte) oder **ehemaliges Mitglied** (hat die Reise verlassen, wurde entfernt oder hat das Konto gelöscht). Ehemalige Mitglieder behalten ihre Beträge, aber **keinen Namen**; gibt es mehrere, heißen sie in fester Reihenfolge (Zeitpunkt des Austritts) «ehemaliges Mitglied 1», «… 2».
+- **Aktive Personen** = Mitglieder + offene Platzhalter. Nur sie können in **neuen** Ausgaben als Zahler oder Beteiligte gewählt werden.
+- **Saldo** einer Person = Summe der von ihr bezahlten Ausgaben − Summe ihrer Anteile + von ihr geleistete Ausgleichszahlungen − von ihr empfangene Ausgleichszahlungen. Positiv = «bekommt», negativ = «schuldet», 0 = «ausgeglichen ✓». **Summe aller Salden = 0** (Invariante, Test).
+- **Offen** = mindestens ein Saldo ≠ 0.
+
+#### Rechte in Inkrement 10 (serverseitig geprüft, Ergänzung zu R.1)
+„Bucht“ (Inkrement 11) hat bei Kosten **keine** Sonderrechte. Platzhalter und ehemalige Mitglieder handeln nie selbst.
+
+| Aktion | Mitglied | Orga | Bedingung |
+|---|---|---|---|
+| Bereich ansehen: alle Ausgaben, alle Salden, Ausgleichsvorschlag, Zahlungsinfos | ✔ | ✔ | Mitglied der Reise, Phase `fixed` (Transparenz – Q35: Kosten sind für die Reise sichtbar) |
+| Ausgabe anlegen (Zahler und Beteiligte frei wählbar unter den **aktiven** Personen, auch Platzhalter als Zahler) | ✔ | ✔ | nicht abgeschlossen |
+| Ausgabe bearbeiten / löschen / Löschen rückgängig | ✔ wenn **angelegt** oder **bezahlt** (Zahler = eigene Person) | ✔ **alle** | nicht abgeschlossen; Konfliktschutz über `version` |
+| «Als bezahlt markieren» (Ausgleichszahlung buchen) | ✔ wenn selbst **Zahlende** oder **Empfangende** | ✔ als Zahlende/Empfangende; **zusätzlich**, wenn **keine** der beiden Seiten ein aktives Mitglied mit Konto ist (Platzhalter/ehemaliges Mitglied auf beiden Seiten) | nicht abgeschlossen; Betrag ≤ aktuell offene Schuld (s. I10-06) |
+| Ist eine Seite Platzhalter oder ehemaliges Mitglied | die **andere** Seite markiert (W19: «Mia → Lena: Lena markiert den Eingang») | wie links | – |
+| Ausgleichszahlung rückgängig | ✔ Zahlende, Empfangende oder wer markiert hat | ✔ | nicht abgeschlossen |
+| Eigene Zahlungsinfo hinterlegen / ändern / löschen | ✔ | ✔ | jederzeit, auch abgeschlossen |
+| Zahlungsinfo **anderer** ändern | – | – (auch Orga nicht) | nie |
+| Währung der Reise ändern | – | ✔ | keine nicht gelöschte Ausgabe und keine Ausgleichszahlung vorhanden |
+| Abrechnung abschließen / wieder öffnen | – | ✔ | Abschließen mit offenen Salden nur nach Warnung (I10-08) |
+| Erinnern `settle` (eigene Forderung) | ✔ an die eigenen Schuldner laut Vorschlag | ✔ | – |
+| Erinnern `settle-all` (alle offenen Ausgleiche) | – | ✔ | – |
+| Platzhalter löschen (F-007) | – | ✔ | **gesperrt**, solange der Platzhalter in einer Ausgabe oder Ausgleichszahlung vorkommt (Hinweis mit Anzahl, Wortlaut UX) |
+
+**Orga darf alles bearbeiten/löschen** (R.1 „auch fremde“) – bewusst: In Freundesgruppen pflegt oft eine Person die Kasse nach, und wer nicht in der App ist (Platzhalter), braucht jemanden, der für ihn korrigiert. Ausgleichszahlungen zwischen zwei handlungsfähigen Mitgliedern markiert die Orga dagegen **nicht** für andere – ob Geld zwischen Kemal und Lena geflossen ist, wissen nur die beiden (gleiche Haltung wie W16 D1 „Geld zwischen anderen geht mich nichts an“). Jede Änderung zeigt «angelegt von / zuletzt geändert von {Name}, {Datum}».
+
+Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseiten (I8-09). Wird die Termin-Festlegung aufgehoben, ist der Bereich wie Infoseite und Unterkünfte **nicht erreichbar**; alle Daten bleiben erhalten und sind nach der nächsten Festlegung unverändert wieder da (Ausgaben hängen nicht am Reisedatum; R.0 Nr. 1).
+
+#### Rechenregeln (Pflicht – reine, getestete Funktionen in `src/lib/`)
+1. **Geld nur als Ganzzahl in Cent** (kleinste Einheit der Reisewährung), nie als Gleitkommazahl – in DB, Server, Client-Logik und Tests. Eingabe-Parsen mit dem vorhandenen Preis-Parser aus I9-02 (Komma/Punkt je Sprache, max. 2 Nachkommastellen); Ausgabe über `formatMoney()`. Summen über viele Ausgaben in JS-`number` (sicher bis 2⁵³) bzw. SQL `bigint` – nie in `int4` aufsummieren.
+2. **Grenzen je Ausgabe:** 1 Cent ≤ Betrag ≤ 1 000 000,00 (= 100 000 000 Cent, wie Unterkunftspreis); Anteile je Person ≥ 0; **Summe der Anteile = Betrag** (Server prüft, DB speichert die Anteile ausdrücklich, s. Datenhaltung).
+3. **Aufteilung „gleich“:** Basis = ⌊Betrag ÷ n⌋, Rest r = Betrag − n × Basis (0 ≤ r < n). Die **ersten r Beteiligten in fester Reihenfolge** erhalten je 1 Cent mehr. Feste Reihenfolge = Reihenfolge der Personen der Abrechnung nach `seq` (Anlage-Reihenfolge in der Reise, aufsteigend). Beispiel 100,00 € auf 3 → 33,34 · 33,33 · 33,33. Die Anteile werden **beim Speichern berechnet und gespeichert**; spätere Änderungen der Personenliste ändern alte Ausgaben nicht. Bearbeiten einer „gleich“-Ausgabe berechnet neu. (Bewusst einfach: max. n−1 Cent Unterschied je Ausgabe; eine „gerechte Rotation“ des Rest-Cents bringt Nutzern nichts Sichtbares.)
+4. **Aufteilung „nach Beträgen“:** je beteiligter Person ein Betrag ≥ 0,01; Summe muss **exakt** dem Gesamtbetrag entsprechen, sonst lehnt der Server ab (Client zeigt live «Noch 12,00 € zu verteilen» / «3,00 € zu viel verteilt» / «✓ Passt genau», W19). Personen mit 0 sind nicht beteiligt.
+5. **Saldo** wie unter „Begriffe“; gelöschte (`deleted_at`) Ausgaben zählen nicht.
+6. **Ausgleichsvorschlag** `settleUp(balances)` – deterministisch, reine Funktion:
+   a. Nur Personen mit Saldo ≠ 0. Schuldner (negativ) und Gläubiger (positiv) jeweils sortiert nach Betrag absteigend, bei Gleichstand nach `seq` aufsteigend.
+   b. **Vorstufe exakte Paare:** Für jeden Schuldner in dieser Reihenfolge wird der erste Gläubiger mit **genau gleichem** Betrag gesucht → eine Überweisung, beide raus.
+   c. **Greedy:** größter Schuldner zahlt an größten Gläubiger den kleineren der beiden Beträge; Restbetrag bleibt im Spiel, neu sortieren (gleiche Regel), wiederholen bis alle 0.
+   d. Ergebnis: Liste «A → B: Betrag» in Entstehungsreihenfolge. **Garantie:** höchstens (Anzahl Personen mit Saldo ≠ 0) − 1 Überweisungen; jede Person zahlt nur **oder** empfängt; gleiche Eingabe → gleiche Ausgabe, unabhängig von der Reihenfolge der Eingabedaten.
+   e. **Hinweis zur Formulierung:** Die mathematisch kleinstmögliche Zahl an Überweisungen zu finden ist im allgemeinen Fall ein sehr aufwendiges Suchproblem; Greedy + exakte Paare liefert in Freundesgruppen praktisch immer das Minimum oder eine Überweisung mehr. Die UI sagt deshalb **nicht** „minimal“, sondern «Mit 5 Überweisungen ist alles erledigt.» (W19). Ein exakter Optimierer ist „später“ (nur falls Nutzer es vermissen).
+   f. Laufzeit: 30 Personen und 10 000 Ausgaben < 100 ms serverseitig (Test mit Zufallsdaten, fester Seed).
+7. **Schwelle A1** (Schulden-Aufgabe im Cockpit, UX-3): eigener Saldo ≤ −Schwelle in der Reisewährung. Schwellen je Währung (Tabelle im Code, Test): **EUR, USD, GBP, CHF, CAD, AUD 50 · DKK, SEK, NOK 500 · PLN 200 · CZK 1 250 · HUF 20 000** (jeweils ganze Einheiten, ≈ 50 €).
+8. **Erlaubte Reisewährungen (Stufe 1):** genau die Währungen aus `currencyForCountry()` – EUR, GBP, CHF, USD, DKK, SEK, NOK, PLN, CZK, HUF, CAD, AUD (alle ISO-4217 mit 2 Nachkommastellen). Andere Codes lehnt der Server ab. Keine Umrechnung (F-037 später).
+
+**Pflicht-Tests der Rechenlogik:** Summe Anteile = Betrag für alle n von 1 bis 30 und Beträge 1 Cent … 100 000 000 Cent (Eigenschaftstest); Summe Salden = 0 nach beliebigen Folgen aus Anlegen/Bearbeiten/Löschen/Ausgleichen; `settleUp` gleicht alle Salden aus, ≤ n−1 Überweisungen, deterministisch bei permutierter Eingabe; Beispiele aus W19-Prototyp als feste Fälle.
+
+#### User Stories & Akzeptanzkriterien
+
+**I10-01 Bereich „Kosten“ und Einstieg**
+**Als** Mitglied **möchte ich** nach der Festlegung einen Ort für alle Gruppenausgaben haben, **damit** wir nach der Reise nicht Kassenzettel und Chatnachrichten zusammensuchen.
+- [ ] Route `/trips/{id}/costs` (nur Mitglieder, nur Phase `fixed`); Aufbau, Leerzustand, Abgeschlossen-Zustand und Texte nach W19 A. Segment „Ausgaben | Salden & Ausgleich“ als zwei Links mit eigenen URLs; ab 960 px zweispaltig (W19 Desktop). Kein Tab (UX-1).
+- [ ] **„Dein Stand“**: eigener Saldo als Wort («Du bekommst 42,00 €» / «Du schuldest 86,00 €» / «Ausgeglichen ✓»), «Gesamt {Summe} · dein Anteil {Betrag}». Nie nur Farbe/Vorzeichen; Schulden nie rot (W19).
+- [ ] Liste: gruppiert nach Datum (neueste zuerst; innerhalb eines Tages zuletzt angelegte zuerst); je Zeile Kategorie-Icon, Titel, «{Name} hat bezahlt · für alle {n}» bzw. Namen, Betrag, «dein Anteil …» / «nicht beteiligt». Platzhalter mit Chip «Platzhalter», ehemalige Mitglieder als «ehemaliges Mitglied» (bei mehreren nummeriert, s. Begriffe).
+- [ ] **Detail-Sheet**: Betrag, Kategorie, Datum, Zahler, Aufteilung je Person (Betrag), Modus («Gleich aufgeteilt» / «Nach Beträgen»), «angelegt von … · zuletzt geändert von …, {Datum}»; Tasten `[Bearbeiten]` `[Löschen]` nur, wenn das Recht besteht, sonst Hinweis «Bearbeiten können {Anlegende/Zahlende} und die Orga.».
+- [ ] **Keine Mengengrenze** für Nutzer (Q36). Liste bleibt bei 500 Ausgaben bedienbar (Laden in Seiten à 100 Einträge oder „Mehr anzeigen“ – Developer entscheidet; Salden immer über **alle** Ausgaben).
+- [ ] Statusangaben aktualisieren sich beim Neuladen (kein Live-Update, wie F-008); nach eigenen Aktionen sofort (optimistisch).
+
+**I10-02 Ausgabe hinzufügen**
+**Als** Mitreisende **möchte ich** eine Ausgabe in Sekunden eintragen, **damit** ich es nicht vergesse.
+- [ ] Route `/trips/{id}/costs/new` (optional `?date=today` von der Kopf-Taste `[+ Ausgabe]`); Felder und Meldungen nach W19 B: **Betrag** (Pflicht, Regeln 1–2, `inputmode="decimal"`, Autofokus, Währungszeichen der Reise), **Wofür?** (Pflicht, 1–60 Zeichen nach Trimmen, Steuerzeichen entfernt, nur Text), **Kategorie** optional (`accommodation` · `travel` · `food` · `activities` · `other`), **Bezahlt von** (genau eine aktive Person, Standard: ich), **Für wen?** (≥ 1 aktive Person, Standard: alle aktiven Personen inkl. offener Platzhalter), **Aufteilung** gleich (Standard) / nach Beträgen (Regeln 3–4, Live-Vorschau je Person), **Datum** (Standard heute in der Zeitzone der Reise `APP_TIME_ZONE`; erlaubt: Anreise − 365 Tage bis Abreise + 90 Tage, sonst Meldung).
+- [ ] Validierung Client **und** Server (zod); Server prüft zusätzlich, dass Zahler und alle Beteiligten **aktive Personen dieser Reise** sind (keine fremden IDs, keine ehemaligen Mitglieder in neuen Ausgaben).
+- [ ] Nach dem Speichern: zurück zur Liste, Snackbar «{Betrag} gespeichert – Salden sind aktualisiert.», Fokus auf h1 (W19). Doppelklick/Netz-Wiederholung erzeugt **keine** Doppelbuchung (Idempotenz-Schlüssel je Formular-Öffnung, vom Client erzeugt, serverseitig 24 h eindeutig je Reise).
+- [ ] Abgeschlossene Abrechnung: Route leitet auf die Liste um, Server lehnt ab.
+
+**I10-03 Ausgabe bearbeiten, löschen, rückgängig**
+**Als** Person, die eine Ausgabe angelegt oder bezahlt hat, **möchte ich** Fehler korrigieren, **damit** die Abrechnung stimmt – **ohne** dass zwei gleichzeitige Änderungen sich still überschreiben.
+- [ ] Route `/trips/{id}/costs/{expenseId}/edit`; Rechte nach Tabelle. Formular wie I10-02, vorbelegt. Enthält die Ausgabe ehemalige Mitglieder, erscheinen sie als nicht wählbarer Chip «ehemaliges Mitglied», der **entfernt**, aber nicht wieder hinzugefügt werden kann; ein ehemaliger Zahler bleibt, bis eine aktive Person gewählt wird.
+- [ ] **Konfliktschutz:** Jede Ausgabe hat `version` (Ganzzahl). Bearbeiten und Löschen senden die gelesene Version; weicht sie ab, lehnt der Server mit Konflikt ab (keine Änderung) und das Formular zeigt «{Name} hat diese Ausgabe gerade geändert.» mit den aktuellen Werten (Wortlaut/Verhalten UX). Erfolgreiche Änderung erhöht `version` um 1.
+- [ ] **Löschen** sofort (ohne Dialog), Snackbar «„{Titel}“ gelöscht · Rückgängig» (6 s, W19). Technisch **weiches Löschen** (`deleted_at`, `deleted_by`): zählt sofort nicht mehr; Rückgängig stellt sie mit allen Anteilen wieder her (gleiche Rechte, nicht bei abgeschlossener Abrechnung). Endgültige Löschung weich gelöschter Ausgaben nach **24 h** durch den vorhandenen Löschjob (`POST /api/internal/retention`), spätestens mit der Reise.
+- [ ] Bearbeiten/Löschen/Wiederherstellen ist bei abgeschlossener Abrechnung gesperrt (Server).
+
+**I10-04 Platzhalter, Beitritt, ehemalige Mitglieder (Q35)**
+**Als** Gruppe **wollen wir** auch Leute ohne App mitrechnen und Leute, die gehen, korrekt in der Abrechnung behalten, **damit** die Summe stimmt.
+- [ ] Offene Platzhalter (F-007) sind als Zahler und Beteiligte wählbar und stehen in Salden und Ausgleich mit Chip «Platzhalter» (W19).
+- [ ] **Platzhalter wird eingelöst** (Beitritt über den persönlichen Link): die Person **übernimmt** alle Ausgaben, Anteile, Ausgleichszahlungen und den Saldo des Platzhalters (gleiche Partei, nun mit Konto). Test.
+- [ ] **Platzhalter löschen** ist gesperrt, solange er in einer (auch weich gelöschten) Ausgabe oder Ausgleichszahlung vorkommt; Hinweis «{Name} kommt in {n} Ausgaben vor – erst dort entfernen.» (Wortlaut UX).
+- [ ] **Reise verlassen** (F-013) mit Saldo ≠ 0 (und Abrechnung nicht abgeschlossen): Warnung mit Betrag und Richtung nach W19 («Du schuldest noch 86,00 €. …» bzw. «Du bekommst noch 42,00 € …»), Hinweis, dass die eigene Zahlungsinfo gelöscht wird; `[Abbrechen]` `[Trotzdem verlassen]`. Saldo 0: keine zusätzliche Warnung.
+- [ ] **Orga entfernt ein Mitglied** (F-004) mit Saldo ≠ 0: entsprechende Warnung an die Orga («Ben bekommt noch 42,00 € …»).
+- [ ] **Konto löschen** (F-043): Der Warn-Schritt listet zusätzlich Reisen mit offenem eigenem Saldo (Reisename + «du schuldest/bekommst …»).
+- [ ] Nach Verlassen/Entfernen/Konto-Löschung: Die Partei bleibt mit allen Beträgen erhalten, **ohne** Verweis auf das Konto und ohne Namen («ehemaliges Mitglied», bei mehreren nummeriert nach Austrittszeitpunkt); `created_by`/`updated_by`/`marked_by` dieser Person werden zu «ehemaliges Mitglied». Summe der Salden bleibt 0 (Test). Tritt dieselbe Person später erneut bei, ist sie eine **neue** Partei (keine Zusammenführung).
+
+**I10-05 Salden**
+**Als** Mitglied **möchte ich** jederzeit sehen, wo jede Person steht, **damit** es keine Diskussion gibt.
+- [ ] `/trips/{id}/costs/balances`: Liste aller Personen der Abrechnung mit Saldo ≠ 0 **und** aller aktiven Personen (auch 0 = «ausgeglichen ✓»); eigene Zeile «du schuldest …»/«du bekommst …»; andere «schuldet …»/«bekommt …» (W19). Reihenfolge: eigene Person zuerst, dann nach `seq`.
+- [ ] Alles ausgeglichen: «Alles ausgeglichen ✓ – Niemand schuldet jemandem etwas.» + kleines Siegel (Motion, reduziert ohne Bewegung).
+
+**I10-06 Ausgleichsvorschlag und «Als bezahlt markieren»**
+**Als** Gruppe **wollen wir** mit möglichst wenigen Überweisungen ausgleichen und abhaken, was erledigt ist, **damit** die Abrechnung keinen Streit auslöst.
+- [ ] «So gleicht ihr aus»: Vorschlag nach Rechenregel 6 aus den **aktuellen** Salden (also nach Abzug bereits gebuchter Ausgleichszahlungen); Satz «Mit {n} Überweisungen ist alles erledigt.»; Zeilen «{A} → {B}: {Betrag}», eigene Zeilen zuerst, darunter die Zahlungsinfo des **Empfängers** (maskiert, I10-07) mit `[Kopieren]`.
+- [ ] `[✓ Als bezahlt markieren]` nur für Berechtigte (Tabelle); für Unbeteiligte stattdessen «Markieren können {A} oder {B}.» (W19). Markieren bucht eine **Ausgleichszahlung** (von A an B, Betrag = Betrag der Vorschlagszeile); Snackbar mit «Rückgängig»; Eintrag wandert nach „Bereits bezahlt“ («{A} → {B}: {Betrag} · markiert von {Name}, {Datum}»).
+- [ ] **Schutz gegen Doppel-/Fehlbuchung (statt Versionsvergleich):** Der Server nimmt die Zahlung nur an, wenn A **aktuell schuldet**, B **aktuell bekommt** und der Betrag ≤ min(|Saldo A|, Saldo B) ist – geprüft unter Sperre der Reise. Sonst Ablehnung «Die Abrechnung hat sich gerade geändert» + neu laden. Damit führen zwei gleichzeitige Klicks auf dieselbe Zeile zu genau einer Buchung, und neue Ausgaben anderer machen das Markieren nicht unnötig ungültig. Test.
+- [ ] Rückgängig/Löschen einer Ausgleichszahlung nach Tabelle (hartes Löschen der Zahlung; Salden ändern sich entsprechend).
+- [ ] Ausgleichszahlungen mit beliebigem Betrag („Teilzahlung erfassen“) sind **nicht** in Stufe 1 (später).
+
+**I10-07 Zahlungsinfo (freiwillig, Q35)**
+**Als** Person, die Geld bekommt, **möchte ich** meine IBAN oder meinen PayPal-Namen einmal hinterlegen, **damit** mich nicht jede:r einzeln danach fragt.
+- [ ] Je Person **und Reise** (nicht im Konto – keine Weitergabe an andere Reisen), zwei optionale Felder: **IBAN** und **Anderer Weg** (Freitext ≤ 100 Zeichen, z. B. «PayPal: lena.k» – nur Text, **keine** automatische Verlinkung, kein HTML). Hinweis im Sheet: «Alle in der Reise können das lesen. Wird gelöscht, wenn du die Reise verlässt.» (Wortlaut UX). Speichern, ändern, löschen jederzeit; Anzeige «zuletzt geändert {Datum}».
+- [ ] **IBAN-Validierung** (Client + Server, eigene reine Funktion mit Tests): Leerzeichen entfernen, Großbuchstaben; Format `^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$`; **Länge passend zum Ländercode** (Tabelle der IBAN-Länder, mind. alle SEPA-Länder + GB, CH; unbekanntes Land → ablehnen); **Prüfziffer nach ISO 13616 (Mod 97 = 1)**. Gespeichert wird die normalisierte Form; angezeigt in Vierergruppen. Meldungen: «Diese IBAN stimmt nicht – bitte prüf die Eingabe.» (keine Unterscheidung, welche Regel verletzt ist, ist nicht nötig). Kein BIC, kein Kontoinhaber (der Name ist der Name in der Reise).
+- [ ] **Maskierung:** In Listen und im Ausgleich wird die IBAN standardmäßig **maskiert** gezeigt – Ländercode + Prüfziffer + letzte 4 Zeichen («DE89 •••• •••• •••• •••• 3000»); `[Anzeigen]` zeigt sie vollständig (nur auf diesem Gerät, bis zum Verlassen der Seite), `[Kopieren]` kopiert die vollständige IBAN **ohne** Leerzeichen und meldet «IBAN kopiert». Screenreader liest maskiert «IBAN endet auf 3000». Zweck: Schutz vor Mitlesen/Screenshots, **kein** Zugriffsschutz – alle Mitglieder der Reise dürfen sie sehen (Q35).
+- [ ] Zahlungsinfos erscheinen **nie** in Teilen-Texten, Mails, Logs, Fehler-Tracking oder URLs (Stufe 1; „IBAN im Abrechnungstext“ ist „später“).
+- [ ] Platzhalter haben keine Zahlungsinfo (können nichts hinterlegen); ehemalige Mitglieder verlieren sie beim Austritt (gelöscht, nicht ausgeblendet).
+
+**I10-08 Abrechnung abschließen, Währung, Teilen-Text**
+**Als** Orga **möchte ich** die Abrechnung nach der Reise abschließen, **damit** niemand mehr versehentlich etwas ändert.
+- [ ] `[Abrechnung abschließen]` (nur Orga, jederzeit möglich, empfohlen ab *Danach*; im Cockpit **immer sekundär**, U-30): Bestätigung nach W19; **bei offenen Salden** zusätzlicher Hinweis «Noch {n} Ausgleiche offen – trotzdem abschließen?» (Wortlaut UX). Danach sind Ausgaben **und** Ausgleichszahlungen schreibgeschützt (Server), Chip «Abrechnung abgeschlossen», Aktionsleiste entfällt. `[Abrechnung wieder öffnen]` (Orga) hebt das auf.
+- [ ] **Währung ändern** (Orga): Auswahl aus den erlaubten Währungen (Rechenregel 8), nur solange keine nicht gelöschte Ausgabe und keine Ausgleichszahlung existiert (unter Sperre der Reise geprüft; weich gelöschte Ausgaben werden dabei endgültig gelöscht). Unterkunftspreise behalten ihre eigene Währung (R.7). Danach ist die Auswahl gesperrt mit Hinweis «Die Währung lässt sich nur ändern, solange es keine Ausgaben gibt.».
+- [ ] **Teilen-Text** (Kopf-Taste `[Teilen]` in W19) über das vorhandene Teilen-Sheet: «Abrechnung {Reise}: {A} → {B}: {Betrag} · … – Details: {Link}» (DE/EN), Platzhalter mit Namen, ehemalige als «ehemaliges Mitglied» (ggf. nummeriert); bei allem ausgeglichen «Abrechnung {Reise}: alles ausgeglichen ✓». **Ohne** IBAN, Titel oder Einzelausgaben.
+
+**I10-09 Cockpit: Kachel Kosten, A1, D1, Kopf-Tasten, Erinnern (F-053)**
+**Als** Mitglied **möchte ich** im Cockpit sehen, ob ich jemandem Geld schulde, **damit** ich nicht nachrechnen muss.
+- [ ] Adapter für `tripRoute()` (Vertrag W16 v2.10) liefert: **Kachel „Kosten“** (Reihenfolge W16 v2.6; Statuszeile nach W16 – «Noch keine Ausgaben» / «Gesamt 456,00 € · du schuldest 86,00 €» / «ausgeglichen ✓»), **A1** (nur *Vorbereitung* und *Unterwegs*, eigener Saldo ≤ −Schwelle nach Rechenregel 7, Text mit dem ersten Empfänger laut eigenem Vorschlag, Wortlaut UX für mehrere Empfänger), **D1** (nur *Danach*, nur wenn ≥ 1 nicht gelöschte Ausgabe existiert, Zustände exakt nach der D1-Tabelle W16 v2.4 je Rolle; erledigt bei «alle 0» für Mitglieder bzw. «abgeschlossen»). In *Danach* gibt es die Kachel erst, wenn D1 erledigt ist (ein Einstieg je Bereich). Unit-Tests **je Zeile** der D1-Tabelle und je Rolle sowie für A1 an der Schwelle (−49,99 / −50,00 / −50,01 €) und für GBP/DKK.
+- [ ] Heute-Reihenfolge nach W16 v2.5 (D1 schulden = Frist/Datum; A1 = eigener Beitrag; D1 abschließen = Freiwilliges, `[Abschließen]` nie primär).
+- [ ] **Kopf-Tasten:** *Unterwegs* `[+ Ausgabe]` → `/costs/new?date=today` (vor `[Tickets]`, das erst mit 12 kommt); *Danach* `[Ausgleichen]` → `/costs/balances` **nur** bei offenen Salden und nicht abgeschlossener Abrechnung.
+- [ ] **Phasenzeile *Danach*** «Zurück · Kosten ausgleichen» (offen) bzw. «Zurück · alles ausgeglichen» (alle 0 oder abgeschlossen); ohne Ausgaben weiter «Zurück seit {n} Tagen». Heute-Satz **H-5** (Ausgaben vorhanden, alles erledigt) bzw. **H-5b** (keine Ausgaben).
+- [ ] **Erinnern** über das vorhandene `RemindSheet` (F-015): `settle` (Gläubiger an einen eigenen Schuldner laut Vorschlag, `single`) und `settle-all` (Orga, `status`) mit den Texten W16 v2.8 (DE/EN); Texte enthalten Reisename, Betrag des eigenen Anspruchs bzw. Anzahl offener Ausgleiche und den Link – **nie** IBAN, Titel oder Beträge zwischen anderen. Platzhalter als Empfänger von `settle` nur über ihren persönlichen Link (wie V2).
+
+**I10-10 Datenschutz, Export, Löschung**
+**Als** Mitglied **möchte ich**, dass Ausgaben und meine Zahlungsinfo nach denselben Regeln wie die Reise verschwinden, **damit** nichts liegen bleibt.
+- [ ] Alles zu Kosten wird **mit der Reise gelöscht** (F-013, 90 Tage nach Reiseende bzw. „Reise löschen“, Q31) – per Fremdschlüssel-Kaskade (Test). Zusätzlich löscht der Löschjob weich gelöschte Ausgaben nach 24 h.
+- [ ] **Lösch-Hinweismail an die Orga** (14 Tage vorher, F-013/Q24): Bei offenen Salden zusätzlicher Satz «Achtung: In der Abrechnung sind noch {n} Ausgleiche offen.» – **ohne** Namen und Beträge.
+- [ ] **Zahlungsinfo** wird gelöscht beim Verlassen/Entfernen, beim Konto-Löschen und mit der Reise; die Person kann sie jederzeit selbst löschen.
+- [ ] **Datenexport (F-013, Q23)** je Reise: eigene Zahlungsinfo (IBAN vollständig, Freitext); Ausgaben, die man **angelegt** oder **bezahlt** hat (Titel, Datum, Betrag, Währung, Kategorie, Modus); in allen Ausgaben, an denen man beteiligt ist, Titel, Datum und **eigener Anteil**; eigene Ausgleichszahlungen (Richtung, Betrag, Datum); eigener aktueller Saldo. **Keine** Namen, Zahlungsinfos oder Anteile anderer Personen (Gegenseite als «andere Person»).
+- [ ] Titel, Beträge, IBAN und Freitext erscheinen **nie** in Logs, Fehler-Tracking, Analytics oder Mails (Ausnahme: Teilen-/Erinnern-Texte, die die Person selbst auslöst, mit den Inhalten aus I10-08/I10-09).
+- [ ] Operations ergänzt vor G1 die Datenschutzerklärung (Platzhalter) um „Kosten teilen & Zahlungsinfo“: Zweck, Sichtbarkeit für die Reise, freiwillige Angabe, Löschfristen, **keine** Zahlungsabwicklung, keine Weitergabe an Banken/Zahlungsdienste.
+
+**I10-11 Querschnitt (Abnahme)**
+- [ ] 360 × 640, 390 × 844, 320 px, 200 % Schrift, Dark Mode, DE/EN (Zahlen-/Währungsformat je Sprache: «1.234,56 €» / «€1,234.56»), Desktop ≥ 960 px (W19 Desktop); Formular vollständig per Tastatur und Screenreader bedienbar (Barrierefreiheit W19: Live-Zeile `aria-live="polite"`, `tabular-nums`, Pfeil mit Text-Alternative).
+- [ ] Reduzierte Bewegung (System oder Konto-Schalter): nur Überblenden, kein Siegel-Effekt; kein Konfetti in diesem Bereich.
+- [ ] Abnahme-Fälle: leere Kosten (Kachel «Noch keine Ausgaben») · Ausgabe gleich auf 3 mit Rest-Cent (100,00 → 33,34/33,33/33,33) · nach Beträgen mit Fehlsumme (gesperrt) und passender Summe · Platzhalter zahlt / ist beteiligt · Platzhalter wird eingelöst (Saldo geht mit) · gleichzeitiges Bearbeiten (Konfliktmeldung) · Löschen + Rückgängig · Anna schuldet ≥ 50 € in *Vorbereitung* (A1) und < 50 € (keine Aufgabe) · *Unterwegs* `[+ Ausgabe]` · *Danach* D1 je Rolle/Zeile · Als bezahlt markieren (beide Seiten, Doppelklick = eine Buchung) · Mitglied verlässt die Reise mit Schulden (Warnung, «ehemaliges Mitglied») · Orga schließt mit offenen Salden ab (Warnung, schreibgeschützt) und öffnet wieder · Währung ändern (nur ohne Ausgaben) · IBAN gültig/ungültig, maskiert/anzeigen/kopieren · Datenexport.
+
+#### Sicherheit (Pflicht – Reviewer prüft mit Tests)
+1. **Rechte** aus der Tabelle oben serverseitig, Tests je Zeile – inkl. Nicht-Mitglied, falsche Reise-ID für Ausgabe/Partei/Ausgleich (keine reiseübergreifenden Zugriffe, alle IDs werden gegen `trip_id` geprüft), Platzhalter-/ehemalige Partei als „Handelnde“ unmöglich, Orga kann **nicht** Ausgleiche zwischen zwei aktiven Konto-Mitgliedern markieren.
+2. **Integrität:** Beträge nur als Ganzzahl im erlaubten Bereich; Summe der Anteile = Betrag (Server + DB-Prüfung per Trigger oder Prüfung im selben Transaktionsschritt); Schreibvorgänge einer Reise unter Zeilensperre der Reise (wie Unterkünfte), damit Salden-Prüfungen (I10-06) und Währungswechsel (I10-08) nicht kollidieren.
+3. **Konfliktschutz** `version` für Ausgaben (I10-03), Idempotenz-Schlüssel beim Anlegen (I10-02), Salden-Prüfung beim Markieren (I10-06).
+4. **Eingaben nur als Text:** Titel, Freitext der Zahlungsinfo – kein HTML/Markdown, keine Auto-Links, Steuerzeichen entfernt; IBAN nur nach Validierung gespeichert.
+5. **Keine Zahlungsabwicklung:** keine Bank-/PayPal-APIs, keine Zahlungslinks mit Betrag, keine neuen ausgehenden Verbindungen, keine neuen Drittanbieter.
+6. **Sparsame Ausgabe:** Die Kosten-Seiten liefern nur Daten dieser Reise; Zahlungsinfos nur an Mitglieder der Reise (nicht in öffentliche Reise-Vorschau, Einladungsseite oder Meta-Tags).
+
+**Rate-Limits** (pro **Konto**, gleicher Mechanismus wie `src/server/rate-limit.ts`; Werte als Vorgabe, Developer darf begründet anpassen):
+| Aktion | Limit |
+|---|---|
+| Ausgabe anlegen | 60 / 10 min je Konto |
+| Ausgabe bearbeiten / löschen / wiederherstellen | 120 / 10 min je Konto |
+| Als bezahlt markieren / rückgängig | 60 / 10 min je Konto |
+| Zahlungsinfo speichern | 20 / h je Konto |
+| Währung ändern / abschließen / wieder öffnen | wie andere Schreibaktionen der Orga |
+Zusätzlich **technische Obergrenze** als Missbrauchsschutz: 10 000 nicht gelöschte Ausgaben je Reise (wird Nutzern nicht als Limit kommuniziert; Q36 „unbegrenzt“ bleibt praktisch wahr – Meldung nur im Grenzfall). Überschreitung: bestehende Limit-Meldung.
+
+#### Datenhaltung (Vorgabe für Developer, Bewertung durch Reviewer)
+| Was | Wo (Empfehlung) | Löschung / Datenschutz |
+|---|---|---|
+| Personen der Abrechnung | neue Tabelle `trip_cost_party`: `id`, `trip_id` (FK `ON DELETE CASCADE`), `seq` (Ganzzahl, aufsteigend je Reise, feste Reihenfolge für Rest-Cent und Gleichstände), `user_id` (FK Konto `ON DELETE SET NULL`, null), `placeholder_id` (FK `trip_placeholder`, null), `former_at` (null), `former_no` (null, Nummer für «ehemaliges Mitglied n»), `created_at`. Eindeutig je Reise: `user_id` (wo nicht null und nicht ehemalig) und `placeholder_id` (wo nicht null). **Kein** zusammengesetzter FK auf `trip_member` (anders als `availability`), damit die Partei das Verlassen überlebt. Anlage **bei erster Verwendung** (Ausgabe/Ausgleich) unter Sperre der Reise. | Kaskade mit der Reise. **Verlassen/Entfernen:** im Austritts-Code `user_id = null`, `former_at`, `former_no` setzen (aktiv, da die Mitgliedschaft – nicht das Konto – endet). **Konto löschen:** ebenso (vor dem Löschen des Kontos, im selben Ablauf). **Platzhalter eingelöst:** `user_id` setzen, `placeholder_id = null`. Name wird nie in der Partei gespeichert (immer live aus Mitgliedschaft/Platzhalter). |
+| Ausgaben | neue Tabelle `trip_expense`: `id`, `trip_id` (FK `CASCADE`), `title` (1–60), `amount_cents` (`integer`, 1 … 100 000 000), `currency` (ISO 4217 = Reisewährung beim Anlegen), `category` (null oder Enum), `spent_on` (`date`), `payer_party_id` (FK Partei `RESTRICT`), `split_mode` (`equal` / `amounts`), `created_by`, `updated_by` (FK Konto `SET NULL`), `created_at`, `updated_at`, `version` (int, Start 1), `deleted_at`, `deleted_by` (null), `idempotency_key` (null, eindeutig je Reise) | Kaskade mit der Reise; weich gelöschte nach 24 h endgültig (Löschjob). Index (`trip_id`, `spent_on desc`). Inhalte nie in Logs. |
+| Anteile | neue Tabelle `trip_expense_share`: `expense_id` (FK `CASCADE`), `party_id` (FK Partei `RESTRICT`), `share_cents` (`integer` ≥ 0); PK (`expense_id`, `party_id`) | Kaskade mit der Ausgabe. Summe = Betrag (Pflicht-Test + Prüfung beim Schreiben). |
+| Ausgleichszahlungen | neue Tabelle `trip_settlement`: `id`, `trip_id` (FK `CASCADE`), `from_party_id`, `to_party_id` (FK Partei `RESTRICT`, verschieden), `amount_cents` (> 0), `marked_by` (FK Konto `SET NULL`), `marked_at` | Kaskade mit der Reise; Rückgängig = Zeile löschen. |
+| Abschluss | an der Reise: `trip.costs_closed_at`, `trip.costs_closed_by` (FK Konto `SET NULL`) | Wieder öffnen = null. |
+| Währung | vorhandene Spalte `trip.currency` (Migration 0010); Prüfung der erlaubten Codes in der App (Rechenregel 8) | – |
+| Zahlungsinfo | an der Mitgliedschaft: `trip_member.payment_iban` (null, normalisiert, max. 34), `trip_member.payment_note` (null, ≤ 100), `trip_member.payment_updated_at` | Verschwindet automatisch mit der Mitgliedschaft (Verlassen, Entfernen, Konto löschen) und mit der Reise. Keine zusätzliche Anwendungsverschlüsselung nötig (IBAN wird freiwillig und bewusst für die Gruppe geteilt; DB/Backups sind ohnehin verschlüsselt, R.4) – nie in Logs. |
+| Salden, Vorschlag | **nicht gespeichert** – immer aus Ausgaben, Anteilen und Ausgleichszahlungen berechnet (keine doppelte Wahrheit) | – |
+| Nur im Browser | Formular-Entwurf bei Netzfehler, «IBAN angezeigt» (Seitenzustand) | Keine Cookies, kein `localStorage` für IBAN. |
+
+Migrationen: eine Migration (`0011`) für `trip_cost_party`, `trip_expense`, `trip_expense_share`, `trip_settlement`, Spalten an `trip` und `trip_member`. Keine neuen Drittanbieter-Konten, kein Dateispeicher, keine neuen ausgehenden Verbindungen, nicht an G1b gebunden. Löschjob erweitern (weich gelöschte Ausgaben > 24 h); Lösch-Hinweismail um den Satz zu offenen Salden ergänzen.
+
+#### Demo-Seed (`seed.ts`, „Demo zurücksetzen“)
+Alle Beträge, Namen und Zahlungsinfos sind Fantasie; IBANs **nur** öffentlich bekannte Beispiel-IBANs (z. B. `DE89 3704 0044 0532 0130 00`, `GB82 WEST 1234 5698 7654 32`) mit Zusatz «(Demo)» im Freitext-Feld – keine echten Konten.
+- **„Kroatien 2027“** (*Vorbereitung*, EUR, Orga Ben, Anna Mitglied, Platzhalter Lotte): 3 Ausgaben (Anzahlung Fähre – David, gleich auf alle inkl. Lotte; Mietwagen-Anzahlung – Anna, **nach Beträgen**; Kleinkram 10,00 € auf 3 → Rest-Cent sichtbar). Anna «du bekommst …» in der Kachel, keine A1; Lotte in den Salden mit Chip «Platzhalter».
+- **„Roadtrip Schottland“** (*Unterwegs*, **GBP**, Ben Orga): ~8 Ausgaben (Cottage 1 650 £ von Ben vor 35 Tagen, Mietwagen, Tankstelle, Supermarkt, eine Ausgabe nicht für alle). Kopf-Taste `[+ Ausgabe]`; Emma schuldet ≥ 50 £ (A1 bei Emma), Anna bekommt etwas (Kachel). Ben mit Beispiel-IBAN GB, Carla mit Freitext «PayPal: carla.demo».
+- **„Gardasee“** (*Danach*, EUR, Felix Orga, Anna, Greta + **ein ehemaliges Mitglied**): Anna schuldet Felix ≥ 50 € → **D1 „du bist dran“** mit `[Zum Ausgleich]`, Kopf-Taste `[Ausgleichen]`, Phasenzeile «Zurück · Kosten ausgleichen»; Greta → Felix bereits «bezahlt» (unter „Bereits bezahlt“); «ehemaliges Mitglied» → Felix offen (Felix kann markieren). Felix mit Beispiel-IBAN DE.
+- **„Kroatien Segeln“** (*Danach*, Löschung in 10 Tagen, Anna Orga): alles ausgeglichen und **abgeschlossen** → D1 erledigt, H-5, Kachel «ausgeglichen ✓». Zusätzlich offene Salden-Variante **nicht** nötig; die Hinweismail mit offenen Salden wird per Test geprüft.
+- **„Familientreffen Harz“** (*Vorbereitung*, Anna Orga): keine Ausgaben → Kachel «Noch keine Ausgaben», Währung ist änderbar (vorführbar).
+- „Malle 2026“ bleibt ohne Ausgaben (Beispiel H-5b).
+
+#### Nicht in Inkrement 10 (Abgrenzung)
+| Kommt mit | Inhalt |
+|---|---|
+| **Inkrement 11** (F-056/F-054) | Nichts zu Kosten – „Bucht“ hat bei Kosten keine Sonderrechte. |
+| **Inkrement 12** (F-055) | Datei-Infrastruktur entsteht; **Belegfotos** bleiben trotzdem „später“ (Premium-Kandidat), können sie aber nutzen. |
+| später (Premium-Kandidaten, R.3/Q36) | **Fremdwährungen F-037**, **Belegfotos**, **Export CSV/PDF**, Aufteilung nach Anteilen/Prozent, **mehrere Zahler** pro Ausgabe. |
+| später (Free, nach Beta-Feedback) | Teilzahlung / freie Ausgleichszahlung erfassen, exakter Minimal-Optimierer für Überweisungen, IBAN/Zahlungsinfo im Teilen-Text, EPC-/GiroCode-QR zum Abscannen in der Banking-App (nur Anzeige, keine Abwicklung), `paypal.me`-Links, wiederkehrende Ausgaben, Budget (F-034), Statistik nach Kategorie, Ausgaben schon vor Phase 3 (Anzahlungen), Kommentare je Ausgabe, Live-Updates, E-Mail-/Push-Erinnerungen (F-014/F-038), Rest-Cent-Rotation. |
+| nie (Nicht-Ziel) | Zahlungsabwicklung in der App, Bank-/PayPal-/Open-Banking-Anbindung, Guthaben/Wallet, Zahlungsaufforderungen mit Zahlungsdienst. |
+
+Aufwand: **M–L (≈ 1,5 Inkremente)**. Risiko: gering–mittel – Rechenlogik (durch reine Funktionen + Eigenschaftstests beherrschbar), Partei-Modell beim Verlassen/Einlösen (Tests je Übergang), Formular-UX auf 360 px (Beträge je Person). Kein Datenschutz-Gate, keine neue Infrastruktur.
 
 ---
 

@@ -557,7 +557,8 @@
       "inactive": "Why: nothing has happened in the trip for almost 12 months. Still planning? Any change, for example to your dates, keeps it.",
       "linkIntro": "Open the trip:",
       "link": "Open trip",
-      "service": "This is a service notice about your trip, not marketing."
+      "service": "This is a service notice about your trip, not marketing.",
+      "openCosts": "Please note: {count, plural, one {1 payment is} other {# payments are}} still open in the expenses."
     },
     "inactiveNotice": {
       "subject": "Your account will be deleted soon",
@@ -880,7 +881,10 @@
       "stayRate": "Hey {name}, {count, plural, one {one place is} other {# places are}} waiting for your rating in {trip} – takes a minute: {link}",
       "stayRateAll": "Hey all, there are places waiting for your rating in {trip} – takes a minute: {link}",
       "stayFix": "Hey {orga}, everyone has rated the places for {trip} – you can pick one now: {link}",
-      "stayBook": "Hey {booker}, we’ve picked {stay} – could you book it? {link}"
+      "stayBook": "Hey {booker}, we’ve picked {stay} – could you book it? {link}",
+      "settle": "Hey {name}, according to the {trip} expenses you still owe me {amount}. Thanks! {link}",
+      "settleAll": "Hey all, {count, plural, one {one payment is} other {# payments are}} still open for {trip} – take a quick look: {link}",
+      "settleOther": "Hey {name}, according to the {trip} expenses you still owe {to} {amount}. {link}"
     }
   },
   "tripSettings": {
@@ -1038,7 +1042,13 @@
     "removeDone": "{name} was removed.",
     "full": "The trip is full (30 of 30, placeholders included).",
     "nameRequired": "Please enter a name.",
-    "label": "Placeholder"
+    "label": "Placeholder",
+    "blockedTitle": "{name} can't be deleted",
+    "blockedText": "{name} is in {count, plural, one {one expense} other {# expenses}} – remove them there first.",
+    "blockedTextPayments": "{name} is in {count, plural, one {one expense or payment} other {# expenses or payments}} – remove them there first.",
+    "blockedToCosts": "Go to expenses",
+    "blockedOk": "OK",
+    "blockedGeneric": "This placeholder is in the expenses – remove it there first."
   },
   "group": {
     "title": "Group",
@@ -1473,7 +1483,9 @@
     "phase": {
       "before": "Locked in · {count, plural, one {# day} other {# days}} to go",
       "during": "On the road · day {day} of {total}",
-      "after": "Back for {count, plural, =0 {a few hours} one {# day} other {# days}}"
+      "after": "Back for {count, plural, =0 {a few hours} one {# day} other {# days}}",
+      "afterSettle": "Back · settling up",
+      "afterSquare": "Back · all square"
     },
     "sr": {
       "before": "{count, plural, one {# day} other {# days}} until you leave.",
@@ -1507,7 +1519,8 @@
       "fresh": "Just done: {titles}",
       "freshCount": "{count} done",
       "offline": "done without the app",
-      "unused": "not used"
+      "unused": "not used",
+      "tripSettled": "Trip · prep, {days} days and settling up"
     },
     "label": {
       "yours": "Your turn",
@@ -1520,7 +1533,8 @@
       "unusedWord": "Not used",
       "plan": "Today’s plan",
       "task": "Your turn · {area}",
-      "areaInfo": "Info"
+      "areaInfo": "Info",
+      "areaCosts": "Expenses"
     },
     "today": {
       "short": "Today · {date}",
@@ -1605,7 +1619,15 @@
       "stayBooked": "{title} · booked ✓",
       "stayOffline": "Sorted outside the app",
       "stayChosen": "{title}",
-      "stayNone": "{count, plural, one {1 suggestion} other {# suggestions}} · none picked"
+      "stayNone": "{count, plural, one {1 suggestion} other {# suggestions}} · none picked",
+      "costs": "Expenses",
+      "costsEmpty": "No expenses yet",
+      "costsTotal": "{total} in total",
+      "costsOwe": "you owe {amount}",
+      "costsOwed": "you’re owed {amount}",
+      "costsSquareMe": "you’re all square ✓",
+      "costsSquare": "all square ✓",
+      "costsClosed": "Closed"
     },
     "moreTitle": "More about the trip",
     "decided": {
@@ -1681,6 +1703,40 @@
       "shortBook": "{orga} to book {title}",
       "withoutAppDone": "Ticked off as sorted outside the app.",
       "withoutAppUndone": "“Sorted outside the app” removed."
+    },
+    "addExpense": "Expense",
+    "addExpenseName": "Add an expense",
+    "settle": "Settle up",
+    "costs": {
+      "debtTitleOne": "You owe {name} {amount}",
+      "debtTitleTwo": "You owe {total} – to {name1} and {name2}",
+      "debtTitleMany": "You owe {total} – to {name1} and {count} others",
+      "debtStatus": "Send the money, then mark it as paid – payment details are on the settle-up page.",
+      "debtStatusNoInfo": "Send the money, then mark it as paid.",
+      "toSettle": "Settle up",
+      "d1Title": "Settle up",
+      "d1DoneSquare": "All square ✓",
+      "d1DoneClosed": "All square · closed ✓",
+      "d1Closed": "Expenses closed",
+      "d1ClosedOwe": "Expenses closed · you still owe {amount}",
+      "d1ClosedOwed": "Expenses closed · you’re still owed {amount}",
+      "owedOne": "You’re still owed {amount} by {name}",
+      "owedTwo": "You’re still owed {amount} by {name1} and {name2}",
+      "owedMany": "You’re still owed {amount} by {name1} and {count} others",
+      "shortOne": "{name} to settle up",
+      "shortMine": "payments to you",
+      "shortOthers": "the others to settle up",
+      "openCount": "{count, plural, one {One payment} other {# payments}} still open",
+      "remind": "Remind",
+      "remindOne": "Remind {name}",
+      "nudgeOrgaName": "Let {orga} know that {name} hasn’t joined yet",
+      "remindMineName": "Remind everyone who still owes you",
+      "remindAllName": "Remind about open payments",
+      "closeEarly": "Close …",
+      "close": "Close",
+      "d1CloseTitle": "All square – close the expenses?",
+      "d1CloseStatus": "After that nobody can change expenses. You can reopen them.",
+      "reopen": "Reopen expenses"
     }
   },
   "tripInfo": {
@@ -2004,5 +2060,275 @@
     "fixedAlready": "The place to stay is already picked.",
     "errorGeneric": "Saving didn’t work. What you entered is still here – please try again.",
     "errorLimited": "Too many suggestions in a short time. Please wait a few minutes."
+  },
+  "costs": {
+    "title": "Expenses",
+    "titleBalances": "Settle up",
+    "pageTitle": "Expenses · {trip}",
+    "pageTitleBalances": "Settle up · {trip}",
+    "share": "Share",
+    "shareName": "Share the balances",
+    "shareTitle": "Share the balances",
+    "shareText": "Expenses for {trip}:\n{lines}\nDetails: {link}",
+    "shareSquare": "Expenses for {trip}: all square ✓ {link}",
+    "tabs": "View",
+    "tabExpenses": "Expenses",
+    "tabBalances": "Settle up",
+    "mine": {
+      "label": "Where you stand",
+      "owed": "You’re owed {amount}",
+      "owe": "You owe {amount}",
+      "square": "You’re all square ✓",
+      "detail": "Your share {share} · paid {paid}",
+      "detailPayments": "Your share {share} · paid {paid} · settled {settled}",
+      "total": "Total spent {total}",
+      "toBalances": "How to settle up"
+    },
+    "day": {
+      "sum": "Total {amount}"
+    },
+    "row": {
+      "paidMe": "You paid",
+      "paid": "{name} paid",
+      "forAll": "for all {count}",
+      "forNames": "for {names}",
+      "forCount": "for {count} people",
+      "forMe": "just for you",
+      "you": "you",
+      "share": "your share {amount}",
+      "notIn": "not included",
+      "custom": "custom split",
+      "withNote": "with a note",
+      "name": "{title}, {amount}. {payer}, {who}. {share}."
+    },
+    "more": "Show older expenses ({count})",
+    "footer": "All amounts in {currency}. We don’t move any money – we just show who owes whom.",
+    "empty": {
+      "title": "No expenses yet",
+      "text": "Whoever pays for the group adds it here – we’ll work out who owes whom."
+    },
+    "add": "Add an expense",
+    "currency": {
+      "line": "Currency: {name} ({code})",
+      "change": "Change",
+      "changeName": "Change the currency",
+      "title": "Trip currency",
+      "hint": "Only possible while there are no expenses. Prices of places to stay keep their currency.",
+      "done": "Currency: {name} ({code}).",
+      "locked": "The currency can only be changed while there are no expenses.",
+      "save": "Save"
+    },
+    "closed": {
+      "note": "{orga} closed the expenses on {date}. Expenses and payments can’t be changed any more.",
+      "chip": "Expenses closed",
+      "reopen": "Reopen expenses",
+      "redirect": "The expenses are closed."
+    },
+    "detail": {
+      "split": "Split",
+      "equal": "Split equally",
+      "amounts": "Custom amounts",
+      "created": "Added by {name} on {date}",
+      "edited": "last changed by {name} on {date}",
+      "edit": "Edit",
+      "delete": "Delete",
+      "who": "{names} and the organizer can change this.",
+      "whoOrga": "Only the organizer can change this.",
+      "noCategory": "No category"
+    },
+    "deleted": "“{title}” deleted.",
+    "undo": "Undo",
+    "former": "Former member",
+    "formerNo": "Former member {n}",
+    "formerInline": "former member",
+    "formerInlineNo": "former member {n}",
+    "placeholder": "placeholder",
+    "you": "You",
+    "changed": "The expenses just changed – here’s the latest.",
+    "error": "That didn’t work. Please try again.",
+    "retry": "Try again",
+    "limited": "Too much at once – please try again in a few minutes.",
+    "someone": "Someone",
+    "cat": {
+      "accommodation": "Place to stay",
+      "travel": "Travel",
+      "food": "Food",
+      "activities": "Activities",
+      "other": "Other"
+    },
+    "paidToYou": "{names} marked {amount} as paid to you. Didn’t arrive? You can take it back under “Already paid”.",
+    "paidToYouClose": "Close notice"
+  },
+  "costForm": {
+    "titleNew": "Add an expense",
+    "titleEdit": "Edit expense",
+    "pageTitleNew": "Add an expense · {trip}",
+    "pageTitleEdit": "Edit expense · {trip}",
+    "amount": "Amount",
+    "amountSr": "Amount in {currency}",
+    "what": "What for?",
+    "whatHint": "e.g. Dinner at the harbour",
+    "category": "Category (optional)",
+    "payer": "Paid by",
+    "me": "Me ({name})",
+    "for": "For whom?",
+    "count": "{count} of {total}",
+    "countSr": "{count} of {total} selected",
+    "none": "Deselect all",
+    "all": "Select all",
+    "formerOnly": "Former members can only be removed.",
+    "zeroHint": "People without an amount aren’t included.",
+    "split": "Split",
+    "equal": "Equally",
+    "custom": "Custom amounts",
+    "perPerson": "{amount} each",
+    "perPersonRest": "{amount} each – {names} {count, plural, one {pays 1 cent more} other {pay 1 cent more each}}.",
+    "perPersonNone": "– each",
+    "customFor": "Amount for {name}",
+    "remain": "{amount} left to split",
+    "over": "{amount} too much",
+    "ok": "Adds up",
+    "fill": "Split across empty fields",
+    "date": "Date",
+    "note": "Note (optional)",
+    "addNote": "Note",
+    "addNoteName": "Add a note",
+    "save": "Save expense",
+    "saveEdit": "Save changes",
+    "saving": "Saving …",
+    "saved": "{amount} saved – balances are up to date.",
+    "savedEdit": "Changes saved.",
+    "view": "View",
+    "counter": "{count} of {max} characters",
+    "error": {
+      "amountMissing": "Please enter an amount.",
+      "amountFormat": "Please enter an amount like 12.50.",
+      "amountMax": "Please enter 1,000,000 or less.",
+      "titleMissing": "Please say what it was for.",
+      "tooLongTitle": "60 characters max.",
+      "tooLongNote": "200 characters max.",
+      "forMissing": "Pick at least one person.",
+      "splitSum": "The amounts don’t add up yet.",
+      "dateMissing": "Please pick a date.",
+      "dateRange": "Please pick a date between {from} and {to}.",
+      "payer": "Please pick who paid.",
+      "save": "Couldn’t save. Your entries are still here."
+    },
+    "discard": {
+      "title": "Discard this expense?",
+      "text": "Your entries will be lost.",
+      "keep": "Keep editing",
+      "confirm": "Discard"
+    },
+    "conflict": {
+      "changed": "{name} just changed this expense.",
+      "now": "Now: {summary}",
+      "take": "Use their version",
+      "mine": "Save mine anyway",
+      "deleted": "This expense has been deleted.",
+      "asNew": "Save as new expense",
+      "toList": "Back to the list",
+      "closed": "{orga} just closed the expenses – they can’t be changed any more."
+    }
+  },
+  "balances": {
+    "yours": "Your payments",
+    "others": "Other payments",
+    "othersOnly": "How you settle up",
+    "count": "{count, plural, one {One payment} other {# payments}} and you’re all done.",
+    "to": "{from} to {to}: {amount}",
+    "markPaid": "Mark as paid",
+    "markReceived": "Mark as received",
+    "whoBoth": "{a} or {b} can mark this.",
+    "whoOne": "{a} can mark this.",
+    "whoOrga": "The organizer can mark this.",
+    "closed": "The expenses are closed.",
+    "paidChip": "Paid",
+    "undoPay": "Take back",
+    "undoPayName": "Take back the payment from {from} to {to}",
+    "marked": "Marked as paid: {from} → {to}, {amount}.",
+    "markedSquare": "Marked as paid: {from} → {to}, {amount}. All square ✓",
+    "unmarked": "Payment taken back.",
+    "allSquareTitle": "All square ✓",
+    "allSquareText": "Nobody owes anybody anything.",
+    "done": "Already paid ({count})",
+    "doneMeta": "marked by {name}, {date}",
+    "doneOrga": "marked by {name} (organizer), {date}",
+    "list": "Balances",
+    "other": {
+      "owed": "is owed {amount}",
+      "owes": "owes {amount}",
+      "square": "all square ✓"
+    },
+    "me": {
+      "owed": "you’re owed {amount}",
+      "owes": "you owe {amount}",
+      "square": "all square ✓"
+    },
+    "remind": "Remind {name}",
+    "remindTitle": "Who still owes you?",
+    "remindAllTitle": "Open payments",
+    "remindAll": "Remind everyone",
+    "remindContext": "According to the expenses, {name} still owes you {amount}.",
+    "remindOther": "{from} → {to}: {amount}",
+    "nudgeOrgaName": "Let {orga} know that {name} hasn’t joined yet",
+    "usually": "This usually happens after the trip."
+  },
+  "payInfo": {
+    "title": "Your payment details (optional)",
+    "sheetTitle": "Your payment details",
+    "empty": "Nothing added yet – e.g. IBAN or PayPal name.",
+    "add": "Add",
+    "change": "Change",
+    "updated": "last changed {date}",
+    "iban": "IBAN (optional)",
+    "note": "Other way (optional)",
+    "noteHint": "e.g. PayPal: max.m",
+    "visible": "Everyone on this trip can see this. It’s deleted when you leave the trip.",
+    "save": "Save",
+    "saved": "Payment details saved.",
+    "delete": "Delete payment details",
+    "deleted": "Payment details deleted.",
+    "error": {
+      "iban": "This IBAN doesn’t look right – please check it.",
+      "note": "100 characters max."
+    },
+    "ibanLabel": "IBAN",
+    "show": "Show",
+    "hide": "Hide",
+    "copy": "Copy",
+    "copied": "Copied ✓",
+    "ibanSr": "{name}’s IBAN, ending in {last4}",
+    "ibanMineSr": "Your IBAN, ending in {last4}",
+    "showName": "Show {name}’s IBAN",
+    "hideName": "Hide {name}’s IBAN",
+    "copyIbanName": "Copy {name}’s IBAN",
+    "ibanCopied": "IBAN copied",
+    "copyNoteName": "Copy {name}’s payment details",
+    "noteCopied": "Payment details copied",
+    "missing": "{name} hasn’t added payment details – best to ask directly."
+  },
+  "closeCosts": {
+    "action": "Close the expenses",
+    "title": "Close the expenses?",
+    "text": "After that nobody can change expenses or payments. You can reopen them.",
+    "warning": "{count, plural, one {One payment is} other {# payments are}} still open – close anyway? After that nobody can change expenses or mark payments as paid until you reopen.",
+    "confirm": "Close",
+    "confirmAnyway": "Close anyway",
+    "done": "Expenses closed.",
+    "reopened": "Expenses reopened."
+  },
+  "costsLeave": {
+    "owe": "You still owe {amount}. If you leave, your expenses stay for the group and you’ll show up as “former member” – best to settle up first.",
+    "owed": "You’re still owed {amount}. If you leave, your expenses stay as “former member”, and the others mark their payments to you themselves.",
+    "payInfo": "Your payment details for this trip will be deleted.",
+    "toBalances": "Settle up",
+    "anyway": "Leave anyway",
+    "removeOwes": "{name} still owes {amount}.",
+    "removeOwed": "{name} is still owed {amount}.",
+    "removeStay": "The expenses stay; {name} will show up as “former member”.",
+    "accountTitle": "You’re not all square on {count, plural, one {one trip} other {# trips}} yet:",
+    "accountOwe": "{trip} – you owe {amount}",
+    "accountOwed": "{trip} – you’re owed {amount}"
   }
 }

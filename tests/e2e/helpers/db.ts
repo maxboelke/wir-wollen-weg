@@ -955,3 +955,13 @@ export async function setLastFixedRange(tripId: string, start: string, end: stri
     ]);
   });
 }
+
+/** Display language of an account (like choosing it in «Konto») – takes effect on the next request. */
+export async function setAccountLocale(email: string, locale: "de" | "en"): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(`update "user" set locale = $2, locale_chosen_at = now() where email = $1`, [
+      email,
+      locale,
+    ]);
+  });
+}

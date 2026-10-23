@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Noch keine Ausgaben</title>
+  <desc>Leerzustand „Kosten“ (W19 D.4.4, F-035, D-60): eine Reisekasse in Indigo mit Beleg dahinter und einem kleinen Stapel Sonnen-Münzen, Sonne und Minze-Wellen in einer Lavendel-Kachel. Dekorativ.</desc>
+  <!-- v1.2 (2026-10-23), Stil B wie empty-stays.svg: flach, ohne Kontur, Kachel statt Teller, keine Texte, keine Koralle
+       (Geld ist hier kein Problem). Ebenen (M-D3): plate, sun, sea, receipt, wallet, coins, sparks. -->
+  <style>
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    @media (prefers-color-scheme: dark) {
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+    }
+  </style>
+  <defs>
+    <clipPath id="wwec-plate"><rect x="28" y="12" width="184" height="156" rx="32"/></clipPath>
+  </defs>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g clip-path="url(#wwec-plate)">
+    <g data-anim="sun">
+      <circle class="wi-sun" cx="168" cy="50" r="24" opacity=".3"/>
+      <circle class="wi-sun" cx="168" cy="50" r="15"/>
+    </g>
+    <g data-anim="sea">
+      <path class="wi-mint" d="M28 132c18-6 36-6 54 0s36 6 54 0 36-6 54 0 22 4 30 2v36H28z"/>
+      <path class="wi-mintd" d="M28 150c18-5 36-5 54 0s36 5 54 0 36-5 54 0 22 4 30 2v18H28z"/>
+    </g>
+  </g>
+  <g data-anim="receipt">
+    <g transform="rotate(-8 99 79)">
+      <path class="wi-paper" d="M70 46a6 6 0 0 1 6-6h46a6 6 0 0 1 6 6v72l-7.25-5-7.25 5-7.25-5-7.25 5-7.25-5-7.25 5-7.25-5-7.25 5z"/>
+      <rect class="wi-violet" x="80" y="54" width="30" height="5" rx="2.5"/>
+      <rect class="wi-violet" x="80" y="66" width="38" height="5" rx="2.5" opacity=".5"/>
+      <rect class="wi-violet" x="80" y="78" width="24" height="5" rx="2.5" opacity=".5"/>
+      <rect class="wi-violet" x="80" y="94" width="38" height="6" rx="3"/>
+    </g>
+  </g>
+  <g data-anim="wallet">
+    <rect class="wi-violet" x="102" y="84" width="66" height="22" rx="8"/>
+    <rect class="wi-brand" x="96" y="92" width="80" height="54" rx="12"/>
+    <rect class="wi-violet" x="146" y="108" width="34" height="22" rx="11"/>
+    <circle class="wi-sun" cx="159" cy="119" r="4.5"/>
+  </g>
+  <g data-anim="coins">
+    <rect class="wi-sun" x="58" y="126" width="34" height="9" rx="4.5"/>
+    <rect class="wi-sun" x="61" y="117" width="34" height="9" rx="4.5" opacity=".6"/>
+    <rect class="wi-sun" x="57" y="108" width="34" height="9" rx="4.5"/>
+  </g>
+  <g data-anim="sparks">
+    <path class="wi-sun" d="M52 34l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path class="wi-violet" d="M196 120l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+  </g>
+</svg>

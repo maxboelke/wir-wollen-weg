@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
 Stand: 2026-10-22 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14.**
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -526,6 +526,76 @@ Zugänglicher Name = «Unterkunft. {Status}». Max. 2 Zeilen, Titel mit „…�
 - **Kopf-Tasten:** keine neue.
 
 **Abnahme UX (zusätzlich zu W18 E.15):** Max Vorbereitung mit 3 offenen (V3 dran, Rang nach V1-Orga-Fällen, Primär «Jetzt swipen») · Max fertig, andere offen (wartet, Erinnern → `status` ohne Platzhalter) · Max alle fertig (wartet, «Lena Bescheid geben» → `stay-fix`) · Lena alle fertig (dran Rang 1 «Festlegen») · Lena Gleichstand / kein ♥ · Lena festgelegt nicht gebucht (dran) · gebucht → Kachel «… · gebucht ✓» + «Neu erledigt» · UX-9 + Rückgängig · keine Vorschläge (Als Nächstes) · Unterwegs ohne Festlegung mit Vorschlägen (nicht genutzt + Kachel) · Termin anders neu festgelegt (Regel 5 „neu buchen“) · H-2-Kurzformen · 200 % (Schiene) · Dark Mode · kein Text, Chip oder Menüpunkt erwähnt die Markierung „Bucht“ (das Verb in «Lena bucht …» ist gemeint und richtig).
+
+## v2.15 Inkrement-10-Schnitt – Kosten: Kachel, A1, D1, Kopf-Tasten, Erinnern (2026-10-23)
+
+Gilt vor v2.4 (A1, D1-Tabelle, Teilphase Danach), v2.6 und v2.8 für Inkrement 10. Bereich: [W19 D](w19-kosten.md), Daten/Rechte/Rechenregeln: [`features.md` R.8](../../product/features.md). CEO-Entscheidungen 2026-10-23: (a) Orga markiert keine Ausgleiche zwischen zwei Mitgliedern mit Konto; (b) Abschließen sperrt auch das Markieren.
+
+**Adapter** `costStatus()` → `areas.costs` (Vertrag v2.10): `{ expenseCount /* nicht gelöscht */, totalCents, currency, myBalanceCents, myDebts: { name: string; cents: number }[] /* Zeilen des Vorschlags, in denen ich zahle */, owedToMe: { name: string; cents: number; placeholder: boolean; former: boolean }[], openTransfers: number /* Zeilen des Vorschlags gesamt */, allSettled: boolean /* alle Salden 0 */, closed: boolean, threshold: number /* Cent, R.8 Regel 7 */ }`. `null` = Bereich nicht gebaut (vor Inkr. 10). „Offen“ = `!allSettled`.
+
+### Kachel „Kosten“ (v2.6, Reihenfolge Unterkunft · Unterlagen · Kosten · Infos · Reisedaten)
+Ziel `/costs`, Icon `wallet` (neu, D-58), Ton laut Designer (D-56). Erscheint in *Vorbereitung* und *Unterwegs* **immer** (auch ohne Ausgaben – Einstieg für Anzahlungen); in *Danach* nur, wenn **keine D1-Station sichtbar** ist (D1 erledigt oder 0 Ausgaben) – ein Einstieg je Bereich.
+
+| Lage | Statuszeile DE | EN |
+|---|---|---|
+| 0 Ausgaben | Noch keine Ausgaben | No expenses yet |
+| ≥ 1, Saldo < 0 | {total} gesamt · du schuldest {amount} | {total} in total · you owe {amount} |
+| ≥ 1, Saldo > 0 | {total} gesamt · du bekommst {amount} | {total} in total · you're owed {amount} |
+| ≥ 1, Saldo = 0, andere offen | {total} gesamt · bei dir ausgeglichen ✓ | {total} in total · you're all square ✓ |
+| alle 0 | {total} gesamt · alles ausgeglichen ✓ | {total} in total · all square ✓ |
+| abgeschlossen (Zusatz vorn) | Abgeschlossen · {…wie oben} | Closed · {…} |
+Beträge über `formatMoney` (ganze Beträge ohne „,00“, sonst exakt); `{amount}` nie gerundet. Zugänglicher Name «Kosten. {Status}». Kein Chip. Max. 2 Zeilen.
+
+### A1 „Du schuldest …“ (Aufgabe ohne Station, nur *Vorbereitung* und *Unterwegs*)
+- **Bedingung:** eigener Saldo ≤ −Schwelle (R.8 Regel 7: 50 € / 50 £ / 500 DKK …; −49,99 € → keine Aufgabe) **und** nicht abgeschlossen. Rang **3** (eigener Beitrag, v2.5). Unterwegs nach den Terminen.
+- **Titel** (Kartenkopf, statt Stations-Titel): 1 Empfänger «Du schuldest {name} {amount}» / «You owe {name} {amount}» · 2 Empfänger «Du schuldest {total} – an {name1} und {name2}» / «You owe {total} – to {name1} and {name2}» · ≥ 3 «Du schuldest {total} – an {name1} und {count} weitere» / «You owe {total} – to {name1} and {count} others» (`{total}` = |Saldo|, Empfänger in Vorschlags-Reihenfolge). Platzhalter-/ehemalige Empfänger mit Namen bzw. «ehemaliges Mitglied».
+- **Status** (ausgeklappt): «Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich.» / «Send the money, then mark it as paid – payment details are on the settle-up page.» (ohne Zahlungsinfo beim Empfänger: «Überweisen und als bezahlt markieren.» / «Send the money, then mark it as paid.»). **Primär** «Zum Ausgleich» / «Settle up» → `/costs/balances`. Titelzeile-Link → `/costs/balances`. Icon `wallet`.
+- Keine Erinnern-Taste, keine H-2-Kurzform (A1 ist nie „wartet“).
+
+### D1 „Kosten ausgleichen“ / „Settle up“ (nur *Danach*, sichtbar bei ≥ 1 Ausgabe) – ersetzt die D1-Tabelle in v2.4
+Erste passende Zeile gilt. `[…]` = Taste; Text-Tasten in Klammern.
+
+| # | Lage | Mitglied | Orga |
+|---|---|---|---|
+| 1 | alle 0 **und** abgeschlossen | erledigt «Alles ausgeglichen ✓» | erledigt «Alles ausgeglichen · abgeschlossen ✓» |
+| 2 | abgeschlossen, offen | erledigt «Abrechnung abgeschlossen» (+ bei eigenem Saldo ≠ 0 «· du schuldest/bekommst noch {amount}» – Info, kein Druck; Markieren ist gesperrt) | erledigt, dto. – in der aufgeklappten Erledigt-Gruppe Text-Taste «Abrechnung wieder öffnen» |
+| 3 | ich schulde | **dran**, Rang 2 – Titel wie A1 («Du schuldest Kemal 23,50 €» bzw. Mehr-Empfänger-Form), Status wie A1, Primär «Zum Ausgleich» | **dran**, dto. |
+| 4 | ich bekomme | **wartet** «Du bekommst noch {amount} von {name}» (mehrere: «… von {name1} und {name2}» / «… von {name1} und {count} weiteren»); `[{name} erinnern]` bei genau einem Schuldner mit Konto oder Platzhalter, sonst `[Erinnern]` → Sheet-Schritt `status` nur mit **meinen** Schuldnern (keine ehemaligen) | **wartet**, dto. |
+| 5 | ich ausgeglichen, andere offen | **wartet** «Noch {count} Ausgleiche offen» – kein Erinnern | **wartet** «Noch {count} Ausgleiche offen» `[Erinnern]` (`settle-all`) + (Abschließen …) |
+| 6 | alle 0, nicht abgeschlossen | erledigt «Alles ausgeglichen ✓» | **dran**, Rang 4 «Alles ausgeglichen – Abrechnung abschließen?» `[Abschließen]` **immer sekundär** (U-30; Seite hat dann ggf. keine Primär-Taste) → Dialog W19 D.9 direkt im Cockpit |
+
+- Text-Taste «Abschließen …» in Zeile 5 (Orga) öffnet den Warn-Dialog W19 D.9 („trotzdem abschließen?“).
+- **Kurzformen H-2** («Ihr wartet auf: …»): Zeile 4 «{name} gleicht aus» / «{name} to settle up» (mehrere: «Ausgleiche an dich» / «payments to you») · Zeile 5 «Ausgleiche der anderen» / «the others to settle up».
+- **Weg-Meta Danach** «{done} von {total} geschafft», total zählt D1 mit (Inkr. 10: total = 1, solange D2/D3 nicht gebaut). Erledigt-Zeile: «Reise · Vorbereitung, {days} Tage und Ausgleich» / «Trip · prep, {days} days and settling up», wenn D1 erledigt ist.
+- „Neu erledigt“ (v2.7) gilt für D1 («Neu erledigt: Kosten ausgleichen»), Siegel-Marker UM-4.
+
+### Phasenzeile, Heute-Satz, Kopf-Tasten
+| | DE | EN | Regel |
+|---|---|---|---|
+| Phasenzeile *Danach* | Zurück · Kosten ausgleichen | Back · settling up | ≥ 1 Ausgabe, offen, nicht abgeschlossen |
+| | Zurück · alles ausgeglichen | Back · all square | ≥ 1 Ausgabe und (alle 0 **oder** abgeschlossen) |
+| | Zurück seit {count} Tagen (unverändert) | Back for {count} days | 0 Ausgaben |
+| H-5 | Alles ausgeglichen – schön war's! | All square – what a trip! | *Danach*, nichts dran/wartet, ≥ 1 Ausgabe |
+| H-5b | unverändert | unverändert | *Danach*, nichts dran/wartet, 0 Ausgaben |
+| Kopf *Unterwegs* | `[+ Ausgabe]` – Kontur `on-ck`, Plus-Icon, erste Taste, Name «Ausgabe hinzufügen» | `[+ Expense]` – «Add an expense» | immer, außer abgeschlossen → `/costs/new?date=today&from=cockpit`; nach Speichern zurück ins Cockpit, Fokus auf die Taste, Snackbar mit «Ansehen» (W19 D.5.6) |
+| Kopf *Danach* | `[Ausgleichen]` – Kontur `on-ck`, Icon `wallet` | `[Settle up]` | nur offen **und** nicht abgeschlossen → `/costs/balances` |
+| Kopf *Vorbereitung* | unverändert `[Kalender]` (keine Kosten-Taste – Einstieg über die Kachel) | | |
+Container < 22 em: Kopf-Tasten brechen unter die Crew (v2.9), Texte bleiben.
+
+### Erinnern (RemindSheet, ux-spec §14.2) – Anlässe in Inkrement 10
+| Anlass | Einstieg | Schritt | Inhalt |
+|---|---|---|---|
+| `settle` | D1 Zeile 4; W19 D.7 «{name} erinnern» | `single` (bei mehreren Schuldnern vorher `status`: h2 «Wer schuldet dir noch?» / «Who still owes you?», Zeilen «{name} – {amount}», je Zeile WhatsApp; kein „Alle erinnern“, jede Nachricht nennt einen eigenen Betrag) | DE «Hey {name}, laut Abrechnung von {trip} bekomme ich noch {amount} von dir. Danke! {link}» · EN «Hey {name}, according to the {trip} expenses you still owe me {amount}. Thanks! {link}». `{link}` = `/trips/{id}/costs/balances`; **Platzhalter:** `{link}` = sein persönlicher Link (R.8, wie V2). |
+| `settle-all` | D1 Zeile 5 (nur Orga) | `status` | h2 «Offene Ausgleiche» / «Open payments» · Zeilen «{from} → {to}: {amount}» (nur Zeilen mit Schuldner = Mitglied mit Konto oder Platzhalter) · Fußleiste «Alle erinnern» mit DE «Hey ihr, bei {trip} {count, plural, one {ist noch ein Ausgleich} other {sind noch # Ausgleiche}} offen – schaut kurz rein: {link}» · EN «Hey all, {count, plural, one {one payment is} other {# payments are}} still open for {trip} – take a quick look: {link}». Einzeltext je Zeile an den Schuldner: DE «Hey {name}, laut Abrechnung von {trip} gehen noch {amount} von dir an {to}. {link}» · EN «Hey {name}, according to the {trip} expenses you still owe {to} {amount}. {link}». |
+Texte nennen **nie** IBAN/Zahlungsinfo, Titel oder Einzelausgaben (R.8 I10-09). Nach Abschluss keine Erinnern-Tasten.
+
+### Sonstiges
+- **Reisemenü `⋯`:** keine neue Zeile (ein Einstieg je Bereich). „Reise verlassen …“ enthält die Saldo-Warnung W19 D.10.
+- **Termin aufgehoben → Phase 2:** Kachel, A1, D1, Kopf-Tasten verschwinden mit dem Weg; Daten bleiben (W19 D.1).
+- **Längen-Budget:** A1/D1 sind normale Heute-Karten (zählen zur 3er-Grenze).
+- **`trip-route.ts`:** `StationId` + `"A1" | "D1"`; Katalog-Reihenfolge … V3, A2, A1 (Vorbereitung/Unterwegs) bzw. D1 (Danach); Rang je Zustand über `TripStation.rank` (A1 = 3, D1 schulden = 2, D1 abschließen = 4); `headActions` um `"addExpense" | "settle"`; `TripTile.area` um `"costs"`; Remind-Anlässe `settle`, `settle-all`; `RouteTarget.page` um `costs`, `costsBalances`, `costsNew`. Unit-Tests je Zeile der D1-Tabelle × Rolle, A1 an der Schwelle (−49,99 / −50,00 / −50,01 €, GBP, DKK), Kachel je Zeile, Phasenzeile, H-5/H-5b, Kopf-Tasten je Teilphase inkl. abgeschlossen.
+
+**Abnahme UX (zusätzlich zu W19 D.18):** Vorbereitung 0 Ausgaben (Kachel «Noch keine Ausgaben», keine A1) · Schuld 49,99/50,00 € · A1 mit 1/2/3 Empfängern · Unterwegs `[+ Ausgabe]` → speichern → zurück ins Cockpit, Snackbar «Ansehen», Kachel-Status neu · Danach je D1-Zeile × Rolle (Orga Zeile 6: keine Primär-Taste) · abgeschlossen mit offenen Salden (D1 erledigt, kein `[Ausgleichen]`, Phasenzeile «alles ausgeglichen») · Kachel erscheint erst nach D1 erledigt · Erinnern `settle` an Platzhalter (persönlicher Link) und `settle-all` · H-2-Kurzformen · H-5 vs. H-5b · 200 % (Schiene, Kopf-Tasten umbrechen) · Dark Mode.
 
 ---
 

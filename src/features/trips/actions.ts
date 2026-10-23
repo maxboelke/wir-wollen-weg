@@ -249,7 +249,7 @@ export async function deleteTripAction(
 
 export interface PlaceholderActionResult {
   ok?: boolean;
-  error?: TripActionError | "nameRequired" | "full";
+  error?: TripActionError | "nameRequired" | "full" | "usedInCosts";
   suggestion?: string;
 }
 
@@ -292,5 +292,7 @@ export async function removePlaceholderAction(
   const found = await organizer(publicId);
   const id = userIdSchema.safeParse(placeholderId);
   if (!found || !id.success) return { error: "notAllowed" };
-  return (await removePlaceholder(found.trip.id, id.data)) ? { ok: true } : { error: "generic" };
+  const removed = await removePlaceholder(found.trip.id, id.data);
+  if (removed === "used") return { error: "usedInCosts" };
+  return removed ? { ok: true } : { error: "generic" };
 }
