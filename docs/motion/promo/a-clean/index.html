@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promo v2 · A „Clean Product“ · Wir wollen weg / When do we go?</title>
+<!--
+  Promo v2, Stil A „Clean Product“ (Motion Designer, 2026-10-23) – ruhig, hell, viel Weißraum, Handy im Mittelpunkt.
+  Storyboard: ../storyboard.md §9 · Aufnahme: ../README.md
+  Bühne 360 × 640 CSS-px (× 3 = 1080 × 1920). Rein zeitbasiert, deterministisch (Konfetti mit festem Seed).
+  Parameter: ?lang=en · ?scene=0..8 · ?t=ms · ?pause=1 · ?loop=1 · ?debug=1 · ?scale=n
+  API: window.__promoReady, __promoDone, __promoDuration, __promoRender(ms)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap">
+<link rel="stylesheet" href="../shared/promo-screens.css">
+<style>
+#stage{background:linear-gradient(180deg,#fdfcff 0%,#f6f4fc 55%,#eeebf8 100%)}
+.glow{position:absolute;border-radius:50%;pointer-events:none}
+#gLav{width:480px;height:480px;left:-250px;top:-230px;background:radial-gradient(closest-side,rgb(167 154 242/.30),rgb(167 154 242/0))}
+#gMint{width:440px;height:440px;right:-230px;top:-200px;background:radial-gradient(closest-side,rgb(82 229 184/.26),rgb(82 229 184/0))}
+#gLow{width:560px;height:560px;left:-100px;bottom:-360px;background:radial-gradient(closest-side,rgb(167 154 242/.30),rgb(167 154 242/0))}
+#gSun{width:560px;height:560px;left:-100px;top:20px;background:radial-gradient(closest-side,rgb(255 207 74/.55),rgb(255 207 74/0));opacity:0;visibility:hidden}
+#gEnd{width:520px;height:520px;left:-80px;top:-40px;background:radial-gradient(closest-side,rgb(82 229 184/.22),rgb(82 229 184/0));opacity:0;visibility:hidden}
+
+/* Untertitel */
+.a-pill{position:absolute;left:0;right:0;top:72px;display:flex;justify-content:center;z-index:20;visibility:hidden}
+.a-pill>span{display:inline-flex;align-items:center;gap:7px;height:28px;padding:0 12px 0 4px;border-radius:999px;background:#fff;
+  box-shadow:0 1px 2px rgb(30 26 61/.08),0 10px 22px -14px rgb(43 34 102/.45);font:800 12.5px/1 var(--ww-font-sans);color:var(--ww-ink-900);white-space:nowrap}
+.a-pill .no{width:20px;height:20px;border-radius:50%;background:var(--ww-indigo-800);color:#fff;display:grid;place-items:center;font:800 11px/1 var(--ww-font-display)}
+.a-pill .no.hk{background:var(--ww-coral-500);width:10px;height:10px;margin-left:6px}
+.a-pill .dots{display:flex;gap:3px;margin-left:3px}
+.a-pill .dots i{width:6px;height:6px;border-radius:50%;background:var(--ww-mist-200)}
+.a-pill .dots i.on{background:var(--ww-mint-500)}
+.a-head{position:absolute;left:18px;right:18px;top:106px;text-align:center;font:800 25px/1.12 var(--ww-font-display);letter-spacing:-.03em;
+  color:var(--ww-ink-900);text-wrap:balance;z-index:20;visibility:hidden}
+.a-head em{font-style:normal;color:var(--ww-lavender-600)}
+.a-head .g{color:var(--ww-mint-700);background:linear-gradient(transparent 62%,rgb(82 229 184/.45) 62%);padding:0 2px;border-radius:3px}
+
+#chatPos{position:absolute;left:34px;top:190px;z-index:5}
+#phw{position:absolute;left:54px;top:166px;width:252px;height:528px;transform-origin:126px 0;z-index:10;opacity:0;visibility:hidden}
+
+/* Endkarte */
+#end{position:absolute;inset:0;z-index:15;pointer-events:none}
+#endLogo{position:absolute;left:136px;top:146px;width:88px;height:88px;opacity:0;visibility:hidden}
+#endWord{position:absolute;left:0;right:0;top:252px;text-align:center;font:800 36px/1.05 var(--ww-font-display);letter-spacing:-.035em;color:var(--ww-ink-900);white-space:nowrap;opacity:0;visibility:hidden}
+#endWord em{font-style:normal;color:var(--ww-lavender-600)}
+#endTag{position:absolute;left:30px;right:30px;top:302px;text-align:center;font:600 15px/1.35 var(--ww-font-sans);color:var(--ww-ink-700);text-wrap:balance;opacity:0;visibility:hidden}
+#endChips{position:absolute;left:10px;right:10px;top:364px;display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
+#endChips span{height:28px;padding:0 11px 0 4px;border-radius:999px;background:#fff;box-shadow:0 1px 2px rgb(30 26 61/.08),0 10px 20px -14px rgb(43 34 102/.45);
+  display:inline-flex;align-items:center;gap:6px;font:700 11.5px/1 var(--ww-font-sans);color:var(--ww-ink-900);white-space:nowrap;opacity:0;visibility:hidden}
+#endChips span b{width:20px;height:20px;border-radius:50%;background:var(--ww-mint-400);color:var(--ww-indigo-800);display:grid;place-items:center;font:800 10.5px/1 var(--ww-font-display)}
+#endNote{position:absolute;left:24px;right:24px;top:446px;text-align:center;font:600 11.5px/1.3 var(--ww-font-sans);color:var(--ww-ink-700);opacity:0;visibility:hidden}
+#conf{position:absolute;inset:0;pointer-events:none;z-index:30}
+</style>
+</head>
+<body>
+<div id="vp">
+  <div id="stage" aria-hidden="true">
+    <div class="glow" id="gLav"></div><div class="glow" id="gMint"></div><div class="glow" id="gLow"></div>
+    <div class="glow" id="gSun"></div><div class="glow" id="gEnd"></div>
+    <div id="chatPos"></div>
+    <div id="phw"></div>
+    <div id="caps"></div>
+    <div id="end">
+      <div id="endLogo"></div>
+      <div id="endWord"></div>
+      <div id="endTag"></div>
+      <div id="endChips"></div>
+      <div id="endNote"></div>
+    </div>
+    <div id="conf"></div>
+  </div>
+</div>
+<script src="../shared/promo-core.js"></script>
+<script src="../shared/promo-screens.js"></script>
+<script>
+(function(){
+'use strict';
+var C=window.PromoCore,PS=window.PromoScreens,$=C.$,S=C.S,O=C.O,pr=C.pr,ez=C.ez,mix=C.mix,bump=C.bump,E=C.E;
+
+/* ---------- Texte (Untertitel + Endkarte) ---------- */
+var TXT={
+de:{hookE:'Kennt ihr das?',hook:'Wann fahren wir <em>eigentlich</em> weg?',
+  steps:['Zeitraum finden','Unterkunft finden','Kosten tracken','Verrechnen'],
+  head:{paint:'Alle tragen ihre <em>freien Tage</em> ein.',heat:'<span class="g">Grün</span> heißt: alle können.',vote:'Abstimmen mit <em>einem Tipp</em>.',
+    party:'Termin steht. <em>Vorfreude an!</em>',swipe:'Unterkünfte vorschlagen, <em>alle swipen</em>.',costs:'Unterwegs Kosten <em>bequem eintragen</em>.',
+    settle:'Bequem verrechnen – <span class="g">alle quitt</span>.'},
+  word:'Wir wollen <em>weg</em>',tag:'Euren gemeinsamen Urlaub finden – ohne Chat-Chaos.',chips:['Zeitraum','Unterkunft','Kosten','Verrechnen'],note:'Einladen per Link · läuft im Browser'},
+en:{hookE:'Sound familiar?',hook:'So when are we <em>actually</em> going?',
+  steps:['Find the dates','Find a place','Track costs','Settle up'],
+  head:{paint:'Everyone adds their <em>free days</em>.',heat:'<span class="g">Green</span> means: everyone’s free.',vote:'Vote with <em>one tap</em>.',
+    party:'Dates set. <em>Countdown on!</em>',swipe:'Suggest places, <em>everyone swipes</em>.',costs:'Log costs <em>on the go</em>.',
+    settle:'Settle up easily – <span class="g">all square</span>.'},
+  word:'When do we <em>go?</em>',tag:'Find your holiday together – no group-chat chaos.',chips:['Dates','Place','Costs','Settle up'],note:'Invite by link · runs in your browser'}
+};
+var X=TXT[C.LANG];
+
+/* ---------- Zeitleiste (ms) ---------- */
+var T0={paint:2400,heat:5600,vote:8800,party:11400,swipe:14600,costs:17600,settle:21000,end:24600};
+var DUR=28000;
+var SCENES=[0,T0.paint,T0.heat,T0.vote,T0.party,T0.swipe,T0.costs,T0.settle,T0.end];
+/* Untertitel: [Schlüssel, ein, aus] – voll sichtbar von ein+160 bis aus−200 */
+var HEADS=[['hook',0,2250],['paint',2500,5400],['heat',5700,8600],['vote',8900,11200],['party',11500,14400],['swipe',14700,17400],['costs',17700,20800],['settle',21100,24400]];
+/* Schritt-Pillen: [Schritt 0=Hook | 1–4, ein, aus] */
+var PILLS=[[0,0,2250],[1,2450,14400],[2,14650,17400],[3,17650,20800],[4,21050,24400]];
+
+/* ---------- Aufbau ---------- */
+var caps=$('caps');
+var pillEls=PILLS.map(function(p){
+  var n=p[0],inner;
+  if(n===0)inner='<span class="no hk"></span>'+X.hookE;
+  else inner='<span class="no">'+n+'</span>'+X.steps[n-1]+'<span class="dots">'+[1,2,3,4].map(function(i){return '<i'+(i<=n?' class="on"':'')+'></i>';}).join('')+'</span>';
+  var el=C.div('a-pill','<span>'+inner+'</span>');caps.appendChild(el);return el;});
+var headEls=HEADS.map(function(h){var el=C.div('a-head',h[0]==='hook'?X.hook:X.head[h[0]]);caps.appendChild(el);return el;});
+
+var chat=PS.chat();$('chatPos').appendChild(chat.el);
+var ph=PS.phone();$('phw').appendChild(ph.el);
+var SC={paint:PS.SCR.paint(),heat:PS.SCR.heat(),vote:PS.SCR.vote(),party:PS.SCR.party(),swipe:PS.SCR.swipe(),costs:PS.SCR.costs(),settle:PS.SCR.settle()};
+['paint','heat','vote','party','swipe','costs','settle'].forEach(function(n){ph.slot.appendChild(SC[n].el);});
+var seq=PS.sequence([
+  {s:SC.paint,tin:T0.paint},{s:SC.heat,tin:T0.heat,mode:'slide'},{s:SC.vote,tin:T0.vote,mode:'slide'},{s:SC.party,tin:T0.party,mode:'fade'},
+  {s:SC.swipe,tin:T0.swipe,mode:'slide'},{s:SC.costs,tin:T0.costs,mode:'slide'},{s:SC.settle,tin:T0.settle,mode:'slide'}]);
+
+/* Endkarte */
+$('endLogo').innerHTML=C.logo(88,'light','el');
+var ek=C.keys($('endLogo'));
+$('endWord').innerHTML=X.word;$('endTag').textContent=X.tag;
+$('endChips').innerHTML=X.chips.map(function(c,i){return '<span data-k="ec'+i+'"><b>'+(i+1)+'</b>'+c+'</span>';}).join('');
+var ck=C.keys($('endChips'));
+$('endNote').textContent=X.note;
+
+/* Konfetti: Ring-Mitte auf der Bühne = Handy (54|166, Maßstab .88 um 126|0) + Rahmen 6 + Ring (120|144) */
+var conf=C.confetti($('conf'),20270710,['#52e5b8','#ffcf4a','#a79af2','#f0503f','#5b48c9']);
+var BURST=T0.party+SC.party.burstAt;
+conf.burst(72,BURST,54+126+(6+SC.party.ring.x-126)*.88,166+(6+SC.party.ring.y)*.88,'burst',90);
+conf.burst(44,BURST+110,0,0,'rain',650);
+
+/* ---------- render ---------- */
+function cap(el,tin,tout,t){
+  if(t<tin-5||t>tout+5){O(el,0);return;}
+  var kin=ez(t,tin,520,E.soft),ko=ez(t,tout-200,200,E.exit);
+  S(el,{y:14*(1-kin)-8*ko,s:mix(.96,1,kin),o:pr(t,tin,160)*(1-ko)});
+}
+function render(t){
+  S($('gLav'),{x:12*Math.sin(t/2600),y:8*Math.cos(t/3100)});
+  S($('gMint'),{x:-10*Math.sin(t/2900),y:10*Math.sin(t/3300)});
+  S($('gSun'),{s:1+.06*bump(t,BURST,700),o:.9*pr(t,BURST-100,420)*(1-pr(t,BURST+1500,900))});
+  O($('gEnd'),pr(t,T0.end+300,700));
+
+  /* Untertitel */
+  for(var i=0;i<HEADS.length;i++)cap(headEls[i],HEADS[i][1],HEADS[i][2],t);
+  for(var j=0;j<PILLS.length;j++)cap(pillEls[j],PILLS[j][1],PILLS[j][2],t);
+
+  /* Hook */
+  if(t<2600){
+    var cin=ez(t,40,460,E.emph),cout=ez(t,2050,420,E.exit);
+    var shk=(t>1750&&t<2050)?Math.sin((t-1750)/26)*2.6*(1-pr(t,1750,300)):0;
+    S(chat.el,{x:shk,y:mix(28,0,cin)+90*cout,s:mix(.96,1,cin)*mix(1,.82,cout),r:-6*cout+shk*.5,o:pr(t,40,200)*(1-pr(t,2100,300))});
+    chat.render(t);
+  }else O(chat.el,0);
+
+  /* Handy */
+  var pin=ez(t,2000,700,E.emph),pout=ez(t,T0.end,460,E.exit);
+  S($('phw'),{y:mix(480,0,pin)+60*pout,r:mix(6,0,pin),s:.88*(1+.03*bump(t,BURST,420))*mix(1,.94,pout),o:pr(t,2000,120)*(1-pout)});
+  if(t>=1950&&t<T0.end+500)seq(t);
+
+  conf.render(t);
+
+  /* Endkarte */
+  if(t>=T0.end){
+    S($('endLogo'),{s:mix(.5,1,ez(t,T0.end+300,640,E.bouncy)),o:pr(t,T0.end+300,160)});
+    C.logoAnim(ek.elSun,ek.elWaves,t,T0.end+460);
+    S($('endWord'),{y:18*(1-ez(t,T0.end+600,560,E.soft)),o:pr(t,T0.end+600,200)});
+    S($('endTag'),{y:12*(1-ez(t,T0.end+850,520,E.soft)),o:pr(t,T0.end+850,220)});
+    for(var c=0;c<4;c++){var tc=T0.end+1100+c*90;S(ck['ec'+c],{s:mix(.7,1,ez(t,tc,460,E.bouncy)),o:pr(t,tc,120)});}
+    O($('endNote'),pr(t,T0.end+1550,300));
+  }else{O($('endLogo'),0);O($('endWord'),0);O($('endTag'),0);O($('endNote'),0);for(var c2=0;c2<4;c2++)O(ck['ec'+c2],0);}
+}
+
+C.player({stage:$('stage'),duration:DUR,scenes:SCENES,render:render,name:'A'});
+})();
+</script>
+</body>
+</html>

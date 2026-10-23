@@ -1,6 +1,6 @@
 # Promo-Video „Wir wollen weg“ – Konzept & Storyboard
 
-Stand: 2026-10-23 (v1.0) · Verantwortlich: Motion Designer · Komposition: [index.html](index.html) · Aufnahme: [README.md](README.md)
+Stand: 2026-10-23 (v2.0 – drei Stile, siehe **§9**; §1–§8 = v1.0, überholt durch das Feedback des Auftraggebers) · Verantwortlich: Motion Designer · Komposition v2: [a-clean](a-clean/index.html) · [b-kinetic](b-kinetic/index.html) · [c-abenteuer](c-abenteuer/index.html) (v1: [index.html](index.html), nicht mehr verwenden) · Aufnahme: [README.md](README.md)
 Bezug: [motion-system.md](../motion-system.md), [interaktionen.md](../interaktionen.md), Design-System v1.0 (B0 „Indigo & Minze“), Prototypen a, b, c, f
 
 ## 1. Eckdaten
@@ -71,3 +71,79 @@ Lesbarkeit: kleinste Schrift im Handy 7,5 CSS-px = 22,5 Video-px (Wochentage, nu
 - **Endkarte ohne Link/Domain**, weil es noch keine öffentliche Adresse gibt (Arbeitsmodus Q25). Sobald es eine Domain gibt, Zeile „Einladen per Link · läuft im Browser“ durch die Adresse ersetzen.
 - **Werbe-Aussagen** prüfen lassen (Operations/Recht): „läuft im Browser“ und „Einladen per Link“ sind Produktfakten; keine Preis- oder „kostenlos“-Aussage, solange das nicht entschieden ist.
 - Kein Browser-Test durch den Motion Designer (keine Browser-Umgebung) – bitte bei der Aufnahme kurz die Szenen per `?scene=n` durchsehen.
+
+---
+
+## 9. v2 – drei Stile (2026-10-23, nach Sichtung durch den Auftraggeber)
+
+### 9.1 Was sich gegenüber v1 ändert (gilt für alle drei Stile)
+| # | Feedback | Umsetzung |
+|---|---|---|
+| 1 | „Jeder **malt** seine freien Tage“ missverständlich | **„Alle tragen ihre *freien Tage* ein.“** / „Everyone adds their *free days*.“ (B: „Alle tragen ihre / freien Tage ein.“) |
+| 2 | Tage, an denen alle können, **grün** | Heatmap-Stufe „alle können“ = **Minze `#52E5B8`** mit Indigo-Zahl + Indigo-Siegel; Legende „■ alle können“; Vorschlags-Pille „✓ Alle können“ in Minze; Untertitel „***Grün** heißt: alle können.*“. Die übrigen Stufen bleiben die Lavendel/Violett-Rampe. Hinweis: In der App ist das im **Dunkelmodus** genau so, im Hellmodus ist „alle“ Indigo mit Minze-Siegel → Abstimmungspunkt M-P4. |
+| 3 | In **Schritten** erzählen | ① **Zeitraum finden** (Tage eintragen → Gruppen-Kalender grün → abstimmen → Termin fix mit Konfetti-Ring) · ② **Unterkunft finden** (vorschlagen – Taste „+ Vorschlagen“, Karten „Vorschlag von Anna/Kemal/Mia“ – und swipen) · ③ **Kosten tracken** (unterwegs „+ Ausgabe eintragen“ → Blatt → Zeile erscheint, „Dein Stand“ springt) · ④ **Verrechnen** („Hab ich überwiesen“ → „Du bist quitt ✓“ → die anderen erledigt → „Alle sind quitt ✓“). Schritt-Nummer + Label immer sichtbar. |
+| 4 | Neue **Kosten-Begriffe** (w19 E.2) | „Ben hat ausgelegt · für alle“, „auf dich 252,00 €“, „Wer hat ausgelegt?“, „Du zahlst noch 71,20 € / 88,10 € zurück. An Ben.“, „Hab ich überwiesen“, „Erledigt“, „Du bist quitt ✓“, „Alle sind quitt ✓ – Niemand muss mehr etwas überweisen.“, „Die Gruppe hat bisher … ausgegeben.“, Bereich „Ausgleichen“. EN: „Ben paid“, „your part“, „You owe €88.10. To Ben.“, „I’ve sent it“, „Done“, „You’re all square ✓“, „Everyone’s square ✓“. Keine alten Begriffe („bezahlt“, „schuldest“, „ausgeglichen“, „Saldo“). |
+| 5 | Texte im Handy wirkten blass/unvollständig | (a) Jeder Screen hat einen **deckenden Hintergrund** und schiebt sich **über** den alten (kein Überblenden zweier halbtransparenter Screens mehr); (b) Inhalte kommen **mit** dem Screen herein statt nachträglich einzublenden – nur Ergebnisse (Häkchen, Balken, Siegel) erscheinen per Geste; (c) jede Szene hat eine **Ruhephase ≥ 0,6 s** im Endzustand, Untertitel stehen ≥ 2,3 s voll da; (d) Nebentexte im Handy mind. `ink-700`, ≥ 8,5 px (= 25 Video-px). |
+
+**Rechnung (Fantasiedaten, geprüft):** Steinhaus 1.260,00 (Ben) + Mietwagen 250,00 (du) + Fähre 96,00 (Anna) = 1.606,00 € → Anteil 321,20 €, du zahlst noch **71,20 €** zurück. + Pizza 84,50 € (Kemal) = **1.690,50 €** → Anteil 338,10 €, du zahlst noch **88,10 €** an Ben. Alle anderen an Ben: Anna 242,10 · Kemal 253,60 · Mia 338,10 (Summe 921,90 € = Bens Plus). „auf dich“: 252,00 + 50,00 + 19,20 + 16,90 = 338,10 €.
+
+**Technik:** Gemeinsame Teile in [`shared/`](shared/) – `promo-core.js` (Easing = Motion-Tokens, Konfetti mit Seed, Abspieler + Aufnahme-API), `promo-screens.js` (sieben nachgebaute Screens + Gruppenchat + Handy + Screen-Folge, Texte DE/EN), `promo-screens.css`. Jeder Screen hat seine eigene, relative Choreografie (inkl. Finger); die Stil-Dateien entscheiden nur Rahmen, Kamera, Untertitel und Zeitpunkte. Schnittstelle wie v1 (`?lang=en`, `?t=`, `?scene=`, `?pause=1`, `?loop=1`, `?debug=1`, `?scale=`, `__promoReady/Render/Done/Duration`).
+
+### 9.2 Stil A „Clean Product“ – [a-clean/index.html](a-clean/index.html) · 28,0 s
+Ruhig, hochwertig, **hell** (Nebel-Weiß mit zarten Lavendel/Minze-Lichtern), Handy (Maßstab 0,88) zentral, weiche Schiebe-Übergänge wie in der App. Oben eine weiße Schritt-Pille „**①** Zeitraum finden ● ○ ○ ○“ (bleibt über den ganzen Schritt stehen), darunter **ein** Satz (Jakarta 800, 25 px, Schlüsselwort Lavendel, „Grün“/„alle quitt“ mit Minze-Marker).
+
+| # | Zeit (s) | Schritt-Pille | Untertitel | Bild |
+|---|---|---|---|---|
+| 0 | 0,0–2,4 | ● Kennt ihr das? | Wann fahren wir *eigentlich* weg? | Chat-Karte „Urlaub 2027“, Blasen ploppen, „47 neu“, Karte zittert und kippt weg; Handy fährt von unten ein |
+| 1 | 2,4–5,6 | ① Zeitraum finden | Alle tragen ihre *freien Tage* ein. | „Meine Tage“: Finger wischt 8.–11. und 12.–18. Juli, „✓ Gespeichert“, „Fertig – abgeben“ → „✓ Abgegeben“, Kopf 5/5 |
+| 2 | 5,6–8,8 | ① | ***Grün** heißt: alle können.* | Gruppen-Kalender: Welle, 10.–17. Juli **grün** + Siegel, Rahmen um den Zeitraum, Vorschlag „✓ Alle können“ + Avatare, Tipp „Abstimmung starten“ |
+| 3 | 8,8–11,4 | ① | Abstimmen mit *einem Tipp*. | „Ja“ bei Option 1 (Balken, „★ Platz 1“), „Vielleicht“ bei Option 2, „5 von 5 haben abgestimmt ✓“, Tipp „Termin festlegen“ |
+| 4 | 11,4–14,6 | ① | Termin steht. *Vorfreude an!* | „Es geht los!“: Ring-Ehrenrunde, Konfetti über die Bühne (12,55 s), Sonnenschein, Handy-Hüpfer |
+| 5 | 14,6–17,6 | ② Unterkunft finden | Unterkünfte vorschlagen, *alle swipen*. | Kopf mit „+ Vorschlagen“, Karte „Vorschlag von Anna“ nach rechts (♥ Gefällt), Altstadtwohnung per ✕ nach links |
+| 6 | 17,6–21,0 | ③ Kosten tracken | Unterwegs Kosten *bequem eintragen*. | „+ Ausgabe eintragen“ → Blatt „Pizza am Hafen · 84,50 € · Wer hat ausgelegt? Kemal · Alle 5“ → Speichern → Zeile erscheint oben (Minze-Tönung), „Du zahlst noch 71,20 €“ springt auf **88,10 € zurück. An Ben.** |
+| 7 | 21,0–24,6 | ④ Verrechnen | Bequem verrechnen – *alle quitt*. | „Ausgleichen“: „An Ben 88,10 €“ → „✓ Hab ich überwiesen“ → Karte Minze „**Du bist quitt ✓**“; Ausgleiche der anderen werden „✓ Erledigt“; Karte wechselt auf „**Alle sind quitt ✓** – Niemand muss mehr etwas überweisen.“ |
+| 8 | 24,6–28,0 | – | – | Endkarte hell: Bildmarke (Sonne steigt), „Wir wollen *weg*“, Claim, vier Schritt-Chips ①–④, „Einladen per Link · läuft im Browser“; ab 26,4 s Standbild |
+
+### 9.3 Stil B „Kinetic Type“ – [b-kinetic/index.html](b-kinetic/index.html) · 29,0 s
+Mutig und taktorientiert: **harte Schnitte auf einem 250-ms-Raster** (120 BPM), vollflächige Farbflächen (Indigo, Minze, Sonne, Lavendel, Koralle), große Typo, das Handy als **Ausschnitt** (Maßstab 1,05–1,6) mit Kamerafahrten auf das Detail, das gerade passiert. Untertitel als schräge Farbstreifen (Jakarta 800, 31 px), die von links aufziehen; darüber der Chip „① Zeitraum finden“. Zwischen den Schritten eine **Schritt-Karte** mit riesiger Ziffer (250 px) und „Schritt 1 von 4“.
+
+| # | Zeit (s) | Fläche | Inhalt |
+|---|---|---|---|
+| 0 | 0,0–3,0 | Indigo · Lavendel · Sonne · Koralle · Indigo | Wort-Schläge im Takt: „Wann?“ – „Juli?“ – „August?!“ – „**47** neue Nachrichten“ (zittert) – „Geht auch *einfacher.*“ |
+| 1 | 3,0–3,75 | Minze | Schritt-Karte **1** „Zeitraum finden“ |
+| 2 | 3,75–6,75 | Indigo | Zoom 1,55 auf die Kalenderzeilen, Finger trägt ein; Fahrt zur Taste „Fertig – abgeben“ · „Alle tragen ihre / *freien Tage ein.*“ |
+| 3 | 6,75–9,75 | Indigo | Gruppen-Kalender, Zoom 1,6 auf die **grünen** Tage, Fahrt zum Vorschlag · „*Grün heißt:* / alle können.“ |
+| 4 | 9,75–12,1 | Indigo | Abstimmen, Fahrt zu „5 von 5“ und „Termin festlegen“ · „Abstimmen. / *Ein Tipp.*“ |
+| 5 | 12,1–15,1 | Indigo + Sonnenschein | Ring + Konfetti (13,25 s) · „Termin steht. / *Vorfreude an!*“ |
+| 6 | 15,1–15,85 | Lavendel | Schritt-Karte **2** „Unterkunft finden“ |
+| 7 | 15,85–18,65 | Minze | Swipen · „*Vorschlagen.* / Alle swipen.“ |
+| 8 | 18,65–19,4 | Sonne | Schritt-Karte **3** „Kosten tracken“ |
+| 9 | 19,4–22,4 | Sonne | Blatt „Ausgabe eintragen“, dann Fahrt zu „Dein Stand“ · „*Unterwegs:* / + Ausgabe. Fertig.“ |
+| 10 | 22,4–23,15 | Indigo | Schritt-Karte **4** „Verrechnen“ |
+| 11 | 23,15–26,15 | Lavendel | „Hab ich überwiesen“ → Fahrt über „Erledigt“ → Zoom 1,5 auf „**Alle sind quitt ✓**“ · „*Am Ende:* / alle quitt ✓“ |
+| 12 | 26,15–29,0 | Indigo | Logo dreht sich ein, „Wir wollen“ / riesig „**weg**“ (Minze), Claim, Chips ①–④, Fußzeile; ab 27,8 s Standbild |
+
+Barrierefreiheit Video: höchstens 2 Farbschnitte pro Sekunde (WCAG 2.3.1: < 3 Blitze/s), Koralle nur einmal 0,75 s, keine Rot-Wechsel.
+
+### 9.4 Stil C „Reise-Abenteuer“ – [c-abenteuer/index.html](c-abenteuer/index.html) · 30,0 s
+Verspielt, wie ein Reise-Tagebuch: **Kartenpapier** (Creme mit feinem Lavendel-Raster, Meer- und Sonnenflecken), **Gepäckanhänger** als Schritt-Etiketten („① Zeitraum finden“), Handys mit **Klebeband** an den Ecken, **Sticker** aus `docs/design/assets/illustrations/` (submitted, vote-done, empty-stays, empty-costs, seal) mit weißem Stanzrand. Eine **Reiseroute** schlängelt sich durch alle Stationen – wie im Cockpit „Reiseverlauf“: **gestrichelt = kommt noch, durchgezogen Minze = geschafft**, ein **Sonnen-Marker** zeigt „hier sind wir“ und wandert während jeder Station langsam weiter (Fortschritt). Beim Aufbruch zur nächsten Station wird die Stationsnummer zum Minze-Häkchen (Stempel). Die Kamera fährt die Route Seite für Seite nach unten (900 ms, `standard`).
+
+| # | Zeit (s) | Seite | Etikett · Überschrift | Bild |
+|---|---|---|---|---|
+| 0 | 0,0–3,2 | Start | „Kennt ihr das?“ · Wann fahren wir *eigentlich* weg? | Chat-Karte schräg auf der Karte, Start-Fähnchen; ab 2,3 s Fahrt zu Station 1 |
+| 1 | 3,2–6,2 | ① | Zeitraum finden · Alle tragen ihre *freien Tage* ein. | Meine Tage; Sticker „abgegeben“ klebt sich an (6,0 s) |
+| 2 | 6,2–9,2 | ① | ***Grün** heißt: alle können.* | Gruppen-Kalender grün |
+| 3 | 9,2–11,7 | ① | Abstimmen mit *einem Tipp*. | Abstimmen |
+| 4 | 11,7–14,5 | ① | Termin steht – *Vorfreude an!* | Ring + Konfetti (12,85 s), Sticker Vorfreude-Ring; 14,5 s: ① wird ✓, Fahrt zu ② |
+| 5 | 15,4–18,3 | ② | Unterkunft finden · Unterkünfte vorschlagen, *alle swipen*. | Swipen, Sticker Haus |
+| 6 | 19,2–22,5 | ③ | Kosten tracken · Unterwegs Kosten *bequem eintragen*. | + Ausgabe, Sticker Geldbörse |
+| 7 | 23,4–26,6 | ④ | Verrechnen · Am Ende verrechnen: *alle quitt*. | Ausgleichen → „Alle sind quitt ✓“, Siegel-Sticker |
+| 8 | 27,4–30,0 | Ziel | – | Route endet im Logo (Ziel), „Wir wollen *weg*“, Claim, Chips als Anhänger mit ✓; ab 28,6 s Standbild |
+
+Zwischen den Stationen (2,3–3,2 · 14,5–15,4 · 18,3–19,2 · 22,5–23,4 · 26,6–27,4 s) fährt die Kamera; Etikett und Überschrift der neuen Station stehen bei Ankunft schon da.
+
+### 9.5 Empfehlung
+- **Für Reels/TikTok: B** (stoppt das Scrollen in den ersten 0,5 s, Takt-Schnitte, große Typo – auch ohne Ton lesbar).
+- **Für WhatsApp-Status, Website, Präsentation: A** (erklärt am ruhigsten, wirkt am „produktnahesten“).
+- **C** ist der sympathischste und markantste Stil (Reiseroute = Produktidee „Reiseverlauf“), braucht aber die meiste Optik-Abnahme (Designer) und ist mit 30,0 s am längsten.
+- Alle drei teilen dieselben Screens → Texte/Zahlen ändern sich an **einer** Stelle (`shared/promo-screens.js`).
