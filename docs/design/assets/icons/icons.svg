@@ -6,6 +6,7 @@
     Alle IDs aus v0.5 bleiben gültig; neu: chevron-down, arrow-right, calendar-plus, sun, star, sparkle, chart, plane, login.
     v1.1 (2026-10-23): neu bed, heart, heart-filled, external (Unterkünfte F-031).
     v1.2 (2026-10-23): neu wallet, transfer, receipt, food, car, ticket, tag (Kosten teilen F-035/F-036, D-58).
+    v1.3 (2026-10-23): neu shield, id-card, history, key (Bucht + Reisedaten F-056/F-054, D-64). eye/eye-off/lock/copy vorhanden.
     Verwendung:
       <svg class="icon" width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>
     In Kacheln: Kachel-Fläche aus den Tile-Tokens, Icon-Farbe = passende Tile-Textfarbe.
@@ -314,6 +315,32 @@
     <title>Sonstiges</title>
     <path d="M3.5 5.5v5.2a2 2 0 0 0 .6 1.4l8.3 8.3a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8L12.1 4.1a2 2 0 0 0-1.4-.6H5.5a2 2 0 0 0-2 2z" fill="currentColor" fill-opacity=".16"/>
     <circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none"/>
+  </symbol>
+
+  <!-- v1.3 (2026-10-23, Inkrement 11 Bucht + Reisedaten, D-64): Schutz/Freigabe (shield), Reisedaten und Chip Bucht (id-card),
+       Zugriffsprotokoll (history), Ausweis-/Passnummer und Code-Bestätigung (key). design-system §9.23. -->
+  <symbol id="ww-icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Geschützt</title>
+    <path d="M12 3.5l7 2.6v5.6c0 4.3-2.9 7.6-7 8.8-4.1-1.2-7-4.5-7-8.8V6.1z" fill="currentColor" fill-opacity=".16"/>
+    <path d="M9 12.2l2.2 2.2 3.9-4.1"/>
+  </symbol>
+  <symbol id="ww-icon-id-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Reisedaten</title>
+    <rect x="2.5" y="5" width="19" height="14" rx="3" fill="currentColor" fill-opacity=".16"/>
+    <circle cx="8.5" cy="10.6" r="2.1"/>
+    <path d="M5.6 15.6c.5-1.4 1.6-2.2 2.9-2.2s2.4.8 2.9 2.2M14.5 10h4M14.5 13.5h2.8"/>
+  </symbol>
+  <symbol id="ww-icon-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Zugriffe</title>
+    <circle cx="12" cy="12" r="8.5" fill="currentColor" fill-opacity=".16" stroke="none"/>
+    <path d="M3.5 12A8.5 8.5 0 1 0 6 6L3.5 8.5"/>
+    <path d="M3.5 4v4.5H8"/>
+    <path d="M12 7.5V12l3 2"/>
+  </symbol>
+  <symbol id="ww-icon-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <title>Dokumentnummer</title>
+    <circle cx="8" cy="15.5" r="4.5" fill="currentColor" fill-opacity=".16"/>
+    <path d="M11.2 12.3l8.3-8.3M16.3 7.2l2.5 2.5M14 9.5l2 2"/>
   </symbol>
 
   <!-- Badge „Alle: Geht“ (x = n, U-4): Kreis in currentColor, Häkchen in ww-icon-knockout, optionaler Ring in ww-icon-ring.

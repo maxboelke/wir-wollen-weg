@@ -1,6 +1,6 @@
 # Design-System – Wir wollen weg / When do we go?
 
-Stand: 2026-10-23 (v1.2: Kosten §9.22; v1.1: Unterkünfte §9.21) · Verantwortlich: Designer · Status: **v1.0 – verbindlich für die Umsetzung** (Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“, Auftraggeber PRD §12 Q18; Q17 Bewegung/Feier/Vibration; CEO-Entscheidungen 2026-10-08 zu D-20–D-35)
+Stand: 2026-10-23 (v1.3: Reisedaten + „Bucht“ §9.23; v1.2: Kosten §9.22; v1.1: Unterkünfte §9.21) · Verantwortlich: Designer · Status: **v1.0 – verbindlich für die Umsetzung** (Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“, Auftraggeber PRD §12 Q18; Q17 Bewegung/Feier/Vibration; CEO-Entscheidungen 2026-10-08 zu D-20–D-35)
 Bezug: [PRD](../product/PRD.md) · [Features](../product/features.md) · UX: [ux-spec](../ux/ux-spec.md), [Wireframes](../ux/wireframes/README.md), [abstimmung-design.md](../ux/abstimmung-design.md) · Motion: [motion-system.md](../motion/motion-system.md) · Tokens: [tokens.css](tokens.css) · Assets: [assets/README.md](assets/README.md) · Abstimmung: [abstimmung-ux.md](abstimmung-ux.md) · Entwurf (Archiv): [richtungen/b/richtung-b.md](richtungen/b/richtung-b.md)
 
 > Arbeitsteilung: Struktur und Verhalten regelt die [UX-Spezifikation](../ux/ux-spec.md), Bewegung das [Motion-System](../motion/motion-system.md), das Aussehen dieses Dokument. Begriffe (DE/EN) folgen dem Glossar ux-spec §10.2. **B ändert die Optik, nicht Funktionen, Texte und Barrierefreiheitsregeln.**
@@ -508,6 +508,98 @@ Zeile 3: «Als bezahlt markieren» / «Als erhalten markieren» mit `check` 20 �
 
 **Kontraste (gerechnet, hell / dunkel):** bekommt/ausgeglichen 5,5 (Nebel 5,0) / 10,2 · schuldet 16,5 / 14,5 · Bereich Sonne 6,2 / 9,6 · Kategorie-Kacheln ≥ 4,9 / ≥ 6,5 · Dein-Stand-Kacheln 4,9 bzw. 6,0 / 7,6 bzw. 7,1 · Karte „Alles ausgeglichen“ Text 14,6 / 10,8, Text 2 6,4 / 6,1 · Chip „Bezahlt“ 4,9 / 7,6 · IBAN-Punkte 5,1 / 5,9 · Pfeil 5,1 / 5,9 · Balken bekommt 5,5 / 10,2, schuldet 3,4 / 3,9 (Grafik ≥ 3 : 1) · Live-Zeile Amber ≥ 6,2 / 9,6 · Avatar „ehemalig“ 6,0 / 7,1.
 
+### 9.23 Reisedaten + „Bucht“ (F-054/F-056, Inkrement 11 – v1.3, 2026-10-23)
+Struktur, Texte, Zustände: **W20 Abschnitt H** und W16 v2.16 (gelten vor diesem Abschnitt). Antworten auf D-64 – D-71: [abstimmung-ux.md](abstimmung-ux.md) §13. Tokens `--ww-travel-*` + `--ww-pattern-travel-demo` (tokens.css v1.3, hell + beide Dunkel-Blöcke). Icons v1.3 (§11).
+
+**Grundregeln:** (1) **Ruhig und vertrauenswürdig, nicht technisch:** kein Tresor-/Hacker-Look, keine Monospace-Schrift, kein Zeichenrauschen, kein Konfetti, keine Kirsche außer bei echten Fehlern (§9.7), keine Koralle. (2) **Feste Icon-Bedeutungen:** `id-card` = Bereich Reisedaten und Chip «Bucht» · `shield` = „wer sieht was“, Freigeben · `clock` = Löschfrist (wie überall „Frist“) · `history` = Zugriffsprotokoll · `key` = Ausweis-/Passnummer und Code-Bestätigung · `eye`/`eye-off` = Anzeigen/Verbergen · `copy` = Kopieren · `lock` = gesperrtes Feld. (3) **Amber nur** für den Vorschau-Hinweis, die Dokument-Warnung und «Dokument läuft vor der Rückreise ab». (4) **Klartext** nur für die Person selbst oder nach «Anzeigen»; Masken haben je Feldart **feste Länge** (verraten keine Namenslänge).
+
+**Bereichsfarbe (D-68, von UX/CEO bestätigt): Lavendel/Indigo** (`travel-area-*` = Lavendel-200 / Indigo **9,3**; dunkel Violett `#5B48C9` / Weiß **6,5**) mit `id-card` – für Kachel „Reisedaten“, Kopf-Icon, Station V4/D3, Icon-Kachel in Aufgaben und Reisemenü-Punkt «Wer bucht? …» (dort nur das Icon in `text-muted`). Unterscheidet sich von „Unterkunft“ (Lavendel-100 / Lavendel-600 + `bed`) durch kräftigeren Ton und Indigo-Icon **und** durch das Icon, von „Kosten“ (Sonne + `wallet`) klar; keine Warnfarbe. Nie als Fläche hinter Werten. Der Chip «Bucht» nutzt dieselben Werte (`travel-chip-*`), Bereich und Markierung gehören sichtbar zusammen.
+
+#### 9.23.1 Chip «Bucht» / «Booking» (D-64)
+| | Hell | Dunkel | Maße |
+|---|---|---|---|
+| Fläche / Text + Icon | `travel-chip-bg` Lavendel-200 / `travel-chip-fg` Indigo – **9,3** | Violett `#5B48C9` / Weiß – **6,5** | Pille; Listen **22** hoch (`travel-chip-h`), Polster 2/8, 12/800, Icon `id-card` 14 · Kopf der Anfrage-Karte **26** (`-lg`), Polster 3/10, 13/800, Icon 16 · Abstand Icon–Text 4 |
+
+- **Platz:** in derselben Zeile **nach dem Namen**, Abstand 6; Reihenfolge `Name · «Orga» · «Bucht»` (Chips untereinander 4). Zeile `flex-wrap`: wird es eng (360 px, 200 %, langer Name), wandern **beide Chips gemeinsam** in die zweite Zeile unter den Namen – der Name bekommt min. 6 em und wird erst danach mit „…“ gekürzt. Nie nur das Icon (Text trägt die Bedeutung, Icon `aria-hidden`).
+- Nicht interaktiv: kein Hover, kein Cursor, kein Fokus. Forced Colors: `border: var(--ww-border-forced)`.
+- **Wo:** „Wer ist dabei?“ (Zeile), Personen-Zeilen in W20, Kopf der Anfrage-Karte A (groß, neben Avatar 32 + Name), Statuszeile „Mehr zur Reise“ als Text («Lena bucht»). Im Schritt **„Wer bucht?“** erscheint der Chip neben dem Namen, sobald der Schalter an ist (Einblenden `duration-fade`, reduziert sofort); Schalter selbst wie §9.20 (Spur 52 × 32, Zeile ≥ 56). Gesperrte Zeile (Platzhalter, Grenze 3): Schalter `aria-disabled` in Aus-Optik + Grund 13/500 `text-muted` darunter. Zähler «2 von 3 vergeben» 13/700 `text-muted`, tabular.
+- Kein Avatar-Badge (das Kronen-Badge bleibt der Orga vorbehalten, §9.17) – zwei Badges an 24-px-Avataren wären unlesbar.
+- **Unterschritt „Wer bucht?“ (D-71):** Sheet §9.16; Einleitung 14/500 `text-muted`; Zeilen ≥ 56: Avatar 32 links · Name 15/700 (+ Chips) · Schalter rechts; Trenner `border-subtle`. Orga ohne jede Markierung: Info §9.18 mit `id-card` «Noch niemand bucht …» über der Liste. Reisemenü-Punkt «Wer bucht? …» mit `id-card` 20.
+
+#### 9.23.2 Anfrage-Karte (Mitglied, W20 H.6 Zustand A)
+Karte §9.6 (Radius 24, Polster 16, `shadow-1`), max. 640 px. Von oben, Abstand 10:
+1. **Kopfzeile:** Avatar 32 · Name 14/700 · Chip «Bucht» groß · rechts Datum 13/500 `text-muted` («28. April»).
+2. **h3** Jakarta 19/800, `text-wrap: balance`: «Lena bucht „Flüge München – Split“» – Zweck in typografischen Anführungszeichen, `overflow-wrap: anywhere`.
+3. «Lena bittet um:» 14/600 `text-muted`, darunter Liste 15/600 `text`, Aufzählungspunkt = Kreis 6 px `travel-area-fg`. Bei Dokument zusätzlich Zeile 13/600 `text` mit `key` 16 in `travel-warn-icon`: «Lena fragt auch nach deiner Ausweis- oder Passnummer.» (ohne Kasten – Hinweis, keine Warnung an die Person).
+4. **Schutz-Hinweis** (Box): `travel-shield-bg`, Radius 14, Polster 10/12, Raster `18px 1fr`, Lücke 8: Icon `shield` 18 in `travel-shield-fg`; Zeile 1 14/700 `text` «Nur Lena sieht deine Angaben.», Zeile 2 = **Löschfrist-Zeile** (9.23.6) ohne eigenes Icon.
+5. Primär `[Angaben eingeben]` (volle Breite, §9.1) · darunter Text-Taste «Ich kläre das direkt mit Lena» (`link`, ≥ 44).
+Zustände D / „klärt es direkt“ / „erloschen“: gleiche Karte; **D** (D-70) mit **Siegel 40** (`seal.svg`) links neben dem h3 «Freigegeben an Lena» (Raster `40px 1fr`, Lücke 12; Container < 22 em: Siegel 20 vor dem h3) – beim Freigeben ein Pop (UM-20), sonst statisch, **kein** Konfetti; Fußzeile: Sekundär klein `[Angaben ändern]` + **destruktiv-leise** Text-Taste «Freigabe zurückziehen …» (15/700 `text-muted`, unterstrichen, `trash` 16 – Kirsche erst an der Bestätigungs-Taste im Sheet); „klärt es direkt“ Icon-Kachel 32 `travel-status-declined-*` + `comment`; „erloschen“ als Info-Karte §9.18 (`info-*`, Icon `info`) + Text-Taste «Ausblenden».
+
+#### 9.23.3 Einwilligungs-Schritt (W20 H.5 Schritt 2, D-66)
+- **Schritt-Balken** wie §9.13 „Drei Schritte“, hier zwei Balken; «Schritt 2 von 2 · Freigeben» 13/700 `text-muted`.
+- **Schritt 1 – Datum als drei Felder** (D-66): `fieldset` ohne Rahmen, Legende 15/700 wie Feld-Labels; drei Inputs §9.7 (Höhe 54, Radius 16) mit sichtbaren Labels 13/700 `text-muted` darüber, Breiten **4 em · 4 em · 6 em**, Lücke 8, Ziffern tabular 17/700; Hilfe 13/500 `text-muted` darunter. Container < 22 em: Tag + Monat in Zeile 1, Jahr in Zeile 2. Fehler: Rahmen 2 px `danger` **nur** an fehlerhaften Feldern, eine Meldung unter der Gruppe. Radiogruppen (Geschlecht, Dokumentart) als Options-Zeilen wie §9.11 (Kreis 22, gewählt 2 px `selected`), Ländern native `<select>` in Input-Optik. Zusatzfelder unterscheiden sich optisch nicht – nur ihr Label.
+- **«Das gibst du frei»:** Karte §9.6, `<dl>`: `dt` 13/700 `text-muted`, `dd` 16/700 `text` (Datum tabular), Zeilen-Trenner `border-subtle`, Polster 10/0; Text-Taste «Angaben ändern» mit `edit` 16.
+- **Einwilligungs-Karte** = das `<label>` der Checkbox, ganze Karte ist Trefferfläche: `surface`, **1,5 px `travel-consent-border`** (eine der wenigen Konturen – sie zeigt „hier musst du handeln“, wie Optionen §9.11), Radius 20 (`travel-consent-radius`), Polster 16, Raster `24px 1fr`, Lücke 12, Checkbox oben bündig mit der ersten Textzeile.
+  - **Checkbox 24** (`travel-consent-check`), Radius 7, 2 px `travel-consent-border`, innen transparent. **Nie vorangekreuzt.**
+  - **Gesetzt:** Checkbox `travel-check-bg` (Indigo; dunkel Minze) + `check` 16 (Strich 2,6) in `travel-check-fg` (13,7 / 11,5); Karte `travel-consent-checked-bg` + **2 px** `travel-consent-checked-border` (Polster um 0,5 px verringern, nichts springt). Erkennbar über Füllung + Haken + Rahmenstärke, nicht nur Farbe.
+  - Text 15/500, Zeilenhöhe 1,5, `text`; **Name** und **Löschdatum** 800. Link «Datenschutzhinweis» (`link`, unterstrichen, `external` 16).
+  - Hover: Rahmen `text-muted`. Fokus: `:focus-visible` an der Checkbox → `--ww-focus-ring` um die **ganze Karte** (`:has(:focus-visible)`). Gedrückt: Checkbox `scale-press`, Haken Pop `fast` (reduziert sofort).
+  - **Fehler** (ohne Häkchen abgesendet): Karte 2 px `danger`, darunter Meldung wie §9.7 (14/600 `danger`, Icon `warning` 16) – einziger Kirsche-Ton im Bereich.
+  - Vorschau-Zusatz unter der Karte: 13/500 `text-muted` (W20 H.12 Nr. 4).
+- **Fußleiste:** Primär `[An Lena freigeben]` mit `shield` 20 vorn (Indigo, §9.1; **immer aktiv**) · darunter Text-Taste «Ich kläre das direkt mit Lena».
+
+#### 9.23.4 Warnhinweis für Zusatzfelder (Anfrage erstellen, W20 H.4)
+- **Schalter-Liste:** Zeilen ≥ 56 px, Label 15/700 links, Schalter §9.20 rechts, Trenner `border-subtle`. „Name laut Ausweis“: Schalter an + `aria-disabled`, statt Schalter-Wirkung `lock` 16 + «Immer dabei» 13/600 `text-muted`. Gesperrte Ablauf-/Länder-Zeile: Label `disabled-text`, Grund 13/500 `text-muted` darunter.
+- **Dokument an → Warnhinweis** direkt unter der Zeile, eingerückt bündig mit dem Label: Box `travel-warn-bg`, Radius 12, Polster 10/12, Raster `18px 1fr`, Lücke 8, Icon `warning` 18 in `travel-warn-icon` (6,2 / 9,6), Text 14/500 `travel-warn-fg` (14,9 / 11,5), Kernsatz «Nur anfragen, wenn die Buchung sie wirklich verlangt» 700. Einblenden Höhe + Überblenden `base` (reduziert sofort). Kein Rahmen, kein Rot.
+- **Bestätigungs-Sheet** «Dokumentnummer wirklich anfragen?»: §9.16, Kopf mit Icon-Kachel 40 `travel-warn-bg` + `key` 22 `travel-warn-icon`; Tasten Sekundär `[Zurück]` / Primär `[Ja, anfragen]` (kein Destruktiv-Rot – es löscht nichts).
+- **«Dokument läuft vor der Rückreise ab»** (nur für die Person selbst, Schritt 1): gleiche Box wie der Warnhinweis, Icon `clock`.
+- Zeile «Nie abgefragt: …» 13/500 `text-muted` mit `lock` 14.
+
+#### 9.23.5 Maskierte Felder mit Anzeigen / Kopieren (Sicht „Bucht“, W20 H.7)
+- **Personen-Karte:** Karte §9.6 (Radius 24, Polster 4/16 – Zeilen bringen eigene Polster). Kopf 56 px: Avatar 32 · h4 Name 16/800 (+ Chip «Bucht», falls die Person selbst bucht) · rechts **Status-Chip** (Tabelle unten).
+- **Feld-Zeile** (`<dl>`-Paar, min. 48 px, `travel-field-row-min-h`): Raster `minmax(7.5em, max-content) 1fr 44px`, Lücke 8, Trenner `border-subtle`. `dt` 13/700 `text-muted`; `dd` 16/700 `text`, Datum/Nummer tabular. **Maske:** gleiche Schrift 16/700, Farbe `travel-mask-fg` (5,1 / 5,9 – **nur auf `surface`**, nie auf vertieft), `letter-spacing: var(--ww-travel-mask-tracking)`, feste Formen: Name «K•••» (je Wort), Datum «••.••.••••», Nummer «C0••••7», Land/Geschlecht «•••». Maske `aria-hidden` + sr-only «verborgen». Keine Unschärfe, kein Balken über Text (wirkt wie Fehler/Laden).
+- **Kopieren:** Icon-Taste 44 × 44, rund, transparent, `copy` 20 in `text-muted`; Hover `surface-sunken`-Kreis; Erfolg 1,2 s `check` 20 in `accent-text` (Pop `fast`, reduziert Wechsel ohne Pop); gesperrt (offline) `disabled-text`.
+- **Anzeigen / Verbergen** (D-69): **Sekundär klein** unter den Feldern (44 px, Radius 12, 2 px `btn-secondary-border`, §9.1), `eye` 18 + «Anzeigen» 15/700; gedrückt (`aria-pressed="true"`) `eye-off` + «Verbergen». Daneben 13/500 `text-muted` «geändert am 3. Mai» (umbrechen erlaubt). **Angezeigt-Zustand:** Karte bekommt innen **2 px `travel-reveal-ring`** und im Kopf vor dem Status-Chip das Etikett `eye` 14 + «sichtbar» 12/800 in `travel-shield-fg` – Schulterblick-Bewusstsein über Ring **und** Wort. Maske ↔ Wert: Überblenden 140 ms je Feld (Motion), reduziert sofort; **keine** Buchstaben-Animation.
+- **Re-Authentifizierung:** vorhandenes Code-Sheet; Einleitung mit Icon-Kachel 40 `travel-shield-bg` + `key` 22 `travel-shield-fg`.
+- **Verantwortungs-Hinweis „Bucht“** oben: Info §9.18 mit `shield` (`travel-shield-*`), einmal pro Seite.
+- **Kopfkarte der eigenen Anfrage:** Karte §9.6, Polster 16. Eyebrow «DEINE ANFRAGE · 28. APRIL» 12/800 Versalien 0,06 em `text-muted` + rechts `more` 44; h3 Jakarta 19/800 Zweck; Felder als Text 14/600 `text-muted`, getrennt durch « · », bei Dokument `key` 14 davor; «2 von 4 haben freigegeben» 14/800 `text` tabular + Balken 6 px (§9.13, `aria-hidden`); Löschfrist-Zeile. **Zählkarte** (Orga ohne „Bucht“): gleiche Kopfkarte ohne `more`, darunter Status-Chips je Person (Avatar 24 + Name 14/700 + Chip), keine Felder, keine Tasten.
+
+| Status-Chip (Höhe 26, Pille, 13/700, Icon 15) | Hell | Dunkel | Icon |
+|---|---|---|---|
+| freigegeben | `travel-status-released-*` Minze-100 / Minze-700 **4,9** | **7,6** | `check` |
+| offen | `travel-status-open-*` Lavendel-100 / Lavendel-600 **5,6** | **7,3** | `clock` |
+| klärt es direkt | `travel-status-declined-*` neutral **6,0** | **7,1** | `comment` |
+| noch nicht dabei (Platzhalter) | transparent + 1,5 px **gestrichelt** `travel-status-pending-border` (3,4 / 3,9), Text `travel-status-pending-fg` **7,2** | **8,2** | `user` |
+
+Kein Status in Amber oder Rot – „offen“ ist kein Problem, „klärt es direkt“ eine respektierte Entscheidung (neutral).
+
+#### 9.23.6 Löschfrist-Hinweis
+- **Löschfrist-Zeile** (überall gleich): Raster `18px 1fr`, Lücke 8, Icon `clock` 18 in `text-muted`, Text 14/500 `text-muted`, **Datum 800 `text`** mit Wochentag: «Wird am **Sa., 26. Juni** automatisch gelöscht.» In der Schutz-Box (9.23.2) ohne eigenes Icon. In der Fußzeile beim Anfragen 13/500.
+- **Termin geändert** (einmal): Info §9.18 + `clock`, schließbar (44).
+- **Danach – Leerzustand** (W20 G / H.9): `illustrations/travel-data-deleted.svg` (max. 160 px hoch, mittig) + h2 Jakarta 21/800 «Reisedaten gelöscht» + Text 15/500 `text-muted` – **kein** Erfolgsgrün-Banner, kein Papierkorb, kein Siegel-Pop (ruhiger Abschluss).
+- **Leerzustände ohne Anfrage** (H.3 Block 5 „Bucht“ und Block 7 Mitglied): `illustrations/empty-travel-data.svg` (max. 160 px) + h2 + Text (+ Primär «Reisedaten anfragen» nur für „Bucht“).
+
+#### 9.23.7 Zugriffsprotokoll-Zeile (W20 H.8)
+Unter Karte D: Kopf h4 mit `history` 18 `text-muted` + «Wer hat zugegriffen?» 15/800. Liste `<ul>` ohne Punkte, Zeile min. 44, Polster 8/0, Trenner `border-subtle`, Raster `28px 1fr`, Lücke 10:
+- **Plakette** 28 (`travel-log-icon`), Kreis `travel-log-icon-bg`, Icon 16 `travel-log-icon-fg` (6,0 / 7,1): `eye` = angesehen, `copy` = kopiert. Aktion über **Icon + Satz**, keine Farbcodierung.
+- Text 14/600 `text`: «Lena hat „Geburtsdatum“ kopiert» (Feldname 800); Zeit 13/500 `text-muted`, tabular, darunter (ab Container ≥ 22 em rechts in derselben Zeile).
+- Leer: Zeile mit Plakette `history` + 14/500 `text-muted` «Lena hat deine Angaben noch nicht angesehen.»
+- Mehr als 5: Text-Taste «Alle 8 Zugriffe anzeigen» + `chevron-down` 16 (`aria-expanded`). Neue Einträge erscheinen ohne Hervorhebung (keine Alarmstimmung).
+
+#### 9.23.8 Vorschau-Hinweis „Nur Fantasiedaten“ (W20 H.12, I11-12, D-65)
+Auffällig, aber nicht alarmierend: warm (Sonne/Amber), mit **Etikett** und **gestreifter Kante** wie ein Absperrband im Kleinen – kein Rot, kein Schatten, kein Blinken, **nicht schließbar**, nicht sticky.
+- Box: Radius 16, Polster 12/14, links zusätzlich `travel-demo-edge` (6 px). `background: var(--ww-pattern-travel-demo) left / var(--ww-travel-demo-edge) 100% no-repeat, var(--ww-travel-demo-bg);` + `border: var(--ww-border-forced)`.
+- Inhalt Raster `20px 1fr`, Lücke 10: Icon `warning` 20 in `travel-demo-icon` (6,2 / 9,6). Rechts zuerst **Etikett** «VORSCHAU» / «PREVIEW» (Pille, Höhe 20, Polster 0/8, 11/800 Versalien 0,06 em, `travel-demo-tag-*` – 11,2 / 12,4), darunter Text 14/600 `travel-demo-fg` (14,9 / 11,5), «Fantasiedaten» 800.
+- In Schritt 1 zusätzlich Text-Taste «Fantasiedaten einsetzen» mit `sparkle` 16 in `link` (auf Sonne-100 6,2, dunkel 8,1), ≥ 44, unter dem Text.
+- Gleiche Optik an allen vier Stellen; der globale `DemoBanner` bleibt unverändert darüber. Forced Colors: Rahmen sichtbar, Streifen entfallen (Hintergründe werden ignoriert) – Etikett-Text trägt die Aussage.
+
+#### 9.23.9 Kachel „Reisedaten“ (Cockpit, W16 v2.16) und Stationen
+Kachel §9.5 / `.tile`: Icon-Kachel 32 `travel-area-*` + `id-card` 22; Titel «Reisedaten»; Status 14/500 `text-muted` mit fettem Teil in `text`: „Bucht“ «3 Freigaben · gelöscht am **26. Juni**», Mitglied «Freigegeben an Lena · gelöscht am **26. Juni**», danach «Gelöscht am 26. Juni». **Keine Werte, keine Masken** in der Kachel. Station **V4**/**D3**: Icon `id-card` in der Stations-Plakette (Zustände wie alle Stationen, W16); D3 erledigt mit Haken wie andere erledigte Stationen.
+
+**Desktop ≥ 960 px:** Mitglied und Formulare einspaltig `travel-content-max-w` (640); „Bucht“: Kopfkarte volle Breite, Personen-Karten zwei Spalten (Lücke 16). **Druck:** Werte und Masken ausgeblendet, Satz «Reisedaten werden nicht gedruckt.» 14 `text`.
+
+**Kontraste (gerechnet, hell / dunkel):** Bereich und Chip «Bucht» 9,3 / 6,5 · Schutz-Box Icon 5,6 / 7,3, Text 13,6 / 12,0 · Masken 5,1 / 5,9 (auf `surface`) · Ring „sichtbar“ 6,8 / 9,0 · Status freigegeben 4,9 / 7,6, offen 5,6 / 7,3, klärt direkt 6,0 / 7,1, noch nicht dabei Text 7,2 / 8,2, Strichrand 3,4 / 3,9 · Einwilligung Rahmen 3,4 / 3,9, Haken 13,7 / 11,5 · Warnhinweis Icon 6,2 / 9,6, Text 14,9 / 11,5 · Vorschau Text 14,9 / 11,5, Etikett 11,2 / 12,4, Icon 6,2 / 9,6, Link 6,2 / 8,1 · Protokoll-Plakette 6,0 / 7,1.
+
 ## 10. i18n-robuste Layouts (DE/EN)
 
 Regeln aus v0.5 gelten unverändert: keine fixen Textbreiten (nur `min-width` 44 und `max-width`); Layouts mit dem längeren Text, Pseudo-Locale +40 % testen; Umbruch erlauben (Tasten, Chips zweizeilig; Tabs scrollen statt kürzen; `line-clamp` nur für Nutzerinhalte); `lang` korrekt setzen, `hyphens: auto` in schmalen Spalten; `overflow-wrap: anywhere` + `min-width: 0` für Nutzerinhalte; keine Texte in Grafiken (außer Wortmarke); ICU-Plural und `Intl`-Formate; Wochentags-Kürzel zweistellig aus den Übersetzungen (Mo Di Mi … / Mo Tu We …; en-US So-Start), Wochenende bleibt Sa/So; Datumsbereiche über `formatRange` mit Halbgeviertstrich; Reisedauer in Nächten.
@@ -530,7 +622,7 @@ Textlängen in B (geprüft, D-35):
 
 ## 11. Ikonografie & Illustration
 
-**Icons** (`assets/icons/icons.svg`, 61 Symbole; v1.1 `bed`, `heart`, `heart-filled`, `external`; **v1.2 Kosten:** `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`): 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6, Chevrons 2,25), runde Enden, `currentColor`, weiche Duoton-Füllung 16 % bei Flächen-Icons. Größen 16/20/24, in Kacheln 22. Alle IDs aus v0.5 gültig; neu `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login`. Weitere bei Bedarf im selben Stil oder aus Lucide (ISC) mit Duoton ergänzen.
+**Icons** (`assets/icons/icons.svg`, 65 Symbole; v1.1 `bed`, `heart`, `heart-filled`, `external`; v1.2 Kosten: `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`; **v1.3 Reisedaten:** `shield`, `id-card`, `history`, `key` – Bedeutungen §9.23): 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6, Chevrons 2,25), runde Enden, `currentColor`, weiche Duoton-Füllung 16 % bei Flächen-Icons. Größen 16/20/24, in Kacheln 22. Alle IDs aus v0.5 gültig; neu `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login`. Weitere bei Bedarf im selben Stil oder aus Lucide (ISC) mit Duoton ergänzen.
 
 **Illustrationen** (`assets/illustrations/`): flach, **ohne Kontur**, Lavendel-Kachel (Radius 32) als Grund, max. 5 Palettenfarben, Lichtflecken als halbtransparente Kreise, wiederkehrende Motive Sonne (Kreis + Schein), Minze-Wellen, konzentrische Bögen, Vier-Zack-Funkel, Konfetti als abgerundete Rechtecke. **Produkt als Illustration** (Hero = Übersichtskarte). Keine Figuren, keine Gesichter, kein Maskottchen, keine Texte. Dunkel: eigene Werte über `--ww-illu-*`. Alle dekorativ. Animierbare Ebenen `data-anim` (M-D3) – Liste in [assets/README.md](assets/README.md).
 
@@ -546,7 +638,9 @@ Textlängen in B (geprüft, D-35):
 | `empty-trips.svg` · `empty-nobody.svg` · `no-matches.svg` · `submitted.svg` · `vote-waiting.svg` · `error.svg` · `goodbye.svg` | Leerzustände und Momente (W04, W07/W09, W09, W08, W10, W14) |
 | `empty-stays.svg` (v1.1) | Leerzustand „Noch keine Unterkünfte“ (W18 E.3) |
 | `empty-costs.svg` (v1.2) | Leerzustand „Noch keine Ausgaben“ (W19 D.4.4) – Reisekasse, Beleg, Sonnen-Münzen, ohne Koralle |
-| `seal.svg` 20/40 | auch Siegel „Alles ausgeglichen“ (§9.22, D-63) |
+| `seal.svg` 20/40 | auch Siegel „Alles ausgeglichen“ (§9.22, D-63) und **Freigabe-Siegel** „Freigegeben an …“ (§9.23.2) |
+| `empty-travel-data.svg` (v1.3) | Leerzustand Reisedaten „Noch keine Anfrage“ / „Gerade nichts zu tun“ (W20 H.3 Block 5/7, D-67) – Ausweiskarte ohne Inhalt + Schild |
+| `travel-data-deleted.svg` (v1.3) | Leerzustand „Reisedaten gelöscht“ (W20 G/H.9, D3) – blasse, leere Karte + Minze-Siegel, ohne Papierkorb |
 
 **Unterkünfte (`assets/unterkuenfte/`, v1.1):** `stay-placeholder.svg` (kein Vorschaubild, hell/dunkel) und acht **Demo-Bilder** `demo-*.svg` (400 × 300, 4:3, je < 7 KB, selbst gezeichnet, keine fremden Assets) – „Foto-Ersatz“ im Illustrationsstil: flach, ohne Kontur, Palette B0 plus wenige Erdtöne (Holz `#B9734A`/`#8E5638`, Stein `#EADFCF`/`#D9CBB4`), keine Figuren, keine Texte, keine Theme-Umschaltung. Motiv in der sicheren Mitte x 50–350 / y 38–262 (passt für 16:10, 16:9 und 1:1). Kopie für den Demo-Seed: `public/demo/stays/`. Details: [assets/README.md](assets/README.md).
 
@@ -584,6 +678,7 @@ Textlängen in B (geprüft, D-35):
 5. Aufräumen (CEO/Developer): `logo-mark-a-sonnenkalender.svg` (Alias), `logo-mark-b-weghaken.svg`, `logo-mark-c-treffpunkt.svg` (Archiv) können gelöscht werden.
 
 ### Changelog
+- **v1.3 (2026-10-23):** Inkrement 11 „Bucht“ + Reisedaten (F-056/F-054): §9.23 (Bereichsfarbe Lavendel-200/Indigo, Chip «Bucht», Anfrage-Karte, Einwilligungs-Karte, Dokument-Warnung, maskierte Felder mit Anzeigen/Kopieren und Zustand „sichtbar“, Status-Chips, Löschfrist-Zeile, Zugriffsprotokoll, Vorschau-Hinweis „Nur Fantasiedaten“, Kachel, Desktop/Druck, Datum in drei Feldern), Bereichsfarbe Lavendel/Indigo (D-68), Antworten D-64–D-71; Tokens `--ww-travel-*`, `--ww-pattern-travel-demo`; Icons `shield`, `id-card`, `history`, `key`; `empty-travel-data.svg`, `travel-data-deleted.svg`; Freigabe-Siegel = `seal.svg`. **Developer:** `node scripts/sync-design-assets.ts` + `ICON_NAMES` um `shield`, `id-card`, `history`, `key` ergänzen.
 - **v1.2 (2026-10-23):** Inkrement 10 „Kosten teilen“ (F-035/F-036): §9.22 (Bereichsfarbe Sonne, Betrags-Typografie, Ausgaben-Zeile, Kategorie-Kacheln, „Dein Stand“ in drei Zuständen, Salden mit Mittelachsen-Balken, Ausgleichszeile mit maskierter IBAN, Karte/Siegel „Alles ausgeglichen“, Formular, Kachel, Desktop), §4.4 Geld-Regel, Antworten D-56–D-63; Tokens `--ww-cost-*`; Icons `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`; `empty-costs.svg`. **Developer:** `node scripts/sync-design-assets.ts` + `ICON_NAMES` ergänzen.
 - **v1.1 (2026-10-23):** Inkrement 9 „Unterkünfte“ (F-031): §9.21 (Swipe-Karte, Stempel zweistufig, Bewertungstasten, Vorschlags-/Ranglisten-Zeile, „Eure Unterkunft“, Hinweise, Kachel, Desktop), Antworten D-46–D-55; Tokens `--ww-stay-*`, `--ww-stamp-*`, `--ww-pattern-stay-placeholder`; Icons `bed`, `heart`, `heart-filled`, `external`; `empty-stays.svg`; Platzhalter + 8 Demo-Bilder (`assets/unterkuenfte/`).
 - **v1.0 (2026-10-08):** Richtung B „Reise-Cockpit“ mit Palette B0 als verbindliches System (Q18). Neu: Leitidee, Prinzipien (Zahl zuerst, keine Konturen, Minze nie Text auf Hell, keine hochzählenden Zahlen), Palette hell/dunkel mit Kontrasten, Cockpit-Farben, Plus Jakarta Sans + Figtree selbst gehostet, Indigo-Heatmap, Komponenten Cockpit-Kopf (voll/kompakt), Kennzahl-Box, Tabs, Kacheln, Karten (Einladungs-Reisekarte ohne Initialen, Ergebnis-Karte mit Countdown-Text und Orga-Variante), Code-Feld, Werkzeugleiste 150 px, Vorschlag-Leiste, Abstimmungs-Segmente, Vorfreude-Ring, Fortschritt, Toast, Sheet, Avatare, Phasen-Punkt, Darstellung-Schalter. Motion-Tokens aus dem Motion-System übernommen (M-D1–M-D9), `data-motion`, Vibration (Q17). CEO-Entscheidungen D-20–D-35 eingearbeitet (Touch ≥ 44, Fokus am aktiven Tab, Kalender 8 px/4 px nach U-1, Werkzeugleiste ≤ 150 px ohne Griff, Lichtflecken nur oben, Countdown als Text, Feier = Vorfreude-Ring). Assets komplett auf B0 umgestellt. v0.5-Abschnitte zu Lagune-Palette, Systemschrift-Fließtext, Logo-A-Farben, Unterstrich-Tabs, Pillen-/12er-Tasten und Teller-Illustrationen ersetzt.

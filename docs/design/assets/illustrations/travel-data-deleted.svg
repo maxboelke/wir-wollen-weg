@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Reisedaten gelöscht</title>
+  <desc>Leerzustand „Reisedaten gelöscht“ (W20 G und H.9, Station D3, F-054): eine leere, blasse Ausweiskarte mit einem Minze-Siegel, Sonne und Minze-Wellen in einer Lavendel-Kachel. Ruhig und erledigt, nicht alarmierend. Dekorativ.</desc>
+  <!-- v1.3 (2026-10-23), Stil B wie empty-costs.svg: flach, ohne Kontur, keine Texte, keine Koralle, kein Papierkorb,
+       kein Schredder. Die Karte ist leer (keine Zeilen mehr) = Daten weg; das Siegel = wie angekündigt erledigt.
+       Ebenen (M-D3): plate, sun, sea, card, seal, sparks. -->
+  <style>
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-lavl { fill: var(--ww-illu-lavender-light, #D6CFFA); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-seal { stroke: var(--ww-seal-fg, #2B2266); }
+    .wi-s-plate { stroke: var(--ww-illu-plate, #ECE6FF); }
+    @media (prefers-color-scheme: dark) {
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+      .wi-lavl { fill: var(--ww-illu-lavender-light, #362C7A); }
+      .wi-s-seal { stroke: var(--ww-seal-fg, #14112E); }
+      .wi-s-plate { stroke: var(--ww-illu-plate, #221C4A); }
+    }
+  </style>
+  <defs>
+    <clipPath id="wwtdd-plate"><rect x="28" y="12" width="184" height="156" rx="32"/></clipPath>
+  </defs>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g clip-path="url(#wwtdd-plate)">
+    <g data-anim="sun">
+      <circle class="wi-sun" cx="68" cy="48" r="24" opacity=".3"/>
+      <circle class="wi-sun" cx="68" cy="48" r="15"/>
+    </g>
+    <g data-anim="sea">
+      <path class="wi-mint" d="M28 136c18-6 36-6 54 0s36 6 54 0 36-6 54 0 22 4 30 2v32H28z"/>
+      <path class="wi-mintd" d="M28 152c18-5 36-5 54 0s36 5 54 0 36-5 54 0 22 4 30 2v16H28z"/>
+    </g>
+  </g>
+  <g data-anim="card">
+    <g transform="rotate(5 122 90)">
+      <rect class="wi-paper" x="74" y="58" width="96" height="64" rx="10" opacity=".7"/>
+      <rect class="wi-lavl" x="74" y="58" width="96" height="16" rx="8"/>
+      <circle class="wi-lavl" cx="96" cy="93" r="8.5"/>
+      <path class="wi-lavl" d="M83 114c1.6-6 6.4-9 13-9s11.4 3 13 9z"/>
+    </g>
+  </g>
+  <g data-anim="seal">
+    <circle class="wi-mint wi-s-plate" cx="164" cy="114" r="20" stroke-width="4"/>
+    <path class="wi-s-seal" d="M154 114.5l6.5 6.5 11.5-12" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g data-anim="sparks">
+    <path class="wi-sun" d="M186 36l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path class="wi-violet" d="M48 112l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+  </g>
+</svg>
