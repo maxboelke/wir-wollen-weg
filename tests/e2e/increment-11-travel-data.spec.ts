@@ -86,12 +86,9 @@ async function release(page: Page, publicId: string, by: string, document = fals
   await page.getByLabel(t.fill.month, { exact: true }).first().fill("8");
   await page.getByLabel(t.fill.year, { exact: true }).first().fill("1990");
   if (document) {
-    await page.getByLabel(t.fill.nationality).selectOption("DE");
+    // Only type + number were asked for (no nationality, no expiry date).
     await page.getByRole("radio", { name: t.documentType.passport }).check();
     await page.getByLabel(t.fill.docNumber).fill("demo 48151");
-    await page.getByLabel(t.fill.day, { exact: true }).nth(1).fill("31");
-    await page.getByLabel(t.fill.month, { exact: true }).nth(1).fill("12");
-    await page.getByLabel(t.fill.year, { exact: true }).nth(1).fill("2032");
   }
   await page.getByRole("button", { name: t.fill.next }).click();
   await expect(page.getByRole("heading", { level: 2, name: t.fill.step2 })).toBeVisible();
@@ -162,13 +159,15 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
       ),
     ).toBeVisible();
     await main(c.max.page).getByRole("button", { name: t.released.withdraw }).click();
-    await c.max.page.getByRole("button", { name: t.revoke.confirm }).click();
+    await c.max.page.getByRole("button", { name: t.revoke.confirm, exact: true }).click();
     await expect(c.max.page.getByText(t.revoke.done)).toBeVisible();
     await expect(main(c.max.page).getByRole("link", { name: t.member.enter })).toBeVisible();
 
     // Sara: Max is open again.
     await c.sara.page.goto(`/trips/${c.publicId}/travel-data`);
-    await expect(main(c.sara.page).locator('[data-travel-person="open"]')).toHaveCount(1);
+    await expect(
+      main(c.sara.page).locator('[data-travel-person="open"]').filter({ hasText: "Max" }),
+    ).toHaveCount(1);
     await expect(main(c.sara.page).locator('[data-travel-person="released"]')).toHaveCount(0);
 
     for (const p of [c.lena, c.sara, c.max]) await p.context.close();
