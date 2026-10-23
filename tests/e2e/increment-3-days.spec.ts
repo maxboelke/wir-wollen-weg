@@ -77,16 +77,25 @@ test.describe("F-005 painting", () => {
     await pickBrush(page, days.brush.maybe);
     const [a, , , d] = await firstDates(page, 4);
     if (!a || !d) throw new Error("not enough days");
-    await cell(page, d).scrollIntoViewIfNeeded();
-    await cell(page, a).scrollIntoViewIfNeeded();
+    // R-078: the drag must stay clear of the auto-scroll zones (48 px below the sticky head and
+    // above the bottom bar on phones). `scrollIntoViewIfNeeded` left day d right above the bar on
+    // Pixel 7 – the page then scrolled under the resting pointer, and depending on timing the last
+    // pointer event hit the gap below d, so the range kept the previous cell (5 days instead of 4).
+    // Center the range instead and check that the page does not move during the gesture.
+    await cell(page, d).evaluate((element) => {
+      element.scrollIntoView({ block: "center", behavior: "instant" });
+    });
     const from = await cell(page, a).boundingBox();
     const to = await cell(page, d).boundingBox();
     if (!from || !to) throw new Error("no boxes");
+    const scrollY = () => page.evaluate(() => window.scrollY);
+    const before = await scrollY();
     await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
     await page.mouse.down();
     await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps: 8 });
     // Preview before releasing: dashed outline, nothing saved yet.
     await expect(cell(page, d)).toHaveAttribute("data-preview", "");
+    expect(await scrollY()).toBe(before);
     await page.mouse.up();
     for (const date of await firstDates(page, 4)) {
       await expect(cell(page, date)).toHaveAttribute("data-state", "maybe");
