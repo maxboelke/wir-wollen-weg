@@ -1,9 +1,9 @@
 import { NextResponse, type NextRequest } from "next/server";
 import type { LimitRule } from "@/lib/invite-limits";
-import { checkStayUrl, normalizeStayUrl } from "@/lib/stays";
+import { canSuggestStay, checkStayUrl, normalizeStayUrl } from "@/lib/stays";
 import { takeLimit } from "@/server/rate-limit";
 import { getSession } from "@/server/session";
-import { findDuplicate } from "@/server/stays/db";
+import { findDuplicate, stayGate } from "@/server/stays/db";
 import { fetchLinkPreview, previewKey } from "@/server/stays/preview";
 import { PREVIEW_TOKEN_TTL_MS, signPreviewToken } from "@/server/stays/preview-token";
 import { sameOrigin } from "@/server/stays/same-origin";
@@ -29,7 +29,7 @@ const json = (body: PreviewAnswer, status = 200) =>
  * Link preview for «Unterkunft vorschlagen» (R.7 I9-03): members of a trip in phase «fixed»
  * only – not an open service. Every failure (blocked, timeout, too big, no metadata, unsafe
  * address, rate limit) gives the same neutral `{ ok: false }` → placeholder card; no details.
- * The result travels as a signed token; images are shown through our own proxy.
+ * The result travels as an encrypted token (R-076); images are shown through our own proxy.
  */
 export async function POST(request: NextRequest): Promise<NextResponse> {
   if (!sameOrigin(request)) return json({ ok: false }, 403);
@@ -45,6 +45,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
   if (typeof publicId !== "string") return json({ ok: false }, 404);
   const found = await findMembership(publicId, session.user.id);
   if (!found || found.trip.phase !== "fixed") return json({ ok: false }, 404);
+  // R-077: no outbound request (and no duplicate details) once suggesting is closed – place
+  // picked or 30 suggestions reached. Same neutral answer as every other failure.
+  const gate = await stayGate(found.trip.id);
+  if (!canSuggestStay({ phase: found.trip.phase, ...gate })) return json({ ok: false });
   const link = checkStayUrl(url);
   if (!link.ok) return json({ ok: false });
   const normalized = normalizeStayUrl(link.url);

@@ -78,7 +78,7 @@ export async function fetchStayImage(
 
 let key: Buffer | undefined;
 
-/** HMAC key of the preview tokens – derived from BETTER_AUTH_SECRET (no new secret). */
+/** AES-256-GCM key of the preview tokens (R-076) – derived from BETTER_AUTH_SECRET (no new secret). */
 export function previewKey(): Buffer {
   if (key) return key;
   const env = serverEnv();

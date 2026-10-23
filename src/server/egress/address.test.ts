@@ -50,6 +50,10 @@ describe("isBlockedAddress – IPv6", () => {
     "fe80::1%eth0",
     "ff02::1",
     "2001:db8::1",
+    "3fff::1", // documentation (RFC 9637)
+    "3fff:fff:ffff::1", // end of 3fff::/20
+    "5f00::1", // SRv6 SIDs
+    "5f00:ffff::1",
     "64:ff9b::a00:1", // NAT64 of 10.0.0.1
     "64:ff9b::7f00:1", // NAT64 of 127.0.0.1
     "64:ff9b:1::a9fe:a9fe", // local-use NAT64 of 169.254.169.254
@@ -67,12 +71,15 @@ describe("isBlockedAddress – IPv6", () => {
     expect(isBlockedAddress(address)).toBe(true);
   });
 
-  it.each(["2606:4700:4700::1111", "2a00:1450:4001:80b::200e", "::ffff:93.184.216.34"])(
-    "allows public %s",
-    (address) => {
-      expect(isBlockedAddress(address)).toBe(false);
-    },
-  );
+  it.each([
+    "2606:4700:4700::1111",
+    "2a00:1450:4001:80b::200e",
+    "::ffff:93.184.216.34",
+    "3fff:1000::1", // just outside 3fff::/20
+    "5f01::1", // just outside 5f00::/16
+  ])("allows public %s", (address) => {
+    expect(isBlockedAddress(address)).toBe(false);
+  });
 
   it("converts embedded IPv4 itself (not left to the library)", () => {
     expect(embeddedIpv4("::ffff:10.0.0.1")).toBe("10.0.0.1");

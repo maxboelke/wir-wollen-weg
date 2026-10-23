@@ -43,6 +43,9 @@ const nextConfig: NextConfig = {
   // Locally and in CI `pnpm start` (= `next start`) serves the regular build.
   ...(process.env.NEXT_OUTPUT_STANDALONE === "1" ? { output: "standalone" as const } : {}),
   poweredByHeader: false,
+  // next/image is not used (stay images go through our own proxy, deployment.md §0.8) – switch
+  // the built-in optimiser at /_next/image off: smaller attack surface (R-075).
+  images: { unoptimized: true },
   // R-072: «today» is the calendar day in the app time zone – inline it so server and client
   // agree (src/lib/dates.ts appTimeZone(), default Europe/Berlin).
   env: { APP_TIME_ZONE: process.env.APP_TIME_ZONE ?? "" },

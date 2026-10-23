@@ -179,7 +179,7 @@ Die Ausnahme für < 250 Beschäftigte greift **nicht**, weil die Verarbeitung re
 | Unterkunfts-Vorschläge (F-031: Link, Titel, Preis, Notiz, Bild-**URL**) | mit der Reise (Q31); beim Verlassen/Konto-Löschen bleibt der Vorschlag ohne Urheber („ehemaliges Mitglied“) | `trip_stay` Cascade, `created_by` → null | ☐ |
 | Unterkunfts-Bewertungen | mit Reise, Vorschlag oder Mitgliedschaft (Verlassen/Entfernen/Konto löschen) | `trip_stay_rating` Cascade | ☐ |
 | Vorschaubilder | **nie dauerhaft** (Q34): nur Browser-Cache `private` ≤ 24 h, optional flüchtiger Server-Cache ≤ 7 Tage ohne Backup | Code-Review, kein Objektspeicher | ☐ |
-| Vorschau-Ergebnis vor dem Speichern | nicht gespeichert, nur im signierten Token (≤ 30 Min.) | – | ☐ |
+| Vorschau-Ergebnis vor dem Speichern | nicht gespeichert, nur im verschlüsselten Token (AES-256-GCM, R-076) (≤ 30 Min.) | – | ☐ |
 | Protokoll der Vorschau-Abrufe | nur Hostname + Ergebnis-Kategorie; wie Server-Logs 7 Tage | Logger, Reviewer | ☐ |
 | Server-/Proxy-Logs mit IP | 7 Tage; **ohne Tokens** in Pfad/Query/`Referer` (deployment.md §5.4, R-037) | Log-Rotation, Caddy-Log-Filter | ☐ |
 | Fehler-Tracking-Ereignisse | 30 Tage, ohne E-Mail/Token (URLs, Header, Breadcrumbs gescrubbt, deployment.md §6.2) | Bugsink-Retention, `beforeSend` | ☐ |

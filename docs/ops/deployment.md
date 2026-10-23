@@ -206,7 +206,7 @@ export const maxDuration = 15;        // Sekunden: 5 s Abruf-Budget + DB + Kalts
 - `src/proxy.ts` (Basic Auth in `preview`) schützt auch die neuen Endpunkte – der Matcher nimmt sie bereits mit, Bild-Anfragen sind same-origin und tragen die Basic-Auth-Zugangsdaten automatisch. Nicht in `isOpenPath` aufnehmen.
 - **Kein `next/image` für Vorschaubilder** und **`images.remotePatterns` bleibt leer:** Der Next-/Vercel-Bildoptimierer würde fremde Bilder selbst abrufen (ohne unseren SSRF-Schutz) und auf dem CDN speichern – Widerspruch zu Q34. Vorschaubilder als `<img src="/…eigener Endpunkt…" alt="">`; die eigenen Demo-Bilder unter `public/` direkt (`<img>` oder `next/image` mit `unoptimized`, damit kein Optimierungskontingent verbraucht wird).
 - Bild-Proxy-Antwort mit `Cache-Control: private, max-age=86400` (R.7) – Vercels CDN cacht `private` nicht (gewollt, Q34). Zusätzlich empfohlen: `Cross-Origin-Resource-Policy: same-origin`.
-- **Kein neues Secret:** Den HMAC-Schlüssel des Vorschau-Tokens (R.7 I9-03) per HKDF aus `BETTER_AUTH_SECRET` ableiten (eigener `info`-String, wie die Rate-Limit-Schlüssel, tech-stack.md §3.2) → der Auftraggeber muss in Vercel nichts nachtragen. Folge: Rotation von `BETTER_AUTH_SECRET` macht offene Vorschau-Tokens ungültig (≤ 30 min, unkritisch).
+- **Kein neues Secret:** Den Schlüssel des Vorschau-Tokens (R.7 I9-03; seit R-076 AES-256-GCM-verschlüsselt statt nur HMAC-signiert, damit Link/Bild-URL nicht in Zugriffs-Logs stehen) per HKDF aus `BETTER_AUTH_SECRET` ableiten (eigener `info`-String, wie die Rate-Limit-Schlüssel, tech-stack.md §3.2) → der Auftraggeber muss in Vercel nichts nachtragen. Folge: Rotation von `BETTER_AUTH_SECRET` macht offene Vorschau-Tokens ungültig (≤ 30 min, unkritisch).
 
 **Hinweise zum DNS-Pinning in Node (Developer, Reviewer prüft mit Tests)**
 
@@ -379,7 +379,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
 | `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
 | `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
-| *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: HMAC-Schlüssel des Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
+| *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: Schlüssel des (AES-256-GCM-verschlüsselten, R-076) Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
 | `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
 | `BACKUP_S3_ENDPOINT`, `BACKUP_S3_REGION`, `BACKUP_S3_BUCKET`, `BACKUP_S3_ACCESS_KEY_ID`, `BACKUP_S3_SECRET_ACCESS_KEY` | ja (prod) | Off-site-Backup-Ziel | – |

@@ -157,8 +157,17 @@ function decoderFor(encoding: string) {
   }
 }
 
-/** Reads a body up to `maxBytes` (after decompression) – aborts while streaming, not after. */
-async function readLimited(body: Readable, encoding: string, maxBytes: number): Promise<Buffer> {
+/**
+ * Reads a body up to `maxBytes` (after decompression) – aborts while streaming, not after.
+ * A broken compressed stream is `bad_type`; a timeout while decompressing stays a timeout
+ * (the original error goes to the caller, which maps it via `signal`/undici codes).
+ */
+async function readLimited(
+  body: Readable,
+  encoding: string,
+  maxBytes: number,
+  signal: AbortSignal,
+): Promise<Buffer> {
   const decoder = decoderFor(encoding);
   const source: Readable = decoder ? body.pipe(decoder) : body;
   if (decoder) {
@@ -177,7 +186,11 @@ async function readLimited(body: Readable, encoding: string, maxBytes: number): 
     discard(body);
     if (decoder) discard(decoder);
     if (error instanceof EgressError) throw error;
-    throw decoder ? new EgressError("bad_type") : error;
+    const timedOut =
+      signal.aborted ||
+      hasCode(error, "UND_ERR_BODY_TIMEOUT") ||
+      hasCode(error, "UND_ERR_HEADERS_TIMEOUT");
+    throw decoder && !timedOut ? new EgressError("bad_type") : error;
   }
   return Buffer.concat(chunks);
 }
@@ -259,7 +272,7 @@ export function createSafeFetcher(options: SafeFetcherOptions = {}): SafeFetcher
         throw new EgressError("too_large");
       }
       const encoding = header(headers, "content-encoding").trim().toLowerCase();
-      const buffer = await readLimited(body, encoding, input.maxBytes);
+      const buffer = await readLimited(body, encoding, input.maxBytes, signal);
       const charset = /charset="?([\w.:-]+)"?/.exec(rawType)?.[1] ?? null;
       return { url: current.href, contentType, charset, body: buffer };
     }

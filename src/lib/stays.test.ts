@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
+  canSuggestStay,
   checkStayUrl,
   completeUrl,
   favouriteOf,
@@ -254,5 +255,15 @@ describe("visibility (Q33)", () => {
     expect(newSince(stays, new Set(["a"]), 20)).toEqual(["b", "c"]);
     expect(newSince(stays, new Set(["a", "c"]), 35)).toEqual([]);
     expect(newSince(stays, new Set(), null)).toEqual([]);
+  });
+});
+
+describe("canSuggestStay (R-077: gate before the link preview)", () => {
+  it("allows suggesting only in phase «fixed», with nothing picked and fewer than 30", () => {
+    expect(canSuggestStay({ phase: "fixed", chosen: false, count: 0 })).toBe(true);
+    expect(canSuggestStay({ phase: "fixed", chosen: false, count: 29 })).toBe(true);
+    expect(canSuggestStay({ phase: "fixed", chosen: false, count: 30 })).toBe(false);
+    expect(canSuggestStay({ phase: "fixed", chosen: true, count: 3 })).toBe(false);
+    expect(canSuggestStay({ phase: "voting", chosen: false, count: 0 })).toBe(false);
   });
 });

@@ -31,6 +31,8 @@ const V6_BLOCKED: [string, number][] = [
   ["100::", 64], // discard-only
   ["2001::", 23], // IETF protocol assignments (Teredo 2001::/32 included)
   ["2001:db8::", 32], // documentation
+  ["3fff::", 20], // documentation (RFC 9637)
+  ["5f00::", 16], // SRv6 SIDs (RFC 9602) – not globally routed
   ["fc00::", 7], // unique local (incl. AWS metadata fd00:ec2::254)
   ["fe80::", 10], // link-local
   ["fec0::", 10], // site-local (deprecated)

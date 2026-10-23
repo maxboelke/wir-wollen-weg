@@ -77,7 +77,7 @@ describe("sniffImageType (magic bytes, R.7 I9-04)", () => {
   });
 });
 
-describe("preview token (R.7 I9-03)", () => {
+describe("preview token (R.7 I9-03, R-076 encrypted)", () => {
   const key = previewTokenKey("a-test-secret-with-enough-length-0123456789");
   const now = 1_800_000_000_000;
   const claims = {
@@ -87,21 +87,59 @@ describe("preview token (R.7 I9-03)", () => {
     site: "Booking.com",
     exp: now + PREVIEW_TOKEN_TTL_MS,
   };
-  it("round-trips", () => {
-    expect(verifyPreviewToken(key, signPreviewToken(key, claims), now)).toEqual(claims);
+  const flip = (token: string, index: number) => {
+    const raw = Buffer.from(token, "base64url");
+    raw[index] = (raw[index] ?? 0) ^ 0x01;
+    return raw.toString("base64url");
+  };
+
+  it("round-trips and binds the token to its trip", () => {
+    const back = verifyPreviewToken(key, signPreviewToken(key, claims), now);
+    expect(back).toEqual(claims);
+    // Callers compare the trip (actions.ts) or check membership of it (image route).
+    expect(back?.trip).toBe("trip-1");
+    const other = verifyPreviewToken(
+      key,
+      signPreviewToken(key, { ...claims, trip: "trip-2" }),
+      now,
+    );
+    expect(other?.trip).toBe("trip-2");
   });
-  it("rejects tampering, other keys, expiry and garbage", () => {
+
+  it("reveals neither link, image URL nor site name (access logs, R.7 I9-10)", () => {
     const token = signPreviewToken(key, claims);
-    const [payload, signature] = token.split(".");
-    const forged = Buffer.from(
-      JSON.stringify({ ...claims, image: "https://evil.example.com/x.jpg" }),
-    ).toString("base64url");
-    expect(verifyPreviewToken(key, `${forged}.${signature ?? ""}`, now)).toBeNull();
+    expect(token).toMatch(/^[A-Za-z0-9_-]+$/);
+    const decoded = Buffer.from(token, "base64url").toString("latin1");
+    for (const secret of ["booking.com", "cdn.example.com", "Booking.com", "trip-1", "exp"]) {
+      expect(token).not.toContain(secret);
+      expect(decoded).not.toContain(secret);
+    }
+  });
+
+  it("uses a fresh IV per token", () => {
+    expect(signPreviewToken(key, claims)).not.toBe(signPreviewToken(key, claims));
+  });
+
+  it("rejects manipulation (IV, ciphertext, tag, truncation)", () => {
+    const token = signPreviewToken(key, claims);
+    const length = Buffer.from(token, "base64url").length;
+    expect(verifyPreviewToken(key, flip(token, 0), now)).toBeNull();
+    expect(verifyPreviewToken(key, flip(token, 14), now)).toBeNull();
+    expect(verifyPreviewToken(key, flip(token, length - 1), now)).toBeNull();
+    expect(verifyPreviewToken(key, token.slice(0, -4), now)).toBeNull();
+    expect(verifyPreviewToken(key, `${token}.x`, now)).toBeNull();
+  });
+
+  it("rejects old signed (plain) tokens, other keys, expiry and garbage", () => {
+    const token = signPreviewToken(key, claims);
+    const plain = Buffer.from(JSON.stringify(claims)).toString("base64url");
+    expect(verifyPreviewToken(key, plain, now)).toBeNull();
     expect(
       verifyPreviewToken(previewTokenKey("other-secret-0123456789012345678901"), token, now),
     ).toBeNull();
     expect(verifyPreviewToken(key, token, now + PREVIEW_TOKEN_TTL_MS + 1)).toBeNull();
-    expect(verifyPreviewToken(key, `${payload ?? ""}.`, now)).toBeNull();
+    expect(verifyPreviewToken(key, "", now)).toBeNull();
+    expect(verifyPreviewToken(key, "abc", now)).toBeNull();
     expect(verifyPreviewToken(key, 42, now)).toBeNull();
     const tooLong = signPreviewToken(key, { ...claims, exp: now + 2 * PREVIEW_TOKEN_TTL_MS });
     expect(verifyPreviewToken(key, tooLong, now)).toBeNull();

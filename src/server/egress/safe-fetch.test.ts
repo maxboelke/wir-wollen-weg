@@ -97,6 +97,14 @@ beforeAll(async () => {
     } else if (path === "/json") {
       response.writeHead(200, { "content-type": "application/json" });
       response.end("{}");
+    } else if (path === "/slow-gzip") {
+      // Headers and the first compressed bytes, then the body stalls (timeout while decompressing).
+      response.writeHead(200, { "content-type": "text/html", "content-encoding": "gzip" });
+      const packed = gzipSync("<title>Slow</title>".repeat(200));
+      response.write(packed.subarray(0, 20));
+    } else if (path === "/broken-gzip") {
+      response.writeHead(200, { "content-type": "text/html", "content-encoding": "gzip" });
+      response.end(Buffer.from("this is not gzip at all"));
     } else if (path === "/slow") {
       // Never answers – the total time limit must end it.
     } else {
@@ -320,6 +328,15 @@ describe("safe fetch – limits", () => {
     const started = Date.now();
     expect(await category(fetcher.fetch({ url: `https://${HOST}/slow`, ...html }))).toBe("timeout");
     expect(Date.now() - started).toBeLessThan(2000);
+  });
+  it("timeout while decompressing stays «timeout», a broken stream is «bad_type»", async () => {
+    const { fetcher } = localFetcher({}, 400);
+    expect(await category(fetcher.fetch({ url: `https://${HOST}/slow-gzip`, ...html }))).toBe(
+      "timeout",
+    );
+    expect(await category(fetcher.fetch({ url: `https://${HOST}/broken-gzip`, ...html }))).toBe(
+      "bad_type",
+    );
   });
 });
 

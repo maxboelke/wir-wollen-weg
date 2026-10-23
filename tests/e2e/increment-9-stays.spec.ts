@@ -438,6 +438,47 @@ test.describe("rights, proxy, CSP", () => {
     expect(noOrigin.status()).toBe(403);
   });
 
+  test("R-077: no link preview once a place is picked or 30 suggestions exist", async ({
+    page,
+  }) => {
+    const trip = await stayTrip(page);
+    const dup = "https://ferienhaus.example/r077-dup";
+    await addStays(trip.tripId, [{ title: "Villa Mare", url: dup }]);
+    const ask = async (url: string) => {
+      const response = await page.request.post("/api/stays/preview", {
+        data: { trip: trip.publicId, url },
+        headers: { origin: new URL(page.url()).origin },
+      });
+      expect(response.status()).toBe(200);
+      return (await response.json()) as { ok: boolean; duplicate?: unknown };
+    };
+    // Open: the duplicate is reported (the route got past the gate).
+    expect((await ask(dup)).duplicate).toBeDefined();
+    // 30 suggestions: neutral refusal, the gate comes before the duplicate check and the fetch.
+    await addStays(
+      trip.tripId,
+      Array.from({ length: 29 }, (_, i) => ({ title: `Place ${String(i)}` })),
+    );
+    expect(await ask(dup)).toEqual({ ok: false });
+    expect(await ask("https://booking.example/new")).toEqual({ ok: false });
+
+    const second = await seedTrip(`Picked ${String(Date.now())}`, { extraMembers: 1 });
+    await addAccountToTrip(second.tripId, trip.email, "Kai");
+    await setFixedDates(second.tripId, 41, 48);
+    await addStays(second.tripId, [
+      { title: "Villa Mare", url: dup, chosen: true },
+      { title: "Casa Azul" },
+    ]);
+    const picked = await page.request.post("/api/stays/preview", {
+      data: { trip: second.publicId, url: dup },
+      headers: { origin: new URL(page.url()).origin },
+    });
+    expect(await picked.json()).toEqual({ ok: false });
+    // A tampered or plain preview token never reaches the image fetcher.
+    const forged = await page.request.get("/api/stays/image?t=eyJ0cmlwIjoieCJ9");
+    expect(forged.status()).toBe(404);
+  });
+
   test("CSP stage 1 on pages; no request to third-party hosts on the area", async ({ page }) => {
     const trip = await stayTrip(page);
     await addStays(trip.tripId, [{ title: "Villa Mare" }]);

@@ -28,7 +28,7 @@ function fail(status: number): Response {
 /**
  * Image proxy (R.7 I9-04, Q34): the browser never talks to third-party servers. NOT an open
  * proxy – it takes no URL, only the id of a stored suggestion (`?s=`, membership checked) or a
- * signed preview token (`?t=`, before saving; trip membership checked too). The image is
+ * encrypted preview token (`?t=`, before saving, R-076; trip membership checked too). The image is
  * fetched with the SSRF-safe fetcher, typed by magic bytes (no SVG), ≤ 4 MB, and never stored
  * on our side – only the browser may cache it privately for a day.
  */

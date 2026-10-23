@@ -929,13 +929,13 @@ Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseit
 **I9-03 Link-Vorschau (best effort, SSRF-sicher)**
 **Als** Mitglied **möchte ich**, dass Titel und Bild automatisch erscheinen, **damit** ich nichts abtippen muss – und nie warten muss, wenn ein Portal blockt.
 - [ ] Server-Endpunkt für den Vorschau-Abruf nimmt nur **Mitglieder einer Reise in Phase `fixed`** an (reisebezogen, kein offener Dienst) und liefert Titel (`og:title`, sonst `<title>`), Site-Name (`og:site_name`, sonst Domain) und Bild-URL (`og:image`/`twitter:image`, relativ aufgelöst, muss ebenfalls `https://` sein). Texte: HTML-Entities dekodiert, Steuerzeichen entfernt, auf Feldlänge gekürzt, nur als Text angezeigt.
-- [ ] Das Ergebnis geht als **serverseitig signiertes Vorschau-Token** (HMAC über Reise, normalisierte URL, Bild-URL, Site-Name, Ablauf ≤ 30 min) an den Client; beim Speichern übernimmt der Server Bild-URL/Site-Name **nur aus einem gültigen Token** – vom Client gelieferte Bild-URLs werden nie übernommen.
+- [ ] Das Ergebnis geht als **serverseitig verschlüsseltes Vorschau-Token** (AES-256-GCM, Schlüssel per HKDF aus BETTER_AUTH_SECRET; enthält Reise, normalisierte URL, Bild-URL, Site-Name, Ablauf ≤ 30 min) an den Client; beim Speichern übernimmt der Server Bild-URL/Site-Name **nur aus einem gültigen Token** – vom Client gelieferte Bild-URLs werden nie übernommen.
 - [ ] **Jeder Fehler** (blockiert, 4xx/5xx, Zeitlimit, zu groß, kein HTML, keine Metadaten, unsichere Adresse) ergibt dieselbe neutrale Antwort „keine Vorschau“ → Platzhalterkarte (W17); keine Fehlerdetails an den Client (kein Werkzeug zum Abtasten von Netzen). Das Vorschlagen wird nie blockiert.
 - [ ] SSRF-Schutz und Limits: siehe **Sicherheit** unten (Pflicht, Reviewer prüft mit Tests).
 
 **I9-04 Vorschaubilder über den Bild-Proxy (Q34)**
 **Als** Mitglied **möchte ich** Bilder der Unterkünfte sehen, ohne dass mein Browser Kontakt zu fremden Servern aufnimmt, **damit** meine IP-Adresse nicht an Portale und Werbenetzwerke geht.
-- [ ] Alle Vorschaubilder werden über einen eigenen Endpunkt ausgeliefert (gleiche Origin). **Kein offener Proxy:** Der Endpunkt nimmt keine frei wählbare URL an, sondern nur die ID eines gespeicherten Vorschlags (mit Mitgliedschaftsprüfung) bzw. ein signiertes Vorschau-Token (vor dem Speichern).
+- [ ] Alle Vorschaubilder werden über einen eigenen Endpunkt ausgeliefert (gleiche Origin). **Kein offener Proxy:** Der Endpunkt nimmt keine frei wählbare URL an, sondern nur die ID eines gespeicherten Vorschlags (mit Mitgliedschaftsprüfung) bzw. ein verschlüsseltes Vorschau-Token (vor dem Speichern).
 - [ ] Abruf mit demselben SSRF-Schutz wie I9-03; nur `image/jpeg`, `image/png`, `image/webp`, `image/gif`, `image/avif`, Typ per **Magic Bytes** geprüft (Header des Fremdservers wird nicht vertraut); **kein SVG**; max. **4 MB** (Vercel-Antwortgrenze 4,5 MB; CEO 2026-10-23); Zeitlimit 5 s.
 - [ ] Antwort mit eigenem `Content-Type` (aus Magic Bytes), `X-Content-Type-Options: nosniff`, `Content-Security-Policy: default-src 'none'; sandbox`, `Cache-Control: private, max-age=86400` (Browser-Cache ≤ 7 Tage erlaubt, nie `public` – keine geteilten Caches/CDN).
 - [ ] **Keine dauerhafte Speicherung** der Bilddaten: nicht in DB, nicht im Objektspeicher, nicht in Backups. Erlaubt ist höchstens ein **flüchtiger** Server-Zwischenspeicher (Arbeitsspeicher/Temp-Verzeichnis, ≤ 7 Tage, nicht gesichert) – Entscheidung Developer/Operations; auf Vercel genügt der Browser-Cache. Gespeichert wird nur die **Bild-URL** (Verweis).
@@ -1027,7 +1027,7 @@ Nicht-Mitglieder und andere Phasen: gleiche 404 wie die übrigen Reise-Unterseit
 | Anzahl Reisende (Should) | `trip.party_size_override` (1–50, null = automatisch) | Wird in Inkrement 10 für „€ pro Person“ wiederverwendet, nicht für die Kostenaufteilung. |
 | Währung der Reise | `trip.currency` (ISO 4217), Standard aus der Feiertagsregion der Reise bzw. Region der Orga (EUR für Euro-Länder, GBP, CHF, USD …); Änderung durch die Orga kommt mit Inkrement 10 (F-035) | Wird von F-035 übernommen – deshalb schon jetzt anlegen, nicht doppelt. |
 | UX-9 V3 | `trip_station_marks(trip_id, station, set_by, set_at)` mit `station = 'V3'` (in Inkrement 8 angekündigt, R.6 Datenhaltung) – jetzt anlegen; PK (`trip_id`, `station`) | Kaskade mit der Reise; `set_by` `ON DELETE SET NULL`. |
-| Vorschau-Ergebnis vor dem Speichern | **nicht in der DB** – nur im signierten Token (I9-03) | Läuft nach ≤ 30 min ab. |
+| Vorschau-Ergebnis vor dem Speichern | **nicht in der DB** – nur im verschlüsselten Token (I9-03) | Läuft nach ≤ 30 min ab. |
 | Vorschaubilder | **nirgends dauerhaft** (Q34) – nur Browser-Cache `private` ≤ 7 Tage, optional flüchtiger Server-Cache ≤ 7 Tage | Kein Backup, kein Objektspeicher. |
 | Nur im Browser | Stapel-Position, „letzter Swipe“ für Rückgängig (`sessionStorage`), ausstehende Bewertungen bei Netzfehler | Keine Cookies. |
 

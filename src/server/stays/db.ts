@@ -123,6 +123,18 @@ async function chosenStayId(tx: Tx, tripId: string): Promise<string | null> {
   return row?.id ?? null;
 }
 
+/** Whether a place is picked and how many suggestions exist – gate of the link preview (R-077). */
+export async function stayGate(tripId: string): Promise<{ chosen: boolean; count: number }> {
+  const [row] = await db()
+    .select({
+      n: count(),
+      chosen: sql<boolean>`coalesce(bool_or(${tripStay.chosenAt} is not null), false)`,
+    })
+    .from(tripStay)
+    .where(eq(tripStay.tripId, tripId));
+  return { chosen: row?.chosen ?? false, count: row?.n ?? 0 };
+}
+
 export interface DuplicateInfo {
   stayId: string;
   authorId: string | null;
