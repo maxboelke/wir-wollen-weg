@@ -298,7 +298,7 @@ test.describe("W18 E.7 – picking, booked, unpicking, UX-9", () => {
     await addStays(trip.tripId, [{ title: "Villa Mare", chosen: true }, { title: "Casa Azul" }]);
     await page.goto(`/trips/${trip.publicId}/stays`);
     await hydrated(page);
-    await expect(page.getByText(fill(s.chosen.waitMember, { orga: "Lena Berg" }))).toBeVisible();
+    await expect(page.getByText(fill(s.chosen.waitMember, { bookers: "Lena Berg" }))).toBeVisible();
     await expect(page.getByRole("button", { name: s.chosen.markBooked })).toHaveCount(0);
     await expect(page.getByRole("button", { name: s.unfix.action })).toHaveCount(0);
     await expect(page.getByRole("button", { name: s.fix })).toHaveCount(0);

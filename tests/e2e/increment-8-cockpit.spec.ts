@@ -284,7 +284,7 @@ test.describe("W16 v2 – Vorbereitung", () => {
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/info$`));
     await expect(page.getByRole("link", { name: en.tripInfo.editName })).toHaveCount(0);
     await expect(
-      page.getByText(fill(en.tripInfo.emptyMember, { orga: "Lena Berg" })),
+      page.getByText(fill(en.tripInfo.emptyMember, { names: "Lena Berg" })),
     ).toBeVisible();
 
     // Another account (no member): the shared «trip not found».
