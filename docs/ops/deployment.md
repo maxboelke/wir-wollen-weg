@@ -1,6 +1,6 @@
 # Deployment & Betrieb – Wir wollen weg
 
-Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.5 (v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v0.6 (v0.6: Löschjob-Umfang inkl. endgültiger Löschung weich gelöschter Ausgaben nach 24 h, §0.10 – Inkrement 10; v0.5: ausgehende Abrufe/SSRF-Betrieb für Link-Vorschau + Bild-Proxy §0.8, CSP-Vorschlag §0.9 – Inkrement 9; v0.4: private Live-Vorschau auf Vercel + Neon, §0.7, PRD Q25 – technischer Teil vom Developer; v0.3: Zugriffslogs ohne Tokens im Pfad, §5.4, R-037) – **aktueller Betriebsmodus: Offline-Demo (§0)**; Hosting-/Mail-Plan (§2–§7) gilt **ab Go-Live** (Auftraggeber-Entscheidung Q15, 2026-10-08)
 
 Bezug: [tech-stack.md](tech-stack.md) · [compliance-checklist.md](compliance-checklist.md) · [**go-live.md – Go-Live-Gate**](go-live.md) · [PRD §8, §12](../product/PRD.md)
 
@@ -285,6 +285,29 @@ frame-ancestors 'none'
 
 Nachzutragen bei Umsetzung: tech-stack.md §8 (Security-Header) – Operations.
 
+### 0.10 Löschjob `/api/internal/retention` – Umfang und Anforderungen (Stand Inkrement 10)
+
+Ein Endpunkt, ein täglicher Lauf in **allen** Umgebungen: Vorschau per Vercel Cron (§0.7, `CRON_SECRET`), ab Go-Live per Timer mit `RETENTION_TOKEN` (§4, §5.2 Dienst `jobs`). Löschregeln fachlich: [compliance-checklist.md §6](compliance-checklist.md). Einstieg im Code: `runRetention()` in `src/server/retention.ts`.
+
+| Durchlauf | Regel | Seit | Status |
+|---|---|---|---|
+| Reisen | Hinweis-Mail an die Orga 14 Tage vorher, Löschung 90 Tage nach Reiseende bzw. 12 Monate nach letzter Aktivität (F-013, Q24) | Inkrement 6 | umgesetzt |
+| Konten | Hinweis 30 Tage vorher, Löschung nach 24 Monaten ohne Login (F-043) | Inkrement 6 | umgesetzt |
+| Demo-Postfach | Mails > 24 h (nur bei `MAIL_TRANSPORT=inbox`) | Vorschau (PR #18) | umgesetzt |
+| **Weich gelöschte Ausgaben** | `trip_expense` mit `deleted_at` älter als **24 h** endgültig löschen, inkl. Anteile (`trip_expense_share` per Kaskade); gilt auch für abgeschlossene Abrechnungen (features.md R.8 I10-03, I10-10) | **Inkrement 10** | **Anforderung an Developer** |
+| Lösch-Hinweismail mit offenen Salden | Zusatzsatz «Achtung: In der Abrechnung sind noch {n} Ausgleiche offen.» – **ohne** Namen, Titel, Beträge (I10-10) | Inkrement 10 | Anforderung an Developer |
+
+Anforderungen an die Erweiterung (Developer, Inkrement 10):
+
+1. **Ein** gezieltes `DELETE … WHERE deleted_at < now - 24 h` (Index auf `deleted_at` bzw. Teilindex `WHERE deleted_at IS NOT NULL`) – keine Schleife über alle Reisen; so bleibt der Lauf auch auf Vercel Hobby (Function-Laufzeit) und Neon Free kurz.
+2. **Uhrzeit aus dem Parameter** `now` von `runRetention(now)` verwenden (testbar, wie die bestehenden Durchläufe); Unit-/Integrationstest mit simulierter Zeit: 23 h alt → bleibt, 25 h alt → weg, nicht gelöschte Ausgaben unberührt, Salden danach unverändert (gelöschte zählten schon vorher nicht).
+3. **Nebenläufigkeit:** Ein gleichzeitiges „Rückgängig“ darf nicht verloren gehen – Bedingung `deleted_at IS NOT NULL AND deleted_at < …` im selben Statement (Rückgängig setzt `deleted_at` auf null, dann greift die Löschung nicht mehr). Rückgängig ist laut UX ohnehin nur 6 s möglich.
+4. **Platzhalter-Löschsperre** zählt weich gelöschte Ausgaben mit (R.8) – nach der endgültigen Löschung ist der Platzhalter wieder löschbar; kein zusätzlicher Schritt nötig.
+5. **Bericht:** neues Feld z. B. `expensesPurged` in `RetentionReport`; Log nur Anzahlen (bestehende Regel: keine Namen, Titel, Beträge, IDs).
+6. **Idempotent:** zweiter Lauf am selben Tag löscht nichts mehr, Fehler in einem Durchlauf brechen die anderen nicht ab.
+
+**Hinweis Taktung:** Der Job läuft einmal täglich. „Nach 24 h“ heißt damit in der Praxis **24–48 h** nach dem Löschen (auf Vercel Hobby zusätzlich bis zu 1 h Versatz). Für die Datenschutzerklärung genügt die Angabe „spätestens nach 2 Tagen endgültig gelöscht“ (compliance-checklist.md §2b); ein häufigerer Lauf ist nicht nötig. Aus **Backups** verschwinden die Daten wie alles andere spätestens nach 30 Tagen (§6.1).
+
 ---
 
 > **Ab hier: Plan ab Go-Live.** §1–§7 beschreiben den Zielbetrieb (Hetzner, Lettermint, Domain). Nichts davon wird vor Freigabe des [Go-Live-Gates](go-live.md) bestellt oder eingerichtet.
@@ -378,7 +401,7 @@ Ablage: Produktion/Staging als Datei `/opt/wir-wollen-weg/<env>/.env` (Rechte `6
 | `RATE_LIMIT_ENABLED` | nein | in E2E-Tests gezielt abschaltbar (nie in prod); betrifft nur die IP-Limits – die Limits pro E-Mail-Adresse (Inkrement 1) sind immer aktiv | `true` |
 | `PASSWORD_BREACH_CHECK` | nein | `hibp` = neue Passwörter zusätzlich online gegen „Have I Been Pwned“ prüfen (k-Anonymität, kein Konto nötig, fail-open); `off` = nur Offline-Liste. In der Offline-Demo `off`; vor Go-live entscheiden | `off` |
 | `CONTACT_EMAIL` | ja (Go-live) | Kontaktadresse auf der Hilfe-Seite (F-051) | `hallo@example.org` (Platzhalter) |
-| `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
+| `RETENTION_TOKEN` | ja (Go-live) | Bearer-Token für `POST /api/internal/retention` (tägliche Löschläufe F-013/F-043: alte Reisen, inaktive Konten, Hinweis-Mails; ab Inkrement 10 zusätzlich weich gelöschte Ausgaben > 24 h, §0.10). Ohne Wert ist der Endpunkt aus (404). **Operations: täglichen Timer einrichten** (z. B. systemd-Timer/cron mit `curl -fsS -X POST -H "Authorization: Bearer …" http://app:3000/api/internal/retention`); nachgetragen vom Developer (Inkrement 6) | leer (Demo: aus) |
 | *(keine neue Variable in Inkrement 9)* | – | Link-Vorschau/Bild-Proxy brauchen kein eigenes Secret: Schlüssel des (AES-256-GCM-verschlüsselten, R-076) Vorschau-Tokens per HKDF aus `BETTER_AUTH_SECRET` (§0.8) | – |
 | `CRON_SECRET` | nur preview | Vercel Cron ruft `GET /api/internal/retention` mit `Authorization: Bearer $CRON_SECRET` auf; wird wie `RETENTION_TOKEN` akzeptiert (≥ 32 Zeichen) | leer |
 | `STAGING_BASIC_AUTH` | nur staging | Caddy-Basic-Auth (Hash) | – |
