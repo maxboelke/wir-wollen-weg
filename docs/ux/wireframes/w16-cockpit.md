@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
-Stand: 2026-10-22 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15.**
+Stand: 2026-10-23 · Verantwortlich: UI/UX
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -596,6 +596,111 @@ Texte nennen **nie** IBAN/Zahlungsinfo, Titel oder Einzelausgaben (R.8 I10-09). 
 - **`trip-route.ts`:** `StationId` + `"A1" | "D1"`; Katalog-Reihenfolge … V3, A2, A1 (Vorbereitung/Unterwegs) bzw. D1 (Danach); Rang je Zustand über `TripStation.rank` (A1 = 3, D1 schulden = 2, D1 abschließen = 4); `headActions` um `"addExpense" | "settle"`; `TripTile.area` um `"costs"`; Remind-Anlässe `settle`, `settle-all`; `RouteTarget.page` um `costs`, `costsBalances`, `costsNew`. Unit-Tests je Zeile der D1-Tabelle × Rolle, A1 an der Schwelle (−49,99 / −50,00 / −50,01 €, GBP, DKK), Kachel je Zeile, Phasenzeile, H-5/H-5b, Kopf-Tasten je Teilphase inkl. abgeschlossen.
 
 **Abnahme UX (zusätzlich zu W19 D.18):** Vorbereitung 0 Ausgaben (Kachel «Noch keine Ausgaben», keine A1) · Schuld 49,99/50,00 € · A1 mit 1/2/3 Empfängern · Unterwegs `[+ Ausgabe]` → speichern → zurück ins Cockpit, Snackbar «Ansehen», Kachel-Status neu · Danach je D1-Zeile × Rolle (Orga Zeile 6: keine Primär-Taste) · abgeschlossen mit offenen Salden (D1 erledigt, kein `[Ausgleichen]`, Phasenzeile «alles ausgeglichen») · Kachel erscheint erst nach D1 erledigt · Erinnern `settle` an Platzhalter (persönlicher Link) und `settle-all` · H-2-Kurzformen · H-5 vs. H-5b · 200 % (Schiene, Kopf-Tasten umbrechen) · Dark Mode.
+
+## v2.16 Inkrement-11-Schnitt – „Bucht“, Station V4, D3, Kachel „Reisedaten“, Erinnern (2026-10-23)
+
+Gilt vor v2.3 (Zeilen V4, D3), v2.4 (V3-Spalte „bucht“, V4-Tabelle, A2, „Rollen auf einen Blick“), v2.6 und v2.8 für Inkrement 11. Bereich: [W20 H](w20-reisedaten.md) (gilt vor W20 A–G), Daten/Rechte/Lebenszyklus: `features.md` **R.9** (gilt dort; „Hinweise an UI/UX“ eingearbeitet, Nachweis W20 H.17). Mit Inkrement 11 gibt es die Markierung „Bucht“ (F-056): Texte dürfen sie jetzt nennen.
+
+**Adapter** `travelDataStatus()` → `areas.travelData` (Vertrag v2.10, Vorschlag):
+```
+{
+  deleteOn: IsoDate;                 // Abreise + 7 Tage (zugesagtes Datum)
+  deleted: boolean;                  // Löschjob gelaufen
+  toMe: { requestId; byName; purpose; fieldKeys: string[]; state: 'open'|'released'|'declined'|'expired' }[];
+  mine: { requestId; purpose; released: number; total: number /* gefragte Mitglieder mit Konto */;
+          open: { key; name }[]; complete: boolean /* niemand mehr offen */;
+          usedSinceComplete: boolean /* „Bucht“ hat danach ≥ 1× angezeigt oder kopiert */;
+          closed: boolean }[];
+  others: { byName; purpose; released; total; complete: boolean }[];   // Orga und „Bucht“: Anfragen anderer „Bucht“-Personen (nur Zahlen)
+}
+```
+`null` = Bereich nicht gebaut **oder abgeschaltet** (`TRAVEL_DATA_ENABLED` aus, R.9 I11-12) → keine V4, keine D3, keine Kachel, kein Anlass, keine Erwähnung. Dazu `RouteViewer.booker: boolean` und `RouteTrip.bookerNames: string[]` (Reihenfolge: Orga zuerst, dann nach Vergabe) – beide braucht V3 auch, wenn `travelData = null`.
+
+### V4 „Reisedaten“ / „Travel details“ – sichtbar und Zustände
+Icon `id-card` (D-64), Bereichsfarbe laut Designer (design-system §9.23: Lavendel/Indigo `travel-area-*`, D-68). Ziel der Karte: `/travel-data`.
+
+**Sichtbar** in *Vorbereitung* und *Unterwegs*, wenn: (a) mindestens eine Anfrage an mich (nicht `expired`), **oder** (b) ich trage „Bucht“, **oder** (c) ich bin Orga und `others` ist nicht leer. Bei mehreren eigenen Anfragen zählt für Text und Zahlen die **älteste nicht abgeschlossene** (R.9 I11-03). In *Danach* gibt es keine V4 (dafür D3).
+
+Erste passende Zeile gilt (eine Person kann zugleich gefragt und „Bucht“ sein – der dringendere Teil bestimmt die Karte, Details stehen im Bereich):
+
+| # | Lage | Zustand | Statuszeile / Text DE | EN | Taste |
+|---|---|---|---|---|---|
+| 1 | ≥ 1 Anfrage an mich **offen** | **dran**, Rang **1** (blockiert andere) | Titel: 1 Anfrage «Reisedaten für {by}» · mehrere «Reisedaten – {count} Anfragen». Kompakt: «{by} bittet um deine Reisedaten» / mehrere «{by1} und {by2} bitten um deine Reisedaten». Ausgeklappt: «Für „{purpose}“: {fields}. Nur {by} sieht sie.» (`{fields}` = Feldnamen mit «und», z. B. «Name laut Ausweis und Geburtsdatum»; mit Dokument: «… und Ausweisnummer») | Title «Travel details for {by}» · «Travel details – {count} requests». «{by} is asking for your travel details» · «For “{purpose}”: {fields}. Only {by} sees them.» | Primär «Angaben freigeben» / «Share details» → `/travel-data/{requestId}` (älteste offene Anfrage) |
+| 2 | ich bin „Bucht“, eine eigene Anfrage `complete`, ≥ 1 freigegeben, `!usedSinceComplete`, nicht geschlossen | **dran**, Rang **2** | «Alle haben geantwortet – {released} von {total} freigegeben. Du kannst buchen.» | «Everyone has answered – {released} of {total} shared. You can book now.» | Primär «Zu den Reisedaten» / «Go to travel details» → `/travel-data` |
+| 3 | ich bin „Bucht“, eine eigene Anfrage hat Offene | **wartet** | «{released} von {total} haben freigegeben · offen: {names}» (Namen max. 2 + «und {n} weitere») | «{released} of {total} have shared · still open: {names}» | `[Erinnern]` (Name «Alle erinnern, die noch nicht geantwortet haben») → Anlass `travel-data` |
+| 4 | ich bin Orga, Anfrage eines anderen läuft (nicht an mich oder von mir beantwortet) | **wartet** | «{by} sammelt Reisedaten · {released} von {total}» (mehrere „Bucht“: «{by1} und {by2} sammeln Reisedaten») | «{by} is collecting travel details · {released} of {total}» | – (die Anfrage gehört „Bucht“; kein Erinnern) |
+| 5 | ich bin „Bucht“ **ohne** eigene Anfrage, nichts sonst offen | **später** (schmale Zeile, **nie** „als Nächstes“, zählt nicht im Weg-Meta, in *Unterwegs* nicht sichtbar) | «Nur falls die Buchung es braucht: hier anfragen statt im Chat.» | «Only if the booking needs it: ask here instead of in the chat.» | – (Zeile → `/travel-data`, dort Leerzustand mit Primär) |
+| 6 | sonst | **erledigt** | Mitglied: «Freigegeben an {by} ✓» · «Du klärst es direkt mit {by}» · mehrere «{count} Anfragen beantwortet» · erloschen «Angaben gelöscht» · „Bucht“: «{released} von {total} freigegeben» · geschlossen «Abgeschlossen – Angaben gelöscht» · alle abgelehnt «Niemand hat freigegeben – ihr klärt es direkt» · Orga (4 fertig) «{by} hat alle Antworten» | «Shared with {by} ✓» · «You're sorting it out with {by}» · «{count} requests answered» · «Details deleted» · «{released} of {total} shared» · «Closed – details deleted» · «Nobody shared – you're sorting it out directly» · «{by} has every answer» | – |
+
+- **Entscheidung „Angaben anfragen“ ist keine Heute-Aufgabe.** Die App weiß nicht, ob eine Buchung Ausweisdaten braucht (innerhalb Europas meist nicht). Würde sie „Bucht“ zum Anfragen drängen, sammelte sie Daten auf Vorrat – gegen die Datensparsamkeit von F-054. Darum Zeile 5 als leise „später“-Zeile und nur ein Einstieg, kein Druck (wie V5).
+- **Zeile 2 statt „Abschließen“ als Pflicht** (Änderung zu v2.4): Die Aufgabe heißt „benutzen“, nicht „löschen“ – erledigt, sobald „Bucht“ nach der letzten Antwort einmal angezeigt oder kopiert hat. Abschließen bleibt freiwillig im Bereich (W20 H.7). Neue Antwort (z. B. nach „Doch freigeben“) setzt `usedSinceComplete` nicht zurück; neue Personen (Spätbeitretende) machen die Anfrage wieder „nicht complete“ → Zeile 3.
+- **Unterwegs:** Zeile 1 steht unter HEUTE **nach** den Terminen (v2.4); Zeilen 2–4 wie in *Vorbereitung*; Zeile 5 entfällt. Nicht erledigte V4 rutscht **nicht** in „nicht genutzt“ – Anfragen können unterwegs noch beantwortet werden (Fähre am Tag 3).
+- **Weg-Meta:** V4 zählt in `{total}`, wenn sie sichtbar ist und nicht Zeile 5. Vorbereitung «{done} von 4 geschafft» (V1, V2, V3, V4).
+- **Neu erledigt** (v2.7) gilt: «Neu erledigt: Reisedaten».
+- **Kurzformen H-2** («Ihr wartet auf: …»): Zeile 3 «Freigaben für deine Anfrage» / «shares for your request» · Zeile 4 «{by} sammelt Reisedaten» / «{by} collecting travel details». (Ersetzt «Freigaben für Lena» aus v2.5.)
+- **Heute-Sortierung** (Rang je Zustand, `TripStation.rank`): V1 Bescheid (1) · V3 festlegen (1) · **V4 freigeben (1)** · V3 buchen (2) · **V4 „alle da“ (2)** · A2 (2) · V3 bewerten (3) · A1 (3) · D1 abschließen (4); gleicher Rang → Katalog V1, V2, V3, V4, A2, A1.
+
+### D3 „Reisedaten gelöscht“ / „Travel details deleted“ (nur *Danach*)
+Sichtbar, wenn bei Reiseende eine **aktive Freigabe von mir** bestand **oder** ich „Bucht“ mit einer nicht geschlossenen Anfrage mit ≥ 1 Freigabe war (Server merkt es sich bis zum Löschdatum; danach liefert `deleted = true` + Merker, ob es mich betraf).
+| Lage | Zustand | DE | EN |
+|---|---|---|---|
+| vor dem Löschdatum (Tage 1–7 nach der Abreise) | **als Nächstes** (R.9 I11-03; nie dran, keine Taste; ist nach Regel 4 schon eine andere Station „als Nächstes“, dann „später“) | Werden am {date} gelöscht – bis dahin kannst du sie noch ansehen. | Will be deleted on {date} – you can still view them until then. |
+| gelöscht | **erledigt** | Am {date} gelöscht – wie angekündigt. | Deleted on {date} – as promised. |
+Ziel `/travel-data` (vor der Löschung lesbar und widerrufbar; danach Leerzustand W20 H.9). D3 zählt im Weg-Meta *Danach*. Offene, unbeantwortete Anfragen an mich sind in *Danach* **keine** Aufgabe; im Bereich bleiben sie beantwortbar (W20 H.11).
+
+### Kachel „Reisedaten“ (v2.6, letzte in der Reihenfolge Unterkunft · Unterlagen · Kosten · Infos · Reisedaten)
+Erscheint nur in *Vorbereitung* und *Unterwegs*, nur wenn **keine V4 im Zustand dran/wartet/später** sichtbar ist (ein Einstieg je Bereich) **und** Daten für mich da sind. **Auch für jede Person mit eigener gespeicherter Freigabe** (R.9 I11-03, ersetzt „nur Bucht“ aus v2.6/F-054) – der Weg zu Widerruf und Zugriffsprotokoll darf nicht in der eingeklappten Erledigt-Gruppe verschwinden (Art. 7 Abs. 3 DSGVO).
+
+| Lage | Statuszeile DE | EN |
+|---|---|---|
+| „Bucht“, eine Anfrage mit ≥ 1 Freigabe, nicht geschlossen | {released} von {total} freigegeben · gelöscht am {date} | {released} of {total} shared · deleted on {date} |
+| „Bucht“ **und** selbst mit Freigabe | Status der eigenen Anfrage (Zeile oben) – die eigene Freigabe steht im Bereich | wie oben |
+| „Bucht“, mehrere solche Anfragen | {count} Anfragen · gelöscht am {date} | {count} requests · deleted on {date} |
+| Person mit eigener Freigabe | Freigegeben an {by} ✓ · gelöscht am {date} (zwei: «an {by1} und {by2}», drei: «an {by1}, {by2} und {by3}») | Shared with {by} ✓ · deleted on {date} |
+Zugänglicher Name «Reisedaten. {Status}». Kein Chip. In *Danach* keine Kachel (D3 übernimmt).
+
+### V3 „Unterkunft“ – „Bucher“ sind jetzt die „Bucht“-Personen (ersetzt den Satz „Bucher = Orga“ aus v2.14)
+**Bucher** = alle mit Markierung „Bucht“; gibt es keine, die Orga. Festlegen bleibt **nur Orga** (Q33); «gebucht ✓» setzen/zurücknehmen: Orga **und** „Bucht“ (W18 E.16).
+
+| Regel v2.14 | Änderung |
+|---|---|
+| 5 (festgelegt, nicht gebucht) | **dran**, Rang 2, für **jede Bucher-Person** (auch wenn sie nicht Orga ist). Die Orga ist nur dann dran, wenn sie selbst Bucher ist; sonst **wartet** mit Text wie Regel 8 und `[{booker} Bescheid geben]` (`stay-book`). |
+| 8 (Mitglied wartet) | «{bookers} bucht {title}.» – `{bookers}` = 1 Name, «Sara oder Kemal», «Lena, Sara oder Kemal» (max. 3 = Grenze; EN «Sara or Kemal is booking {title}.»). Bewusst «oder» statt R.9-Beispiel «Lena und Kemal buchen»: Gebucht wird einmal, von einer der Personen; nach Termin-Änderung «Neuer Termin – {bookers} bucht {title} neu.» Taste: 1 Bucher `[Sara Bescheid geben]`, mehrere `[Bescheid geben]` → RemindSheet Schritt `orga` mit Auswahl der Bucher (je Zeile WhatsApp). |
+| Kurzform H-2 Regel 8 | «{bookers} bucht {title}» |
+| 3, 4, 6, 7, 9 | unverändert (eine „Bucht“-Person ohne Orga-Rolle verhält sich dort wie ein Mitglied). |
+| UX-9 «Haben wir schon …» | unverändert nur Orga. |
+Anlass `stay-book`: Empfänger = Bucher (Text v2.8 mit `{booker}`). Der Platzhalter `{orga}` in `stays.chosen.waitMember` wird `{bookers}` (W18 E.16).
+
+### A2 „Infos ergänzen“
+Jetzt für **Orga und „Bucht“** (v2.4 wie ursprünglich vorgesehen); mehrere Personen können dieselbe Aufgabe sehen – wer zuerst einträgt, erledigt sie für alle. Infos-Kachel leer für „Bucht“: «Infos ergänzen» wie Orga (W22 E).
+
+### Erinnern (RemindSheet, ux-spec §14.2) – Anlass in Inkrement 11
+| Anlass | Einstieg | Schritt | Inhalt |
+|---|---|---|---|
+| `travel-data` | V4 Zeile 3 `[Erinnern]`; W20 H.7 `[Erinnern]` | `status` → `single`/`all` | h2 «Wer fehlt noch?» / «Who's still missing?» · bei mehreren laufenden eigenen Anfragen je Anfrage eine h3 «„{purpose}“» · Gruppe «Offen ({n})» / «Open ({n})» mit WhatsApp je Person · Gruppe «Klärt es direkt ({n})» / «Sorting it out directly ({n})» **ohne** Taste · nur Mitglieder mit Konto · Fußleiste «Alle erinnern ({n})» (nur bei genau einer laufenden Anfrage; sonst je h3 eine Taste «Alle erinnern»). Text `single` DE «Hey {name}, für „{purpose}“ brauche ich noch deine Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}» · EN «Hey {name}, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}». `all` DE «Hey ihr, für „{purpose}“ brauche ich noch eure Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}» · EN «Hey all, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}». |
+`{link}` = `/trips/{id}/travel-data` (nie eine `requestId`, nie Felder oder Werte). Ersetzt den Text in v2.8 und W20 E. **Offene Platzhalter** (R.9 I11-09) stehen im Schritt `status` in einer eigenen Gruppe «Noch nicht dabei ({n})» / «Not joined yet ({n})» mit WhatsApp je Person, Anlass **`travel-data-join`**, `{link}` = **persönlicher Link** des Platzhalters: DE «Hey {name}, magst du bei {trip} beitreten? Für „{purpose}“ brauche ich danach deine Reisedaten – bitte in der App freigeben, nicht im Chat: {link}» · EN «Hey {name}, could you join {trip}? I'll then need your travel details for “{purpose}” – please share them in the app, not in the chat: {link}». Nicht in «Alle erinnern».
+
+### „Wer ist dabei?“, „Mehr zur Reise“, Reisemenü
+- **Sheet „Wer ist dabei?“:** Chip «Bucht» / «Booking» je Person (Icon `id-card` + Text); ohne jede Markierung sieht die Orga oben «Noch niemand bucht – markiere, wer Unterkunft und Tickets bucht.» + «Wer bucht? ›»; Mitglieder sehen darunter den Satz «{Namen} bucht/buchen für euch und darf/dürfen Reisedaten anfragen.»; Orga sieht Text-Taste **«Wer bucht? ändern ›»** → Unterschritt „Wer bucht?“ (W20 H.2).
+- **Zeile „Wer ist dabei? (6)“** in „Mehr zur Reise“: Statuszeile «{Namen} bucht» bzw. «… buchen» (vor dem bisherigen Status).
+- **Reisemenü `⋯`** (nur Orga, nur Phase 3): neuer Punkt **«Wer bucht? …»** (Icon `id-card`) zwischen «Freunde einladen» und «So habt ihr entschieden» → öffnet direkt denselben Unterschritt. Damit ist der in v2.13 ausgesparte Punkt aus Teil B §2.5 gebaut.
+- **Ticket-Crew:** keine Chips (zu klein); nichts ändert sich.
+- **„Reise verlassen …“ / „Mitglied entfernen …“ / „Festlegung aufheben …“:** Zusatzsätze zu Reisedaten nach W20 H.9/H.11.
+
+### Rollen auf einen Blick (ersetzt die Tabelle in v2.4 für Inkrement 11)
+| | Mitglied | „Bucht“ | Orga |
+|---|---|---|---|
+| sieht | eigenen Stand + neutrale Zahlen | + Werte (maskiert, Anzeigen/Kopieren protokolliert) **nur** zu eigenen Anfragen; Status je Person aller Anfragen | + Gruppenfortschritt, Favorit (Q33), Status je Person aller Anfragen – **nie** Inhalte |
+| „du bist dran“ typisch | bewerten, **freigeben**, schulden | + **Unterkunft buchen**, **Reisedaten benutzen** (Zeile 2), A2 | + Bescheid geben, festlegen, buchen (nur als Bucher), A2, abschließen (Kosten) |
+| Erinnern | V2 (Orga Bescheid), V3, D1 (eigene Forderung) | + **V4** (`travel-data`) | + V2 (Platzhalter), V3, D1 (alle) |
+| „ohne App erledigt“ (UX-9) | – | – | V2, V3, V5 |
+| Markierung „Bucht“ vergeben | – | – | ✔ |
+
+### `trip-route.ts` (Vorschlag)
+`StationId` + `"V4" | "D3"`; Katalog … V3, **V4**, A2, A1 (Vorbereitung/Unterwegs) bzw. D1, **D3** (Danach); `RouteViewer.booker`; `RouteTrip.bookerNames`; `RouteAreas.travelData?: TravelDataStatus | null`; `TripTile.area` + `"travelData"`; Remind-Anlässe `travel-data`, `travel-data-join`; `RouteTarget.page` + `travelData`, `travelDataRequest` (mit `requestId`), `travelDataNew`. V3-Funktion bekommt `bookerNames`/`viewer.booker` statt fester Orga. Unit-Tests je Zeile der V4-Tabelle × Rolle (Mitglied, „Bucht“, Orga ohne „Bucht“, Orga + „Bucht“, gefragt + „Bucht“), Rang-Reihenfolge mit V1/V3, D3 vor/nach Löschung, Kachel je Zeile inkl. „keine Kachel bei sichtbarer V4“, V3-Regeln 5/8 mit 0/1/2 Buchern, `travelData = null` → keine Spur (auch kein «Bucht» in V3-Texten fehlt nicht – V3 nutzt `bookerNames` unabhängig).
+
+### Abnahme UX (zusätzlich zu W20 H.18)
+Max gefragt (V4 dran Rang 1, Primär «Angaben freigeben» → Formular) · Max nach Freigabe (V4 erledigt, «Neu erledigt», Kachel «Freigegeben an Lena ✓ · gelöscht am 26. Juni») · Lena „Bucht“ ohne Anfrage (später-Zeile, Weg-Meta ohne V4) · Lena Anfrage läuft (wartet, Erinnern `travel-data` mit „Klärt es direkt“ ohne Taste) · Lena alle geantwortet (dran Rang 2 → einmal Anzeigen → erledigt + Kachel) · Lena gefragt von Sara **und** eigene Anfrage (Zeile 1 gewinnt) · Orga ohne „Bucht“ bei Saras Anfrage (wartet ohne Erinnern, keine Werte im Netzwerk-Tab) · Unterwegs Tag 3 mit offener Anfrage (nach Terminen) · Danach D3 später → nach Löschjob erledigt · V3 mit Sara als Bucherin (Sara dran «buchen», Lena wartet mit `[Sara Bescheid geben]`, Max «Sara bucht …») · 0 „Bucht“ → V3 wie Inkrement 9 · Reisemenü «Wer bucht? …» nur Orga · Sheet „Wer ist dabei?“ mit Chips · H-2-Kurzformen · `travelData = null` (Produktion vor G1b): keine V4/D3/Kachel, „Bucht“-Chips und V3-Bucher trotzdem da · 200 % · Dark Mode.
 
 ---
 

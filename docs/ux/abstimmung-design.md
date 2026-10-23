@@ -1,6 +1,6 @@
 # Abstimmung UI/UX ↔ Design
 
-Stand: 2026-10-22 (Runde 4 – Cockpit Variante C „Reiseverlauf“, §12; vorher Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-23 (Runde 7 – Inkrement 11 „Bucht“ + Reisedaten, §16; Runde 4 – Cockpit Variante C „Reiseverlauf“, §12; vorher Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ## 0. Stand
 
@@ -473,7 +473,47 @@ Keine an den Auftraggeber. An den CEO (Umfang, Empfehlung UX): **Notiz** zur Aus
 | UM-14 – UM-19 | neu (UM-15 mit Prüfauftrag) | Motion Designer |
 | Notiz, „Als Ausgabe eintragen“ | Empfehlung | CEO |
 
+## 16. Runde 7 – Inkrement 11 „Bucht“ + Reisedaten (W20 H, W16 v2.16, W22 E, W18 E.16, 2026-10-23)
+
+Struktur, Zustände und Texte: [W20 H](wireframes/w20-reisedaten.md) (gilt vor W20 A–G), Cockpit [W16 v2.16](wireframes/w16-cockpit.md), Infos [W22 E](wireframes/w22-infoseite.md), Unterkunft [W18 E.16](wireframes/w18-unterkunft-swipen.md); Daten/Rechte `docs/product/features.md` R.9. Prototyp `mockups/reise-managen/index.html` `#/data*` ist **überholt** in: Geburtsdatum (jetzt drei Felder), Einwilligungstext (Regel + „derzeit am …“), Demo-Hinweis (nicht wegklickbar, `DEMO`-Präfix), „Wer bucht?“ (jetzt Unterschritt von „Wer ist dabei?“), Maskierung Dokumentnummer. **Blockierend für den Bau (R.9 „Voraussetzung“): D-64 (Icons + Chip), D-67 (Leer-Illustration); Motion UM-20, UM-21.**
+
+### 16.1 Punkte an den Designer (D-64 – D-71)
+| ID | Thema | Bitte |
+|---|---|---|
+| **D-64** | **Icons + Chip «Bucht»** | Neu im Sprite: `id-card` (Bereich Reisedaten, V4/D3, Kachel, Chip, Reisemenü «Wer bucht? …») und `shield` (Datenschutz-Hinweise, Einwilligung, Taste «An Lena freigeben»). Chip «Bucht» / «Booking» mit `id-card` 16 + Text, unterscheidbar vom Orga-Chip (Krone) ohne Farbe allein. **Blockierend.** |
+| **D-65** | **Hinweis-Stile** | (a) `note demo` – Amber + `warning`, **nicht schließbar**, auch Dark Mode ≥ 4,5 : 1; (b) Warnhinweis Dokumentnummer (Amber, direkt unter dem Schalter); (c) Verantwortungs-Hinweis „Bucht“ und „Wer sieht was?“ (Info + `shield`). Masken «K•••», «••.••.••••», «C••••7»: Figtree tabular wie D-62, Punkte in `text-muted` mit ≥ 4,5 : 1. |
+| **D-66** | **Formular „Angaben“ / „Freigeben“** | Schritt-Balken (2 Segmente, wie vorhandene Zwei-Schritt-Abläufe); Datum als **drei Felder** Tag 4 em · Monat 4 em · Jahr 6 em mit sichtbaren Labels, bei < 22 em zweizeilig; Einwilligung als **Karte mit Checkbox** (ganze Karte klickbar, angehakt: 2 px `selected`-Rand + Tönung, nicht nur Farbe); Zusammenfassung „Das gibst du frei“ als `<dl>`. |
+| **D-67** | **Leer-Illustration** `empty-travel-data.svg` | Stil B wie `empty-costs`, Motiv z. B. Ausweiskarte mit Schild/Schloss, Minze-Wellen; ohne Text, ohne Gesicht/Foto auf der Karte; Ebenen `data-anim`. Für „Reisedaten gelöscht“ und „Gerade nichts zu tun“. **Blockierend** (R.9). |
+| **D-68** | **Bereichsfarbe Reisedaten** | design-system §9.23 (Entwurf, parallel) nennt Lavendel-200 / Indigo (`travel-area-*`) – **UX einverstanden**, Bedingung: Unterkunft nutzt ebenfalls Lavendel, also müssen Kacheln/Stationen sich über Icon (`bed` vs. `id-card`) und Titel unterscheiden (tun sie). Nicht Koralle (Aufgabe), nicht Amber (Warnung). |
+| **D-69** | **Personen-Karte (Sicht „Bucht“)** | Kopf Avatar · Name (h4) · Status-Chip (freigegeben = Minze + ✓, offen = Uhr, klärt es direkt = neutral, noch nicht dabei = wie Platzhalter); `<dl>`-Zeilen Label/Wert + Kopieren-Icon-Taste 44 px rechts; «Anzeigen»/«Verbergen» (`eye`/`eye-off`) sekundär klein + 13 px «geändert am …»; ab 960 px zwei Spalten. Zählkarte für fremde Anfragen (nur Zahl + Chips). |
+| **D-70** | **Zugriffsprotokoll + Karte „Freigegeben an …“** | Siegel 40 (vorhandenes `seal.svg`, wie D-63) neben h3; Protokoll als ruhige Liste (Icon `eye` bzw. `copy` 16, Text, Zeit rechts oder darunter), keine Tabellenoptik; destruktiv-leise Text-Taste «Freigabe zurückziehen …». |
+| **D-71** | **Unterschritt „Wer bucht?“** | Schalter-Zeilen wie Bewegungs-Schalter (design-system Schalter), Avatar links, gesperrt mit Grund; Zähler «2 von 3 vergeben»; Info-Zeile «Noch niemand bucht …» für die Orga. Reisemenü-Punkt mit `id-card`. |
+
+### 16.2 Punkte an den Motion Designer (UM-20 – UM-24, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-20** | Freigegeben | Karte „Freigegeben an …“ tritt ein, **Siegel 40 ploppt** (wie Festlegen der Unterkunft), **kein Konfetti** (R.9: kein Konfetti in diesem Bereich) | ohne Bewegung (Überblenden) |
+| **UM-21** | Anzeigen ↔ Verbergen | je Feld **Überblenden 140 ms**, keine Buchstaben-/„Entschlüsseln“-Animation (R.9) | sofort |
+| **UM-22** | Kopieren | Icon `copy` → `check` mit Pop (`fast`), 1,2 s, zurück | Wechsel ohne Pop |
+| **UM-23** | Widerruf / Abschließen / Löschung / Markierung entzogen | Karte überblendet in den neuen Zustand; **kein** Schredder-/Auflösungseffekt | sofort |
+| **UM-24** | Schalter „Wer bucht?“, Chip «Bucht» | Standard-Schalter; Chip blendet in der Liste ein/aus (`fast`); keine Haptik | sofort |
+Alle Momente nur bei eigener Aktion im Client. **M-U14** (Fokus nach «Als gebucht markieren») ist in W18 E.16 bestätigt.
+
+### 16.3 Fragen
+Keine an den Auftraggeber. An PM/CEO (nicht blockierend): Widerruf, solange die Festlegung aufgehoben ist (W20 H.17 – Empfehlung Zeile im Konto).
+
+### 16.4 Abstimmungsstand Runde 7
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-64, D-67 | neu, **blockierend** | Designer |
+| D-65, D-66, D-68 – D-71 | neu (mit vorhandenen Tokens baubar) | Designer |
+| UM-20, UM-21 | neu, **blockierend** (R.9) | Motion Designer |
+| UM-22 – UM-24 | neu | Motion Designer |
+| M-U14 | von UX bestätigt (W18 E.16) | – |
+| Widerruf in Phase 2 | Empfehlung | PM/CEO |
+
 ## Changelog
+- 2026-10-23 (Runde 7, Inkrement 11): §16 – Punkte D-64–D-71 (Designer), UM-20–UM-24 (Motion), M-U14 bestätigt; W20 H, W16 v2.16, W22 E, W18 E.16 (an R.9 angeglichen).
 - 2026-10-23 (Runde 6, Inkrement 10): §15 – Punkte D-56–D-63 (Designer), UM-14–UM-19 (Motion), CEO-Fragen Notiz/„Als Ausgabe eintragen“; W19 D, W16 v2.15 (an R.8 und CEO-Entscheidungen a/b angeglichen).
 - 2026-10-23 (Runde 5, Inkrement 9): §14 – Punkte D-46–D-55 (Designer), UM-8–UM-13 (Motion), Frage UX-10; W17 F, W18 E, W16 v2.14, W22 D.
 - 2026-10-22 (Runde 4b): §13 – Antworten U-23–U-30, Bewertung UM-4, Abnahme D-36–D-45; W16 v2.12/v2.13 (Inkrement-8-Schnitt), W22 baureif.
