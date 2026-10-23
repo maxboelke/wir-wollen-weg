@@ -148,7 +148,7 @@ export function BookerSheetBody({
           <span>{t("none")}</span>
         </p>
       ) : null}
-      <ul className={styles.sheetMenu}>
+      <ul className={styles.bookerList}>
         {people.map((person) => {
           const checked = on.has(person.key);
           const locked = !checked && full;

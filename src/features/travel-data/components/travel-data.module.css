@@ -1033,6 +1033,15 @@
 }
 
 /* «Wer bucht?» rows ≥ 56 px (§9.23.1) */
+/* «Wer bucht?» list – like .sheetMenu but without its button styles (the rows hold switches) */
+.bookerList {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
 .bookerRow {
   min-height: 56px;
   padding-block: var(--ww-space-1);
