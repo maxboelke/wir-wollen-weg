@@ -53,7 +53,12 @@ async function swapOrganizer(tripId: string, email: string) {
   await makeOrganizer(tripId, email);
 }
 
-async function askNameAndBirth(page: Page, publicId: string, purpose: string, withDocument = false) {
+async function askNameAndBirth(
+  page: Page,
+  publicId: string,
+  purpose: string,
+  withDocument = false,
+) {
   await page.goto(`/trips/${publicId}/travel-data/new`);
   await hydrated(page);
   await page.getByLabel(t.request.purpose).fill(purpose);
@@ -110,7 +115,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
     // Max sees nothing to do yet; the area answers with no-store.
     const response = await c.max.page.goto(`/trips/${c.publicId}/travel-data`);
     expect(response?.headers()["cache-control"]).toContain("no-store");
-    await expect(main(c.max.page).getByRole("heading", { name: t.emptyMember.title })).toBeVisible();
+    await expect(
+      main(c.max.page).getByRole("heading", { name: t.emptyMember.title }),
+    ).toBeVisible();
 
     await askNameAndBirth(c.sara.page, c.publicId, purpose);
     await expectNoSeriousAxeViolations(c.sara.page, "travel data booker");
@@ -118,9 +125,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
     // Max: V4 «dran» in the cockpit → form → release.
     await c.max.page.goto(`/trips/${c.publicId}`);
     await expect(
-      c.max.page.getByRole("link", { name: en.route.v4.share }).or(
-        c.max.page.getByRole("button", { name: en.route.v4.share }),
-      ),
+      c.max.page
+        .getByRole("link", { name: en.route.v4.share })
+        .or(c.max.page.getByRole("button", { name: en.route.v4.share })),
     ).toBeVisible();
     await release(c.max.page, c.publicId, "Sara");
     await expectNoSeriousAxeViolations(c.max.page, "travel data member released");
@@ -139,7 +146,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
     await expect(person.getByText(FAMILY)).toHaveCount(0);
 
     // Lena (organiser without the marking): status only – no values, no «Show».
-    const lenaHtml = await (await c.lena.page.request.get(`/trips/${c.publicId}/travel-data`)).text();
+    const lenaHtml = await (
+      await c.lena.page.request.get(`/trips/${c.publicId}/travel-data`)
+    ).text();
     expect(lenaHtml).not.toContain(FAMILY);
     await c.lena.page.goto(`/trips/${c.publicId}/travel-data`);
     await expect(main(c.lena.page).locator("[data-travel-count]")).toBeVisible();
@@ -148,7 +157,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
     // Max sees the access log entry, then withdraws.
     await c.max.page.goto(`/trips/${c.publicId}/travel-data`);
     await expect(
-      main(c.max.page).getByText(fill(t.log.viewed, { name: "Sara", when: "" }).replace(/ · $/, "")),
+      main(c.max.page).getByText(
+        fill(t.log.viewed, { name: "Sara", when: "" }).replace(/ · $/, ""),
+      ),
     ).toBeVisible();
     await main(c.max.page).getByRole("button", { name: t.released.withdraw }).click();
     await c.max.page.getByRole("button", { name: t.revoke.confirm }).click();
@@ -163,7 +174,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
     for (const p of [c.lena, c.sara, c.max]) await p.context.close();
   });
 
-  test("document numbers need a fresh code confirmation (> 12 h / password)", async ({ browser }) => {
+  test("document numbers need a fresh code confirmation (> 12 h / password)", async ({
+    browser,
+  }) => {
     test.setTimeout(180_000);
     const c = await crew(browser);
     await askNameAndBirth(c.sara.page, c.publicId, "Flights to Edinburgh", true);
@@ -186,7 +199,9 @@ test.describe("W20 H – request, consent, masked view, access log, withdrawal",
 });
 
 test.describe("W20 H.2 – «Wer bucht?» in the cockpit", () => {
-  test("organiser marks and unmarks; members see the chip and the sentence", async ({ browser }) => {
+  test("organiser marks and unmarks; members see the chip and the sentence", async ({
+    browser,
+  }) => {
     test.setTimeout(120_000);
     const c = await crew(browser);
     const page = c.lena.page;
@@ -212,7 +227,9 @@ test.describe("W20 H.2 – «Wer bucht?» in the cockpit", () => {
     await c.max.page.goto(`/trips/${c.publicId}`);
     await hydrated(c.max.page);
     await c.max.page.getByRole("button", { name: en.trip.menu }).click();
-    await expect(c.max.page.getByRole("button", { name: en.trip.menuItems.bookers })).toHaveCount(0);
+    await expect(c.max.page.getByRole("button", { name: en.trip.menuItems.bookers })).toHaveCount(
+      0,
+    );
     for (const p of [c.lena, c.sara, c.max]) await p.context.close();
   });
 });

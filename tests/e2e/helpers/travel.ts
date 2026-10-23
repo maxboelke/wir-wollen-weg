@@ -21,9 +21,10 @@ export async function setBookerMark(tripId: string, email: string, on: boolean):
       where trip_id = $1 and user_id = (select id from "user" where email = $2)`,
     [tripId, email, on],
   );
-  await run(`update trip set booker_defaulted_at = coalesce(booker_defaulted_at, now()) where id = $1`, [
-    tripId,
-  ]);
+  await run(
+    `update trip set booker_defaulted_at = coalesce(booker_defaulted_at, now()) where id = $1`,
+    [tripId],
+  );
 }
 
 /** As if the last code sign-in of every session of `email` were more than 12 hours ago. */

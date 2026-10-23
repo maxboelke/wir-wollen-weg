@@ -65,6 +65,8 @@ describe("remind texts (ux-spec §14.1, §14.2)", () => {
     // Costs (Increment 10, W16 v2.15): `settle`, `settle-all`, `settleOther`.
     amount: "1.234,56 €",
     to: "Lena",
+    // Travel details (Increment 11, W16 v2.16): `travelData`, `travelDataAll`, `travelDataJoin`.
+    purpose: "Fähre Split – Hvar",
   };
 
   it("name the person, carry the link and stay ≤ 300 characters (typical trip name)", () => {

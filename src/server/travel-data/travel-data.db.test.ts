@@ -119,10 +119,10 @@ async function fixture(start = 40, end = 45): Promise<Fixture> {
   );
   return {
     tripId,
-    orga: orga ?? "",
-    booker: booker ?? "",
-    max: max ?? "",
-    mia: mia ?? "",
+    orga,
+    booker,
+    max,
+    mia,
     placeholderId: (placeholder.rows[0] as { id: string }).id,
     placeholderToken: token,
     optionId: (option.rows[0] as { id: string }).id,
