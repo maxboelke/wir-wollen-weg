@@ -7,6 +7,7 @@ import { Avatar } from "@/components/ui/avatar";
 import { Banner } from "@/components/ui/banner";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
+import { ButtonLink } from "@/components/ui/button-link";
 import { Card } from "@/components/ui/card";
 import { TextField } from "@/components/ui/field";
 import { Icon } from "@/components/ui/icon";
@@ -27,6 +28,9 @@ export interface ManagedPlaceholder {
   displayName: string;
   link: string;
   texts: Record<Locale, string>;
+  /** Appearances in the costs (R.8 I10-04) – > 0 blocks deleting. */
+  usage?: { expenses: number; settlements: number };
+  costsHref?: string;
 }
 
 interface PlaceholderManagerProps {
@@ -71,6 +75,8 @@ export function PlaceholderManager({
   const [lastSheet, setLastSheet] = useState<Exclude<Sheet, null> | null>(null);
   const [pending, startTransition] = useTransition();
   if (sheet && sheet !== lastSheet) setLastSheet(sheet);
+  const blocked = (p: ManagedPlaceholder) =>
+    (p.usage?.expenses ?? 0) + (p.usage?.settlements ?? 0) > 0;
   const shown = sheet ?? lastSheet;
 
   function handle(
@@ -95,7 +101,9 @@ export function PlaceholderManager({
           ? t("nameRequired")
           : result.error === "full"
             ? t("full")
-            : tCommon("genericError"),
+            : result.error === "usedInCosts"
+              ? t("blockedGeneric")
+              : tCommon("genericError"),
       );
     }
     focus?.focus();
@@ -128,7 +136,9 @@ export function PlaceholderManager({
       ? t("linkFor", { name: shown.placeholder.displayName })
       : shown.kind === "menu"
         ? t("renameTitle", { name: shown.placeholder.displayName })
-        : t("removeTitle", { name: shown.placeholder.displayName });
+        : blocked(shown.placeholder)
+          ? t("blockedTitle", { name: shown.placeholder.displayName })
+          : t("removeTitle", { name: shown.placeholder.displayName });
 
   return (
     <Card as="section" aria-labelledby={`${ids}-title`} className={styles.card} id="placeholders">
@@ -298,7 +308,38 @@ export function PlaceholderManager({
             </div>
           </form>
         ) : null}
-        {shown?.kind === "remove" ? (
+        {shown?.kind === "remove" && blocked(shown.placeholder) ? (
+          <div className={styles.sheet}>
+            <p>
+              {(shown.placeholder.usage?.settlements ?? 0) > 0
+                ? t("blockedTextPayments", {
+                    name: shown.placeholder.displayName,
+                    count:
+                      (shown.placeholder.usage?.expenses ?? 0) +
+                      (shown.placeholder.usage?.settlements ?? 0),
+                  })
+                : t("blockedText", {
+                    name: shown.placeholder.displayName,
+                    count: shown.placeholder.usage?.expenses ?? 0,
+                  })}
+            </p>
+            <div className={styles.actions}>
+              {shown.placeholder.costsHref ? (
+                <ButtonLink href={shown.placeholder.costsHref} variant="secondary" size="md">
+                  {t("blockedToCosts")}
+                </ButtonLink>
+              ) : null}
+              <Button
+                size="md"
+                onClick={() => {
+                  setSheet(null);
+                }}
+              >
+                {t("blockedOk")}
+              </Button>
+            </div>
+          </div>
+        ) : shown?.kind === "remove" ? (
           <div className={styles.sheet}>
             <p>{t("removeText", { name: shown.placeholder.displayName })}</p>
             <div className={styles.actions}>

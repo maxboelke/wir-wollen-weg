@@ -273,7 +273,7 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
                 isOrganizer ? `${tripPath(trip.publicId, "invite")}#placeholders` : undefined
               }
               ownHref={tripPath(trip.publicId, phase === "vote" ? "poll" : "days")}
-              context={sheetContext(view)}
+              context={await sheetContext(view)}
             />
             <div className={styles.invite}>
               {isOrganizer || canInvite ? (

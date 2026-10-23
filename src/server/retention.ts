@@ -2,6 +2,7 @@ import "server-only";
 import { and, eq, isNotNull, isNull, lt, or, sql } from "drizzle-orm";
 import { isLocale, type Locale } from "@/i18n/config";
 import { inboxEnabled } from "@/lib/app-env";
+import { settleUp } from "@/lib/costs";
 import {
   ACCOUNT_NOTICE_DAYS,
   ACCOUNT_INACTIVE_MONTHS,
@@ -13,6 +14,7 @@ import {
   tripDeletionDate,
 } from "@/lib/retention";
 import { deleteAccount } from "./account-deletion";
+import { balancesOf, loadCostsRaw, purgeDeletedExpenses } from "./costs/db";
 import { db } from "./db/client";
 import { trip, tripMember, user } from "./db/schema";
 import { serverEnv } from "./env";
@@ -43,10 +45,22 @@ export interface RetentionReport {
   mailErrors: number;
   /** Demo inbox (online preview only): mails older than 24 hours. */
   demoMailsDeleted: number;
+  /** Soft-deleted expenses older than 24 hours (deployment.md §0.10). */
+  expensesPurged: number;
 }
 
 const appUrl = () => serverEnv().APP_URL.replace(/\/$/, "");
 const localeOf = (value: string | null | undefined): Locale => (isLocale(value) ? value : "en");
+
+/** Open settlements of a trip (the proposal) – the notice mail names only this number. */
+async function openSettlementCount(tripId: string): Promise<number> {
+  const raw = await loadCostsRaw(tripId);
+  if (raw.expenses.length === 0) return 0;
+  const balances = balancesOf(raw);
+  return settleUp(
+    raw.parties.map((p) => ({ id: p.id, seq: p.seq, cents: balances.get(p.id) ?? 0 })),
+  ).length;
+}
 
 async function tripPass(now: Date, report: RetentionReport): Promise<void> {
   const rows = await db()
@@ -107,6 +121,7 @@ async function tripPass(now: Date, report: RetentionReport): Promise<void> {
             date: effectiveDeletionDate(due.at, now, TRIP_NOTICE_DAYS),
             reason: due.reason,
             tripUrl: `${appUrl()}/trips/${row.publicId}`,
+            openSettlements: await openSettlementCount(row.id),
           }),
         );
       } catch {
@@ -190,8 +205,10 @@ export async function runRetention(now = new Date()): Promise<RetentionReport> {
     noticesReset: 0,
     mailErrors: 0,
     demoMailsDeleted: 0,
+    expensesPurged: 0,
   };
   await tripPass(now, report);
+  report.expensesPurged = await purgeDeletedExpenses(now);
   await accountPass(now, report);
   if (inboxEnabled()) report.demoMailsDeleted = await purgeDemoInbox(now);
   console.info("retention: run finished", JSON.stringify(report));

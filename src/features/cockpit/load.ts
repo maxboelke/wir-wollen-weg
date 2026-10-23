@@ -1,9 +1,18 @@
 import "server-only";
+import { getTranslations } from "next-intl/server";
 import { fromUtcDate, isoDateInZone, type IsoDate } from "@/lib/dates";
 import { compareTallies, rankOptions, tallyOf, type Tally } from "@/lib/poll";
 import { effectiveDeletionDate, TRIP_NOTICE_DAYS, tripDeletionDate } from "@/lib/retention";
 import { firstLine } from "@/lib/trip-info";
-import { tripRoute, type InfoStatus, type StayStatus, type TripRoute } from "@/lib/trip-route";
+import {
+  tripRoute,
+  type CostStatus,
+  type InfoStatus,
+  type StayStatus,
+  type TripRoute,
+} from "@/lib/trip-route";
+import { loadCostsRaw, type CostsRaw } from "@/server/costs/db";
+import { costStatus } from "../costs/load";
 import { getTripInfo, type TripInfoView } from "@/server/cockpit";
 import { listOptions, listVotes } from "@/server/poll";
 import { loadStaysRaw, stayStatus, type StaysRaw } from "../stays/load";
@@ -24,6 +33,9 @@ export interface CockpitData {
   /** Places to stay (W16 v2.14) – for the remind sheets. */
   stay: StayStatus;
   staysRaw: StaysRaw;
+  /** Costs (W16 v2.15) – for the reminders and the close dialog. */
+  costs: CostStatus;
+  costsRaw: CostsRaw;
   info: TripInfoView | null;
   /** Places 1 and 2 of the vote (fixed range first if it is not place 1). */
   places: DecidedPlace[];
@@ -50,13 +62,18 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
   const { trip, me, members, placeholders, today, isOrganizer } = view;
   const start = trip.fixedStart ?? today;
   const end = trip.fixedEnd ?? today;
-  const [info, options, votes, staysRaw] = await Promise.all([
+  const [info, options, votes, staysRaw, costsRaw, tCosts] = await Promise.all([
     getTripInfo(trip.id),
     listOptions(trip.id),
     listVotes(trip.id),
     loadStaysRaw(trip.id),
+    loadCostsRaw(trip.id),
+    getTranslations("costs"),
   ]);
   const stay = stayStatus(view, staysRaw);
+  const costs = costStatus(view, costsRaw, (no) =>
+    no === null ? tCosts("formerInline") : tCosts("formerInlineNo", { n: no }),
+  );
   const tallies = options.map((option) => ({
     ...option,
     tally: tallyOf(votes.filter((vote) => vote.optionId === option.id)),
@@ -111,6 +128,7 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
       },
       info: infoStatus(info),
       stay,
+      costs,
     },
     today,
   );
@@ -118,6 +136,8 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
     route,
     stay,
     staysRaw,
+    costs,
+    costsRaw,
     info,
     places,
     fixedOn,

@@ -9,6 +9,12 @@ import {
   isInviteTokenShape,
   isPublicIdShape,
 } from "@/lib/tokens";
+import {
+  claimPlaceholderParty,
+  dropPlaceholderParty,
+  placeholderUsage,
+  retireParty,
+} from "./costs/db";
 import { db } from "./db/client";
 import {
   MAX_TRIP_MEMBERS,
@@ -309,6 +315,9 @@ export async function removeMember(tripId: string, userId: string): Promise<bool
       )
       .returning({ userId: tripMember.userId });
     if (removed.length === 0) return false;
+    // Costs (R.8 I10-04): the party stays with all amounts as «ehemaliges Mitglied»; the
+    // payment details went with the membership row.
+    await retireParty(tx, tripId, userId);
     // Places to stay (R.7 I9-10): the ratings went with the membership; own suggestions stay
     // for the group, the author becomes «ehemaliges Mitglied».
     await tx
@@ -518,20 +527,34 @@ export async function renamePlaceholder(
   }
 }
 
-/** Removes an open placeholder – its personal link stops working at once (Flow J). */
-export async function removePlaceholder(tripId: string, placeholderId: string): Promise<boolean> {
-  const removed = await db()
-    .delete(tripPlaceholder)
-    .where(
-      and(
-        eq(tripPlaceholder.id, placeholderId),
-        eq(tripPlaceholder.tripId, tripId),
-        isNull(tripPlaceholder.claimedAt),
-      ),
-    )
-    .returning({ id: tripPlaceholder.id });
-  if (removed.length > 0) await touch(tripId);
-  return removed.length > 0;
+/**
+ * Removes an open placeholder – its personal link stops working at once (Flow J). Blocked while
+ * the placeholder appears in an expense (also soft-deleted) or a settlement (R.8 I10-04); an
+ * unused cost party goes with it. Under the trip lock like the cost writes.
+ */
+export async function removePlaceholder(
+  tripId: string,
+  placeholderId: string,
+): Promise<boolean | "used"> {
+  const result = await db().transaction(async (tx) => {
+    await lockTrip(tx, tripId);
+    const usage = await placeholderUsage(tx, tripId, placeholderId);
+    if (usage.expenses + usage.settlements > 0) return "used" as const;
+    await dropPlaceholderParty(tx, tripId, placeholderId);
+    const removed = await tx
+      .delete(tripPlaceholder)
+      .where(
+        and(
+          eq(tripPlaceholder.id, placeholderId),
+          eq(tripPlaceholder.tripId, tripId),
+          isNull(tripPlaceholder.claimedAt),
+        ),
+      )
+      .returning({ id: tripPlaceholder.id });
+    return removed.length > 0;
+  });
+  if (result === true) await touch(tripId);
+  return result;
 }
 
 async function touch(tripId: string): Promise<void> {
@@ -736,6 +759,8 @@ async function joinLocked(
         .update(tripPlaceholder)
         .set({ claimedAt: now, claimedBy: userId })
         .where(eq(tripPlaceholder.id, claiming.id));
+      // Costs (R.8 I10-04): the person takes over the placeholder's expenses and balance.
+      await claimPlaceholderParty(tx, row.id, claiming.id, userId);
     }
     await tx.insert(tripMember).values({ tripId: row.id, userId, displayName: clean });
     await tx.update(trip).set({ updatedAt: now }).where(eq(trip.id, row.id));

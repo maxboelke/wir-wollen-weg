@@ -1,7 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { useEffect, useId, useRef, useState } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
 import { DURATION, enter } from "@/lib/motion";
@@ -110,6 +111,50 @@ export function CalendarButton({ icsHref, googleHref }: { icsHref: string; googl
             </a>
           </li>
         </ul>
+      ) : null}
+    </div>
+  );
+}
+
+/**
+ * Cost head buttons (W16 v2.15): Unterwegs «+ Ausgabe» → new expense (back to the cockpit after
+ * saving), Danach «Ausgleichen» → settle up. Outline on Indigo like «Kalender» (never primary).
+ */
+export function CostHeadButtons({
+  addExpense,
+  settle,
+}: {
+  addExpense: string | null;
+  settle: string | null;
+}) {
+  const t = useTranslations("route");
+  // Back from «Ausgabe speichern» (W19 D.5.6): focus on «+ Ausgabe», then drop the parameter.
+  useLayoutEffect(() => {
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("focus") !== "add-expense") return;
+    document.querySelector<HTMLElement>('[data-head-action="add-expense"]')?.focus();
+    url.searchParams.delete("focus");
+    window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
+  }, []);
+  if (!addExpense && !settle) return null;
+  return (
+    <div className={styles.actions}>
+      {addExpense ? (
+        <Link
+          className={styles.headButton}
+          href={addExpense}
+          aria-label={t("addExpenseName")}
+          data-head-action="add-expense"
+        >
+          <Icon name="plus" size={20} />
+          <span>{t("addExpense")}</span>
+        </Link>
+      ) : null}
+      {settle ? (
+        <Link className={styles.headButton} href={settle} data-head-action="settle">
+          <Icon name="wallet" size={20} />
+          <span>{t("settle")}</span>
+        </Link>
       ) : null}
     </div>
   );

@@ -557,7 +557,8 @@
       "inactive": "Grund: In der Reise ist seit fast 12 Monaten nichts passiert. Plant ihr noch? Dann reicht eine Änderung, zum Beispiel an euren Tagen.",
       "linkIntro": "Zur Reise:",
       "link": "Reise öffnen",
-      "service": "Dies ist ein Servicehinweis zu deiner Reise, keine Werbung."
+      "service": "Dies ist ein Servicehinweis zu deiner Reise, keine Werbung.",
+      "openCosts": "Achtung: In der Abrechnung {count, plural, one {ist noch ein Ausgleich} other {sind noch # Ausgleiche}} offen."
     },
     "inactiveNotice": {
       "subject": "Dein Konto wird bald gelöscht",
@@ -880,7 +881,10 @@
       "stayRate": "Hey {name}, bei {trip} {count, plural, one {wartet eine Unterkunft} other {warten # Unterkünfte}} auf deine Bewertung – dauert eine Minute: {link}",
       "stayRateAll": "Hey ihr, bei {trip} warten noch Unterkünfte auf eure Bewertung – dauert eine Minute: {link}",
       "stayFix": "Hey {orga}, alle haben die Unterkünfte für {trip} bewertet – du kannst jetzt festlegen: {link}",
-      "stayBook": "Hey {booker}, {stay} steht fest – magst du buchen? {link}"
+      "stayBook": "Hey {booker}, {stay} steht fest – magst du buchen? {link}",
+      "settle": "Hey {name}, laut Abrechnung von {trip} bekomme ich noch {amount} von dir. Danke! {link}",
+      "settleAll": "Hey ihr, bei {trip} {count, plural, one {ist noch ein Ausgleich} other {sind noch # Ausgleiche}} offen – schaut kurz rein: {link}",
+      "settleOther": "Hey {name}, laut Abrechnung von {trip} gehen noch {amount} von dir an {to}. {link}"
     }
   },
   "tripSettings": {
@@ -1038,7 +1042,13 @@
     "removeDone": "{name} wurde entfernt.",
     "full": "Die Reise ist voll (30 von 30, Platzhalter zählen mit).",
     "nameRequired": "Bitte gib einen Namen ein.",
-    "label": "Platzhalter"
+    "label": "Platzhalter",
+    "blockedTitle": "{name} kann nicht gelöscht werden",
+    "blockedText": "{name} kommt in {count, plural, one {einer Ausgabe} other {# Ausgaben}} vor – erst dort entfernen.",
+    "blockedTextPayments": "{name} kommt in {count, plural, one {einer Ausgabe oder einem Ausgleich} other {# Ausgaben oder Ausgleichen}} vor – erst dort entfernen.",
+    "blockedToCosts": "Zu den Kosten",
+    "blockedOk": "OK",
+    "blockedGeneric": "Dieser Platzhalter kommt in den Kosten vor – erst dort entfernen."
   },
   "group": {
     "title": "Gruppe",
@@ -1473,7 +1483,9 @@
     "phase": {
       "before": "Steht fest · {count, plural, one {noch # Tag} other {noch # Tage}}",
       "during": "Unterwegs · Tag {day} von {total}",
-      "after": "Zurück seit {count, plural, =0 {heute} one {# Tag} other {# Tagen}}"
+      "after": "Zurück seit {count, plural, =0 {heute} one {# Tag} other {# Tagen}}",
+      "afterSettle": "Zurück · Kosten ausgleichen",
+      "afterSquare": "Zurück · alles ausgeglichen"
     },
     "sr": {
       "before": "Noch {count, plural, one {# Tag} other {# Tage}} bis zur Abreise.",
@@ -1507,7 +1519,8 @@
       "fresh": "Neu erledigt: {titles}",
       "freshCount": "{count} erledigt",
       "offline": "ohne App erledigt",
-      "unused": "nicht genutzt"
+      "unused": "nicht genutzt",
+      "tripSettled": "Reise · Vorbereitung, {days} Tage und Ausgleich"
     },
     "label": {
       "yours": "Du bist dran",
@@ -1520,7 +1533,8 @@
       "unusedWord": "Nicht genutzt",
       "plan": "Termin heute",
       "task": "Du bist dran · {area}",
-      "areaInfo": "Infos"
+      "areaInfo": "Infos",
+      "areaCosts": "Kosten"
     },
     "today": {
       "short": "Heute · {date}",
@@ -1605,7 +1619,15 @@
       "stayBooked": "{title} · gebucht ✓",
       "stayOffline": "Ohne App erledigt",
       "stayChosen": "{title}",
-      "stayNone": "{count, plural, one {1 Vorschlag} other {# Vorschläge}} · keiner festgelegt"
+      "stayNone": "{count, plural, one {1 Vorschlag} other {# Vorschläge}} · keiner festgelegt",
+      "costs": "Kosten",
+      "costsEmpty": "Noch keine Ausgaben",
+      "costsTotal": "{total} gesamt",
+      "costsOwe": "du schuldest {amount}",
+      "costsOwed": "du bekommst {amount}",
+      "costsSquareMe": "bei dir ausgeglichen ✓",
+      "costsSquare": "alles ausgeglichen ✓",
+      "costsClosed": "Abgeschlossen"
     },
     "moreTitle": "Mehr zur Reise",
     "decided": {
@@ -1681,6 +1703,39 @@
       "shortBook": "{orga} bucht {title}",
       "withoutAppDone": "Als „ohne App erledigt“ abgehakt.",
       "withoutAppUndone": "Markierung „ohne App erledigt“ entfernt."
+    },
+    "addExpense": "Ausgabe",
+    "addExpenseName": "Ausgabe hinzufügen",
+    "settle": "Ausgleichen",
+    "costs": {
+      "debtTitleOne": "Du schuldest {name} {amount}",
+      "debtTitleTwo": "Du schuldest {total} – an {name1} und {name2}",
+      "debtTitleMany": "Du schuldest {total} – an {name1} und {count} weitere",
+      "debtStatus": "Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich.",
+      "debtStatusNoInfo": "Überweisen und als bezahlt markieren.",
+      "toSettle": "Zum Ausgleich",
+      "d1Title": "Kosten ausgleichen",
+      "d1DoneSquare": "Alles ausgeglichen ✓",
+      "d1DoneClosed": "Alles ausgeglichen · abgeschlossen ✓",
+      "d1Closed": "Abrechnung abgeschlossen",
+      "d1ClosedOwe": "Abrechnung abgeschlossen · du schuldest noch {amount}",
+      "d1ClosedOwed": "Abrechnung abgeschlossen · du bekommst noch {amount}",
+      "owedOne": "Du bekommst noch {amount} von {name}",
+      "owedTwo": "Du bekommst noch {amount} von {name1} und {name2}",
+      "owedMany": "Du bekommst noch {amount} von {name1} und {count} weiteren",
+      "shortOne": "{name} gleicht aus",
+      "shortMine": "Ausgleiche an dich",
+      "shortOthers": "Ausgleiche der anderen",
+      "openCount": "Noch {count, plural, one {ein Ausgleich} other {# Ausgleiche}} offen",
+      "remind": "Erinnern",
+      "remindOne": "{name} erinnern",
+      "remindMineName": "Alle erinnern, die dir noch etwas schulden",
+      "remindAllName": "An offene Ausgleiche erinnern",
+      "closeEarly": "Abschließen …",
+      "close": "Abschließen",
+      "d1CloseTitle": "Alles ausgeglichen – Abrechnung abschließen?",
+      "d1CloseStatus": "Danach kann niemand mehr Ausgaben ändern. Du kannst sie wieder öffnen.",
+      "reopen": "Abrechnung wieder öffnen"
     }
   },
   "tripInfo": {
@@ -2004,5 +2059,274 @@
     "fixedAlready": "Die Unterkunft steht schon fest.",
     "errorGeneric": "Speichern hat nicht geklappt. Deine Eingaben sind noch da – versuch es noch einmal.",
     "errorLimited": "Zu viele Vorschläge in kurzer Zeit. Bitte warte ein paar Minuten."
+  },
+  "costs": {
+    "title": "Kosten",
+    "titleBalances": "Ausgleich",
+    "pageTitle": "Kosten · {trip}",
+    "pageTitleBalances": "Ausgleich · {trip}",
+    "share": "Teilen",
+    "shareName": "Abrechnung teilen",
+    "shareTitle": "Abrechnung teilen",
+    "shareText": "Abrechnung {trip}:\n{lines}\nDetails: {link}",
+    "shareSquare": "Abrechnung {trip}: Alles ausgeglichen ✓ {link}",
+    "tabs": "Ansicht",
+    "tabExpenses": "Ausgaben",
+    "tabBalances": "Ausgleich",
+    "mine": {
+      "label": "Dein Stand",
+      "owed": "Du bekommst {amount}",
+      "owe": "Du schuldest {amount}",
+      "square": "Du bist ausgeglichen ✓",
+      "detail": "Dein Anteil {share} · bezahlt {paid}",
+      "detailPayments": "Dein Anteil {share} · bezahlt {paid} · Ausgleiche {settled}",
+      "total": "Ausgaben gesamt {total}",
+      "toBalances": "So gleichst du aus"
+    },
+    "day": {
+      "sum": "Summe {amount}"
+    },
+    "row": {
+      "paidMe": "Du hast bezahlt",
+      "paid": "{name} hat bezahlt",
+      "forAll": "für alle {count}",
+      "forNames": "für {names}",
+      "forCount": "für {count} Personen",
+      "forMe": "nur für dich",
+      "you": "dich",
+      "share": "dein Anteil {amount}",
+      "notIn": "nicht beteiligt",
+      "custom": "nach Beträgen",
+      "withNote": "mit Notiz",
+      "name": "{title}, {amount}. {payer}, {who}. {share}."
+    },
+    "more": "Ältere Ausgaben anzeigen ({count})",
+    "footer": "Alle Beträge in {currency}. Wir überweisen nichts – wir zeigen nur, wer wem was schuldet.",
+    "empty": {
+      "title": "Noch keine Ausgaben",
+      "text": "Wer etwas für die Gruppe bezahlt, trägt es hier ein – wir rechnen aus, wer wem was schuldet."
+    },
+    "add": "Ausgabe hinzufügen",
+    "currency": {
+      "line": "Währung: {name} ({code})",
+      "change": "Ändern",
+      "changeName": "Währung ändern",
+      "title": "Währung der Reise",
+      "hint": "Geht nur, solange es keine Ausgaben gibt. Preise bei Unterkünften bleiben in ihrer Währung.",
+      "done": "Währung: {name} ({code}).",
+      "locked": "Die Währung lässt sich nur ändern, solange es keine Ausgaben gibt.",
+      "save": "Speichern"
+    },
+    "closed": {
+      "note": "{orga} hat die Abrechnung am {date} abgeschlossen. Ausgaben und Ausgleiche lassen sich nicht mehr ändern.",
+      "chip": "Abrechnung abgeschlossen",
+      "reopen": "Abrechnung wieder öffnen",
+      "redirect": "Die Abrechnung ist abgeschlossen."
+    },
+    "detail": {
+      "split": "Aufteilung",
+      "equal": "Gleich aufgeteilt",
+      "amounts": "Nach Beträgen",
+      "created": "Angelegt von {name} am {date}",
+      "edited": "zuletzt geändert von {name} am {date}",
+      "edit": "Bearbeiten",
+      "delete": "Löschen",
+      "who": "Ändern können {names} und die Orga.",
+      "whoOrga": "Ändern kann die Orga.",
+      "noCategory": "Ohne Kategorie"
+    },
+    "deleted": "„{title}“ gelöscht.",
+    "undo": "Rückgängig",
+    "former": "Ehemaliges Mitglied",
+    "formerNo": "Ehemaliges Mitglied {n}",
+    "formerInline": "ehemaliges Mitglied",
+    "formerInlineNo": "ehemaliges Mitglied {n}",
+    "placeholder": "Platzhalter",
+    "you": "Du",
+    "changed": "Die Abrechnung hat sich gerade geändert – hier ist der aktuelle Stand.",
+    "error": "Das hat nicht geklappt. Bitte versuch es nochmal.",
+    "retry": "Nochmal versuchen",
+    "limited": "Gerade ging zu viel auf einmal – bitte versuch es in ein paar Minuten nochmal.",
+    "someone": "Jemand",
+    "cat": {
+      "accommodation": "Unterkunft",
+      "travel": "Anreise",
+      "food": "Essen",
+      "activities": "Aktivitäten",
+      "other": "Sonstiges"
+    },
+    "paidToYou": "{names} {count, plural, one {hat} other {haben}} {amount} an dich als bezahlt markiert. Nicht angekommen? Du kannst es unter „Bereits bezahlt“ zurücknehmen.",
+    "paidToYouClose": "Hinweis schließen"
+  },
+  "costForm": {
+    "titleNew": "Ausgabe hinzufügen",
+    "titleEdit": "Ausgabe bearbeiten",
+    "pageTitleNew": "Ausgabe hinzufügen · {trip}",
+    "pageTitleEdit": "Ausgabe bearbeiten · {trip}",
+    "amount": "Betrag",
+    "amountSr": "Betrag in {currency}",
+    "what": "Wofür?",
+    "whatHint": "z. B. Abendessen am Hafen",
+    "category": "Kategorie (optional)",
+    "payer": "Bezahlt von",
+    "me": "Ich ({name})",
+    "for": "Für wen?",
+    "count": "{count} von {total}",
+    "countSr": "{count} von {total} ausgewählt",
+    "none": "Alle abwählen",
+    "all": "Alle auswählen",
+    "formerOnly": "Ehemalige Mitglieder lassen sich nur entfernen.",
+    "zeroHint": "Personen ohne Betrag sind nicht beteiligt.",
+    "split": "Aufteilung",
+    "equal": "Gleich",
+    "custom": "Nach Beträgen",
+    "perPerson": "Je Person {amount}",
+    "perPersonRest": "Je Person {amount} – {names} {count, plural, one {zahlt 1 Cent mehr} other {zahlen je 1 Cent mehr}}.",
+    "perPersonNone": "Je Person –",
+    "customFor": "Betrag für {name}",
+    "remain": "Noch {amount} zu verteilen",
+    "over": "{amount} zu viel verteilt",
+    "ok": "Passt genau",
+    "fill": "Auf leere Felder verteilen",
+    "date": "Datum",
+    "note": "Notiz (optional)",
+    "addNote": "Notiz",
+    "addNoteName": "Notiz hinzufügen",
+    "save": "Ausgabe speichern",
+    "saveEdit": "Änderungen speichern",
+    "saving": "Speichert …",
+    "saved": "{amount} gespeichert – Salden sind aktualisiert.",
+    "savedEdit": "Änderungen gespeichert.",
+    "view": "Ansehen",
+    "counter": "{count} von {max} Zeichen",
+    "error": {
+      "amountMissing": "Bitte gib einen Betrag ein.",
+      "amountFormat": "Bitte einen Betrag wie 12,50 eingeben.",
+      "amountMax": "Bitte höchstens 1.000.000 eingeben.",
+      "titleMissing": "Bitte gib an, wofür das war.",
+      "tooLongTitle": "Höchstens 60 Zeichen.",
+      "tooLongNote": "Höchstens 200 Zeichen.",
+      "forMissing": "Wähle mindestens eine Person.",
+      "splitSum": "Die Beträge ergeben noch nicht die Summe.",
+      "dateMissing": "Bitte wähle ein Datum.",
+      "dateRange": "Bitte ein Datum zwischen {from} und {to} wählen.",
+      "payer": "Bitte wähle, wer bezahlt hat.",
+      "save": "Konnte nicht speichern. Deine Eingaben sind noch da."
+    },
+    "discard": {
+      "title": "Ausgabe verwerfen?",
+      "text": "Deine Eingaben gehen verloren.",
+      "keep": "Weiter bearbeiten",
+      "confirm": "Verwerfen"
+    },
+    "conflict": {
+      "changed": "{name} hat diese Ausgabe gerade geändert.",
+      "now": "Jetzt: {summary}",
+      "take": "Ihre Fassung übernehmen",
+      "mine": "Meine trotzdem speichern",
+      "deleted": "Diese Ausgabe wurde inzwischen gelöscht.",
+      "asNew": "Als neue Ausgabe speichern",
+      "toList": "Zur Liste",
+      "closed": "{orga} hat die Abrechnung gerade abgeschlossen – Ausgaben lassen sich nicht mehr ändern."
+    }
+  },
+  "balances": {
+    "yours": "Deine Ausgleiche",
+    "others": "Weitere Ausgleiche",
+    "othersOnly": "So gleicht ihr aus",
+    "count": "Mit {count, plural, one {einer Überweisung} other {# Überweisungen}} ist alles erledigt.",
+    "to": "{from} an {to}: {amount}",
+    "markPaid": "Als bezahlt markieren",
+    "markReceived": "Als erhalten markieren",
+    "whoBoth": "Markieren können {a} oder {b}.",
+    "whoOne": "Markieren kann {a}.",
+    "whoOrga": "Markieren kann die Orga.",
+    "closed": "Die Abrechnung ist abgeschlossen.",
+    "paidChip": "Bezahlt",
+    "undoPay": "Zurücknehmen",
+    "undoPayName": "Zahlung {from} an {to} zurücknehmen",
+    "marked": "Als bezahlt markiert: {from} → {to}, {amount}.",
+    "markedSquare": "Als bezahlt markiert: {from} → {to}, {amount}. Alles ausgeglichen ✓",
+    "unmarked": "Zahlung zurückgenommen.",
+    "allSquareTitle": "Alles ausgeglichen ✓",
+    "allSquareText": "Niemand schuldet jemandem etwas.",
+    "done": "Bereits bezahlt ({count})",
+    "doneMeta": "markiert von {name}, {date}",
+    "doneOrga": "markiert von {name} (Orga), {date}",
+    "list": "Salden",
+    "other": {
+      "owed": "bekommt {amount}",
+      "owes": "schuldet {amount}",
+      "square": "ausgeglichen ✓"
+    },
+    "me": {
+      "owed": "du bekommst {amount}",
+      "owes": "du schuldest {amount}",
+      "square": "ausgeglichen ✓"
+    },
+    "remind": "{name} erinnern",
+    "remindTitle": "Wer schuldet dir noch?",
+    "remindAllTitle": "Offene Ausgleiche",
+    "remindAll": "Alle erinnern",
+    "remindContext": "{name} schuldet dir laut Abrechnung noch {amount}.",
+    "remindOther": "{from} → {to}: {amount}",
+    "usually": "Üblich ist das nach der Reise."
+  },
+  "payInfo": {
+    "title": "Deine Zahlungsinfo (freiwillig)",
+    "sheetTitle": "Deine Zahlungsinfo",
+    "empty": "Noch nichts hinterlegt – z. B. IBAN oder PayPal-Name.",
+    "add": "Hinterlegen",
+    "change": "Ändern",
+    "updated": "zuletzt geändert {date}",
+    "iban": "IBAN (optional)",
+    "note": "Anderer Weg (optional)",
+    "noteHint": "z. B. PayPal: max.m",
+    "visible": "Alle in dieser Reise können das lesen. Wird gelöscht, wenn du die Reise verlässt.",
+    "save": "Speichern",
+    "saved": "Zahlungsinfo gespeichert.",
+    "delete": "Zahlungsinfo löschen",
+    "deleted": "Zahlungsinfo gelöscht.",
+    "error": {
+      "iban": "Diese IBAN stimmt nicht – bitte prüf die Eingabe.",
+      "note": "Höchstens 100 Zeichen."
+    },
+    "ibanLabel": "IBAN",
+    "show": "Anzeigen",
+    "hide": "Verbergen",
+    "copy": "Kopieren",
+    "copied": "Kopiert ✓",
+    "ibanSr": "IBAN von {name}, endet auf {last4}",
+    "ibanMineSr": "Deine IBAN, endet auf {last4}",
+    "showName": "IBAN von {name} anzeigen",
+    "hideName": "IBAN von {name} verbergen",
+    "copyIbanName": "IBAN von {name} kopieren",
+    "ibanCopied": "IBAN kopiert",
+    "copyNoteName": "Zahlungsinfo von {name} kopieren",
+    "noteCopied": "Zahlungsinfo kopiert",
+    "missing": "{name} hat keine Zahlungsinfo hinterlegt – frag am besten direkt."
+  },
+  "closeCosts": {
+    "action": "Abrechnung abschließen",
+    "title": "Abrechnung abschließen?",
+    "text": "Danach kann niemand mehr Ausgaben oder Ausgleiche ändern. Du kannst sie wieder öffnen.",
+    "warning": "Noch {count, plural, one {ein Ausgleich ist} other {# Ausgleiche sind}} offen – trotzdem abschließen? Danach kann niemand mehr Ausgaben ändern oder Ausgleiche als bezahlt markieren, bis du wieder öffnest.",
+    "confirm": "Abschließen",
+    "confirmAnyway": "Trotzdem abschließen",
+    "done": "Abrechnung abgeschlossen.",
+    "reopened": "Abrechnung wieder offen."
+  },
+  "costsLeave": {
+    "owe": "Du schuldest noch {amount}. Wenn du gehst, bleiben deine Ausgaben für die Gruppe erhalten und du erscheinst darin als „ehemaliges Mitglied“ – gleich am besten vorher aus.",
+    "owed": "Du bekommst noch {amount}. Wenn du gehst, bleiben deine Ausgaben als „ehemaliges Mitglied“ erhalten, und die anderen markieren ihre Zahlungen an dich selbst.",
+    "payInfo": "Deine Zahlungsinfo für diese Reise wird gelöscht.",
+    "toBalances": "Zum Ausgleich",
+    "anyway": "Trotzdem verlassen",
+    "removeOwes": "{name} schuldet noch {amount}.",
+    "removeOwed": "{name} bekommt noch {amount}.",
+    "removeStay": "Die Ausgaben bleiben erhalten; {name} erscheint darin als „ehemaliges Mitglied“.",
+    "accountTitle": "In {count, plural, one {einer Reise} other {# Reisen}} ist bei dir noch nicht alles ausgeglichen:",
+    "accountOwe": "{trip} – du schuldest {amount}",
+    "accountOwed": "{trip} – du bekommst {amount}"
   }
 }

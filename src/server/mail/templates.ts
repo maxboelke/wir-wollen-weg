@@ -328,12 +328,15 @@ export function renderTripDeletionNoticeEmail({
   date,
   reason,
   tripUrl,
+  openSettlements = 0,
 }: {
   locale: Locale;
   tripName: string;
   date: Date;
   reason: "afterTrip" | "inactive";
   tripUrl: string;
+  /** Open settlements of the cost splitting (R.8 I10-10) – only the number, no names/amounts. */
+  openSettlements?: number;
 }): RenderedEmail {
   const t = translator(locale);
   const when = longDate(date, locale);
@@ -345,6 +348,9 @@ export function renderTripDeletionNoticeEmail({
     blocks: [
       { kind: "text", text: t("tripNotice.text", { trip: tripName, date: when }) },
       { kind: "text", text: t(`tripNotice.${reason}`) },
+      ...(openSettlements > 0
+        ? [{ kind: "text" as const, text: t("tripNotice.openCosts", { count: openSettlements }) }]
+        : []),
       {
         kind: "button",
         intro: t("tripNotice.linkIntro"),

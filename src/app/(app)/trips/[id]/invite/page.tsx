@@ -12,6 +12,8 @@ import { TripShell } from "@/features/trips/components/trip-shell";
 import { loadTripView } from "@/features/trips/load";
 import { tripPath } from "@/features/trips/paths";
 import { inviteLink, inviteShareTexts, placeholderShareTexts } from "@/features/trips/share-texts";
+import { placeholderUsage } from "@/server/costs/db";
+import { db } from "@/server/db/client";
 import styles from "./invite.module.css";
 
 type Params = PageProps<"/trips/[id]/invite">;
@@ -55,6 +57,9 @@ export default async function InvitePage({ params, searchParams }: Params) {
             token: placeholder.inviteToken,
             name: placeholder.displayName,
           }),
+          // R.8 I10-04: deleting is blocked while the placeholder appears in the costs.
+          usage: await placeholderUsage(db(), trip.id, placeholder.id),
+          costsHref: tripPath(trip.publicId, "costs"),
         })),
       )
     : [];

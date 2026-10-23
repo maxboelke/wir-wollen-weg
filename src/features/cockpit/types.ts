@@ -2,6 +2,7 @@ import type { TileTone } from "@/components/ui/card";
 import type { IconName } from "@/components/ui/icon";
 import type { Locale } from "@/i18n/config";
 import type { StationState } from "@/lib/trip-route";
+import type { CostRemindData } from "../costs/remind-types";
 import type { StayRemindData } from "../stays/remind-types";
 
 /**
@@ -19,9 +20,13 @@ export type CockpitAction =
   | { kind: "announce" }
   | { kind: "withoutApp"; placeholderId: string; name: string; on: boolean }
   /** UX-9 for V3 «Haben wir schon / brauchen wir nicht» – on: confirm dialog first. */
-  | { kind: "stayWithoutApp"; on: boolean };
+  | { kind: "stayWithoutApp"; on: boolean }
+  /** D1 (organiser): close the expenses (dialog W19 D.9) / reopen them. */
+  | { kind: "closeCosts"; open: number }
+  | { kind: "reopenCosts" };
 
-export type RemindOccasion = "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book";
+export type RemindOccasion =
+  "placeholder" | "orga" | "stay-rate" | "stay-fix" | "stay-book" | "settle" | "settle-all";
 
 export interface StationView {
   id: string;
@@ -103,6 +108,10 @@ export interface TicketView {
   range: string;
   crew: { avatars: { id: string; name: string }[]; more: number; text: string };
   calendar: { icsHref: string; googleHref: string } | null;
+  /** Unterwegs: «+ Ausgabe» → new expense (W16 v2.15). */
+  addExpense: string | null;
+  /** Danach: «Ausgleichen» → settle up (only open and not closed). */
+  settle: string | null;
   celebrate: boolean;
   departureDue: boolean;
 }
@@ -151,4 +160,6 @@ export interface CockpitSheetData {
   manageHref: string | null;
   /** Stay reminders (W16 v2.14) – null when the area has nothing to remind. */
   stayRemind: StayRemindData | null;
+  /** Cost reminders `settle` / `settle-all` (W16 v2.15) – null when nothing is open. */
+  costRemind: CostRemindData | null;
 }

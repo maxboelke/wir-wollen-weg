@@ -62,6 +62,9 @@ describe("remind texts (ux-spec §14.1, §14.2)", () => {
     count: 3,
     booker: "Lena",
     stay: "Kamena Kuća – Steinhaus",
+    // Costs (Increment 10, W16 v2.15): `settle`, `settle-all`, `settleOther`.
+    amount: "1.234,56 €",
+    to: "Lena",
   };
 
   it("name the person, carry the link and stay ≤ 300 characters (typical trip name)", () => {
@@ -74,6 +77,20 @@ describe("remind texts (ux-spec §14.1, §14.2)", () => {
         expect(text).not.toContain("@");
         expect(text.length, `${locale}.${key}`).toBeLessThanOrEqual(300);
       }
+    }
+  });
+
+  it("cost reminders name the own amount and never payment details (R.8 I10-09)", () => {
+    const t = createTranslator({ locale: "de", messages: de, namespace: "share.remind" });
+    expect(t("settle", values)).toBe(
+      `Hey Kemal, laut Abrechnung von ${TRIP} bekomme ich noch 1.234,56 € von dir. Danke! ${LINK}`,
+    );
+    const tEn = createTranslator({ locale: "en", messages: en, namespace: "share.remind" });
+    expect(tEn("settleAll", { ...values, count: 1 })).toBe(
+      `Hey all, one payment is still open for ${TRIP} – take a quick look: ${LINK}`,
+    );
+    for (const key of ["settle", "settleAll", "settleOther"] as const) {
+      expect(t(key, values)).not.toMatch(/IBAN|PayPal/);
     }
   });
 

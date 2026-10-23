@@ -246,6 +246,7 @@
 
 /* Head buttons: always outline on Indigo («on-ck», 44 px, never primary – v2.12 U-25) */
 .headButton {
+  text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;

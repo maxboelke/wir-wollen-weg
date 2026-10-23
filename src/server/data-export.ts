@@ -2,6 +2,7 @@ import "server-only";
 import { and, asc, eq } from "drizzle-orm";
 import { todayIso } from "@/lib/dates";
 import { hasPassword } from "./account";
+import { exportRows, partiesOfUser } from "./costs/db";
 import { db } from "./db/client";
 import {
   availability,
@@ -75,10 +76,90 @@ export interface DataExport {
     }[];
     /** Own ratings only (♥ «like» / ✕ «nope») – never ratings of other people. */
     myStayRatings: { title: string; rating: "like" | "nope"; ratedAt: string }[];
+    /**
+     * F-035/F-036 (Increment 10, R.8 I10-10): own payment details, expenses the person added or
+     * paid, own shares, own settlements and the own balance – never names, payment details or
+     * shares of other people (the other side is «andere Person» / «other person»).
+     */
+    costs: CostExport | null;
   }[];
 }
 
 const iso = (date: Date | null) => (date ? date.toISOString() : null);
+
+export interface CostExport {
+  currency: string;
+  myPaymentDetails: { iban: string | null; otherWay: string | null } | null;
+  expensesAddedOrPaidByMe: {
+    title: string;
+    date: string;
+    amount: number;
+    currency: string;
+    category: string | null;
+    split: "equal" | "amounts";
+    addedByMe: boolean;
+    paidByMe: boolean;
+  }[];
+  myShares: { title: string; date: string; myShare: number; currency: string }[];
+  mySettlements: {
+    direction: "paid to other person" | "received from other person";
+    amount: number;
+    markedAt: string;
+  }[];
+  myBalance: number;
+}
+
+/** Cost data of ONE person in ONE trip (R.8 I10-10). */
+async function costExport(
+  tripId: string,
+  userId: string,
+  currency: string,
+  payment: { iban: string | null; note: string | null },
+): Promise<CostExport | null> {
+  const parties = await partiesOfUser(userId);
+  const party = parties.find((p) => p.tripId === tripId)?.partyId ?? null;
+  const hasPayment = payment.iban !== null || payment.note !== null;
+  if (!party && !hasPayment) return null;
+  const raw = party ? await exportRows(tripId) : null;
+  const unit = (cents: number) => cents / 100;
+  return {
+    currency,
+    myPaymentDetails: hasPayment ? { iban: payment.iban, otherWay: payment.note } : null,
+    expensesAddedOrPaidByMe: (raw?.expenses ?? [])
+      .filter((e) => e.createdBy === userId || e.payerPartyId === party)
+      .map((e) => ({
+        title: e.title,
+        date: e.spentOn,
+        amount: unit(e.amountCents),
+        currency: e.currency,
+        category: e.category,
+        split: e.splitMode,
+        addedByMe: e.createdBy === userId,
+        paidByMe: e.payerPartyId === party,
+      })),
+    myShares: (raw?.expenses ?? []).flatMap((e) => {
+      const share = raw?.shares.find((s) => s.expenseId === e.id && s.partyId === party);
+      return share
+        ? [
+            {
+              title: e.title,
+              date: e.spentOn,
+              myShare: unit(share.shareCents),
+              currency: e.currency,
+            },
+          ]
+        : [];
+    }),
+    mySettlements: (raw?.settlements ?? [])
+      .filter((s) => s.from === party || s.to === party)
+      .map((s) => ({
+        direction: s.from === party ? "paid to other person" : "received from other person",
+        amount: unit(s.amountCents),
+        markedAt: s.markedAt.toISOString(),
+      })),
+    myBalance: unit(party && raw ? (raw.balances.get(party) ?? 0) : 0),
+  };
+}
 
 export async function exportUserData(userId: string, now = new Date()): Promise<DataExport | null> {
   const [account] = await db().select().from(user).where(eq(user.id, userId));
@@ -175,44 +256,50 @@ export async function exportUserData(userId: string, now = new Date()): Promise<
       ipAddress: row.ipAddress,
       userAgent: row.userAgent,
     })),
-    trips: memberships.map(({ trip: t, member }) => ({
-      name: t.name,
-      searchRange: { start: t.rangeStart, end: t.rangeEnd },
-      phase: t.phase,
-      fixedDates: t.fixedStart && t.fixedEnd ? { start: t.fixedStart, end: t.fixedEnd } : null,
-      myRole: member.role,
-      myNameInTrip: member.displayName,
-      joinedAt: member.joinedAt.toISOString(),
-      submittedAt: iso(member.submittedAt),
-      comment: member.comment,
-      myDays: days
-        .filter((row) => row.tripId === t.id)
-        .map((row) => ({ day: row.day, state: row.state })),
-      myVotes: votes
-        .filter((row) => row.tripId === t.id)
-        .map((row) => ({ start: row.start, end: row.end, answer: row.choice })),
-      departureCelebratedOn: member.departureCelebratedOn,
-      infoLastChangedByMeAt: iso(infoEdits.find((row) => row.tripId === t.id)?.updatedAt ?? null),
-      myStaySuggestions: stays
-        .filter((row) => row.tripId === t.id)
-        .map((row) => ({
-          link: row.url,
-          title: row.title,
-          price:
-            row.priceCents === null
-              ? null
-              : { amount: row.priceCents / 100, currency: row.currency },
-          note: row.note,
-          createdAt: row.createdAt.toISOString(),
-        })),
-      myStayRatings: stayRatings
-        .filter((row) => row.tripId === t.id)
-        .map((row) => ({
-          title: row.title,
-          rating: row.value,
-          ratedAt: row.ratedAt.toISOString(),
-        })),
-    })),
+    trips: await Promise.all(
+      memberships.map(async ({ trip: t, member }) => ({
+        name: t.name,
+        searchRange: { start: t.rangeStart, end: t.rangeEnd },
+        phase: t.phase,
+        fixedDates: t.fixedStart && t.fixedEnd ? { start: t.fixedStart, end: t.fixedEnd } : null,
+        myRole: member.role,
+        myNameInTrip: member.displayName,
+        joinedAt: member.joinedAt.toISOString(),
+        submittedAt: iso(member.submittedAt),
+        comment: member.comment,
+        myDays: days
+          .filter((row) => row.tripId === t.id)
+          .map((row) => ({ day: row.day, state: row.state })),
+        myVotes: votes
+          .filter((row) => row.tripId === t.id)
+          .map((row) => ({ start: row.start, end: row.end, answer: row.choice })),
+        departureCelebratedOn: member.departureCelebratedOn,
+        infoLastChangedByMeAt: iso(infoEdits.find((row) => row.tripId === t.id)?.updatedAt ?? null),
+        myStaySuggestions: stays
+          .filter((row) => row.tripId === t.id)
+          .map((row) => ({
+            link: row.url,
+            title: row.title,
+            price:
+              row.priceCents === null
+                ? null
+                : { amount: row.priceCents / 100, currency: row.currency },
+            note: row.note,
+            createdAt: row.createdAt.toISOString(),
+          })),
+        myStayRatings: stayRatings
+          .filter((row) => row.tripId === t.id)
+          .map((row) => ({
+            title: row.title,
+            rating: row.value,
+            ratedAt: row.ratedAt.toISOString(),
+          })),
+        costs: await costExport(t.id, userId, t.currency, {
+          iban: member.paymentIban,
+          note: member.paymentNote,
+        }),
+      })),
+    ),
   };
 }
 
