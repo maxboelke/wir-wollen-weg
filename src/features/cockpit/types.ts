@@ -4,6 +4,7 @@ import type { Locale } from "@/i18n/config";
 import type { StationState } from "@/lib/trip-route";
 import type { CostRemindData } from "../costs/remind-types";
 import type { StayRemindData } from "../stays/remind-types";
+import type { TravelRemindData } from "../travel-data/types";
 
 /**
  * Serialisable view model of the «Reiseverlauf» cockpit (W16 v2): every text is resolved on
@@ -128,6 +129,8 @@ export interface SheetPerson {
   name: string;
   organizer: boolean;
   me: boolean;
+  /** Marking «Bucht» (F-056) – the chip is visible for everybody. */
+  booker: boolean;
 }
 
 export interface SheetPlaceholder {
@@ -169,4 +172,10 @@ export interface CockpitSheetData {
   stayRemind: StayRemindData | null;
   /** Cost reminders `settle` / `settle-all` (W16 v2.15) – null when nothing is open. */
   costRemind: CostRemindData | null;
+  /** Reminder `travel-data` (W16 v2.16) – only the viewer's own open requests. */
+  travelRemind: TravelRemindData | null;
+  /** The travel-details area is on – texts may mention it (W20 H.1: no teaser otherwise). */
+  travelData: boolean;
+  /** «Wer bucht?» (W20 H.2): the organiser may change the marking (phase «fixed»). */
+  canSetBookers: boolean;
 }

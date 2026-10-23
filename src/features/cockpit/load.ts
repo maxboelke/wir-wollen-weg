@@ -9,13 +9,18 @@ import {
   type CostStatus,
   type InfoStatus,
   type StayStatus,
+  type TravelDataStatus,
   type TripRoute,
 } from "@/lib/trip-route";
+import { travelDataOn } from "@/lib/app-env";
+import { loadTravelRaw, type TravelRaw } from "@/server/travel-data/db";
 import { loadCostsRaw, type CostsRaw } from "@/server/costs/db";
 import { costStatus } from "../costs/load";
 import { getTripInfo, type TripInfoView } from "@/server/cockpit";
 import { listOptions, listVotes } from "@/server/poll";
 import { loadStaysRaw, stayStatus, type StaysRaw } from "../stays/load";
+import { travelDataStatus } from "../travel-data/status";
+import { bookersOf } from "../trips/bookers";
 import type { TripView } from "../trips/load";
 import { orgaName } from "../trips/remind";
 
@@ -36,6 +41,12 @@ export interface CockpitData {
   /** Costs (W16 v2.15) – for the reminders and the close dialog. */
   costs: CostStatus;
   costsRaw: CostsRaw;
+  /**
+   * Travel details (W16 v2.16) – null when the area is switched off (TRAVEL_DATA_ENABLED,
+   * R.9 I11-12) or the trip is not fixed: then no V4/D3/tile and no reminder.
+   */
+  travel: TravelDataStatus | null;
+  travelRaw: TravelRaw | null;
   info: TripInfoView | null;
   /** Places 1 and 2 of the vote (fixed range first if it is not place 1). */
   places: DecidedPlace[];
@@ -62,14 +73,17 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
   const { trip, me, members, placeholders, today, isOrganizer } = view;
   const start = trip.fixedStart ?? today;
   const end = trip.fixedEnd ?? today;
-  const [info, options, votes, staysRaw, costsRaw, tCosts] = await Promise.all([
+  const travelOn = travelDataOn() && trip.phase === "fixed";
+  const [info, options, votes, staysRaw, costsRaw, tCosts, travelRaw] = await Promise.all([
     getTripInfo(trip.id),
     listOptions(trip.id),
     listVotes(trip.id),
     loadStaysRaw(trip.id),
     loadCostsRaw(trip.id),
     getTranslations("costs"),
+    travelOn ? loadTravelRaw(trip.id, me.userId) : Promise.resolve(null),
   ]);
+  const travel = travelRaw ? travelDataStatus(view, travelRaw) : null;
   const stay = stayStatus(view, staysRaw);
   const costs = costStatus(view, costsRaw, (no) =>
     no === null ? tCosts("formerInline") : tCosts("formerInlineNo", { n: no }),
@@ -113,11 +127,13 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
       fixedOn,
       announced: trip.fixedAnnouncedAt !== null,
       orgaName: orgaName(view),
+      // «Bucher» (W16 v2.16) – also with the travel-details area switched off (V3, A2).
+      bookerNames: bookersOf(members).map((m) => m.displayName),
       memberCount: members.length,
       yesVotes: fixedPlace ? fixedPlace.tally.yes : null,
       deletionDate: fromUtcDate(deletion),
     },
-    { role: isOrganizer ? "organizer" : "member" },
+    { role: isOrganizer ? "organizer" : "member", booker: me.bookerSince !== null },
     {
       group: {
         placeholders: placeholders.map((p) => ({
@@ -129,6 +145,7 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
       info: infoStatus(info),
       stay,
       costs,
+      travelData: travel,
     },
     today,
   );
@@ -138,6 +155,8 @@ export async function loadCockpit(view: TripView): Promise<CockpitData> {
     staysRaw,
     costs,
     costsRaw,
+    travel,
+    travelRaw,
     info,
     places,
     fixedOn,

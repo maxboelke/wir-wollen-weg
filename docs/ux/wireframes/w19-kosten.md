@@ -1,6 +1,6 @@
 # W19 – Kosten teilen: Ausgaben, Ausgabe hinzufügen, Salden & Ausgleich
 
-Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 10** – maßgeblich ist **Abschnitt D „Inkrement-10-Schnitt“** (gilt vor A–C; A–C bleiben als Entwurf vom 2026-10-20 stehen) · Features **F-035 + F-036**, Q35, Q36 · Routen `/trips/{id}/costs`, `/costs/balances`, `/costs/new`, `/costs/{eid}/edit` · Cockpit-Anbindung: [W16 v2.15](w16-cockpit.md)
+Stand: 2026-10-23 · UI/UX · Status: **Überarbeitung nach Auftraggeber-Feedback zu Inkrement 10 – maßgeblich ist Abschnitt E** (gilt vor D; D gilt weiter, wo E nichts ändert; A–C bleiben als Entwurf vom 2026-10-20 stehen) · Features **F-035 + F-036**, Q35, Q36 · Routen `/trips/{id}/costs`, `/costs/balances`, `/costs/new`, `/costs/{eid}/edit` · Cockpit-Anbindung: [W16 v2.17](w16-cockpit.md) (vorher v2.15) · Vorher/Nachher-Mockup: [`../mockups/kosten-v2/index.html`](../mockups/kosten-v2/index.html)
 Prototyp: [`#/costs`](../mockups/reise-managen/index.html), [`#/costs/new`](../mockups/reise-managen/index.html), [`#/costs/balances`](../mockups/reise-managen/index.html) – Salden und Ausgleich werden im Prototyp **echt berechnet** (Cent-Ganzzahlen, Greedy-Ausgleich).
 
 ## Grundregeln
@@ -554,3 +554,285 @@ Fremdwährungen (F-037), Belegfotos, Export CSV/PDF, Anteile/Prozent, mehrere Za
 
 ### D.18 Abnahme UX Inkrement 10
 360 × 640, 390 × 844, 320 px, 200 %, Dark Mode, DE/EN (Komma/Punkt, «12.5» auf DE), ≥ 960 px · Leerzustand Mitglied/Orga (Währung ändern) · Schnellweg Betrag + Wofür + Speichern aus Liste und aus Cockpit-Kopf (zurück ins Cockpit) · Gleich mit Cent-Rest (10 € / 3) · Nach Beträgen: zu wenig/zu viel/passt, „Auf leere Felder verteilen“, Absenden falsch → Fokus/Ansage · Platzhalter als Zahler und Beteiligte · Bearbeiten-Recht (Anlegende, Zahlende, Orga, sonst Satz) · Löschen + Rückgängig · Konflikt geändert/gelöscht · Salden-Wortlaut alle drei Fälle, nie Rot · Markieren (beide Seiten, Doppeltipp = eine Buchung), Rückgängig, Zurücknehmen, Hinweis „an dich bezahlt“ · Mia → Lena: Lena markiert; Orga sieht bei Kemal → Lena **keine** Taste; Orga markiert Platzhalter → ehemaliges Mitglied · IBAN gültig/ungültig, maskiert/anzeigen/kopieren (ohne Leerzeichen), anderer Weg nicht verlinkt, löschen · Währung ändern ohne/mit Ausgaben · Abschließen mit (Warnung)/ohne offene Ausgleiche, danach keine Markieren-Tasten, `/new` gesperrt, wieder öffnen · Verlassen mit Schuld/Forderung/0, Zahlungsinfo-Satz · Platzhalter mit Ausgaben löschen → gesperrt · mehrere ehemalige Mitglieder nummeriert · Konto löschen mit offenem Saldo · Teilen-Text · Ausgleich-Moment eigener Saldo 0 / alle 0 (und reduziert) · VoiceOver/TalkBack: Beträge, Pfeil „an“, Live-Zeilen nicht geschwätzig.
+
+---
+
+## E. Überarbeitung nach Auftraggeber-Feedback (2026-10-23, gilt vor D)
+
+**Anlass:** Feedback des Auftraggebers zum gebauten Inkrement 10 (Screenshots `inc10/01–17`):
+1. Kosten müssen **nach Reisebeginn einfacher erreichbar** sein – unterwegs der meistgenutzte Bereich.
+2. Die Kosten-Seite ist **überladen**; Informationen müssen **klar getrennt** und die **Begriffe unmissverständlich** sein („bezahlt“, „Ausgaben gesamt“ lassen Fragen offen).
+3. Beim **Ausgleich** reichen die Überweisungen **mit meiner Person** ausführlich. **Präzisierung (2026-10-23):** Die Beträge der anderen ruhig zeigen – „spannend“ –, aber **nicht detailreich**: kompakte, ruhige Liste «A → B · Betrag» mit Status, ohne Aktionen, ohne Zahlungsinfo, ohne Detail-Ansicht, eingeklappt.
+
+**Geltung:** E ersetzt in D die Abschnitte D.3 (Aufbau), D.6 (Dein Stand), D.7 (Ausgleich), die Wortwahl in D.4/D.5/D.8/D.16 und das Segment. **Unverändert aus D:** Rechte (D.2, außer Sichtbarkeit E.6), Phasen (D.1), Rechenregeln (R.8), Formular-Logik (D.5.1–D.5.7 außer Texten), Konflikte, Abschließen-Logik (D.9), Verlassen/Löschen (D.10), Zustände (D.12), Barrierefreiheit (D.14, ergänzt in E.10). Cockpit-Teil (Kosten-Leiste unterwegs, Danach): [W16 v2.17](w16-cockpit.md). Klickbarer Vorher/Nachher-Vergleich: [`../mockups/kosten-v2/index.html`](../mockups/kosten-v2/index.html).
+
+### E.0 Diagnose (was am gebauten Stand nicht funktioniert)
+| # | Befund (Screenshot) | Ursache | Lösung |
+|---|---|---|---|
+| 1 | „Dein Stand“ zeigt vier Zahlen auf einmal: Saldo, «Dein Anteil», «bezahlt», «Ausgaben gesamt» (01, 05, 12) | Erklärung und Ergebnis gleich laut; drei Zahlen ohne Bezug zueinander | **ein Satz** + Rechenweg nur auf Wunsch («So rechnen wir», E.4) |
+| 2 | «bezahlt 150,00 €» – an wen? zurückgezahlt? für mich? | „bezahlt“ steht für Ausgabe **und** für Ausgleich | zwei getrennte Wortfamilien: **ausgelegt** (Ausgabe) vs. **zurückzahlen / überweisen** (Ausgleich), E.2 |
+| 3 | «Ausgaben gesamt 340,00 €» in *meiner* Karte – meine oder alle? | Gruppenzahl steht im persönlichen Block | Gruppenzahl wandert zur Gruppenliste: «Die Gruppe hat bisher 340,00 € ausgegeben.» |
+| 4 | Ausgleich-Seite: Deine Ausgleiche + Weitere Ausgleiche (mit IBAN der anderen!) + Bereits bezahlt + Salden mit Balken + Zahlungsinfo + Abschließen (02, 05, 12) | alles für alle gleichzeitig offen | eigene Überweisungen ausführlich; andere kompakt + eingeklappt; Salden-Liste entfällt (E.5) |
+| 5 | Unterwegs: Kosten = Kachel ganz unten + kleine Kontur-Taste im Kopf (07, 11) | Kachel-Regel „Bereiche ohne Ende unter den Weg“ passt nicht zum häufigsten Bereich unterwegs | **Kosten-Leiste** unten, immer im Daumenbereich (W16 v2.17) |
+| 6 | Zwei Wege zum Ausgleich auf `/costs` (Link «So gleichst du aus» **und** Segment) | doppelte Navigation | Segment entfällt; ein Einstieg aus „Dein Stand“ |
+| 7 | (Nebenbefund, kein UX-Thema) Gardasee/Felix zeigt «EUR 630.00», «1'200.00» (12, 13) | Zahlformat-Locale offenbar nicht `de-DE` (Schweizer bzw. Code-Anzeige) | **an Reviewer/Developer:** `formatExact`/`formatMoney` mit App-Sprache `de-DE`/`en-GB` statt Konto-/Browser-Region prüfen |
+
+### E.1 Leitlinien der Überarbeitung
+1. **Drei Ebenen, drei Fragen, optisch getrennt:** (a) **Ich** – „Wie stehe ich?“ (getönte Karte, oben) · (b) **Gruppe** – „Was haben wir ausgegeben?“ (neutrale Liste) · (c) **Ausgleichen** – „Wer überweist wem?“ (eigene Seite, eine Ebene tiefer).
+2. **Ein Satz statt vier Zahlen.** Ergebnis groß, Herleitung nur auf Wunsch (progressive disclosure).
+3. **Ein Wort, eine Bedeutung** (Glossar E.2). Verbotene Wörter in der UI: „bezahlt“ (außer im festen Ausdruck „bezahlt von“ – auch der entfällt), „Saldo/Salden“, „Ausgaben gesamt“, „Schulden“ als Substantiv.
+4. **Eigenes ausführlich, Fremdes kompakt.** Aktionen, Zahlungsinfo und Erinnern nur bei Überweisungen mit mir. Die der anderen: eine Zeile «A → B · Betrag · Status», eingeklappt.
+5. **Weniger Zahlen je Zeile:** Tagessummen, Chip «nach Beträgen» und Salden-Balken entfallen.
+
+### E.2 Glossar – Vorher / Nachher (verbindlich für alle Kosten-Texte, Cockpit, Mails, Erinnern)
+| Begriff (Bedeutung) | Vorher DE | **Nachher DE** | Vorher EN | **Nachher EN** | Warum |
+|---|---|---|---|---|---|
+| Bereich | Kosten | **Kosten** (unverändert) | Expenses | **Expenses** | eindeutig |
+| Eintrag (jemand hat für die Gruppe Geld ausgegeben) | Ausgabe | **Ausgabe** | expense | **expense** | eindeutig, bleibt |
+| Wer das Geld für die Ausgabe gegeben hat | «Lena hat bezahlt» · Feld «Bezahlt von» | **«Lena hat ausgelegt»** · Feld **«Wer hat ausgelegt?»** | «Lena paid» · «Paid by» | **«Lena paid»** · **«Who paid?»** | „ausgelegt“ = vorgestreckt für andere; nicht verwechselbar mit „zurückgezahlt“. EN „paid“ bleibt, weil EN den Ausgleich mit „send/sent“ benennt (keine Kollision mehr). |
+| Mein Teil an einer Ausgabe | «dein Anteil 25,00 €» · «nicht beteiligt» | **«auf dich 25,00 €»** · **«ohne dich»** | «your share …» · «not included» | **«your part …»** · **«not you»** | kurz, direkt unter dem Betrag lesbar wie „davon auf dich“ |
+| Summe meiner Teile über alle Ausgaben | «Dein Anteil 112,00 €» | **«Auf dich entfällt 214,00 €»** (nur im Rechenweg) | «Your share» | **«Your part of all expenses»** | |
+| Summe, die ich ausgelegt habe | «bezahlt 26,00 €» | **«Du hast ausgelegt 150,00 €»** (nur im Rechenweg) | «paid» | **«You paid»** | |
+| Was alle zusammen ausgegeben haben | «Ausgaben gesamt 456,00 €» · Kachel «{x} gesamt» | **«Die Gruppe hat bisher 340,00 € ausgegeben.»** (nur über der Liste; nicht mehr in „Dein Stand“, nicht mehr auf der Kachel) | «Total spent» | **«The group has spent €340.00 so far.»** | sagt, *wessen* Summe |
+| Mein Ergebnis > 0 | «Du bekommst 42,00 €» | **«Du bekommst noch 42,00 € zurück.»** | «You're owed €42.00» | **«You get €42.00 back.»** | „zurück“ erklärt, *warum* |
+| Mein Ergebnis < 0 | «Du schuldest 86,00 €» | **«Du zahlst noch 86,00 € zurück.»** | «You owe €86.00» | **«You owe €86.00.»** | gleiche Wortfamilie wie die Aktion; kein „Schulden“-Gefühl |
+| Mein Ergebnis = 0 | «Du bist ausgeglichen ✓» | **«Du bist quitt ✓»** | «You're all square ✓» | **«You're all square ✓»** | Alltagswort, nicht verwechselbar mit „Ausgleich“ als Vorgang |
+| Alle = 0 | «Alles ausgeglichen ✓ – Niemand schuldet jemandem etwas.» | **«Alle sind quitt ✓»** – «Niemand muss mehr etwas überweisen.» | «All square ✓» | **«Everyone's square ✓»** – «Nobody needs to send anything.» | |
+| Vorgang am Ende (Bereich, Seite, Kopf-Taste) | «Ausgleich», «Salden & Ausgleich», «So gleichst du aus» | **«Ausgleichen»** (Verb, Seiten-h1 und Taste) | «Settle up» | **«Settle up»** | ein Name für die Seite |
+| Eine Geldbewegung zwischen zwei Personen (Vorschlag) | «Ausgleich» · «Du → Kemal» | **«Überweisung»** · Zeile **«An Kemal · 86,00 €»** / **«Von Ben · 63,34 €»** (eigene), **«Jonas → Kemal · 90,00 €»** (andere) | «payment» | **«transfer»** · «To Kemal» / «From Ben» | „Überweisung“ = konkrete Handlung; „bar oder PayPal“ deckt der Fußsatz ab |
+| Markieren durch Zahlende | «Als bezahlt markieren» | **«Hab ich überwiesen»** | «Mark as paid» | **«I've sent it»** | Ich-Perspektive, keine Doppeldeutigkeit |
+| Markieren durch Empfangende | «Als erhalten markieren» | **«Ist angekommen»** | «Mark as received» | **«I've got it»** | |
+| Markieren durch Orga (Platzhalter ↔ ehemalig) | «Als bezahlt markieren» | **«Als erledigt markieren»** | «Mark as paid» | **«Mark as done»** | Orga war nicht beteiligt |
+| Zustand nach Markieren | Chip «✓ Bezahlt» · Liste «Bereits bezahlt (n)» | Chip **«✓ Erledigt»** · Liste **«Erledigt (n)»** | «✓ Paid» · «Already paid» | **«✓ Done»** · **«Done (n)»** | |
+| Zurücknehmen | «Zurücknehmen» | **«Zurücknehmen»** (bleibt) | «Take back» | **«Undo»** | |
+| Liste aller Personen mit Plus/Minus | «Salden» (+ Balken) | **entfällt** (E.5.5) | «Balances» | – | Fachwort, Overload |
+| Hinweis an Empfangende | «Greta hat 175,00 € an dich als bezahlt markiert …» | **«Greta hat 175,00 € an dich als überwiesen markiert. Noch nicht angekommen? Unter „Erledigt“ kannst du es zurücknehmen.»** | «… marked … as paid to you» | **«Greta marked €175.00 as sent to you. Not there yet? You can undo it under “Done”.»** | |
+| Zahlungsinfo | «Deine Zahlungsinfo (freiwillig)» | **«Wohin soll das Geld?»** (Karte, nur wenn ich etwas bekomme) / **«Deine Zahlungsinfo»** (sonst, eingeklappt) | «Your payment details» | **«Where should the money go?»** / **«Your payment details»** | Zweck statt Fachwort |
+| Abschließen | «Abrechnung abschließen» | **«Abrechnung abschließen»** (bleibt, nur Orga) | «Close the expenses» | **«Close the expenses»** | |
+| Fußsatz | «Alle Beträge in Euro. Wir überweisen nichts – wir zeigen nur, wer wem was schuldet.» | **«Alle Beträge in Euro. Die App bewegt kein Geld – überweist selbst, bar oder per PayPal.»** | «… we just show who owes whom» | **«All amounts in euros. The app doesn't move money – send it yourselves, in cash or via PayPal.»** | erklärt „Überweisung“ für Bargeld mit |
+
+**Prüfregel Mehrdeutigkeit (für alle neuen Texte):** Jeder Satz mit Betrag beantwortet *wer* · *an/von wem* bzw. *wofür* · *Richtung* (ausgelegt / zurück / an / von). Kein Betrag ohne Bezugswort.
+
+### E.3 Bereich `/costs` – neuer Aufbau (mobil, von oben)
+```
+┌────────────────────────────────────┐
+│▓(←) Kroatien 2027              (⋯)▓│  Kopf: ← · Reisename + h1 «Kosten»; KEIN Teilen mehr hier
+│▓    Kosten                        ▓│
+╰▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓╯
+│ ╔════════════════════════════════╗ │  (1) DEIN STAND – getönte Karte (Ich-Ebene)
+│ ║ DEIN STAND                     ║ │      Ton: zahlst zurück = neutral, bekommst = Minze-Hauch
+│ ║ Du zahlst noch                 ║ │      Satz 24–26/800, Betrag tabular
+│ ║ 64,00 € zurück.                ║ │
+│ ║ An Lena.                       ║ │      Empfänger-Kurzsatz (≤ 2 Namen, sonst «An 3 Personen.»)
+│ ║ [   Ausgleichen  ›           ] ║ │      Sekundär-Taste volle Breite → /balances (nur ≠ 0 oder andere offen)
+│ ║ So rechnen wir  ▾              ║ │      Text-Taste, aria-expanded, Rechenweg E.4
+│ ╚════════════════════════════════╝ │
+│                                    │  deutlicher Abstand (space-8) = Ebenenwechsel
+│ Ausgaben der Gruppe                │  (2) h2 – Gruppen-Ebene, neutral, keine Tönung
+│ Die Gruppe hat bisher 1.017,00 €   │      14/600 muted
+│ ausgegeben.                        │
+│ MO., 14. JUNI                      │  Tages-Trenner (h3, 13/800 Versal), OHNE Tagessumme
+│ ┌────────────────────────────────┐ │
+│ │(✦) Bootstour          150,00 € │ │  Zeile wie D.4.2, Texte neu:
+│ │    Du hast ausgelegt  auf dich │ │  «{Wer} hat ausgelegt · für {wen}»
+│ │    · für alle 6        25,00 € │ │  rechts: Betrag + «auf dich 25,00 €» / «ohne dich»
+│ ├────────────────────────────────┤ │
+│ │(🍴) Pizza am Hafen     60,00 € │ │
+│ │    Sara hat ausgelegt  auf dich│ │
+│ │    · für Lena, dich, Kemal 20,00│ │
+│ └────────────────────────────────┘ │
+│ …                                  │
+│ Alle Beträge in Euro. Die App      │  Fußsatz E.2
+│ bewegt kein Geld – …               │
+├────────────────────────────────────┤
+│ [ +  Ausgabe eintragen           ] │  fixierte Aktionsleiste = einzige Primär-Taste (unverändert)
+└────────────────────────────────────┘
+```
+| # | Block | sichtbar, wenn | Änderung ggü. D.3 |
+|---|---|---|---|
+| 1 | Hinweis «Abrechnung abgeschlossen» | abgeschlossen | Text unverändert (D.3) |
+| 2 | Hinweis „an dich überwiesen“ (E.2) | wie D.8.3 | **nur noch auf `/balances`**, auf `/costs` als einzeilige Zusatzzeile in „Dein Stand“: «Greta hat 175,00 € als überwiesen markiert ›» (→ `/balances`) |
+| 3 | **Dein Stand** (E.4) | ≥ 1 Ausgabe oder Überweisung | ein Satz + Empfänger-/Absender-Kurzsatz + `[Ausgleichen ›]` + «So rechnen wir» |
+| 4 | ~~Segment Ausgaben · Ausgleich~~ | – | **entfällt** (Einstieg nur über `[Ausgleichen ›]`; Desktop zweispaltig, E.10) |
+| 5 | **Ausgaben der Gruppe** (h2 + Gruppensatz + Liste) | ≥ 1 Ausgabe | Gruppensumme hierher; Tagessummen und Chip «nach Beträgen» entfallen |
+| 6 | Leerzustand | 0 Ausgaben | wie D.4.4, Text «Wer etwas für die Gruppe auslegt, trägt es hier ein – wir rechnen aus, wer wem was zurückzahlt.» |
+| 7 | Fußsatz | immer | Text E.2 |
+| 8 | Aktionsleiste `[+ Ausgabe eintragen]` | nicht abgeschlossen | nur Text («eintragen» statt «hinzufügen») |
+
+**Teilen** (Abrechnungstext) wandert vom Kopf ans Ende von `/balances` (E.5, Text-Taste «Übersicht teilen»), Kopf rechts wieder das Reisemenü-Muster ohne Zusatz-Taste – ein Kopf-Element weniger.
+
+### E.4 „Dein Stand“ – ein Satz, Rechenweg auf Wunsch
+**Hauptsatz** (h2-Ersatz: Karte ist `<section aria-labelledby>` mit Eyebrow «Dein Stand» als h2; der Satz ist ein `<p>` 24/800 Jakarta, `tabular-nums`):
+| Lage | DE | EN | Kurzsatz darunter (14/600) DE / EN |
+|---|---|---|---|
+| < 0 | Du zahlst noch {amount} zurück. | You owe {amount}. | An {name}. · An {name1} und {name2}. · An {count} Personen. / To {name}. · To {name1} and {name2}. · To {count} people. |
+| > 0 | Du bekommst noch {amount} zurück. | You get {amount} back. | Von {name}. · Von {name1} und {name2}. · Von {count} Personen. / From … |
+| = 0, andere offen | Du bist quitt ✓ | You're all square ✓ | Bei den anderen sind noch {count} Überweisungen offen. / {count} transfers still open between the others. |
+| = 0, alle 0 | Alle sind quitt ✓ | Everyone's square ✓ | – |
+| 0 Ausgaben | (Karte entfällt, Leerzustand) | | |
+Farben wie D.6 (zurück bekommen = `cost-get-fg`, zurückzahlen = `cost-owe-fg` Tinte, quitt = `cost-even-fg` + Siegel 20). Nie Rot, kein Minus. Kurzsatz nennt **Namen**, keine Beträge (die stehen auf `/balances`).
+
+**Taste** `[Ausgleichen ›]` (Sekundär, volle Breite, 48 px) – nur, wenn mein Ergebnis ≠ 0 **oder** andere offen sind; bei „Alle sind quitt“ statt der Taste nichts (Orga: Text-Link «Abrechnung abschließen ›» → `/balances#close`). Ziel `/costs/balances`.
+
+**«So rechnen wir ▾»** (Text-Taste 44 px, `aria-expanded`, `aria-controls`; eingeklappt Standard; Zustand nicht gespeichert):
+```
+  Du hast für die Gruppe ausgelegt      150,00 €
+  Auf dich entfällt                   − 214,00 €
+  Schon zurückgezahlt                 +  20,00 €   ← nur wenn ≠ 0 («Schon zurückbekommen − x»)
+  ─────────────────────────────────────────────
+  Du zahlst noch zurück                  44,00 €
+  „Auf dich entfällt“ = deine Teile an allen Ausgaben, bei denen du dabei bist.
+```
+`<dl>` mit Zeilen (Begriff links, Betrag rechts tabular), Rechenzeichen als Text (sr liest «minus», «plus»), Summenzeile 700. Die Gruppensumme steht **nicht** im Rechenweg (gehört zur Gruppen-Ebene).
+
+### E.5 `/costs/balances` „Ausgleichen“ – neuer Aufbau
+Kopf: ← (Herkunft: Cockpit-Leiste/D1 → zurück ins Cockpit, sonst `/costs`) · Reisename + h1 **«Ausgleichen»**. Kein Segment. `<title>` «Ausgleichen · {Reise} · Wir wollen weg».
+
+```
+Sicht Max (Mitglied, zahlt)                Sicht Lena (Orga, bekommt)
+┌──────────────────────────────────┐       ┌──────────────────────────────────┐
+│ DEIN STAND                       │ (1)   │ DEIN STAND                       │
+│ Du zahlst noch 64,00 € zurück.   │       │ Du bekommst noch 206,00 € zurück.│
+│ So rechnen wir ▾                 │       │ So rechnen wir ▾                 │
+╞══════════════════════════════════╡       ╞══════════════════════════════════╡
+│ Deine Überweisung            h2  │ (2)   │ Das bekommst du              h2  │
+│ ┌──────────────────────────────┐ │       │ ┌──────────────────────────────┐ │
+│ │ (LE) An Lena       64,00 €   │ │       │ │ (SA) Von Sara     134,00 €   │ │
+│ │ IBAN DE89 •••• … 3000        │ │       │ │ [Ist angekommen] Sara erinnern│ │
+│ │ [Kopieren] [Anzeigen]        │ │       │ ├──────────────────────────────┤ │
+│ │ PayPal: lena.k   [Kopieren]  │ │       │ │ (MA) Von Max       64,00 €   │ │
+│ │ [✓ Hab ich überwiesen     ]  │ │ Primär│ │ [Ist angekommen] Max erinnern │ │
+│ └──────────────────────────────┘ │       │ ├──────────────────────────────┤ │
+│                                  │       │ │ (JO) Von Jonas      8,00 €   │ │
+│                                  │       │ │ [Ist angekommen] Jonas erinnern│
+│                                  │       │ └──────────────────────────────┘ │
+│                                  │       │ Wohin soll das Geld?         h2  │ (3)
+│                                  │       │ IBAN DE12 •••• 0042  [Ändern]    │
+│ Erledigt (0) – entfällt bei 0    │ (4)   │ Für dich als Orga            h2  │ (5)
+│                                  │       │ Mia [Platzhalter] → ehem. Mitgl. │
+│                                  │       │ 20,00 €  [Als erledigt markieren]│
+│ Ausgleiche der anderen (4)  ▾    │ (6)   │ Ausgleiche der anderen (2)  ▾    │
+│ Insgesamt noch 5 Überweisungen   │       │ Insgesamt noch 5 Überweisungen   │
+│ offen, bis alle quitt sind.      │       │ offen, bis alle quitt sind.      │
+│ ── aufgeklappt: ──               │       │                                  │
+│ Sara → Lena       134,00 € offen │       │                                  │
+│ Jonas → Kemal      90,00 € offen │       │                                  │
+│ Jonas → Lena        8,00 € offen │       │                                  │
+│ Mia → ehem. Mitgl. 20,00 € offen │       │                                  │
+│ Deine Zahlungsinfo ▸         (3) │       │ [Abrechnung abschließen]     (7) │
+│ Übersicht teilen ›           (8) │       │ Übersicht teilen ›           (8) │
+└──────────────────────────────────┘       └──────────────────────────────────┘
+```
+
+| # | Block | Inhalt / Regel |
+|---|---|---|
+| 1 | **Dein Stand** | wie E.4, **ohne** Kurzsatz und ohne `[Ausgleichen]` (man ist schon da); «So rechnen wir» bleibt. Hinweis „an dich überwiesen“ (E.2) als Info-Banner **über** der Karte. |
+| 2 | **Eigene Überweisungen** – h2 je Richtung: **«Deine Überweisung»** / **«Deine Überweisungen»** (ich zahle) bzw. **«Das bekommst du»** (ich bekomme). Wegen `settleUp` zahlt eine Person nur **oder** empfängt – es erscheint immer höchstens **eine** der beiden Gruppen. | Karte je Überweisung: Avatar · «An Lena» / «Von Sara» (Platzhalter-Chip, «ehemaliges Mitglied») · Betrag 17/800. **Ich zahle:** Zahlungsinfo der Empfängerin (IBAN maskiert, `[Kopieren]` zuerst, `[Anzeigen]`; anderer Weg + `[Kopieren]`; ohne: «Lena hat keine Zahlungsinfo hinterlegt – frag am besten direkt.») + Taste **«Hab ich überwiesen»** (Primär für die erste, weitere Sekundär). **Ich bekomme:** Taste **«Ist angekommen»** (Sekundär) + Text-Taste **«{Name} erinnern»** (nicht bei ehemaligen). Nach Markieren: Chip «✓ Erledigt» + «Zurücknehmen» an Ort und Stelle (D.8.1), Snackbar «Erledigt: an Lena, 64,00 €.» / «Erledigt: von Sara, 134,00 €.» + «Rückgängig». |
+| 3 | **Zahlungsinfo** | **Ich bekomme etwas** (Ergebnis > 0) und habe keine hinterlegt → offene Karte **«Wohin soll das Geld?»** direkt unter Block 2: «Hinterleg IBAN oder PayPal-Name – dann sehen Sara, Max und Jonas sie bei ihrer Überweisung an dich.» + `[Hinterlegen]` (Sekundär). Ich bekomme und habe hinterlegt → kompakte Zeile «Wohin soll das Geld? · IBAN DE12 •••• 0042 · [Ändern]». **Sonst** (zahle oder quitt) → eingeklappte Zeile **«Deine Zahlungsinfo ▸»** am Ende (vor Teilen). Sheet und Regeln unverändert D.8.4; Hilfetext neu: «**Nur wer an dich überweist, sieht das.** Wird gelöscht, wenn du die Reise verlässt.» (E.6). |
+| 4 | **Erledigt ({n})** – nur **meine** erledigten Überweisungen | eingeklappt (`aria-expanded`), entfällt bei 0. Zeile «An Lena · 64,00 €» + 13 px «von dir markiert am 3. Mai» / «von Lena markiert am 3. Mai» + Text-Taste «Zurücknehmen» (Rechte wie D.2). |
+| 5 | **Für dich als Orga** (nur Orga, nur wenn es Überweisungen gibt, die **nur** die Orga markieren darf: Platzhalter/ehemalig ↔ Platzhalter/ehemalig, R.8) | h2 + Satz «Hier ist niemand mit App beteiligt – du kannst es abhaken, wenn du weißt, dass es erledigt ist.» · Zeilen kompakt «Mia [Platzhalter] → ehemaliges Mitglied · 20,00 €» + Text-Taste **«Als erledigt markieren»**. Offen (nicht eingeklappt) – es ist eine Aufgabe. Diese Zeilen erscheinen **nicht** zusätzlich in Block 6. |
+| 6 | **Ausgleiche der anderen ({n})** – alle Überweisungen ohne mich (offen **und** erledigt, außer Block 5) | **eingeklappt** (Button h2-Ersatz `aria-expanded`); darunter **immer sichtbar** der neutrale Satz: «Insgesamt noch {open} Überweisungen offen, bis alle quitt sind.» (alle offenen, inkl. meiner) bzw. «Alle sind quitt ✓». Aufgeklappt: `<ul>` kompakte Zeilen **«Sara → Lena · 134,00 €»** + Status-Text rechts **«offen»** (muted) / **«✓ erledigt»** (Minze); Avatare 20 px, eine Zeile, 44 px hoch. **Keine** Tasten, **keine** Zahlungsinfo, **kein** „markiert von“, **nicht** antippbar. Reihenfolge: offen zuerst (Vorschlags-Reihenfolge), dann erledigt (neueste zuerst). Bei 0 Zeilen entfällt der Block (nur der Satz bleibt, falls eigene offen). |
+| 7 | **Abrechnung abschließen** (nur Orga) | Sekundär, wie D.9 (Dialoge unverändert, Wort «Ausgleiche» → «Überweisungen»: «Noch 3 Überweisungen sind offen – trotzdem abschließen? …»). |
+| 8 | **Übersicht teilen ›** (alle) | Text-Taste, Teilen-Sheet mit Text D.11 (ohne Zahlungsinfo). Wortlaut: «Ausgleichen {trip}:\n{from} → {to}: {amount}\n…\nDetails: {link}» / «Settle up – {trip}: …». |
+| – | **Salden-Liste + Balken** | **entfällt für alle** (auch Orga). Begründung: Die Liste wiederholt dieselbe Information wie die Überweisungen in abstrakter Form (Plus/Minus je Person) – der Auftraggeber will „wer an wen“, nicht Kontostände. Wer den Stand einer Person wissen will, sieht ihre Zeilen in Block 6. |
+| – | **Alle quitt** | statt 2–6: Karte «Alle sind quitt ✓» + «Niemand muss mehr etwas überweisen.» (Siegel 40) · darunter «Erledigt ({n}) ▸» (meine) und «Ausgleiche der anderen ({n}) ▸» (Historie) · Orga: `[Abrechnung abschließen]`. |
+| – | **Abgeschlossen** | Hinweis wie D.3 Block 1; keine Tasten; Blöcke 2/4/6 lesbar; Satz «Die Abrechnung ist abgeschlossen.» einmal oben. |
+
+**Reihenfolge Orga, die selbst zahlt:** Block 2 «Deine Überweisung» → 5 → 6 → Zahlungsinfo ▸ → 7 → 8.
+
+### E.6 Sichtbarkeit – wer sieht was (ändert R.8 „Bereich ansehen“, Hinweis an PM)
+| Information | Mitglied | Orga | Vorher (R.8) |
+|---|---|---|---|
+| Alle Ausgaben (Liste, Detail-Sheet mit Aufteilung) | ✔ | ✔ | ✔ (unverändert – gemeinsame Kasse) |
+| Eigenes Ergebnis + Rechenweg | ✔ | ✔ | ✔ |
+| Eigene Überweisungen mit Aktionen | ✔ | ✔ | ✔ |
+| Überweisungen der anderen: **Namen, Betrag, offen/erledigt** | ✔ kompakt, eingeklappt | ✔ dto. | ✔ mit Details |
+| … „markiert von“, Zeitpunkt, Zurücknehmen, Erinnern | ✘ | ✘ (nur Block 5) | ✔ |
+| Ergebnis (Saldo) **je Person** als Liste | ✘ | ✘ | ✔ |
+| Zahlungsinfo (IBAN / anderer Weg) anderer | **nur** von Personen, an die **ich** laut Vorschlag überweise | dto. | alle Mitglieder (Q35 „sichtbar für die Reise“) |
+**Technik (Developer):** Der Server liefert die Zahlungsinfo **nur** für die Empfänger meiner offenen Überweisungen aus (nicht nur ausblenden). Für Block 6 genügen `{from, to, cents, done}`; `markedBy/at` nur für eigene Zeilen. Ergebnisse anderer Personen werden nicht an den Client gegeben (Cockpit-Adapter `costStatus()` braucht sie nicht). Der Teilen-Text darf weiterhin alle offenen Überweisungen nennen (gleiche Informationstiefe wie Block 6).
+
+**Sonderfall Zahlungsinfo:** Wird jemand durch eine neue Ausgabe vom Empfänger zum Zahler, verschwindet seine Zahlungsinfo bei den anderen sofort – das ist gewollt (nur wer an ihn überweisen muss, braucht sie).
+
+### E.7 Formular „Ausgabe eintragen“ (D.5) – nur Texte
+| Stelle | Vorher | Nachher DE | Nachher EN |
+|---|---|---|---|
+| h1 / Taste | Ausgabe hinzufügen · Ausgabe speichern | **Ausgabe eintragen** · **Ausgabe speichern** | Add an expense · Save expense |
+| Feld Zahler | Bezahlt von · «Ich (Max)» | **Wer hat ausgelegt?** · «Ich (Max)» | **Who paid?** · «Me (Max)» |
+| Für wen | Für wen? · {n} von {total} | **Für wen war es?** · {n} von {total} | **Who was it for?** |
+| Aufteilung | Aufteilung · Gleich · Nach Beträgen | **Wie aufteilen?** · **Gleich** · **Eigene Beträge** | **How to split?** · **Equally** · **Own amounts** |
+| Live-Zeile | Je Person 10,00 € | **Je Person 10,00 €** (bleibt) | {amount} each |
+| Snackbar | 60,00 € gespeichert – Salden sind aktualisiert. | **Gespeichert. Du zahlst jetzt noch 44,00 € zurück.** / **… bekommst jetzt noch 42,00 € zurück.** / **… bist jetzt quitt ✓** (neues Ergebnis als Satz – zeigt die Wirkung) | **Saved. You now owe €44.00.** / **… now get €42.00 back.** / **… you're now all square ✓** |
+Schnellweg, Validierung, Konflikte unverändert.
+
+### E.8 Detail-Sheet (D.4.3) – Texte
+«{Kategorie} · {Datum} · **Lena hat ausgelegt**» · h3 **«So wird geteilt»** (statt «Aufteilung») · je Person «Lena 25,00 €» (ich: «Du 25,00 €») · Fuß «**Gleich geteilt** / **Eigene Beträge** · eingetragen von Kemal am 1. Mai» · Rechte-Satz «Ändern können Kemal und die Orga.» (bleibt).
+
+### E.9 Kachel, Hinweise, Erinnern (Wortlaut-Angleich)
+- **Kachel „Kosten“** (W16 v2.17 regelt *wann*): Status nur noch das eigene Ergebnis, ohne Gruppensumme: «Noch keine Ausgaben» · «Du zahlst noch {amount} zurück» · «Du bekommst noch {amount} zurück» · «Du bist quitt ✓» · «Alle sind quitt ✓» · abgeschlossen: «Abgeschlossen · alle quitt ✓» / «Abgeschlossen · du zahlst noch {amount} zurück». EN: «No expenses yet» · «You owe {amount}» · «You get {amount} back» · «You're all square ✓» · «Everyone's square ✓» · «Closed · …».
+- **Erinnern-Texte** (D.11, W16 v2.15): «Hey {name}, bei {trip} bekomme ich laut App noch {amount} von dir zurück. Danke! {link}» · EN unverändert. Orga `settle-all`: «… sind noch {count} Überweisungen offen …».
+- **Verlassen-Dialog** (D.10): «Du zahlst noch 86,00 € zurück. …» / «Du bekommst noch 42,00 € zurück. …»; «Zum Ausgleich» → «Zum Ausgleichen».
+- **Konto löschen** (D.10): «In {n} Reisen bist du noch nicht quitt:» + «Kroatien 2027 – du zahlst noch 86,00 € zurück».
+
+### E.10 Responsive, Barrierefreiheit (Ergänzung zu D.14)
+- **≥ 960 px:** `/costs` zweispaltig: links „Ausgaben der Gruppe“, rechts sticky „Dein Stand“ (mit «So rechnen wir») + eigene Überweisungen kompakt (Block 2 ohne Zahlungsinfo, Taste «Ausgleichen ›»). `/balances` einspaltig 640 px (eine Aufgabe, keine zweite Spalte nötig).
+- **Ebenen-Trennung** nicht nur über Farbe: Eyebrow «Dein Stand» + Tönung **und** Abstand `space-8` + h2 «Ausgaben der Gruppe».
+- Überschriften `/balances`: h1 Ausgleichen · h2 Dein Stand · h2 Deine Überweisung(en) / Das bekommst du · h2 Wohin soll das Geld? · h2 Für dich als Orga · Button „Ausgleiche der anderen“ in h2 · Button „Erledigt“ in h2.
+- Kompaktzeile Block 6: zugänglicher Text «Sara an Lena, 134,00 €, offen»; Pfeil `aria-hidden`.
+- «So rechnen wir»: Rechenzeichen als Text; Summenzeile mit `<strong>`.
+- Fokus: nach «Hab ich überwiesen» bleibt er auf «Zurücknehmen» (D.14); Aufklappen setzt keinen Fokus um.
+- 320 px / 200 %: „Dein Stand“-Satz bricht frei um; Kompaktzeile darf zweizeilig werden (Betrag + Status in Zeile 2).
+
+### E.11 Motion (Delta zu D.13)
+Unverändert bis auf: Aufklappen «So rechnen wir» / «Ausgleiche der anderen» / «Erledigt» = Standard-Akkordeon (`base`, reduziert sofort). Ausgleich-Moment (UM-16) feiert jetzt «Du bist quitt ✓»; UM-17 «Alle sind quitt ✓». Salden-Balken-Animation entfällt.
+
+### E.12 Texte DE / EN (ersetzt die betroffenen Schlüssel in D.16)
+| Schlüssel (Vorschlag) | DE | EN |
+|---|---|---|
+| `costs.add` | Ausgabe eintragen | Add an expense |
+| `costs.mine.owe` / `.owed` / `.square` / `.allSquare` | Du zahlst noch {amount} zurück. · Du bekommst noch {amount} zurück. · Du bist quitt ✓ · Alle sind quitt ✓ | You owe {amount}. · You get {amount} back. · You're all square ✓ · Everyone's square ✓ |
+| `costs.mine.to` / `.from` | An {names}. · An {count} Personen. · Von {names}. · Von {count} Personen. | To {names}. · To {count} people. · From {names}. · From {count} people. |
+| `costs.mine.othersOpen` | Bei den anderen {count, plural, one {ist noch eine Überweisung} other {sind noch # Überweisungen}} offen. | {count, plural, one {One transfer is} other {# transfers are}} still open between the others. |
+| `costs.mine.settle` | Ausgleichen | Settle up |
+| `costs.calc.*` | So rechnen wir · Du hast für die Gruppe ausgelegt · Auf dich entfällt · Schon zurückgezahlt · Schon zurückbekommen · Du zahlst noch zurück · Du bekommst noch zurück · Quitt · „Auf dich entfällt“ = deine Teile an allen Ausgaben, bei denen du dabei bist. | How we work it out · You paid for the group · Your part of all expenses · Already sent · Already received · You still owe · You still get back · Square · “Your part” = your parts of all expenses you're in. |
+| `costs.group.title` / `.total` | Ausgaben der Gruppe · Die Gruppe hat bisher {total} ausgegeben. | Group expenses · The group has spent {total} so far. |
+| `costs.row.paidMe` / `.paid` | Du hast ausgelegt · {name} hat ausgelegt | You paid · {name} paid |
+| `costs.row.share` / `.notIn` | auf dich {amount} · ohne dich | your part {amount} · not you |
+| `costs.footer` | Alle Beträge in {currency}. Die App bewegt kein Geld – überweist selbst, bar oder per PayPal. | All amounts in {currency}. The app doesn't move money – send it yourselves, in cash or via PayPal. |
+| `costs.empty.text` | Wer etwas für die Gruppe auslegt, trägt es hier ein – wir rechnen aus, wer wem was zurückzahlt. | Whoever pays for the group adds it here – we'll work out who pays back whom. |
+| `balances.title` | Ausgleichen | Settle up |
+| `balances.mineOut` / `.mineOutMany` / `.mineIn` | Deine Überweisung · Deine Überweisungen · Das bekommst du | Your transfer · Your transfers · What you get |
+| `balances.to` / `.from` | An {name} · Von {name} | To {name} · From {name} |
+| `balances.sent` / `.received` / `.orgaDone` | Hab ich überwiesen · Ist angekommen · Als erledigt markieren | I've sent it · I've got it · Mark as done |
+| `balances.doneChip` / `.undo` | ✓ Erledigt · Zurücknehmen | ✓ Done · Undo |
+| `balances.markedOut` / `.markedIn` | Erledigt: an {name}, {amount}. · Erledigt: von {name}, {amount}. | Done: to {name}, {amount}. · Done: from {name}, {amount}. |
+| `balances.done` / `.doneMeta` | Erledigt ({count}) · von {name} markiert am {date} · von dir markiert am {date} | Done ({count}) · marked by {name} on {date} · marked by you on {date} |
+| `balances.orga.*` | Für dich als Orga · Hier ist niemand mit App beteiligt – du kannst es abhaken, wenn du weißt, dass es erledigt ist. | For you as organizer · Nobody with the app is involved here – tick it off once you know it's done. |
+| `balances.others` / `.open` / `.doneState` | Ausgleiche der anderen ({count}) · offen · ✓ erledigt | Other people's transfers ({count}) · open · ✓ done |
+| `balances.groupOpen` | Insgesamt {count, plural, one {noch eine Überweisung} other {noch # Überweisungen}} offen, bis alle quitt sind. | {count, plural, one {One transfer} other {# transfers}} left until everyone's square. |
+| `balances.othersRow` (sr) | {from} an {to}, {amount}, {state} | {from} to {to}, {amount}, {state} |
+| `balances.allSquare.*` | Alle sind quitt ✓ · Niemand muss mehr etwas überweisen. | Everyone's square ✓ · Nobody needs to send anything. |
+| `balances.paidToYou` | {names} {count, plural, one {hat} other {haben}} {amount} an dich als überwiesen markiert. Noch nicht angekommen? Unter „Erledigt“ kannst du es zurücknehmen. | {names} marked {amount} as sent to you. Not there yet? You can undo it under “Done”. |
+| `balances.share` | Übersicht teilen | Share overview |
+| `payInfo.whereTitle` / `.whereText` | Wohin soll das Geld? · Hinterleg IBAN oder PayPal-Name – dann sehen {names} sie bei ihrer Überweisung an dich. | Where should the money go? · Add an IBAN or PayPal name – {names} will see it when sending you money. |
+| `payInfo.title` / `.hint` | Deine Zahlungsinfo · Nur wer an dich überweist, sieht das. Wird gelöscht, wenn du die Reise verlässt. | Your payment details · Only people sending you money see this. It's deleted when you leave the trip. |
+| `costForm.payer` / `.for` / `.split` / `.equal` / `.custom` | Wer hat ausgelegt? · Für wen war es? · Wie aufteilen? · Gleich · Eigene Beträge | Who paid? · Who was it for? · How to split? · Equally · Own amounts |
+| `costForm.saved.*` | Gespeichert. Du zahlst jetzt noch {amount} zurück. · Gespeichert. Du bekommst jetzt noch {amount} zurück. · Gespeichert. Du bist jetzt quitt ✓ | Saved. You now owe {amount}. · Saved. You now get {amount} back. · Saved. You're now all square ✓ |
+| `costs.detail.*` | So wird geteilt · Gleich geteilt · Eigene Beträge · eingetragen von {name} am {date} | How it's split · Split equally · Own amounts · added by {name} on {date} |
+| `close.open` | Noch {count, plural, one {eine Überweisung ist} other {# Überweisungen sind}} offen – trotzdem abschließen? … | {count, plural, one {One transfer is} other {# transfers are}} still open – close anyway? … |
+Entfallen: `costs.tabs`, `costs.mine.detail*`, `costs.mine.total`, `costs.day.sum`, `costs.row.custom`, `balances.list`, `balances.other.*`, `balances.whoMarks` (andere Zeilen haben keine Tasten mehr; Block 5 erklärt sich selbst), `balances.yours/others/othersOnly/count`.
+
+### E.13 Abweichungen von R.8 und Aufwand (Hinweis an PM/CEO/Developer)
+1. **Sichtbarkeit** (E.6): R.8 „Bereich ansehen: alle Salden, Ausgleichsvorschlag, Zahlungsinfos“ → neu: Salden anderer **nicht**; Ausgleichsvorschlag der anderen **kompakt** (Namen, Betrag, Status); Zahlungsinfos **nur** der eigenen Empfänger. Q35 („Zahlungsinfo sichtbar für die Reise“) wird enger – Datenschutz-Gewinn, kein Funktionsverlust.
+2. **Salden-Liste** (R.8 I10-01/Umfang „Salden je Person“) entfällt.
+3. **Segment „Ausgaben | Salden & Ausgleich“** (R.8 I10-01) entfällt; Einstieg über „Dein Stand“.
+4. **Teilen** wandert vom Kopf auf `/balances`.
+5. Rechte, Rechenregeln, Datenhaltung: **unverändert**.
+**Aufwand (Schätzung UX):** überwiegend Texte (i18n) und Umbau von `costs-view.tsx` (Blöcke umsortieren, Segment/Salden raus, Akkordeons rein), Server-Filter in `load.ts` (Zahlungsinfo/Salden), Snackbar mit neuem Ergebnis. Keine Migration.
+
+### E.14 Abnahme UX (zusätzlich zu D.18, ersetzt dort Salden/Segment-Punkte)
+Max zahlt (eine Überweisung, Primär «Hab ich überwiesen», IBAN Kopieren) · Lena bekommt von 3 (Sekundär-Tasten, Erinnern, Karte «Wohin soll das Geld?» ohne/mit Zahlungsinfo) · Orga-Block nur bei Platzhalter ↔ ehemalig · „Ausgleiche der anderen“ eingeklappt, Satz immer sichtbar, Zeilen ohne Tasten/IBAN · Netzwerk-Tab: keine fremden Zahlungsinfos/Salden für Mitglieder · «So rechnen wir» mit/ohne Überweisungen, Summe = Hauptsatz · Glossar: kein «bezahlt», «Salden», «Ausgaben gesamt», «schuldest» mehr in DE-Oberfläche (Suche in `de.json`) · Snackbar nach Speichern nennt neues Ergebnis · Alle quitt / abgeschlossen · 320 px, 200 %, Dark Mode, DE/EN.
+
+### E.15 Offene Fragen an den Auftraggeber (über den CEO)
+- **K-1 Kosten-Leiste unterwegs** (W16 v2.17): Variante C „Leiste unten“ (Empfehlung) oder A „Karte unter dem Kopf“? – im Mockup umschaltbar.
+- **K-2 „quitt“** als Wort für „ausgeglichen“: Empfehlung **ja** (Alltagssprache, nicht verwechselbar mit „Ausgleichen“). Nur fragen, falls der CEO unsicher ist.

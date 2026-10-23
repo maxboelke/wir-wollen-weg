@@ -12,6 +12,8 @@ import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
 import { costRemindData } from "../costs/remind";
 import { stayRemindData } from "../stays/remind";
+import { travelRemindData } from "../travel-data/remind";
+import { bookersOf } from "../trips/bookers";
 import { nameList, nightsText, orList, rangeText } from "../trips/format";
 import type { TripView } from "../trips/load";
 import { costsPath, travelDataPath, tripPath } from "../trips/paths";
@@ -323,13 +325,25 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       decided: { title: t("decided.title"), sub: t("decided.sub") },
       members: {
         title: t("members.title", { count: view.members.length }),
-        sub:
-          placeholders > 0
-            ? t("members.subPlaceholders", { orga, count: placeholders })
-            : t("members.sub", { orga }),
+        sub: membersSub(ctx, view, placeholders, orga),
       },
     },
   };
+}
+
+/** «Mehr zur Reise» → «Wer ist dabei?»: «Lena und Sara buchen · Lena ist Orga» (W16 v2.16). */
+function membersSub(ctx: Ctx, view: TripView, placeholders: number, orga: string): string {
+  const rest =
+    placeholders > 0
+      ? ctx.t("members.subPlaceholders", { orga, count: placeholders })
+      : ctx.t("members.sub", { orga });
+  const bookers = bookersOf(view.members).map((m) => m.displayName);
+  if (bookers.length === 0) return rest;
+  return ctx.t("members.subBookers", {
+    names: nameList(bookers, ctx.locale, ctx.more),
+    count: bookers.length,
+    rest,
+  });
 }
 
 /** Ticket head (W16 v2.2): ring, range, crew, calendar button. */
@@ -471,6 +485,7 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
       name: m.displayName,
       organizer: m.role === "organizer",
       me: m.userId === me.userId,
+      booker: m.bookerSince !== null,
     })),
     placeholders: sheetPlaceholders,
     announce,
@@ -510,5 +525,8 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
         ? await stayRemindData(view, data.staysRaw)
         : null,
     costRemind: await costRemindData(view, data.costsRaw),
+    travelRemind: data.travelRaw ? await travelRemindData(view, data.travelRaw) : null,
+    travelData: data.travel !== null,
+    canSetBookers: isOrganizer && trip.phase === "fixed",
   };
 }

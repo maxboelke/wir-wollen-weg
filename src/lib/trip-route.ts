@@ -1046,12 +1046,8 @@ export function v4Station(
     return {
       ...base,
       state: "waiting",
-      status: msg("v4.waiting", {
-        released: own.released,
-        total: own.total,
-        names: { names: names.length > 2 ? [...names.slice(0, 2)] : names },
-        more: Math.max(0, names.length - 2),
-      }),
+      // Names as a list – longer lists end with «und n weitere» (ux-spec §10.3).
+      status: msg("v4.waiting", { released: own.released, total: own.total, names: { names } }),
       short: msg("v4.shortMine"),
       remind: {
         occasion: "travel-data",

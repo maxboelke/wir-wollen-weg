@@ -312,7 +312,11 @@
       "policy": "Datenschutzerklärung",
       "export": "Meine Daten herunterladen (JSON)",
       "exportHint": "Alles, was wir über dich gespeichert haben – nur deine eigenen Angaben.",
-      "delete": "Konto löschen"
+      "delete": "Konto löschen",
+      "travelTitle": "Freigegebene Reisedaten",
+      "travelRow": "Reisedaten für {trip} an {name} freigegeben („{purpose}“)",
+      "travelWithdraw": "Freigabe zurückziehen …",
+      "travelHint": "Solange der Termin wieder offen ist, ziehst du die Freigabe hier zurück. Ist er festgelegt, findest du sie unter „Reisedaten“ in der Reise."
     },
     "back": "Zurück zum Konto",
     "email": {
@@ -365,7 +369,9 @@
       "dialogTitle": "Konto endgültig löschen?",
       "dialogText": "Dein Konto und deine Daten werden sofort gelöscht. Das kann nicht rückgängig gemacht werden.",
       "dialogConfirm": "Konto löschen",
-      "planOutdated": "Bei deinen Reisen hat sich inzwischen etwas geändert. Bitte prüf deine Auswahl und versuch es nochmal – es wurde nichts gelöscht."
+      "planOutdated": "Bei deinen Reisen hat sich inzwischen etwas geändert. Bitte prüf deine Auswahl und versuch es nochmal – es wurde nichts gelöscht.",
+      "travelMember": "Deine freigegebenen Reisedaten werden sofort gelöscht.",
+      "travelBooker": "Deine offenen Anfragen werden geschlossen und alle Freigaben gelöscht."
     }
   },
   "regions": {
@@ -747,7 +753,8 @@
       "unfix": "Festlegung aufheben",
       "cancelPoll": "Abstimmung abbrechen",
       "remind": "Gruppe erinnern",
-      "decided": "So habt ihr entschieden"
+      "decided": "So habt ihr entschieden",
+      "bookers": "Wer bucht? …"
     },
     "dialogs": {
       "leaveTitle": "„{trip}“ verlassen?",
@@ -788,7 +795,12 @@
       "cancelPollText": "Alle Optionen und Stimmen werden gelöscht. Eingetragene Tage bleiben erhalten; die Reise geht zurück zu ‚Tage sammeln‘.",
       "cancelPollKeep": "Abstimmung behalten",
       "cancelPollConfirm": "Abstimmung abbrechen",
-      "cancelPollDone": "Abstimmung abgebrochen"
+      "cancelPollDone": "Abstimmung abgebrochen",
+      "leaveTravelMember": "Deine freigegebenen Reisedaten werden sofort gelöscht.",
+      "leaveTravelBooker": "Deine Anfragen werden geschlossen und alle an dich freigegebenen Reisedaten sofort gelöscht.",
+      "removeTravelMember": "Die freigegebenen Reisedaten von {name} werden sofort gelöscht.",
+      "removeTravelBooker": "Die Anfragen von {name} werden geschlossen und alle an {name} freigegebenen Reisedaten sofort gelöscht.",
+      "unfixTravel": "Freigegebene Reisedaten bleiben höchstens 30 Tage gespeichert – steht bis dahin kein neuer Termin, werden sie gelöscht."
     },
     "notFoundTitle": "Reise nicht gefunden",
     "notFoundText": "Diese Reise gibt es nicht oder du bist nicht dabei. Wenn du eingeladen wurdest, öffne den Einladungslink aus dem Gruppenchat.",
@@ -884,7 +896,10 @@
       "stayBook": "Hey {booker}, {stay} steht fest – magst du buchen? {link}",
       "settle": "Hey {name}, laut Abrechnung von {trip} bekomme ich noch {amount} von dir. Danke! {link}",
       "settleAll": "Hey ihr, bei {trip} {count, plural, one {ist noch ein Ausgleich} other {sind noch # Ausgleiche}} offen – schaut kurz rein: {link}",
-      "settleOther": "Hey {name}, laut Abrechnung von {trip} gehen noch {amount} von dir an {to}. {link}"
+      "settleOther": "Hey {name}, laut Abrechnung von {trip} gehen noch {amount} von dir an {to}. {link}",
+      "travelData": "Hey {name}, für „{purpose}“ brauche ich noch deine Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}",
+      "travelDataAll": "Hey ihr, für „{purpose}“ brauche ich noch eure Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}",
+      "travelDataJoin": "Hey {name}, magst du bei {trip} beitreten? Für „{purpose}“ brauche ich danach deine Reisedaten – bitte in der App freigeben, nicht im Chat: {link}"
     }
   },
   "tripSettings": {
@@ -1613,7 +1628,7 @@
       "infoMeeting": "Treffpunkt steht",
       "infoCheckIn": "Check-in ab {time} Uhr",
       "infoAddress": "Adresse da",
-      "infoEmpty": "Noch leer – {orga} trägt sie ein",
+      "infoEmpty": "Noch leer – {names} {count, plural, one {trägt} other {tragen}} sie ein",
       "infoEmptyOrga": "Infos ergänzen",
       "stay": "Unterkunft",
       "stayBooked": "{title} · gebucht ✓",
@@ -1627,7 +1642,12 @@
       "costsOwed": "du bekommst {amount}",
       "costsSquareMe": "bei dir ausgeglichen ✓",
       "costsSquare": "alles ausgeglichen ✓",
-      "costsClosed": "Abgeschlossen"
+      "costsClosed": "Abgeschlossen",
+      "travel": "Reisedaten",
+      "travelMine": "{released} von {total} freigegeben",
+      "travelMineMany": "{count} Anfragen",
+      "travelShared": "Freigegeben an {names} ✓",
+      "travelDeleteOn": "gelöscht am {date}"
     },
     "moreTitle": "Mehr zur Reise",
     "decided": {
@@ -1650,12 +1670,15 @@
       "withoutAppChip": "ohne App",
       "notJoined": "Noch nicht beigetreten – persönlicher Link offen",
       "withoutApp": "Macht ohne App mit (von {orga} abgehakt)",
-      "manage": "Platzhalter verwalten"
+      "manage": "Platzhalter verwalten",
+      "booker": "Bucht",
+      "subBookers": "{names} {count, plural, one {bucht} other {buchen}} · {rest}"
     },
     "remind": {
       "listTitle": "Noch nicht beigetreten",
       "personal": "Persönlicher Link – nur für {name}, nicht in die Gruppe schicken.",
-      "orgaText": "Den persönlichen Link hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken."
+      "orgaText": "Den persönlichen Link hat nur {orga}. Sag kurz Bescheid – dann kann {orga} ihn weiterschicken.",
+      "travelTitle": "Wer fehlt noch?"
     },
     "toast": {
       "withoutApp": "„{name} macht ohne App mit“ ist abgehakt – für alle sichtbar.",
@@ -1694,15 +1717,16 @@
       "remind": "Erinnern",
       "remindName": "Alle erinnern, die noch nicht bewertet haben",
       "memberFix": "Alle haben bewertet – {orga} legt fest.",
-      "memberBook": "{orga} bucht {title}.",
-      "memberRebook": "Neuer Termin – {orga} bucht {title} neu.",
+      "memberBook": "{bookers} bucht {title}.",
+      "memberRebook": "Neuer Termin – {bookers} bucht {title} neu.",
       "nudgeFixName": "{orga} Bescheid geben, dass es ans Festlegen geht",
-      "nudgeBookName": "{orga} Bescheid geben, dass {title} gebucht werden kann",
+      "nudgeBookName": "{bookers} Bescheid geben, dass {title} gebucht werden kann",
       "shortRate": "Bewertungen für die Unterkunft",
       "shortFix": "{orga} legt die Unterkunft fest",
-      "shortBook": "{orga} bucht {title}",
+      "shortBook": "{bookers} bucht {title}",
       "withoutAppDone": "Als „ohne App erledigt“ abgehakt.",
-      "withoutAppUndone": "Markierung „ohne App erledigt“ entfernt."
+      "withoutAppUndone": "Markierung „ohne App erledigt“ entfernt.",
+      "nudgeBookers": "Bescheid geben"
     },
     "addExpense": "Ausgabe",
     "addExpenseName": "Ausgabe hinzufügen",
@@ -1737,6 +1761,47 @@
       "d1CloseTitle": "Alles ausgeglichen – Abrechnung abschließen?",
       "d1CloseStatus": "Danach kann niemand mehr Ausgaben ändern. Du kannst sie wieder öffnen.",
       "reopen": "Abrechnung wieder öffnen"
+    },
+    "v4": {
+      "title": "Reisedaten",
+      "titleFor": "Reisedaten für {by}",
+      "titleMany": "Reisedaten – {count} Anfragen",
+      "asks": "{by} bittet um deine Reisedaten",
+      "asksMany": "{names} bitten um deine Reisedaten",
+      "asksLong": "Für „{purpose}“: {fields}. Nur {by} sieht sie.",
+      "share": "Angaben freigeben",
+      "allIn": "Alle haben geantwortet – {released} von {total} freigegeben. Du kannst buchen.",
+      "toArea": "Zu den Reisedaten",
+      "waiting": "{released} von {total} haben freigegeben · offen: {names}",
+      "shortMine": "Freigaben für deine Anfrage",
+      "remind": "Erinnern",
+      "remindName": "Alle erinnern, die noch nicht geantwortet haben",
+      "collecting": "{by} sammelt Reisedaten · {released} von {total}",
+      "collectingMany": "{names} sammeln Reisedaten",
+      "shortOthers": "{by} sammelt Reisedaten",
+      "later": "Nur falls die Buchung es braucht: hier anfragen statt im Chat.",
+      "doneClosed": "Abgeschlossen – Angaben gelöscht",
+      "doneNobody": "Niemand hat freigegeben – ihr klärt es direkt",
+      "doneMine": "{released} von {total} freigegeben",
+      "doneMany": "{count} Anfragen beantwortet",
+      "doneShared": "Freigegeben an {by} ✓",
+      "doneDeclined": "Du klärst es direkt mit {by}",
+      "doneOthers": "{by} hat alle Antworten",
+      "doneDeleted": "Angaben gelöscht",
+      "field": {
+        "legal_name": "Name laut Ausweis",
+        "birth_date": "Geburtsdatum",
+        "sex": "Geschlecht laut Ausweis",
+        "nationality": "Staatsangehörigkeit",
+        "document": "Ausweisnummer",
+        "document_expiry": "Ablaufdatum",
+        "issuing_country": "Ausstellungsland"
+      }
+    },
+    "d3": {
+      "title": "Reisedaten gelöscht",
+      "before": "Werden am {date} gelöscht – bis dahin kannst du sie noch ansehen.",
+      "done": "Am {date} gelöscht – wie angekündigt."
     }
   },
   "tripInfo": {
@@ -1760,7 +1825,7 @@
     "emergency": "Notfallkontakt der Unterkunft",
     "updatedBy": "Zuletzt geändert von {name}, {date}",
     "updatedAt": "Zuletzt geändert am {date}",
-    "emptyMember": "Noch keine Infos – {orga} trägt hier Adresse, Check-in und Treffpunkt ein.",
+    "emptyMember": "Noch keine Infos – {names} {count, plural, one {trägt} other {tragen}} hier Adresse, Check-in und Treffpunkt ein.",
     "emptyOrga": "Noch keine Infos – trag Adresse, Check-in und Treffpunkt ein, dann finden alle sie hier.",
     "emptyAction": "Infos ergänzen",
     "form": {
@@ -1797,7 +1862,9 @@
       "discard": "Verwerfen",
       "keep": "Weiter bearbeiten",
       "reloadTitle": "Neu laden?",
-      "reloadText": "Deine Eingaben gehen verloren und du siehst die neue Fassung."
+      "reloadText": "Deine Eingaben gehen verloren und du siehst die neue Fassung.",
+      "notesHintTravel": "Keine Ausweis- oder Buchungsnummern hier eintragen – Ausweisdaten fragt ihr über „Reisedaten“ an. Links (https) werden automatisch erkannt.",
+      "noLongerAllowed": "Du kannst die Infos nicht mehr bearbeiten – {orga} hat geändert, wer bucht."
     },
     "fromStay": "Aus „{title}“ übernehmen",
     "fromStayDone": "Name übernommen – jetzt Adresse und Check-in ergänzen.",
@@ -1940,7 +2007,7 @@
       "booked": "gebucht",
       "bookedBy": "am {date} von {name}",
       "bookedOn": "am {date}",
-      "waitMember": "{orga} bucht – sobald es klappt, steht hier „gebucht ✓“.",
+      "waitMember": "{bookers} bucht – sobald es klappt, steht hier „gebucht ✓“.",
       "markBooked": "Als gebucht markieren",
       "unbook": "Doch nicht gebucht",
       "bookedToast": "Als gebucht markiert.",
@@ -1949,7 +2016,8 @@
       "seeInfo": "In den Infos ansehen",
       "share": "Unsere Unterkunft für {trip}: {title} {link}",
       "shareTitle": "Unterkunft teilen",
-      "likes": "♥ {count}"
+      "likes": "♥ {count}",
+      "orgaCanBook": "{bookers} bucht – du kannst es auch selbst markieren."
     },
     "unfix": {
       "action": "Festlegung aufheben …",
@@ -2003,7 +2071,9 @@
       "context": "{name} hat noch {count, plural, one {eine Unterkunft} other {# Unterkünfte}} nicht bewertet.",
       "contextAll": "Erinnert alle, die noch nicht alles bewertet haben.",
       "fixContext": "Alle haben bewertet. Sag {orga} kurz, dass es ans Festlegen geht.",
-      "bookContext": "{title} steht fest. Sag {orga} kurz, dass es ans Buchen geht."
+      "bookContext": "{title} steht fest. Sag {orga} kurz, dass es ans Buchen geht.",
+      "bookersTitle": "Wem Bescheid geben?",
+      "bookersContext": "{title} steht fest. Wem sagst du Bescheid, dass es ans Buchen geht?"
     }
   },
   "stayForm": {
@@ -2330,5 +2400,355 @@
     "accountTitle": "In {count, plural, one {einer Reise} other {# Reisen}} ist bei dir noch nicht alles ausgeglichen:",
     "accountOwe": "{trip} – du schuldest {amount}",
     "accountOwed": "{trip} – du bekommst {amount}"
+  },
+  "booking": {
+    "none": "Noch niemand bucht – markiere, wer Unterkunft und Tickets bucht.",
+    "start": "Wer bucht? ›",
+    "change": "Wer bucht? ändern ›",
+    "menu": "Wer bucht? …",
+    "sentence": "{names} {count, plural, one {bucht} other {buchen}} für euch und {count, plural, one {darf} other {dürfen}} Reisedaten anfragen.",
+    "sentenceNoData": "{names} {count, plural, one {bucht} other {buchen}} für euch.",
+    "sheet": {
+      "title": "Wer bucht?",
+      "intro": "Wer bucht, darf Reisedaten anfragen und sieht nur, was ihr oder ihm jemand freigibt – auch die Orga sieht sonst nichts. Außerdem: Infos bearbeiten, Unterkunft als gebucht markieren. Höchstens 3; alle sehen, wer bucht.",
+      "introNoData": "Wer bucht, darf die Infos bearbeiten und die Unterkunft als gebucht markieren. Höchstens 3; alle sehen, wer bucht.",
+      "you": "Du ({name})",
+      "switchName": "{name} bucht",
+      "counter": "{count} von 3 vergeben",
+      "back": "Zurück zu „Wer ist dabei?“"
+    },
+    "on": "{name} bucht jetzt.",
+    "off": "{name} bucht nicht mehr.",
+    "max": "Höchstens 3 – schalte erst jemanden aus.",
+    "placeholder": "Kann erst nach dem Beitritt buchen",
+    "revoke": {
+      "title": "{name} bucht dann nicht mehr",
+      "body": "{genitive} {count, plural, one {Anfrage wird} other {# Anfragen werden}} geschlossen, und alle Angaben, die {name} freigegeben wurden ({released, plural, =0 {bisher keine} one {von einer Person} other {von # Personen}}), werden sofort gelöscht. Das lässt sich nicht rückgängig machen.",
+      "confirm": "Markierung entziehen",
+      "done": "{name} bucht nicht mehr – die Reisedaten sind gelöscht."
+    },
+    "error": "Das hat nicht geklappt – bitte neu laden.",
+    "notAllowed": "Das kann gerade nur {bookers} oder die Orga."
+  },
+  "travelData": {
+    "title": "Reisedaten",
+    "pageTitle": "Reisedaten · {trip}",
+    "newPageTitle": "Reisedaten anfragen · {trip}",
+    "answerPageTitle": "Reisedaten für {name} · Schritt {step} von 2 · {trip}",
+    "chip": "Bucht",
+    "formerMember": "ehemaliges Mitglied",
+    "more": "{count} weitere",
+    "generic": "Das hat nicht geklappt – bitte neu laden.",
+    "limited": "Zu viele Aktionen in kurzer Zeit. Bitte warte ein paar Minuten.",
+    "offline": "Braucht eine Verbindung.",
+    "print": "Reisedaten werden nicht gedruckt.",
+    "closeHint": "Hinweis schließen",
+    "fields": {
+      "legal_name": "Name laut Ausweis",
+      "birth_date": "Geburtsdatum",
+      "sex": "Geschlecht laut Ausweis",
+      "nationality": "Staatsangehörigkeit",
+      "document": "Ausweis- oder Passnummer",
+      "document_expiry": "Ablaufdatum des Dokuments",
+      "issuing_country": "Ausstellungsland"
+    },
+    "values": {
+      "given_name": "Vorname(n)",
+      "family_name": "Nachname(n)",
+      "birth_date": "Geburtsdatum",
+      "sex": "Geschlecht",
+      "nationality": "Staatsangehörigkeit",
+      "document_type": "Dokumentart",
+      "document_number": "Dokumentnummer",
+      "document_expiry": "Ablaufdatum",
+      "issuing_country": "Ausstellungsland"
+    },
+    "sex": {
+      "F": "F (weiblich)",
+      "M": "M (männlich)",
+      "X": "X (divers / nicht angegeben)"
+    },
+    "sexOption": {
+      "F": "F – weiblich",
+      "M": "M – männlich",
+      "X": "X – divers / nicht angegeben"
+    },
+    "documentType": {
+      "passport": "Reisepass",
+      "id_card": "Personalausweis"
+    },
+    "log": {
+      "title": "Wer hat zugegriffen?",
+      "today": "heute, {time}",
+      "yesterday": "gestern, {time}",
+      "date": "{date}, {time}",
+      "viewed": "{name} hat deine Angaben angesehen · {when}",
+      "viewedMany": "{name} hat deine Angaben {count}× angesehen · zuletzt {when}",
+      "copied": "{name} hat „{field}“ kopiert · {when}",
+      "copiedMany": "{name} hat „{field}“ {count}× kopiert · zuletzt {when}",
+      "empty": "{name} hat deine Angaben noch nicht angesehen.",
+      "showAll": "Alle Zugriffe anzeigen"
+    },
+    "demo": {
+      "area": "Demo – bitte nur Fantasiedaten eingeben: keine echten Namen aus dem Ausweis, kein echtes Geburtsdatum, keine echten Ausweisnummern.",
+      "form": "Demo – bitte keine echten Ausweisdaten eingeben.",
+      "formDoc": "Demo – bitte keine echten Ausweisdaten eingeben. Ausweisnummern müssen mit DEMO beginnen.",
+      "fill": "Fantasiedaten einsetzen",
+      "filled": "Fantasiedaten eingesetzt.",
+      "request": "Demo – hier werden nur Fantasiedaten gesammelt.",
+      "release": "Demo – bitte keine echten Ausweisdaten freigeben. „Demo zurücksetzen“ löscht alles.",
+      "docHelp": "Vorschau: nur Fantasie-Nummern, die mit DEMO beginnen – z. B. DEMO12345."
+    },
+    "hints": {
+      "marked": "{name} hat dich als „Bucht“ markiert. Du kannst Reisedaten anfragen – du siehst nur, was dir jemand freigibt.",
+      "revoked": "Du bist nicht mehr als „Bucht“ markiert. Deine Anfragen sind geschlossen, alle Angaben gelöscht."
+    },
+    "datesChanged": {
+      "member": "Eure Reise hat neue Daten – deine Angaben werden jetzt am {date} gelöscht. Du kannst die Freigabe jederzeit zurückziehen.",
+      "booker": "Euer Termin hat sich geändert ({range}) – prüf, ob du neu buchen musst. Die Angaben gelten weiter bis {date}."
+    },
+    "toMe": {
+      "title": "Anfragen an dich"
+    },
+    "mine": {
+      "title": "Deine Anfragen",
+      "header": "Deine Anfrage · {date}",
+      "count": "{released} von {total} haben freigegeben",
+      "deleteOn": "Alle Angaben werden am {date} gelöscht.",
+      "menu": "Anfrage „{purpose}“ verwalten",
+      "addPeople": "Personen hinzufügen …",
+      "removePerson": "Person entfernen …",
+      "close": "Anfrage abschließen …",
+      "noEdit": "Andere Angaben nötig? Stell eine neue Anfrage.",
+      "closeAll": "Alles gebucht? Anfrage abschließen",
+      "closed": "Abgeschlossen am {date} – Angaben gelöscht",
+      "expired": "Erloschen – Angaben gelöscht",
+      "closedGroup": "Abgeschlossen ({count})",
+      "newMembers": "Neu dabei: {names} – noch nicht gefragt.",
+      "addNew": "Hinzufügen …",
+      "remind": "Erinnern",
+      "remindName": "Alle erinnern, die für „{purpose}“ noch nicht geantwortet haben",
+      "placeholderInfo": "Bekommt die Anfrage, sobald {name} beitritt.",
+      "changedOn": "geändert am {date}",
+      "none": "Noch keine eigene Anfrage",
+      "noneAction": "Reisedaten anfragen ›"
+    },
+    "booker": {
+      "note": "Du siehst nur, was dir jemand ausdrücklich freigibt. Was du außerhalb der App damit machst (z. B. in ein Buchungsformular eintragen), liegt in deiner Verantwortung – bitte nicht in Chats weiterleiten."
+    },
+    "status": {
+      "released": "freigegeben",
+      "open": "offen",
+      "declined": "klärt es direkt",
+      "placeholder": "noch nicht dabei"
+    },
+    "others": {
+      "title": "Weitere Anfragen",
+      "card": "{name} sammelt Reisedaten für „{purpose}“"
+    },
+    "emptyBooker": {
+      "title": "Noch keine Anfrage",
+      "text": "Frag nur an, was eine Buchung wirklich braucht – innerhalb Europas genügt meist der Name. Alle, die du fragst, entscheiden selbst, ob sie freigeben.",
+      "cta": "Reisedaten anfragen"
+    },
+    "emptyMember": {
+      "title": "Gerade nichts zu tun",
+      "text": "Wenn {names} für eine Buchung deine Daten {count, plural, one {braucht} other {brauchen}}, fragt sie hier an. Du entscheidest, was du freigibst.",
+      "textNobody": "Wenn jemand für eine Buchung deine Daten braucht, fragt sie hier an. Du entscheidest, was du freigibst."
+    },
+    "who": {
+      "title": "Wer sieht was?",
+      "s1": "Nur die Person, die anfragt (Markierung „Bucht“), sieht deine Angaben – und nur, wenn du freigibst.",
+      "s2": "Die Orga und andere, die buchen, sehen nur den Status („freigegeben“, „offen“); alle anderen nur Zahlen.",
+      "s3": "Gespeichert wird verschlüsselt; keine Ausweis-Scans, keine Freitexte.",
+      "s4": "Gelöscht wird automatisch 7 Tage nach der Reise (derzeit am {date}) – oder sofort, wenn du die Freigabe zurückziehst."
+    },
+    "deleted": {
+      "title": "Reisedaten gelöscht",
+      "body": "Am {date} – 7 Tage nach der Reise, wie angekündigt. Auch das Zugriffsprotokoll ist gelöscht."
+    },
+    "member": {
+      "asks": "{name} bucht „{purpose}“",
+      "asksFor": "{name} bittet um:",
+      "onlyFor": "Nur {name} sieht deine Angaben. Automatisch gelöscht 7 Tage nach der Reise (derzeit am {date}).",
+      "docNote": "{name} fragt auch nach deiner Ausweis- oder Passnummer.",
+      "afterTrip": "Die Reise ist vorbei – nur nötig, wenn {name} noch etwas nachbuchen muss.",
+      "enter": "Angaben eingeben",
+      "askedOn": "angefragt am {date}"
+    },
+    "released": {
+      "title": "Freigegeben an {name}",
+      "meta": "Für „{purpose}“ · am {date}",
+      "deleteOn": "Wird am {date} automatisch gelöscht.",
+      "change": "Angaben ändern",
+      "withdraw": "Freigabe zurückziehen …",
+      "expiresSoon": "Dein Dokument läuft vor der Rückreise ab ({date}). Prüf, ob du rechtzeitig ein neues bekommst.",
+      "expiredDoc": "Dieses Dokument ist abgelaufen."
+    },
+    "declinedCard": {
+      "title": "Du klärst das direkt mit {name}",
+      "text": "„{purpose}“ – {name} sieht nur „klärt es direkt“, keinen Grund.",
+      "undo": "Doch freigeben"
+    },
+    "expiredCard": {
+      "closedByBooker": "{name} hat fertig gebucht – deine Angaben wurden gelöscht.",
+      "bookerRevoked": "{name} bucht nicht mehr – deine Angaben für „{purpose}“ wurden gelöscht.",
+      "requesterLeft": "{name} ist nicht mehr dabei – deine Angaben wurden gelöscht.",
+      "unfixed": "Die Festlegung war länger als 30 Tage aufgehoben – deine Angaben wurden gelöscht.",
+      "expired": "Deine Angaben für „{purpose}“ wurden gelöscht.",
+      "hide": "Ausblenden"
+    },
+    "decline": "Ich kläre das direkt mit {name}",
+    "declined": "{name} sieht: „klärt es direkt“.",
+    "revoke": {
+      "title": "Freigabe zurückziehen?",
+      "body": "{name} sieht deine Angaben dann nicht mehr – sie werden sofort gelöscht, auch das Zugriffsprotokoll.",
+      "confirm": "Zurückziehen",
+      "done": "Freigabe zurückgezogen – deine Angaben sind gelöscht."
+    },
+    "reveal": "Anzeigen",
+    "hide": "Verbergen",
+    "hidden": "verborgen",
+    "revealName": "Angaben von {name} anzeigen",
+    "hideName": "Angaben von {name} verbergen",
+    "shown": "Angaben von {name} werden angezeigt.",
+    "hiddenAnnounce": "Angaben von {name} verborgen.",
+    "copy": "{field} von {name} kopieren",
+    "copied": "Kopiert – bitte nicht in Chats weiterleiten.",
+    "copyBlocked": "Kopieren geht hier nicht – tipp „Anzeigen“ und übertrage es von Hand.",
+    "loadFailed": "Konnte gerade nicht geladen werden – bitte noch einmal.",
+    "close": {
+      "title": "Anfrage abschließen?",
+      "body": "Alle freigegebenen Angaben für „{purpose}“ werden sofort gelöscht – auch für dich nicht mehr sichtbar. Hast du alles gebucht?",
+      "confirm": "Abschließen und löschen",
+      "done": "Anfrage abgeschlossen – die Angaben sind gelöscht."
+    },
+    "removePerson": {
+      "title": "Wen nimmst du aus der Anfrage?",
+      "confirmTitle": "{name} aus der Anfrage nehmen?",
+      "body": "Die freigegebenen Angaben werden sofort gelöscht.",
+      "confirm": "Aus der Anfrage nehmen",
+      "done": "{name} ist nicht mehr gefragt."
+    },
+    "addPeople": {
+      "title": "Personen hinzufügen",
+      "submit": "Hinzufügen",
+      "done": "{count, plural, one {Eine Person} other {# Personen}} hinzugefügt – sie sehen die Anfrage jetzt."
+    },
+    "reauth": {
+      "title": "Kurz bestätigen",
+      "intro": "Zum Schutz der Ausweisnummern: Bitte bestätige kurz per Code, dass du es bist.",
+      "send": "Code senden",
+      "sent": "Wir haben dir einen Code an {email} geschickt.",
+      "confirm": "Bestätigen"
+    },
+    "request": {
+      "cta": "Reisedaten anfragen",
+      "ctaShort": "+ Anfrage",
+      "title": "Reisedaten anfragen",
+      "purpose": "Wofür brauchst du die Daten?",
+      "help": "Alle Gefragten sehen diesen Zweck – z. B. „Flüge München – Split“. Bitte keine persönlichen Daten hineinschreiben.",
+      "purposeError": "Bitte gib an, wofür du die Daten brauchst.",
+      "purposeCounter": "Noch {count} Zeichen",
+      "fieldsLegend": "Welche Angaben?",
+      "always": "Immer dabei",
+      "onlyWithDoc": "Nur zusammen mit der Dokumentnummer",
+      "docWarning": "Nur anfragen, wenn die Buchung sie wirklich verlangt – innerhalb Europas genügt meist der Name. Vor dem ersten Anzeigen fragen wir dich nach einem Code.",
+      "never": "Nie abgefragt: Ausweisfotos oder -scans, Adresse, Freitext. Gelöscht wird automatisch 7 Tage nach der Reise (derzeit am {date}).",
+      "whoLegend": "Wen fragst du?",
+      "afterJoin": "bekommt es nach Beitritt",
+      "whoError": "Bitte wähle mindestens eine Person.",
+      "whoHint": "Kommt später jemand dazu, kannst du die Person nachträglich hinzufügen.",
+      "submit": "Anfrage senden",
+      "sent": "Anfrage an {count, plural, one {eine Person} other {# Personen}} gesendet – sie sehen sie in ihrer Übersicht.",
+      "docConfirmTitle": "Dokumentnummer wirklich anfragen?",
+      "docConfirmBody": "{count, plural, one {Eine Person soll} other {# Personen sollen}} dir die Ausweis- oder Passnummer geben. Brauchst du sie für „{purpose}“?",
+      "docConfirmBack": "Zurück",
+      "docConfirmYes": "Ja, anfragen",
+      "limit": "Schließ erst eine Anfrage ab – höchstens 3 gleichzeitig.",
+      "discardTitle": "Anfrage verwerfen?",
+      "discardText": "Deine Eingaben werden nicht gespeichert.",
+      "keep": "Weiter bearbeiten",
+      "discard": "Verwerfen",
+      "noOne": "Noch niemand zum Fragen – lade erst jemanden ein.",
+      "fieldWithDoc": "Dokument (Art + Nummer)"
+    },
+    "fill": {
+      "step": "Schritt {step} von 2",
+      "step1": "Angaben",
+      "step2": "Freigeben",
+      "forPurpose": "Für „{purpose}“ · nur {name} sieht deine Angaben",
+      "exact": "Schreib alles genau wie im Ausweis, auch zweite Vornamen – sonst kann der Anbieter die Buchung ablehnen.",
+      "givenNames": "Vorname(n) laut Ausweis",
+      "familyNames": "Nachname(n) laut Ausweis",
+      "birth": "Geburtsdatum",
+      "day": "Tag",
+      "month": "Monat",
+      "year": "Jahr",
+      "dateHelp": "z. B. 07 04 1995",
+      "dateHelpUs": "z. B. 04 07 1995",
+      "sexLegend": "Geschlecht laut Ausweis",
+      "sexHelp": "Airlines fragen das als Anrede ab.",
+      "nationality": "Staatsangehörigkeit",
+      "choose": "Bitte wählen",
+      "docLegend": "Dokument",
+      "docNumber": "Dokumentnummer",
+      "expiry": "Ablaufdatum des Dokuments",
+      "country": "Ausstellungsland",
+      "next": "Weiter",
+      "summary": "{count, plural, one {Eine Angabe fehlt noch} other {# Angaben fehlen noch}}",
+      "reuse": "Angaben aus deiner Freigabe an {name} übernehmen",
+      "reused": "Angaben übernommen – bitte prüfen.",
+      "discardTitle": "Angaben verwerfen?",
+      "discardText": "Deine Eingaben werden nicht gespeichert.",
+      "discard": "Verwerfen",
+      "keep": "Weiter bearbeiten",
+      "declineTitle": "Angaben verwerfen und es direkt mit {name} klären?",
+      "declineConfirm": "Direkt klären",
+      "declineBack": "Zurück",
+      "back": "Zurück",
+      "closedByBooker": "{name} hat die Anfrage inzwischen abgeschlossen – es wurde nichts gespeichert.",
+      "noLongerBooker": "{name} bucht nicht mehr – es wurde nichts gespeichert."
+    },
+    "errors": {
+      "givenRequired": "Bitte gib deine Vornamen ein – alle, wie im Ausweis.",
+      "givenInvalid": "Bitte nur Buchstaben, Leerzeichen, Bindestrich, Apostroph oder Punkt.",
+      "familyRequired": "Bitte gib deinen Nachnamen ein, wie im Ausweis.",
+      "familyInvalid": "Bitte nur Buchstaben, Leerzeichen, Bindestrich, Apostroph oder Punkt.",
+      "dateIncomplete": "Bitte gib dein Geburtsdatum vollständig ein.",
+      "dateInvalid": "Dieses Datum gibt es nicht – bitte prüf Tag und Monat.",
+      "dateFuture": "Das Geburtsdatum kann nicht in der Zukunft liegen.",
+      "dateYear": "Bitte prüf das Jahr.",
+      "sexRequired": "Bitte wähle aus, was in deinem Ausweis steht.",
+      "nationalityRequired": "Bitte wähle deine Staatsangehörigkeit.",
+      "documentTypeRequired": "Bitte wähle die Dokumentart.",
+      "documentNumberInvalid": "Bitte gib die Nummer genau wie im Dokument ein – nur Buchstaben und Ziffern.",
+      "documentDemo": "In der Demo nur Fantasie-Nummern, die mit DEMO beginnen.",
+      "expiryIncomplete": "Bitte gib das Ablaufdatum vollständig ein.",
+      "expiryInvalid": "Dieses Datum gibt es nicht – bitte prüf Tag und Monat.",
+      "countryRequired": "Bitte wähle das Ausstellungsland."
+    },
+    "consent": {
+      "summary": "Das gibst du frei",
+      "change": "Angaben ändern",
+      "text": "Ich gebe diese Angaben für „{purpose}“ an {name} frei. Sie werden verschlüsselt gespeichert, nur {name} sieht sie, und sie werden 7 Tage nach der Reise automatisch gelöscht (derzeit am {date}). Ich kann die Freigabe jederzeit zurückziehen.",
+      "privacy": "Datenschutzhinweis",
+      "missing": "Bitte bestätige die Freigabe – oder kläre es direkt mit {name}.",
+      "release": "An {name} freigeben",
+      "releaseChange": "Änderungen freigeben",
+      "released": "Freigegeben an {name}.",
+      "failed": "Das hat nicht geklappt – deine Angaben sind noch nicht freigegeben. Bitte versuch es noch einmal."
+    },
+    "remind": {
+      "title": "Wer fehlt noch?",
+      "open": "Offen ({count})",
+      "declined": "Klärt es direkt ({count})",
+      "pending": "Noch nicht dabei ({count})",
+      "all": "Alle erinnern ({count})",
+      "allShort": "Alle erinnern",
+      "context": "{name} hat für „{purpose}“ noch nicht geantwortet.",
+      "contextAll": "Erinnert alle, die für „{purpose}“ noch nicht geantwortet haben.",
+      "contextJoin": "{name} ist noch nicht beigetreten – die Nachricht enthält den persönlichen Link."
+    }
   }
 }
