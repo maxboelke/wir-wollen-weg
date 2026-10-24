@@ -325,7 +325,32 @@ Grundlage: `docs/ux/abstimmung-design.md` §16 (D-64 – D-71), W20 Abschnitt H,
 | U-42 | **Bestätigung „Dokumentnummer wirklich anfragen?“:** Primär-Taste nicht destruktiv (es löscht nichts), Kopf mit `key` in Amber-Kachel. Bitte bestätigen. |
 | U-43 | **Etikett «VORSCHAU» / «PREVIEW»** im Vorschau-Hinweis ist ein neuer Text (Schlüssel z. B. `travelData.demo.tag`). Bitte in H.16 aufnehmen. |
 
+## 14. Runde 9 – Kosten v2 (Inkrement 11a): Antworten auf D-81 – D-87 (2026-10-24)
+
+Grundlage: `docs/ux/abstimmung-design.md` §18, W19 E, W16 v2.17 Fassung 2; geprüft gegen den gebauten Stand (`src/features/cockpit/components/cost-dock.*`, `src/features/costs/components/`). Optik: [design-system.md §9.22.1](design-system.md). Keine neuen Tokens nötig.
+
+| ID | Antwort Design | Status |
+|---|---|---|
+| **D-81** Kosten-Leiste Fassung 2 | **Bestätigt wie gebaut** (Link-Fläche vertieft + Rahmen, Kachel 32 Sonne + `wallet`, «Kosten · Verlauf ›» 13/800 Link, Stand-Satz 14/700, Primär 48 ohne Glow, Ausblenden UM-26, Fokus-Schutz, Rückfall statisch). Zwei kleine Nachbesserungen: (a) im Rückfall (`.static`) Taste volle Breite unter der Link-Fläche (W16: „darunter Taste volle Breite“); (b) Titelgröße per Token `--ww-text-meta` statt `0.8125rem`. Minze-Text auf vertieft = 4,6 – deshalb Stand-Satz 700 beibehalten. | erledigt (blockierend aufgehoben) |
+| **D-82** „Dein Stand“ v2 | **Bestätigt** (Tönung `primary-tint` / `accent-tint`, 1,5 px `border-subtle`, ohne Schatten, Satz 24/800, Rechenweg weiß mit Summenlinie `border-strong`). Ebenen ohne Farbe unterscheidbar (Eyebrow + `space-8` + h2) – erfüllt. | erledigt |
+| **D-83** Ausgaben-Zeile v2 | **Ruhig genug** wie gebaut (Trenner 12/800 Versal, rechte Spalte 13/600). Keine weitere Reduktion. | erledigt |
+| **D-84** Eigene Überweisung | **Bestätigt** (Kopf 17/800, Primär nur erste, «Ist angekommen» Sekundär + Erinnern-Text-Taste in einer Zeile mit Umbruch, Chip «✓ Erledigt» `cost-paid-*`). | erledigt |
+| **D-85** Kompaktzeile | **Bestätigt** (44 px, Avatare 20, Betrag 14/800, Status 12/700 muted / `cost-paid-fg`, nicht antippbar). **Ergänzung:** die aufgeklappte Liste steht in **einer** ruhigen Fläche (`surface`, Radius `card`, Polster 0/16, ohne Schatten) – nur Trennlinien auf Nebel sind praktisch unsichtbar. Keine Karte je Zeile. | erledigt, kleine Code-Anpassung |
+| **D-86** Ruhige Karten | **Bestätigt** für «Für dich als Orga» (`surface`, 1,5 px `border-subtle`, kein Schatten, keine Koralle). «Wohin soll das Geld?» (`payCard`) bitte **gleiche** Kontur 1,5 px `border-subtle` wie «Für dich als Orga» – beide Karten sind dieselbe Gattung. | erledigt, kleine Code-Anpassung |
+| **D-87** Salden-Balken | **Entfallen.** Tokens `--ww-cost-bar-*` bleiben als „reserviert/ungenutzt“ stehen (kein Code nutzt sie); Entfernen beim nächsten Token-Aufräumen, falls bis Go-Live ungenutzt. | erledigt |
+
+### 14.1 Kurzliste für den Developer (Inkrement 11a, klein)
+1. `cost-dock.module.css`: `.static .action { flex: 1 1 100%; }` (Rückfall: Taste volle Breite unter der Link-Fläche).
+2. `cost-dock.module.css`: `.title` `font-size: var(--ww-text-meta)` statt `0.8125rem`.
+3. `costs.module.css`: Liste „Ausgleiche der anderen“ (`[data-others-list]` bzw. eigene Klasse) als eine Fläche: `background: var(--ww-color-surface); border-radius: var(--ww-radius-card); padding: 0 var(--ww-space-4);` – **nicht** für die Orga-Liste in `quietCard` (die steht schon auf `surface`).
+4. `costs.module.css`: `.payCard` Rahmen `1.5px solid var(--ww-color-border-subtle)` wie `.quietCard` (Forced-Colors-Rahmen bleibt über `--ww-border-forced`, falls nötig als `outline`).
+5. M-P4-Assets: `node scripts/sync-design-assets.ts` ausführen (geänderte `illustrations/hero.svg` → `illustrations.json`).
+
+### 14.2 Offen für UI/UX
+Keine neuen Punkte. Hinweis: W19 E.3 nennt im Wireframe noch „zahlst zurück = neutral“ und Tages-Trenner 13/800 – gebaut und bestätigt sind `primary-tint` (D-82) und 12/800 (D-83); bitte bei Gelegenheit angleichen.
+
 ## Changelog
+- 2026-10-24 (Runde 9, Inkrement 11a): §14 – Antworten D-81–D-87, Kurzliste Developer; design-system §9.22.1; M-P4-Assets: `heatmap-legend.svg`, `heatmap-markers.svg`, `icons/all-available.svg`, `illustrations/hero.svg` („alle“ hell grün), design-system §4.1 Palette angepasst.
 - 2026-10-23 (Runde 7, Inkrement 11): §13 – Antworten D-64–D-71, offene Punkte U-39–U-43; Icons v1.3 (`shield`, `id-card`, `history`, `key`), `empty-travel-data.svg`, `travel-data-deleted.svg`, Tokens v1.3 `--ww-travel-*`, design-system §9.23.
 - 2026-10-23 (Runde 6, Inkrement 10): §12 – Antworten D-56–D-63, offene Punkte U-35–U-38; Icons v1.2, `empty-costs.svg`, Tokens v1.2 `--ww-cost-*`, design-system §9.22.
 - 2026-10-23 (Runde 5, Inkrement 9): §11 – Antworten D-46–D-55, offene Punkte U-31–U-34; Icons, Platzhalter, Demo-Bilder, Leerzustand, Tokens v1.1, design-system §9.21.
