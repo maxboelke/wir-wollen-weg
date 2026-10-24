@@ -117,7 +117,7 @@ export function CostDock({ dock }: { dock: DockView }) {
             return;
           }
           if (entry?.isIntersecting) apply(true);
-          else if (wantHidden.current === false) apply(false);
+          else if (!wantHidden.current) apply(false);
         },
         { rootMargin: `0px 0px -${String(h)}px 0px` },
       );

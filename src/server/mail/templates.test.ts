@@ -143,7 +143,7 @@ describe("privacy mails (F-013, F-043)", () => {
       tripUrl: "https://app.example/trips/abcdefghij",
       openSettlements: 3,
     });
-    expect(mail.text).toContain("Achtung: In der Abrechnung sind noch 3 Ausgleiche offen.");
+    expect(mail.text).toContain("Achtung: In der Abrechnung sind noch 3 Überweisungen offen.");
     const en = renderTripDeletionNoticeEmail({
       locale: "en",
       tripName: "Gardasee",
@@ -152,7 +152,7 @@ describe("privacy mails (F-013, F-043)", () => {
       tripUrl: "https://app.example/trips/abcdefghij",
       openSettlements: 1,
     });
-    expect(en.text).toContain("1 payment is still open");
+    expect(en.text).toContain("1 transfer is still open");
   });
 
   it("warns an inactive account 30 days before with a sign-in link", () => {
