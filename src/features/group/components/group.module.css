@@ -279,7 +279,7 @@
   padding-inline: 6px;
   border-radius: var(--ww-radius-pill);
   background: var(--ww-hm-suggest);
-  color: var(--ww-hm-all-fg);
+  color: var(--ww-hm-suggest-fg);
   font-size: var(--ww-text-xs);
   font-weight: var(--ww-font-weight-extrabold);
   font-variant-numeric: tabular-nums;
@@ -885,7 +885,7 @@ details[open] > .legendSummary .chevron {
   padding-inline: 3px;
   border-radius: var(--ww-radius-pill);
   background: var(--ww-hm-suggest);
-  color: var(--ww-hm-all-fg);
+  color: var(--ww-hm-suggest-fg);
   font-size: 0.6875rem;
   font-weight: var(--ww-font-weight-extrabold);
   pointer-events: none;

@@ -230,9 +230,9 @@ Score s = (geht + ½ · zur Not) / abgegeben. Stufen und Siegel-Regel wie v0.5 (
 | wenige | 0 < s < 0,5 | `#D6CFFA` / Tinte | 11,1 | `#362C7A` / `#F3F1FF` | 10,4 | Zahl |
 | einige | 0,5 ≤ s < 0,75 | `#A79AF2` / Tinte | 6,7 | `#5B48C9` / Weiß | 6,5 | Zahl |
 | viele | 0,75 ≤ s < 1 | `#5B48C9` / Weiß | 6,5 | `#A79AF2` / `#14112E` | 7,4 | Zahl |
-| alle | s = 1 | `#2B2266` / Weiß | 13,7 | Minze `#52E5B8` / `#14112E` | 11,5 | Zahl + **Siegel** (hell Minze mit weißem Ring, Minze gegen Zelle 8,7; dunkel Mitternacht-Kreis mit Minze-Haken) |
+| alle | s = 1 | **Minze `#52E5B8` / Indigo `#2B2266`** (M-P4, seit 2026-10-23) | 8,7 | Minze `#52E5B8` / `#14112E` | 11,5 | Zahl + **Siegel** (hell Indigo-Kreis mit Minze-Haken und weißem Ring, Indigo gegen Zelle 8,7; dunkel Mitternacht-Kreis mit Minze-Haken) |
 
-Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen und Farbfehlsichtigkeit behalten die Reihenfolge; Nachbarstufen Fläche zu Fläche 1,2–2,6 – wie bisher nicht alle ≥ 3 : 1, die Information steckt in Zahl, Schraffur, Siegel und ◐ (1.4.1 erfüllt). Pflicht-Simulation im Review (§12). Referenz: `assets/heatmap/heatmap-legend.svg`.
+**M-P4 (entschieden 2026-10-23, Auftraggeber: ja):** „alle können“ ist auch im Hellmodus **grün** (Minze-Fläche, Indigo-Zahl, Indigo-Siegel) – wie im Dunkelmodus und im Werbevideo; „Grün heißt: alle können“. Tokens `--ww-hm-all-*`/`--ww-hm-seal-*` (tokens.css); die Rang-Pille auf dem Vorschlags-Band nutzt seitdem `--ww-hm-suggest-fg` statt `hm-all-fg`. Folge: Die Luminanz-Rampe ist hell bis „viele“ monoton (0,85 → 0,66 → 0,38 → 0,11), „alle“ springt bewusst auf 0,61 – „alle“ ist zusätzlich durch Zahl x = n **und** Siegel kodiert, „viele“ ↔ „alle“ Fläche zu Fläche 4,1 : 1; Minze gegen Weiß 1,6 : 1 (Zellgrenze nicht informationstragend, 1.4.11 erfüllt über Zahl/Siegel). Vorher: Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen und Farbfehlsichtigkeit behalten die Reihenfolge; Nachbarstufen Fläche zu Fläche 1,2–2,6 – wie bisher nicht alle ≥ 3 : 1, die Information steckt in Zahl, Schraffur, Siegel und ◐ (1.4.1 erfüllt). Pflicht-Simulation im Review (§12). Referenz: `assets/heatmap/heatmap-legend.svg`.
 
 ### 6.3 Markierungen
 | Zustand | Darstellung | Kontrast |
@@ -245,7 +245,7 @@ Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen 
 | Vorschlag | **Indigo-Band** (dunkel Minze) 4 px in der Zeilenfuge, Endkappen nur an An-/Abreisetag, an Umbrüchen offen | 13,7 gegen Weiß / 10,2 dunkel |
 | Außerhalb / vergangen | ohne Fläche, Datum `hm-outside-fg` | 3,4 / 3,9 |
 
-„Alle können“ und „Vorschlag“ teilen die Markenfarbe – gewollt: der beste Zeitraum ist der indigofarbene. Referenz: `heatmap-markers.svg`.
+„Vorschlag“ bleibt hell das Indigo-Band; „alle können“ ist seit M-P4 grün (Minze) – Grün = frei, Indigo-Band = unser Vorschlag. Referenz: `heatmap-markers.svg`.
 
 ### 6.4 Meine Tage (F-005)
 | Zustand | Hell | Dunkel | Muster | Symbol |
