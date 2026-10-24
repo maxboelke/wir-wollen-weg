@@ -58,7 +58,7 @@
   align-items: center;
   gap: 2px;
   color: var(--ww-color-link);
-  font-size: 0.8125rem;
+  font-size: var(--ww-text-meta);
   font-weight: var(--ww-font-weight-extrabold);
 }
 
@@ -100,6 +100,11 @@
 
 .action:active {
   transform: scale(var(--ww-motion-scale-press, 0.98));
+}
+
+/* Static card at 200 % text / low windows (W16 v2.17, D-82): the button takes the full width. */
+.static .action {
+  flex: 1 1 100%;
 }
 
 /* Phones: fixed bar at the bottom, in the thumb zone, above the home indicator. */

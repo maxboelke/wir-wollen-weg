@@ -1770,7 +1770,7 @@ function Settle({
         {othersCount > 0 ? (
           <ul
             id={`${ids}-others-list`}
-            className={styles.compactList}
+            className={cx(styles.compactList, styles.othersList)}
             hidden={!othersOpen}
             data-others-list=""
           >

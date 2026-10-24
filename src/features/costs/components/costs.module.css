@@ -834,6 +834,14 @@
   list-style: none;
 }
 
+/* «Ausgleiche der anderen» on a surface – dividers on the page background were 1.1:1 (D-86). */
+.othersList {
+  padding: 0 var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+}
+
 .compactRow {
   display: flex;
   flex-wrap: wrap;
@@ -1002,7 +1010,7 @@
   flex-direction: column;
   gap: var(--ww-space-2);
   padding: var(--ww-space-4);
-  border: var(--ww-border-forced);
+  border: 1.5px solid var(--ww-color-border-subtle);
   border-radius: var(--ww-radius-card);
   background: var(--ww-color-surface);
 }
