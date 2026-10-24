@@ -271,16 +271,8 @@ export function priceInput(cents: number | null, locale: string): string {
   return `${String(whole)}${locale.startsWith("de") ? "," : "."}${String(fraction).padStart(2, "0")}`;
 }
 
-/** «2.050 €» / «£2,050» / «1.840,50 €» – decimals only when there are cents. */
-export function formatMoney(cents: number, currency: string, intl: string): string {
-  const whole = cents % 100 === 0;
-  return new Intl.NumberFormat(intl, {
-    style: "currency",
-    currency,
-    minimumFractionDigits: whole ? 0 : 2,
-    maximumFractionDigits: whole ? 0 : 2,
-  }).format(cents / 100);
-}
+/** «2.050 €» / «£2,050» / «1.840,50 €» – the shared formatter of src/lib/money.ts. */
+export { formatMoneyShort as formatMoney } from "./money";
 
 /**
  * «≈ X pro Person» (R.7 I9-02): total ÷ travellers, rounded half up to whole currency units –

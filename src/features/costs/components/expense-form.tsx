@@ -39,6 +39,7 @@ import {
   type SplitMode,
 } from "@/lib/costs";
 import { cx } from "@/lib/cx";
+import { currencySymbol } from "@/lib/money";
 import { formatDate } from "@/lib/dates";
 import { textLength } from "@/lib/trip-info";
 import { costsPath, tripPath } from "@/features/trips/paths";
@@ -103,12 +104,7 @@ function valuesOf(expense: CostExpenseView | null, model: CostsModel, date: stri
 }
 
 /** Currency symbol position by language (DE «60,00 €», EN «€60.00»). */
-function symbolOf(currency: string, intl: string): { symbol: string; before: boolean } {
-  const parts = new Intl.NumberFormat(intl, { style: "currency", currency }).formatToParts(1);
-  const index = parts.findIndex((p) => p.type === "currency");
-  const integer = parts.findIndex((p) => p.type === "integer");
-  return { symbol: parts[index]?.value ?? currency, before: index < integer };
-}
+const symbolOf = currencySymbol;
 
 function currencyName(code: string, locale: string): string {
   try {
