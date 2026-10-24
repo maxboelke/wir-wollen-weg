@@ -12,9 +12,11 @@ import { formatTime } from "@/lib/trip-info";
 import type { Msg, RouteAction, RouteTarget, TripGoal, TripStation } from "@/lib/trip-route";
 import { costRemindData } from "../costs/remind";
 import { stayRemindData } from "../stays/remind";
-import { nameList, nightsText, rangeText } from "../trips/format";
+import { travelRemindData } from "../travel-data/remind";
+import { bookersOf } from "../trips/bookers";
+import { nameList, nightsText, orList, rangeText } from "../trips/format";
 import type { TripView } from "../trips/load";
-import { costsPath, tripPath } from "../trips/paths";
+import { costsPath, travelDataPath, tripPath } from "../trips/paths";
 import { orgaName } from "../trips/remind";
 import { inviteLink, resultShareTexts, tripLink } from "../trips/share-texts";
 import type { CockpitData } from "./load";
@@ -44,12 +46,21 @@ interface Ctx {
   more: (count: number) => string;
 }
 
+/** Labels of travel-detail fields inside way texts (`route.v4.field.*`). */
+function fieldNames(ctx: Ctx, keys: readonly string[]): string {
+  return new Intl.ListFormat(ctx.locale, { type: "conjunction", style: "long" }).format(
+    keys.map((key) => ctx.t(`v4.field.${key}`)),
+  );
+}
+
 /** Resolves a message of the way (`route.*`) with names, dates and times in the viewer's format. */
 function text(ctx: Ctx, msg: Msg): string {
   const values: Values = {};
   for (const [key, value] of Object.entries(msg.values ?? {})) {
     if (typeof value === "string" || typeof value === "number") values[key] = value;
     else if ("names" in value) values[key] = nameList([...value.names], ctx.locale, ctx.more);
+    else if ("or" in value) values[key] = orList([...value.or], ctx.locale);
+    else if ("fields" in value) values[key] = fieldNames(ctx, value.fields);
     else if ("date" in value) values[key] = formatDate(value.date, ctx.intl, { weekday: false });
     else if ("time" in value) values[key] = formatTime(value.time, ctx.intl);
     else if ("money" in value) {
@@ -83,6 +94,8 @@ const LOOK: Record<string, { icon: IconName; tone: Exclude<TileTone, "brand"> }>
   A2: { icon: "info", tone: "lavender" },
   A1: { icon: "wallet", tone: "sun" },
   D1: { icon: "wallet", tone: "sun" },
+  V4: { icon: "id-card", tone: "travel" },
+  D3: { icon: "id-card", tone: "travel" },
   "T-meet": { icon: "users", tone: "lavender" },
 };
 
@@ -108,6 +121,12 @@ function link(view: TripView, target: RouteTarget): CockpitLink {
       return { kind: "path", href: costsPath(id, "balances") };
     case "costsNew":
       return { kind: "path", href: `${costsPath(id, "new")}?date=today&from=cockpit` };
+    case "travelData":
+      return { kind: "path", href: travelDataPath(id) };
+    case "travelDataNew":
+      return { kind: "path", href: travelDataPath(id, "new") };
+    case "travelDataRequest":
+      return { kind: "path", href: travelDataPath(id, target.requestId) };
   }
 }
 
@@ -270,8 +289,15 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       status,
       ariaLabel: sentence(title, status),
       href: path(view, tile.href),
-      icon: tile.area === "stay" ? "bed" : tile.area === "costs" ? "wallet" : "info",
-      tone: tile.area === "costs" ? "sun" : "lavender",
+      icon:
+        tile.area === "stay"
+          ? "bed"
+          : tile.area === "costs"
+            ? "wallet"
+            : tile.area === "travelData"
+              ? "id-card"
+              : "info",
+      tone: tile.area === "costs" ? "sun" : tile.area === "travelData" ? "travel" : "lavender",
     };
   });
   const placeholders = view.placeholders.length;
@@ -299,13 +325,25 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
       decided: { title: t("decided.title"), sub: t("decided.sub") },
       members: {
         title: t("members.title", { count: view.members.length }),
-        sub:
-          placeholders > 0
-            ? t("members.subPlaceholders", { orga, count: placeholders })
-            : t("members.sub", { orga }),
+        sub: membersSub(ctx, view, placeholders, orga),
       },
     },
   };
+}
+
+/** «Mehr zur Reise» → «Wer ist dabei?»: «Lena und Sara buchen · Lena ist Orga» (W16 v2.16). */
+function membersSub(ctx: Ctx, view: TripView, placeholders: number, orga: string): string {
+  const rest =
+    placeholders > 0
+      ? ctx.t("members.subPlaceholders", { orga, count: placeholders })
+      : ctx.t("members.sub", { orga });
+  const bookers = bookersOf(view.members).map((m) => m.displayName);
+  if (bookers.length === 0) return rest;
+  return ctx.t("members.subBookers", {
+    names: nameList(bookers, ctx.locale, ctx.more),
+    count: bookers.length,
+    rest,
+  });
 }
 
 /** Ticket head (W16 v2.2): ring, range, crew, calendar button. */
@@ -447,6 +485,7 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
       name: m.displayName,
       organizer: m.role === "organizer",
       me: m.userId === me.userId,
+      booker: m.bookerSince !== null,
     })),
     placeholders: sheetPlaceholders,
     announce,
@@ -486,5 +525,8 @@ export async function sheetData(view: TripView, data: CockpitData): Promise<Cock
         ? await stayRemindData(view, data.staysRaw)
         : null,
     costRemind: await costRemindData(view, data.costsRaw),
+    travelRemind: data.travelRaw ? await travelRemindData(view, data.travelRaw) : null,
+    travelData: data.travel !== null,
+    canSetBookers: isOrganizer && trip.phase === "fixed",
   };
 }

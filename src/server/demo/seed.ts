@@ -36,9 +36,20 @@
 // sample IBAN, Carla «PayPal: carla.demo»), «Gardasee» (Danach – Anna owes Felix → D1, Greta
 // already paid, a former member still owes Felix), «Kroatien Segeln» (all square and closed).
 // IBANs are well-known sample IBANs marked «(Demo)», never real accounts.
+// Increment 11 (F-056 «Bucht», F-054 Reisedaten, features.md R.9 Demo-Seed): every fixed trip
+// gives its organiser the default marking; «Kroatien 2027» – Ben handed it to David (Ben is
+// organiser WITHOUT «Bucht», sees status only), David asks «Fähre Split – Hvar»: Carla shared,
+// Anna open (V4 «du bist dran»), Emma «klärt es direkt», placeholder Lotte; «Familientreffen
+// Harz» – Anna asks «Bahntickets Hannover – Braunlage»: Hanna shared (2 log rows), Greta open,
+// Opa Klaus not joined; «Roadtrip Schottland» – Ben asks «Flüge nach Edinburgh» WITH the document:
+// Anna, Carla, Emma shared (Emma's passport expires before the return); «Gardasee» – Felix's
+// request is gone after the deletion date (D3 done). All names, dates and numbers are made up;
+// document numbers start with DEMO; releases are encrypted through the app's cipher module.
 import { randomBytes, randomInt } from "node:crypto";
 import type { ClientBase } from "pg";
 import { addDays, todayIso } from "../../lib/dates.ts";
+import { CONSENT_VERSION, TRAVEL_SCHEMA_VERSION } from "../../lib/travel-data.ts";
+import { currentKeyRing, sealRecord } from "../travel-data/cipher.ts";
 
 export const DEMO_DOMAIN = "@demo.test";
 
@@ -178,6 +189,38 @@ interface CostSeed {
   closedBy?: string;
 }
 
+/** Travel details (Increment 11): values per person – made up, numbers start with DEMO. */
+interface TravelValuesSeed {
+  givenNames: string;
+  familyNames: string;
+  birthDate: string;
+  sex?: "F" | "M" | "X";
+  nationality?: string;
+  documentType?: "passport" | "id_card";
+  documentNumber?: string;
+  documentExpiry?: string;
+  issuingCountry?: string;
+}
+
+interface TravelRequestSeed {
+  by: string;
+  purpose: string;
+  fields: string[];
+  daysAgo: number;
+  /** Member keys or `ph:<placeholder name>` → state; released people need `values`. */
+  answers: Record<string, "open" | "released" | "declined" | "expired">;
+  values?: Record<string, TravelValuesSeed>;
+  /** Access log rows of the asking person per released member. */
+  access?: Record<string, { action: "view" | "copy"; field?: string; hoursAgo: number }[]>;
+  closed?: { reason: "done" | "expired"; daysAgo: number };
+}
+
+interface TravelSeed {
+  /** Member keys with the marking «Bucht» (default: the organiser). */
+  bookers?: string[];
+  requests?: TravelRequestSeed[];
+}
+
 interface TripSeed {
   name: string;
   description?: string;
@@ -220,6 +263,8 @@ interface TripSeed {
   stayWithoutAppBy?: string;
   /** Cost splitting (Increment 10). */
   costs?: CostSeed;
+  /** «Bucht» + travel details (Increment 11). */
+  travel?: TravelSeed;
 }
 
 const TRIPS: TripSeed[] = [
@@ -358,6 +403,26 @@ const TRIPS: TripSeed[] = [
       [day(55), day(59)],
     ],
     placeholders: ["Opa Klaus"],
+    travel: {
+      requests: [
+        {
+          by: "anna",
+          purpose: "Bahntickets Hannover – Braunlage",
+          fields: ["legal_name", "birth_date"],
+          daysAgo: 3,
+          answers: { hanna: "released", greta: "open", "ph:Opa Klaus": "open" },
+          values: {
+            hanna: { givenNames: "Hanna Sophie", familyNames: "Koch", birthDate: "1991-05-23" },
+          },
+          access: {
+            hanna: [
+              { action: "view", hoursAgo: 26 },
+              { action: "copy", field: "birth_date", hoursAgo: 25 },
+            ],
+          },
+        },
+      ],
+    },
     info: {
       stayName: "Ferienhaus Brockenblick",
       address: "Am Kurpark 12\n38700 Braunlage",
@@ -620,6 +685,57 @@ const TRIPS: TripSeed[] = [
       { person: "carla", submitted: true, voted: true, celebrated: true },
       { person: "emma", submitted: true, voted: true, celebrated: true },
     ],
+    travel: {
+      requests: [
+        {
+          by: "ben",
+          purpose: "Flüge nach Edinburgh",
+          fields: [
+            "legal_name",
+            "birth_date",
+            "nationality",
+            "document",
+            "document_expiry",
+            "issuing_country",
+          ],
+          daysAgo: 30,
+          answers: { anna: "released", carla: "released", emma: "released" },
+          values: {
+            anna: {
+              givenNames: "Anna Lena",
+              familyNames: "Schmidt",
+              birthDate: "1993-02-11",
+              nationality: "DE",
+              documentType: "passport",
+              documentNumber: "DEMO4711A",
+              documentExpiry: day(900),
+              issuingCountry: "DE",
+            },
+            carla: {
+              givenNames: "Carla Maria",
+              familyNames: "Rossi",
+              birthDate: "1994-03-15",
+              nationality: "IT",
+              documentType: "id_card",
+              documentNumber: "DEMOCA2741",
+              documentExpiry: day(1200),
+              issuingCountry: "IT",
+            },
+            emma: {
+              givenNames: "Emma Jane",
+              familyNames: "Brown",
+              birthDate: "1996-09-30",
+              nationality: "US",
+              documentType: "passport",
+              documentNumber: "DEMO550193",
+              documentExpiry: day(5),
+              issuingCountry: "US",
+            },
+          },
+          access: { anna: [{ action: "view", hoursAgo: 700 }] },
+        },
+      ],
+    },
     costs: {
       expenses: [
         {
@@ -699,6 +815,19 @@ const TRIPS: TripSeed[] = [
       checkOut: "10:00",
     },
     stayWithoutAppBy: "felix",
+    travel: {
+      requests: [
+        {
+          by: "felix",
+          purpose: "Fähre Limone – Malcesine",
+          fields: ["legal_name", "birth_date"],
+          daysAgo: 30,
+          // Deleted by the retention job on the deletion date (departure + 7) – only the hull.
+          answers: { anna: "expired", greta: "declined" },
+          closed: { reason: "expired", daysAgo: 1 },
+        },
+      ],
+    },
     members: [
       { person: "felix", organizer: true, submitted: true, voted: true, celebrated: true },
       { person: "anna", submitted: true, voted: true, celebrated: true },
@@ -753,6 +882,27 @@ const TRIPS: TripSeed[] = [
     fixedDaysAgo: 12,
     options: [[day(60), day(67)]],
     placeholders: ["Lotte"],
+    travel: {
+      bookers: ["david"],
+      requests: [
+        {
+          by: "david",
+          purpose: "Fähre Split – Hvar",
+          fields: ["legal_name", "birth_date"],
+          daysAgo: 2,
+          answers: {
+            ben: "open",
+            anna: "open",
+            carla: "released",
+            emma: "declined",
+            "ph:Lotte": "open",
+          },
+          values: {
+            carla: { givenNames: "Carla Maria", familyNames: "Rossi", birthDate: "1994-03-15" },
+          },
+        },
+      ],
+    },
     members: [
       { person: "ben", organizer: true, submitted: true, votes: ["yes"], celebrated: true },
       { person: "anna", submitted: true, votes: ["yes"], celebrated: true },
@@ -982,6 +1132,110 @@ async function seedCosts(
 }
 
 /** True if at least one demo person exists (the build seeds only an empty preview). */
+/**
+ * «Bucht» + travel details (Increment 11, R.9 Demo-Seed): the default marking (organiser) or the
+ * seed's `bookers`, requests with recipients, ENCRYPTED releases (same cipher module as the app,
+ * same AAD) and access-log rows. Without a key (no BETTER_AUTH_SECRET/TRAVEL_DATA_KEYS) released
+ * answers stay «offen» – nothing is ever stored in plain text.
+ */
+async function seedTravel(
+  client: Pick<ClientBase, "query">,
+  tripId: string,
+  seed: TripSeed,
+  ids: Map<string, string>,
+  placeholders: Map<string, string>,
+): Promise<void> {
+  const orga = seed.members.find((m) => m.organizer)?.person;
+  const bookers = seed.travel?.bookers ?? (orga ? [orga] : []);
+  for (const [position, key] of bookers.entries()) {
+    await client.query(
+      `update trip_member set booker_since = now() - make_interval(days => $3), booker_set_by = $4
+       where trip_id = $1 and user_id = $2`,
+      [tripId, ids.get(key), 10 - position, orga ? (ids.get(orga) ?? null) : null],
+    );
+  }
+  await client.query(
+    `update trip set booker_defaulted_at = now() - interval '10 days' where id = $1`,
+    [tripId],
+  );
+  const ring = currentKeyRing(process.env);
+  for (const request of seed.travel?.requests ?? []) {
+    const inserted = await client.query<{ id: string }>(
+      `insert into travel_data_request (trip_id, requester_id, purpose, fields, created_at,
+         closed_at, closed_reason, used_at)
+       values ($1, $2, $3, $4::text[], now() - make_interval(days => $5),
+         case when $6::int is not null then now() - make_interval(days => $6::int) end, $7,
+         case when $8::boolean then now() - interval '1 day' end)
+       returning id`,
+      [
+        tripId,
+        ids.get(request.by),
+        request.purpose,
+        request.fields,
+        request.daysAgo,
+        request.closed?.daysAgo ?? null,
+        request.closed?.reason ?? null,
+        Object.keys(request.access ?? {}).length > 0,
+      ],
+    );
+    const requestId = inserted.rows[0]?.id ?? "";
+    for (const [who, wanted] of Object.entries(request.answers)) {
+      const placeholderId = who.startsWith("ph:") ? placeholders.get(who.slice(3)) : undefined;
+      const userId = placeholderId ? undefined : ids.get(who);
+      const values = userId ? request.values?.[who] : undefined;
+      const state = wanted === "released" && !(values && ring) ? "open" : wanted;
+      const recipient = await client.query<{ id: string }>(
+        `insert into travel_data_recipient (request_id, trip_id, user_id, placeholder_id, state,
+           responded_at, updated_at)
+         values ($1, $2, $3, $4, $5, case when $5 in ('released', 'declined') then now() - make_interval(days => $6) end,
+           now() - make_interval(days => $6))
+         returning id`,
+        [
+          requestId,
+          tripId,
+          userId ?? null,
+          placeholderId ?? null,
+          state,
+          Math.max(0, request.daysAgo - 1),
+        ],
+      );
+      const recipientId = recipient.rows[0]?.id ?? "";
+      if (state !== "released" || !values || !ring || !userId) continue;
+      const record = Object.fromEntries(
+        Object.entries(values).filter(([, value]) => value !== undefined),
+      );
+      const sealed = sealRecord(ring, record, {
+        tripId,
+        requestId,
+        userId,
+        schemaVersion: TRAVEL_SCHEMA_VERSION,
+      });
+      await client.query(
+        `insert into travel_data_release (recipient_id, ciphertext, nonce, key_id, schema_version,
+           consent_at, consent_version, consent_locale, created_at, updated_at)
+         values ($1, $2, $3, $4, $5, now() - make_interval(days => $6), $7, 'de',
+           now() - make_interval(days => $6), now() - make_interval(days => $6))`,
+        [
+          recipientId,
+          sealed.ciphertext,
+          sealed.nonce,
+          sealed.keyId,
+          TRAVEL_SCHEMA_VERSION,
+          Math.max(0, request.daysAgo - 1),
+          CONSENT_VERSION,
+        ],
+      );
+      for (const entry of request.access?.[who] ?? []) {
+        await client.query(
+          `insert into travel_data_access (recipient_id, actor_id, action, field, at)
+           values ($1, $2, $3, $4, now() - make_interval(hours => $5))`,
+          [recipientId, ids.get(request.by), entry.action, entry.field ?? null, entry.hoursAgo],
+        );
+      }
+    }
+  }
+}
+
 export async function hasDemoData(client: Pick<ClientBase, "query">): Promise<boolean> {
   const row = await client.query<{ found: boolean }>(
     `select exists (select 1 from "user" where email like $1) as found`,
@@ -1175,6 +1429,9 @@ export async function seedDemo(
       }
       if (seed.costs && tripId) {
         await seedCosts(client, tripId, seed, ids, placeholderIds);
+      }
+      if (seed.phase === "fixed" && tripId) {
+        await seedTravel(client, tripId, seed, ids, placeholderIds);
       }
       for (const stay of seed.stays ?? []) {
         const orgaKey = seed.members.find((m) => m.organizer)?.person;

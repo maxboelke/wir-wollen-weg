@@ -1,6 +1,7 @@
 import "server-only";
 import { getTranslations } from "next-intl/server";
 import { locales, type Locale } from "@/i18n/config";
+import { bookersOf } from "../trips/bookers";
 import type { TripView } from "../trips/load";
 import { tripPath } from "../trips/paths";
 import { tripLink } from "../trips/share-texts";
@@ -56,6 +57,9 @@ export async function stayRemindData(view: TripView, raw: StaysRaw): Promise<Sta
   const done = people.filter((p) => p.left === 0);
   const orga = members.find((m) => m.role === "organizer")?.displayName ?? "";
   const chosen = raw.stays.find((s) => s.chosenAt !== null) ?? null;
+  // «Bucher» (W16 v2.16): the «Bucht» people, else the organiser. Who books gets no nudge.
+  const bookers = bookersOf(members);
+  const iBook = bookers.length > 0 ? me.bookerSince !== null : isOrganizer;
   return {
     tripName: trip.name,
     orgaName: orga,
@@ -78,14 +82,22 @@ export async function stayRemindData(view: TripView, raw: StaysRaw): Promise<Sta
           return t("stayFix", { orga, trip: trip.name, link });
         }),
     book:
-      isOrganizer || !chosen
+      iBook || !chosen
         ? null
         : {
             title: chosen.title,
-            texts: await perLocale(async (locale) => {
-              const t = await getTranslations({ locale, namespace: "share.remind" });
-              return t("stayBook", { booker: orga, stay: chosen.title, link });
-            }),
+            bookers: await Promise.all(
+              (bookers.length > 0 ? bookers : members.filter((m) => m.role === "organizer")).map(
+                async (b) => ({
+                  key: b.userId,
+                  name: b.displayName,
+                  texts: await perLocale(async (locale) => {
+                    const t = await getTranslations({ locale, namespace: "share.remind" });
+                    return t("stayBook", { booker: b.displayName, stay: chosen.title, link });
+                  }),
+                }),
+              ),
+            ),
           },
   };
 }

@@ -29,6 +29,7 @@ Stand: 2026-10-08 (Runde 3: Look & Feel 2.0 Richtung B „Reise-Cockpit“, Q17)
 | W13 | [13-konto.md](13-konto.md) | Konto, E-Mail ändern, Passwort, Konto löschen `/account…` | F-041, F-042, F-043, F-046 | I, F | fertig |
 | W14 | [14-system-und-fehler.md](14-system-und-fehler.md) | System-/Fehlerzustände | F-003, F-041, F-043 | – | fertig |
 | W15 | [15-hilfe.md](15-hilfe.md) | Hilfe/FAQ `/de/hilfe`, `/en/help` (MVP – bestätigt (Auftraggeber 2026-10-08)) | – (WCAG 3.2.6) | A.2, H.4 | fertig |
+| W23 | [w23-beta-und-installation.md](w23-beta-und-installation.md) | Beta-Einstieg `/beta`, Datenschutz-Zustimmung, App installieren `/install`, Offline-Seite, PWA-Regeln (Safe Areas, Statusleiste, Zurück-Wege, externe Links), Beta-Etikett + Feedback | F-040, F-041, F-003, F-046, F-051 | A.0 in W23 | fertig (Designer D-72 – D-80 offen) |
 
 ## HTML-Skizzen
 - **[08-meine-tage.html](08-meine-tage.html)** (v2) – im Browser öffnen; mobil + Desktop nebeneinander. Interaktiv: Pinsel wählen, Tag antippen (Umschalten), über mehrere Tage ziehen (gestrichelte Vorschau je Zeilensegment), Bereichsmodus (zwei Tipps, Ankerpunkt + Hinweiszeile), Rückgängig (deaktiviert, wenn leer), Snackbar über der Leiste via `--ww-sticky-bar-h`, Tastatur (Pfeile, Leertaste, 1/2/3, Strg+Z, Esc). Die mobile Touch-Gestenlogik (horizontal starten bzw. 300 ms halten) ist nicht nachgebaut.

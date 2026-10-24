@@ -66,7 +66,9 @@ Wortmarken liegen als `<text>` in **Plus Jakarta Sans 800, 28 px, −0,02 em** v
 | `wallet` | Bereich Kosten: Kachel, A1/D1, Kopf `[Ausgleichen]` (v1.2) | `transfer` | Ausgleich / Überweisung, optional (v1.2) |
 | `receipt` | Ausgabe ohne Kategorie (v1.2) | `food` | Kategorie Essen & Trinken (v1.2) |
 | `car` | Kategorie Anreise – Alternative zu `plane`, U-35 (v1.2) | `ticket` | Kategorie Aktivitäten – Alternative zu `sparkle`, U-35 (v1.2) |
-| `tag` | Kategorie Sonstiges (v1.2) | | |
+| `tag` | Kategorie Sonstiges (v1.2) | `shield` | Geschützt: „wer sieht was“, Freigeben (v1.3) |
+| `id-card` | Bereich Reisedaten, Chip «Bucht» (v1.3) | `history` | Zugriffsprotokoll (v1.3) |
+| `key` | Ausweis-/Passnummer, Code-Bestätigung (v1.3) | | |
 
 Einzeldateien (Ansicht, gleiche Formen): `calendar`, `share`, `vote`, `crown`, `check`, `maybe`, `cross`, `language`, `calendar-download`, `copy`, `holiday`, `link`, `all-available`. Maßgeblich ist das Sprite.
 
@@ -106,6 +108,9 @@ Neu in v1.1 (2026-10-23): `empty-stays.svg` – Leerzustand „Noch keine Unterk
 
 Neu in v1.2 (2026-10-23, Kosten F-035/F-036): `empty-costs.svg` – Leerzustand „Noch keine Ausgaben“ (W19 D.4.4, D-60), Ebenen `plate`, `sun`, `sea`, `receipt`, `wallet`, `coins`, `sparks` (IDs `wwec-`). Icons v1.2: `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`. Siegel „Alles ausgeglichen“ = `seal.svg` (20/40, D-63) – keine eigene Datei.
 **Developer:** `node scripts/sync-design-assets.ts` ausführen (erzeugt `public/icons.svg` und `illustrations.json` neu) und `ICON_NAMES` in `src/components/ui/icon-names.ts` um die sieben IDs ergänzen – sonst schlägt `scripts/design-assets.test.ts` fehl.
+
+Neu in v1.3 (2026-10-23, Bucht + Reisedaten F-056/F-054): `empty-travel-data.svg` – Leerzustand „Noch keine Anfrage“ / „Gerade nichts zu tun“ (W20 H.3, D-67), Ebenen `plate`, `sun`, `sea`, `card`, `shield`, `sparks` (IDs `wwetd-`); `travel-data-deleted.svg` – „Reisedaten gelöscht“ (W20 G, D3), Ebenen `plate`, `sun`, `sea`, `card`, `seal`, `sparks` (IDs `wwtdd-`). Freigabe-Siegel = `seal.svg` 20/40 (keine eigene Datei). Icons v1.3: `shield`, `id-card`, `history`, `key`.
+**Developer:** wieder `node scripts/sync-design-assets.ts` und `ICON_NAMES` um `shield`, `id-card`, `history`, `key` ergänzen.
 
 ## Unterkünfte (`unterkuenfte/`, v1.1, F-031)
 

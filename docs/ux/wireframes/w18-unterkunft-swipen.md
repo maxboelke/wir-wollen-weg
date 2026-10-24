@@ -1,6 +1,6 @@
 # W18 – Unterkünfte: Liste, Swipen, Rangliste, Festlegen
 
-Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 9** – Präzisierungen und Inkrement-9-Schnitt: **Abschnitt E (gilt vor A–D)** · Feature **F-031**, Q31, Q33, Q34 · Routen `/trips/{id}/stays`, `/trips/{id}/stays/swipe` · Vorschlagen/Bearbeiten: [W17](w17-unterkunft-vorschlagen.md) · Cockpit-Anbindung: [W16 v2.14](w16-cockpit.md) · Infos-Übernahme: [W22 D](w22-infoseite.md)
+Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 9** – Präzisierungen und Inkrement-9-Schnitt: **Abschnitt E (gilt vor A–D)**; Inkrement 11 („Bucht“ markiert gebucht): **E.16** · Feature **F-031**, Q31, Q33, Q34 · Routen `/trips/{id}/stays`, `/trips/{id}/stays/swipe` · Vorschlagen/Bearbeiten: [W17](w17-unterkunft-vorschlagen.md) · Cockpit-Anbindung: [W16 v2.14](w16-cockpit.md) · Infos-Übernahme: [W22 D](w22-infoseite.md)
 Prototyp: [`#/stay`](../mockups/reise-managen/index.html) und [`#/stay/swipe`](../mockups/reise-managen/index.html) – Swipe mit Maus/Finger, Tasten ← / →, Strg+Z.
 
 ## Grundregeln
@@ -378,3 +378,25 @@ R.7 gilt. Für die Oberfläche zusätzlich nötig: „Neu“ (E.5.6) aus `trip_s
 
 ### E.15 Abnahme UX Inkrement 9
 360 × 640, 390 × 844, 320 px, 200 %, Dark Mode, DE/EN, ≥ 960 px · Leer (Mitglied/Orga) · Mitglied mit offenen (gesperrt, Netzwerk-Tab ohne fremde Zahlen/Namen) · Swipen per Geste, Tasten, Tastatur; Rückgängig mehrstufig · Ende → Rangliste frei · Bewertung in der Liste zurücknehmen → Snackbar „wieder gesperrt“ · neuer Vorschlag sperrt wieder („Neu“, V3 dran) · Gleichstand, niemand ♥ · Orga festlegen mit Offenen → alle sehen Rangliste · gebucht + Rückgängig · aufheben · UX-9 + Rückgängig · Termin aufheben → Weiterleitung; anders neu festlegen → „gebucht“ zurückgesetzt + Hinweis, Orga schließt ihn · Platzhalterkarte · VoiceOver/TalkBack nur mit Tasten.
+
+### E.16 Inkrement 11 – „Bucht“ markiert «gebucht» (2026-10-23, gilt vor E.2 und E.7)
+
+Grundlage: F-056, `features.md` R.9 I11-02, Cockpit [W16 v2.16](w16-cockpit.md) (V3 „Bucher“).
+
+**Bucher** = alle mit Markierung „Bucht“; gibt es keine, die Orga.
+
+| Element (E.2-Tabelle) | Mitglied | „Bucht“ (ohne Orga-Rolle) | Orga |
+|---|---|---|---|
+| `[Als gebucht markieren]` / «Doch nicht gebucht» | – | ✔ | ✔ (immer, auch ohne Markierung – R.9) |
+| «Name in die Infos übernehmen ›» (W22 D/E) | – | ✔ | ✔ |
+| `[Das wird's]`, «Festlegung aufheben», UX-9, «Ändern» (Reisende), Bearbeiten/Löschen fremder Vorschläge | – | – | ✔ (unverändert nur Orga, Q33) |
+
+- **Karte „Eure Unterkunft“, Satz für alle ohne Recht:** `stays.chosen.waitMember` mit `{bookers}` statt `{orga}`: «{bookers} bucht – sobald es klappt, steht hier „gebucht ✓“.» / «{bookers} is booking it – you'll see “booked ✓” here once it's done.» (`{bookers}` wie W16 v2.16: «Sara», «Sara oder Kemal», «Lena, Sara oder Kemal»). Eine Orga ohne Markierung sieht trotzdem die Taste (sie darf) und zusätzlich darüber 13 px «Sara bucht – du kannst es auch selbst markieren.»
+- **Primär-Vorrang (E.3):** Swipe-Aufforderung › Leerzustand › `[Als gebucht markieren]` – gilt jetzt für Orga **und** „Bucht“.
+- **Chip nach dem Markieren:** «✓ gebucht · am 3. Mai von Sara» (`booked_by`, R.9) – ist die Person nicht mehr in der Reise: «✓ gebucht · am 3. Mai».
+- **Fokus nach «Als gebucht markieren»** (Motion-Frage M-U14, hiermit bestätigt): Fokus sofort auf die Text-Taste «Doch nicht gebucht», die die Primär-Taste ersetzt; nach «Rückgängig» bzw. «Doch nicht gebucht» zurück auf `[Als gebucht markieren]`.
+- **Markierung entzogen:** «gebucht ✓» bleibt bestehen (R.9); nur das Recht endet. Tippt die Person danach noch (veraltete Seite), lehnt der Server ab → Snackbar «Das kann gerade nur {bookers} oder die Orga.» + Seite neu laden.
+- **Termin geändert → „gebucht“ zurückgesetzt** (E.8): Cockpit „neu buchen“ gilt für alle Bucher (W16 v2.16); Hinweis im Bereich unverändert, schließen darf weiterhin nur die Orga.
+- **Erinnern `stay-book`:** Empfänger = Bucher; bei mehreren wählt man im Sheet-Schritt `orga` die Person (je Zeile WhatsApp), Kontext «{title} steht fest. Sag {bookers} kurz, dass es ans Buchen geht.».
+- **Bei 0 „Bucht“** gilt alles wie Inkrement 9 (Orga = Bucher).
+- Abnahme: Sara („Bucht“, nicht Orga) markiert/zieht zurück + Fokus · Mitglied ohne Markierung: keine Taste, Server lehnt Direktaufruf ab · Orga ohne Markierung bei Sara als Bucherin (Taste + Hinweissatz) · Chip «von Sara» · Entzug nach dem Markieren (bleibt gebucht) · mehrere Bucher in Texten und `stay-book` · DE/EN.

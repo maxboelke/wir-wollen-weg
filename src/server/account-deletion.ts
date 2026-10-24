@@ -9,6 +9,7 @@ import {
 import { emailLimitKey } from "./auth/email-limit-store";
 import { retireAllParties } from "./costs/db";
 import { reauthIdentifier } from "./auth/reauth";
+import { closeRequestsOfRequester, travelReauthIdentifier } from "./travel-data/db";
 import { db } from "./db/client";
 import {
   authAttempt,
@@ -183,6 +184,9 @@ export async function deleteAccount(
     for (const step of plan.steps) await applyStep(tx, userId, step);
     // Costs (R.8 I10-04): parties stay with their amounts as «ehemaliges Mitglied».
     await retireAllParties(tx, userId);
+    // Travel details (R.9 I11-11): requests of this person close and every release to them is
+    // deleted now; the person's own releases go with the memberships (cascade).
+    await closeRequestsOfRequester(tx, null, userId);
     await tx.delete(tripPlaceholder).where(eq(tripPlaceholder.claimedBy, userId));
     const sessions = await tx
       .select({ id: session.id })
@@ -199,10 +203,10 @@ export async function deleteAccount(
         sql`strpos(${verification.value}, ${JSON.stringify(email)}) > 0`,
         ...(sessions.length > 0
           ? [
-              inArray(
-                verification.identifier,
-                sessions.map((row) => reauthIdentifier(row.id)),
-              ),
+              inArray(verification.identifier, [
+                ...sessions.map((row) => reauthIdentifier(row.id)),
+                ...sessions.map((row) => travelReauthIdentifier(row.id)),
+              ]),
             ]
           : []),
       ),

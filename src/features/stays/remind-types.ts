@@ -28,6 +28,13 @@ export interface StayRemindData {
   allTexts: Record<Locale, string> | null;
   /** To the organiser: «alle haben bewertet – du kannst festlegen» (members only). */
   fix: Record<Locale, string> | null;
-  /** To the organiser: «{stay} steht fest – magst du buchen?» (members only). */
-  book: { title: string; texts: Record<Locale, string> } | null;
+  /**
+   * To the «Bucher» (W16 v2.16, W18 E.16): «{stay} steht fest – magst du buchen?» – one text per
+   * «Bucht» person (or the organiser when nobody carries the marking); only for viewers who do
+   * not book themselves. Several → the sheet lists them (WhatsApp per row).
+   */
+  book: {
+    title: string;
+    bookers: { key: string; name: string; texts: Record<Locale, string> }[];
+  } | null;
 }

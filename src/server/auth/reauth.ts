@@ -53,3 +53,25 @@ export async function isReauthenticatedIn(
   const row = await store.findVerificationValue(reauthIdentifier(sessionId));
   return row ? row.expiresAt.getTime() > now : false;
 }
+
+/**
+ * Re-authentication for travel-detail document numbers (F-054, R.9 I11-08): a separate marker
+ * per session, valid 12 hours, set by a code/magic-link sign-in or a confirmed code – a password
+ * does not count (same reason as above).
+ */
+export const TRAVEL_REAUTH_TTL_MS = 12 * 60 * 60 * 1000;
+
+export const travelReauthIdentifier = (sessionId: string) => `travel-reauth-${sessionId}`;
+
+export async function markTravelReauthenticatedIn(
+  store: VerificationStore,
+  sessionId: string,
+  now = Date.now(),
+): Promise<void> {
+  await store.deleteVerificationByIdentifier(travelReauthIdentifier(sessionId));
+  await store.createVerificationValue({
+    identifier: travelReauthIdentifier(sessionId),
+    value: "1",
+    expiresAt: new Date(now + TRAVEL_REAUTH_TTL_MS),
+  });
+}

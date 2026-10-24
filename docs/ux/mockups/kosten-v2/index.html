@@ -1,0 +1,2254 @@
+<!doctype html>
+<html lang="de" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mockup Kosten v2 – Vorher/Nachher · Wir wollen weg</title>
+<!-- Einzige externe Ressource: Schriften (im Produkt selbst gehostet). Ohne Netz greift die Systemschrift. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400..800&family=Plus+Jakarta+Sans:wght@500..800&display=swap" rel="stylesheet">
+<style>
+/* ===== docs/design/tokens.css (unverändert eingebettet) ===== */
+/* ==========================================================================
+   Wir wollen weg / When do we go? – Design Tokens
+   Version 1.0 · 2026-10-08 · Verantwortlich: Designer
+   v1.1 · 2026-10-23: Unterkünfte F-031 (§2 --ww-stay-*, --ww-stamp-*; §5 --ww-pattern-stay-placeholder) – nur Ergänzungen
+   v1.2 · 2026-10-23: Kosten teilen F-035/F-036 (§2 Maße --ww-cost-*; §3/§4 Farben --ww-cost-*) – nur Ergänzungen
+   v1.3 · 2026-10-23: Bucht + Reisedaten F-056/F-054 (§2 Maße --ww-travel-*; §3/§4 Farben --ww-travel-*;
+          §5 --ww-pattern-travel-demo) – nur Ergänzungen
+   Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“ (Auftraggeber, PRD §12 Q18)
+   Dokumentation: docs/design/design-system.md (v1.0)
+
+   Aufbau
+   1. Primitive (Rohwerte – nicht direkt in Komponenten verwenden)
+   2. Nicht-farbige Tokens (Typo, Abstände, Radien, Größen, Ebenen)
+   3. Semantik HELL (Standard)
+   4. Semantik DUNKEL „Mitternacht“ – prefers-color-scheme UND [data-theme="dark"]
+   5. Muster, Verläufe, Fokus-Ringe (werden je Theme neu aufgelöst)
+   6. Motion inkl. reduzierter Bewegung (System UND [data-motion="reduce"])
+   7. Forced Colors (Hilfs-Token für Rahmen)
+
+   Theme-Steuerung
+   - Ohne Attribut folgt die App dem System (prefers-color-scheme). MVP: nur System.
+   - <html data-theme="light|dark"> erzwingt ein Theme (Tests, späterer Schalter).
+   Bewegung
+   - prefers-reduced-motion: reduce ODER <html data-motion="reduce"> (Konto-Schalter
+     „Bewegung reduzieren“, PRD Q17). Der Schalter kann nur reduzieren.
+   Kontraste: WCAG 2.x, gerechnet und abgerundet – Tabellen in design-system.md §4/§6.
+   Präfix aller Tokens: --ww-
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. PRIMITIVE
+   -------------------------------------------------------------------------- */
+:root {
+  /* Indigo – Marke, Cockpit, Haupt-Taste, Heatmap „alle“, Vorschlag-Band */
+  --ww-indigo-500: #5b48c9; /* Violett: Heatmap „viele“, Logo-Blatt auf Indigo */
+  --ww-indigo-600: #3f2f99; /* Verlauf Reisekarte */
+  --ww-indigo-700: #3a2f86; /* Hover */
+  --ww-indigo-800: #2b2266; /* Indigo – Markenfarbe */
+  --ww-indigo-900: #221b52; /* Gedrückt; Cockpit dunkel */
+
+  /* Lavendel – Abstimmung, Links, Heatmap-Rampe, Kacheln */
+  --ww-lavender-100: #ece6ff;
+  --ww-lavender-200: #d6cffa;
+  --ww-lavender-250: #cfc9f2; /* Kopf-Text 2 auf Indigo */
+  --ww-lavender-300: #a79af2;
+  --ww-lavender-400: #c3b8ff; /* Lavendel-Text dunkel */
+  --ww-lavender-600: #5a3fd0; /* Lavendel-Text hell, Links */
+
+  /* Minze – Akzent, „passt / alle können“, Haupt-Taste auf Indigo und dunkel */
+  --ww-mint-100: #d9f8ec;
+  --ww-mint-300: #7dedcb; /* Hover dunkel */
+  --ww-mint-400: #52e5b8; /* Minze – NIE Text auf Hell (1,5 : 1) */
+  --ww-mint-450: #3fd0a5; /* Gedrückt dunkel */
+  --ww-mint-500: #1fbf94; /* Minze tief – nur dekorativ */
+  --ww-mint-700: #00775a; /* Minze-Text hell */
+  --ww-mint-900: #133c3b; /* Ja-Fläche dunkel */
+
+  /* Sonne – Freude, „Zur Not / Vielleicht“, Platz 1, Krone */
+  --ww-sun-100: #fff3cc;
+  --ww-sun-200: #ffdb73;
+  --ww-sun-400: #ffcf4a;
+  --ww-sun-500: #e3a700; /* Stimmen-Balken Vielleicht */
+  --ww-sun-700: #7a5200; /* Sonne-Text hell */
+  --ww-sun-800: #5a4a17; /* Streifen dunkel */
+  --ww-sun-900: #3a3113; /* Zur-Not-Fläche dunkel */
+
+  /* Koralle – Feiertag, To-do */
+  --ww-coral-100: #ffe4df;
+  --ww-coral-300: #ffb4a8; /* Text dunkel */
+  --ww-coral-400: #ff8a7a; /* Eselsohr dunkel */
+  --ww-coral-500: #f0503f; /* Eselsohr hell – nur Nicht-Text */
+  --ww-coral-700: #a3321f; /* Text hell */
+  --ww-coral-900: #4a1f1a;
+
+  /* Tinte – Text und Linien (hell → dunkel) */
+  --ww-ink-50: #f3f1ff;  /* Text dunkel */
+  --ww-ink-100: #d9d5f2;
+  --ww-ink-200: #b9b4dc;
+  --ww-ink-300: #9c97c4;
+  --ww-ink-500: #8a86a8; /* Rahmen hell */
+  --ww-ink-600: #6e6992;
+  --ww-ink-700: #57527a;
+  --ww-ink-900: #1e1a3d; /* Tinte */
+
+  /* Nebel – helle Flächen */
+  --ww-mist-0: #ffffff;
+  --ww-mist-50: #f4f2fb;  /* Grund hell */
+  --ww-mist-100: #eeecf5; /* Heatmap „niemand“ */
+  --ww-mist-150: #ece9f7; /* vertieft */
+  --ww-mist-200: #e3dff0; /* Linie */
+  --ww-mist-300: #ddd9ea; /* „Geht nicht“ */
+  --ww-mist-400: #c9c6d4; /* Schraffur „niemand“ (deckend) */
+  --ww-mist-500: #aba7bd; /* Kreuzschraffur „Geht nicht“ (deckend) */
+
+  /* Mitternacht – dunkle Flächen */
+  --ww-night-500: #7d77ad; /* Rahmen dunkel */
+  --ww-night-600: #4a4290; /* Kreuzschraffur dunkel */
+  --ww-night-650: #3a3370; /* Schraffur dunkel */
+  --ww-night-700: #362c7a; /* Heatmap „wenige“ dunkel */
+  --ww-night-750: #2e2860; /* Nein-Fläche dunkel */
+  --ww-night-760: #2e2566; /* Lavendel-Fläche dunkel */
+  --ww-night-775: #2f2963; /* Linie dunkel */
+  --ww-night-800: #2a2458; /* erhöht */
+  --ww-night-820: #221c4a; /* Heatmap „niemand“ dunkel */
+  --ww-night-850: #1f1a45; /* Fläche */
+  --ww-night-900: #191538; /* vertieft */
+  --ww-night-950: #14112e; /* Grund */
+
+  /* Kirsche – ausschließlich Fehler & destruktiv („Rot heißt Fehler, nicht Nein“) */
+  --ww-cherry-100: #fde7e4;
+  --ww-cherry-300: #ff8a80;
+  --ww-cherry-350: #ffa8a0;
+  --ww-cherry-600: #b42318;
+  --ww-cherry-700: #8f1c13;
+  --ww-cherry-900: #431b2a;
+
+  /* Blau – nur Fokus */
+  --ww-blue-300: #8fb3ff;
+  --ww-blue-600: #2b59c3;
+
+  /* Avatare – 8 Pastelltöne, bedeutungslos (Hash der Mitglieds-ID), beide Modi */
+  --ww-avatar-1: #ffd3c7;
+  --ww-avatar-2: #c9dbff;
+  --ww-avatar-3: #d4f2b0;
+  --ww-avatar-4: #dcd3ff;
+  --ww-avatar-5: #ffe7a3;
+  --ww-avatar-6: #bdefe0;
+  --ww-avatar-7: #ffcfe6;
+  --ww-avatar-8: #eadfcf;
+  --ww-avatar-ink: #1e1a3d; /* Initialen ≥ 10 : 1 auf allen 8 Tönen */
+}
+
+/* --------------------------------------------------------------------------
+   2. NICHT-FARBIGE TOKENS
+   -------------------------------------------------------------------------- */
+:root {
+  /* ---------------- Typografie ----------------
+     Beide Schriften SIL OFL 1.1, SELBST GEHOSTET (kein CDN, DSGVO).
+     @font-face-Vorgabe: design-system.md §5.1. Fallback ist die Systemschrift. */
+  --ww-font-system: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue",
+    Arial, "Noto Sans", "Liberation Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji";
+  /* UI & Fließtext: Figtree */
+  --ww-font-sans: "Figtree", var(--ww-font-system);
+  /* Titel, Kennzahlen, Wortmarke: Plus Jakarta Sans */
+  --ww-font-display: "Plus Jakarta Sans", "Figtree", var(--ww-font-system);
+  /* Zahlen (Kalender, Kennzahl, Code, Countdown): Plus Jakarta Sans + tabular-nums */
+  --ww-font-numeric: var(--ww-font-display);
+
+  --ww-font-weight-regular: 400;
+  --ww-font-weight-medium: 500;
+  --ww-font-weight-semibold: 600;
+  --ww-font-weight-bold: 700;
+  --ww-font-weight-extrabold: 800;
+  --ww-font-weight-display: 800; /* Plus Jakarta Sans */
+
+  /* Größen (rem, Basis 16 px). Nie unter 12 px. */
+  --ww-text-xs: 0.75rem;      /* 12 – Kalenderdatum, Legende (≥ 600) */
+  --ww-text-meta: 0.8125rem;  /* 13 – Tags, Meta, Phase im Kopf */
+  --ww-text-sm: 0.875rem;     /* 14 – Labels, Tabs, Hilfetext */
+  --ww-text-md: 1rem;         /* 16 – Fließtext, ALLE Inputs (kein iOS-Zoom) */
+  --ww-text-lg: 1.0625rem;    /* 17 – Tasten, Lead */
+  --ww-text-xl: 1.1875rem;    /* 19 – H2, Datumsbereich */
+  --ww-text-2xl: clamp(1.3125rem, 1.2rem + 0.5vw, 1.5rem);  /* 21–24 – Reisename im Kopf, Ergebnis-Datum */
+  --ww-text-3xl: clamp(1.625rem, 1.35rem + 1.2vw, 2rem);    /* 26–32 – H1 */
+  --ww-text-display: clamp(2rem, 1.3rem + 3vw, 3.5rem);     /* 32–56 – Startseite, „Es geht los!“ */
+  --ww-text-kpi: 1rem;        /* 16 – Kennzahl-Satz im Cockpit */
+  --ww-text-kpi-lg: 1.25rem;  /* 20 – Kennzahl-Kacheln */
+  --ww-text-countdown: 2.875rem; /* 46 – Countdown im Vorfreude-Ring */
+  --ww-text-code: 1.625rem;   /* 26 – Ziffern im Code-Feld */
+
+  --ww-leading-tight: 1.12;
+  --ww-leading-snug: 1.25;
+  --ww-leading-normal: 1.45;
+  --ww-tracking-display: -0.03em;
+  --ww-tracking-tight: -0.02em;
+  --ww-tracking-wide: 0.04em;
+
+  /* ---------------- Abstände (4-px-Raster) ---------------- */
+  --ww-space-0: 0;
+  --ww-space-0-5: 0.125rem; /* 2 */
+  --ww-space-1: 0.25rem;    /* 4 */
+  --ww-space-1-5: 0.375rem; /* 6 */
+  --ww-space-2: 0.5rem;     /* 8 */
+  --ww-space-3: 0.75rem;    /* 12 */
+  --ww-space-4: 1rem;       /* 16 */
+  --ww-space-5: 1.25rem;    /* 20 */
+  --ww-space-6: 1.5rem;     /* 24 */
+  --ww-space-8: 2rem;       /* 32 */
+  --ww-space-10: 2.5rem;    /* 40 */
+  --ww-space-12: 3rem;      /* 48 */
+  --ww-space-16: 4rem;      /* 64 */
+
+  /* ---------------- Radien ---------------- */
+  --ww-radius-xs: 6px;
+  --ww-radius-sm: 11px;     /* Kalenderzelle, kleine Tasten */
+  --ww-radius-md: 16px;     /* Tasten, Eingabefelder, Segment-Spur */
+  --ww-radius-lg: 24px;     /* Karten */
+  --ww-radius-xl: 28px;     /* Ergebnis-Karte, Bottom-Sheet, Werkzeugleiste oben */
+  --ww-radius-2xl: 30px;    /* Cockpit-Unterkante */
+  --ww-radius-pill: 999px;  /* Chips, Tabs, Balken */
+  /* Komponenten-Radien (Alias, damit die Optik an einer Stelle steuerbar bleibt) */
+  --ww-radius-cell: 11px;
+  --ww-radius-tile: 13px;
+  --ww-radius-tile-sm: 11px;
+  --ww-radius-code: 14px;
+  --ww-radius-button: 16px;
+  --ww-radius-button-sm: 12px;
+  --ww-radius-segment: 12px;
+  --ww-radius-card: 24px;
+  --ww-radius-trip-card: 26px;
+  --ww-radius-result: 28px;
+  --ww-radius-sheet: 28px;
+  --ww-radius-cockpit: 30px;
+
+  /* ---------------- Größen ---------------- */
+  --ww-size-touch-min: 44px;
+  --ww-size-control-sm: 44px;     /* kleine Taste – nie unter 44 px (D-20) */
+  --ww-size-control-md: 48px;     /* Eingabefeld, Sekundär-Taste */
+  --ww-size-control-lg: 54px;     /* Haupt-Taste */
+  --ww-size-icon-sm: 16px;
+  --ww-size-icon-md: 20px;
+  --ww-size-icon-lg: 24px;
+  --ww-size-avatar-sm: 24px;
+  --ww-size-avatar-md: 32px;
+  --ww-size-avatar-lg: 40px;
+  --ww-size-tile: 40px;           /* Icon-Kachel */
+  --ww-size-tile-sm: 34px;        /* Kachel in Kennzahl-Kacheln */
+  --ww-size-cockpit-button: 44px; /* runde Icon-Taste im Kopf */
+  --ww-size-kpi-ring: 52px;       /* Fortschrittsring in der Kennzahl-Box */
+  --ww-size-countdown-ring: 156px;/* Vorfreude-Ring */
+  /* Reiseverlauf (W16 v2, D-36–D-42, abstimmung-ux.md §10.1) */
+  --ww-size-countdown-ring-hero: clamp(120px, 21svh, 168px); /* Ring im Ticket-Kopf */
+  --ww-size-mini-ring: 20px;      /* Mini-Ring in Zeile 1 beim Scrollen */
+  --ww-route-line-w: 3px;         /* Linie des Wegs */
+  --ww-route-marker: 32px;        /* Marker erledigt / wartet / als Nächstes / Ziel */
+  --ww-route-marker-today: 40px;  /* Heute-Marker (Sonne) */
+  --ww-route-marker-later: 24px;  /* „später“ – bewusst kleiner = gedämpft */
+  --ww-size-seal-sm: 20px;        /* Siegel klein (Beitritt, Abgabe) */
+  --ww-size-seal-md: 40px;
+  --ww-size-seal-lg: 64px;        /* Siegel groß (Termin steht fest) */
+  /* Kalender mobil (U-1, CEO bestätigt 2026-10-08): 8 px Rand GESAMT je Seite,
+     4 px Spaltenfuge → Zelle (360 − 16 − 24) / 7 = 45,7 px bei 360 px, nie < 44 px.
+     Unter 600 px: Kalender-Karte 4 px vom Bildschirmrand + 4 px Innenrand. */
+  --ww-size-cal-cell-min-w: 44px;
+  --ww-size-cal-cell-h: 46px;     /* mobil (+ 9 px Zeilenfuge = 55 px Zeilenraster) */
+  --ww-size-cal-cell-h-lg: 64px;  /* ab 600 px */
+  --ww-size-cal-gap: 4px;         /* Spaltenfuge – trägt die Wochenend-Spur */
+  --ww-size-cal-row-gap: 9px;     /* Zeilenfuge – trägt das Vorschlag-Band (4 px) */
+  --ww-size-cal-inset-sm: 8px;    /* Rand gesamt < 600 px (= Karte 4 + innen 4) */
+  --ww-size-cal-card-gutter-sm: 4px; /* Abstand Kalender-Karte zum Bildschirmrand < 600 px */
+  --ww-size-cal-card-pad-sm: 4px;    /* Innenrand der Kalender-Karte < 600 px */
+  --ww-size-cal-inset: 16px;
+  --ww-size-sheet-half: 50dvh;
+  --ww-size-sheet-full: 92dvh;
+  /* Werkzeugleiste „Meine Tage“ ≤ 150 px ohne Safe-Area (D-28, CEO 2026-10-08):
+     8 Polster · 16 Statuszeile · 4 · ≤ 58 Pinsel · 8 · 48 Werkzeugzeile · 8. Kein Griff, kein Label. */
+  --ww-size-toolbar-max: 150px;
+  --ww-size-toolbar-status-h: 16px;
+  --ww-size-toolbar-brush-h: 58px;
+  --ww-size-toolbar-tool-w: 44px;  /* Werkzeug-Kachel < 400 px: 44 × 48 */
+  --ww-size-toolbar-tool-h: 48px;
+  --ww-size-suggest-bar-max: 120px;/* Vorschlag-Leiste W09 ohne Safe-Area */
+  /* Cockpit-Tabs (D-20): Pille 44 px hoch, Spur 48 px (4 px Polster) */
+  --ww-size-tab-h: 44px;
+  --ww-size-tab-track-h: 48px;
+  --ww-size-cockpit-compact-h: 104px; /* sticky kompakter Kopf: Zeile 48 + Tabs 48 + 8 */
+  --ww-size-toast-gap: 8px;
+  --ww-size-code-box-w: 48px;     /* < 380 px: 44px */
+  --ww-size-code-box-h: 58px;     /* < 380 px: 54px */
+  --ww-size-content-narrow: 40rem;
+  --ww-size-content-wide: 65rem;
+
+  /* Breakpoints (nur Doku – in Media Queries als Literal): 360 · 600 · 960 · 1200 */
+
+  /* ---------------- Rahmenstärken ---------------- */
+  --ww-border-thin: 1px;
+  --ww-border-medium: 1.5px;
+  --ww-border-thick: 2px;
+  --ww-focus-width: 3px;
+  --ww-focus-offset: 2px;
+
+  /* ---------------- Ebenen ---------------- */
+  --ww-z-sticky: 10;
+  --ww-z-header: 20;
+  --ww-z-sheet: 40;
+  --ww-z-celebration: 45; /* Konfetti-Ebene, pointer-events: none */
+  --ww-z-toast: 50;
+
+  /* ---------------- Unterkünfte F-031 (v1.1, 2026-10-23, design-system §9.21) ----------------
+     Bild-Quellen sind 4:3 (Demo-Bilder 400 × 300) und werden per object-fit: cover
+     auf die Anzeigeformate zugeschnitten; das Motiv liegt in der sicheren Mitte.
+     Elemente AUF Bildern (Stempel, Domain-Chip) sind absichtlich theme-unabhängig,
+     weil Bilder in beiden Modi gleich aussehen. */
+  --ww-stay-image-ratio: 16 / 10;        /* Swipe-Karte, Vorschau W17 (W18 E.5.2) */
+  --ww-stay-image-max-h: 34svh;          /* 360 × 640: Titel, Preis, Tasten ohne Scrollen */
+  --ww-stay-image-max-h-narrow: 28svh;   /* Container < 22 em */
+  --ww-stay-image-ratio-wide: 16 / 9;    /* „Eure Unterkunft“ */
+  --ww-stay-thumb: 64px;                 /* Vorschlags-Zeile (Liste und Rangliste) */
+  --ww-stay-thumb-radius: 14px;
+  --ww-stay-thumb-tile: 28px;            /* Mini-Stapel in der Kachel „Unterkunft“ */
+  --ww-stay-card-max-w: 420px;
+  --ww-stay-card-radius: 28px;
+  --ww-stay-rate-btn: 64px;              /* ✕ / ♥ unter dem Stapel */
+  --ww-stay-undo-btn: 48px;
+  --ww-stay-toggle: 44px;                /* Bewertungspaar in der Zeile */
+  --ww-stay-rank: 32px;                  /* Rang-Kreis */
+  --ww-stay-source-bg: rgb(20 17 46 / 0.72); /* Domain-Chip: Weiß darauf ≥ 7,3 auch über reinem Weiß */
+  --ww-stay-source-fg: #ffffff;
+  --ww-stay-image-scrim: linear-gradient(to top, rgb(20 17 46 / 0.55), rgb(20 17 46 / 0) 42%);
+  --ww-stamp-like-bg: var(--ww-mint-400);
+  --ww-stamp-like-fg: var(--ww-indigo-800);  /* 8,7 */
+  --ww-stamp-nope-bg: var(--ww-mist-0);
+  --ww-stamp-nope-fg: var(--ww-ink-900);     /* 16,5 */
+  --ww-stamp-nope-border: var(--ww-ink-900);
+  --ww-stamp-ring: rgb(255 255 255 / 0.9);
+  --ww-stamp-radius: 14px;
+  --ww-stamp-tilt: 8deg;                     /* ♥ −8°, ✕ +8° */
+
+  /* ---------------- Kosten F-035/F-036 (v1.2, 2026-10-23, design-system §9.22) ----------------
+     Beträge immer tabellarisch (gleich breite Ziffern), nie mit Minus-Zeichen – die Richtung
+     steht als Wort da („du bekommst / du schuldest / ausgeglichen ✓“). */
+  --ww-cost-numeric: tabular-nums lining-nums;  /* font-variant-numeric für ALLE Beträge */
+  --ww-cost-amount-hero: 1.625rem;       /* 26 – Saldo-Satz „Dein Stand“, Betrag im Detail-Sheet (Jakarta 800) */
+  --ww-cost-amount-input: 1.75rem;       /* 28 – Betragsfeld im Formular (Jakarta 800) */
+  --ww-cost-amount-row: 1rem;            /* 16 – Betrag in Ausgaben-/Ausgleichszeile (Figtree 800) */
+  --ww-cost-amount-meta: 0.8125rem;      /* 13 – „dein Anteil 25,00 €“, Tagessumme */
+  --ww-cost-input-h: 56px;               /* Betragsfeld */
+  --ww-cost-row-min-h: 64px;             /* Ausgaben-Zeile */
+  --ww-cost-tile: 36px;                  /* Kategorie-Kachel in der Zeile */
+  --ww-cost-tile-radius: 12px;
+  --ww-cost-tile-icon: 20px;
+  --ww-cost-stand-tile: 40px;            /* Icon-Kachel bzw. Siegel in „Dein Stand“ */
+  --ww-cost-bar-h: 6px;                  /* Saldo-Balken je Person (D-57), aria-hidden */
+  --ww-cost-iban-gap: 0.3em;             /* Abstand der Vierergruppen in der IBAN */
+
+  /* ---------------- Bucht + Reisedaten F-056/F-054 (v1.3, 2026-10-23, design-system §9.23) ----------------
+     Masken sind gleich lang (verraten keine Länge), Werte tabellarisch, keine Monospace-Schrift. */
+  --ww-travel-chip-h: 22px;              /* Chip „Bucht“ in Listen (Wer ist dabei?, Personen-Karten) */
+  --ww-travel-chip-h-lg: 26px;           /* Chip „Bucht“ im Kopf der Anfrage-Karte */
+  --ww-travel-chip-icon: 14px;           /* id-card im Chip (16 im großen Chip) */
+  --ww-travel-tile: 32px;                /* Icon-Kachel „Reisedaten“ (Cockpit), Icon 22 */
+  --ww-travel-field-row-min-h: 48px;     /* Zeile Label · Wert · Kopieren in der Bucht-Sicht */
+  --ww-travel-copy-btn: 44px;            /* Icon-Taste Kopieren je Feld */
+  --ww-travel-mask-tracking: 0.14em;     /* Abstand der Punkte in Masken */
+  --ww-travel-consent-check: 24px;       /* Checkbox der Einwilligung (Trefferfläche = ganze Karte) */
+  --ww-travel-consent-radius: 20px;      /* Einwilligungs-Karte */
+  --ww-travel-log-icon: 28px;            /* runde Icon-Plakette je Protokoll-Zeile */
+  --ww-travel-demo-edge: 6px;            /* gestreifte Kante links am Vorschau-Hinweis */
+  --ww-travel-content-max-w: 640px;      /* Mitglied/Formulare (W20 H.14) */
+}
+
+/* --------------------------------------------------------------------------
+   3. SEMANTIK – HELL (Standard)
+   Grund #F4F2FB (Nebel), Fläche #FFFFFF. Kontraste: „Fläche / Grund“.
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  color-scheme: light;
+
+  /* Flächen */
+  --ww-color-bg: var(--ww-mist-50);
+  --ww-color-surface: var(--ww-mist-0);
+  --ww-color-surface-raised: var(--ww-mist-0);
+  --ww-color-surface-sunken: var(--ww-mist-150);
+  --ww-color-scrim: rgb(20 17 46 / 0.5);
+
+  /* Text */
+  --ww-color-text: var(--ww-ink-900);          /* 16,5 / 14,9 */
+  --ww-color-text-muted: var(--ww-ink-700);    /*  7,2 /  6,5 · auf vertieft 6,0 */
+  --ww-color-text-subtle: var(--ww-ink-600);   /*  5,1 /  4,6 · NICHT auf vertieft */
+  --ww-color-text-inverse: var(--ww-mist-0);
+  --ww-color-text-on-primary: var(--ww-mist-0);/* 13,7 auf Indigo */
+  --ww-color-text-on-danger: var(--ww-mist-0); /*  6,5 */
+  --ww-color-link: var(--ww-lavender-600);     /*  6,8 / 6,1 – immer unterstrichen */
+
+  /* Linien */
+  --ww-color-border-subtle: var(--ww-mist-200);/* nur Trennlinien IN Karten, keine Kartenkontur */
+  --ww-color-border-strong: var(--ww-ink-500); /*  3,4 / 3,1 – Inputs, Optionen (1.4.11) */
+
+  /* Marke & Aktion */
+  --ww-color-primary: var(--ww-indigo-800);        /* Haupt-Taste; gegen Grund 12,4 */
+  --ww-color-primary-hover: var(--ww-indigo-700);
+  --ww-color-primary-active: var(--ww-indigo-900);
+  --ww-color-primary-text: var(--ww-lavender-600); /* Text-Tasten, Links (6,8 / 6,1) */
+  --ww-color-primary-tint: var(--ww-lavender-100); /* gewählte Chips, Info – Text darauf 5,6 */
+  --ww-color-primary-tint-strong: var(--ww-lavender-200);
+  --ww-color-accent: var(--ww-mint-400);           /* NUR Fläche (mit Indigo-Inhalt) oder auf Indigo */
+  --ww-color-accent-strong: var(--ww-mint-700);    /* Minze als Linie/Icon auf Hell: 5,5 / 5,0 */
+  --ww-color-accent-text: var(--ww-mint-700);      /* „Geht/Ja/Gespeichert“ als Text: 5,5 / 5,0 */
+  --ww-color-accent-tint: var(--ww-mint-100);      /* Text darauf 4,9 */
+  --ww-color-on-accent: var(--ww-indigo-800);      /* Inhalt auf Minze: 8,7 */
+  --ww-color-sun: var(--ww-sun-400);               /* Logo-Sonne, Platz 1, Krone – Tinte darauf 11,2 */
+  --ww-color-selected: var(--ww-indigo-800);       /* Gewählt-Rahmen (Pinsel, Segment, Karte, Checkbox) */
+
+  /* Status */
+  --ww-color-danger: var(--ww-cherry-600);         /* 6,5 / 5,9 */
+  --ww-color-danger-hover: var(--ww-cherry-700);
+  --ww-color-danger-tint: var(--ww-cherry-100);    /* Fehlertext darauf 5,5 */
+  --ww-color-warning-text: var(--ww-sun-700);      /* auf warning-tint 6,2 */
+  --ww-color-warning-tint: var(--ww-sun-100);
+  --ww-color-success-text: var(--ww-mint-700);     /* auf success-tint 4,9 */
+  --ww-color-success-tint: var(--ww-mint-100);
+  --ww-color-info-text: var(--ww-lavender-600);    /* auf info-tint 5,6 */
+  --ww-color-info-tint: var(--ww-lavender-100);
+  --ww-color-holiday-text: var(--ww-coral-700);    /* Feiertags-Chip 5,7 */
+  --ww-color-holiday-tint: var(--ww-coral-100);
+  --ww-color-holiday-mark: var(--ww-coral-500);    /* Eselsohr, nur Nicht-Text: 3,5 gegen Weiß */
+
+  /* Deaktiviert (keine Kontrastpflicht, trotzdem lesbar) */
+  --ww-color-disabled-bg: var(--ww-mist-150);
+  --ww-color-disabled-text: var(--ww-ink-600);     /* 4,2 */
+
+  /* Fokus */
+  --ww-color-focus: var(--ww-blue-600);            /* 6,3 / 5,7 */
+  --ww-color-focus-gap: var(--ww-mist-0);
+  --ww-color-focus-on-brand: var(--ww-mist-0);     /* auf Indigo-Flächen: 13,7 (Blau hätte 2,1) */
+
+  /* Toast / Inverse */
+  --ww-color-inverse-bg: var(--ww-ink-900);
+  --ww-color-inverse-text: var(--ww-mist-0);       /* 16,5 */
+  --ww-color-inverse-link: var(--ww-mint-400);     /* 10,4 */
+
+  /* Schatten (keine Konturen – Karten trennen sich über Schatten) */
+  --ww-shadow-1: 0 1px 2px rgb(30 26 61 / 0.06), 0 14px 30px -18px rgb(43 34 102 / 0.38); /* Karte */
+  --ww-shadow-2: 0 2px 4px rgb(30 26 61 / 0.06), 0 18px 36px -16px rgb(43 34 102 / 0.45); /* Hover, schwebend */
+  --ww-shadow-3: 0 8px 16px rgb(30 26 61 / 0.10), 0 24px 40px -20px rgb(43 34 102 / 0.60); /* Sheet, Toast, Ergebnis-Karte */
+  --ww-shadow-button: 0 10px 22px -10px rgb(43 34 102 / 0.60);
+  --ww-shadow-button-accent: 0 12px 26px -12px rgb(82 229 184 / 0.75);
+  --ww-shadow-selected: 0 8px 16px -10px rgb(43 34 102 / 0.60); /* gewählter Pinsel / Segment */
+  --ww-shadow-sticky-bottom: 0 -16px 34px -18px rgb(43 34 102 / 0.45);
+
+  /* ---------------- Tasten ---------------- */
+  --ww-btn-primary-bg: var(--ww-color-primary);
+  --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+  --ww-btn-secondary-bg: var(--ww-color-surface);
+  --ww-btn-secondary-fg: var(--ww-indigo-800);     /* 13,7 */
+  --ww-btn-secondary-border: var(--ww-indigo-800);
+  --ww-btn-tool-bg: var(--ww-color-surface-sunken);/* Werkzeug-/Blätter-Kacheln */
+  --ww-btn-tool-fg: var(--ww-color-text);
+
+  /* ---------------- Cockpit-Kopf ---------------- */
+  --ww-cockpit-bg: var(--ww-indigo-800);
+  --ww-cockpit-glow-mint: rgb(82 229 184 / 0.22);   /* oben rechts, ≤ 22 % */
+  --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+  --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.30); /* oben links, ≤ 30 % */
+  --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+  --ww-cockpit-text: var(--ww-mist-0);              /* ≥ 8,4 am hellsten Punkt, 13,7 auf Indigo */
+  --ww-cockpit-text-muted: var(--ww-lavender-250);  /* ≥ 5,0 am hellsten Punkt, 8,7 auf Indigo */
+  --ww-cockpit-accent: var(--ww-mint-400);          /* Haupt-Taste im Kopf, Ring, Hervorhebung: 8,7 */
+  --ww-cockpit-on-accent: var(--ww-indigo-800);
+  --ww-cockpit-control-bg: rgb(255 255 255 / 0.12); /* runde Icon-Tasten */
+  --ww-cockpit-track: rgb(255 255 255 / 0.10);      /* Tab-Spur – Kopf-Text 2 darauf 6,5 */
+  --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);     /* Kennzahl-Box */
+  --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+  --ww-cockpit-outline: rgb(255 255 255 / 0.60);    /* Sekundär-Taste im Kopf */
+  --ww-cockpit-tab-active-bg: var(--ww-mist-0);
+  --ww-cockpit-tab-active-fg: var(--ww-indigo-800); /* 13,7 */
+
+  /* ---------------- Kacheln (Icon in getönter Fläche) ---------------- */
+  --ww-tile-lavender-bg: var(--ww-lavender-100);  /* Zeit, Planung, Abstimmung */
+  --ww-tile-lavender-fg: var(--ww-lavender-600);  /* 5,6 */
+  --ww-tile-mint-bg: var(--ww-mint-100);          /* Gruppe, passt */
+  --ww-tile-mint-fg: var(--ww-mint-700);          /* 4,9 */
+  --ww-tile-sun-bg: var(--ww-sun-100);            /* Dauer, Freude */
+  --ww-tile-sun-fg: var(--ww-sun-700);            /* 6,2 */
+  --ww-tile-coral-bg: var(--ww-coral-100);        /* Feiertag, Hervorhebung */
+  --ww-tile-coral-fg: var(--ww-coral-700);        /* 5,7 */
+  --ww-tile-brand-bg: var(--ww-indigo-800);       /* Marke */
+  --ww-tile-brand-fg: var(--ww-mint-400);         /* 8,7 */
+
+  /* ---------------- Fortschritt & Diagramme ---------------- */
+  --ww-progress-track: var(--ww-mist-150);
+  --ww-progress-fill: var(--ww-indigo-800);       /* Balken auf Weiß (Reisekarte, Schritte) */
+  --ww-progress-current: var(--ww-sun-400);       /* aktueller Schritt (+ 1,5-px-Kante sun-700) */
+  --ww-progress-current-edge: var(--ww-sun-700);
+  --ww-ring-start: var(--ww-mint-400);            /* Vorfreude-Ring: Minze → Sonne */
+  --ww-ring-end: var(--ww-sun-400);
+  --ww-ring-track: rgb(255 255 255 / 0.14);
+  --ww-ring-knob: var(--ww-sun-400);
+  --ww-ring-knob-edge: var(--ww-cockpit-bg);
+  --ww-daybar-high: var(--ww-mint-400);           /* Tages-Balken (Ausblick, dekorativ) */
+  --ww-daybar-low: var(--ww-lavender-300);
+
+  /* ---------------- Siegel (Belohnung, M-D4) ---------------- */
+  --ww-seal-bg: var(--ww-mint-400);
+  --ww-seal-fg: var(--ww-indigo-800);             /* 8,7 */
+  --ww-seal-ring: var(--ww-mist-0);
+
+  /* ---------------- Konfetti (M-D5) – dekorativ, keine Kontrastpflicht ---------------- */
+  --ww-confetti-1: var(--ww-mint-400);
+  --ww-confetti-2: var(--ww-sun-400);
+  --ww-confetti-3: var(--ww-lavender-300);
+  --ww-confetti-4: var(--ww-coral-500);
+  --ww-confetti-5: var(--ww-mist-0);
+
+  /* ---------------- Avatare ---------------- */
+  --ww-avatar-fg: var(--ww-avatar-ink);
+  --ww-avatar-ring: var(--ww-color-surface);      /* 2-px-Ring in der Flächenfarbe */
+  --ww-avatar-open-border: var(--ww-color-border-strong); /* gestrichelt = offen */
+
+  /* ---------------- Eigene Verfügbarkeit „Meine Tage“ (F-005) ---------------- */
+  --ww-avail-yes-bg: var(--ww-mint-100);          /* Tinte darauf 14,6 */
+  --ww-avail-yes-fg: var(--ww-mint-700);          /* Symbol in Legende/Pinsel 4,9 */
+  --ww-avail-maybe-bg: var(--ww-sun-100);         /* Tinte 14,9 */
+  --ww-avail-maybe-stripe: var(--ww-sun-200);     /* Tinte 12,3 */
+  --ww-avail-maybe-fg: var(--ww-ink-900);
+  --ww-avail-no-bg: var(--ww-mist-300);           /* Tinte 11,9 */
+  --ww-avail-no-line: var(--ww-mist-500);         /* Tinte auf Linie 7,0 */
+  --ww-avail-no-fg: var(--ww-ink-900);
+  --ww-avail-day-text: var(--ww-ink-900);
+  --ww-avail-plaque-ring: rgb(30 26 61 / 0.40);   /* 1,5-px-Ring um die Symbol-Plakette */
+
+  /* ---------------- Abstimmung (F-011) ---------------- */
+  --ww-vote-yes-bg: var(--ww-mint-100);
+  --ww-vote-yes-fg: var(--ww-mint-700);           /* 4,9 */
+  --ww-vote-yes-bar: var(--ww-mint-700);          /* 5,5 */
+  --ww-vote-maybe-bg: var(--ww-sun-100);
+  --ww-vote-maybe-fg: var(--ww-sun-700);          /* 6,2 */
+  --ww-vote-maybe-bar: var(--ww-sun-500);         /* dekorativ, Zahl steht als Text daneben */
+  --ww-vote-no-bg: var(--ww-mist-150);
+  --ww-vote-no-fg: var(--ww-ink-700);             /* 6,0 – neutral, nicht rot */
+  --ww-vote-no-bar: var(--ww-ink-500);            /* 3,4 */
+  --ww-vote-selected-bg: var(--ww-indigo-800);    /* gewählte Option */
+  --ww-vote-selected-fg: var(--ww-mist-0);        /* 13,7 */
+  --ww-vote-tick-bg: var(--ww-mint-400);          /* Häkchen-Ecke */
+  --ww-vote-tick-fg: var(--ww-indigo-800);
+  --ww-vote-ghost-border: var(--ww-ink-700);      /* unbestätigter Vorschlag, gestrichelt */
+  --ww-rank-bg: var(--ww-sun-400);                /* „Platz 1“ – Tinte 11,2 */
+  --ww-rank-fg: var(--ww-ink-900);
+
+  /* ---------------- Heatmap (F-008) – „Indigo-Rampe“ ----------------
+     s = (geht + 0,5 · zur Not) / abgegeben
+     none: s = 0 · few: 0 < s < 0,5 · some: 0,5 ≤ s < 0,75 · many: 0,75 ≤ s < 1 · all: s = 1
+     Zahl in der Zelle = Anzahl „Geht“ / abgegeben (U-4). Siegel NUR bei x = n (= Stufe all). */
+  --ww-hm-nodata-bg: transparent;
+  --ww-hm-nodata-fg: var(--ww-ink-700);           /* 7,2 / 6,5 */
+  --ww-hm-nodata-border: var(--ww-ink-500);       /* gestrichelt 3,4 */
+  --ww-hm-none-bg: var(--ww-mist-100);            /* L 0,85 */
+  --ww-hm-none-line: var(--ww-mist-400);          /* Schraffur 45° */
+  --ww-hm-none-fg: var(--ww-ink-900);             /* 14,1 (auf Linie 9,8) */
+  --ww-hm-few-bg: var(--ww-lavender-200);         /* L 0,66 */
+  --ww-hm-few-fg: var(--ww-ink-900);              /* 11,1 */
+  --ww-hm-some-bg: var(--ww-lavender-300);        /* L 0,38 */
+  --ww-hm-some-fg: var(--ww-ink-900);             /*  6,7 */
+  --ww-hm-many-bg: var(--ww-indigo-500);          /* L 0,11 */
+  --ww-hm-many-fg: var(--ww-mist-0);              /*  6,5 */
+  --ww-hm-all-bg: var(--ww-indigo-800);           /* L 0,026 */
+  --ww-hm-all-fg: var(--ww-mist-0);               /* 13,7 */
+  --ww-hm-seal-bg: var(--ww-mint-400);            /* gegen Zelle 8,7 */
+  --ww-hm-seal-fg: var(--ww-indigo-800);
+  --ww-hm-seal-ring: var(--ww-mist-0);            /* 1,4 px */
+
+  --ww-hm-weekend-lane: rgb(167 154 242 / 0.16);  /* Spur hinter Sa/So */
+  --ww-hm-weekday-weekend-fg: var(--ww-ink-900);
+  --ww-hm-holiday: var(--ww-coral-500);           /* Eselsohr 3,5 gegen Weiß */
+  --ww-hm-holiday-edge: var(--ww-color-surface);  /* Kerbe in Kartenfarbe */
+  --ww-hm-today-ring: currentColor;
+  --ww-hm-selected-outer: var(--ww-ink-900);
+  --ww-hm-selected-inner: var(--ww-mist-0);
+  --ww-hm-suggest: var(--ww-indigo-800);          /* Band 4 px, 13,7 gegen Weiß */
+  --ww-hm-suggest-tint: var(--ww-lavender-100);
+  --ww-hm-outside-fg: var(--ww-ink-500);          /* 3,4 / 3,1 */
+
+  /* ---------------- Kalender-Interaktion ---------------- */
+  --ww-cal-preview-border: var(--ww-ink-900);
+  --ww-cal-anchor: var(--ww-ink-900);
+  --ww-cal-anchor-ring: var(--ww-mist-0);
+
+  /* ---------------- Phasen (Text + Punkt im Kopf, Chip auf Karten) ---------------- */
+  --ww-phase-collect-dot: var(--ww-mint-400);
+  --ww-phase-collect-bg: var(--ww-mint-100);      /* Text 4,9 */
+  --ww-phase-collect-fg: var(--ww-mint-700);
+  --ww-phase-vote-dot: var(--ww-lavender-300);
+  --ww-phase-vote-bg: var(--ww-lavender-100);     /* Text 5,6 */
+  --ww-phase-vote-fg: var(--ww-lavender-600);
+  --ww-phase-fixed-dot: var(--ww-sun-400);
+  --ww-phase-fixed-bg: var(--ww-sun-400);         /* Text 11,2 */
+  --ww-phase-fixed-fg: var(--ww-ink-900);
+  --ww-phase-past-dot: var(--ww-ink-500);
+  --ww-phase-past-bg: var(--ww-mist-150);         /* Text 6,0 */
+  --ww-phase-past-fg: var(--ww-ink-700);
+  --ww-todo-bg: var(--ww-coral-100);              /* „Deine Tage fehlen noch“ 5,7 */
+  --ww-todo-fg: var(--ww-coral-700);
+  --ww-todo-bar: var(--ww-coral-500);
+
+  /* ---------------- Reiseverlauf (W16 v2, D-37) ---------------- */
+  --ww-route-line-done: var(--ww-color-accent-strong); /* erledigt, durchgezogen 5,0 */
+  --ww-route-line-todo: var(--ww-color-border-strong); /* ab Heute gestrichelt 3,1 */
+  --ww-route-wait: var(--ww-lavender-600);             /* „wartet“ Ring + Termin-Kante 6,1 */
+  --ww-route-today-halo: var(--ww-indigo-800);
+  --ww-route-coin: var(--ww-mint-500);                 /* Münzstapel am Erledigt-Marker */
+
+  /* ---------------- Kosten F-035/F-036 (v1.2, design-system §9.22) ----------------
+     Schulden sind kein Fehler: NIE Kirsche/Koralle für „schuldet“. Kontraste gegen surface / bg. */
+  --ww-cost-area-bg: var(--ww-sun-100);                /* Bereichsfarbe Kosten (Kachel, A1, D1): Icon 6,2 */
+  --ww-cost-area-fg: var(--ww-sun-700);
+  --ww-cost-get-fg: var(--ww-mint-700);                /* „bekommt“ 5,5 / 5,0 */
+  --ww-cost-owe-fg: var(--ww-ink-900);                 /* „schuldet“ neutral in Tinte 16,5 / 14,9 */
+  --ww-cost-even-fg: var(--ww-mint-700);               /* „ausgeglichen ✓“ 5,5 / 5,0 */
+  --ww-cost-get-tile-bg: var(--ww-mint-100);           /* „Dein Stand“ bekommt: Icon 4,9 */
+  --ww-cost-get-tile-fg: var(--ww-mint-700);
+  --ww-cost-owe-tile-bg: var(--ww-mist-150);           /* „Dein Stand“ schuldet: Icon 6,0 – neutral */
+  --ww-cost-owe-tile-fg: var(--ww-ink-700);
+  --ww-cost-settled-bg: var(--ww-mint-100);            /* Karte „Alles ausgeglichen“: Tinte 14,6 · Tinte 2 6,4 */
+  --ww-cost-settled-fg: var(--ww-ink-900);
+  --ww-cost-settled-muted: var(--ww-ink-700);
+  --ww-cost-paid-bg: var(--ww-mint-100);               /* Chip „✓ Bezahlt“ 4,9 */
+  --ww-cost-paid-fg: var(--ww-mint-700);
+  --ww-cost-bar-get: var(--ww-mint-700);               /* Saldo-Balken bekommt 5,5 */
+  --ww-cost-bar-owe: var(--ww-ink-500);                /* Saldo-Balken schuldet 3,4 – neutral */
+  --ww-cost-bar-track: var(--ww-mist-150);
+  --ww-cost-bar-axis: var(--ww-ink-500);               /* Mittelachse 1 px */
+  --ww-cost-mask-fg: var(--ww-ink-600);                /* „••••“ der maskierten IBAN 5,1 */
+  --ww-cost-arrow-fg: var(--ww-ink-600);               /* Pfeil A → B 5,1 */
+  --ww-cost-former-bg: var(--ww-mist-150);             /* Avatar „ehemaliges Mitglied“ (D-59): Icon 6,0 */
+  --ww-cost-former-fg: var(--ww-ink-700);
+  /* Kategorien (Icon-Kachel 36): accommodation · travel · food · activities · other/ohne */
+  --ww-cost-cat-accommodation-bg: var(--ww-lavender-100); /* 5,6 – wie Kachel „Unterkunft“ */
+  --ww-cost-cat-accommodation-fg: var(--ww-lavender-600);
+  --ww-cost-cat-travel-bg: var(--ww-lavender-200);       /* 9,3 */
+  --ww-cost-cat-travel-fg: var(--ww-indigo-800);
+  --ww-cost-cat-food-bg: var(--ww-sun-100);              /* 6,2 */
+  --ww-cost-cat-food-fg: var(--ww-sun-700);
+  --ww-cost-cat-activities-bg: var(--ww-mint-100);       /* 4,9 */
+  --ww-cost-cat-activities-fg: var(--ww-mint-700);
+  --ww-cost-cat-other-bg: var(--ww-mist-150);            /* 6,0 – auch „ohne Kategorie“ (receipt) */
+  --ww-cost-cat-other-fg: var(--ww-ink-700);
+
+  /* ---------------- Bucht + Reisedaten F-056/F-054 (v1.3, design-system §9.23) ----------------
+     Keine Kirsche (außer echte Fehler), keine Koralle. Amber nur für Vorschau-Hinweis und Dokument-Warnung. */
+  --ww-travel-area-bg: var(--ww-lavender-200);         /* Bereichsfarbe Lavendel/Indigo (D-68): Kachel/Kopf/V4/D3 + id-card 9,3 */
+  --ww-travel-area-fg: var(--ww-indigo-800);
+  --ww-travel-chip-bg: var(--ww-lavender-200);         /* Chip „Bucht“: 9,3 */
+  --ww-travel-chip-fg: var(--ww-indigo-800);
+  --ww-travel-shield-bg: var(--ww-lavender-100);       /* Schutz-Hinweis (shield): Text 5,6 */
+  --ww-travel-shield-fg: var(--ww-lavender-600);
+  --ww-travel-mask-fg: var(--ww-ink-600);              /* „K•••“, „••.••.••••“ auf surface 5,1 – NICHT auf vertieft */
+  --ww-travel-reveal-ring: var(--ww-lavender-600);     /* Personen-Karte „angezeigt“: Ring 2 px innen, 6,8 */
+  --ww-travel-status-released-bg: var(--ww-mint-100);  /* „✓ freigegeben“ 4,9 */
+  --ww-travel-status-released-fg: var(--ww-mint-700);
+  --ww-travel-status-open-bg: var(--ww-lavender-100);  /* „◷ offen“ 5,6 */
+  --ww-travel-status-open-fg: var(--ww-lavender-600);
+  --ww-travel-status-declined-bg: var(--ww-mist-150);  /* „klärt es direkt“ 6,0 – neutral */
+  --ww-travel-status-declined-fg: var(--ww-ink-700);
+  --ww-travel-status-pending-border: var(--ww-ink-500);/* „noch nicht dabei“: gestrichelt 3,4 */
+  --ww-travel-status-pending-fg: var(--ww-ink-700);    /* 7,2 */
+  --ww-travel-consent-border: var(--ww-ink-500);       /* Karte + Checkbox nicht gewählt 3,4 */
+  --ww-travel-consent-checked-bg: var(--ww-lavender-100);
+  --ww-travel-consent-checked-border: var(--ww-indigo-800);
+  --ww-travel-check-bg: var(--ww-indigo-800);          /* gesetzte Checkbox, Haken weiß 13,7 */
+  --ww-travel-check-fg: var(--ww-mist-0);
+  --ww-travel-warn-bg: var(--ww-sun-100);              /* Dokument-Warnung: Icon 6,2 · Text Tinte 14,9 */
+  --ww-travel-warn-icon: var(--ww-sun-700);
+  --ww-travel-warn-fg: var(--ww-ink-900);
+  --ww-travel-demo-bg: var(--ww-sun-100);              /* Vorschau-Hinweis „Nur Fantasiedaten“: Text 14,9 */
+  --ww-travel-demo-fg: var(--ww-ink-900);
+  --ww-travel-demo-icon: var(--ww-sun-700);            /* 6,2 */
+  --ww-travel-demo-tag-bg: var(--ww-sun-400);          /* Etikett „VORSCHAU“ 11,2 */
+  --ww-travel-demo-tag-fg: var(--ww-ink-900);
+  --ww-travel-demo-stripe-a: var(--ww-sun-400);        /* gestreifte Kante, dekorativ */
+  --ww-travel-demo-stripe-b: var(--ww-sun-200);
+  --ww-travel-log-icon-bg: var(--ww-mist-150);         /* Protokoll-Plakette: Icon 6,0 */
+  --ww-travel-log-icon-fg: var(--ww-ink-700);
+
+  /* ---------------- Illustrationen (inline-SVG) ---------------- */
+  --ww-illu-plate: var(--ww-lavender-100);
+  --ww-illu-paper: var(--ww-mist-0);
+  --ww-illu-ink: var(--ww-ink-900);
+  --ww-illu-subtle: var(--ww-lavender-200);
+  --ww-illu-brand: var(--ww-indigo-800);
+  --ww-illu-violet: var(--ww-indigo-500);
+  --ww-illu-lavender: var(--ww-lavender-300);
+  --ww-illu-lavender-light: var(--ww-lavender-200);
+  --ww-illu-mint: var(--ww-mint-400);
+  --ww-illu-mint-deep: var(--ww-mint-500);
+  --ww-illu-sun: var(--ww-sun-400);
+  --ww-illu-coral: var(--ww-coral-500);
+  --ww-illu-on-brand: var(--ww-mist-0);
+}
+
+/* --------------------------------------------------------------------------
+   4. SEMANTIK – DUNKEL „Mitternacht“
+   Block A: System-Dunkel, sofern nicht ausdrücklich Hell gewählt.
+   Block B: erzwungenes Dunkel per [data-theme="dark"].
+   Beide Blöcke sind absichtlich IDENTISCH – bei Änderungen beide pflegen.
+   Grund #14112E · Fläche #1F1A45 · erhöht #2A2458
+   -------------------------------------------------------------------------- */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+
+    --ww-color-bg: var(--ww-night-950);
+    --ww-color-surface: var(--ww-night-850);
+    --ww-color-surface-raised: var(--ww-night-800);
+    --ww-color-surface-sunken: var(--ww-night-900);
+    --ww-color-scrim: rgb(0 0 0 / 0.6);
+
+    --ww-color-text: var(--ww-ink-50);            /* 16,3 / 14,5 / 12,6 */
+    --ww-color-text-muted: var(--ww-ink-200);     /*  9,2 /  8,2 /  7,1 */
+    --ww-color-text-subtle: var(--ww-ink-300);    /*  6,6 /  5,9 /  5,1 */
+    --ww-color-text-inverse: var(--ww-ink-900);
+    --ww-color-text-on-primary: var(--ww-night-950); /* 11,5 auf Minze */
+    --ww-color-text-on-danger: var(--ww-night-950);
+    --ww-color-link: var(--ww-mint-400);          /* 11,5 / 10,2 */
+
+    --ww-color-border-subtle: var(--ww-night-775);
+    --ww-color-border-strong: var(--ww-night-500);/* 4,4 / 3,9 / 3,4 */
+
+    --ww-color-primary: var(--ww-mint-400);
+    --ww-color-primary-hover: var(--ww-mint-300);
+    --ww-color-primary-active: var(--ww-mint-450);
+    --ww-color-primary-text: var(--ww-mint-400);
+    --ww-color-primary-tint: var(--ww-night-760); /* Lavendel-Text darauf 7,3 */
+    --ww-color-primary-tint-strong: var(--ww-night-700);
+    --ww-color-accent: var(--ww-mint-400);
+    --ww-color-accent-strong: var(--ww-mint-400);
+    --ww-color-accent-text: var(--ww-mint-400);   /* 10,2 */
+    --ww-color-accent-tint: var(--ww-mint-900);   /* Minze darauf 7,6 */
+    --ww-color-on-accent: var(--ww-night-950);    /* 11,5 */
+    --ww-color-sun: var(--ww-sun-400);
+    --ww-color-selected: var(--ww-mint-400);
+
+    --ww-color-danger: var(--ww-cherry-300);      /* 7,1 auf Fläche */
+    --ww-color-danger-hover: var(--ww-cherry-350);
+    --ww-color-danger-tint: var(--ww-cherry-900); /* 6,4 */
+    --ww-color-warning-text: var(--ww-sun-200);   /* auf warning-tint 9,6 */
+    --ww-color-warning-tint: var(--ww-sun-900);
+    --ww-color-success-text: var(--ww-mint-400);  /* 7,6 */
+    --ww-color-success-tint: var(--ww-mint-900);
+    --ww-color-info-text: var(--ww-lavender-400); /* 7,3 */
+    --ww-color-info-tint: var(--ww-night-760);
+    --ww-color-holiday-text: var(--ww-coral-300); /* 8,2 */
+    --ww-color-holiday-tint: var(--ww-coral-900);
+    --ww-color-holiday-mark: var(--ww-coral-400); /* 7,0 gegen Fläche */
+
+    --ww-color-disabled-bg: var(--ww-night-800);
+    --ww-color-disabled-text: var(--ww-ink-300);
+
+    --ww-color-focus: var(--ww-blue-300);         /* 8,7 / 7,7 */
+    --ww-color-focus-gap: var(--ww-night-950);
+    --ww-color-focus-on-brand: var(--ww-mist-0);
+
+    --ww-color-inverse-bg: var(--ww-ink-50);
+    --ww-color-inverse-text: var(--ww-ink-900);
+    --ww-color-inverse-link: var(--ww-lavender-600); /* 6,1 */
+
+    --ww-shadow-1: 0 14px 30px -16px rgb(0 0 0 / 0.70);
+    --ww-shadow-2: 0 18px 36px -14px rgb(0 0 0 / 0.75);
+    --ww-shadow-3: 0 24px 48px -16px rgb(0 0 0 / 0.80);
+    --ww-shadow-button: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+    --ww-shadow-button-accent: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+    --ww-shadow-selected: 0 8px 16px -10px rgb(0 0 0 / 0.70);
+    --ww-shadow-sticky-bottom: 0 -16px 34px -12px rgb(0 0 0 / 0.70);
+
+    --ww-btn-primary-bg: var(--ww-color-primary);
+    --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+    --ww-btn-secondary-bg: transparent;
+    --ww-btn-secondary-fg: var(--ww-ink-50);
+    --ww-btn-secondary-border: var(--ww-ink-50);
+    --ww-btn-tool-bg: var(--ww-night-800);
+    --ww-btn-tool-fg: var(--ww-ink-50);
+
+    --ww-cockpit-bg: var(--ww-indigo-900);        /* hebt sich nur 1,1 : 1 ab – Trennung über Rundung */
+    --ww-cockpit-glow-mint: rgb(82 229 184 / 0.18);
+    --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+    --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.22);
+    --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+    --ww-cockpit-text: var(--ww-mist-0);
+    --ww-cockpit-text-muted: var(--ww-lavender-250); /* 9,8 */
+    --ww-cockpit-accent: var(--ww-mint-400);
+    --ww-cockpit-on-accent: var(--ww-night-950);
+    --ww-cockpit-control-bg: rgb(255 255 255 / 0.12);
+    --ww-cockpit-track: rgb(255 255 255 / 0.10);
+    --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);
+    --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+    --ww-cockpit-outline: rgb(255 255 255 / 0.60);
+    --ww-cockpit-tab-active-bg: var(--ww-ink-50);
+    --ww-cockpit-tab-active-fg: var(--ww-night-950);
+
+    --ww-tile-lavender-bg: var(--ww-night-760);
+    --ww-tile-lavender-fg: var(--ww-lavender-400);
+    --ww-tile-mint-bg: var(--ww-mint-900);
+    --ww-tile-mint-fg: var(--ww-mint-400);
+    --ww-tile-sun-bg: var(--ww-sun-900);
+    --ww-tile-sun-fg: var(--ww-sun-200);
+    --ww-tile-coral-bg: var(--ww-coral-900);
+    --ww-tile-coral-fg: var(--ww-coral-300);
+    --ww-tile-brand-bg: var(--ww-indigo-500);
+    --ww-tile-brand-fg: var(--ww-mist-0);         /* 6,5 */
+
+    --ww-progress-track: var(--ww-night-800);
+    --ww-progress-fill: var(--ww-mint-400);
+    --ww-progress-current: var(--ww-sun-400);
+    --ww-progress-current-edge: var(--ww-sun-200);
+    --ww-ring-start: var(--ww-mint-400);
+    --ww-ring-end: var(--ww-sun-400);
+    --ww-ring-track: rgb(255 255 255 / 0.14);
+    --ww-ring-knob: var(--ww-sun-400);
+    --ww-ring-knob-edge: var(--ww-cockpit-bg);
+    --ww-daybar-high: var(--ww-mint-400);
+    --ww-daybar-low: var(--ww-lavender-300);
+
+    --ww-seal-bg: var(--ww-mint-400);
+    --ww-seal-fg: var(--ww-night-950);
+    --ww-seal-ring: var(--ww-night-850);
+
+    --ww-confetti-1: var(--ww-mint-400);
+    --ww-confetti-2: var(--ww-sun-400);
+    --ww-confetti-3: var(--ww-lavender-300);
+    --ww-confetti-4: var(--ww-coral-400);
+    --ww-confetti-5: var(--ww-mist-0);
+
+    --ww-avatar-fg: var(--ww-avatar-ink);
+    --ww-avatar-ring: var(--ww-color-surface);
+    --ww-avatar-open-border: var(--ww-color-border-strong);
+
+    --ww-avail-yes-bg: var(--ww-mint-900);        /* Text 10,8 */
+    --ww-avail-yes-fg: var(--ww-mint-400);        /*  7,6 */
+    --ww-avail-maybe-bg: var(--ww-sun-900);       /* Symbol 9,6 */
+    --ww-avail-maybe-stripe: var(--ww-sun-800);   /* Symbol 6,4 */
+    --ww-avail-maybe-fg: var(--ww-sun-200);
+    --ww-avail-no-bg: var(--ww-night-750);        /* Text 11,8 */
+    --ww-avail-no-line: var(--ww-night-600);      /* Text auf Linie 7,6 */
+    --ww-avail-no-fg: var(--ww-ink-50);
+    --ww-avail-day-text: var(--ww-ink-50);
+    --ww-avail-plaque-ring: rgb(243 241 255 / 0.45);
+
+    --ww-vote-yes-bg: var(--ww-mint-900);
+    --ww-vote-yes-fg: var(--ww-mint-400);         /* 7,6 */
+    --ww-vote-yes-bar: var(--ww-mint-400);
+    --ww-vote-maybe-bg: var(--ww-sun-900);
+    --ww-vote-maybe-fg: var(--ww-sun-200);        /* 9,6 */
+    --ww-vote-maybe-bar: var(--ww-sun-200);
+    --ww-vote-no-bg: var(--ww-night-750);
+    --ww-vote-no-fg: var(--ww-ink-100);           /* 9,2 */
+    --ww-vote-no-bar: var(--ww-night-500);
+    --ww-vote-selected-bg: var(--ww-mint-400);
+    --ww-vote-selected-fg: var(--ww-night-950);   /* 11,5 */
+    --ww-vote-tick-bg: var(--ww-ink-50);
+    --ww-vote-tick-fg: var(--ww-indigo-800);
+    --ww-vote-ghost-border: var(--ww-ink-200);
+    --ww-rank-bg: var(--ww-sun-400);
+    --ww-rank-fg: var(--ww-night-950);            /* 12,4 */
+
+    --ww-hm-nodata-bg: transparent;
+    --ww-hm-nodata-fg: var(--ww-ink-200);         /* 8,2 */
+    --ww-hm-nodata-border: var(--ww-night-500);   /* 3,9 */
+    --ww-hm-none-bg: var(--ww-night-820);
+    --ww-hm-none-line: var(--ww-night-650);
+    --ww-hm-none-fg: var(--ww-ink-50);            /* 14,1 (auf Linie 9,9) */
+    --ww-hm-few-bg: var(--ww-night-700);
+    --ww-hm-few-fg: var(--ww-ink-50);             /* 10,4 */
+    --ww-hm-some-bg: var(--ww-indigo-500);
+    --ww-hm-some-fg: var(--ww-mist-0);            /*  6,5 */
+    --ww-hm-many-bg: var(--ww-lavender-300);
+    --ww-hm-many-fg: var(--ww-night-950);         /*  7,4 */
+    --ww-hm-all-bg: var(--ww-mint-400);
+    --ww-hm-all-fg: var(--ww-night-950);          /* 11,5 */
+    --ww-hm-seal-bg: var(--ww-night-950);         /* dunkles Siegel auf Minze-Zelle */
+    --ww-hm-seal-fg: var(--ww-mint-400);
+    --ww-hm-seal-ring: transparent;
+
+    --ww-hm-weekend-lane: rgb(167 154 242 / 0.08);
+    --ww-hm-weekday-weekend-fg: var(--ww-ink-50);
+    --ww-hm-holiday: var(--ww-coral-400);
+    --ww-hm-holiday-edge: var(--ww-color-surface);
+    --ww-hm-today-ring: currentColor;
+    --ww-hm-selected-outer: var(--ww-ink-50);
+    --ww-hm-selected-inner: var(--ww-night-950);
+    --ww-hm-suggest: var(--ww-mint-400);          /* 10,2 gegen Fläche */
+    --ww-hm-suggest-tint: var(--ww-night-760);
+    --ww-hm-outside-fg: var(--ww-night-500);      /* 3,9 */
+
+    --ww-cal-preview-border: var(--ww-ink-50);
+    --ww-cal-anchor: var(--ww-ink-50);
+    --ww-cal-anchor-ring: var(--ww-night-950);
+
+    --ww-phase-collect-dot: var(--ww-mint-400);
+    --ww-phase-collect-bg: var(--ww-mint-900);    /* 7,6 */
+    --ww-phase-collect-fg: var(--ww-mint-400);
+    --ww-phase-vote-dot: var(--ww-lavender-300);
+    --ww-phase-vote-bg: var(--ww-night-760);      /* 7,3 */
+    --ww-phase-vote-fg: var(--ww-lavender-400);
+    --ww-phase-fixed-dot: var(--ww-sun-400);
+    --ww-phase-fixed-bg: var(--ww-sun-400);       /* 12,4 */
+    --ww-phase-fixed-fg: var(--ww-night-950);
+    --ww-phase-past-dot: var(--ww-ink-300);
+    --ww-phase-past-bg: var(--ww-night-750);      /* 9,2 */
+    --ww-phase-past-fg: var(--ww-ink-100);
+    --ww-todo-bg: var(--ww-coral-900);            /* 8,2 */
+    --ww-todo-fg: var(--ww-coral-300);
+    --ww-todo-bar: var(--ww-coral-400);
+
+    --ww-route-line-done: var(--ww-color-accent-strong);
+    --ww-route-line-todo: var(--ww-color-border-strong);
+    --ww-route-wait: var(--ww-lavender-400);
+    --ww-route-today-halo: var(--ww-mint-400);
+    --ww-route-coin: var(--ww-mint-500);
+
+    --ww-cost-area-bg: var(--ww-sun-900);          /* 9,6 */
+    --ww-cost-area-fg: var(--ww-sun-200);
+    --ww-cost-get-fg: var(--ww-mint-400);          /* 10,2 / 11,5 */
+    --ww-cost-owe-fg: var(--ww-ink-50);            /* 14,5 / 16,3 */
+    --ww-cost-even-fg: var(--ww-mint-400);
+    --ww-cost-get-tile-bg: var(--ww-mint-900);     /* 7,6 */
+    --ww-cost-get-tile-fg: var(--ww-mint-400);
+    --ww-cost-owe-tile-bg: var(--ww-night-800);    /* 7,1 */
+    --ww-cost-owe-tile-fg: var(--ww-ink-200);
+    --ww-cost-settled-bg: var(--ww-mint-900);      /* Text 10,8 · Text 2 6,1 */
+    --ww-cost-settled-fg: var(--ww-ink-50);
+    --ww-cost-settled-muted: var(--ww-ink-200);
+    --ww-cost-paid-bg: var(--ww-mint-900);         /* 7,6 */
+    --ww-cost-paid-fg: var(--ww-mint-400);
+    --ww-cost-bar-get: var(--ww-mint-400);
+    --ww-cost-bar-owe: var(--ww-night-500);        /* 3,9 */
+    --ww-cost-bar-track: var(--ww-night-800);
+    --ww-cost-bar-axis: var(--ww-night-500);
+    --ww-cost-mask-fg: var(--ww-ink-300);          /* 5,9 */
+    --ww-cost-arrow-fg: var(--ww-ink-300);
+    --ww-cost-former-bg: var(--ww-night-800);      /* 7,1 */
+    --ww-cost-former-fg: var(--ww-ink-200);
+    --ww-cost-cat-accommodation-bg: var(--ww-night-760); /* 7,3 */
+    --ww-cost-cat-accommodation-fg: var(--ww-lavender-400);
+    --ww-cost-cat-travel-bg: var(--ww-indigo-500);       /* 6,5 */
+    --ww-cost-cat-travel-fg: var(--ww-mist-0);
+    --ww-cost-cat-food-bg: var(--ww-sun-900);            /* 9,6 */
+    --ww-cost-cat-food-fg: var(--ww-sun-200);
+    --ww-cost-cat-activities-bg: var(--ww-mint-900);     /* 7,6 */
+    --ww-cost-cat-activities-fg: var(--ww-mint-400);
+    --ww-cost-cat-other-bg: var(--ww-night-800);         /* 7,1 */
+    --ww-cost-cat-other-fg: var(--ww-ink-200);
+
+    /* Bucht + Reisedaten (v1.3) */
+    --ww-travel-area-bg: var(--ww-indigo-500);           /* 6,5 */
+    --ww-travel-area-fg: var(--ww-mist-0);
+    --ww-travel-chip-bg: var(--ww-indigo-500);           /* 6,5 */
+    --ww-travel-chip-fg: var(--ww-mist-0);
+    --ww-travel-shield-bg: var(--ww-night-760);          /* 7,3 */
+    --ww-travel-shield-fg: var(--ww-lavender-400);
+    --ww-travel-mask-fg: var(--ww-ink-300);              /* 5,9 auf surface */
+    --ww-travel-reveal-ring: var(--ww-lavender-400);
+    --ww-travel-status-released-bg: var(--ww-mint-900);  /* 7,6 */
+    --ww-travel-status-released-fg: var(--ww-mint-400);
+    --ww-travel-status-open-bg: var(--ww-night-760);     /* 7,3 */
+    --ww-travel-status-open-fg: var(--ww-lavender-400);
+    --ww-travel-status-declined-bg: var(--ww-night-800); /* 7,1 */
+    --ww-travel-status-declined-fg: var(--ww-ink-200);
+    --ww-travel-status-pending-border: var(--ww-night-500); /* 3,9 */
+    --ww-travel-status-pending-fg: var(--ww-ink-200);    /* 8,2 */
+    --ww-travel-consent-border: var(--ww-night-500);     /* 3,9 */
+    --ww-travel-consent-checked-bg: var(--ww-night-760);
+    --ww-travel-consent-checked-border: var(--ww-mint-400);
+    --ww-travel-check-bg: var(--ww-mint-400);            /* Haken 11,5 */
+    --ww-travel-check-fg: var(--ww-night-950);
+    --ww-travel-warn-bg: var(--ww-sun-900);              /* Icon 9,6 · Text 11,5 */
+    --ww-travel-warn-icon: var(--ww-sun-200);
+    --ww-travel-warn-fg: var(--ww-ink-50);
+    --ww-travel-demo-bg: var(--ww-sun-900);              /* Text 11,5 */
+    --ww-travel-demo-fg: var(--ww-ink-50);
+    --ww-travel-demo-icon: var(--ww-sun-200);            /* 9,6 */
+    --ww-travel-demo-tag-bg: var(--ww-sun-400);          /* 12,4 */
+    --ww-travel-demo-tag-fg: var(--ww-night-950);
+    --ww-travel-demo-stripe-a: var(--ww-sun-400);
+    --ww-travel-demo-stripe-b: var(--ww-sun-800);
+    --ww-travel-log-icon-bg: var(--ww-night-800);        /* 7,1 */
+    --ww-travel-log-icon-fg: var(--ww-ink-200);
+
+    --ww-illu-plate: var(--ww-night-820);
+    --ww-illu-paper: var(--ww-night-750);
+    --ww-illu-ink: var(--ww-ink-50);
+    --ww-illu-subtle: var(--ww-night-700);
+    --ww-illu-brand: var(--ww-indigo-500);
+    --ww-illu-violet: var(--ww-lavender-300);
+    --ww-illu-lavender: var(--ww-lavender-300);
+    --ww-illu-lavender-light: var(--ww-night-700);
+    --ww-illu-mint: var(--ww-mint-400);
+    --ww-illu-mint-deep: var(--ww-mint-500);
+    --ww-illu-sun: var(--ww-sun-400);
+    --ww-illu-coral: var(--ww-coral-400);
+    --ww-illu-on-brand: var(--ww-mist-0);
+  }
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --ww-color-bg: var(--ww-night-950);
+  --ww-color-surface: var(--ww-night-850);
+  --ww-color-surface-raised: var(--ww-night-800);
+  --ww-color-surface-sunken: var(--ww-night-900);
+  --ww-color-scrim: rgb(0 0 0 / 0.6);
+
+  --ww-color-text: var(--ww-ink-50);
+  --ww-color-text-muted: var(--ww-ink-200);
+  --ww-color-text-subtle: var(--ww-ink-300);
+  --ww-color-text-inverse: var(--ww-ink-900);
+  --ww-color-text-on-primary: var(--ww-night-950);
+  --ww-color-text-on-danger: var(--ww-night-950);
+  --ww-color-link: var(--ww-mint-400);
+
+  --ww-color-border-subtle: var(--ww-night-775);
+  --ww-color-border-strong: var(--ww-night-500);
+
+  --ww-color-primary: var(--ww-mint-400);
+  --ww-color-primary-hover: var(--ww-mint-300);
+  --ww-color-primary-active: var(--ww-mint-450);
+  --ww-color-primary-text: var(--ww-mint-400);
+  --ww-color-primary-tint: var(--ww-night-760);
+  --ww-color-primary-tint-strong: var(--ww-night-700);
+  --ww-color-accent: var(--ww-mint-400);
+  --ww-color-accent-strong: var(--ww-mint-400);
+  --ww-color-accent-text: var(--ww-mint-400);
+  --ww-color-accent-tint: var(--ww-mint-900);
+  --ww-color-on-accent: var(--ww-night-950);
+  --ww-color-sun: var(--ww-sun-400);
+  --ww-color-selected: var(--ww-mint-400);
+
+  --ww-color-danger: var(--ww-cherry-300);
+  --ww-color-danger-hover: var(--ww-cherry-350);
+  --ww-color-danger-tint: var(--ww-cherry-900);
+  --ww-color-warning-text: var(--ww-sun-200);
+  --ww-color-warning-tint: var(--ww-sun-900);
+  --ww-color-success-text: var(--ww-mint-400);
+  --ww-color-success-tint: var(--ww-mint-900);
+  --ww-color-info-text: var(--ww-lavender-400);
+  --ww-color-info-tint: var(--ww-night-760);
+  --ww-color-holiday-text: var(--ww-coral-300);
+  --ww-color-holiday-tint: var(--ww-coral-900);
+  --ww-color-holiday-mark: var(--ww-coral-400);
+
+  --ww-color-disabled-bg: var(--ww-night-800);
+  --ww-color-disabled-text: var(--ww-ink-300);
+
+  --ww-color-focus: var(--ww-blue-300);
+  --ww-color-focus-gap: var(--ww-night-950);
+  --ww-color-focus-on-brand: var(--ww-mist-0);
+
+  --ww-color-inverse-bg: var(--ww-ink-50);
+  --ww-color-inverse-text: var(--ww-ink-900);
+  --ww-color-inverse-link: var(--ww-lavender-600);
+
+  --ww-shadow-1: 0 14px 30px -16px rgb(0 0 0 / 0.70);
+  --ww-shadow-2: 0 18px 36px -14px rgb(0 0 0 / 0.75);
+  --ww-shadow-3: 0 24px 48px -16px rgb(0 0 0 / 0.80);
+  --ww-shadow-button: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+  --ww-shadow-button-accent: 0 10px 24px -12px rgb(82 229 184 / 0.55);
+  --ww-shadow-selected: 0 8px 16px -10px rgb(0 0 0 / 0.70);
+  --ww-shadow-sticky-bottom: 0 -16px 34px -12px rgb(0 0 0 / 0.70);
+
+  --ww-btn-primary-bg: var(--ww-color-primary);
+  --ww-btn-primary-fg: var(--ww-color-text-on-primary);
+  --ww-btn-secondary-bg: transparent;
+  --ww-btn-secondary-fg: var(--ww-ink-50);
+  --ww-btn-secondary-border: var(--ww-ink-50);
+  --ww-btn-tool-bg: var(--ww-night-800);
+  --ww-btn-tool-fg: var(--ww-ink-50);
+
+  --ww-cockpit-bg: var(--ww-indigo-900);
+  --ww-cockpit-glow-mint: rgb(82 229 184 / 0.18);
+  --ww-cockpit-glow-mint-0: rgb(82 229 184 / 0);
+  --ww-cockpit-glow-lavender: rgb(167 154 242 / 0.22);
+  --ww-cockpit-glow-lavender-0: rgb(167 154 242 / 0);
+  --ww-cockpit-text: var(--ww-mist-0);
+  --ww-cockpit-text-muted: var(--ww-lavender-250);
+  --ww-cockpit-accent: var(--ww-mint-400);
+  --ww-cockpit-on-accent: var(--ww-night-950);
+  --ww-cockpit-control-bg: rgb(255 255 255 / 0.12);
+  --ww-cockpit-track: rgb(255 255 255 / 0.10);
+  --ww-cockpit-kpi-bg: rgb(255 255 255 / 0.08);
+  --ww-cockpit-ring-track: rgb(255 255 255 / 0.18);
+  --ww-cockpit-outline: rgb(255 255 255 / 0.60);
+  --ww-cockpit-tab-active-bg: var(--ww-ink-50);
+  --ww-cockpit-tab-active-fg: var(--ww-night-950);
+
+  --ww-tile-lavender-bg: var(--ww-night-760);
+  --ww-tile-lavender-fg: var(--ww-lavender-400);
+  --ww-tile-mint-bg: var(--ww-mint-900);
+  --ww-tile-mint-fg: var(--ww-mint-400);
+  --ww-tile-sun-bg: var(--ww-sun-900);
+  --ww-tile-sun-fg: var(--ww-sun-200);
+  --ww-tile-coral-bg: var(--ww-coral-900);
+  --ww-tile-coral-fg: var(--ww-coral-300);
+  --ww-tile-brand-bg: var(--ww-indigo-500);
+  --ww-tile-brand-fg: var(--ww-mist-0);
+
+  --ww-progress-track: var(--ww-night-800);
+  --ww-progress-fill: var(--ww-mint-400);
+  --ww-progress-current: var(--ww-sun-400);
+  --ww-progress-current-edge: var(--ww-sun-200);
+  --ww-ring-start: var(--ww-mint-400);
+  --ww-ring-end: var(--ww-sun-400);
+  --ww-ring-track: rgb(255 255 255 / 0.14);
+  --ww-ring-knob: var(--ww-sun-400);
+  --ww-ring-knob-edge: var(--ww-cockpit-bg);
+  --ww-daybar-high: var(--ww-mint-400);
+  --ww-daybar-low: var(--ww-lavender-300);
+
+  --ww-seal-bg: var(--ww-mint-400);
+  --ww-seal-fg: var(--ww-night-950);
+  --ww-seal-ring: var(--ww-night-850);
+
+  --ww-confetti-1: var(--ww-mint-400);
+  --ww-confetti-2: var(--ww-sun-400);
+  --ww-confetti-3: var(--ww-lavender-300);
+  --ww-confetti-4: var(--ww-coral-400);
+  --ww-confetti-5: var(--ww-mist-0);
+
+  --ww-avatar-fg: var(--ww-avatar-ink);
+  --ww-avatar-ring: var(--ww-color-surface);
+  --ww-avatar-open-border: var(--ww-color-border-strong);
+
+  --ww-avail-yes-bg: var(--ww-mint-900);
+  --ww-avail-yes-fg: var(--ww-mint-400);
+  --ww-avail-maybe-bg: var(--ww-sun-900);
+  --ww-avail-maybe-stripe: var(--ww-sun-800);
+  --ww-avail-maybe-fg: var(--ww-sun-200);
+  --ww-avail-no-bg: var(--ww-night-750);
+  --ww-avail-no-line: var(--ww-night-600);
+  --ww-avail-no-fg: var(--ww-ink-50);
+  --ww-avail-day-text: var(--ww-ink-50);
+  --ww-avail-plaque-ring: rgb(243 241 255 / 0.45);
+
+  --ww-vote-yes-bg: var(--ww-mint-900);
+  --ww-vote-yes-fg: var(--ww-mint-400);
+  --ww-vote-yes-bar: var(--ww-mint-400);
+  --ww-vote-maybe-bg: var(--ww-sun-900);
+  --ww-vote-maybe-fg: var(--ww-sun-200);
+  --ww-vote-maybe-bar: var(--ww-sun-200);
+  --ww-vote-no-bg: var(--ww-night-750);
+  --ww-vote-no-fg: var(--ww-ink-100);
+  --ww-vote-no-bar: var(--ww-night-500);
+  --ww-vote-selected-bg: var(--ww-mint-400);
+  --ww-vote-selected-fg: var(--ww-night-950);
+  --ww-vote-tick-bg: var(--ww-ink-50);
+  --ww-vote-tick-fg: var(--ww-indigo-800);
+  --ww-vote-ghost-border: var(--ww-ink-200);
+  --ww-rank-bg: var(--ww-sun-400);
+  --ww-rank-fg: var(--ww-night-950);
+
+  --ww-hm-nodata-bg: transparent;
+  --ww-hm-nodata-fg: var(--ww-ink-200);
+  --ww-hm-nodata-border: var(--ww-night-500);
+  --ww-hm-none-bg: var(--ww-night-820);
+  --ww-hm-none-line: var(--ww-night-650);
+  --ww-hm-none-fg: var(--ww-ink-50);
+  --ww-hm-few-bg: var(--ww-night-700);
+  --ww-hm-few-fg: var(--ww-ink-50);
+  --ww-hm-some-bg: var(--ww-indigo-500);
+  --ww-hm-some-fg: var(--ww-mist-0);
+  --ww-hm-many-bg: var(--ww-lavender-300);
+  --ww-hm-many-fg: var(--ww-night-950);
+  --ww-hm-all-bg: var(--ww-mint-400);
+  --ww-hm-all-fg: var(--ww-night-950);
+  --ww-hm-seal-bg: var(--ww-night-950);
+  --ww-hm-seal-fg: var(--ww-mint-400);
+  --ww-hm-seal-ring: transparent;
+
+  --ww-hm-weekend-lane: rgb(167 154 242 / 0.08);
+  --ww-hm-weekday-weekend-fg: var(--ww-ink-50);
+  --ww-hm-holiday: var(--ww-coral-400);
+  --ww-hm-holiday-edge: var(--ww-color-surface);
+  --ww-hm-today-ring: currentColor;
+  --ww-hm-selected-outer: var(--ww-ink-50);
+  --ww-hm-selected-inner: var(--ww-night-950);
+  --ww-hm-suggest: var(--ww-mint-400);
+  --ww-hm-suggest-tint: var(--ww-night-760);
+  --ww-hm-outside-fg: var(--ww-night-500);
+
+  --ww-cal-preview-border: var(--ww-ink-50);
+  --ww-cal-anchor: var(--ww-ink-50);
+  --ww-cal-anchor-ring: var(--ww-night-950);
+
+  --ww-phase-collect-dot: var(--ww-mint-400);
+  --ww-phase-collect-bg: var(--ww-mint-900);
+  --ww-phase-collect-fg: var(--ww-mint-400);
+  --ww-phase-vote-dot: var(--ww-lavender-300);
+  --ww-phase-vote-bg: var(--ww-night-760);
+  --ww-phase-vote-fg: var(--ww-lavender-400);
+  --ww-phase-fixed-dot: var(--ww-sun-400);
+  --ww-phase-fixed-bg: var(--ww-sun-400);
+  --ww-phase-fixed-fg: var(--ww-night-950);
+  --ww-phase-past-dot: var(--ww-ink-300);
+  --ww-phase-past-bg: var(--ww-night-750);
+  --ww-phase-past-fg: var(--ww-ink-100);
+  --ww-todo-bg: var(--ww-coral-900);
+  --ww-todo-fg: var(--ww-coral-300);
+  --ww-todo-bar: var(--ww-coral-400);
+
+  --ww-route-line-done: var(--ww-color-accent-strong);
+  --ww-route-line-todo: var(--ww-color-border-strong);
+  --ww-route-wait: var(--ww-lavender-400);
+  --ww-route-today-halo: var(--ww-mint-400);
+  --ww-route-coin: var(--ww-mint-500);
+
+  --ww-cost-area-bg: var(--ww-sun-900);
+  --ww-cost-area-fg: var(--ww-sun-200);
+  --ww-cost-get-fg: var(--ww-mint-400);
+  --ww-cost-owe-fg: var(--ww-ink-50);
+  --ww-cost-even-fg: var(--ww-mint-400);
+  --ww-cost-get-tile-bg: var(--ww-mint-900);
+  --ww-cost-get-tile-fg: var(--ww-mint-400);
+  --ww-cost-owe-tile-bg: var(--ww-night-800);
+  --ww-cost-owe-tile-fg: var(--ww-ink-200);
+  --ww-cost-settled-bg: var(--ww-mint-900);
+  --ww-cost-settled-fg: var(--ww-ink-50);
+  --ww-cost-settled-muted: var(--ww-ink-200);
+  --ww-cost-paid-bg: var(--ww-mint-900);
+  --ww-cost-paid-fg: var(--ww-mint-400);
+  --ww-cost-bar-get: var(--ww-mint-400);
+  --ww-cost-bar-owe: var(--ww-night-500);
+  --ww-cost-bar-track: var(--ww-night-800);
+  --ww-cost-bar-axis: var(--ww-night-500);
+  --ww-cost-mask-fg: var(--ww-ink-300);
+  --ww-cost-arrow-fg: var(--ww-ink-300);
+  --ww-cost-former-bg: var(--ww-night-800);
+  --ww-cost-former-fg: var(--ww-ink-200);
+  --ww-cost-cat-accommodation-bg: var(--ww-night-760);
+  --ww-cost-cat-accommodation-fg: var(--ww-lavender-400);
+  --ww-cost-cat-travel-bg: var(--ww-indigo-500);
+  --ww-cost-cat-travel-fg: var(--ww-mist-0);
+  --ww-cost-cat-food-bg: var(--ww-sun-900);
+  --ww-cost-cat-food-fg: var(--ww-sun-200);
+  --ww-cost-cat-activities-bg: var(--ww-mint-900);
+  --ww-cost-cat-activities-fg: var(--ww-mint-400);
+  --ww-cost-cat-other-bg: var(--ww-night-800);
+  --ww-cost-cat-other-fg: var(--ww-ink-200);
+
+  /* Bucht + Reisedaten (v1.3) */
+  --ww-travel-area-bg: var(--ww-indigo-500);
+  --ww-travel-area-fg: var(--ww-mist-0);
+  --ww-travel-chip-bg: var(--ww-indigo-500);
+  --ww-travel-chip-fg: var(--ww-mist-0);
+  --ww-travel-shield-bg: var(--ww-night-760);
+  --ww-travel-shield-fg: var(--ww-lavender-400);
+  --ww-travel-mask-fg: var(--ww-ink-300);
+  --ww-travel-reveal-ring: var(--ww-lavender-400);
+  --ww-travel-status-released-bg: var(--ww-mint-900);
+  --ww-travel-status-released-fg: var(--ww-mint-400);
+  --ww-travel-status-open-bg: var(--ww-night-760);
+  --ww-travel-status-open-fg: var(--ww-lavender-400);
+  --ww-travel-status-declined-bg: var(--ww-night-800);
+  --ww-travel-status-declined-fg: var(--ww-ink-200);
+  --ww-travel-status-pending-border: var(--ww-night-500);
+  --ww-travel-status-pending-fg: var(--ww-ink-200);
+  --ww-travel-consent-border: var(--ww-night-500);
+  --ww-travel-consent-checked-bg: var(--ww-night-760);
+  --ww-travel-consent-checked-border: var(--ww-mint-400);
+  --ww-travel-check-bg: var(--ww-mint-400);
+  --ww-travel-check-fg: var(--ww-night-950);
+  --ww-travel-warn-bg: var(--ww-sun-900);
+  --ww-travel-warn-icon: var(--ww-sun-200);
+  --ww-travel-warn-fg: var(--ww-ink-50);
+  --ww-travel-demo-bg: var(--ww-sun-900);
+  --ww-travel-demo-fg: var(--ww-ink-50);
+  --ww-travel-demo-icon: var(--ww-sun-200);
+  --ww-travel-demo-tag-bg: var(--ww-sun-400);
+  --ww-travel-demo-tag-fg: var(--ww-night-950);
+  --ww-travel-demo-stripe-a: var(--ww-sun-400);
+  --ww-travel-demo-stripe-b: var(--ww-sun-800);
+  --ww-travel-log-icon-bg: var(--ww-night-800);
+  --ww-travel-log-icon-fg: var(--ww-ink-200);
+
+  --ww-illu-plate: var(--ww-night-820);
+  --ww-illu-paper: var(--ww-night-750);
+  --ww-illu-ink: var(--ww-ink-50);
+  --ww-illu-subtle: var(--ww-night-700);
+  --ww-illu-brand: var(--ww-indigo-500);
+  --ww-illu-violet: var(--ww-lavender-300);
+  --ww-illu-lavender: var(--ww-lavender-300);
+  --ww-illu-lavender-light: var(--ww-night-700);
+  --ww-illu-mint: var(--ww-mint-400);
+  --ww-illu-mint-deep: var(--ww-mint-500);
+  --ww-illu-sun: var(--ww-sun-400);
+  --ww-illu-coral: var(--ww-coral-400);
+  --ww-illu-on-brand: var(--ww-mist-0);
+}
+
+/* --------------------------------------------------------------------------
+   5. MUSTER, VERLÄUFE, FOKUS-RINGE
+   Absichtlich auf :root UND [data-theme] deklariert, damit var()-Bezüge im
+   jeweiligen Theme neu aufgelöst werden.
+   Verwendung (Grundfarbe immer als letzte Ebene):
+     background: var(--ww-pattern-hm-none), var(--ww-hm-none-bg);
+     background: var(--ww-pattern-avail-maybe), var(--ww-avail-maybe-bg);
+     background: var(--ww-pattern-avail-no), var(--ww-avail-no-bg);
+     background: var(--ww-cockpit-image), var(--ww-cockpit-bg);
+   SVG-Äquivalente: docs/design/assets/heatmap/heatmap-patterns.svg
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme] {
+  /* „niemand“ – feine Diagonalschraffur 45°, 1,5 px / 6 px */
+  --ww-pattern-hm-none: repeating-linear-gradient(
+    45deg,
+    var(--ww-hm-none-line) 0 1.5px,
+    transparent 1.5px 6px
+  );
+  /* „Zur Not“ – Sonnenstreifen 135°, 6 px / 12 px (= „halb“) */
+  --ww-pattern-avail-maybe: repeating-linear-gradient(
+    135deg,
+    var(--ww-avail-maybe-stripe) 0 6px,
+    transparent 6px 12px
+  );
+  /* „Geht nicht“ – Kreuzschraffur 45° + 135°, 1,5 px / 7 px */
+  --ww-pattern-avail-no: repeating-linear-gradient(
+      45deg,
+      var(--ww-avail-no-line) 0 1.5px,
+      transparent 1.5px 7px
+    ),
+    repeating-linear-gradient(
+      135deg,
+      var(--ww-avail-no-line) 0 1.5px,
+      transparent 1.5px 7px
+    );
+  /* Unterkunft ohne Vorschaubild (F-031, D-48) – Streifen 135°, 10 px / 20 px;
+     text-muted darauf hell ≥ 6,0, dunkel ≥ 8,9. Grafik: assets/unterkuenfte/stay-placeholder.svg */
+  --ww-pattern-stay-placeholder: repeating-linear-gradient(
+    135deg,
+    var(--ww-color-surface-sunken) 0 10px,
+    var(--ww-color-bg) 10px 20px
+  );
+  /* Vorschau-Hinweis „Nur Fantasiedaten“ (F-054, I11-12, §9.23) – gestreifte Kante links, 135°, 5 px / 10 px,
+     nur dekorativ (Text + Etikett tragen die Aussage). background: var(--ww-pattern-travel-demo) left / var(--ww-travel-demo-edge) 100% no-repeat, var(--ww-travel-demo-bg); */
+  --ww-pattern-travel-demo: repeating-linear-gradient(
+    135deg,
+    var(--ww-travel-demo-stripe-a) 0 5px,
+    var(--ww-travel-demo-stripe-b) 5px 10px
+  );
+  /* Wochenend-Spur */
+  --ww-pattern-weekend-lane: linear-gradient(
+    var(--ww-hm-weekend-lane),
+    var(--ww-hm-weekend-lane)
+  );
+
+  /* Cockpit-Lichtflecken: Minze oben rechts, Lavendel oben links.
+     Feste Höhe 96 px (D-23): die Flecken enden in der Kopfzeile und liegen NIE
+     unter Tabs oder Kennzahl-Box → Kennzahl-Text dort ≥ 6,9 : 1. */
+  --ww-cockpit-image: radial-gradient(
+      240px 96px at 100% 0,
+      var(--ww-cockpit-glow-mint) 0,
+      var(--ww-cockpit-glow-mint-0) 100%
+    ),
+    radial-gradient(
+      220px 96px at 0 0,
+      var(--ww-cockpit-glow-lavender) 0,
+      var(--ww-cockpit-glow-lavender-0) 100%
+    );
+  /* Reisekarte (Einladung W03) – Text nur oben links, weiß ≥ 8,6 */
+  --ww-gradient-trip-card: linear-gradient(
+    135deg,
+    var(--ww-indigo-800) 0%,
+    var(--ww-indigo-600) 60%,
+    var(--ww-indigo-500) 100%
+  );
+  /* Vorfreude-Ring (als SVG-Verlauf nachbauen: stop-color = Tokens) */
+  --ww-gradient-ring: linear-gradient(135deg, var(--ww-ring-start), var(--ww-ring-end));
+
+  /* Fokus-Ring (box-shadow-Variante; Standard ist outline, siehe globals.css) */
+  --ww-focus-ring: 0 0 0 var(--ww-focus-offset) var(--ww-color-focus-gap),
+    0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus);
+  /* Fokus auf Indigo-Flächen (Cockpit, Reisekarte, gewählte Stimme): weißer Ring */
+  --ww-focus-ring-on-brand: 0 0 0 var(--ww-focus-offset) var(--ww-cockpit-bg),
+    0 0 0 calc(var(--ww-focus-offset) + var(--ww-focus-width)) var(--ww-color-focus-on-brand);
+  /* Fokus in der Cockpit-Tab-Spur und an Minze-Tasten auf Indigo (D-22):
+     Hof 2 px Indigo + Ring 3 px Weiß + Hof 2 px Indigo – sichtbar auch an der
+     weißen aktiven Pille. Fokussierter Tab z-index: 1. */
+  --ww-focus-ring-on-brand-isolated: 0 0 0 2px var(--ww-cockpit-bg),
+    0 0 0 5px var(--ww-color-focus-on-brand),
+    0 0 0 7px var(--ww-cockpit-bg);
+  /* Fokus in dichten Rastern (Kalender, Segmente): Hof auf beiden Seiten.
+     Zelle bei Fokus position: relative; z-index: 1. */
+  --ww-focus-ring-isolated: 0 0 0 2px var(--ww-color-focus-gap),
+    0 0 0 5px var(--ww-color-focus),
+    0 0 0 7px var(--ww-color-focus-gap);
+  /* Auswahl in Kalenderzellen: Doppelrahmen innen */
+  --ww-selected-ring: inset 0 0 0 2px var(--ww-hm-selected-outer),
+    inset 0 0 0 4px var(--ww-hm-selected-inner);
+}
+
+/* --------------------------------------------------------------------------
+   6. MOTION
+   Werte: docs/motion/motion-system.md §3 (Motion Designer), übernommen in v1.0
+   (Antworten M-D1–M-D9: design-system.md §8 und abstimmung-ux.md §6).
+   Regler Richtung B: Tempo 1,0 · Federn soft ζ 0,75 / bouncy ζ 0,5 (unverändert).
+   -------------------------------------------------------------------------- */
+:root {
+  /* Dauern */
+  --ww-duration-instant: 80ms;    /* Eindrücken, Ziffer im Code-Feld */
+  --ww-duration-fast: 140ms;      /* Hover, Chips, kleiner Pop, Segmentwechsel */
+  --ww-duration-base: 220ms;      /* Toast, Inhalte, Indikatoren, Balken */
+  --ww-duration-slow: 320ms;      /* Sheet, Seitenwechsel, FLIP */
+  --ww-duration-moderate: 480ms;  /* Aufbau: Band zeichnen, Ring-Schritt, Siegel klein */
+  --ww-duration-celebrate: 700ms; /* Siegel groß, Ergebnis-Karte */
+  --ww-duration-confetti: 1800ms; /* je Teilchen ± 400 ms, Gesamtende ≤ 2600 ms */
+  --ww-duration-fade: 140ms;      /* reines Überblenden – BLEIBT bei reduzierter Bewegung */
+
+  /* Easing */
+  --ww-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ww-ease-enter: cubic-bezier(0, 0, 0, 1);
+  --ww-ease-exit: cubic-bezier(0.3, 0, 1, 1);
+  --ww-ease-emphasized: cubic-bezier(0.05, 0.7, 0.1, 1);
+  --ww-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1); /* Fallback für spring-bouncy */
+  --ww-ease-spring-soft: cubic-bezier(0.34, 1.3, 0.64, 1);
+  --ww-ease-spring-bouncy: var(--ww-ease-spring);
+
+  /* Distanzen & Skalierungen */
+  --ww-motion-distance-sm: 8px;
+  --ww-motion-distance: 16px;
+  --ww-motion-distance-lg: 24px;
+  --ww-motion-scale-press: 0.97;  /* Tasten: 0,98 laut Richtung B ist im Rahmen – 0,97 gilt */
+  --ww-motion-scale-cell: 0.94;
+  --ww-motion-scale-enter: 0.96;
+  --ww-motion-scale-pop: 0.6;
+
+  /* Staffelung */
+  --ww-stagger-cell: 12ms;
+  --ww-stagger-item: 40ms;
+  --ww-stagger-card: 60ms;
+  --ww-stagger-max: 400ms;
+}
+
+/* Federn als linear() – nur, wo unterstützt (ungültige Werte fielen sonst nicht zurück) */
+@supports (transition-timing-function: linear(0, 1)) {
+  :root {
+    /* ζ = 0,75 – max. +2,8 % bei 70 % der Dauer; 220–480 ms */
+    --ww-ease-spring-soft: linear(0, 0.052 5%, 0.174 10%, 0.325 15%, 0.478 20%,
+      0.619 25%, 0.738 30%, 0.833 35%, 0.906 40%, 0.991 50%, 1.024 60%,
+      1.028 70%, 1.021 80%, 1.013 90%, 1);
+    /* ζ = 0,5 – max. +16 % bei 35 % der Dauer; 480–700 ms; NUR Siegel */
+    --ww-ease-spring-bouncy: linear(0, 0.116 5%, 0.372 10%, 0.657 15%, 0.898 20%,
+      1.061 25%, 1.145 30%, 1.163 35%, 1.139 40%, 1.095 45%, 1.049 50%,
+      0.987 60%, 0.974 70%, 0.986 80%, 0.999 90%, 1);
+  }
+}
+
+/* Reduzierte Bewegung (System). Überblenden (duration-fade) bleibt erhalten (M-D2). */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --ww-duration-instant: 0.01ms;
+    --ww-duration-fast: 0.01ms;
+    --ww-duration-base: 0.01ms;
+    --ww-duration-slow: 0.01ms;
+    --ww-duration-moderate: 0.01ms;
+    --ww-duration-celebrate: 0.01ms;
+    --ww-duration-confetti: 0ms;   /* Konfetti wird gar nicht erzeugt (JS prüft) */
+    --ww-duration-fade: 140ms;
+    --ww-ease-spring: linear;
+    --ww-ease-spring-soft: linear;
+    --ww-ease-spring-bouncy: linear;
+    --ww-motion-distance-sm: 0px;
+    --ww-motion-distance: 0px;
+    --ww-motion-distance-lg: 0px;
+    --ww-motion-scale-press: 1;
+    --ww-motion-scale-cell: 1;
+    --ww-motion-scale-enter: 1;
+    --ww-motion-scale-pop: 1;
+    --ww-stagger-cell: 0ms;
+    --ww-stagger-item: 0ms;
+    --ww-stagger-card: 0ms;
+  }
+}
+
+/* Reduzierte Bewegung (Konto-Schalter „Bewegung reduzieren“, PRD Q17) – identisch */
+:root[data-motion="reduce"] {
+  --ww-duration-instant: 0.01ms;
+  --ww-duration-fast: 0.01ms;
+  --ww-duration-base: 0.01ms;
+  --ww-duration-slow: 0.01ms;
+  --ww-duration-moderate: 0.01ms;
+  --ww-duration-celebrate: 0.01ms;
+  --ww-duration-confetti: 0ms;
+  --ww-duration-fade: 140ms;
+  --ww-ease-spring: linear;
+  --ww-ease-spring-soft: linear;
+  --ww-ease-spring-bouncy: linear;
+  --ww-motion-distance-sm: 0px;
+  --ww-motion-distance: 0px;
+  --ww-motion-distance-lg: 0px;
+  --ww-motion-scale-press: 1;
+  --ww-motion-scale-cell: 1;
+  --ww-motion-scale-enter: 1;
+  --ww-motion-scale-pop: 1;
+  --ww-stagger-cell: 0ms;
+  --ww-stagger-item: 0ms;
+  --ww-stagger-card: 0ms;
+}
+
+/* --------------------------------------------------------------------------
+   7. FORCED COLORS
+   Karten, Kacheln, Tasten und Kennzahl-Kacheln haben keine Kontur. Sie tragen
+   deshalb IMMER border: var(--ww-border-forced). Normal unsichtbar (transparent),
+   im Kontrastmodus färbt der Browser transparente Rahmen in CanvasText bzw.
+   ButtonText um – so bleiben Flächen erkennbar.
+   -------------------------------------------------------------------------- */
+:root {
+  --ww-border-forced: 1px solid transparent;
+}
+@media (forced-colors: active) {
+  :root {
+    --ww-border-forced: 1px solid CanvasText;
+  }
+}
+
+</style>
+<style>
+/* ==========================================================================
+   Klickbarer UX-Mockup „Kosten v2“ – Vorher/Nachher zum Auftraggeber-Feedback
+   (W19 Abschnitt E, W16 v2.17). KEIN Produktivcode. Farben/Maße aus tokens.css.
+   ========================================================================== */
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:var(--ww-font-sans);background:var(--ww-color-surface-sunken);color:var(--ww-color-text);
+  -webkit-font-smoothing:antialiased;line-height:1.4}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--ww-color-focus);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums lining-nums}
+.vh{position:absolute!important;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* ---------- Bühne ---------- */
+.stage{display:flex;gap:32px;align-items:flex-start;justify-content:center;padding:24px 16px 48px;flex-wrap:wrap}
+.panel{width:min(100%,340px);background:var(--ww-color-surface);border-radius:var(--ww-radius-lg);padding:20px;box-shadow:var(--ww-shadow-1)}
+.panel h1{font-family:var(--ww-font-display);font-size:1.25rem;margin:0 0 4px}
+.panel p{margin:0 0 12px;color:var(--ww-color-text-muted);font-size:.875rem}
+.ctl{margin:14px 0 0}
+.ctl-label{font-size:.75rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--ww-color-text-muted);margin:0 0 6px}
+.seg{display:flex;background:var(--ww-color-surface-sunken);border-radius:12px;padding:4px;gap:4px}
+.seg button{flex:1;min-height:40px;border:0;background:transparent;border-radius:9px;font-weight:700;font-size:.875rem;cursor:pointer;color:var(--ww-color-text-muted)}
+.seg button[aria-pressed="true"]{background:var(--ww-color-surface);color:var(--ww-color-text);box-shadow:var(--ww-shadow-1)}
+.note{margin-top:16px;padding:12px;border-radius:12px;background:var(--ww-color-info-tint);color:var(--ww-color-info-text);font-size:.8125rem}
+.note b{display:block;margin-bottom:2px}
+.panel ul{padding-left:18px;margin:8px 0 0;font-size:.8125rem;color:var(--ww-color-text-muted)}
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.badge-ver{font-weight:800;font-size:.8125rem;padding:4px 12px;border-radius:999px;background:var(--ww-color-primary);color:var(--ww-color-text-on-primary)}
+.badge-ver.before{background:var(--ww-color-surface);color:var(--ww-color-text);border:2px solid var(--ww-color-border-strong)}
+.phone{position:relative;width:390px;height:844px;max-width:calc(100vw - 16px);border-radius:44px;border:10px solid #14112E;overflow:hidden;
+  background:var(--ww-color-bg);box-shadow:0 30px 60px -30px rgb(20 17 46 / .6)}
+.screen{position:absolute;inset:0;overflow-y:auto;overflow-x:hidden;scroll-behavior:smooth}
+.screen.has-dock{padding-bottom:96px}
+.screen.has-bar{padding-bottom:88px}
+
+/* ---------- App-Kopf ---------- */
+.top{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:14px 14px 12px;background:var(--ww-cockpit-bg);color:var(--ww-cockpit-text)}
+.top.round{border-radius:0 0 var(--ww-radius-cockpit) var(--ww-radius-cockpit)}
+.iconbtn{width:44px;height:44px;border-radius:999px;border:0;background:var(--ww-cockpit-control-bg);color:inherit;display:grid;place-items:center;cursor:pointer;flex:none}
+.iconbtn.outline{background:transparent;border:2px solid var(--ww-cockpit-outline)}
+.top .t{flex:1;min-width:0}
+.top .t b{display:block;font-family:var(--ww-font-display);font-size:1.25rem;font-weight:800;line-height:1.15;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .t small{display:flex;align-items:center;gap:6px;font-size:.8125rem;color:var(--ww-cockpit-text-muted);font-weight:600}
+.dot{width:8px;height:8px;border-radius:99px;background:var(--ww-color-sun)}
+.ticket{background:var(--ww-cockpit-bg);color:var(--ww-cockpit-text);padding:0 18px 20px;border-radius:0 0 var(--ww-radius-cockpit) var(--ww-radius-cockpit);margin-top:-1px}
+.ring{display:grid;place-items:center;padding:6px 0 4px}
+.ring svg{width:150px;height:150px}
+.ring .in{position:absolute;text-align:center;font-family:var(--ww-font-display);font-weight:800}
+.ring-box{position:relative;display:grid;place-items:center}
+.ring .in small{display:block;font-size:.875rem;color:var(--ww-cockpit-text-muted);font-weight:700}
+.ring .in big{display:block;font-size:2.4rem;line-height:1}
+.ring .in em{font-style:normal;font-size:1.2rem;line-height:1.15;display:block}
+.dates{text-align:center;font-family:var(--ww-font-display);font-weight:800;font-size:1.0625rem;margin:6px 0 12px}
+.tear{border-top:2px dashed var(--ww-cockpit-outline);margin:0 -4px 12px;opacity:.6}
+.crew{display:flex;align-items:center;gap:10px;font-weight:700;font-size:.875rem;flex-wrap:wrap}
+.crew .avs{display:flex}.crew .avs .av{margin-left:-8px;border:2px solid var(--ww-cockpit-bg)}.crew .avs .av:first-child{margin-left:0}
+.headbtn{margin-left:auto;display:inline-flex;gap:8px;align-items:center;min-height:44px;padding:0 16px;border-radius:14px;border:2px solid var(--ww-cockpit-outline);background:transparent;color:var(--ww-cockpit-text);font-weight:800;cursor:pointer}
+
+/* ---------- Avatare, Chips ---------- */
+.av{width:28px;height:28px;border-radius:99px;display:inline-grid;place-items:center;font-size:.625rem;font-weight:800;color:var(--ww-avatar-fg,#1E1A3D);flex:none}
+.av.sm{width:22px;height:22px;font-size:.5625rem}
+.av.ph{background:transparent!important;border:2px dashed var(--ww-color-border-strong);color:var(--ww-color-text)}
+.av.ex{background:var(--ww-cost-former-bg)!important;color:var(--ww-cost-former-fg)}
+.chip{display:inline-flex;align-items:center;gap:4px;font-size:.6875rem;font-weight:800;padding:2px 8px;border-radius:999px;background:var(--ww-color-surface-sunken);color:var(--ww-color-text-muted);vertical-align:middle}
+.chip.ok{background:var(--ww-cost-paid-bg);color:var(--ww-cost-paid-fg)}
+.chip.lock{background:var(--ww-color-surface-sunken)}
+
+/* ---------- Inhalt ---------- */
+.content{padding:18px 16px 24px}
+h2.sec{font-family:var(--ww-font-display);font-size:1.1875rem;font-weight:800;margin:22px 0 10px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+h2.sec small{font-family:var(--ww-font-sans);font-size:.8125rem;color:var(--ww-color-text-muted);font-weight:700}
+.card{background:var(--ww-color-surface);border-radius:var(--ww-radius-lg);box-shadow:var(--ww-shadow-1);padding:16px}
+.muted{color:var(--ww-color-text-muted)}
+.small{font-size:.8125rem}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 18px;border-radius:var(--ww-radius-button);font-weight:800;font-size:1rem;cursor:pointer;border:2px solid transparent;text-decoration:none}
+.btn.primary{background:var(--ww-btn-primary-bg);color:var(--ww-btn-primary-fg);box-shadow:var(--ww-shadow-button)}
+.btn.secondary{background:var(--ww-btn-secondary-bg);color:var(--ww-btn-secondary-fg);border-color:var(--ww-btn-secondary-border)}
+.btn.sm{min-height:44px;font-size:.875rem;padding:0 14px;border-radius:12px}
+.btn.full{width:100%}
+.tbtn{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 4px;border:0;background:none;color:var(--ww-color-link);font-weight:700;font-size:.875rem;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.tbtn.plain{text-decoration:none}
+
+/* Weg */
+.route{position:relative;padding-left:44px}
+.route:before{content:"";position:absolute;left:15px;top:14px;bottom:30px;border-left:3px dashed var(--ww-route-line-todo)}
+.stop{position:relative;margin:0 0 14px}
+.coin{position:absolute;left:-44px;top:0;width:32px;height:32px;border-radius:99px;display:grid;place-items:center;background:var(--ww-route-coin,#2B2266);color:#fff}
+.coin.done{background:var(--ww-color-accent);color:var(--ww-color-on-accent)}
+.coin.today{background:var(--ww-color-sun);color:#2B2266;box-shadow:0 0 0 6px var(--ww-route-today-halo)}
+.coin.wait{background:var(--ww-color-surface);border:2px solid var(--ww-color-primary);color:var(--ww-color-primary)}
+.donerow{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 16px;border-radius:999px;border:1.5px solid var(--ww-color-border-subtle);background:var(--ww-color-surface);font-weight:700;font-size:.875rem}
+.todaytag{display:inline-block;background:var(--ww-color-sun);color:#2B2266;font-weight:800;font-size:.8125rem;letter-spacing:.04em;padding:6px 12px;border-radius:999px}
+.todaysent{font-size:.875rem;color:var(--ww-color-text-muted);font-weight:600;margin:8px 0 10px}
+.scard{background:var(--ww-color-surface);border-radius:20px;box-shadow:var(--ww-shadow-1);padding:14px 14px 14px 16px;border-left:5px solid transparent;margin-bottom:12px}
+.scard.term{border-left-color:var(--ww-tile-lavender-fg)}
+.scard.todo{border-left-color:var(--ww-todo-bar)}
+.scard .k{display:inline-block;font-size:.6875rem;font-weight:800;letter-spacing:.05em;padding:3px 10px;border-radius:999px;margin-bottom:8px}
+.k.term{background:var(--ww-tile-lavender-bg);color:var(--ww-tile-lavender-fg)}
+.k.todo{background:var(--ww-todo-bg);color:var(--ww-todo-fg)}
+.k.wait{background:var(--ww-color-surface-sunken);color:var(--ww-color-text-muted)}
+.shead{display:flex;gap:10px;align-items:center;font-weight:800;font-size:1.0625rem;font-family:var(--ww-font-display);text-decoration:none;color:inherit;cursor:pointer;background:none;border:0;padding:0;text-align:left;width:100%}
+.shead .chev{margin-left:auto;color:var(--ww-color-text-muted)}
+.itile{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none}
+.it-cost{background:var(--ww-cost-area-bg);color:var(--ww-cost-area-fg)}
+.it-lav{background:var(--ww-tile-lavender-bg);color:var(--ww-tile-lavender-fg)}
+.it-mint{background:var(--ww-tile-mint-bg);color:var(--ww-tile-mint-fg)}
+.sbody{font-size:.875rem;color:var(--ww-color-text-muted);margin:8px 0 12px}
+.goal{background:var(--ww-cockpit-bg);color:var(--ww-cockpit-text);border-radius:18px;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.goal b{font-family:var(--ww-font-display)}
+.goal small{display:block;color:var(--ww-cockpit-text-muted)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.tile{background:var(--ww-color-surface);border-radius:18px;box-shadow:var(--ww-shadow-1);padding:14px;min-height:110px;border:0;text-align:left;cursor:pointer;display:flex;flex-direction:column;gap:6px}
+.tile b{font-family:var(--ww-font-display);font-size:1rem}
+.tile span{font-size:.8125rem;color:var(--ww-color-text-muted)}
+.list{list-style:none;margin:0;padding:0}
+.more-row{display:flex;align-items:center;gap:12px;min-height:56px;padding:8px 0;border-bottom:1px solid var(--ww-color-border-subtle)}
+.more-row:last-child{border-bottom:0}
+
+/* Kosten-Leiste (Variante C) */
+.dock{position:absolute;left:0;right:0;bottom:0;z-index:8;background:var(--ww-color-surface-raised);border-radius:var(--ww-radius-xl) var(--ww-radius-xl) 0 0;
+  box-shadow:var(--ww-shadow-sticky-bottom);padding:10px 12px calc(10px + 14px) 12px;display:flex;align-items:center;gap:10px;border-top:var(--ww-border-forced)}
+.dock{transition:transform var(--ww-duration-base) var(--ww-ease-exit,ease-in),opacity var(--ww-duration-base),visibility 0s linear var(--ww-duration-base)}
+.dock.off{transform:translateY(105%);opacity:0;visibility:hidden}
+.dock:not(.off){transition-delay:0s}
+@media (prefers-reduced-motion:reduce){.dock{transition:none}}
+[data-motion="reduce"] .dock{transition:none}
+.dock .stand{flex:1;min-width:0;min-height:56px;border:1.5px solid var(--ww-color-border-subtle);background:var(--ww-color-surface-sunken);border-radius:var(--ww-radius-md);
+  text-align:left;cursor:pointer;padding:8px 10px;display:flex;align-items:center;gap:10px}
+.dock .stand:active{transform:scale(.98)}
+.dock .stand .txt{display:flex;flex-direction:column;min-width:0}
+.dock .eyebrow{font-size:.8125rem;font-weight:800;color:var(--ww-color-link);display:flex;align-items:center;gap:2px}
+.dock .s{font-weight:700;font-size:.875rem;line-height:1.25}
+.dock .btn{flex:none;box-shadow:var(--ww-shadow-1);padding:0 14px}
+.tile .lnk{color:var(--ww-color-link);font-weight:700;font-size:.8125rem;margin-top:auto}
+/* Variante A (Karte unter dem Kopf) */
+.dockcard{margin:16px 16px 0;background:var(--ww-color-surface);border-radius:var(--ww-radius-lg);box-shadow:var(--ww-shadow-2);padding:14px 16px 16px}
+.dockcard .stand{display:flex;width:100%;border:0;background:none;text-align:left;padding:0 0 12px;cursor:pointer;flex-direction:column}
+.dockcard .eyebrow{font-size:.6875rem;font-weight:800;letter-spacing:.08em;color:var(--ww-color-text-muted)}
+.dockcard .s{font-family:var(--ww-font-display);font-weight:800;font-size:1.25rem}
+.get{color:var(--ww-cost-get-fg)} .owe{color:var(--ww-cost-owe-fg)} .even{color:var(--ww-cost-even-fg)}
+
+/* Kosten-Seite */
+.stand-card{border-radius:var(--ww-radius-lg);padding:16px 18px;box-shadow:var(--ww-shadow-1);background:var(--ww-color-surface)}
+.stand-card.v2{background:var(--ww-color-primary-tint);box-shadow:none;border:1.5px solid var(--ww-color-border-subtle)}
+.stand-card.v2.get{background:var(--ww-color-accent-tint)}
+.eyebrow2{font-size:.6875rem;font-weight:800;letter-spacing:.08em;color:var(--ww-color-text-muted);margin:0 0 4px;text-transform:uppercase}
+.hero{font-family:var(--ww-font-display);font-weight:800;font-size:1.5rem;line-height:1.2;margin:0}
+.hero-old{display:flex;gap:12px;align-items:center}
+.hero-old .hero{font-size:1.625rem}
+.sub{font-weight:700;font-size:.875rem;margin:6px 0 0;color:var(--ww-color-text)}
+.calc{margin:8px 0 0;padding:12px 14px;border-radius:14px;background:var(--ww-color-surface);font-size:.875rem}
+.calc dl{margin:0;display:grid;grid-template-columns:1fr auto;gap:6px 12px}
+.calc dt{color:var(--ww-color-text-muted);font-weight:600}
+.calc dd{margin:0;text-align:right;font-weight:700}
+.calc .sum{border-top:1.5px solid var(--ww-color-border-strong);padding-top:6px;font-weight:800;color:var(--ww-color-text)}
+.calc p{margin:8px 0 0;font-size:.75rem;color:var(--ww-color-text-muted)}
+.segtabs{display:flex;background:var(--ww-color-surface-sunken);border-radius:14px;padding:4px;margin:18px 0 6px}
+.segtabs button{flex:1;min-height:44px;border:0;border-radius:11px;background:transparent;font-weight:700;color:var(--ww-color-text-muted);cursor:pointer}
+.segtabs button[aria-current="page"]{background:var(--ww-color-surface);color:var(--ww-color-text);box-shadow:var(--ww-shadow-1)}
+.group-h{margin:30px 0 2px;font-family:var(--ww-font-display);font-size:1.1875rem;font-weight:800}
+.group-s{margin:0 0 6px;color:var(--ww-color-text-muted);font-weight:600;font-size:.875rem}
+.day{display:flex;justify-content:space-between;margin:16px 0 8px;font-weight:800;font-size:.9375rem}
+.day.v2{font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ww-color-text-muted)}
+.rows{background:var(--ww-color-surface);border-radius:20px;box-shadow:var(--ww-shadow-1);overflow:hidden}
+.row{display:flex;gap:12px;align-items:flex-start;width:100%;padding:14px 16px;border:0;background:none;text-align:left;cursor:pointer;border-bottom:1px solid var(--ww-color-border-subtle);min-height:64px}
+.row:last-child{border-bottom:0}
+.row .main{flex:1;min-width:0}
+.row .main b{display:block;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.row .main span{display:block;font-size:.8125rem;color:var(--ww-color-text-muted)}
+.row .amt{text-align:right;flex:none}
+.row .amt b{display:block;font-size:1rem;font-weight:800}
+.row .amt span{display:block;font-size:.75rem;color:var(--ww-color-text-muted);white-space:nowrap}
+.cat{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;flex:none}
+.cat-travel{background:var(--ww-cost-cat-travel-bg);color:var(--ww-cost-cat-travel-fg)}
+.cat-acc{background:var(--ww-cost-cat-accommodation-bg);color:var(--ww-cost-cat-accommodation-fg)}
+.cat-food{background:var(--ww-cost-cat-food-bg);color:var(--ww-cost-cat-food-fg)}
+.cat-act{background:var(--ww-cost-cat-activities-bg);color:var(--ww-cost-cat-activities-fg)}
+.cat-other{background:var(--ww-cost-cat-other-bg);color:var(--ww-cost-cat-other-fg)}
+.foot{font-size:.8125rem;color:var(--ww-color-text-muted);margin:18px 2px 0}
+.actionbar{position:absolute;left:0;right:0;bottom:0;z-index:8;padding:12px 16px 26px;background:linear-gradient(to top,var(--ww-color-bg) 70%,transparent)}
+
+/* Ausgleich */
+.xfer{padding:14px 0;border-bottom:1px solid var(--ww-color-border-subtle)}
+.xfer:last-child{border-bottom:0}
+.xfer .line{display:flex;align-items:center;gap:8px;font-weight:800}
+.xfer .line .amt{margin-left:auto;font-size:1.0625rem}
+.xfer .pay{margin:10px 0 0;font-size:.875rem}
+.iban{font-family:ui-monospace,Menlo,monospace;font-size:.8125rem;letter-spacing:.02em}
+.iban .m{color:var(--ww-cost-mask-fg)}
+.btnrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;align-items:center}
+.arrow{color:var(--ww-cost-arrow-fg)}
+.disc{display:flex;width:100%;align-items:center;justify-content:space-between;min-height:48px;border:0;background:none;padding:0;cursor:pointer;font-family:var(--ww-font-display);font-weight:800;font-size:1.0625rem;color:var(--ww-color-text);text-align:left}
+.disc svg{transition:transform var(--ww-duration-base)}
+.disc[aria-expanded="true"] svg{transform:rotate(180deg)}
+.compact{list-style:none;margin:4px 0 0;padding:0}
+.compact li{display:flex;align-items:center;gap:6px;min-height:44px;font-size:.875rem;border-bottom:1px solid var(--ww-color-border-subtle)}
+.compact li:last-child{border-bottom:0}
+.compact .who{flex:1;min-width:0;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.compact .a{font-weight:800;white-space:nowrap}
+.compact .st{width:70px;text-align:right;font-size:.75rem;font-weight:700;color:var(--ww-color-text-muted)}
+.compact .st.ok{color:var(--ww-cost-paid-fg)}
+.neutral{font-size:.875rem;color:var(--ww-color-text-muted);font-weight:600;margin:2px 0 0}
+.bal{padding:10px 0;border-bottom:1px solid var(--ww-color-border-subtle)}
+.bal:last-child{border-bottom:0}
+.bal .l{display:flex;align-items:center;gap:8px;font-weight:700;font-size:.875rem}
+.bal .l .v{margin-left:auto;font-weight:800}
+.bar{position:relative;height:6px;border-radius:99px;background:var(--ww-cost-bar-track);margin-top:8px}
+.bar i{position:absolute;top:0;bottom:0;border-radius:99px}
+.bar:after{content:"";position:absolute;left:50%;top:-3px;bottom:-3px;border-left:1px solid var(--ww-cost-bar-axis)}
+.info{display:flex;gap:10px;padding:12px 14px;border-radius:16px;background:var(--ww-color-info-tint);color:var(--ww-color-info-text);font-size:.875rem;font-weight:600;margin-bottom:14px}
+.allsq{background:var(--ww-cost-settled-bg);color:var(--ww-cost-settled-fg);border-radius:var(--ww-radius-lg);padding:20px;text-align:center}
+.allsq b{font-family:var(--ww-font-display);font-size:1.25rem;display:block}
+
+/* Formular */
+.field{margin:0 0 16px}
+.field label,.field .lab{display:block;font-weight:800;font-size:.9375rem;margin:0 0 6px}
+.inp{width:100%;min-height:48px;border-radius:var(--ww-radius-md);border:2px solid var(--ww-color-border-strong);background:var(--ww-color-surface);color:var(--ww-color-text);padding:0 14px;font:inherit;font-size:1rem}
+.inp.big{min-height:56px;font-family:var(--ww-font-display);font-size:1.75rem;font-weight:800}
+.amtwrap{position:relative}.amtwrap span{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-family:var(--ww-font-display);font-size:1.5rem;font-weight:800;color:var(--ww-color-text-muted)}
+.pchips{display:flex;flex-wrap:wrap;gap:8px}
+.pchip{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:0 12px 0 6px;border-radius:999px;border:2px solid var(--ww-color-border-subtle);background:var(--ww-color-surface);cursor:pointer;font-weight:700;font-size:.875rem}
+.pchip input{position:absolute;opacity:0;pointer-events:none}
+.pchip:has(input:checked){border-color:var(--ww-color-primary);background:var(--ww-color-primary-tint)}
+.pchip:has(input:focus-visible){outline:3px solid var(--ww-color-focus);outline-offset:2px}
+.pchip .tick{display:none}.pchip:has(input:checked) .tick{display:inline}
+.err{color:var(--ww-color-danger);font-size:.8125rem;font-weight:700;margin-top:6px}
+.live{font-weight:700;font-size:.875rem;margin-top:8px}
+
+/* Sheet, Snackbar */
+.scrim{position:absolute;inset:0;background:var(--ww-color-scrim);z-index:20}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:21;background:var(--ww-color-surface);border-radius:var(--ww-radius-sheet) var(--ww-radius-sheet) 0 0;padding:10px 18px 28px;max-height:80%;overflow:auto}
+.grab{width:40px;height:5px;border-radius:9px;background:var(--ww-color-border-subtle);margin:0 auto 10px}
+.sheet h2{font-family:var(--ww-font-display);margin:0;font-size:1.25rem}
+.snack{position:absolute;left:12px;right:12px;z-index:30;background:var(--ww-color-inverse-bg);color:var(--ww-color-inverse-text);border-radius:14px;padding:12px 14px;display:flex;align-items:center;gap:10px;font-size:.875rem;font-weight:600;box-shadow:var(--ww-shadow-3)}
+.snack button{margin-left:auto;background:none;border:0;color:var(--ww-color-inverse-link);font-weight:800;cursor:pointer;min-height:40px;white-space:nowrap}
+.hl{animation:hl 1.6s ease-out}
+@keyframes hl{from{background:var(--ww-color-accent-tint)}to{background:transparent}}
+@media (prefers-reduced-motion:reduce){.hl{animation:none}.disc svg{transition:none}}
+.mock-hint{font-size:.6875rem;color:var(--ww-color-text-muted);text-align:center;margin:10px 0 0}
+</style>
+</head>
+<body>
+<div class="stage">
+  <section class="panel" aria-labelledby="ph">
+    <h1 id="ph">Kosten v2 – Vorher / Nachher</h1>
+    <p>Klickbarer UX-Mockup zum Feedback auf Inkrement 10 (W19 Abschnitt E, W16 v2.17). Beträge werden echt berechnet; „Hab ich überwiesen“, „Ausgabe eintragen“ usw. funktionieren.</p>
+    <div class="ctl"><p class="ctl-label" id="l-ver">Fassung</p>
+      <div class="seg" role="group" aria-labelledby="l-ver"><button data-set="ver:before">Vorher (gebaut)</button><button data-set="ver:after">Nachher (Vorschlag)</button></div></div>
+    <div class="ctl"><p class="ctl-label" id="l-role">Du bist</p>
+      <div class="seg" role="group" aria-labelledby="l-role"><button data-set="role:max">Max · Mitglied</button><button data-set="role:lena">Lena · Orga</button></div></div>
+    <div class="ctl"><p class="ctl-label" id="l-ph">Teilphase</p>
+      <div class="seg" role="group" aria-labelledby="l-ph"><button data-set="phase:on">Unterwegs</button><button data-set="phase:after">Danach</button></div></div>
+    <div class="ctl" id="ctl-dock"><p class="ctl-label" id="l-dock">Kosten im Cockpit (nur Nachher)</p>
+      <div class="seg" role="group" aria-labelledby="l-dock"><button data-set="dock:C">C · Leiste unten</button><button data-set="dock:A">A · Karte oben</button></div></div>
+    <div class="ctl"><p class="ctl-label" id="l-th">Darstellung</p>
+      <div class="seg" role="group" aria-labelledby="l-th"><button data-set="theme:light">Hell</button><button data-set="theme:dark">Dunkel</button></div></div>
+    <div class="ctl"><p class="ctl-label">Gehe zu</p>
+      <div class="seg" role="group" aria-label="Ansicht"><button data-go="trips">Reisen</button><button data-go="cockpit">Cockpit</button><button data-go="costs">Kosten</button><button data-go="balances">Ausgleich</button></div></div>
+    <div class="ctl"><p class="ctl-label" id="l-st">App-Start (W16 v2.18)</p>
+      <div class="seg" role="group" aria-labelledby="l-st"><button data-set="running:one">1 laufende Reise</button><button data-set="running:two">2 überlappend</button></div>
+      <button class="btn secondary sm" id="appstart" style="margin-top:8px;width:100%">App über Home-Symbol öffnen</button></div>
+    <div class="ctl"><button class="tbtn" id="reset">Beispieldaten zurücksetzen</button></div>
+    <div class="note"><b>So lesen</b>Max zahlt Lena noch zurück, Lena (Orga) bekommt von drei Personen. Mia ist Platzhalter, ein ehemaliges Mitglied hat den Mietwagen ausgelegt – „Mia → ehemaliges Mitglied“ darf nur die Orga abhaken.</div>
+    <ul>
+      <li>Nachher: Kosten-Leiste unterwegs/danach als Abkürzung – blendet aus, sobald unten die Kachel „Kosten“ sichtbar wird; ein Satz statt vier Zahlen, „So rechnen wir“ auf Wunsch.</li>
+      <li>App-Start: Nachher öffnet sich bei genau einer laufenden Reise (Unterwegs) direkt das Cockpit; bei zwei überlappenden „Meine Reisen“ mit „Läuft gerade“.</li>
+      <li>Ausgleichen: eigene Überweisungen ausführlich, die der anderen kompakt und eingeklappt, keine Salden-Liste.</li>
+      <li>Texte nur DE; EN in W19 E.12.</li>
+    </ul>
+  </section>
+  <div class="phone-wrap">
+    <span class="badge-ver" id="badge"></span>
+    <div class="phone" id="phone"><div class="screen" id="screen"></div><div id="overlay"></div></div>
+  </div>
+</div>
+<script>
+"use strict";
+/* ---------------- Icons ---------------- */
+const I=(d,s=20)=>`<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
+const ic={
+  back:I('<path d="M15 18l-6-6 6-6"/>'), more:I('<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>'),
+  chev:I('<path d="M9 18l6-6-6-6"/>',18), down:I('<path d="M6 9l6 6 6-6"/>',20), plus:I('<path d="M12 5v14M5 12h14"/>'),
+  wallet:I('<path d="M3 7h15a3 3 0 0 1 3 3v7a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3z"/><path d="M3 7l12-3v3"/><circle cx="16.5" cy="13.5" r="1.2"/>'),
+  arrow:I('<path d="M5 12h14M13 6l6 6-6 6"/>',16), check:I('<path d="M5 13l4 4L19 7"/>',18), copy:I('<rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h8"/>',18),
+  eye:I('<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',18), remind:I('<path d="M3 10v4h4l5 4V6L7 10z"/><path d="M16 9a4 4 0 0 1 0 6"/>',18),
+  share:I('<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v6h14v-6"/>'), info:I('<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'),
+  bed:I('<path d="M3 18V7M3 13h18v5M21 13a3 3 0 0 0-3-3h-7v3"/><circle cx="7" cy="10.5" r="1.5"/>'), users:I('<circle cx="9" cy="9" r="3"/><path d="M3 19a6 6 0 0 1 12 0"/><path d="M16 6a3 3 0 0 1 0 6M21 19a6 6 0 0 0-4-5.6"/>'),
+  sun:I('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',18),
+  plane:I('<path d="M10 14l-7-3 1-2 9 1 5-5a2 2 0 0 1 3 3l-5 5 1 9-2 1-3-7z"/>'), food:I('<path d="M7 3v8M5 3v4a2 2 0 0 0 4 0V3M7 11v10M17 3c-2 2-2 6 0 8v10"/>'),
+  sparkle:I('<path d="M12 3l2 6 6 2-6 2-2 6-2-6-6-2 6-2z"/>'), tag:I('<path d="M3 12V3h9l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.3"/>'), lock:I('<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/>',14),
+  person:I('<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',14)
+};
+const CAT={travel:['cat-travel',ic.plane,'Anreise'],acc:['cat-acc',ic.bed,'Unterkunft'],food:['cat-food',ic.food,'Essen'],act:['cat-act',ic.sparkle,'Aktivitäten'],other:['cat-other',ic.tag,'Sonstiges']};
+
+/* ---------------- Daten ---------------- */
+const PEOPLE={
+  lena:{name:'Lena',ini:'LE',seq:1,bg:'#FFD3C7',orga:true,iban:'DE89370400440532013000',other:'PayPal: lena.k'},
+  max:{name:'Max',ini:'MA',seq:2,bg:'#C9DBFF'},
+  kemal:{name:'Kemal',ini:'KE',seq:3,bg:'#D4F2B0'},
+  sara:{name:'Sara',ini:'SA',seq:4,bg:'#DCD3FF',iban:'DE02120300000000202051'},
+  jonas:{name:'Jonas',ini:'JO',seq:5,bg:'#FFE7A3'},
+  mia:{name:'Mia',ini:'MI',seq:6,ph:true},
+  ex:{name:'ehemaliges Mitglied',ini:'',seq:7,former:true}
+};
+const ALL7=['lena','max','kemal','sara','jonas','mia','ex'], ALL6=ALL7.slice(0,6);
+function seedExpenses(){return [
+  {id:'e1',t:'Fähre Split–Hvar',payer:'kemal',c:28000,for:ALL7,cat:'travel',d:'2027-05-02',by:'kemal'},
+  {id:'e2',t:'Anzahlung Unterkunft',payer:'lena',c:42000,for:ALL7,cat:'acc',d:'2027-04-20',by:'lena'},
+  {id:'e3',t:'Mietwagen',payer:'ex',c:14000,for:ALL7,cat:'travel',d:'2027-05-10',by:'lena'},
+  {id:'e4',t:'Tanken',payer:'mia',c:17400,for:ALL6,cat:'travel',d:'2027-06-12',by:'lena'},
+  {id:'e5',t:'Supermarkt',payer:'jonas',c:9600,for:ALL6,cat:'food',d:'2027-06-12',by:'jonas'},
+  {id:'e6',t:'Bootstour',payer:'max',c:15000,for:ALL6,cat:'act',d:'2027-06-13',by:'max'},
+  {id:'e7',t:'Pizza am Hafen',payer:'sara',c:6000,for:['lena','max','kemal'],cat:'food',d:'2027-06-13',by:'sara'},
+  {id:'e8',t:'Eis',payer:'kemal',c:2400,for:ALL6,cat:'food',d:'2027-06-14',by:'kemal'}
+];}
+const S={ver:'after',role:'max',phase:'on',dock:'C',theme:'light',screen:'cockpit',from:'cockpit',
+  exp:seedExpenses(),pay:[],fresh:new Set(),open:{},sheet:null,snack:null,form:null,hl:null,shown:new Set(),running:'one',startHint:false};
+function seedPayments(){S.pay = S.phase==='after' ? [{id:'p0',from:'jonas',to:'kemal',c:9000,by:'kemal',at:'20. Juni'},{id:'p1',from:'jonas',to:'lena',c:800,by:'jonas',at:'21. Juni'}] : [];}
+
+/* ---------------- Rechnen (R.8) ---------------- */
+const seq=id=>PEOPLE[id].seq;
+function split(c,ps){ps=[...ps].sort((a,b)=>seq(a)-seq(b));const b=Math.floor(c/ps.length);let r=c-b*ps.length;return ps.map(p=>[p,b+(r-->0?1:0)]);}
+function stats(){const bal={},paid={},share={},sent={},recv={};ALL7.forEach(p=>{bal[p]=0;paid[p]=0;share[p]=0;sent[p]=0;recv[p]=0});
+  for(const e of S.exp){paid[e.payer]+=e.c;bal[e.payer]+=e.c;for(const [p,s] of split(e.c,e.for)){share[p]+=s;bal[p]-=s;}}
+  for(const p of S.pay){bal[p.from]+=p.c;bal[p.to]-=p.c;sent[p.from]+=p.c;recv[p.to]+=p.c;}
+  const total=S.exp.reduce((a,e)=>a+e.c,0);return {bal,paid,share,sent,recv,total};}
+function settle(bal){let d=Object.entries(bal).filter(([,v])=>v<0).map(([k,v])=>[k,-v]),c=Object.entries(bal).filter(([,v])=>v>0).map(([k,v])=>[k,v]);const out=[];
+  const so=a=>a.sort((x,y)=>y[1]-x[1]||seq(x[0])-seq(y[0]));so(d);so(c);
+  for(const x of [...d]){const i=c.findIndex(y=>y[1]===x[1]);if(i>=0){out.push({from:x[0],to:c[i][0],c:x[1]});c.splice(i,1);d.splice(d.indexOf(x),1);}}
+  while(d.length&&c.length){so(d);so(c);const a=d[0],b=c[0],m=Math.min(a[1],b[1]);out.push({from:a[0],to:b[0],c:m});a[1]-=m;b[1]-=m;d=d.filter(x=>x[1]);c=c.filter(x=>x[1]);}
+  return out;}
+const fmt=c=>new Intl.NumberFormat('de-DE',{style:'currency',currency:'EUR'}).format(c/100);
+const me=()=>S.role, isOrga=()=>PEOPLE[me()].orga, after=()=>S.ver==='after';
+const nm=(id,{you=true,cap=true}={})=>{if(you&&id===me())return cap?'Du':'du';return PEOPLE[id].name;};
+const nmDat=(id)=>id===me()?'dir':PEOPLE[id].name; // „an dir/an Lena“ selten genutzt
+function av(id,sm){const p=PEOPLE[id];const cls='av'+(sm?' sm':'')+(p.ph?' ph':'')+(p.former?' ex':'');
+  return `<span class="${cls}" style="background:${p.bg||''}" aria-hidden="true">${p.former?ic.person:p.ini}</span>`;}
+const phChip=id=>PEOPLE[id].ph?' <span class="chip">Platzhalter</span>':'';
+const esc=s=>String(s).replace(/[&<>"]/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
+function listDe(a){return a.length<=1?a.join(''):a.slice(0,-1).join(', ')+' und '+a[a.length-1];}
+const canMark=(t)=>{const m=me();if(t.from===m||t.to===m)return true;const acct=id=>!PEOPLE[id].ph&&!PEOPLE[id].former;return isOrga()&&!acct(t.from)&&!acct(t.to);};
+
+/* ---------------- Texte je Fassung ---------------- */
+function standSentence(b,{short=false}={}){ // Nachher
+  if(b<0)return short?`Du zahlst noch <span class="num">${fmt(-b)}</span> zurück`:`Du zahlst noch <span class="num">${fmt(-b)}</span> zurück.`;
+  if(b>0)return short?`Du bekommst noch <span class="num">${fmt(b)}</span> zurück`:`Du bekommst noch <span class="num">${fmt(b)}</span> zurück.`;
+  return 'Du bist quitt ✓';}
+const tone=b=>b>0?'get':b<0?'owe':'even';
+
+/* ---------------- Render ---------------- */
+const $=s=>document.querySelector(s);
+function render(keepScroll){
+  document.documentElement.dataset.theme=S.theme;
+  document.querySelectorAll('[data-set]').forEach(b=>{const [k,v]=b.dataset.set.split(':');b.setAttribute('aria-pressed',String(S[k]===v));});
+  document.querySelectorAll('[data-go]').forEach(b=>b.setAttribute('aria-pressed',String(S.screen===b.dataset.go)));
+  $('#ctl-dock').style.opacity=after()?1:.45;
+  const badge=$('#badge');badge.textContent=after()?'NACHHER – Vorschlag':'VORHER – gebauter Stand (Inkrement 10)';badge.className='badge-ver'+(after()?'':' before');
+  const sc=$('#screen');const y=sc.scrollTop;
+  const st=stats();const tr=settle(st.bal);
+  let html='',chrome='';
+  if(S.screen==='cockpit'){[html,chrome]=cockpit(st,tr);}
+  else if(S.screen==='costs'){[html,chrome]=costs(st,tr);}
+  else if(S.screen==='balances'){[html,chrome]=balances(st,tr);}
+  else if(S.screen==='new'){[html,chrome]=form(st);}
+  else if(S.screen==='trips'){[html,chrome]=tripsScreen();}
+  sc.className='screen'+(chrome.includes('class="dock')?' has-dock':'')+(chrome.includes('actionbar')?' has-bar':'');
+  sc.innerHTML=html;
+  let ov=chrome;
+  if(S.sheet)ov+=sheet(st);
+  if(S.snack){const bottom=chrome.includes('class="dock')?104:chrome.includes('actionbar')?92:20;
+    ov+=`<div class="snack" role="status" style="bottom:${bottom}px"><span>${S.snack.text}</span>${S.snack.act?`<button data-act="${S.snack.act}">${S.snack.label}</button>`:''}</div>`;}
+  $('#overlay').innerHTML=ov;
+  sc.scrollTop=keepScroll?y:0;
+  setupDockObserver();
+}
+/* Leiste blendet aus, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird (W16 v2.17 Fassung 2) */
+let dockObs=null;
+function setupDockObserver(){
+  if(dockObs){dockObs.disconnect();dockObs=null;}
+  const dock=$('#dock'),tile=$('#cost-tile');if(!dock||!tile)return;
+  const hBar=dock.offsetHeight;
+  dockObs=new IntersectionObserver(es=>{for(const e of es){
+    const hide=e.isIntersecting;
+    if(hide&&dock.contains(document.activeElement))continue; // Fokus-Schutz
+    dock.classList.toggle('off',hide);
+    if(hide)dock.setAttribute('inert','');else dock.removeAttribute('inert');
+    const sn=document.querySelector('.snack');if(sn)sn.style.bottom=(hide?20:hBar+8)+'px';
+  }},{root:$('#screen'),rootMargin:`0px 0px -${hBar}px 0px`,threshold:0});
+  dockObs.observe(tile);
+}
+
+/* ---------- Cockpit ---------- */
+function topbar(title,sub,{round=false,back='home'}={}){
+  return `<header class="top${round?' round':''}"><button class="iconbtn" data-nav="${back}" aria-label="Zurück">${ic.back}</button>
+  <div class="t"><b>${title}</b>${sub?`<small><span class="dot" aria-hidden="true"></span>${sub}</small>`:''}</div><button class="iconbtn" aria-label="Reisemenü">${ic.more}</button></header>`;}
+function ring(on){const pct=on?3/8:1;const C=2*Math.PI*62;
+  return `<div class="ring"><div class="ring-box"><svg viewBox="0 0 150 150" aria-hidden="true"><defs><linearGradient id="rg" x1="0" x2="1"><stop offset="0" style="stop-color:var(--ww-ring-start)"/><stop offset="1" style="stop-color:var(--ww-ring-end)"/></linearGradient></defs>
+  <circle cx="75" cy="75" r="62" fill="none" stroke="var(--ww-cockpit-ring-track)" stroke-width="12"/>
+  <circle cx="75" cy="75" r="62" fill="none" stroke="url(#rg)" stroke-width="12" stroke-linecap="round" stroke-dasharray="${C*pct} ${C}" transform="rotate(-90 75 75)"/></svg>
+  <div class="in">${on?'<small>Tag</small><big>3</big><small>von 8</small>':'<em>Schön<br>war’s!</em>'}</div></div></div>`;}
+function cockpit(st,tr){
+  const m=me(),b=st.bal[m],on=S.phase==='on';
+  const myOut=tr.filter(t=>t.from===m),myIn=tr.filter(t=>t.to===m);
+  const showDock=after()&&(on||b!==0);
+  let h=topbar('Kroatien 2027',on?'Unterwegs · Tag 3 von 8':(tr.length?'Zurück · Kosten ausgleichen':'Zurück · alle quitt'),{back:'trips'}).replace('aria-label="Zurück"','aria-label="Meine Reisen"');
+  h+=`<div class="ticket">${ring(on)}<p class="dates">Sa., 12. – Sa., 19. Juni 2027</p><div class="tear" aria-hidden="true"></div>
+   <div class="crew"><span class="avs">${av('lena')}${av('max')}${av('kemal')}<span class="av" style="background:var(--ww-cockpit-control-bg);color:#fff">+3</span></span>6 dabei · 7 Nächte`;
+  if(!after()){ if(on)h+=`<button class="headbtn" data-nav="new">${ic.plus} Ausgabe</button>`; else if(tr.length)h+=`<button class="headbtn" data-nav="balances">${ic.wallet} Ausgleichen</button>`; }
+  h+=`</div></div>`;
+  // Variante A
+  let chrome='';
+  if(showDock){
+    const btn=on?`<button class="btn primary${S.dock==='A'?' full':''}" data-nav="new" aria-label="Ausgabe eintragen">${ic.plus} Ausgabe${S.dock==='A'?' eintragen':''}</button>`
+                :`<button class="btn primary${S.dock==='A'?' full':''}" data-nav="balances">${ic.wallet} Ausgleichen</button>`;
+    const s=S.exp.length?standSentence(b,{short:true}):'Noch keine Ausgaben';
+    if(S.dock==='A')h+=`<aside class="dockcard" aria-label="Kosten – Abkürzung"><button class="stand" data-nav="costs"><span class="eyebrow" style="color:var(--ww-color-link)">Kosten · Verlauf ›</span><span class="s ${tone(b)}">${s}</span></button>${btn}</aside>`;
+    else chrome=`<aside class="dock" id="dock" aria-label="Kosten – Abkürzung"><button class="stand" data-nav="costs" aria-label="Kosten-Verlauf: ${s.replace(/<[^>]+>/g,'')}"><span class="itile it-cost" style="width:32px;height:32px">${ic.wallet}</span><span class="txt"><span class="eyebrow">Kosten · Verlauf ${ic.chev}</span><span class="s ${tone(b)}">${s}</span></span></button>${btn}</aside>`;
+  }
+  // Weg
+  h+=`<div class="content"><h2 class="sec">${on?'Eure Reise, Tag für Tag':'Nach der Reise'}<small>${on?'Tag 3 von 8':(tr.length?'0 von 1 geschafft':'1 von 1 geschafft')}</small></h2><div class="route">`;
+  h+=`<div class="stop"><span class="coin done">${ic.check}</span><div class="donerow">${on?'Vorbereitung · 4 erledigt':'Reise · Vorbereitung und 8 Tage'} ${ic.down}</div></div>`;
+  h+=`<div class="stop"><span class="coin today">${ic.sun}</span><span class="todaytag">${on?'HEUTE · TAG 3 · MO., 14. JUNI':'HEUTE · ZURÜCK SEIT 4 TAGEN'}</span>`;
+  const a1=!after()&&on&&b<=-5000;
+  if(on){
+    h+=`<p class="todaysent">${a1?'Heute ein Termin – und eine Sache für dich.':'Heute ein Termin – sonst genießt den Tag!'}</p>
+    <div class="scard term"><span class="k term">TERMIN HEUTE</span><button class="shead"><span class="itile it-lav">${ic.users}</span>Bootstour Pakleni-Inseln<span class="chev">${ic.chev}</span></button>
+    <p class="sbody">Treffpunkt 9:30 Uhr · Hafen Hvar, Steg 3</p><button class="btn ${after()&&showDock?'secondary':'primary'} full">Infos öffnen</button></div>`;
+    if(a1){const to=myOut[0];h+=`<div class="scard todo"><span class="k todo">DU BIST DRAN · KOSTEN</span><button class="shead" data-nav="balances"><span class="itile it-cost">${ic.wallet}</span>Du schuldest ${nm(to.to)} ${fmt(to.c)}<span class="chev">${ic.chev}</span></button>
+      <p class="sbody">Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich.</p></div>`;}
+    h+=`</div><div class="stop"><span class="coin">${ic.sun}</span><p class="small" style="font-weight:800;margin:6px 0 8px">ZIEL · SA., 19. JUNI</p><div class="goal"><span class="itile it-cost">${ic.plane}</span><div><b>Heimreise</b><small>Fähre Hvar–Split 15:30 Uhr</small></div></div></div>`;
+  } else {
+    // Danach – D1
+    if(!tr.length){h+=`<p class="todaysent">Alle quitt – schön war’s!</p>`;}
+    else if(b<0){
+      const names=listDe(myOut.map(t=>nm(t.to)));
+      h+=`<p class="todaysent">Du bist dran – eine Sache für dich.</p><div class="scard todo"><span class="k todo">DU BIST DRAN</span>
+      <button class="shead" data-nav="balances"><span class="itile it-cost">${ic.wallet}</span>${after()?`Du zahlst ${names} noch ${fmt(-b)} zurück`:`Du schuldest ${names} ${fmt(-b)}`}<span class="chev">${ic.chev}</span></button>
+      <p class="sbody">${after()?'Überweisen und dann „Hab ich überwiesen“ tippen – die Kontodaten stehen beim Ausgleichen.':'Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich.'}</p>
+      ${after()?'':`<button class="btn primary full" data-nav="balances">Zum Ausgleich</button>`}</div>`;
+    } else if(b>0){
+      const names=listDe(myIn.map(t=>PEOPLE[t.from].former?'ehemaligem Mitglied':PEOPLE[t.from].name));
+      h+=`<p class="todaysent">Für dich gerade nichts zu tun. Ihr wartet auf: Überweisungen an dich.</p></div><div class="stop"><span class="coin wait"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"/><circle cx="7" cy="7" r="5.6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span><p class="small" style="font-weight:800;margin:6px 0 8px">LÄUFT · WARTET AUF ANDERE</p>
+      <div class="scard"><button class="shead" data-nav="balances"><span class="itile it-cost">${ic.wallet}</span>Kosten ausgleichen<span class="chev">${ic.chev}</span></button>
+      <p class="sbody">${after()?`Du bekommst noch ${fmt(b)} zurück – von ${names}`:`Du bekommst noch ${fmt(b)} von ${names}`}</p></div>
+      <button class="btn secondary sm">${ic.remind} Erinnern</button>`;
+    } else {
+      h+=`<p class="todaysent">Für dich gerade nichts zu tun. Ihr wartet auf: ${after()?'Überweisungen der anderen':'Ausgleiche der anderen'}.</p></div><div class="stop"><span class="coin wait"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1a6 6 0 0 1 0 12z" fill="currentColor"/><circle cx="7" cy="7" r="5.6" fill="none" stroke="currentColor" stroke-width="1.4"/></svg></span>
+      <div class="scard"><button class="shead" data-nav="balances"><span class="itile it-cost">${ic.wallet}</span>Kosten ausgleichen<span class="chev">${ic.chev}</span></button><p class="sbody">Noch ${tr.length} ${after()?'Überweisungen':'Ausgleiche'} offen</p></div>`;
+    }
+    h+=`</div><div class="stop"><span class="coin">${ic.sun}</span><p class="small" style="font-weight:800;margin:6px 0 8px">ZIEL</p><div class="goal"><span class="itile it-cost">${ic.sun}</span><div><b>Wohin geht’s als Nächstes?</b><small>Die Gruppe steht schon – plant gleich die nächste Reise.</small></div></div></div>`;
+  }
+  h+=`</div>`;
+  // Kacheln
+  const tiles=[`<button class="tile"><span class="itile it-lav">${ic.bed}</span><b>Unterkunft</b><span>Kamena Kuća · gebucht ✓</span></button>`];
+  const costTileVisible= on ? true : (after()&&showDock) || !tr.length;
+  if(costTileVisible){const s=!S.exp.length?'Noch keine Ausgaben':after()?(tr.length||b?standSentence(b,{short:true}):'Alle sind quitt ✓'):
+      `${fmt(st.total)} gesamt · ${b<0?'du schuldest '+fmt(-b):b>0?'du bekommst '+fmt(b):'alles ausgeglichen ✓'}`;
+    tiles.push(`<button class="tile" id="cost-tile" data-nav="costs"><span class="itile it-cost">${ic.wallet}</span><b>Kosten</b><span>${s}</span>${after()&&(on||showDock)?'<span class="lnk">Alle Ausgaben ansehen ›</span>':''}</button>`);}
+  tiles.push(`<button class="tile"><span class="itile it-lav">${ic.info}</span><b>Infos</b><span>Treffpunkt steht · Adresse da</span></button>`);
+  h+=`<h2 class="sec">Immer griffbereit</h2><div class="tiles">${tiles.join('')}</div>
+  <h2 class="sec">Mehr zur Reise</h2><div class="card" style="padding:4px 16px"><div class="more-row"><span class="itile it-lav">${ic.users}</span><b>Wer ist dabei? (6)</b></div></div>
+  <p class="mock-hint">Mockup: nur Kosten-Einstiege sind klickbar.</p></div>`;
+  return [h,chrome];
+}
+
+/* ---------- Kosten-Seite ---------- */
+function rowsHtml(old){
+  const m=me();const by={};
+  [...S.exp].sort((a,b)=>b.d.localeCompare(a.d)||b.id.localeCompare(a.id)).forEach(e=>{(by[e.d]=by[e.d]||[]).push(e)});
+  let h='';
+  for(const d of Object.keys(by)){
+    const dt=new Date(d+'T12:00');const lab=dt.toLocaleDateString('de-DE',{weekday:'short',day:'numeric',month:'long'});
+    const sum=by[d].reduce((a,e)=>a+e.c,0);
+    h+= old?`<h3 class="day"><span>${lab}</span><span class="muted num">${fmt(sum)}</span></h3>`:`<h3 class="day v2">${lab}</h3>`;
+    h+=`<ul class="rows list">`;
+    for(const e of by[d]){
+      const [cc,ci]=CAT[e.cat||'other'];const mine=split(e.c,e.for).find(x=>x[0]===m);
+      const payer=e.payer===m?(old?'Du hast bezahlt':'Du hast ausgelegt'):`${PEOPLE[e.payer].former?'Ehemaliges Mitglied':PEOPLE[e.payer].name} hat ${old?'bezahlt':'ausgelegt'}`;
+      const n=e.for.length;const forTxt=(n===ALL6.length&&!e.for.includes('ex'))||n===ALL7.length?`für alle ${n}`:n<=3?'für '+listDe(e.for.map(p=>p===m?'dich':PEOPLE[p].name)):`für ${n} Personen`;
+      const share=mine?(old?`dein Anteil ${fmt(mine[1])}`:`auf dich ${fmt(mine[1])}`):(old?'nicht beteiligt':'ohne dich');
+      h+=`<li><button class="row${S.hl===e.id?' hl':''}" data-detail="${e.id}"><span class="cat ${cc}">${ci}</span><span class="main"><b>${esc(e.t)}</b><span>${payer} · ${forTxt}</span></span>
+      <span class="amt"><b class="num">${fmt(e.c)}</b><span class="num">${share}</span></span></button></li>`;
+    }
+    h+=`</ul>`;
+  }
+  return h;
+}
+function calcBlock(st){
+  const m=me(),b=st.bal[m];
+  let rows=`<dt>Du hast für die Gruppe ausgelegt</dt><dd class="num">${fmt(st.paid[m])}</dd><dt>Auf dich entfällt</dt><dd class="num">− ${fmt(st.share[m])}</dd>`;
+  if(st.sent[m])rows+=`<dt>Schon zurückgezahlt</dt><dd class="num">+ ${fmt(st.sent[m])}</dd>`;
+  if(st.recv[m])rows+=`<dt>Schon zurückbekommen</dt><dd class="num">− ${fmt(st.recv[m])}</dd>`;
+  rows+=`<dt class="sum">${b<0?'Du zahlst noch zurück':b>0?'Du bekommst noch zurück':'Quitt'}</dt><dd class="sum num">${fmt(Math.abs(b))}</dd>`;
+  return `<div class="calc" id="calc"><dl>${rows}</dl><p>„Auf dich entfällt“ = deine Teile an allen Ausgaben, bei denen du dabei bist.</p></div>`;
+}
+function standV2(st,tr,{onBalances=false}={}){
+  const m=me(),b=st.bal[m];
+  const out=tr.filter(t=>t.from===m),inn=tr.filter(t=>t.to===m);
+  let sub='';
+  if(!onBalances){
+    if(b<0)sub=out.length<=2?'An '+listDe(out.map(t=>PEOPLE[t.to].former?'ehemaliges Mitglied':PEOPLE[t.to].name))+'.':`An ${out.length} Personen.`;
+    else if(b>0)sub=inn.length<=2?'Von '+listDe(inn.map(t=>PEOPLE[t.from].former?'ehemaligem Mitglied':PEOPLE[t.from].name))+'.':`Von ${inn.length} Personen.`;
+    else if(tr.length)sub=`Bei den anderen ${tr.length===1?'ist noch eine Überweisung':'sind noch '+tr.length+' Überweisungen'} offen.`;
+  }
+  const hero=b===0&&!tr.length?'Alle sind quitt ✓':standSentence(b);
+  const open=!!S.open.calc;
+  return `<section class="stand-card v2 ${tone(b)}" aria-labelledby="st-h"><h2 class="eyebrow2" id="st-h">Dein Stand</h2>
+   <p class="hero ${tone(b)}">${hero}</p>${sub?`<p class="sub">${sub}</p>`:''}
+   ${!onBalances&&(b!==0||tr.length)?`<button class="btn secondary full" style="margin-top:12px" data-nav="balances">Ausgleichen ${ic.chev}</button>`:''}
+   <button class="tbtn plain" data-toggle="calc" aria-expanded="${open}" aria-controls="calc">So rechnen wir ${ic.down}</button>${open?calcBlock(st):''}</section>`;
+}
+function standOld(st,{link=true}={}){
+  const m=me(),b=st.bal[m];
+  const t=b>0?`Du bekommst ${fmt(b)}`:b<0?`Du schuldest ${fmt(-b)}`:'Du bist ausgeglichen ✓';
+  const pays=st.sent[m]||st.recv[m]?` · Ausgleiche ${fmt(st.sent[m]+st.recv[m])}`:'';
+  return `<section class="stand-card"><p class="eyebrow2">Dein Stand</p><div class="hero-old"><span class="itile ${b>0?'it-mint':'it-lav'}">${ic.wallet}</span><p class="hero ${tone(b)}">${t}</p></div>
+  <p class="small muted" style="margin:6px 0 0">Dein Anteil ${fmt(st.share[m])} · bezahlt ${fmt(st.paid[m])}${pays}</p><p class="small muted" style="margin:4px 0 0">Ausgaben gesamt ${fmt(st.total)}</p>
+  ${link&&b!==0?`<button class="tbtn plain" data-nav="balances" style="margin-top:6px">So gleichst du aus ${ic.chev}</button>`:''}</section>`;
+}
+function costs(st,tr){
+  const old=!after();
+  let h=topbar('Kroatien 2027','Kosten',{round:true,back:S.from==='cockpit'?'cockpit':'cockpit'});
+  if(old)h=h.replace('<button class="iconbtn" aria-label="Reisemenü">',`<button class="iconbtn outline" aria-label="Abrechnung teilen">${ic.share}</button><button class="iconbtn" aria-label="Reisemenü">`);
+  h+=`<div class="content">`;
+  if(old){h+=standOld(st)+`<nav class="segtabs" aria-label="Kosten"><button aria-current="page">Ausgaben</button><button data-nav="balances">Ausgleich</button></nav>`+rowsHtml(true)+
+     `<p class="foot">Alle Beträge in Euro. Wir überweisen nichts – wir zeigen nur, wer wem was schuldet.</p>`;}
+  else{h+=standV2(st,tr)+`<h2 class="group-h">Ausgaben der Gruppe</h2><p class="group-s">Die Gruppe hat bisher <span class="num">${fmt(st.total)}</span> ausgegeben.</p>`+rowsHtml(false)+
+     `<p class="foot">Alle Beträge in Euro. Die App bewegt kein Geld – überweist selbst, bar oder per PayPal.</p>`;}
+  h+=`</div>`;
+  const chrome=`<div class="actionbar"><button class="btn primary full" data-nav="new">${ic.plus} ${old?'Ausgabe hinzufügen':'Ausgabe eintragen'}</button></div>`;
+  return [h,chrome];
+}
+
+/* ---------- Ausgleich ---------- */
+function ibanHtml(id){const p=PEOPLE[id];if(!p.iban&&!p.other)return `<p class="pay muted">${p.name} hat keine Zahlungsinfo hinterlegt – frag am besten direkt.</p>`;
+  let h='';if(p.iban){const full=S.open['iban-'+id];const g=p.iban.match(/.{1,4}/g);
+    h+=`<p class="pay"><span class="iban num">IBAN ${full?g.join(' '):g[0]+' <span class="m">•••• •••• •••• ••••</span> '+p.iban.slice(-4)}</span></p>
+    <div class="btnrow"><button class="tbtn" data-copy="IBAN">${ic.copy} Kopieren</button><button class="tbtn" data-toggle="iban-${id}" aria-pressed="${!!full}">${ic.eye} ${full?'Verbergen':'Anzeigen'}</button></div>`;}
+  if(p.other)h+=`<p class="pay">${esc(p.other)} <button class="tbtn" data-copy="Zahlungsinfo">${ic.copy} Kopieren</button></p>`;
+  return h;}
+function balances(st,tr){return after()?balancesNew(st,tr):balancesOld(st,tr);}
+function justDone(t){return S.pay.find(p=>p.fresh&&p.from===t.from&&p.to===t.to);}
+function balancesNew(st,tr){
+  const m=me(),b=st.bal[m];
+  let h=topbar('Kroatien 2027','Ausgleichen',{round:true,back:S.from==='cockpit'?'cockpit':'costs'}).replace('<b>Kroatien 2027</b>','<b>Ausgleichen</b>').replace('Ausgleichen</small>','Kroatien 2027</small>');
+  h+=`<div class="content">`;
+  // Hinweis „an dich überwiesen“
+  const toMe=S.pay.filter(p=>p.to===m&&p.by!==m&&!S.shown.has(p.id));
+  if(toMe.length)h+=`<div class="info" role="status">${ic.info}<span>${listDe(toMe.map(p=>PEOPLE[p.by].name))} ${toMe.length>1?'haben':'hat'} ${fmt(toMe.reduce((a,p)=>a+p.c,0))} an dich als überwiesen markiert. Noch nicht angekommen? Unter „Erledigt“ kannst du es zurücknehmen.</span></div>`;
+  h+=standV2(st,tr,{onBalances:true});
+  const freshMine=S.pay.filter(p=>p.fresh&&(p.from===m||p.to===m));
+  const out=tr.filter(t=>t.from===m),inn=tr.filter(t=>t.to===m);
+  const outAll=[...out,...freshMine.filter(p=>p.from===m)], inAll=[...inn,...freshMine.filter(p=>p.to===m)];
+  if(!tr.length&&!freshMine.length){h+=`<div class="allsq" style="margin-top:16px"><b>Alle sind quitt ✓</b><span>Niemand muss mehr etwas überweisen.</span></div>`;}
+  if(outAll.length){
+    h+=`<h2 class="sec">${outAll.length>1?'Deine Überweisungen':'Deine Überweisung'}</h2><div class="card" style="padding:4px 16px">`;
+    outAll.forEach((t,i)=>{const done=!!t.fresh;
+      h+=`<div class="xfer"><div class="line">${av(t.to)} An ${PEOPLE[t.to].former?'ehemaliges Mitglied':PEOPLE[t.to].name}${phChip(t.to)}<span class="amt num">${fmt(t.c)}</span></div>
+      ${done?`<div class="btnrow"><span class="chip ok">${ic.check} Erledigt</span><button class="tbtn" data-undo="${t.id}">Zurücknehmen</button></div>`:
+      ibanHtml(t.to)+`<div class="btnrow"><button class="btn ${i===0?'primary':'secondary'} sm" data-mark="${t.from}>${t.to}>${t.c}">${ic.check} Hab ich überwiesen</button></div>`}</div>`;});
+    h+=`</div>`;
+  }
+  if(inAll.length){
+    h+=`<h2 class="sec">Das bekommst du</h2><div class="card" style="padding:4px 16px">`;
+    inAll.forEach(t=>{const done=!!t.fresh;const fr=PEOPLE[t.from];
+      h+=`<div class="xfer"><div class="line">${av(t.from)} Von ${fr.former?'ehemaligem Mitglied':fr.name}${phChip(t.from)}<span class="amt num">${fmt(t.c)}</span></div>
+      ${done?`<div class="btnrow"><span class="chip ok">${ic.check} Erledigt</span><button class="tbtn" data-undo="${t.id}">Zurücknehmen</button></div>`:
+      `<div class="btnrow"><button class="btn secondary sm" data-mark="${t.from}>${t.to}>${t.c}">${ic.check} Ist angekommen</button>${fr.former?'':`<button class="tbtn plain" data-remind="${t.from}">${ic.remind} ${fr.name} erinnern</button>`}</div>`}</div>`;});
+    h+=`</div>`;
+  }
+  // Wohin soll das Geld?
+  const p=PEOPLE[m];
+  if(b>0){ if(!p.iban&&!p.other){const who=listDe(inn.filter(t=>!PEOPLE[t.from].former).map(t=>PEOPLE[t.from].name));
+      h+=`<h2 class="sec">Wohin soll das Geld?</h2><div class="card"><p style="margin:0 0 12px" class="small">Hinterleg IBAN oder PayPal-Name – dann sehen ${who||'die anderen'} sie bei ihrer Überweisung an dich.</p><button class="btn secondary sm" data-snack="Im Mockup nicht ausgeführt – Sheet wie W19 D.8.4.">Hinterlegen</button></div>`;}
+    else h+=`<h2 class="sec">Wohin soll das Geld?</h2><div class="card" style="display:flex;align-items:center;gap:10px"><span class="iban num">IBAN ${p.iban.slice(0,4)} <span class="m">••••</span> ${p.iban.slice(-4)}</span><button class="tbtn" style="margin-left:auto">Ändern</button></div><p class="small muted">Nur wer an dich überweist, sieht das.</p>`;}
+  // Für dich als Orga
+  if(isOrga()){const og=tr.filter(t=>t.from!==m&&t.to!==m&&canMark(t));const ogDone=S.pay.filter(x=>x.fresh&&x.from!==m&&x.to!==m);
+    if(og.length||ogDone.length){h+=`<h2 class="sec">Für dich als Orga</h2><div class="card"><p class="small muted" style="margin:0 0 6px">Hier ist niemand mit App beteiligt – du kannst es abhaken, wenn du weißt, dass es erledigt ist.</p>`;
+      [...og,...ogDone].forEach(t=>{h+=`<div class="xfer"><div class="line" style="flex-wrap:wrap">${av(t.from,1)} ${PEOPLE[t.from].name}${phChip(t.from)} <span class="arrow">${ic.arrow}</span><span class="vh">an</span> ${av(t.to,1)} ${PEOPLE[t.to].former?'ehemaliges Mitglied':PEOPLE[t.to].name}<span class="amt num">${fmt(t.c)}</span></div>
+      <div class="btnrow">${t.fresh?`<span class="chip ok">${ic.check} Erledigt</span><button class="tbtn" data-undo="${t.id}">Zurücknehmen</button>`:`<button class="tbtn" data-mark="${t.from}>${t.to}>${t.c}">Als erledigt markieren</button>`}</div></div>`;});
+      h+=`</div>`;}}
+  // Erledigt (meine)
+  const mineDone=S.pay.filter(x=>!x.fresh&&(x.from===m||x.to===m));
+  if(mineDone.length){const o=!!S.open.done;h+=`<div style="margin-top:14px"><h2 style="margin:0"><button class="disc" data-toggle="done" aria-expanded="${o}">Erledigt (${mineDone.length}) ${ic.down}</button></h2>`;
+    if(o){h+=`<ul class="compact">`+mineDone.map(x=>`<li><span class="who">${x.from===m?'An '+PEOPLE[x.to].name:'Von '+PEOPLE[x.from].name} · <span class="a num">${fmt(x.c)}</span><span class="small muted">· ${x.by===m?'von dir':'von '+PEOPLE[x.by].name} markiert am ${x.at}</span></span><button class="tbtn" data-undo="${x.id}">Zurücknehmen</button></li>`).join('')+`</ul>`;}
+    h+=`</div>`;}
+  // Ausgleiche der anderen
+  const othersOpen=tr.filter(t=>t.from!==m&&t.to!==m&&!(isOrga()&&canMark(t)));
+  const othersDone=S.pay.filter(x=>!x.fresh&&x.from!==m&&x.to!==m);
+  const n=othersOpen.length+othersDone.length;
+  h+=`<div style="margin-top:14px">`;
+  if(n){const o=!!S.open.others;
+    h+=`<h2 style="margin:0"><button class="disc" data-toggle="others" aria-expanded="${o}" aria-controls="others-list">Ausgleiche der anderen (${n}) ${ic.down}</button></h2>`;
+    if(o){h+=`<ul class="compact" id="others-list">`+[...othersOpen.map(t=>({...t,done:false})),...othersDone.map(t=>({...t,done:true}))].map(t=>{
+      const f=PEOPLE[t.from],to=PEOPLE[t.to];
+      return `<li><span class="who">${av(t.from,1)}${f.name}${f.ph?' <span class="chip">Platzhalter</span>':''} <span class="arrow">${ic.arrow}</span><span class="vh">an</span> ${av(t.to,1)}${to.former?'ehem. Mitglied':to.name}</span><span class="a num">${fmt(t.c)}</span><span class="st${t.done?' ok':''}">${t.done?'✓ erledigt':'offen'}</span></li>`;}).join('')+`</ul>`;}
+  }
+  h+=`<p class="neutral">${tr.length?`Insgesamt noch ${tr.length===1?'eine Überweisung':tr.length+' Überweisungen'} offen, bis alle quitt sind.`:'Alle sind quitt ✓'}</p></div>`;
+  if(b<=0&&!(PEOPLE[m].iban))h+=`<button class="tbtn plain" style="margin-top:8px">Deine Zahlungsinfo ${ic.chev}</button>`;
+  if(isOrga())h+=`<div style="margin-top:18px"><button class="btn secondary full" data-snack="Dialog wie W19 D.9 – im Mockup nicht ausgeführt.">Abrechnung abschließen</button></div>`;
+  h+=`<button class="tbtn plain" style="margin-top:6px" data-snack="Teilen-Sheet mit Text „Ausgleichen Kroatien 2027: …“">${ic.share} Übersicht teilen</button></div>`;
+  return [h,''];
+}
+function balancesOld(st,tr){
+  const m=me();
+  let h=topbar('Kroatien 2027','Kosten',{round:true,back:'cockpit'}).replace('<button class="iconbtn" aria-label="Reisemenü">',`<button class="iconbtn outline" aria-label="Abrechnung teilen">${ic.share}</button><button class="iconbtn" aria-label="Reisemenü">`);
+  h+=`<div class="content">`+standOld(st,{link:false})+`<nav class="segtabs" aria-label="Kosten"><button data-nav="costs">Ausgaben</button><button aria-current="page">Ausgleich</button></nav>`;
+  const mine=tr.filter(t=>t.from===m||t.to===m),others=tr.filter(t=>!(t.from===m||t.to===m));
+  const line=t=>`<div class="line" style="flex-wrap:wrap">${av(t.from,1)} ${nm(t.from)}${phChip(t.from)} <span class="arrow">${ic.arrow}</span> ${av(t.to,1)} ${PEOPLE[t.to].former?'Ehemaliges Mitglied':nm(t.to)}<span class="amt num">${fmt(t.c)}</span></div>`;
+  if(mine.length){h+=`<h2 class="sec">Deine Ausgleiche</h2><div class="card" style="padding:4px 16px">`;
+    mine.forEach((t,i)=>{h+=`<div class="xfer">${line(t)}${t.from===m?ibanHtml(t.to):''}<div class="btnrow"><button class="btn ${t.from===m&&i===0?'primary':'secondary'} sm" data-mark="${t.from}>${t.to}>${t.c}">${ic.check} ${t.from===m?'Als bezahlt markieren':'Als erhalten markieren'}</button>${t.to===m&&!PEOPLE[t.from].former?`<button class="btn secondary sm">${ic.remind} ${PEOPLE[t.from].name} erinnern</button>`:''}</div></div>`;});
+    h+=`</div>`;}
+  if(others.length){h+=`<h2 class="sec">Weitere Ausgleiche</h2><p class="small muted" style="margin:-4px 0 8px">Mit ${tr.length} Überweisungen ist alles erledigt.</p><div class="card" style="padding:4px 16px">`;
+    others.forEach(t=>{const acct=id=>!PEOPLE[id].ph&&!PEOPLE[id].former;const who=acct(t.from)&&acct(t.to)?`Markieren können ${PEOPLE[t.from].name} oder ${PEOPLE[t.to].name}.`:acct(t.from)?`Markieren kann ${PEOPLE[t.from].name}.`:acct(t.to)?`Markieren kann ${PEOPLE[t.to].name}.`:'Markieren kann die Orga.';
+      h+=`<div class="xfer">${line(t)}${ibanHtml(t.to).replace(/<p class="pay muted">.*?<\/p>/,'')}${canMark(t)?`<div class="btnrow"><button class="btn secondary sm" data-mark="${t.from}>${t.to}>${t.c}">Als bezahlt markieren</button></div>`:`<p class="small muted" style="margin:8px 0 0">${who}</p>`}</div>`;});
+    h+=`</div>`;}
+  if(!tr.length)h+=`<div class="allsq" style="margin-top:16px"><b>Alles ausgeglichen ✓</b><span>Niemand schuldet jemandem etwas.</span></div>`;
+  h+=`<div class="disc" style="margin-top:12px">Bereits bezahlt (${S.pay.length}) ${ic.down}</div>`;
+  h+=`<h2 class="sec">Salden</h2><div class="card" style="padding:4px 16px">`;
+  const max=Math.max(...ALL7.map(p=>Math.abs(st.bal[p])),1);
+  [m,...ALL7.filter(p=>p!==m)].forEach(p=>{const v=st.bal[p];const w=Math.abs(v)/max*50;
+    h+=`<div class="bal"><div class="l">${av(p,1)} ${p===m?'Du':PEOPLE[p].former?'Ehemaliges Mitglied':PEOPLE[p].name}${phChip(p)}<span class="v ${tone(v)} num">${v>0?(p===m?'du bekommst ':'bekommt ')+fmt(v):v<0?(p===m?'du schuldest ':'schuldet ')+fmt(-v):'ausgeglichen ✓'}</span></div>
+    <div class="bar" aria-hidden="true"><i style="${v>=0?`left:50%;width:${w}%;background:var(--ww-cost-bar-get)`:`right:50%;width:${w}%;background:var(--ww-cost-bar-owe)`}"></i></div></div>`;});
+  h+=`</div>`;
+  if(isOrga())h+=`<div style="margin-top:16px"><button class="btn secondary full">Abrechnung abschließen</button></div>`;
+  const p=PEOPLE[m];
+  h+=`<div class="card" style="margin-top:16px"><b>Deine Zahlungsinfo (freiwillig)</b>${p.iban?`<p class="iban">IBAN ${p.iban.slice(0,4)} •••• ${p.iban.slice(-4)}</p>`:`<p class="small muted">Noch nichts hinterlegt – z. B. IBAN oder PayPal-Name.</p><button class="btn secondary sm">Hinterlegen</button>`}</div></div>`;
+  return [h,''];
+}
+
+/* ---------- Formular ---------- */
+function form(st){
+  const old=!after();const f=S.form||(S.form={amt:'',t:'',payer:me(),for:[...ALL6],err:{}});
+  const n=f.for.length;const cents=parseAmt(f.amt);
+  let h=topbar(old?'Ausgabe hinzufügen':'Ausgabe eintragen','',{round:true,back:S.from});
+  h+=`<form class="content" id="xf" novalidate>
+   <div class="field"><label for="f-amt">Betrag</label><div class="amtwrap"><input class="inp big num" id="f-amt" inputmode="decimal" autocomplete="off" placeholder="0,00" value="${esc(f.amt)}" aria-label="Betrag in Euro" ${f.err.amt?'aria-invalid="true" aria-describedby="e-amt"':''}><span aria-hidden="true">€</span></div>${f.err.amt?`<p class="err" id="e-amt">${f.err.amt}</p>`:''}</div>
+   <div class="field"><label for="f-t">Wofür?</label><input class="inp" id="f-t" maxlength="60" placeholder="z. B. Abendessen am Hafen" value="${esc(f.t)}" ${f.err.t?'aria-invalid="true" aria-describedby="e-t"':''}>${f.err.t?`<p class="err" id="e-t">${f.err.t}</p>`:''}</div>
+   <div class="field"><label for="f-p">${old?'Bezahlt von':'Wer hat ausgelegt?'}</label><select class="inp" id="f-p">${ALL6.map(p=>`<option value="${p}" ${f.payer===p?'selected':''}>${p===me()?`Ich (${PEOPLE[p].name})`:PEOPLE[p].name+(PEOPLE[p].ph?' · Platzhalter':'')}</option>`).join('')}</select></div>
+   <fieldset class="field" style="border:0;padding:0;margin:0 0 16px"><legend class="lab" style="font-weight:800;margin-bottom:6px">${old?'Für wen?':'Für wen war es?'} <span class="muted small">${n} von 6</span></legend><div class="pchips">
+   ${ALL6.map(p=>`<label class="pchip"><input type="checkbox" value="${p}" ${f.for.includes(p)?'checked':''}>${av(p,1)}${p===me()?'Ich':PEOPLE[p].name}${PEOPLE[p].ph?' · Platzhalter':''}<span class="tick" aria-hidden="true">✓</span></label>`).join('')}</div>${f.err.for?`<p class="err">${f.err.for}</p>`:''}</fieldset>
+   <div class="field"><span class="lab">${old?'Aufteilung':'Wie aufteilen?'}</span><div class="segtabs" style="margin:0"><button type="button" aria-current="page">Gleich</button><button type="button" disabled title="Im Mockup nicht aktiv">${old?'Nach Beträgen':'Eigene Beträge'}</button></div>
+   <p class="live" aria-live="polite">Je Person ${cents&&n?fmt(Math.floor(cents/n)):'–'}</p></div>
+   <p class="small muted">Datum: heute · „+ Notiz“ wie W19 D.5 (im Mockup ausgelassen)</p></form>`;
+  const chrome=`<div class="actionbar"><button class="btn primary full" data-save="1">Ausgabe speichern</button></div>`;
+  return [h,chrome];
+}
+function parseAmt(s){s=String(s).trim().replace(/\s/g,'');if(!s)return 0;const m=s.match(/^(\d{1,7})(?:[.,](\d{1,2}))?$/);if(!m)return NaN;return Number(m[1])*100+Number((m[2]||'0').padEnd(2,'0'));}
+
+/* ---------- Sheet ---------- */
+function sheet(){
+  const e=S.exp.find(x=>x.id===S.sheet);if(!e)return '';const old=!after();const m=me();
+  const parts=split(e.c,e.for);const payer=e.payer===m?(old?'Du hast bezahlt':'Du hast ausgelegt'):`${PEOPLE[e.payer].former?'Ehemaliges Mitglied':PEOPLE[e.payer].name} hat ${old?'bezahlt':'ausgelegt'}`;
+  return `<div class="scrim" data-close="1"></div><div class="sheet" role="dialog" aria-modal="true" aria-labelledby="sh-t"><div class="grab"></div>
+  <div style="display:flex;align-items:center"><h2 id="sh-t">${esc(e.t)}</h2><button class="iconbtn" style="margin-left:auto;background:var(--ww-color-surface-sunken)" data-close="1" aria-label="Schließen">✕</button></div>
+  <p class="hero num" style="margin:8px 0 4px">${fmt(e.c)}</p><p class="small muted" style="margin:0 0 12px">${CAT[e.cat||'other'][2]} · ${new Date(e.d+'T12:00').toLocaleDateString('de-DE',{weekday:'long',day:'numeric',month:'long'})} · ${payer}</p>
+  <h3 style="margin:0 0 6px;font-size:1rem">${old?'Aufteilung':'So wird geteilt'}</h3><ul class="compact">${parts.map(([p,c])=>`<li><span class="who">${av(p,1)} ${p===m?'Du':PEOPLE[p].former?'Ehemaliges Mitglied':PEOPLE[p].name}${phChip(p)}</span><span class="a num">${fmt(c)}</span></li>`).join('')}</ul>
+  <p class="small muted">${old?'Gleich aufgeteilt · Angelegt von ':'Gleich geteilt · eingetragen von '}${e.by===m?(old?'dir':'dir'):PEOPLE[e.by].name}</p></div>`;
+}
+
+/* ---------- Meine Reisen (für v2.18 App-Start) ---------- */
+function tripsScreen(){
+  const on=S.phase==='on';const two=S.running==='two';
+  const card=(n,sub,nav,tone)=>`<button class="tile" style="width:100%;min-height:84px;margin-bottom:12px;flex-direction:row;align-items:center;gap:12px" ${nav?`data-nav="${nav}"`:''}><span class="itile ${tone}">${ic.sun}</span><span style="display:flex;flex-direction:column;flex:1"><b>${n}</b><span>${sub}</span></span><span class="muted">${ic.chev}</span></button>`;
+  let h=`<header class="top round"><div class="t" style="padding-left:6px"><b>Meine Reisen</b></div><button class="iconbtn" aria-label="Konto">${ic.users}</button></header><div class="content">`;
+  const running=[];if(on)running.push(card('Kroatien 2027','Unterwegs · Tag 3 von 8','cockpit','it-cost'));
+  if(two)running.push(card('Familie im Harz','Unterwegs · Tag 1 von 3',null,'it-mint'));
+  if(after()&&running.length)h+=`<h2 class="sec">Läuft gerade</h2>`+running.join('')+`<h2 class="sec">Weitere Reisen</h2>`;
+  else{h+=`<h2 class="sec">Deine Reisen</h2>`+running.join('');}
+  if(!on)h+=card('Kroatien 2027','Zurück · Kosten ausgleichen','cockpit','it-cost');
+  h+=card('Lissabon 2028','Tage sammeln · 4 von 6 dabei',null,'it-lav');
+  h+=`<p class="mock-hint">Mockup: „Meine Reisen“ nur angedeutet.</p></div>`;
+  return [h,''];
+}
+function appStart(){
+  S.pay.forEach(p=>delete p.fresh);S.sheet=null;S.snack=null;S.form=null;
+  const running=S.phase==='on'?(S.running==='two'?2:1):0;
+  if(after()&&running===1){S.screen='cockpit';S.from='cockpit';
+    if(!S.startHint){S.startHint=true;snack('Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.','go:trips','Meine Reisen');}}
+  else S.screen='trips';
+  render();
+}
+
+/* ---------------- Aktionen ---------------- */
+let snackTimer;
+function snack(text,act,label){S.snack={text,act,label};clearTimeout(snackTimer);snackTimer=setTimeout(()=>{S.snack=null;render(true)},6000);}
+function go(screen){
+  if(screen==='home')screen='cockpit';
+  if(screen==='new'){S.form=null;S.from=S.screen==='new'?S.from:S.screen;}
+  else if(screen==='balances'||screen==='costs'){ if(S.screen==='cockpit')S.from='cockpit'; else if(S.screen==='costs'&&screen==='balances')S.from='costs'; }
+  // markierte Zeilen wandern beim Verlassen nach „Erledigt“
+  S.pay.forEach(p=>delete p.fresh);
+  if(S.screen==='balances'&&screen!=='balances')S.pay.forEach(x=>{if(x.to===me())S.shown.add(x.id)});
+  S.screen=screen;S.sheet=null;render();
+}
+document.addEventListener('click',ev=>{
+  const t=ev.target.closest('button,[data-close]');if(!t)return;
+  if(t.dataset.set){const [k,v]=t.dataset.set.split(':');S[k]=v;if(k==='phase'){seedPayments();}if(k==='phase'||k==='role'||k==='ver'){S.shown=new Set(['p0']);}if(k==='ver'||k==='role'||k==='phase'){S.open={};}S.sheet=null;S.snack=null;render();return;}
+  if(t.dataset.go){S.from='cockpit';go(t.dataset.go);return;}
+  if(t.id==='appstart'){appStart();return;}
+  if(t.id==='reset'){S.exp=seedExpenses();seedPayments();S.shown=new Set(['p0']);S.open={};S.snack=null;S.sheet=null;render();return;}
+  if(t.dataset.nav){ev.preventDefault();go(t.dataset.nav==='home'?'cockpit':t.dataset.nav);return;}
+  if(t.dataset.toggle){const k=t.dataset.toggle;S.open[k]=!S.open[k];render(true);const b=document.querySelector(`[data-toggle="${k}"]`);b&&b.focus();return;}
+  if(t.dataset.detail){S.sheet=t.dataset.detail;render(true);const x=document.querySelector('.sheet [data-close]');x&&x.focus();return;}
+  if(t.dataset.close){S.sheet=null;render(true);return;}
+  if(t.dataset.mark){const [from,to,c]=t.dataset.mark.split('>');const id='p'+Date.now();
+    S.pay.push({id,from,to,c:+c,by:me(),at:'heute',fresh:true});S.shown.add(id);
+    const txt=after()?(from===me()?`Erledigt: an ${PEOPLE[to].name}, ${fmt(+c)}.`:to===me()?`Erledigt: von ${PEOPLE[from].name}, ${fmt(+c)}.`:`Erledigt: ${PEOPLE[from].name} → ${PEOPLE[to].former?'ehemaliges Mitglied':PEOPLE[to].name}, ${fmt(+c)}.`)
+      :`Als bezahlt markiert: ${nm(from)} → ${PEOPLE[to].former?'ehemaliges Mitglied':nm(to)}, ${fmt(+c)}.`;
+    snack(txt,'undo:'+id,'Rückgängig');render(true);const u=document.querySelector(`[data-undo="${id}"]`);u&&u.focus();return;}
+  if(t.dataset.undo){S.pay=S.pay.filter(p=>p.id!==t.dataset.undo);snack(after()?'Zurückgenommen.':'Zahlung zurückgenommen.');render(true);return;}
+  if(t.dataset.act){const [a,id]=t.dataset.act.split(':');if(a==='undo'){S.pay=S.pay.filter(p=>p.id!==id);}if(a==='view'){S.snack=null;go('costs');return;}if(a==='go'){S.snack=null;go(id);return;}S.snack=null;render(true);return;}
+  if(t.dataset.remind){snack(`WhatsApp-Text an ${PEOPLE[t.dataset.remind].name} (RemindSheet) – im Mockup nicht geöffnet.`);render(true);return;}
+  if(t.dataset.copy){snack(`${t.dataset.copy} kopiert`);render(true);return;}
+  if(t.dataset.snack){snack(t.dataset.snack);render(true);return;}
+  if(t.dataset.save){save();return;}
+});
+document.addEventListener('input',ev=>{if(!S.form)return;const el=ev.target;
+  if(el.id==='f-amt'){S.form.amt=el.value;const live=document.querySelector('.live');const c=parseAmt(el.value);const n=S.form.for.length;if(live)live.textContent='Je Person '+(c&&n?fmt(Math.floor(c/n)):'–');}
+  if(el.id==='f-t')S.form.t=el.value;});
+document.addEventListener('change',ev=>{if(!S.form)return;const el=ev.target;
+  if(el.id==='f-p')S.form.payer=el.value;
+  if(el.type==='checkbox'){S.form.for=[...document.querySelectorAll('.pchip input:checked')].map(i=>i.value);render(true);const i=document.querySelector(`.pchip input[value="${el.value}"]`);i&&i.focus();}});
+function save(){const f=S.form;f.err={};const c=parseAmt(f.amt);
+  if(!f.amt.trim())f.err.amt='Bitte gib einen Betrag ein.';else if(!(c>0))f.err.amt='Bitte einen Betrag wie 12,50 eingeben.';
+  if(!f.t.trim())f.err.t='Bitte gib an, wofür das war.';if(!f.for.length)f.err.for='Wähle mindestens eine Person.';
+  if(Object.keys(f.err).length){render(true);const x=document.querySelector('[aria-invalid="true"]');x&&x.focus();return;}
+  const id='n'+Date.now();S.exp.push({id,t:f.t.trim(),payer:f.payer,c,for:f.for,cat:'other',d:S.phase==='on'?'2027-06-14':'2027-06-23',by:me()});S.hl=id;
+  const back=S.from==='cockpit'?'cockpit':'costs';S.form=null;S.pay.forEach(p=>delete p.fresh);S.screen=back;
+  const b=stats().bal[me()];
+  const txt=after()?(b<0?`Gespeichert. Du zahlst jetzt noch ${fmt(-b)} zurück.`:b>0?`Gespeichert. Du bekommst jetzt noch ${fmt(b)} zurück.`:'Gespeichert. Du bist jetzt quitt ✓'):`${fmt(c)} gespeichert – Salden sind aktualisiert.`;
+  snack(txt,back==='cockpit'?'view:1':null,'Ansehen');render();setTimeout(()=>{S.hl=null},1700);}
+seedPayments();S.shown.add('p0');
+render();
+</script>
+</body>
+</html>

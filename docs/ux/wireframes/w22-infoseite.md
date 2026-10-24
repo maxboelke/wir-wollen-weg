@@ -1,6 +1,6 @@
 # W22 – Infos zur Reise (Anzeige & Bearbeiten)
 
-Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 8** (Präzisierungen und Inkrement-8-Schnitt: Abschnitt C – gilt vor A/B) · **Inkrement 9: Abschnitt D** (Übernahme aus der Unterkunft) · Feature **F-033** (Text & Links, ohne Dateien) · Routen `/trips/{id}/info`, `/info/edit`
+Stand: 2026-10-23 · UI/UX · Status: **baureif für Inkrement 8** (Präzisierungen und Inkrement-8-Schnitt: Abschnitt C – gilt vor A/B) · **Inkrement 9: Abschnitt D** (Übernahme aus der Unterkunft) · **Inkrement 11: Abschnitt E** („Bucht“ darf bearbeiten) · Feature **F-033** (Text & Links, ohne Dateien) · Routen `/trips/{id}/info`, `/info/edit`
 Prototyp: [`#/info`](../mockups/reise-managen/index.html) (als Lena: „Bearbeiten“; nach „Das wird's“ in W18 „Adresse übernehmen“).
 
 ## Rechte
@@ -133,3 +133,22 @@ Grundlage: CEO-Entscheidung (c) vom 2026-10-23 und [`features.md` R.7](../../pro
 | `info.fromStay.previous` / `.restore` | Vorher: „{name}“ · Zurück | Before: “{name}” · Restore |
 | `info.addressHint.stay` | Die genaue Adresse steht meist in der Buchungsbestätigung. | The exact address is usually in your booking confirmation. |
 | `info.toStay` | Zur Unterkunft | Go to the place |
+
+## E. Inkrement 11 – „Bucht“ darf die Infos bearbeiten (2026-10-23, gilt vor A–D)
+
+Grundlage: F-056, `features.md` R.9 I11-02, [W20 H.2](w20-reisedaten.md) (Markierung), [W16 v2.16](w16-cockpit.md) (A2, Kachel).
+
+| Thema | Inkrement 8–10 | **ab Inkrement 11** |
+|---|---|---|
+| Rechteprüfung | `canEditTripInfo(member)` = Orga | Orga **oder** „Bucht“ (serverseitig bei jedem Speichern) |
+| Kopf-Taste «Bearbeiten» | nur Orga | Orga und „Bucht“ |
+| Leerzustand mit Primär `[Infos ergänzen]`, Infos-Kachel «Infos ergänzen» | nur Orga | Orga und „Bucht“ |
+| Aufgabe A2 (Infos leer, ≤ 21 Tage) | nur Orga | Orga und alle „Bucht“ – wer zuerst einträgt, erledigt sie für alle |
+| «Name in die Infos übernehmen ›» / «Aus „{Titel}“ übernehmen» (D) | Orga | Orga und „Bucht“ |
+| Hinweis unter „Gut zu wissen“ | «Keine Ausweis- oder Buchungsnummern hier eintragen.» | «Keine Ausweis- oder Buchungsnummern hier eintragen – Ausweisdaten fragt ihr über „Reisedaten“ an.» (nur wenn der Bereich Reisedaten an ist; sonst unverändert – keine Teaser) |
+
+- **Leerzustand Mitglied:** «Noch keine Infos – {names} {count, plural, one {trägt} other {tragen}} hier Adresse, Check-in und Treffpunkt ein.» – `{names}` = Orga + „Bucht“-Personen ohne Doppelung, Orga zuerst, max. 4 Namen («Lena und Sara», «Lena, Sara und Kemal»). Cockpit-Kachel Mitglied: «Noch leer – {names} {trägt/tragen} sie ein».
+- **Markierung entzogen, während das Formular offen ist:** Speichern → Server lehnt ab → Weiterleitung auf `/info` mit Hinweis (Info) «Du kannst die Infos nicht mehr bearbeiten – {Orga} hat geändert, wer bucht.» Eingaben gehen verloren (vorher kein Dialog möglich; selten). Bereits gespeicherte Änderungen bleiben (R.9).
+- **Konflikt** (zwei „Bucht“ oder Orga + „Bucht“ gleichzeitig): Banner aus C («{Name} hat die Infos inzwischen geändert.» `[Neu laden]`) – jetzt praktisch relevant; unverändert „letzte Speicherung gewinnt“.
+- **«Zuletzt geändert von …»** zeigt auch „Bucht“-Personen; kein Chip dahinter.
+- Abnahme: „Bucht“ ohne Orga-Rolle bearbeitet/übernimmt/löst A2 · Mitglied ohne Markierung ruft `/info/edit` auf → Weiterleitung · Entzug während Bearbeitung · Leertext mit 1/2/3 Namen DE/EN · Hinweissatz mit/ohne Bereich Reisedaten.

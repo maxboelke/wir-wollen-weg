@@ -1,7 +1,7 @@
 # W16 – Reise-Cockpit (Übersicht nach der Festlegung, Phase 3)
 
-Stand: 2026-10-22 · Verantwortlich: UI/UX
-- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15.**
+Stand: 2026-10-23 · Verantwortlich: UI/UX
+- **Teil A – W16 v2 „Reiseverlauf“ (gültig, ab 2026-10-22):** Auswahl des Auftraggebers aus den Cockpit-Varianten (Variante C, [`../../design/mockups/cockpit-varianten/index.html`](../../design/mockups/cockpit-varianten/index.html)), kombiniert mit der Designer-Empfehlung (Ticket-Kopf aus A, Bereiche ohne Ende als Kacheln unter dem Weg). Status: **baureif** – Auftraggeber-Freigabe Q26–Q36, UX-1, UX-2, UX-8, UX-9 (2026-10-22); Optik/Motion abgestimmt (`../abstimmung-design.md` §12–§13, Design-Mockup [`../../design/mockups/cockpit-reiseverlauf/index.html`](../../design/mockups/cockpit-reiseverlauf/index.html) = optische Vorgabe). Entscheidungen zu U-23–U-30: v2.12. **Inkrement-8-Schnitt: v2.13. Inkrement-9-Schnitt (V3 Unterkunft): v2.14. Inkrement-10-Schnitt (Kosten: Kachel, A1, D1, Kopf-Tasten): v2.15. Inkrement-11-Schnitt („Bucht“, V4, D3, Kachel Reisedaten): v2.16. Kosten nach Reisebeginn (Kosten-Leiste, Wortlaut; Auftraggeber-Feedback): v2.17 – gilt vor v2.15. App startet in der laufenden Reise: v2.18.**
 - **Teil B – W16 v1 „Kachel-Cockpit“ (abgelöst):** bleibt als Verlauf stehen. Weiter gültig daraus sind nur die ausdrücklich in v2.0 genannten Teile (Hub ohne Tabs, Routen, Reisemenü, Teilphasen-Grenzen, offene Fragen UX-1 bis UX-7).
 
 ---
@@ -596,6 +596,288 @@ Texte nennen **nie** IBAN/Zahlungsinfo, Titel oder Einzelausgaben (R.8 I10-09). 
 - **`trip-route.ts`:** `StationId` + `"A1" | "D1"`; Katalog-Reihenfolge … V3, A2, A1 (Vorbereitung/Unterwegs) bzw. D1 (Danach); Rang je Zustand über `TripStation.rank` (A1 = 3, D1 schulden = 2, D1 abschließen = 4); `headActions` um `"addExpense" | "settle"`; `TripTile.area` um `"costs"`; Remind-Anlässe `settle`, `settle-all`; `RouteTarget.page` um `costs`, `costsBalances`, `costsNew`. Unit-Tests je Zeile der D1-Tabelle × Rolle, A1 an der Schwelle (−49,99 / −50,00 / −50,01 €, GBP, DKK), Kachel je Zeile, Phasenzeile, H-5/H-5b, Kopf-Tasten je Teilphase inkl. abgeschlossen.
 
 **Abnahme UX (zusätzlich zu W19 D.18):** Vorbereitung 0 Ausgaben (Kachel «Noch keine Ausgaben», keine A1) · Schuld 49,99/50,00 € · A1 mit 1/2/3 Empfängern · Unterwegs `[+ Ausgabe]` → speichern → zurück ins Cockpit, Snackbar «Ansehen», Kachel-Status neu · Danach je D1-Zeile × Rolle (Orga Zeile 6: keine Primär-Taste) · abgeschlossen mit offenen Salden (D1 erledigt, kein `[Ausgleichen]`, Phasenzeile «alles ausgeglichen») · Kachel erscheint erst nach D1 erledigt · Erinnern `settle` an Platzhalter (persönlicher Link) und `settle-all` · H-2-Kurzformen · H-5 vs. H-5b · 200 % (Schiene, Kopf-Tasten umbrechen) · Dark Mode.
+
+## v2.16 Inkrement-11-Schnitt – „Bucht“, Station V4, D3, Kachel „Reisedaten“, Erinnern (2026-10-23)
+
+Gilt vor v2.3 (Zeilen V4, D3), v2.4 (V3-Spalte „bucht“, V4-Tabelle, A2, „Rollen auf einen Blick“), v2.6 und v2.8 für Inkrement 11. Bereich: [W20 H](w20-reisedaten.md) (gilt vor W20 A–G), Daten/Rechte/Lebenszyklus: `features.md` **R.9** (gilt dort; „Hinweise an UI/UX“ eingearbeitet, Nachweis W20 H.17). Mit Inkrement 11 gibt es die Markierung „Bucht“ (F-056): Texte dürfen sie jetzt nennen.
+
+**Adapter** `travelDataStatus()` → `areas.travelData` (Vertrag v2.10, Vorschlag):
+```
+{
+  deleteOn: IsoDate;                 // Abreise + 7 Tage (zugesagtes Datum)
+  deleted: boolean;                  // Löschjob gelaufen
+  toMe: { requestId; byName; purpose; fieldKeys: string[]; state: 'open'|'released'|'declined'|'expired' }[];
+  mine: { requestId; purpose; released: number; total: number /* gefragte Mitglieder mit Konto */;
+          open: { key; name }[]; complete: boolean /* niemand mehr offen */;
+          usedSinceComplete: boolean /* „Bucht“ hat danach ≥ 1× angezeigt oder kopiert */;
+          closed: boolean }[];
+  others: { byName; purpose; released; total; complete: boolean }[];   // Orga und „Bucht“: Anfragen anderer „Bucht“-Personen (nur Zahlen)
+}
+```
+`null` = Bereich nicht gebaut **oder abgeschaltet** (`TRAVEL_DATA_ENABLED` aus, R.9 I11-12) → keine V4, keine D3, keine Kachel, kein Anlass, keine Erwähnung. Dazu `RouteViewer.booker: boolean` und `RouteTrip.bookerNames: string[]` (Reihenfolge: Orga zuerst, dann nach Vergabe) – beide braucht V3 auch, wenn `travelData = null`.
+
+### V4 „Reisedaten“ / „Travel details“ – sichtbar und Zustände
+Icon `id-card` (D-64), Bereichsfarbe laut Designer (design-system §9.23: Lavendel/Indigo `travel-area-*`, D-68). Ziel der Karte: `/travel-data`.
+
+**Sichtbar** in *Vorbereitung* und *Unterwegs*, wenn: (a) mindestens eine Anfrage an mich (nicht `expired`), **oder** (b) ich trage „Bucht“, **oder** (c) ich bin Orga und `others` ist nicht leer. Bei mehreren eigenen Anfragen zählt für Text und Zahlen die **älteste nicht abgeschlossene** (R.9 I11-03). In *Danach* gibt es keine V4 (dafür D3).
+
+Erste passende Zeile gilt (eine Person kann zugleich gefragt und „Bucht“ sein – der dringendere Teil bestimmt die Karte, Details stehen im Bereich):
+
+| # | Lage | Zustand | Statuszeile / Text DE | EN | Taste |
+|---|---|---|---|---|---|
+| 1 | ≥ 1 Anfrage an mich **offen** | **dran**, Rang **1** (blockiert andere) | Titel: 1 Anfrage «Reisedaten für {by}» · mehrere «Reisedaten – {count} Anfragen». Kompakt: «{by} bittet um deine Reisedaten» / mehrere «{by1} und {by2} bitten um deine Reisedaten». Ausgeklappt: «Für „{purpose}“: {fields}. Nur {by} sieht sie.» (`{fields}` = Feldnamen mit «und», z. B. «Name laut Ausweis und Geburtsdatum»; mit Dokument: «… und Ausweisnummer») | Title «Travel details for {by}» · «Travel details – {count} requests». «{by} is asking for your travel details» · «For “{purpose}”: {fields}. Only {by} sees them.» | Primär «Angaben freigeben» / «Share details» → `/travel-data/{requestId}` (älteste offene Anfrage) |
+| 2 | ich bin „Bucht“, eine eigene Anfrage `complete`, ≥ 1 freigegeben, `!usedSinceComplete`, nicht geschlossen | **dran**, Rang **2** | «Alle haben geantwortet – {released} von {total} freigegeben. Du kannst buchen.» | «Everyone has answered – {released} of {total} shared. You can book now.» | Primär «Zu den Reisedaten» / «Go to travel details» → `/travel-data` |
+| 3 | ich bin „Bucht“, eine eigene Anfrage hat Offene | **wartet** | «{released} von {total} haben freigegeben · offen: {names}» (Namen max. 2 + «und {n} weitere») | «{released} of {total} have shared · still open: {names}» | `[Erinnern]` (Name «Alle erinnern, die noch nicht geantwortet haben») → Anlass `travel-data` |
+| 4 | ich bin Orga, Anfrage eines anderen läuft (nicht an mich oder von mir beantwortet) | **wartet** | «{by} sammelt Reisedaten · {released} von {total}» (mehrere „Bucht“: «{by1} und {by2} sammeln Reisedaten») | «{by} is collecting travel details · {released} of {total}» | – (die Anfrage gehört „Bucht“; kein Erinnern) |
+| 5 | ich bin „Bucht“ **ohne** eigene Anfrage, nichts sonst offen | **später** (schmale Zeile, **nie** „als Nächstes“, zählt nicht im Weg-Meta, in *Unterwegs* nicht sichtbar) | «Nur falls die Buchung es braucht: hier anfragen statt im Chat.» | «Only if the booking needs it: ask here instead of in the chat.» | – (Zeile → `/travel-data`, dort Leerzustand mit Primär) |
+| 6 | sonst | **erledigt** | Mitglied: «Freigegeben an {by} ✓» · «Du klärst es direkt mit {by}» · mehrere «{count} Anfragen beantwortet» · erloschen «Angaben gelöscht» · „Bucht“: «{released} von {total} freigegeben» · geschlossen «Abgeschlossen – Angaben gelöscht» · alle abgelehnt «Niemand hat freigegeben – ihr klärt es direkt» · Orga (4 fertig) «{by} hat alle Antworten» | «Shared with {by} ✓» · «You're sorting it out with {by}» · «{count} requests answered» · «Details deleted» · «{released} of {total} shared» · «Closed – details deleted» · «Nobody shared – you're sorting it out directly» · «{by} has every answer» | – |
+
+- **Entscheidung „Angaben anfragen“ ist keine Heute-Aufgabe.** Die App weiß nicht, ob eine Buchung Ausweisdaten braucht (innerhalb Europas meist nicht). Würde sie „Bucht“ zum Anfragen drängen, sammelte sie Daten auf Vorrat – gegen die Datensparsamkeit von F-054. Darum Zeile 5 als leise „später“-Zeile und nur ein Einstieg, kein Druck (wie V5).
+- **Zeile 2 statt „Abschließen“ als Pflicht** (Änderung zu v2.4): Die Aufgabe heißt „benutzen“, nicht „löschen“ – erledigt, sobald „Bucht“ nach der letzten Antwort einmal angezeigt oder kopiert hat. Abschließen bleibt freiwillig im Bereich (W20 H.7). Neue Antwort (z. B. nach „Doch freigeben“) setzt `usedSinceComplete` nicht zurück; neue Personen (Spätbeitretende) machen die Anfrage wieder „nicht complete“ → Zeile 3.
+- **Unterwegs:** Zeile 1 steht unter HEUTE **nach** den Terminen (v2.4); Zeilen 2–4 wie in *Vorbereitung*; Zeile 5 entfällt. Nicht erledigte V4 rutscht **nicht** in „nicht genutzt“ – Anfragen können unterwegs noch beantwortet werden (Fähre am Tag 3).
+- **Weg-Meta:** V4 zählt in `{total}`, wenn sie sichtbar ist und nicht Zeile 5. Vorbereitung «{done} von 4 geschafft» (V1, V2, V3, V4).
+- **Neu erledigt** (v2.7) gilt: «Neu erledigt: Reisedaten».
+- **Kurzformen H-2** («Ihr wartet auf: …»): Zeile 3 «Freigaben für deine Anfrage» / «shares for your request» · Zeile 4 «{by} sammelt Reisedaten» / «{by} collecting travel details». (Ersetzt «Freigaben für Lena» aus v2.5.)
+- **Heute-Sortierung** (Rang je Zustand, `TripStation.rank`): V1 Bescheid (1) · V3 festlegen (1) · **V4 freigeben (1)** · V3 buchen (2) · **V4 „alle da“ (2)** · A2 (2) · V3 bewerten (3) · A1 (3) · D1 abschließen (4); gleicher Rang → Katalog V1, V2, V3, V4, A2, A1.
+
+### D3 „Reisedaten gelöscht“ / „Travel details deleted“ (nur *Danach*)
+Sichtbar, wenn bei Reiseende eine **aktive Freigabe von mir** bestand **oder** ich „Bucht“ mit einer nicht geschlossenen Anfrage mit ≥ 1 Freigabe war (Server merkt es sich bis zum Löschdatum; danach liefert `deleted = true` + Merker, ob es mich betraf).
+| Lage | Zustand | DE | EN |
+|---|---|---|---|
+| vor dem Löschdatum (Tage 1–7 nach der Abreise) | **als Nächstes** (R.9 I11-03; nie dran, keine Taste; ist nach Regel 4 schon eine andere Station „als Nächstes“, dann „später“) | Werden am {date} gelöscht – bis dahin kannst du sie noch ansehen. | Will be deleted on {date} – you can still view them until then. |
+| gelöscht | **erledigt** | Am {date} gelöscht – wie angekündigt. | Deleted on {date} – as promised. |
+Ziel `/travel-data` (vor der Löschung lesbar und widerrufbar; danach Leerzustand W20 H.9). D3 zählt im Weg-Meta *Danach*. Offene, unbeantwortete Anfragen an mich sind in *Danach* **keine** Aufgabe; im Bereich bleiben sie beantwortbar (W20 H.11).
+
+### Kachel „Reisedaten“ (v2.6, letzte in der Reihenfolge Unterkunft · Unterlagen · Kosten · Infos · Reisedaten)
+Erscheint nur in *Vorbereitung* und *Unterwegs*, nur wenn **keine V4 im Zustand dran/wartet/später** sichtbar ist (ein Einstieg je Bereich) **und** Daten für mich da sind. **Auch für jede Person mit eigener gespeicherter Freigabe** (R.9 I11-03, ersetzt „nur Bucht“ aus v2.6/F-054) – der Weg zu Widerruf und Zugriffsprotokoll darf nicht in der eingeklappten Erledigt-Gruppe verschwinden (Art. 7 Abs. 3 DSGVO).
+
+| Lage | Statuszeile DE | EN |
+|---|---|---|
+| „Bucht“, eine Anfrage mit ≥ 1 Freigabe, nicht geschlossen | {released} von {total} freigegeben · gelöscht am {date} | {released} of {total} shared · deleted on {date} |
+| „Bucht“ **und** selbst mit Freigabe | Status der eigenen Anfrage (Zeile oben) – die eigene Freigabe steht im Bereich | wie oben |
+| „Bucht“, mehrere solche Anfragen | {count} Anfragen · gelöscht am {date} | {count} requests · deleted on {date} |
+| Person mit eigener Freigabe | Freigegeben an {by} ✓ · gelöscht am {date} (zwei: «an {by1} und {by2}», drei: «an {by1}, {by2} und {by3}») | Shared with {by} ✓ · deleted on {date} |
+Zugänglicher Name «Reisedaten. {Status}». Kein Chip. In *Danach* keine Kachel (D3 übernimmt).
+
+### V3 „Unterkunft“ – „Bucher“ sind jetzt die „Bucht“-Personen (ersetzt den Satz „Bucher = Orga“ aus v2.14)
+**Bucher** = alle mit Markierung „Bucht“; gibt es keine, die Orga. Festlegen bleibt **nur Orga** (Q33); «gebucht ✓» setzen/zurücknehmen: Orga **und** „Bucht“ (W18 E.16).
+
+| Regel v2.14 | Änderung |
+|---|---|
+| 5 (festgelegt, nicht gebucht) | **dran**, Rang 2, für **jede Bucher-Person** (auch wenn sie nicht Orga ist). Die Orga ist nur dann dran, wenn sie selbst Bucher ist; sonst **wartet** mit Text wie Regel 8 und `[{booker} Bescheid geben]` (`stay-book`). |
+| 8 (Mitglied wartet) | «{bookers} bucht {title}.» – `{bookers}` = 1 Name, «Sara oder Kemal», «Lena, Sara oder Kemal» (max. 3 = Grenze; EN «Sara or Kemal is booking {title}.»). Bewusst «oder» statt R.9-Beispiel «Lena und Kemal buchen»: Gebucht wird einmal, von einer der Personen; nach Termin-Änderung «Neuer Termin – {bookers} bucht {title} neu.» Taste: 1 Bucher `[Sara Bescheid geben]`, mehrere `[Bescheid geben]` → RemindSheet Schritt `orga` mit Auswahl der Bucher (je Zeile WhatsApp). |
+| Kurzform H-2 Regel 8 | «{bookers} bucht {title}» |
+| 3, 4, 6, 7, 9 | unverändert (eine „Bucht“-Person ohne Orga-Rolle verhält sich dort wie ein Mitglied). |
+| UX-9 «Haben wir schon …» | unverändert nur Orga. |
+Anlass `stay-book`: Empfänger = Bucher (Text v2.8 mit `{booker}`). Der Platzhalter `{orga}` in `stays.chosen.waitMember` wird `{bookers}` (W18 E.16).
+
+### A2 „Infos ergänzen“
+Jetzt für **Orga und „Bucht“** (v2.4 wie ursprünglich vorgesehen); mehrere Personen können dieselbe Aufgabe sehen – wer zuerst einträgt, erledigt sie für alle. Infos-Kachel leer für „Bucht“: «Infos ergänzen» wie Orga (W22 E).
+
+### Erinnern (RemindSheet, ux-spec §14.2) – Anlass in Inkrement 11
+| Anlass | Einstieg | Schritt | Inhalt |
+|---|---|---|---|
+| `travel-data` | V4 Zeile 3 `[Erinnern]`; W20 H.7 `[Erinnern]` | `status` → `single`/`all` | h2 «Wer fehlt noch?» / «Who's still missing?» · bei mehreren laufenden eigenen Anfragen je Anfrage eine h3 «„{purpose}“» · Gruppe «Offen ({n})» / «Open ({n})» mit WhatsApp je Person · Gruppe «Klärt es direkt ({n})» / «Sorting it out directly ({n})» **ohne** Taste · nur Mitglieder mit Konto · Fußleiste «Alle erinnern ({n})» (nur bei genau einer laufenden Anfrage; sonst je h3 eine Taste «Alle erinnern»). Text `single` DE «Hey {name}, für „{purpose}“ brauche ich noch deine Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}» · EN «Hey {name}, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}». `all` DE «Hey ihr, für „{purpose}“ brauche ich noch eure Reisedaten – bitte direkt in der App freigeben, nicht hier im Chat: {link}» · EN «Hey all, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}». |
+`{link}` = `/trips/{id}/travel-data` (nie eine `requestId`, nie Felder oder Werte). Ersetzt den Text in v2.8 und W20 E. **Offene Platzhalter** (R.9 I11-09) stehen im Schritt `status` in einer eigenen Gruppe «Noch nicht dabei ({n})» / «Not joined yet ({n})» mit WhatsApp je Person, Anlass **`travel-data-join`**, `{link}` = **persönlicher Link** des Platzhalters: DE «Hey {name}, magst du bei {trip} beitreten? Für „{purpose}“ brauche ich danach deine Reisedaten – bitte in der App freigeben, nicht im Chat: {link}» · EN «Hey {name}, could you join {trip}? I'll then need your travel details for “{purpose}” – please share them in the app, not in the chat: {link}». Nicht in «Alle erinnern».
+
+### „Wer ist dabei?“, „Mehr zur Reise“, Reisemenü
+- **Sheet „Wer ist dabei?“:** Chip «Bucht» / «Booking» je Person (Icon `id-card` + Text); ohne jede Markierung sieht die Orga oben «Noch niemand bucht – markiere, wer Unterkunft und Tickets bucht.» + «Wer bucht? ›»; Mitglieder sehen darunter den Satz «{Namen} bucht/buchen für euch und darf/dürfen Reisedaten anfragen.»; Orga sieht Text-Taste **«Wer bucht? ändern ›»** → Unterschritt „Wer bucht?“ (W20 H.2).
+- **Zeile „Wer ist dabei? (6)“** in „Mehr zur Reise“: Statuszeile «{Namen} bucht» bzw. «… buchen» (vor dem bisherigen Status).
+- **Reisemenü `⋯`** (nur Orga, nur Phase 3): neuer Punkt **«Wer bucht? …»** (Icon `id-card`) zwischen «Freunde einladen» und «So habt ihr entschieden» → öffnet direkt denselben Unterschritt. Damit ist der in v2.13 ausgesparte Punkt aus Teil B §2.5 gebaut.
+- **Ticket-Crew:** keine Chips (zu klein); nichts ändert sich.
+- **„Reise verlassen …“ / „Mitglied entfernen …“ / „Festlegung aufheben …“:** Zusatzsätze zu Reisedaten nach W20 H.9/H.11.
+
+### Rollen auf einen Blick (ersetzt die Tabelle in v2.4 für Inkrement 11)
+| | Mitglied | „Bucht“ | Orga |
+|---|---|---|---|
+| sieht | eigenen Stand + neutrale Zahlen | + Werte (maskiert, Anzeigen/Kopieren protokolliert) **nur** zu eigenen Anfragen; Status je Person aller Anfragen | + Gruppenfortschritt, Favorit (Q33), Status je Person aller Anfragen – **nie** Inhalte |
+| „du bist dran“ typisch | bewerten, **freigeben**, schulden | + **Unterkunft buchen**, **Reisedaten benutzen** (Zeile 2), A2 | + Bescheid geben, festlegen, buchen (nur als Bucher), A2, abschließen (Kosten) |
+| Erinnern | V2 (Orga Bescheid), V3, D1 (eigene Forderung) | + **V4** (`travel-data`) | + V2 (Platzhalter), V3, D1 (alle) |
+| „ohne App erledigt“ (UX-9) | – | – | V2, V3, V5 |
+| Markierung „Bucht“ vergeben | – | – | ✔ |
+
+### `trip-route.ts` (Vorschlag)
+`StationId` + `"V4" | "D3"`; Katalog … V3, **V4**, A2, A1 (Vorbereitung/Unterwegs) bzw. D1, **D3** (Danach); `RouteViewer.booker`; `RouteTrip.bookerNames`; `RouteAreas.travelData?: TravelDataStatus | null`; `TripTile.area` + `"travelData"`; Remind-Anlässe `travel-data`, `travel-data-join`; `RouteTarget.page` + `travelData`, `travelDataRequest` (mit `requestId`), `travelDataNew`. V3-Funktion bekommt `bookerNames`/`viewer.booker` statt fester Orga. Unit-Tests je Zeile der V4-Tabelle × Rolle (Mitglied, „Bucht“, Orga ohne „Bucht“, Orga + „Bucht“, gefragt + „Bucht“), Rang-Reihenfolge mit V1/V3, D3 vor/nach Löschung, Kachel je Zeile inkl. „keine Kachel bei sichtbarer V4“, V3-Regeln 5/8 mit 0/1/2 Buchern, `travelData = null` → keine Spur (auch kein «Bucht» in V3-Texten fehlt nicht – V3 nutzt `bookerNames` unabhängig).
+
+### Abnahme UX (zusätzlich zu W20 H.18)
+Max gefragt (V4 dran Rang 1, Primär «Angaben freigeben» → Formular) · Max nach Freigabe (V4 erledigt, «Neu erledigt», Kachel «Freigegeben an Lena ✓ · gelöscht am 26. Juni») · Lena „Bucht“ ohne Anfrage (später-Zeile, Weg-Meta ohne V4) · Lena Anfrage läuft (wartet, Erinnern `travel-data` mit „Klärt es direkt“ ohne Taste) · Lena alle geantwortet (dran Rang 2 → einmal Anzeigen → erledigt + Kachel) · Lena gefragt von Sara **und** eigene Anfrage (Zeile 1 gewinnt) · Orga ohne „Bucht“ bei Saras Anfrage (wartet ohne Erinnern, keine Werte im Netzwerk-Tab) · Unterwegs Tag 3 mit offener Anfrage (nach Terminen) · Danach D3 später → nach Löschjob erledigt · V3 mit Sara als Bucherin (Sara dran «buchen», Lena wartet mit `[Sara Bescheid geben]`, Max «Sara bucht …») · 0 „Bucht“ → V3 wie Inkrement 9 · Reisemenü «Wer bucht? …» nur Orga · Sheet „Wer ist dabei?“ mit Chips · H-2-Kurzformen · `travelData = null` (Produktion vor G1b): keine V4/D3/Kachel, „Bucht“-Chips und V3-Bucher trotzdem da · 200 % · Dark Mode.
+
+## v2.17 Kosten nach Reisebeginn – Kosten-Leiste, Danach, Wortlaut (Auftraggeber-Feedback, 2026-10-23)
+
+Gilt vor v2.15 (Kopf-Tasten, A1, D1, Kachel) und v2.5/v2.6, soweit unten genannt. Bereich: [W19 E](w19-kosten.md) (Glossar E.2 gilt auch hier). Mockup Vorher/Nachher: [`../mockups/kosten-v2/index.html`](../mockups/kosten-v2/index.html).
+
+**Auftrag:** «Die Kosten müssten in der Reise-Übersicht nach Reisebeginn einfacher zu erreichen sein – das wird während der Reise sehr oft genutzt.» Heute (Screenshots 07, 11): Kontur-Taste `[+ Ausgabe]` im Ticket-Kopf unter der Crew und Kachel „Kosten“ unter dem Weg – bei 390 × 844 erst nach ~1,5 Bildschirmen Scrollen; der Stand ist nur in der Kachel lesbar.
+
+### Varianten
+| | A „Kosten-Karte unter dem Kopf“ | B „Schwebende Taste (FAB)“ | **C „Kosten-Leiste unten“ (empfohlen)** | D „Status quo, Taste größer“ |
+|---|---|---|---|---|
+| Aufbau | Karte direkt unter dem Ticket, vor dem Weg: «Du zahlst noch 64,00 € zurück ›» + `[+ Ausgabe eintragen]` | runde Taste „+“ unten rechts, Stand weiter in der Kachel | fixierte Leiste am unteren Rand: links Stand als Link (2 Zeilen), rechts `[+ Ausgabe]` | Kopf-Taste gefüllt, Kachel nach oben |
+| Erreichbar beim Scrollen | nein (nur oben) | ja | **ja** | nein |
+| Daumenbereich | nein (Bildmitte/oben) | ja | **ja** | nein |
+| Stand sichtbar | ja | nein | **ja** | nur Kachel |
+| Weg/„Heute“ im ersten Bildschirm | wird ~120 px nach unten geschoben | ja | **ja** (Leiste deckt ~76 px unten; Seite bekommt Innenabstand) | ja |
+| Risiken | verdrängt „Heute“ (Kernidee Variante C des Cockpits) | Icon-only-Taste (Bedeutung raten), verdeckt Inhalte rechts, kein Stand | zweite fixierte Fläche neben Snackbar (Abstand regeln), 200 % (Rückfall) | löst das Problem nicht |
+| Muster bekannt aus | – | Splitwise/Tricount (Plus-Taste) | Banking-/Lieferdienst-Apps (Warenkorb-/Saldo-Leiste) | – |
+**Empfehlung C.** Der Auftraggeber kennt das Muster aus Finanzguru (Inspiration Richtung B): ein Stand, immer da, eine Aktion. **A ist der Rückfall** für Fälle, in denen eine fixierte Leiste zu viel Platz nähme (200 %, Querformat, s. unten) – damit sind beide Varianten ohnehin zu bauen, A aber nur als statische Form derselben Komponente.
+
+### Kosten-Leiste – Regeln (Fassung 2, nach Mockup-Feedback des Auftraggebers 2026-10-23)
+**Feedback:** «Variante C gefällt, aber der Ausgabe-Button ist so präsent, dass nicht ersichtlich ist, dass man durch Tippen auf ‚Kosten‘ alle Kosten-Verläufe sieht. Die Leiste soll nur so lange da sein, bis man nach ganz unten gescrollt hat, wo der Punkt Kosten sowieso schon vorher war – quasi nur als Shortcut.» → Die Leiste ist ein **Shortcut** zur Kachel „Kosten“, kein Ersatz. Die Kachel bleibt der feste Ort.
+
+**Sichtbar:**
+| Teilphase | Bedingung | Leiste links (Link → `/costs`) | Leiste rechts (Taste) | Kachel „Kosten“ unten |
+|---|---|---|---|---|
+| *Vorbereitung* | – | **keine Leiste** | – | wie v2.15, Texte W19 E.9 |
+| *Unterwegs* | nicht abgeschlossen | Icon `wallet` + «Kosten · Verlauf ›» + Stand-Satz | **`[+ Ausgabe]`** → `/costs/new?date=today&from=cockpit` | **ja** (Fassung 2 – kommt zurück) |
+| *Unterwegs* | abgeschlossen | keine Leiste | – | ja, «Abgeschlossen · …» |
+| *Danach* | eigenes Ergebnis ≠ 0, nicht abgeschlossen | wie oben | **`[Ausgleichen]`** → `/costs/balances?from=cockpit` | **ja** (neben D1 – Anker der Leiste, s. u.) |
+| *Danach* | Ergebnis = 0 oder abgeschlossen | keine Leiste | – | nach v2.15 (nur ohne sichtbare D1) |
+
+**Kachel „Kosten“ (Unterwegs/Danach, Fassung 2):** Titel «Kosten», Statuszeile = Stand-Satz (W19 E.9), darunter **Link-Zeile «Alle Ausgaben ansehen ›»** (14/700, Link-Farbe) – sagt ausdrücklich, dass hier der Verlauf liegt. Ganze Kachel ein Link → `/costs`; zugänglicher Name «Kosten. {Stand}. Alle Ausgaben ansehen». Reihenfolge in „Immer griffbereit“ unverändert (Unterkunft · Unterlagen · **Kosten** · Infos · Reisedaten). Bewusste Ausnahme (d) zum Grundsatz „ein Einstieg je Bereich“ (v2.1): Leiste = Abkürzung zum selben Ziel, nie gleichzeitig mit der Kachel sichtbar (Ausblende-Regel).
+
+**Aufbau der Leiste – Gewichtung neu (D-81, Fassung 2):**
+```
+┌──────────────────────────────────────────────┐
+│ ┌──────────────────────────────┐ ┌─────────┐ │
+│ │(▣) Kosten · Verlauf        › │ │ + Aus-  │ │   links: eigenes Tap-Ziel als Fläche
+│ │    Du zahlst noch 64,00 €    │ │  gabe   │ │   (surface-sunken, Radius md, ≥ 56 px hoch)
+│ │    zurück                    │ │         │ │   rechts: Taste 48 px, schmal (Icon + 1 Wort)
+│ └──────────────────────────────┘ └─────────┘ │
+└──────────────────────────────────────────────┘
+```
+- **Links** = sichtbar eigene Fläche (Hintergrund `surface-sunken`, Radius `radius-md`, Rahmen `border-subtle`, Hover/Press wie Kachel), Icon-Kachel 32 `wallet` (Bereichsfarbe Kosten), Zeile 1 **«Kosten · Verlauf ›»** (13/800, Link-Farbe, Chevron), Zeile 2 Stand-Satz (14/700, Farbe je Lage). Breite ≈ 60–65 %.
+- **Rechts** = `[+ Ausgabe]` bzw. `[Ausgleichen]`: Primär-**Füllung**, aber kompakt (48 px hoch, Breite nach Inhalt, kein Schatten-Glow `shadow-button`, nur `shadow-1`). Damit dominiert sie nicht mehr allein; beide Hälften wirken als zwei gleichrangige Ziele.
+- **Tasten-Text:** «+ Ausgabe» (Name «Ausgabe eintragen») / «+ Expense» («Add an expense») · «Ausgleichen» / «Settle up».
+- Fläche `surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Innenabstand 10/12 px + `env(safe-area-inset-bottom)`; Höhe ≈ 80 px + Safe Area.
+
+**Ausblenden, sobald die Kachel erscheint (Shortcut-Logik):**
+- `IntersectionObserver` auf die **Kachel „Kosten“** mit `rootMargin` unten = −(Leistenhöhe) – die Leiste blendet aus, sobald die Kachel **oberhalb der Leiste** sichtbar wird (also bevor die Leiste sie verdeckt). Sie blendet wieder ein, sobald die Kachel den sichtbaren Bereich nach unten verlässt (Hochscrollen).
+- **Hysterese** 24 px (Einblenden erst, wenn die Kachel 24 px weiter unten ist als beim Ausblenden) – kein Flackern beim Stehenbleiben an der Grenze. Nur IntersectionObserver, keine Scroll-Listener.
+- **Bewegung (UM-26, neu):** Ausblenden = nach unten gleiten + Ausblenden (`base` 220 ms, `ease-exit`, Weg = Leistenhöhe), Einblenden = `base`, `ease-enter`. **Reduzierte Bewegung: sofort** (kein Gleiten, kein Fade).
+- Ausgeblendet = `visibility:hidden` nach der Transition + `inert` → nicht fokussierbar, nicht vorgelesen.
+- **Fokus-Schutz:** Liegt der Tastaturfokus **in** der Leiste, blendet sie nicht aus (sonst Fokusverlust). Wird sie ausgeblendet, während die Snackbar über ihr steht, rutscht die Snackbar an den unteren Rand (Abstand 16 px + Safe Area).
+- `main` behält `padding-bottom` = Leistenhöhe nur, solange die Leiste sichtbar sein **kann** (Unterwegs/Danach); `scroll-padding-bottom` ebenso (WCAG 2.4.11).
+- Seite kürzer als ein Bildschirm (Kachel sofort sichtbar): Leiste erscheint gar nicht.
+
+**DOM-, Fokus- und Screenreader-Reihenfolge (geprüft):**
+- Die Leiste steht im DOM **direkt nach dem Ticket-Kopf** als `<aside aria-label="Kosten – Abkürzung">` (DE) / «Expenses – shortcut» (EN). Tastatur- und Screenreader-Nutzende erreichen den häufigsten Bereich also früh, unabhängig vom Scrollstand (sie bewegen sich oft ohne zu scrollen). Reihenfolge darin: **zuerst** Link «Kosten · Verlauf» (Name «Kosten-Verlauf: Du zahlst noch 64,00 € zurück»), **dann** Taste «Ausgabe eintragen».
+- Ausblenden per Scroll betrifft nur Sehende; da `inert` erst greift, wenn die Kachel sichtbar ist, finden Screenreader-Nutzende den Bereich weiterhin über die Kachel (gleiches Ziel, gleicher Name „Kosten“).
+- Kein `aria-live` für das Ein-/Ausblenden (wäre geschwätzig).
+- **200 % / Querformat / Höhe < 560 px (Rückfall = Variante A):** Wäre die Leiste höher als 20 % der Fensterhöhe, steht sie **nicht fixiert** als Karte direkt unter dem Ticket-Kopf (links Link-Fläche volle Breite, darunter Taste volle Breite) – **kein** Ausblenden nötig, die Kachel unten bleibt. DOM-Position ist in beiden Formen dieselbe (nach dem Kopf), daher keine Änderung der Fokus-Reihenfolge beim Umschalten.
+- **Desktop ≥ 960 px:** keine fixierte Leiste; Variante A (Karte unter dem Kopf).
+
+**Wechselwirkungen (unverändert gegenüber Fassung 1, außer Kachel):**
+- **Primär-Regel:** Die Leisten-Taste ist die einzige gefüllte Primär-Taste; Heute-Karten zeigen ihre Tasten sekundär (Unterwegs/Danach mit Leiste). Ist die Leiste ausgeblendet (unten angekommen), ist keine Primär-Taste sichtbar – gewollt, unten ist Nachschlagen.
+- **Entfallen** weiterhin: Kopf-Tasten `[+ Ausgabe]`/`[Ausgleichen]` (v2.15) und **A1 in *Unterwegs*** (A1 nur *Vorbereitung*). D1 bleibt *Danach* als Station ohne eigene Taste.
+- **Snackbar** über der Leiste (8 px Abstand); nach Speichern aus der Leiste zurück ins Cockpit, Fokus auf `[+ Ausgabe]`, Snackbar «Gespeichert. Du zahlst jetzt noch 44,00 € zurück.» + «Ansehen».
+- **Mini-Ring** im sticky Kopf (v2.8) bleibt; Leiste und Kopf zusammen ≤ 30 % der Höhe bei 360 × 640.
+
+<details><summary>Fassung 1 (überholt, 2026-10-23) – nur zur Nachvollziehbarkeit</summary>
+
+#### Kosten-Leiste – Regeln (Fassung 1)
+**Sichtbar:**
+| Teilphase | Bedingung | Links (Link → Ziel) | Rechts (Taste) |
+|---|---|---|---|
+| *Vorbereitung* | – | **keine Leiste** (Kachel wie v2.15, neue Texte W19 E.9) | – |
+| *Unterwegs* | nicht abgeschlossen | Eyebrow «KOSTEN» + Stand-Satz → `/costs` | **`[+ Ausgabe]`** (Primär) → `/costs/new?date=today&from=cockpit` |
+| *Unterwegs* | abgeschlossen | keine Leiste; Kachel «Abgeschlossen · …» | – |
+| *Danach* | eigenes Ergebnis ≠ 0, nicht abgeschlossen | Eyebrow «KOSTEN» + Stand-Satz → `/costs` | **`[Ausgleichen]`** (Primär) → `/costs/balances?from=cockpit` |
+| *Danach* | eigenes Ergebnis = 0 oder abgeschlossen | keine Leiste – D1 (v2.15) bzw. Kachel übernimmt | – |
+
+**Stand-Satz** (14/700, max. 2 Zeilen; Betrag tabular; Farben wie W19 E.4): «Du zahlst noch 64,00 € zurück» · «Du bekommst noch 206,00 € zurück» · «Du bist quitt ✓» · 0 Ausgaben: «Noch keine Ausgaben». EN: «You owe €64.00» · «You get €206.00 back» · «You're all square ✓» · «No expenses yet». Eyebrow «KOSTEN» / «EXPENSES» 11/800 Versal + Chevron.
+**Tasten-Text:** «+ Ausgabe» (zugänglicher Name «Ausgabe eintragen») / «+ Expense» («Add an expense») · «Ausgleichen» / «Settle up» (Icon `wallet`).
+
+**Aussehen (Designer D-81):** Fläche `surface-raised`, Radius oben `radius-xl`, Schatten `shadow-sticky-bottom`, Innenabstand 12/16 px + `env(safe-area-inset-bottom)` (installierte Web-App auf dem iPhone!). Höhe ≈ 72 px + Safe Area. Linke Hälfte ist **ein** Link (44 px+, ganze Fläche), rechte Taste Primär 48 px.
+
+**Wechselwirkungen:**
+- **Primär-Regel (bewusste Anpassung von ux-spec §1.1 / v2.5):** Ist die Leiste sichtbar, trägt **ihre** Taste die einzige Primär-Optik der Seite. Heute-Karten (Termin «Infos öffnen», V4, D1 …) zeigen ihre Tasten dann **sekundär**. Begründung: Unterwegs ist „Ausgabe eintragen“ die mit Abstand häufigste Handlung (mehrmals täglich); Termine und Aufgaben sind Einzelfälle, die durch Position (Heute) und Koralle/Lavendel-Kante genug Gewicht haben. Zwei gleich laute Primärtasten würden die Leiste entwerten. *Danach* gilt dasselbe für `[Ausgleichen]`.
+- **Ein Einstieg je Bereich (v2.1):** Solange die Leiste sichtbar ist, **entfallen** Kachel „Kosten“, Kopf-Tasten `[+ Ausgabe]`/`[Ausgleichen]` (v2.15) und **A1 in *Unterwegs*** (A1 nur noch in *Vorbereitung*). D1 bleibt in *Danach* als **Station** (Weg-Logik, Meta „0 von 1 geschafft“), aber **ohne eigene Taste**: Karte = Link «Kosten ausgleichen ›» mit Status (W19-E-Wortlaut, z. B. «Du zahlst Felix noch 235,00 € zurück.» / «Du bekommst noch 630,00 € zurück – von Anna und ehemaligem Mitglied.»), `[{Name} erinnern]` bleibt (Zeile 4), Orga-Zeilen 5/6 unverändert.
+- **Heute-Satz:** H-1-Zählung ohne A1 unterwegs; sonst unverändert.
+- **Snackbar** erscheint **über** der Leiste (Abstand 8 px); nach Speichern aus der Leiste: zurück ins Cockpit, Fokus auf `[+ Ausgabe]`, Snackbar «Gespeichert. Du zahlst jetzt noch 44,00 € zurück.» + «Ansehen» (→ `/costs`); der Stand-Satz der Leiste wechselt per Überblenden (UM-14).
+- **Seitenende:** `main` erhält `padding-bottom` = Leistenhöhe; `scroll-padding-bottom` ebenso (WCAG 2.4.11 – Fokus nie verdeckt). Footer bleibt darunter erreichbar.
+- **Rückfall statisch (= Variante A):** Wenn die Leiste höher als **20 % der Fensterhöhe** wäre (200 % Text, Querformat, kleine Geräte < 560 px Höhe) – gemessen per `ResizeObserver`/Media-Query –, steht sie **nicht fixiert** direkt unter dem Ticket-Kopf (vor dem Weg) als Karte mit gleicher Reihenfolge (Stand-Link, Taste volle Breite).
+- **Mini-Ring** im sticky Kopf (v2.8) bleibt; Leiste und Kopf zusammen ≤ 30 % der Höhe bei 360 × 640.
+- **Desktop ≥ 960 px:** keine fixierte Leiste; dieselbe Komponente als Karte oben in der rechten Spalte bzw. unter dem Kopf (Variante A), da Platz kein Problem ist.
+
+**DOM-Reihenfolge & Barrierefreiheit:** `<aside aria-labelledby="dock-title">` (sichtbarer Eyebrow «Kosten» = Name) steht im DOM **direkt nach dem Ticket-Kopf** (vor dem Weg) – Tastatur und Screenreader erreichen den häufigsten Bereich früh; visuell unten fixiert. Kein `role="toolbar"`. Stand-Link zugänglicher Name «Kosten: Du zahlst noch 64,00 € zurück». Kontraste aus Tokens; Forced Colors: Rahmen oben `--ww-border-forced`.
+
+**Motion (UM-26, Fassung 1 – überholt):** Leiste erscheint beim Seitenaufbau ohne Bewegung (sie ist „immer schon da“); kein Ein-/Ausblenden beim Scrollen (würde Daumen-Ziel verschieben). Stand-Wechsel = UM-14.
+
+
+</details>
+
+### Danach – „Kosten ausgleichen“ prominent
+- Ergebnis ≠ 0: Leiste mit `[Ausgleichen]` (oben) **plus** D1 als erste Station unter Heute (ohne Taste). Damit ist Ausgleichen in *Danach* doppelt präsent – Leiste = Aktion, D1 = Ort im Ablauf (bewusste Ausnahme (d) zum Grundsatz gegen Doppelungen, v2.1: Status ≠ Aufgabe, wie Ausnahme (c)).
+- Ergebnis = 0, andere offen: keine Leiste; D1 «wartet» (Mitglied) bzw. Orga mit `[Erinnern]` wie v2.15 Zeile 5.
+- Alle quitt: D1 erledigt / Orga Zeile 6, Kachel «Alle sind quitt ✓».
+- **Fassung 2:** Solange die Leiste in *Danach* sichtbar sein kann, steht auch die Kachel „Kosten“ (mit «Alle Ausgaben ansehen ›») unten – sie ist der Anker der Ausblende-Regel und der Weg zum Verlauf.
+
+### Texte Cockpit (Wortlaut-Angleich an W19 E.2)
+| Stelle | Vorher | Nachher DE | Nachher EN |
+|---|---|---|---|
+| A1/D1 Titel (ich zahle) | Du schuldest {name} {amount} | **Du zahlst {name} noch {amount} zurück** (2: «… {total} zurück – an {n1} und {n2}», ≥ 3: «… – an {n1} und {count} weitere») | You owe {name} {amount} (unverändert) |
+| A1/D1 Status | Überweisen und als bezahlt markieren – die Zahlungsinfo steht beim Ausgleich. | **Überweisen und dann «Hab ich überwiesen» tippen – die Kontodaten stehen beim Ausgleichen.** | Send it, then tap “I've sent it” – the payment details are on the settle-up page. |
+| D1 Zeile 4 | Du bekommst noch {amount} von {name} | **Du bekommst noch {amount} zurück – von {name}** | You get {amount} back – from {name} |
+| D1 Zeile 5 | Noch {count} Ausgleiche offen | **Noch {count} Überweisungen offen** | {count} transfers still open |
+| D1 Zeile 1/6 | Alles ausgeglichen ✓ | **Alle sind quitt ✓** | Everyone's square ✓ |
+| Phasenzeile *Danach* | Zurück · Kosten ausgleichen / alles ausgeglichen | **Zurück · Kosten ausgleichen** / **Zurück · alle quitt** | Back · settling up / Back · all square |
+| H-5 | Alles ausgeglichen – schön war's! | **Alle quitt – schön war's!** | All square – what a trip! |
+| H-2 Kurzform | Ausgleiche der anderen | **Überweisungen der anderen** | the others' transfers |
+| Kachel | {total} gesamt · du schuldest {amount} … | W19 E.9 (ohne Gruppensumme) | W19 E.9 |
+
+### `trip-route.ts` (Vorschlag)
+`headActions` ohne `"addExpense" | "settle"`; neu `costDock: { kind: "add" | "settle"; myBalanceCents: number; hasExpenses: boolean } | null` (Regeln oben); `tiles` **mit** `costs`, wenn `costDock` gesetzt (Fassung 2: Kachel ist Anker, Status + `linkLabel: "allExpenses"`); A1 nur `subphase === "prep"`; D1-Karten mit `primary: null`, wenn `costDock` gesetzt; Heute-Karten `buttonTone: "secondary"` bei `costDock`. Unit-Tests: Leiste je Teilphase × Ergebnis (< 0, 0, > 0, keine Ausgaben, abgeschlossen) × Rolle; Kachel **vorhanden** bei Leiste, keine Kopf-Taste/A1; Primär-Zählung = 1.
+
+### Abnahme UX
+Unterwegs Tag 3 (Max zahlt zurück, Lena bekommt, 0 Ausgaben) · Leiste → `[+ Ausgabe]` → speichern → Cockpit, Snackbar mit neuem Ergebnis über der Leiste · Termin-Karte jetzt Sekundär · keine A1 unterwegs · Danach mit Ergebnis ≠ 0 (Leiste `[Ausgleichen]`, D1 ohne Taste) / = 0 (keine Leiste) · abgeschlossen (keine Leiste) · 200 % und 360 × 560 → Leiste statisch unter dem Kopf · iPhone-Web-App: Leiste über dem Home-Indikator · **Fassung 2:** Leiste blendet aus, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird, und beim Hochscrollen wieder ein (reduziert: sofort); Fokus in der Leiste verhindert Ausblenden; Kachel zeigt «Alle Ausgaben ansehen ›»; linke Leistenfläche als eigenes Tap-Ziel erkennbar · Tastatur: Leiste direkt nach dem Kopf erreichbar, Fokus nie verdeckt · Dark Mode.
+
+## v2.18 App startet in der laufenden Reise (Auftraggeber-Wunsch, 2026-10-23)
+
+**Auftrag:** «Die App soll sich immer in der Reise öffnen, die gerade läuft, damit ich nicht erst aus der Reiseauswahl wählen muss – ich kann ja ohnehin nur auf einer Reise gleichzeitig sein.» Gilt ergänzend zu sitemap §4 (`/` → angemeldet: `/trips`) und ux-spec §15 (installierte Web-App, `start_url: "/"`).
+
+### Was ist ein „App-Start“?
+Die Weiterleitung greift **nur** an der Einstiegs-Route **`/`** (angemeldet). `/` ist bereits heute der Einstieg für:
+| Einstieg | heute | neu |
+|---|---|---|
+| Home-Bildschirm-Symbol (PWA, `start_url: "/"`), Lesezeichen/Eingabe der Domain | `/` → `/trips` | `/` → **laufende Reise** (Regeln unten), sonst `/trips` |
+| nach Login **ohne** `next`-Ziel (Code/Magic-Link, Standardziel) | `/trips` | Standardziel wird **`/`** → gleiche Regel |
+| „Meine Reisen“ (`/trips`) über ← aus einer Reise, Wortmarke im Header, Konto-Seite, Browser-Zurück | `/trips` | **unverändert** – `/trips` leitet **nie** weiter |
+| Deep-Links: Einladung `/i/{token}`, Platzhalter-Link, Mail-/Erinnern-Links `/trips/{id}/…`, Login mit `next` | Ziel | **unverändert – haben Vorrang** |
+Die Wortmarke/„Home“ im App-Header muss auf **`/trips`** zeigen (nicht `/`), damit „Meine Reisen“ immer erreichbar bleibt. Wiederaufnahme der PWA aus dem Hintergrund lädt keine Seite neu → keine Weiterleitung (gewollt: man bleibt, wo man war).
+
+### Regel (serverseitig in `/`, eine reine Funktion `startTrip(trips, today)`)
+1. Kandidaten = Reisen, in denen ich **Mitglied** bin, Phase `fixed`, Teilphase heute = ***Unterwegs*** (Anreise ≤ heute ≤ Abreise, Zeitzone wie Teilphase: `APP_TIME_ZONE`). Platzhalter-Zugänge zählen nicht (haben kein Konto).
+2. **Genau ein Kandidat** → 307 auf `/trips/{id}` (Cockpit).
+3. **Kein Kandidat** → `/trips` (wie heute).
+4. **Zwei oder mehr** (überlappende Reisen, z. B. Familien-Wochenende innerhalb des Sommerurlaubs) → **keine** automatische Wahl; `/trips` zeigt oben einen Abschnitt **«Läuft gerade»** (h2) mit diesen Reisen als große Karten (Reisename, «Unterwegs · Tag 3 von 8», Pfeil) – ein Tipp öffnet die Reise. Raten wäre schlimmer als ein Tipp mehr.
+5. **Abreisetag** ist Tag 1 von *Unterwegs* → zählt (dort läuft die Feier „Heute geht's los“, UX-8).
+6. **Tag vorher: nein** (Empfehlung). Begründung: Vorbereitung hat noch eigene Aufgaben in mehreren Reisen; ein Sprung am Vortag überrascht und „Meine Reisen“ zeigt die Reise ohnehin oben mit «Morgen geht's los». Sollte der Auftraggeber es wünschen, ist es ein Parameter (`startWindowDaysBefore = 0 | 1`).
+7. **Danach: nein** (Empfehlung). Nach der Rückkehr ist die Reise nicht mehr „laufend“; der Ausgleich wird über Erinnern-Links (Deep-Link) und „Meine Reisen“ erreicht.
+8. Kein Konto-Schalter in Stufe 1 (nicht nötig, da die Weiterleitung nur am Start greift und ein Tipp auf ← sie aufhebt). Später optional unter Konto: «Beim Start die laufende Reise öffnen» (an).
+
+### Weg zurück zu „Meine Reisen“
+- Zeile 1 des Cockpits: ← führt **immer** auf `/trips` (nicht `history.back()` – nach dem Start gibt es keinen Verlauf). Zugänglicher Name «Meine Reisen» (statt «Zurück»), Tooltip ebenso.
+- **Einmaliger Hinweis** beim ersten automatischen Öffnen je Reise (Snackbar, 6 s, `role="status"`): «Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.» + Aktion **«Meine Reisen»** (→ `/trips`). Merker je Reise im `localStorage` (nur Reise-ID). EN: «Your current trip opened right away. All trips are at the top left.» · «My trips».
+- Kein Fokus-Sprung durch den Hinweis; Fokus wie bei normalem Seitenaufbau (h1/Zeile 1).
+
+### Sonderfälle
+| Fall | Verhalten |
+|---|---|
+| Reise endet heute um Mitternacht / Zeitzonen-Grenze | Regel nach `APP_TIME_ZONE` (wie Teilphase, R-072) |
+| Laufende Reise, aber ich habe sie heute verlassen / wurde entfernt | kein Kandidat → `/trips` |
+| Festlegung der laufenden Reise aufgehoben (Phase 2) | kein Kandidat |
+| Beta-/Login-Seiten, Einladung angenommen | Ziel der Einladung (Vorrang), danach normale Regeln |
+| Offline-Start der PWA | Offline-Seite (ux-spec §15); keine Weiterleitung möglich |
+| Sprache | Weiterleitung behält die Sprache (Cookie), Ziel `/trips/{id}` ohne Sprach-Präfix wie alle App-Routen |
+
+### Texte DE / EN
+| Schlüssel | DE | EN |
+|---|---|---|
+| `start.hint` / `.action` | Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links. · Meine Reisen | Your current trip opened right away. All trips are at the top left. · My trips |
+| `trips.runningNow` | Läuft gerade | Happening now |
+| `cockpit.backToTrips` (Name ←) | Meine Reisen | My trips |
+
+### Abnahme UX
+PWA-Start mit genau einer laufenden Reise → Cockpit + einmaliger Hinweis (zweiter Start: kein Hinweis) · ← → `/trips` · `/trips` leitet nie weiter · zwei überlappende → `/trips` mit «Läuft gerade» · keine laufende → `/trips` · Abreisetag zählt, Vortag/Danach nicht · Einladungs-/Erinnern-Link hat Vorrang · Login ohne `next` → Regel, mit `next` → Ziel · Zeitzone · Screenreader: Hinweis einmal angesagt, ← heißt «Meine Reisen».
 
 ---
 

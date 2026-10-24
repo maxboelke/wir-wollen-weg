@@ -1,10 +1,10 @@
 # Go-Live-Gate – Wir wollen weg / When do we go?
 
-Stand: 2026-10-09 · Verantwortlich: Operations Manager · Status: v1.3 (v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
+Stand: 2026-10-23 · Verantwortlich: Operations Manager · Status: v1.6 (v1.6: Gate G0 an W23 angeglichen – `/beta`, Einladungsweg E-G0-2, Gerätetests G-1–G-14, Feedback, kein Lösch-Versprechen; v1.5: **Gate G0 – geschlossene Freundes-Beta** auf Vercel + Neon mit echten Daten, vor Stufe 1; v1.4: **Gate G1b – persönliche Reisedaten** (Inkrement 11) + Prüfpunkt „Reisedaten in Produktion aus“; v1.3: CSP Stufe 2, Egress-Härtung, Datenschutz-Abschnitt „Unterkünfte & Link-Vorschau“ – Inkrement 9; gilt ab Auftraggeber-Entscheidung Q14–Q16 vom 2026-10-08; v1.1: Entscheidungspunkt HIBP-Check; v1.2: R-037 Tokens in Logs)
 
 Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go-Live) · [compliance-checklist.md](compliance-checklist.md) · [status.md](status.md) · [PRD §12](../product/PRD.md) (Q11, Q14–Q16)
 
-> **Auftrag an den CEO:** Bevor die App für irgendjemanden außerhalb des Teams **dauerhaft über das Internet erreichbar** wird (Staging für Testpersonen, Beta M1, Launch M2), legt der CEO dem Auftraggeber diese Checkliste vor und erinnert ihn an die zurückgestellten Entscheidungen Q14 (Betreiber/Impressum), Q15 (Domain, Hosting-/Mail-Konten) und Q16 (Rechtstexte-Weg). **Ohne Freigabe aller Pflichtpunkte von Stufe 1 und 2 kein Go-Live.**
+> **Auftrag an den CEO:** Bevor die App für irgendjemanden außerhalb des Teams **dauerhaft über das Internet erreichbar** wird (Staging für Testpersonen, Beta M1, Launch M2), legt der CEO dem Auftraggeber diese Checkliste vor und erinnert ihn an die zurückgestellten Entscheidungen Q14 (Betreiber/Impressum), Q15 (Domain, Hosting-/Mail-Konten) und Q16 (Rechtstexte-Weg). **Ohne Freigabe aller Pflichtpunkte von Stufe 1 und 2 kein Go-Live.** Ausnahme mit eigenem, leichterem Gate: die **geschlossene Freundes-Beta G0** (unten) auf Vercel + Neon.
 >
 > **Wann erinnern?** Spätestens **6 Wochen vor dem gewünschten Beta-Start**, sonst automatisch beim ersten dieser Auslöser: (a) Inkrement 5 (Abstimmung & Festlegung, P1-5) ist begonnen, (b) jemand möchte Testpersonen außerhalb des eigenen WLANs einladen, (c) der In-App-Browser-Gerätetest (T2) soll über eine dauerhafte Staging-URL laufen.
 >
@@ -19,6 +19,28 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | Domain registrieren, DNS, Mail-Domain verifizieren | 1–2 Tage |
 | DMARC von `p=none` über `quarantine` auf `reject` (deployment.md §7) | 2–4 Wochen Beobachtung |
 | Server-Einrichtung, Staging, Backups, Restore-Test (OPS-1, OPS-3, OPS-4) | ca. 1 Woche Arbeit Operations |
+
+---
+
+## Gate G0 – geschlossene Freundes-Beta „Stufe B“ (Vercel + Neon, echte Daten im Freundeskreis)
+
+**Neu seit 2026-10-23 (CEO + Auftraggeber).** Ein **eigenes, leichteres Gate vor Stufe 1**: private, nicht-kommerzielle Beta für einen geschlossenen Freundeskreis (Beta-Code, max. 50 Konten) auf **Vercel Hobby + Neon Free**, eigene Domain `app.<domain>`, echte Login-Mails über **Lettermint**, installierbar als **PWA** auf dem iPhone. **G0 ersetzt weder G1 noch G1b:** Echtbetrieb für Menschen außerhalb des Freundeskreises, öffentliche Beta M1 und persönliche Reisedaten bleiben an Stufe 1/2 bzw. G1b gebunden. Technik: [deployment.md §0.12](deployment.md) · Recht: [compliance-checklist.md §13](compliance-checklist.md) · Einrichtung: [beta-anleitung.md](beta-anleitung.md).
+
+**Vom Auftraggeber zu liefern (Q15 teilweise vorgezogen):** Domain (~5 €/Jahr, `.de` bei INWX), Lettermint-Konto (Free), zweites Neon- und Vercel-Projekt (Free), **sein Name** und eine Kontakt-Adresse für den Datenschutzhinweis, ein Beta-Code, WhatsApp-Nummer/Mail für Feedback (nur als Vercel-Variable), Entscheidungen E-G0-1 (Vercel Hobby vs. Pro) und **E-G0-2 (Einladungslink ersetzt Beta-Code – Empfehlung UX – oder Beta-Code für jeden)**. UX-Spezifikation: [W23](../ux/wireframes/w23-beta-und-installation.md).
+
+| ☐ | Pflichtpunkt | Wer | Bezug |
+|---|---|---|---|
+| ☐ | **Beta-Modus P1-B0 vom Reviewer freigegeben** (✅/⚠️ ohne offene hohe Findings): `APP_ENV=beta` mit Startschutz, Beta-Einstieg `/beta` (Beta-Code serverseitig **vor** jedem Mailversand geprüft, klare Fehlermeldung, Rate-Limit, rotierbar, Beta-Pass-Cookie, Kontenobergrenze), Einladungsweg nach E-G0-2, Konto-Anlage nur über den Hook (fail closed), Zustimmung mit Version, kein Demo-Postfach/-Seed/-Banner, kanonischer Host, Reisedaten aus, PWA (Manifest, iOS-Meta, Safe Area, Code-Login in der PWA, `/install`, „Einladungslink einfügen“), Service Worker nur mit `/offline` + statischen Dateien, ohne personenbezogene Daten im Cache, Beta-Etikett + „Feedback geben“, CSP `worker-src`/`manifest-src` | Developer → Reviewer | deployment.md §0.12.4–§0.12.7 |
+| ☐ | **Rechtstexte Beta** online ohne Platzhalter: Beta-Datenschutzhinweis mit Name + Kontakt des Auftraggebers, Kurzfassung mit Zustimmung (ohne Lösch-Versprechen zum Beta-Ende), Seite „Anbieter & Kontakt“, Mail-Footer | Developer, CEO prüft Text | compliance §13.3, §13.4, §13.6 |
+| ☐ | **Entscheidung E-G0-1 Vercel-Tarif** getroffen und dokumentiert (Empfehlung: Hobby + Maßnahmen); **KI-Training in Vercel abgeschaltet** | Auftraggeber | compliance §13.2 |
+| ☐ | AVV/DPA-PDFs Lettermint + Neon abgelegt (außerhalb des Repos); DPF-Status Neon/Databricks geprüft | Auftraggeber, Operations | compliance §13.1 |
+| ☐ | Domain registriert (EU-Registrar, 2FA); `app.<domain>` mit Vercel verbunden, `*.vercel.app` leitet um | Auftraggeber | beta-anleitung.md §1, §6 |
+| ☐ | Mail: Domain bei Lettermint verifiziert, DMARC `p=none`, Tracking aus; **Testmail an Gmail + iCloud + GMX/web.de** kommt im Posteingang an, Header `spf=pass dkim=pass dmarc=pass` | Auftraggeber, Operations wertet aus | beta-anleitung.md §2, deployment.md §7.2 |
+| ☐ | Eigene Neon-DB `wir-wollen-weg-beta` (Frankfurt, PG 18), eigene Secrets (`BETTER_AUTH_SECRET`, `CRON_SECRET`) ≠ Vorschau | Auftraggeber | deployment.md §0.12.2 |
+| ☐ | Release-Weg steht: Zweig `beta`, `ignoreCommand`, Build ohne Seed; erster Aufbau grün, Löschjob-Lauf im Log (nur Anzahlen) | Developer, Auftraggeber | deployment.md §0.12.2 |
+| ☐ | **Gerätetests W23 G-1 – G-14** (iPhone aktuelles iOS + Android-Kurztest): `/beta` in Safari → `/install` → App vom Home-Bildschirm (angemeldet **oder** einmal per Code – Ergebnis notieren), Code aus Mail-Vorschlag, Magic Link aus der App, Offline-Seite, Safe Area hell/dunkel, Zurück-Wege, ICS, externe Links, Einladungslink einfügen, VoiceOver | Reviewer + Auftraggeber | W23 G, deployment.md §0.12.6 |
+| ☐ | Hinweis an Tester verschickt (WhatsApp-Vorlage beta-anleitung.md §8), Mini-Datenpannen-Prozess + VVT-Eintrag; **kein** Lösch-Versprechen zum Beta-Ende (normale Löschfristen) | CEO, Auftraggeber, Operations | compliance §13.1 |
+| ☐ | Bekannte Go-Live-Findings bewusst akzeptiert oder behoben: R-035 (Konto-Adresse als Variante – Empfehlung: vor G0 beheben, falls klein), R-037 (Token-Pfade in Vercel-Logs – akzeptiert für G0), Proxy-Rate-Limit `/i/*` (akzeptiert, App-Limits greifen) | CEO | status.md |
 
 ---
 
@@ -66,6 +88,7 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 | ☐ | **Egress-Härtung** des App-Containers (nur `tcp/443` ins Internet, interne Netze + Metadaten `169.254.169.254` gesperrt); SSRF-Tests der Link-Vorschau grün | Operations (OPS-1), Reviewer | deployment.md §0.8, §5.1 |
 | ☐ | **In-App-Browser-Gerätetest T2** (WhatsApp, Instagram; iOS + Android) über Staging bestanden | Developer + Reviewer | tech-stack.md §11 |
 | ☐ | Demo-Seed-Daten **nicht** in Produktion (Seed-Skript verweigert `APP_ENV=production`) | Developer, Reviewer | deployment.md §0.4 |
+| ☐ | **Persönliche Reisedaten in Produktion aus** (`TRAVEL_DATA_ENABLED` leer bzw. `false`), solange G1b nicht freigegeben ist – Route `/trips/{id}/travel-data` liefert 404 | Operations, Reviewer | deployment.md §0.11.1, Gate G1b unten |
 | ☐ | Reviewer-Freigabe ✅ für alle Features des Meilensteins (DE und EN) | Reviewer | CLAUDE.md |
 
 ## Stufe 3 – zusätzlich vor öffentlichem Launch (M2)
@@ -80,12 +103,34 @@ Bezug: [deployment.md](deployment.md) (§0 Offline-Demo, §2–§7 Betrieb ab Go
 
 ---
 
+## Gate G1b – persönliche Reisedaten (F-054/F-056, ab Inkrement 11)
+
+**Zusätzlich zu Stufe 1 + 2**, unabhängig von Stufe 3. Solange G1b nicht freigegeben ist, läuft die App in Produktion **ohne** den Bereich Reisedaten (`TRAVEL_DATA_ENABLED` aus); Markierung „Bucht“, Infoseite, Unterkünfte und Kosten funktionieren trotzdem. Details und Abhak-Listen: [compliance-checklist.md §12](compliance-checklist.md), Schlüssel: [deployment.md §0.11](deployment.md). Dateibezogene Punkte (F-055, Inkrement 12) werden ergänzt.
+
+| ☐ | Pflichtpunkt | Wer | Bezug |
+|---|---|---|---|
+| ☐ | **DSFA** (schlanke Datenschutz-Folgenabschätzung, Art. 35) für Reisedaten abgeschlossen und abgelegt | Operations → Rechtsprüfung | compliance §12.2 |
+| ☐ | **Rechtliche Prüfung PAuswG/PassG** (Speicherung von Ausweis-/Passnummern) dokumentiert; falls unzulässig: Feld Dokumentnummer in Produktion deaktiviert | Rechtsprüfung (Q16) | compliance §12.3 |
+| ☐ | **Datenschutzerklärung** um Abschnitt „Persönliche Reisedaten“ ergänzt (Einwilligung, nur anfragende Person, Verschlüsselung, Zugriffsprotokoll, Fristen, Widerruf), Einwilligungstext DE/EN mit Version; VVT + TOM ergänzt | Operations (Entwurf), Rechtsprüfung | compliance §12.3, §5, §7 |
+| ☐ | **Löschkonzept** Reisedaten getestet: Widerruf, Entzug „Bucht“, Verlassen/Entfernen, Konto löschen, Reiseende + 7 Tage, Festlegung aufgehoben + 30 Tage; Löschjob täglich in Produktion | Reviewer, Operations | compliance §6, §12.4 |
+| ☐ | **Log-Regeln:** Logs/Fehler-Tracking enthalten nur anonyme Zähler, keine IDs/Werte – Suchtest mit Demo-Werten auf Staging bestanden | Reviewer, Operations | compliance §12.5 |
+| ☐ | **Schlüssel:** eigener `TRAVEL_DATA_KEYS` für Produktion, getrennt von DB-Zugang und Backups abgelegt, Sicherungskopie beim Betreiber; Startschutz, Rotation und Runbook A auf Staging geübt | Operations, Auftraggeber | deployment.md §0.11 |
+| ☐ | **Security-Review Reisedaten** (Rechte, Löschung, Re-Authentifizierung, keine Werte in Logs/Mails/URLs) bestanden | Reviewer | features.md R.9 „Sicherheit“ |
+| ☐ | **Prüfpunkt Vorschau:** Dokumentnummern ohne `DEMO`-Präfix werden in der Vorschau abgelehnt; Hinweis „keine echten Ausweisdaten“ sichtbar | Reviewer, CEO | compliance §12.6 |
+| ☐ | Datenpannen-Prozess (Art. 33/34) inkl. Runbook B „Schlüsselleck“ steht | Operations | compliance §7, deployment.md §0.11.8 |
+
+Erst nach Freigabe (Tabelle unten) setzt Operations `TRAVEL_DATA_ENABLED=true` in Produktion und startet die App neu.
+
+---
+
 ## Freigabe
 
 | Stufe | Freigegeben durch Auftraggeber am | Notiz |
 |---|---|---|
+| G0 – Freundes-Beta (Vercel + Neon) | – | erst danach Testpersonen einladen; Entscheidung E-G0-1 hier notieren |
 | 1 – Staging | – | |
 | 2 – Beta (M1) | – | |
 | 3 – Launch (M2) | – | |
+| G1b – persönliche Reisedaten | – | erst danach `TRAVEL_DATA_ENABLED=true` in Produktion |
 
 Der CEO trägt die Freigabe hier und im [Status-Board](status.md) ein.

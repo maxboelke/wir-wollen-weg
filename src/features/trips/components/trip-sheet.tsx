@@ -74,6 +74,37 @@ export interface TripSheetContext {
       }
     | null
     | undefined;
+  /** Travel details (W20 H.9): releases/open requests per member – null when none exist. */
+  travel?: { byMember: Record<string, { released: number; requests: number }> } | null | undefined;
+}
+
+/** Extra sentence of the leave/remove dialogs when travel details go with it (W20 H.9). */
+function TravelLine({
+  footprint,
+  self,
+  name,
+}: {
+  footprint: { released: number; requests: number } | undefined;
+  self: boolean;
+  name: string;
+}) {
+  const t = useTranslations("trip.dialogs");
+  if (!footprint) return null;
+  if (footprint.requests > 0) {
+    return (
+      <p data-leave-travel="">
+        {self ? t("leaveTravelBooker") : t("removeTravelBooker", { name })}
+      </p>
+    );
+  }
+  if (footprint.released > 0) {
+    return (
+      <p data-leave-travel="">
+        {self ? t("leaveTravelMember") : t("removeTravelMember", { name })}
+      </p>
+    );
+  }
+  return null;
 }
 
 interface TripSheetProps extends TripSheetContext {
@@ -253,6 +284,17 @@ function MenuStep({
       {canInvite ? (
         <MenuItem icon="share" href={tripPath(publicId, "invite")}>
           {t("invite")}
+        </MenuItem>
+      ) : null}
+      {cockpit?.data.canSetBookers ? (
+        <MenuItem
+          icon="id-card"
+          onClick={() => {
+            onClose();
+            cockpit.open({ kind: "bookers" });
+          }}
+        >
+          {t("bookers")}
         </MenuItem>
       ) : null}
       {cockpit ? (
@@ -437,7 +479,9 @@ function LeaveStep({
   isOrganizer,
   members,
   costs,
+  travel,
   myUserId,
+  myName,
   intl,
 }: { onStep: (step: SheetStep) => void; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
@@ -488,6 +532,7 @@ function LeaveStep({
         </p>
       ) : null}
       {costs?.payInfo ? <p>{tLeave("payInfo")}</p> : null}
+      <TravelLine footprint={travel?.byMember[myUserId]} self name={myName} />
       <ErrorLine error={error} />
       <Actions onCancel={onClose}>
         <Button
@@ -623,13 +668,14 @@ function DeleteStep({ onClose, publicId, tripName }: { onClose: () => void } & T
  * «Festlegung aufheben» (F-012, W11-07, ux-spec §14.4): calm – the vote opens again with all
  * votes kept; the organiser stays on the overview, where the tabs fade back in.
  */
-function UnfixStep({ onClose, publicId }: { onClose: () => void } & TripSheetContext) {
+function UnfixStep({ onClose, publicId, travel }: { onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
   const router = useRouter();
   const { run, pending, error, toast } = useResult();
   return (
     <div className={styles.body}>
       <p>{t("unfixText")}</p>
+      {travel ? <p data-unfix-travel="">{t("unfixTravel")}</p> : null}
       <ErrorLine error={error} />
       <Actions onCancel={onClose}>
         <Button
@@ -727,6 +773,7 @@ function RemoveStep({
   onClose,
   publicId,
   costs,
+  travel,
   intl,
 }: { member: SheetMember; onClose: () => void } & TripSheetContext) {
   const t = useTranslations("trip.dialogs");
@@ -751,6 +798,11 @@ function RemoveStep({
           {tLeave("removeStay", { name: member.displayName })}
         </p>
       ) : null}
+      <TravelLine
+        footprint={travel?.byMember[member.userId]}
+        self={false}
+        name={member.displayName}
+      />
       <Checkbox
         label={t("removeRenew")}
         checked={renew}

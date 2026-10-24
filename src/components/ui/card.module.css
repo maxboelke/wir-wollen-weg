@@ -93,3 +93,8 @@
   background: var(--ww-tile-brand-bg);
   color: var(--ww-tile-brand-fg);
 }
+
+.travel {
+  background: var(--ww-travel-area-bg);
+  color: var(--ww-travel-area-fg);
+}

@@ -254,7 +254,7 @@ describe("V3 rules 6–8 – waiting", () => {
     const station = route(stay({ chosen: { title: "Villa" } })).groups.waiting[0];
     expect(station?.status).toEqual({
       key: "v3.memberBook",
-      values: { orga: "Lena", title: "Villa" },
+      values: { bookers: { or: ["Lena"] }, title: "Villa" },
     });
     expect(station?.remind?.occasion).toBe("stay-book");
     expect(

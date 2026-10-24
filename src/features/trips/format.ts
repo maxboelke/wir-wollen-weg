@@ -12,6 +12,16 @@ export function nameList(
   return new Intl.ListFormat(locale, { type: "conjunction", style: "long" }).format(list);
 }
 
+/** «Lena und Sara» – conjunction list without truncation (client components, max. 3 «Bucht»). */
+export function nameListClient(names: string[], locale: string): string {
+  return new Intl.ListFormat(locale, { type: "conjunction", style: "long" }).format(names);
+}
+
+/** «Lena, Sara oder Kemal» – alternatives (W16 v2.16 «Bucher», max. 3 = the limit). */
+export function orList(names: string[], locale: string): string {
+  return new Intl.ListFormat(locale, { type: "disjunction", style: "long" }).format(names);
+}
+
 export interface NightsLabels {
   nights: (count: number) => string;
   range: (min: number, max: number) => string;

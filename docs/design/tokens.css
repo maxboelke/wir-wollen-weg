@@ -3,6 +3,8 @@
    Version 1.0 · 2026-10-08 · Verantwortlich: Designer
    v1.1 · 2026-10-23: Unterkünfte F-031 (§2 --ww-stay-*, --ww-stamp-*; §5 --ww-pattern-stay-placeholder) – nur Ergänzungen
    v1.2 · 2026-10-23: Kosten teilen F-035/F-036 (§2 Maße --ww-cost-*; §3/§4 Farben --ww-cost-*) – nur Ergänzungen
+   v1.3 · 2026-10-23: Bucht + Reisedaten F-056/F-054 (§2 Maße --ww-travel-*; §3/§4 Farben --ww-travel-*;
+          §5 --ww-pattern-travel-demo) – nur Ergänzungen
    Richtung B „Reise-Cockpit“, Palette B0 „Indigo & Minze“ (Auftraggeber, PRD §12 Q18)
    Dokumentation: docs/design/design-system.md (v1.0)
 
@@ -331,6 +333,21 @@
   --ww-cost-stand-tile: 40px;            /* Icon-Kachel bzw. Siegel in „Dein Stand“ */
   --ww-cost-bar-h: 6px;                  /* Saldo-Balken je Person (D-57), aria-hidden */
   --ww-cost-iban-gap: 0.3em;             /* Abstand der Vierergruppen in der IBAN */
+
+  /* ---------------- Bucht + Reisedaten F-056/F-054 (v1.3, 2026-10-23, design-system §9.23) ----------------
+     Masken sind gleich lang (verraten keine Länge), Werte tabellarisch, keine Monospace-Schrift. */
+  --ww-travel-chip-h: 22px;              /* Chip „Bucht“ in Listen (Wer ist dabei?, Personen-Karten) */
+  --ww-travel-chip-h-lg: 26px;           /* Chip „Bucht“ im Kopf der Anfrage-Karte */
+  --ww-travel-chip-icon: 14px;           /* id-card im Chip (16 im großen Chip) */
+  --ww-travel-tile: 32px;                /* Icon-Kachel „Reisedaten“ (Cockpit), Icon 22 */
+  --ww-travel-field-row-min-h: 48px;     /* Zeile Label · Wert · Kopieren in der Bucht-Sicht */
+  --ww-travel-copy-btn: 44px;            /* Icon-Taste Kopieren je Feld */
+  --ww-travel-mask-tracking: 0.14em;     /* Abstand der Punkte in Masken */
+  --ww-travel-consent-check: 24px;       /* Checkbox der Einwilligung (Trefferfläche = ganze Karte) */
+  --ww-travel-consent-radius: 20px;      /* Einwilligungs-Karte */
+  --ww-travel-log-icon: 28px;            /* runde Icon-Plakette je Protokoll-Zeile */
+  --ww-travel-demo-edge: 6px;            /* gestreifte Kante links am Vorschau-Hinweis */
+  --ww-travel-content-max-w: 640px;      /* Mitglied/Formulare (W20 H.14) */
 }
 
 /* --------------------------------------------------------------------------
@@ -610,6 +627,42 @@
   --ww-cost-cat-other-bg: var(--ww-mist-150);            /* 6,0 – auch „ohne Kategorie“ (receipt) */
   --ww-cost-cat-other-fg: var(--ww-ink-700);
 
+  /* ---------------- Bucht + Reisedaten F-056/F-054 (v1.3, design-system §9.23) ----------------
+     Keine Kirsche (außer echte Fehler), keine Koralle. Amber nur für Vorschau-Hinweis und Dokument-Warnung. */
+  --ww-travel-area-bg: var(--ww-lavender-200);         /* Bereichsfarbe Lavendel/Indigo (D-68): Kachel/Kopf/V4/D3 + id-card 9,3 */
+  --ww-travel-area-fg: var(--ww-indigo-800);
+  --ww-travel-chip-bg: var(--ww-lavender-200);         /* Chip „Bucht“: 9,3 */
+  --ww-travel-chip-fg: var(--ww-indigo-800);
+  --ww-travel-shield-bg: var(--ww-lavender-100);       /* Schutz-Hinweis (shield): Text 5,6 */
+  --ww-travel-shield-fg: var(--ww-lavender-600);
+  --ww-travel-mask-fg: var(--ww-ink-600);              /* „K•••“, „••.••.••••“ auf surface 5,1 – NICHT auf vertieft */
+  --ww-travel-reveal-ring: var(--ww-lavender-600);     /* Personen-Karte „angezeigt“: Ring 2 px innen, 6,8 */
+  --ww-travel-status-released-bg: var(--ww-mint-100);  /* „✓ freigegeben“ 4,9 */
+  --ww-travel-status-released-fg: var(--ww-mint-700);
+  --ww-travel-status-open-bg: var(--ww-lavender-100);  /* „◷ offen“ 5,6 */
+  --ww-travel-status-open-fg: var(--ww-lavender-600);
+  --ww-travel-status-declined-bg: var(--ww-mist-150);  /* „klärt es direkt“ 6,0 – neutral */
+  --ww-travel-status-declined-fg: var(--ww-ink-700);
+  --ww-travel-status-pending-border: var(--ww-ink-500);/* „noch nicht dabei“: gestrichelt 3,4 */
+  --ww-travel-status-pending-fg: var(--ww-ink-700);    /* 7,2 */
+  --ww-travel-consent-border: var(--ww-ink-500);       /* Karte + Checkbox nicht gewählt 3,4 */
+  --ww-travel-consent-checked-bg: var(--ww-lavender-100);
+  --ww-travel-consent-checked-border: var(--ww-indigo-800);
+  --ww-travel-check-bg: var(--ww-indigo-800);          /* gesetzte Checkbox, Haken weiß 13,7 */
+  --ww-travel-check-fg: var(--ww-mist-0);
+  --ww-travel-warn-bg: var(--ww-sun-100);              /* Dokument-Warnung: Icon 6,2 · Text Tinte 14,9 */
+  --ww-travel-warn-icon: var(--ww-sun-700);
+  --ww-travel-warn-fg: var(--ww-ink-900);
+  --ww-travel-demo-bg: var(--ww-sun-100);              /* Vorschau-Hinweis „Nur Fantasiedaten“: Text 14,9 */
+  --ww-travel-demo-fg: var(--ww-ink-900);
+  --ww-travel-demo-icon: var(--ww-sun-700);            /* 6,2 */
+  --ww-travel-demo-tag-bg: var(--ww-sun-400);          /* Etikett „VORSCHAU“ 11,2 */
+  --ww-travel-demo-tag-fg: var(--ww-ink-900);
+  --ww-travel-demo-stripe-a: var(--ww-sun-400);        /* gestreifte Kante, dekorativ */
+  --ww-travel-demo-stripe-b: var(--ww-sun-200);
+  --ww-travel-log-icon-bg: var(--ww-mist-150);         /* Protokoll-Plakette: Icon 6,0 */
+  --ww-travel-log-icon-fg: var(--ww-ink-700);
+
   /* ---------------- Illustrationen (inline-SVG) ---------------- */
   --ww-illu-plate: var(--ww-lavender-100);
   --ww-illu-paper: var(--ww-mist-0);
@@ -878,6 +931,41 @@
     --ww-cost-cat-other-bg: var(--ww-night-800);         /* 7,1 */
     --ww-cost-cat-other-fg: var(--ww-ink-200);
 
+    /* Bucht + Reisedaten (v1.3) */
+    --ww-travel-area-bg: var(--ww-indigo-500);           /* 6,5 */
+    --ww-travel-area-fg: var(--ww-mist-0);
+    --ww-travel-chip-bg: var(--ww-indigo-500);           /* 6,5 */
+    --ww-travel-chip-fg: var(--ww-mist-0);
+    --ww-travel-shield-bg: var(--ww-night-760);          /* 7,3 */
+    --ww-travel-shield-fg: var(--ww-lavender-400);
+    --ww-travel-mask-fg: var(--ww-ink-300);              /* 5,9 auf surface */
+    --ww-travel-reveal-ring: var(--ww-lavender-400);
+    --ww-travel-status-released-bg: var(--ww-mint-900);  /* 7,6 */
+    --ww-travel-status-released-fg: var(--ww-mint-400);
+    --ww-travel-status-open-bg: var(--ww-night-760);     /* 7,3 */
+    --ww-travel-status-open-fg: var(--ww-lavender-400);
+    --ww-travel-status-declined-bg: var(--ww-night-800); /* 7,1 */
+    --ww-travel-status-declined-fg: var(--ww-ink-200);
+    --ww-travel-status-pending-border: var(--ww-night-500); /* 3,9 */
+    --ww-travel-status-pending-fg: var(--ww-ink-200);    /* 8,2 */
+    --ww-travel-consent-border: var(--ww-night-500);     /* 3,9 */
+    --ww-travel-consent-checked-bg: var(--ww-night-760);
+    --ww-travel-consent-checked-border: var(--ww-mint-400);
+    --ww-travel-check-bg: var(--ww-mint-400);            /* Haken 11,5 */
+    --ww-travel-check-fg: var(--ww-night-950);
+    --ww-travel-warn-bg: var(--ww-sun-900);              /* Icon 9,6 · Text 11,5 */
+    --ww-travel-warn-icon: var(--ww-sun-200);
+    --ww-travel-warn-fg: var(--ww-ink-50);
+    --ww-travel-demo-bg: var(--ww-sun-900);              /* Text 11,5 */
+    --ww-travel-demo-fg: var(--ww-ink-50);
+    --ww-travel-demo-icon: var(--ww-sun-200);            /* 9,6 */
+    --ww-travel-demo-tag-bg: var(--ww-sun-400);          /* 12,4 */
+    --ww-travel-demo-tag-fg: var(--ww-night-950);
+    --ww-travel-demo-stripe-a: var(--ww-sun-400);
+    --ww-travel-demo-stripe-b: var(--ww-sun-800);
+    --ww-travel-log-icon-bg: var(--ww-night-800);        /* 7,1 */
+    --ww-travel-log-icon-fg: var(--ww-ink-200);
+
     --ww-illu-plate: var(--ww-night-820);
     --ww-illu-paper: var(--ww-night-750);
     --ww-illu-ink: var(--ww-ink-50);
@@ -1138,6 +1226,41 @@
   --ww-cost-cat-other-bg: var(--ww-night-800);
   --ww-cost-cat-other-fg: var(--ww-ink-200);
 
+  /* Bucht + Reisedaten (v1.3) */
+  --ww-travel-area-bg: var(--ww-indigo-500);
+  --ww-travel-area-fg: var(--ww-mist-0);
+  --ww-travel-chip-bg: var(--ww-indigo-500);
+  --ww-travel-chip-fg: var(--ww-mist-0);
+  --ww-travel-shield-bg: var(--ww-night-760);
+  --ww-travel-shield-fg: var(--ww-lavender-400);
+  --ww-travel-mask-fg: var(--ww-ink-300);
+  --ww-travel-reveal-ring: var(--ww-lavender-400);
+  --ww-travel-status-released-bg: var(--ww-mint-900);
+  --ww-travel-status-released-fg: var(--ww-mint-400);
+  --ww-travel-status-open-bg: var(--ww-night-760);
+  --ww-travel-status-open-fg: var(--ww-lavender-400);
+  --ww-travel-status-declined-bg: var(--ww-night-800);
+  --ww-travel-status-declined-fg: var(--ww-ink-200);
+  --ww-travel-status-pending-border: var(--ww-night-500);
+  --ww-travel-status-pending-fg: var(--ww-ink-200);
+  --ww-travel-consent-border: var(--ww-night-500);
+  --ww-travel-consent-checked-bg: var(--ww-night-760);
+  --ww-travel-consent-checked-border: var(--ww-mint-400);
+  --ww-travel-check-bg: var(--ww-mint-400);
+  --ww-travel-check-fg: var(--ww-night-950);
+  --ww-travel-warn-bg: var(--ww-sun-900);
+  --ww-travel-warn-icon: var(--ww-sun-200);
+  --ww-travel-warn-fg: var(--ww-ink-50);
+  --ww-travel-demo-bg: var(--ww-sun-900);
+  --ww-travel-demo-fg: var(--ww-ink-50);
+  --ww-travel-demo-icon: var(--ww-sun-200);
+  --ww-travel-demo-tag-bg: var(--ww-sun-400);
+  --ww-travel-demo-tag-fg: var(--ww-night-950);
+  --ww-travel-demo-stripe-a: var(--ww-sun-400);
+  --ww-travel-demo-stripe-b: var(--ww-sun-800);
+  --ww-travel-log-icon-bg: var(--ww-night-800);
+  --ww-travel-log-icon-fg: var(--ww-ink-200);
+
   --ww-illu-plate: var(--ww-night-820);
   --ww-illu-paper: var(--ww-night-750);
   --ww-illu-ink: var(--ww-ink-50);
@@ -1195,6 +1318,13 @@
     135deg,
     var(--ww-color-surface-sunken) 0 10px,
     var(--ww-color-bg) 10px 20px
+  );
+  /* Vorschau-Hinweis „Nur Fantasiedaten“ (F-054, I11-12, §9.23) – gestreifte Kante links, 135°, 5 px / 10 px,
+     nur dekorativ (Text + Etikett tragen die Aussage). background: var(--ww-pattern-travel-demo) left / var(--ww-travel-demo-edge) 100% no-repeat, var(--ww-travel-demo-bg); */
+  --ww-pattern-travel-demo: repeating-linear-gradient(
+    135deg,
+    var(--ww-travel-demo-stripe-a) 0 5px,
+    var(--ww-travel-demo-stripe-b) 5px 10px
   );
   /* Wochenend-Spur */
   --ww-pattern-weekend-lane: linear-gradient(

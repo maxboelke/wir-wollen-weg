@@ -26,7 +26,11 @@ import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client
 import { emailAccess, type AccessEmailPayload, type CodeMailPayload } from "./email-access-plugin";
 import * as emailLimits from "./email-limit-store";
 import { hashPassword, verifyPassword } from "./password-hash";
-import { MAILBOX_SIGN_IN_PATHS, markReauthenticatedIn } from "./reauth";
+import {
+  MAILBOX_SIGN_IN_PATHS,
+  markReauthenticatedIn,
+  markTravelReauthenticatedIn,
+} from "./reauth";
 
 const SESSION_DAYS = 90;
 
@@ -172,6 +176,8 @@ function createAuth() {
             // password in the sign-up name step).
             if (context?.path && MAILBOX_SIGN_IN_PATHS.has(context.path)) {
               await markReauthenticatedIn(context.context.internalAdapter, session.id);
+              // Document numbers of travel details: 12 hours (R.9 I11-08).
+              await markTravelReauthenticatedIn(context.context.internalAdapter, session.id);
             }
             // Signing in counts as activity (inactivity deletion, F-043).
             await db()

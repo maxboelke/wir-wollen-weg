@@ -1,6 +1,6 @@
 # Sitemap & Informationsarchitektur – Wir wollen weg / When do we go? (MVP)
 
-Stand: 2026-10-20 (Feedback-Runde 1: Phase 3 ohne Tabs, Erinnern für alle; davor Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-23 (§7 Beta-Modus & installierte Web-App, W23; davor 2026-10-20 Feedback-Runde 1: Phase 3 ohne Tabs, Erinnern für alle; davor Runde 3: Richtung B „Reise-Cockpit“, Q17) · Verantwortlich: UI/UX · Bezug: [PRD](../product/PRD.md) §6, [features.md](../product/features.md), [user-flows.md](user-flows.md), [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ---
 
@@ -49,7 +49,7 @@ Direkte URLs auf einen Tab werden in Phase 1/2 immer respektiert (kein Umleiten)
 └── Impressum                        /de/impressum · /en/imprint     F-046
 
 Angemeldet
-├── Meine Reisen (Start)             /trips               F-044
+├── Meine Reisen (Start)             /trips               F-044   ← Einstieg `/` (PWA-Start, nach Login ohne Ziel) öffnet stattdessen die **laufende Reise**, wenn es genau eine gibt (W16 v2.18); `/trips` selbst leitet nie weiter
 ├── Neue Reise planen                /trips/new           F-001 (auch ohne Login startbar)
 │   └── Einladen (nach Anlage)       /trips/{id}/invite   F-002
 ├── Reise                            /trips/{id}          Tab „Übersicht“ (F-007, F-012-Ergebnis, F-015)
@@ -160,3 +160,25 @@ Systemseiten
 **Rollenbezeichnung:** In der Oberfläche heißt die Rolle „Orga“ / „Organizer“ (Kronen-Icon immer mit Text) – *bestätigt (Auftraggeber 2026-10-08)*. „Organisator“ bleibt nur interner/Dokumentbegriff.
 
 **Darstellung:** Dark Mode – kein eigener Menüpunkt und keine Kontoeinstellung im MVP; die App folgt dem System (*bestätigt (Auftraggeber 2026-10-08)*). **Bewegung** – Schalter „Bewegung reduzieren“ in /account, Karte „Darstellung“ (Q17 a, F-052, W13); keine eigene Route.
+
+## 7. Beta-Modus „Stufe B“ & installierte Web-App (2026-10-23)
+
+Details: **[W23](wireframes/w23-beta-und-installation.md)**, Regeln [ux-spec §15](ux-spec.md). Ergänzungen der Sitemap (nur im Beta-Modus, außer **[immer]**):
+
+```
+Öffentlich
+├── Beta-Einstieg                    /beta                (Beta-Code → ?step=privacy Zustimmung → /login)
+├── Offline-Seite [immer]            /offline             (nur vom Service Worker ausgeliefert, nicht verlinkt)
+Angemeldet
+├── App installieren                 /install             (einmalig nach Registrierung/Beitritt mit ?next=, sonst aus Menü/Hilfe;
+│                                                          nicht in der installierten App)
+└── Sheets ohne URL: „Einladungslink einfügen“ [immer, nur installierte App] · „Feedback geben“
+```
+
+- **Landing (Beta):** Haupt-CTA „Ich habe einen Beta-Code“ → `/beta`; „Reise planen“ ohne Login → `/beta?next=/trips/new`.
+- **`/` in der installierten App ohne Sitzung** → `/login` im App-Modus (nicht die Landing) [immer].
+- **Avatar-Menü:** Meine Reisen · Konto · Sprache · **App installieren** (nur nicht installiert, nicht Desktop) · **Feedback geben** (Beta) · Hilfe · Abmelden.
+- **Reisemenü „⋯“:** zusätzlich **Feedback geben** (Beta) vor „Hilfe“.
+- **Header:** Etikett „Beta“ neben der Wortmarke (globaler Header), nicht im Cockpit-Kopf.
+- **Zurück-Weg auf jeder Seite** [immer] – Hilfe, Rechtstexte, Konto, `/i/{token}` (angemeldet) bekommen „← Zurück“ (Audit W23 C.5).
+- **Ausgeblendet im Beta-Modus:** Demo-Postfach `/demo/postfach`, Demo-Banner, „Demo zurücksetzen“; Reisedaten (F-054) wie W20 H.1.

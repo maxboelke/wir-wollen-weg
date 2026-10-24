@@ -60,6 +60,10 @@ export const ICON_NAMES = [
   "car",
   "ticket",
   "tag",
+  "shield",
+  "id-card",
+  "history",
+  "key",
   "all-available",
 ] as const;
 

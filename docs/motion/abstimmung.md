@@ -147,6 +147,26 @@ Ergänzend spezifiziert (ohne UM-Punkt): Zurücknehmen in „Bereits bezahlt“ 
 |---|---|---|---|
 | **M-X10** | **Kosten-Bewegung ohne neue Bibliothek** | (a) Ausgleich-Ansicht hält `recentlyPaid` im Clientzustand und rendert diese Zeilen an ihrem alten Index – unabhängig vom Serverstand nach `revalidatePath`/`router.refresh()`, bis zum Unmount (W19-A). (b) Ankerausgleich als kleiner Helfer `keepAnchor(el, mutate)` (messen → ändern → `scrollBy(Δ)`), kein `overflow-anchor`. (c) Text-Überblenden als Helfer `refresh(el)` = `animate(el, [{opacity: 0.35}, {opacity: 1}], {duration: DURATION.fade})` (wird bei reduzierter Bewegung von `animate()` schon übersprungen). (d) Siegel ausschließlich über `sealPop(…, 20 | 40)`, Element erst nach Server-Bestätigung mounten, Pop im `useLayoutEffect`. (e) Löschen/FLIP ohne `transition` auf Höhe. Tests: Playwright – Markieren → `router.refresh()` → Zeile noch da, Fokus auf «Zurücknehmen»; 7 s warten → Zeile noch da; Segment wechseln → nur unter „Bereits bezahlt“; Neuladen mit Saldo 0 → `document.getAnimations()` leer; `reducedMotion: 'reduce'` → keine `transform`-Animation; kein `navigator.vibrate`. | **offen** (zur Umsetzung in Inkrement 10) |
 
+## 6. Runde 5 – Promo-Video 9:16 (2026-10-23)
+
+Konzept [promo/storyboard.md](promo/storyboard.md), Komposition [promo/index.html](promo/index.html), Aufnahme [promo/README.md](promo/README.md).
+
+| # | An | Thema | Frage / Vorschlag | Status |
+|---|---|---|---|---|
+| **M-P1** | Designer | Optik-Abnahme Promo | Screens im Video sind nachgebaut (vereinfacht, 240-px-Bildschirm) – bitte Farben, Wortmarke als HTML-Text (statt SVG, damit „weg“/„go?“ animierbar ist) und Untertitel-Stil (Jakarta 800, 27 px, Schlüsselwort Minze/Sonne) freigeben. | **offen** |
+| **M-P2** | Produktmanager / Auftraggeber | Claim | Arbeitstitel „Euren gemeinsamen Urlaub finden – ohne Chat-Chaos.“ / „Find your holiday together – no group-chat chaos.“ | **offen** |
+| **M-P3** | Operations | Werbe-Aussagen, Musik | Endkarte nennt nur Produktfakten („Einladen per Link · läuft im Browser“), keine Domain, kein „kostenlos“. Musik nicht eingebaut – Lizenzweg (Plattform-Bibliothek vs. eigene Lizenz) entscheidet der Auftraggeber. | **offen** |
+
+### 6.1 Runde 5b – Promo v2, drei Stile (2026-10-23)
+Nach Sichtung durch den Auftraggeber: [promo/storyboard.md §9](promo/storyboard.md), Kompositionen `promo/a-clean/`, `promo/b-kinetic/`, `promo/c-abenteuer/`, gemeinsame Teile `promo/shared/`.
+
+| # | An | Thema | Frage / Vorschlag | Status |
+|---|---|---|---|---|
+| **M-P4** | Designer (+ CEO) | **„Alle können“ = Grün** | Der Auftraggeber möchte die Tage, an denen alle können, **grün** sehen („so wie in der App“). In `tokens.css` ist `--ww-hm-all-bg` aber nur im **Dunkelmodus** Minze; im **Hellmodus** ist „alle“ Indigo `#2B2266` mit Minze-Siegel (design-system §6.2 „der beste Zeitraum ist der indigofarbene“). Das Video zeigt Minze `#52E5B8` mit Indigo-Zahl und Indigo-Siegel (= Dunkelmodus-Logik, auf hellem Screen). Frage: Soll die **App** im Hellmodus nachziehen (z. B. `hm-all-bg: mint-400`, `hm-all-fg: indigo-800`, Siegel Indigo; Kontrast Indigo auf Minze ≈ 8,7 : 1)? Sonst weicht das Video bewusst ab. Empfehlung Motion: nachziehen – Grün = „frei/alle können“ ist sofort verständlich, und Video und App erzählen dasselbe. | **offen** |
+| **M-P5** | Designer | Optik-Abnahme v2 | Stil C nutzt Illustrationen als „Sticker“ (weißer Stanzrand, schräg), Gepäckanhänger-Etiketten, Klebeband und ein Kartenraster; Stil B riesige Ziffern (250 px) und Farbflächen in Vollton (Minze, Sonne, Lavendel, Koralle). Bitte freigeben bzw. Korrekturen nennen. Ersetzt M-P1. | **offen** |
+| **M-P6** | UI/UX | Begriffe im Video | Video-Texte folgen w19 E.2. Zwei kleine Abweichungen zur App bitte bestätigen: Vorschlags-Pille „✓ Alle können“ statt „Alle dabei“ (passt zum Untertitel „Grün heißt: alle können“), Taste „+ Vorschlagen“ im Kopf der Unterkünfte und Chip „Vorschlag von Anna“ auf der Karte (zeigt Schritt ② „vorschlagen“). | **offen** |
+| **M-P7** | Produktmanager / Auftraggeber | Stilwahl | Empfehlung Motion: **B** für Reels/TikTok, **A** für WhatsApp-Status/Website; C als Markenvariante, falls der Auftraggeber „verspielt“ möchte. | **offen** |
+
 ## Entscheidungen des Auftraggebers (2026-10-08, Q17)
 - Schalter „Bewegung reduzieren“ im Konto (W13) zusätzlich zur Systemeinstellung: **ja**.
 - Feier für **alle** Mitglieder, einmal pro Person und Festlegung (F-012): **ja**.
@@ -157,6 +177,8 @@ Ergänzend spezifiziert (ohne UM-Punkt): Zurücknehmen in „Bereits bezahlt“ 
 - Die Feier F-012 ist der **Vorfreude-Ring** (`countdown-ring.svg`), nicht Siegel + Kalenderblatt.
 
 ## Changelog
+- 2026-10-23 Runde 5b: §6.1 – Promo v2, drei Stile nach Auftraggeber-Feedback (M-P4 – M-P7; M-P5 ersetzt M-P1).
+- 2026-10-23 Runde 5: §6 – Promo-Video 9:16 (M-P1 – M-P3).
 - 2026-10-23 Runde 4 (Inkrement 10): §5 – Antworten UM-14 – UM-19 (UM-15 entschieden: Zeile bleibt bis zum nächsten Laden, kein zeitgesteuertes Zuklappen; „Wandern“ über Zähler/aufgeklappte Liste, Beleg-Flug MVP+; UM-16 `moderate` statt `celebrate`; UM-18 Tönung 1200 ms, Löschen ohne Höhen-Animation; UM-19 bestätigt); neu M-U16 – M-U18, M-X10.
 - 2026-10-23 Runde 3: §4 – Antworten UM-1 – UM-7 (Gegenprüfung Cockpit-Code, drei kleine Korrekturen → M-X8) und UM-8 – UM-13 (Swipen, UM-13 bestätigt: keine Vibration); neu M-U13–M-U15, M-D13–M-D14, M-X8–M-X9; Prototyp f.
 - 2026-10-08 Runde 2: Status aller M-Punkte nach den Antworten von Designer (abstimmung-ux §6) und UI/UX (abstimmung-design §9) gesetzt; neu M-D10–M-D12, M-U12, M-X6–M-X7.

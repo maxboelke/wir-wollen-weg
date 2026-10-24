@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promo v2 · C „Reise-Abenteuer“ · Wir wollen weg / When do we go?</title>
+<!--
+  Promo v2, Stil C „Reise-Abenteuer“ (Motion Designer, 2026-10-23) – verspielt: Reisekarten-Papier, Gepäckanhänger-Etiketten,
+  Sticker (Illustrationen aus docs/design/assets/illustrations), Klebeband. Eine Reiseroute verbindet die vier Schritte als „Weg“
+  wie im Cockpit „Reiseverlauf“: erledigt = durchgezogen, kommt noch = gestrichelt, Sonnen-Marker = „hier sind wir“.
+  Die Kamera fährt die Route Station für Station nach unten.
+  Storyboard: ../storyboard.md §9 · Aufnahme: ../README.md
+  Bühne 360 × 640 CSS-px (× 3 = 1080 × 1920). Rein zeitbasiert, deterministisch (Route-Länge selbst berechnet, keine DOM-Messung).
+  Parameter: ?lang=en · ?scene=0..8 · ?t=ms · ?pause=1 · ?loop=1 · ?debug=1 · ?scale=n
+  API: window.__promoReady, __promoDone, __promoDuration, __promoRender(ms)
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap">
+<link rel="stylesheet" href="../shared/promo-screens.css">
+<style>
+#stage{background:#fbf6ec}
+#world{position:absolute;left:0;top:0;width:360px;height:3840px;
+  background-image:linear-gradient(rgb(167 154 242/.13) 1px,transparent 1px),linear-gradient(90deg,rgb(167 154 242/.13) 1px,transparent 1px);background-size:24px 24px}
+.sea{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgb(82 229 184/.22),rgb(82 229 184/0))}
+.sunsp{position:absolute;border-radius:50%;background:radial-gradient(closest-side,rgb(255 207 74/.22),rgb(255 207 74/0))}
+#route{position:absolute;left:0;top:0}
+
+/* Etiketten (Gepäckanhänger) + Überschriften */
+.c-tag{position:absolute;top:76px;height:30px;display:inline-flex;align-items:center;gap:7px;padding:0 13px 0 22px;border-radius:7px 15px 15px 7px;
+  font:800 13px/1 var(--ww-font-sans);white-space:nowrap;box-shadow:0 8px 16px -10px rgb(43 34 102/.55);visibility:hidden}
+.c-tag::before{content:"";position:absolute;left:8px;top:11px;width:8px;height:8px;border-radius:50%;background:#fbf6ec;box-shadow:inset 0 0 0 1.5px rgb(30 26 61/.25)}
+.c-tag b{width:20px;height:20px;border-radius:50%;background:var(--ww-indigo-800);color:#fff;display:grid;place-items:center;font:800 11px/1 var(--ww-font-display)}
+.c-tag.mint{background:var(--ww-mint-400);color:var(--ww-indigo-800)}
+.c-tag.sun{background:var(--ww-sun-400);color:var(--ww-ink-900)}
+.c-tag,.c-head{z-index:9}
+.c-head{position:absolute;left:22px;right:22px;top:112px;text-align:center;font:800 24px/1.14 var(--ww-font-display);letter-spacing:-.03em;color:var(--ww-ink-900);text-wrap:balance;visibility:hidden}
+.c-head em{font-style:normal;background:linear-gradient(transparent 56%,rgb(255 207 74/.75) 56%);padding:0 2px;border-radius:2px}
+.c-head .g{color:var(--ww-mint-700);background:linear-gradient(transparent 56%,rgb(82 229 184/.55) 56%);padding:0 2px;border-radius:2px}
+
+/* Route-Elemente */
+.c-pin{position:absolute;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;z-index:6}
+.c-pin span{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center}
+.c-pin .pa{background:#fff;color:var(--ww-indigo-800);box-shadow:inset 0 0 0 2.5px var(--ww-indigo-800);font:800 13px/1 var(--ww-font-display)}
+.c-pin .pb{background:var(--ww-mint-400);color:var(--ww-indigo-800);box-shadow:0 0 0 3px #fff,0 6px 12px -6px rgb(43 34 102/.6);opacity:0;visibility:hidden}
+.c-flag{position:absolute;height:24px;padding:0 9px 0 6px;border-radius:999px;background:var(--ww-indigo-800);color:#fff;display:inline-flex;align-items:center;gap:4px;
+  font:800 10.5px/1 var(--ww-font-sans);white-space:nowrap;transform:translate(-50%,-50%);z-index:6}
+.c-mk{position:absolute;left:0;top:0;width:30px;height:30px;margin:-15px 0 0 -15px;border-radius:50%;background:var(--ww-sun-400);color:var(--ww-sun-700);
+  display:grid;place-items:center;box-shadow:0 0 0 3px #fff,0 0 0 9px rgb(255 207 74/.28),0 8px 14px -6px rgb(43 34 102/.55);z-index:8}
+
+/* Sticker + Klebeband */
+.c-st{position:absolute;padding:5px;background:#fff;border-radius:14px;box-shadow:0 8px 16px -8px rgb(43 34 102/.5);z-index:7;opacity:0;visibility:hidden}
+.c-st img{display:block;width:64px;height:48px}
+.c-st.sq img{width:48px;height:48px}
+.c-ph{position:absolute;left:54px;width:252px;height:528px;transform-origin:126px 0;transform:scale(.82);z-index:5}
+.c-tape{position:absolute;width:74px;height:22px;background:rgb(255 207 74/.62);z-index:70;box-shadow:0 1px 2px rgb(122 82 0/.15)}
+.c-glow{position:absolute;width:560px;height:560px;left:-100px;border-radius:50%;background:radial-gradient(closest-side,rgb(255 207 74/.55),rgb(255 207 74/0));opacity:0;visibility:hidden;z-index:1}
+
+/* Hook */
+.c-chat{position:absolute;left:34px;top:196px;z-index:5}
+
+/* Endkarte */
+#endLogo{position:absolute;left:132px;width:96px;height:96px;z-index:9;opacity:0;visibility:hidden}
+#endWord{position:absolute;left:0;right:0;text-align:center;font:800 36px/1.05 var(--ww-font-display);letter-spacing:-.035em;color:var(--ww-ink-900);white-space:nowrap;opacity:0;visibility:hidden}
+#endWord em{font-style:normal;color:var(--ww-lavender-600)}
+#endTag{position:absolute;left:30px;right:30px;text-align:center;font:600 15px/1.35 var(--ww-font-sans);color:var(--ww-ink-700);text-wrap:balance;opacity:0;visibility:hidden}
+#endChips{position:absolute;left:12px;right:12px;display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
+#endChips span{height:28px;padding:0 11px 0 4px;border-radius:7px 14px 14px 7px;background:#fff;box-shadow:0 6px 14px -8px rgb(43 34 102/.5);
+  display:inline-flex;align-items:center;gap:6px;font:800 11.5px/1 var(--ww-font-sans);color:var(--ww-ink-900);white-space:nowrap;opacity:0;visibility:hidden}
+#endChips span b{width:20px;height:20px;border-radius:50%;background:var(--ww-mint-400);color:var(--ww-indigo-800);display:grid;place-items:center}
+#endNote{position:absolute;left:24px;right:24px;text-align:center;font:600 11.5px/1.3 var(--ww-font-sans);color:var(--ww-ink-700);opacity:0;visibility:hidden}
+#conf{position:absolute;inset:0;pointer-events:none;z-index:30}
+</style>
+</head>
+<body>
+<div id="vp">
+  <div id="stage" aria-hidden="true">
+    <div id="world"></div>
+    <div id="conf"></div>
+  </div>
+</div>
+<script src="../shared/promo-core.js"></script>
+<script src="../shared/promo-screens.js"></script>
+<script>
+(function(){
+'use strict';
+var C=window.PromoCore,PS=window.PromoScreens,$=C.$,S=C.S,O=C.O,pr=C.pr,ez=C.ez,mix=C.mix,bump=C.bump,E=C.E,div=C.div;
+var PG=640, ILL='../../../design/assets/illustrations/';
+
+/* ---------- Texte ---------- */
+var TXT={
+de:{hookTag:'Kennt ihr das?',start:'Start',
+  steps:['Zeitraum finden','Unterkunft finden','Kosten tracken','Verrechnen'],
+  head:{hook:'Wann fahren wir <em>eigentlich</em> weg?',paint:'Alle tragen ihre <em>freien Tage</em> ein.',heat:'<span class="g">Grün</span> heißt: alle können.',
+    vote:'Abstimmen mit <em>einem Tipp</em>.',party:'Termin steht – <em>Vorfreude an!</em>',swipe:'Unterkünfte vorschlagen, <em>alle swipen</em>.',
+    costs:'Unterwegs Kosten <em>bequem eintragen</em>.',settle:'Am Ende verrechnen: <span class="g">alle quitt</span>.'},
+  word:'Wir wollen <em>weg</em>',tag:'Euren gemeinsamen Urlaub finden – ohne Chat-Chaos.',chips:['Zeitraum','Unterkunft','Kosten','Verrechnen'],note:'Einladen per Link · läuft im Browser'},
+en:{hookTag:'Sound familiar?',start:'Start',
+  steps:['Find the dates','Find a place','Track costs','Settle up'],
+  head:{hook:'So when are we <em>actually</em> going?',paint:'Everyone adds their <em>free days</em>.',heat:'<span class="g">Green</span> means: everyone’s free.',
+    vote:'Vote with <em>one tap</em>.',party:'Dates set – <em>countdown on!</em>',swipe:'Suggest places, <em>everyone swipes</em>.',
+    costs:'Log costs <em>on the go</em>.',settle:'Settle up: <span class="g">all square</span>.'},
+  word:'When do we <em>go?</em>',tag:'Find your holiday together – no group-chat chaos.',chips:['Dates','Place','Costs','Settle up'],note:'Invite by link · runs in your browser'}
+};
+var X=TXT[C.LANG];
+
+/* ---------- Zeitleiste (ms) ---------- */
+/* Kamerafahrten zwischen den Seiten (Seite 0 Hook, 1–4 Schritte, 5 Endkarte) */
+var TR=[[2300,3200,0,1],[14500,15400,1,2],[18300,19200,2,3],[22500,23400,3,4],[26600,27400,4,5]];
+var T0={paint:3200,heat:6200,vote:9200,party:11700,swipe:15400,costs:19200,settle:23400};
+var END=27400;
+/* Hook länger, damit der Chat lesbar ist: Bis HOLD läuft alles normal, dann steht die Zeit (nur der Chat läuft weiter),
+   danach läuft die Zeitleiste um HOOK_EXTRA verschoben weiter. */
+var HOLD=2000, HOOK_EXTRA=3600, DUR=30000+HOOK_EXTRA;
+function tl(t){return t<=HOLD?t:(t<HOLD+HOOK_EXTRA?HOLD:t-HOOK_EXTRA);}
+var SCENES=[0,T0.paint,T0.heat,T0.vote,T0.party,T0.swipe,T0.costs,T0.settle,END].map(function(x,i){return i?x+HOOK_EXTRA:0;});
+/* Überschriften: [Schlüssel, Seite, ein, aus] – die letzte je Seite bleibt stehen und fährt mit der Seite weg */
+var HEADS=[['hook',0,0,3200],['paint',1,2950,6000],['heat',1,6300,9000],['vote',1,9300,11550],['party',1,11800,15400],['swipe',2,15050,19200],['costs',3,18950,23400],['settle',4,23150,27400]];
+/* Etiketten: [Seite, Nummer (0 = Hook), ein] */
+var TAGS=[[0,0,0],[1,1,2800],[2,2,14950],[3,3,18750],[4,4,22950]];
+
+/* ---------- Route (Weltkoordinaten) ---------- */
+var P=[[180,600],[120,PG+20],[34,PG+92],[30,PG+260],[40,PG+420],[30,PG+560],
+  [180,PG+615],[330,2*PG+10],[326,2*PG+92],[330,2*PG+260],[322,2*PG+420],[330,2*PG+560],
+  [180,2*PG+615],[30,3*PG+10],[34,3*PG+92],[30,3*PG+260],[40,3*PG+420],[30,3*PG+560],
+  [180,3*PG+615],[330,4*PG+10],[326,4*PG+92],[330,4*PG+260],[322,4*PG+420],[330,4*PG+560],
+  [180,4*PG+615],[180,5*PG+60],[180,5*PG+150]];
+var PIN=[2,8,14,20], BOT=[5,11,17,23], FIN=26;
+function q(i){return P[Math.max(0,Math.min(P.length-1,i))];}
+var segs=[],d='M'+P[0][0]+' '+P[0][1];
+for(var i=0;i<P.length-1;i++){
+  var p0=q(i-1),p1=q(i),p2=q(i+1),p3=q(i+2);
+  var c1=[p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6],c2=[p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6];
+  segs.push([p1,c1,c2,p2]);
+  d+='C'+c1[0].toFixed(1)+' '+c1[1].toFixed(1)+' '+c2[0].toFixed(1)+' '+c2[1].toFixed(1)+' '+p2[0]+' '+p2[1];
+}
+function bz(s,u){var v=1-u;return [v*v*v*s[0][0]+3*v*v*u*s[1][0]+3*v*u*u*s[2][0]+u*u*u*s[3][0],v*v*v*s[0][1]+3*v*v*u*s[1][1]+3*v*u*u*s[2][1]+u*u*u*s[3][1]];}
+var TAB=[[0,P[0][0],P[0][1]]],WL=[0],RL=0;
+segs.forEach(function(s){var prev=s[0];for(var k=1;k<=48;k++){var pt=bz(s,k/48);RL+=Math.hypot(pt[0]-prev[0],pt[1]-prev[1]);TAB.push([RL,pt[0],pt[1]]);prev=pt;}WL.push(RL);});
+function ptAt(l){
+  if(l<=0)return [TAB[0][1],TAB[0][2]];if(l>=RL){var z=TAB[TAB.length-1];return [z[1],z[2]];}
+  var lo=0,hi=TAB.length-1;while(hi-lo>1){var m=(lo+hi)>>1;if(TAB[m][0]<l)lo=m;else hi=m;}
+  var a=TAB[lo],b=TAB[hi],k=(l-a[0])/(b[0]-a[0]);return [mix(a[1],b[1],k),mix(a[2],b[2],k)];
+}
+/* Marker-Fahrplan: [t, Routen-Länge, Easing] – auf der Station langsam weiter (Fortschritt), zwischen Stationen zügig */
+var MK=[[0,0],[2300,0],[3200,WL[PIN[0]],E.std],[14500,WL[BOT[0]],E.lin],[15400,WL[PIN[1]],E.std],[18300,WL[BOT[1]],E.lin],[19200,WL[PIN[2]],E.std],
+  [22500,WL[BOT[2]],E.lin],[23400,WL[PIN[3]],E.std],[26600,WL[BOT[3]],E.lin],[27400,WL[FIN],E.std]];
+
+/* ---------- Aufbau ---------- */
+var W=$('world'),H='';
+/* Kartenflecken */
+[[ -120,40,300],[220,300,280],[-90,PG+380,320],[230,2*PG+120,300],[-100,3*PG+300,300],[220,4*PG+360,300],[-60,5*PG+380,360]].forEach(function(s,i){
+  H+='<div class="'+(i%2?'sunsp':'sea')+'" style="left:'+s[0]+'px;top:'+s[1]+'px;width:'+s[2]+'px;height:'+s[2]+'px"></div>';});
+H+='<svg id="route" width="360" height="3840" viewBox="0 0 360 3840" aria-hidden="true">'+
+  '<path d="'+d+'" fill="none" stroke="#8a86a8" stroke-opacity=".7" stroke-width="3" stroke-linecap="round" stroke-dasharray="1 8"/>'+
+  '<path id="rDone" d="'+d+'" pathLength="'+RL.toFixed(2)+'" fill="none" stroke="#00775a" stroke-width="4" stroke-linecap="round" stroke-dasharray="0 '+(RL+10).toFixed(2)+'"/></svg>';
+W.innerHTML=H;
+function add(cls,html,css){var e=div(cls,html);if(css)e.style.cssText=css;W.appendChild(e);return e;}
+
+add('c-flag',C.ic('flag',11)+X.start,'left:'+P[0][0]+'px;top:'+(P[0][1]+26)+'px');
+var pins=PIN.map(function(ix,n){return add('c-pin','<span class="pa">'+(n+1)+'</span><span class="pb">'+C.ic('check',14)+'</span>','left:'+P[ix][0]+'px;top:'+P[ix][1]+'px');});
+var tagEls=TAGS.map(function(tg){
+  var pg=tg[0],n=tg[1],right=pg===2||pg===4;
+  var html=n?'<b>'+n+'</b>'+X.steps[n-1]:X.hookTag;
+  var css='top:'+(pg*PG+76)+'px;'+(n===0?'left:50%;margin-left:-70px':right?'right:56px;transform-origin:100% 50%':'left:56px;transform-origin:0 50%');
+  var e=add('c-tag '+(n?'mint':'sun'),html,css);
+  if(n===0){e.style.marginLeft='0';e.style.left='0';e.style.right='0';e.style.width='fit-content';e.style.margin='0 auto';e.style.transformOrigin='50% 50%';}
+  return {el:e,t:tg[2],r:right?3:-3};});
+var headEls=HEADS.map(function(h){return add('c-head',X.head[h[0]],'top:'+(h[1]*PG+112)+'px');});
+
+/* Hook: Gruppenchat */
+var chat=PS.chat({start:300,gap:650,badge:4300});var chatW=add('c-chat','');chatW.style.top='196px';chatW.appendChild(chat.el);
+
+/* Handys je Station */
+function mkPhone(page,tapeHue){
+  var w=add('c-ph','','top:'+(page*PG+178)+'px');
+  var ph=PS.phone();w.appendChild(ph.el);
+  var t1=div('c-tape');t1.style.cssText='left:-24px;top:4px;transform:rotate(-38deg)';
+  var t2=div('c-tape');t2.style.cssText='right:-24px;top:4px;transform:rotate(38deg)';
+  if(tapeHue)t1.style.background=t2.style.background=tapeHue;
+  w.appendChild(t1);w.appendChild(t2);
+  return {w:w,slot:ph.slot};
+}
+var glow=add('c-glow','','top:'+(PG+20)+'px');
+var ph1=mkPhone(1),ph2=mkPhone(2,'rgb(82 229 184/.55)'),ph3=mkPhone(3),ph4=mkPhone(4,'rgb(167 154 242/.55)');
+var SC={paint:PS.SCR.paint(),heat:PS.SCR.heat(),vote:PS.SCR.vote(),party:PS.SCR.party(),swipe:PS.SCR.swipe(),costs:PS.SCR.costs(),settle:PS.SCR.settle()};
+['paint','heat','vote','party'].forEach(function(n){ph1.slot.appendChild(SC[n].el);});
+ph2.slot.appendChild(SC.swipe.el);ph3.slot.appendChild(SC.costs.el);ph4.slot.appendChild(SC.settle.el);
+var seq1=PS.sequence([{s:SC.paint,tin:T0.paint},{s:SC.heat,tin:T0.heat,mode:'slide'},{s:SC.vote,tin:T0.vote,mode:'slide'},{s:SC.party,tin:T0.party,mode:'fade'}]);
+var seq2=PS.sequence([{s:SC.swipe,tin:T0.swipe}]),seq3=PS.sequence([{s:SC.costs,tin:T0.costs}]),seq4=PS.sequence([{s:SC.settle,tin:T0.settle}]);
+
+/* Sticker (Illustrationen) in der freien Spalte gegenüber der Route: [Datei, Seite, x, y, Drehung, Zeit, quadratisch?] */
+var STK=[['submitted.svg',1,285,262,7,6000],['vote-done.svg',1,285,392,-6,T0.party+1150],
+  ['empty-stays.svg',2,2,300,-7,16600],['empty-costs.svg',3,285,300,6,21000],['seal.svg',4,10,300,-8,T0.settle+900,true]];
+var stEls=STK.map(function(s){return {el:add('c-st'+(s[6]?' sq':''),'<img src="'+ILL+s[0]+'" alt="">','left:'+s[2]+'px;top:'+(s[1]*PG+s[3])+'px'),r:s[4],t:s[5]};});
+
+/* Marker „hier sind wir“ */
+var mk=add('c-mk',C.ic('sun',16));
+
+/* Endkarte (Seite 5) */
+var E0=5*PG;
+var eLogo=add('','');eLogo.id='endLogo';eLogo.style.top=(E0+108)+'px';eLogo.innerHTML=C.logo(96,'light','el');var ek=C.keys(eLogo);
+var eWord=add('',X.word);eWord.id='endWord';eWord.style.top=(E0+222)+'px';
+var eTag=add('');eTag.id='endTag';eTag.style.top=(E0+272)+'px';eTag.textContent=X.tag;
+var eChips=add('',X.chips.map(function(c,i){return '<span data-k="ec'+i+'"><b>'+C.ic('check',11)+'</b>'+c+'</span>';}).join(''));eChips.id='endChips';eChips.style.top=(E0+336)+'px';
+var ck=C.keys(eChips);
+var eNote=add('');eNote.id='endNote';eNote.style.top=(E0+420)+'px';eNote.textContent=X.note;
+
+/* Konfetti aus dem Ring (Handy 1: Seite 1, Maßstab .82 um 126|0) */
+var conf=C.confetti($('conf'),20270710,['#52e5b8','#ffcf4a','#a79af2','#f0503f','#5b48c9']);
+var BURST=T0.party+SC.party.burstAt;
+conf.burst(72,BURST,54+126+(6+SC.party.ring.x-126)*.82,178+(6+SC.party.ring.y)*.82,'burst',90);
+conf.burst(44,BURST+110,0,0,'rain',650);
+
+/* ---------- render ---------- */
+function camY(t){
+  var y=0;
+  for(var i=0;i<TR.length;i++){var r=TR[i];if(t>=r[1])y=r[3]*PG;else if(t>=r[0]){y=mix(r[2]*PG,r[3]*PG,ez(t,r[0],r[1]-r[0],E.std));break;}else break;}
+  return y;
+}
+function near(cy,page){return Math.abs(cy-page*PG)<PG+40;}
+function render(rt){
+  var t=tl(rt);
+  var cy=camY(t);
+  W.style.transform='translateY('+(-cy).toFixed(2)+'px)';
+
+  /* Route + Marker */
+  var l=C.track(MK,t)[0];
+  $('rDone').setAttribute('stroke-dasharray',l.toFixed(2)+' '+(RL+10).toFixed(2));
+  var mp=ptAt(l);S(mk,{x:mp[0],y:mp[1],s:1+.08*Math.sin(rt/260)});
+  /* Stationen abhaken (beim Aufbruch zur nächsten) */
+  for(var p=0;p<4;p++){var td=TR[p+1][0],kd=pr(t,td,160);
+    C.swap(pins[p].children[0],pins[p].children[1],kd);S(pins[p],{s:1+.3*bump(t,td,380)});}
+
+  /* Etiketten + Überschriften */
+  for(var g=0;g<tagEls.length;g++){var tg=tagEls[g],kt=ez(t,tg.t,520,E.bouncy);S(tg.el,{r:tg.r*(g?1:0)+mix(-10,0,kt)*(g?1:0),s:mix(.6,1,kt),o:pr(t,tg.t,100)});}
+  for(var h=0;h<HEADS.length;h++){var hd=HEADS[h],el=headEls[h];
+    if(t<hd[2]-5||t>hd[3]+5){O(el,0);continue;}
+    var kin=ez(t,hd[2],520,E.soft),ko=ez(t,hd[3]-200,200,E.exit);
+    S(el,{y:12*(1-kin)-8*ko,s:mix(.96,1,kin),o:pr(t,hd[2],160)*(1-ko)});}
+
+  /* Hook */
+  if(near(cy,0)){
+    var cin=ez(rt,40,460,E.emph),shk=(rt>4430&&rt<4780)?Math.sin((rt-4430)/26)*2.6*(1-pr(rt,4430,350)):0;
+    S(chat.el,{x:shk,y:mix(28,0,cin),s:mix(.96,1,cin),r:-2.5+shk*.5,o:pr(rt,40,200)});chat.render(rt);
+  }
+
+  /* Handys */
+  S(ph1.w,{s:.82*(1+.03*bump(t,BURST,420))});
+  if(near(cy,1))seq1(t);
+  if(near(cy,2))seq2(t);
+  if(near(cy,3))seq3(t);
+  if(near(cy,4))seq4(t);
+  S(glow,{s:1+.06*bump(t,BURST,700),o:.85*pr(t,BURST-100,420)*(1-pr(t,BURST+1500,900))});
+
+  /* Sticker */
+  for(var s=0;s<stEls.length;s++){var st=stEls[s],ks=ez(t,st.t,560,E.bouncy);S(st.el,{r:st.r+mix(-22,0,ks),s:mix(.3,1,ks),o:pr(t,st.t,90)});}
+
+  conf.render(t);
+
+  /* Endkarte */
+  S(eLogo,{s:mix(.5,1,ez(t,END-150,640,E.bouncy)),o:pr(t,END-150,160)});
+  C.logoAnim(ek.elSun,ek.elWaves,t,END);
+  S(eWord,{y:18*(1-ez(t,END+150,560,E.soft)),o:pr(t,END+150,200)});
+  S(eTag,{y:12*(1-ez(t,END+400,520,E.soft)),o:pr(t,END+400,220)});
+  for(var c=0;c<4;c++){var tc=END+500+c*80;S(ck['ec'+c],{r:(c%2?3:-3)*(1-ez(t,tc,460,E.soft)),s:mix(.6,1,ez(t,tc,460,E.bouncy)),o:pr(t,tc,120)});}
+  O(eNote,pr(t,END+800,300));
+}
+
+C.player({stage:$('stage'),duration:DUR,scenes:SCENES,render:render,name:'C'});
+})();
+</script>
+</body>
+</html>

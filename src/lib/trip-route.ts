@@ -18,7 +18,7 @@ export type StationState = "done" | "yours" | "waiting" | "next" | "later";
  * V1 «Termin steht», V2 «Alle sind dabei», A2 task «Infos eintragen», T-meet meeting point on
  * the first travel day (a plan, not a task), goals V6 / T-goal / D-goal.
  */
-export type StationId = "V1" | "V2" | "V3" | "A2" | "A1" | "D1" | "T-meet";
+export type StationId = "V1" | "V2" | "V3" | "V4" | "A2" | "A1" | "D1" | "D3" | "T-meet";
 export type GoalId = "V6" | "T-goal" | "D-goal";
 
 /** A value inside a message: formatted by the page (names as a list, dates, clock times). */
@@ -26,6 +26,10 @@ export type MsgValue =
   | string
   | number
   | { names: readonly string[] }
+  /** «Sara oder Kemal» – alternatives (W16 v2.16 «Bucher»). */
+  | { or: readonly string[] }
+  /** Travel-detail field codes → «Name laut Ausweis und Geburtsdatum» (W16 v2.16 V4). */
+  | { fields: readonly string[] }
   | { date: IsoDate }
   | { time: string }
   /** Money in cents of a currency – `exact` always shows two decimals (balances, W19 D.6). */
@@ -51,8 +55,12 @@ export type RouteTarget =
         | "staysRanking"
         | "costs"
         | "costsBalances"
-        | "costsNew";
-    };
+        | "costsNew"
+        | "travelData"
+        | "travelDataNew";
+    }
+  /** W20 H.5 – answer one request (the oldest open one, W16 v2.16 V4 row 1). */
+  | { kind: "page"; page: "travelDataRequest"; requestId: string };
 
 export type RouteAction =
   | { kind: "announce" }
@@ -78,7 +86,9 @@ export interface RouteRemind {
     | "stay-book"
     /** Costs (W16 v2.15): own debtors (`single`/status) – all open settlements (organiser). */
     | "settle"
-    | "settle-all";
+    | "settle-all"
+    /** Travel details (W16 v2.16): open people of the viewer's own request(s). */
+    | "travel-data";
   /** Placeholder ids (one → single step, several → list). Empty for `orga`. */
   keys: string[];
   label: Msg;
@@ -130,7 +140,7 @@ export interface TripGoal {
 }
 
 export interface TripTile {
-  area: "info" | "stay" | "costs";
+  area: "info" | "stay" | "costs" | "travelData";
   title: Msg;
   /** Parts of the one status line, joined with « · ». */
   status: Msg[];
@@ -186,6 +196,11 @@ export interface TripRoute {
 export interface RouteTrip {
   start: IsoDate;
   end: IsoDate;
+  /**
+   * People with the marking «Bucht» (F-056) – organiser first, then by marking. Also when the
+   * travel-details area is off (V3 uses it). Empty = the organiser books (W18 E.16).
+   */
+  bookerNames?: readonly string[];
   /** Day the dates were fixed (start of the «Vorfreude» ring, V1 «7 Tage nach Festlegung»). */
   fixedOn: IsoDate;
   /** The organiser tapped WhatsApp/share/copy in «Allen Bescheid geben» (V1). */
@@ -200,6 +215,8 @@ export interface RouteTrip {
 
 export interface RouteViewer {
   role: "organizer" | "member";
+  /** The viewer carries the marking «Bucht» (F-056). */
+  booker?: boolean;
 }
 
 /** Status of the info page (F-033) for the way – null = area not built. */
@@ -269,6 +286,49 @@ export interface CostStatus {
   firstHasPayInfo: boolean;
 }
 
+/** Answer states of a request (W16 v2.16 adapter `travelDataStatus()`). */
+export type TravelAnswerState = "open" | "released" | "declined" | "expired";
+
+/**
+ * Status of the personal travel details (F-054) – adapter `travelDataStatus()` of W16 v2.16.
+ * Numbers only, never values. `total` = asked members with an account (no placeholders).
+ */
+export interface TravelDataStatus {
+  /** Departure + 7 (the promised date). */
+  deleteOn: IsoDate;
+  /** The deletion date has passed (values are never read any more). */
+  deleted: boolean;
+  /** D3: the viewer had an active release at the end of the trip, or asked as «Bucht». */
+  affected: boolean;
+  /** Requests to the viewer – open requests only (closed ones are history). */
+  toMe: readonly {
+    requestId: string;
+    byName: string;
+    purpose: string;
+    fieldKeys: readonly string[];
+    state: TravelAnswerState;
+  }[];
+  /** The viewer's own requests, oldest first. */
+  mine: readonly {
+    requestId: string;
+    purpose: string;
+    released: number;
+    total: number;
+    open: readonly { key: string; name: string }[];
+    complete: boolean;
+    usedSinceComplete: boolean;
+    closed: boolean;
+  }[];
+  /** Organiser and «Bucht»: open requests of OTHER «Bucht» people (numbers only). */
+  others: readonly {
+    byName: string;
+    purpose: string;
+    released: number;
+    total: number;
+    complete: boolean;
+  }[];
+}
+
 export interface RouteAreas {
   group: { placeholders: readonly { id: string; name: string; withoutApp: boolean }[] };
   info: InfoStatus | null;
@@ -276,7 +336,9 @@ export interface RouteAreas {
   stay?: StayStatus | null;
   /** Increment 10 – undefined/null: area not built (older callers and tests). */
   costs?: CostStatus | null;
-  // Increments 11–12 add `travelData`, `documents` adapters here.
+  /** Increment 11 – null: area not built or switched off (TRAVEL_DATA_ENABLED, R.9 I11-12). */
+  travelData?: TravelDataStatus | null;
+  // Increment 12 adds the `documents` adapter here.
 }
 
 /** A2 appears this many days before the arrival when the infos are still empty (W16 v2.4). */
@@ -288,9 +350,29 @@ export const ANNOUNCE_DAYS = 7;
  * Default urgency under «Heute» (W16 v2.5): what blocks others first (1), then dates/deadlines
  * (2), then own contributions (3). V3 sets its rank per state (W16 v2.14).
  */
-const RANK: Record<StationId, number> = { "T-meet": 0, V1: 1, A2: 2, V2: 3, V3: 3, A1: 3, D1: 2 };
-/** Catalogue order (W16 v2.3/v2.15) – ties and every other group. */
-const ORDER: Record<StationId, number> = { "T-meet": 0, V1: 1, V2: 2, V3: 3, A2: 4, A1: 5, D1: 6 };
+const RANK: Record<StationId, number> = {
+  "T-meet": 0,
+  V1: 1,
+  A2: 2,
+  V2: 3,
+  V3: 3,
+  V4: 3,
+  A1: 3,
+  D1: 2,
+  D3: 5,
+};
+/** Catalogue order (W16 v2.3/v2.15/v2.16) – ties and every other group. */
+const ORDER: Record<StationId, number> = {
+  "T-meet": 0,
+  V1: 1,
+  V2: 2,
+  V3: 3,
+  V4: 4,
+  A2: 5,
+  A1: 6,
+  D1: 7,
+  D3: 8,
+};
 
 export function subphaseOf(start: IsoDate, end: IsoDate, today: IsoDate): Subphase {
   if (today < start) return "before";
@@ -425,10 +507,18 @@ function v2Station(
   };
 }
 
-/** A2: organiser, infos empty (no meeting point, no address), ≤ 21 days before arrival. */
+/** May edit the infos (W22 E): organiser or «Bucht». */
+const infoEditor = (viewer: RouteViewer) => viewer.role === "organizer" || viewer.booker === true;
+
+/** Who fills in the infos – organiser first, then «Bucht» people, no doubles (W22 E). */
+function infoNames(trip: RouteTrip): string[] {
+  return [...new Set([trip.orgaName, ...(trip.bookerNames ?? [])])].slice(0, 4);
+}
+
+/** A2: organiser or «Bucht», infos empty (no meeting point, no address), ≤ 21 days before arrival. */
 function infoTask(viewer: RouteViewer, areas: RouteAreas, daysToGo: number): TripStation | null {
   const info = areas.info;
-  if (viewer.role !== "organizer" || !info) return null;
+  if (!infoEditor(viewer) || !info) return null;
   if (info.meeting || info.hasAddress || daysToGo > INFO_TASK_DAYS) return null;
   return {
     id: "A2",
@@ -447,10 +537,11 @@ function infoTile(viewer: RouteViewer, trip: RouteTrip, info: InfoStatus): TripT
   if (info.checkIn) parts.push(msg("tiles.infoCheckIn", { time: { time: info.checkIn } }));
   if (info.hasAddress) parts.push(msg("tiles.infoAddress"));
   if (parts.length === 0) {
+    const names = infoNames(trip);
     parts.push(
-      viewer.role === "organizer"
+      infoEditor(viewer)
         ? msg("tiles.infoEmptyOrga")
-        : msg("tiles.infoEmpty", { orga: trip.orgaName }),
+        : msg("tiles.infoEmpty", { names: { names }, count: names.length }),
     );
   }
   return {
@@ -476,8 +567,9 @@ function favouriteMsg(prefix: string, stay: StayStatus): Msg {
 }
 
 /**
- * Station V3 (W16 v2.14 table, first matching rule wins; «Bucher» = organiser in Increment 9).
- * Counting base `membersTotal` = members without placeholders.
+ * Station V3 (W16 v2.14 table, first matching rule wins). «Bucher» = the «Bucht» people, or the
+ * organiser when nobody carries the marking (W16 v2.16, W18 E.16). Counting base `membersTotal`
+ * = members without placeholders.
  */
 export function v3Station(
   trip: RouteTrip,
@@ -486,6 +578,10 @@ export function v3Station(
   sub: Subphase,
 ): TripStation {
   const orga = viewer.role === "organizer";
+  const bookers = trip.bookerNames && trip.bookerNames.length > 0 ? trip.bookerNames : null;
+  const isBooker = bookers ? viewer.booker === true : orga;
+  const bookerList = bookers ?? [trip.orgaName];
+  const who: MsgValue = { or: bookerList };
   const base = {
     id: "V3" as const,
     kind: "station" as const,
@@ -554,19 +650,19 @@ export function v3Station(
       ...(orga ? { textActions: [fixNow, withoutAppAction] } : {}),
     };
   }
-  if (orga) {
-    // 4 – everybody rated, nothing picked: pick (rank 1, blocks the others).
-    if (!stay.chosen && allDone) {
-      return {
-        ...base,
-        state: "yours",
-        rank: 1,
-        status: favouriteMsg("v3.fix", stay),
-        primary: { label: msg("v3.fixAction"), action: RANKING },
-      };
-    }
-    // 5 – picked, not booked: book (rank 2, a date/deadline).
-    if (stay.chosen) {
+  // 4 – organiser: everybody rated, nothing picked: pick (rank 1, blocks the others).
+  if (orga && !stay.chosen && allDone) {
+    return {
+      ...base,
+      state: "yours",
+      rank: 1,
+      status: favouriteMsg("v3.fix", stay),
+      primary: { label: msg("v3.fixAction"), action: RANKING },
+    };
+  }
+  if (stay.chosen) {
+    // 5 – picked, not booked: every «Bucher» books (rank 2, a date/deadline).
+    if (isBooker) {
       return {
         ...base,
         state: "yours",
@@ -577,6 +673,24 @@ export function v3Station(
         primary: { label: msg("v3.toStay"), action: STAYS },
       };
     }
+    // 8 – everybody else (also an organiser without the marking) waits for the «Bucher».
+    const single = bookerList.length === 1 ? bookerList[0] : undefined;
+    return {
+      ...base,
+      state: "waiting",
+      status: stay.rebook
+        ? msg("v3.memberRebook", { bookers: who, title: chosenTitle })
+        : msg("v3.memberBook", { bookers: who, title: chosenTitle }),
+      short: msg("v3.shortBook", { bookers: who, title: chosenTitle }),
+      remind: {
+        occasion: "stay-book",
+        keys: [],
+        label: single ? msg("v2.nudgeOrga", { orga: single }) : msg("v3.nudgeBookers"),
+        name: msg("v3.nudgeBookName", { bookers: who, title: chosenTitle }),
+      },
+    };
+  }
+  if (orga) {
     // 6 (organiser) – waiting for ratings.
     const status = stay.favourite
       ? msg("v3.waitingOrga", {
@@ -597,23 +711,6 @@ export function v3Station(
         name: msg("v3.remindName"),
       },
       textActions: [fixNow, withoutAppAction],
-    };
-  }
-  // 8 – member: picked, not booked.
-  if (stay.chosen) {
-    return {
-      ...base,
-      state: "waiting",
-      status: stay.rebook
-        ? msg("v3.memberRebook", { orga: trip.orgaName, title: chosenTitle })
-        : msg("v3.memberBook", { orga: trip.orgaName, title: chosenTitle }),
-      short: msg("v3.shortBook", { orga: trip.orgaName, title: chosenTitle }),
-      remind: {
-        occasion: "stay-book",
-        keys: [],
-        label: msg("v2.nudgeOrga", { orga: trip.orgaName }),
-        name: msg("v3.nudgeBookName", { orga: trip.orgaName, title: chosenTitle }),
-      },
     };
   }
   // 7 – member: everybody rated, the organiser picks.
@@ -880,6 +977,201 @@ function costsTile(costs: CostStatus): TripTile {
   return { area: "costs", title: msg("tiles.costs"), status: parts, href: COSTS };
 }
 
+/* ------------------------------------------------------------------------------------------ */
+/* Travel details: V4, D3, tile (W16 v2.16, Increment 11)                                       */
+/* ------------------------------------------------------------------------------------------ */
+
+const TRAVEL_DATA: RouteTarget = { kind: "page", page: "travelData" };
+
+/** «Name laut Ausweis und Geburtsdatum» – field codes, labelled and joined by the page. */
+function fieldList(keys: readonly string[]): MsgValue {
+  return { fields: keys };
+}
+
+/**
+ * Station V4 «Reisedaten» (W16 v2.16 table, first matching row wins) – only in Vorbereitung and
+ * Unterwegs. Returns null when the station is not visible. Row 5 («später») never becomes «als
+ * Nächstes» and does not count in the way meta (`laterOnly`).
+ */
+export function v4Station(
+  data: TravelDataStatus,
+  viewer: RouteViewer,
+  sub: Subphase,
+): (TripStation & { laterOnly?: boolean }) | null {
+  if (sub === "after") return null;
+  const orga = viewer.role === "organizer";
+  const booker = viewer.booker === true;
+  const toMe = data.toMe.filter((r) => r.state !== "expired");
+  const runningOthers = data.others;
+  if (toMe.length === 0 && !booker && !(orga && runningOthers.length > 0)) return null;
+  const base = {
+    id: "V4" as const,
+    kind: "station" as const,
+    title: msg("v4.title"),
+    href: TRAVEL_DATA,
+  };
+
+  // 1 – a request to me is open: my turn, rank 1 (blocks the asker).
+  const openToMe = toMe.filter((r) => r.state === "open");
+  const first = openToMe[0];
+  if (first) {
+    const bys = [...new Set(openToMe.map((r) => r.byName))];
+    return {
+      ...base,
+      state: "yours",
+      rank: 1,
+      title:
+        openToMe.length === 1
+          ? msg("v4.titleFor", { by: first.byName })
+          : msg("v4.titleMany", { count: openToMe.length }),
+      status:
+        bys.length === 1
+          ? msg("v4.asks", { by: first.byName })
+          : msg("v4.asksMany", { names: { names: bys.slice(0, 2) } }),
+      detail: msg("v4.asksLong", {
+        purpose: first.purpose,
+        fields: fieldList(first.fieldKeys),
+        by: first.byName,
+      }),
+      primary: {
+        label: msg("v4.share"),
+        action: { kind: "page", page: "travelDataRequest", requestId: first.requestId },
+      },
+    };
+  }
+  // The oldest request of mine that is not closed decides rows 2/3 (R.9 I11-03).
+  const own = booker ? data.mine.find((r) => !r.closed) : undefined;
+  // 2 – everybody answered, at least one shared, not used yet: book now (rank 2).
+  if (own && own.complete && own.released > 0 && !own.usedSinceComplete) {
+    return {
+      ...base,
+      state: "yours",
+      rank: 2,
+      status: msg("v4.allIn", { released: own.released, total: own.total }),
+      primary: { label: msg("v4.toArea"), action: TRAVEL_DATA },
+    };
+  }
+  // 3 – my request has open people: waiting, reminder `travel-data`.
+  if (own && own.open.length > 0) {
+    const names = own.open.map((p) => p.name);
+    return {
+      ...base,
+      state: "waiting",
+      // Names as a list – longer lists end with «und n weitere» (ux-spec §10.3).
+      status: msg("v4.waiting", { released: own.released, total: own.total, names: { names } }),
+      short: msg("v4.shortMine"),
+      remind: {
+        occasion: "travel-data",
+        keys: [own.requestId],
+        label: msg("v4.remind"),
+        name: msg("v4.remindName"),
+      },
+    };
+  }
+  // 4 – organiser: a request of another «Bucht» person is still running.
+  const running = orga ? runningOthers.filter((r) => !r.complete) : [];
+  const firstRunning = running[0];
+  if (firstRunning) {
+    const bys = [...new Set(running.map((r) => r.byName))];
+    return {
+      ...base,
+      state: "waiting",
+      status:
+        bys.length === 1
+          ? msg("v4.collecting", {
+              by: firstRunning.byName,
+              released: firstRunning.released,
+              total: firstRunning.total,
+            })
+          : msg("v4.collectingMany", { names: { names: bys } }),
+      short: msg("v4.shortOthers", { by: firstRunning.byName }),
+    };
+  }
+  // 5 – «Bucht» without any own request and nothing else: a quiet «später» line.
+  if (
+    booker &&
+    data.mine.length === 0 &&
+    toMe.length === 0 &&
+    !(orga && runningOthers.length > 0)
+  ) {
+    if (sub !== "before") return null;
+    return { ...base, state: "later", status: msg("v4.later"), laterOnly: true };
+  }
+  // 6 – done.
+  return { ...base, state: "done", status: v4DoneStatus(data, booker, toMe, own, orga) };
+}
+
+function v4DoneStatus(
+  data: TravelDataStatus,
+  booker: boolean,
+  toMe: TravelDataStatus["toMe"],
+  own: TravelDataStatus["mine"][number] | undefined,
+  orga: boolean,
+): Msg {
+  if (booker && data.mine.length > 0) {
+    if (!own) return msg("v4.doneClosed");
+    if (own.released === 0) return msg("v4.doneNobody");
+    return msg("v4.doneMine", { released: own.released, total: own.total });
+  }
+  if (toMe.length > 1) return msg("v4.doneMany", { count: toMe.length });
+  const answer = toMe[0];
+  if (answer?.state === "released") return msg("v4.doneShared", { by: answer.byName });
+  if (answer?.state === "declined") return msg("v4.doneDeclined", { by: answer.byName });
+  const done = orga ? data.others[0] : undefined;
+  if (done) return msg("v4.doneOthers", { by: done.byName });
+  return msg("v4.doneDeleted");
+}
+
+/** Station D3 «Reisedaten gelöscht» (W16 v2.16) – only in Danach, only when it concerned me. */
+export function d3Station(data: TravelDataStatus, sub: Subphase): TripStation | null {
+  if (sub !== "after" || !data.affected) return null;
+  const date: MsgValue = { date: data.deleteOn };
+  return {
+    id: "D3",
+    kind: "station",
+    title: msg("d3.title"),
+    href: TRAVEL_DATA,
+    ...(data.deleted
+      ? { state: "done" as const, status: msg("d3.done", { date }) }
+      : { state: "next" as const, status: msg("d3.before", { date }) }),
+  };
+}
+
+/**
+ * Tile «Reisedaten» (W16 v2.16) – Vorbereitung/Unterwegs, only without a visible V4 in the
+ * states dran/wartet/später, for «Bucht» with stored releases AND for every person with an own
+ * stored release (withdrawal must stay one tap away, Art. 7 Abs. 3 DSGVO).
+ */
+function travelTile(
+  data: TravelDataStatus,
+  viewer: RouteViewer,
+  sub: Subphase,
+  v4: TripStation | null,
+): TripTile | null {
+  if (sub === "after" || data.deleted) return null;
+  if (v4 && v4.state !== "done") return null;
+  const date: MsgValue = { date: data.deleteOn };
+  const withData =
+    viewer.booker === true ? data.mine.filter((r) => !r.closed && r.released > 0) : [];
+  const status: Msg[] = [];
+  const firstOwn = withData[0];
+  if (firstOwn) {
+    status.push(
+      withData.length === 1
+        ? msg("tiles.travelMine", { released: firstOwn.released, total: firstOwn.total })
+        : msg("tiles.travelMineMany", { count: withData.length }),
+    );
+  } else {
+    const sharedWith = [
+      ...new Set(data.toMe.filter((r) => r.state === "released").map((r) => r.byName)),
+    ];
+    if (sharedWith.length === 0) return null;
+    status.push(msg("tiles.travelShared", { names: { names: sharedWith } }));
+  }
+  status.push(msg("tiles.travelDeleteOn", { date }));
+  return { area: "travelData", title: msg("tiles.travel"), status, href: TRAVEL_DATA };
+}
+
 const byCatalogue = (a: TripStation, b: TripStation) => ORDER[a.id] - ORDER[b.id];
 const rankOf = (s: TripStation) => s.rank ?? RANK[s.id];
 const byUrgency = (a: TripStation, b: TripStation) =>
@@ -904,12 +1196,19 @@ export function tripRoute(
 
   const stay = areas.stay ?? null;
   const costs = areas.costs ?? null;
+  const travel = areas.travelData ?? null;
   const d1 = costs && sub === "after" ? d1Station(costs, viewer, trip.orgaName) : null;
+  const v4 = travel ? v4Station(travel, viewer, sub) : null;
+  const d3 = travel ? d3Station(travel, sub) : null;
+  // V4 «später» (row 5) is a quiet line: never «als Nächstes», not counted (W16 v2.16).
+  const v4Later = v4?.laterOnly ? v4 : null;
   const stations = [
     v1Station(trip, viewer, today, sub),
     v2Station(trip, viewer, areas, sub),
     ...(stay ? [v3Station(trip, viewer, stay, sub)] : []),
+    ...(v4 && !v4Later ? [v4] : []),
     ...(d1 ? [d1] : []),
+    ...(d3 ? [d3] : []),
   ];
   const tasks = [
     ...(sub === "before" ? [infoTask(viewer, areas, daysToGo)] : []),
@@ -927,7 +1226,10 @@ export function tripRoute(
     .filter((s) => s.kind === "station" && (s.state === "next" || s.state === "later"))
     .sort(byCatalogue);
   const next = open[0] ? { ...open[0], state: "next" as const } : null;
-  const later = open.slice(1).map((s) => ({ ...s, state: "later" as const }));
+  const later = [
+    ...open.slice(1).map((s) => ({ ...s, state: "later" as const })),
+    ...(v4Later ? [stripLater(v4Later)] : []),
+  ];
 
   // Appointments of the day (Unterwegs): in Increment 8 only the meeting point on day 1.
   const plans: TripStation[] =
@@ -957,6 +1259,7 @@ export function tripRoute(
   const doneStations = done.filter((s) => s.kind === "station");
   const countable = stations.length;
   const d1Done = d1?.state === "done";
+  const afterStations = [d1, d3].filter((s): s is TripStation => s !== null);
   const costsOpen = costs !== null && costs.expenseCount > 0 && !costs.allSettled && !costs.closed;
   return {
     subphase: sub,
@@ -1007,8 +1310,11 @@ export function tripRoute(
           : null
         : sub === "during"
           ? msg("meta.day", { day: index, total })
-          : d1
-            ? msg("meta.done", { done: d1Done ? 1 : 0, total: 1 })
+          : afterStations.length > 0
+            ? msg("meta.done", {
+                done: afterStations.filter((s) => s.state === "done").length,
+                total: afterStations.length,
+              })
             : null,
     doneSummary:
       sub === "during"
@@ -1044,9 +1350,16 @@ export function tripRoute(
       // Costs: always in Vorbereitung/Unterwegs; in Danach only without a visible D1 station.
       ...(costs && (sub !== "after" || d1 === null || d1Done) ? [costsTile(costs)] : []),
       ...(info ? [infoTile(viewer, trip, info)] : []),
+      ...(travel ? [travelTile(travel, viewer, sub, v4)] : []),
     ].filter((tile): tile is TripTile => tile !== null),
     departureDay: today === trip.start,
   };
+}
+
+function stripLater(station: TripStation & { laterOnly?: boolean }): TripStation {
+  const rest = { ...station };
+  delete rest.laterOnly;
+  return rest;
 }
 
 /** Heute-Satz H-1–H-7 with the precedence H-7 → H-6 → H-1 → H-2 → H-3/H-4/H-5b (W16 v2.5). */

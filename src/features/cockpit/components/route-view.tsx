@@ -368,6 +368,8 @@ function StationActions({
             const { occasion, keys } = station.remind;
             if (occasion === "placeholder" || occasion === "orga") {
               cockpit?.open({ kind: "remind", occasion, keys });
+            } else if (occasion === "travel-data") {
+              cockpit?.open({ kind: "travel", step: { requestId: keys[0] } });
             } else if (occasion === "settle" || occasion === "settle-all") {
               const data = cockpit?.data.costRemind;
               if (data) cockpit.open({ kind: "cost", step: firstCostStep(data, occasion) });

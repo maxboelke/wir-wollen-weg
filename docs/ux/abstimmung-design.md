@@ -1,6 +1,6 @@
 # Abstimmung UI/UX ↔ Design
 
-Stand: 2026-10-22 (Runde 4 – Cockpit Variante C „Reiseverlauf“, §12; vorher Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
+Stand: 2026-10-23 (Runde 7 – Inkrement 11 „Bucht“ + Reisedaten, §16; Runde 4 – Cockpit Variante C „Reiseverlauf“, §12; vorher Runde 3 – Richtung B, Motion) · Verantwortlich: UI/UX · Gegenstück: `docs/design/abstimmung-ux.md` (Designer) · Bezug: [ux-spec.md](ux-spec.md), [Wireframes](wireframes/README.md)
 
 ## 0. Stand
 
@@ -473,7 +473,114 @@ Keine an den Auftraggeber. An den CEO (Umfang, Empfehlung UX): **Notiz** zur Aus
 | UM-14 – UM-19 | neu (UM-15 mit Prüfauftrag) | Motion Designer |
 | Notiz, „Als Ausgabe eintragen“ | Empfehlung | CEO |
 
+## 16. Runde 7 – Inkrement 11 „Bucht“ + Reisedaten (W20 H, W16 v2.16, W22 E, W18 E.16, 2026-10-23)
+
+Struktur, Zustände und Texte: [W20 H](wireframes/w20-reisedaten.md) (gilt vor W20 A–G), Cockpit [W16 v2.16](wireframes/w16-cockpit.md), Infos [W22 E](wireframes/w22-infoseite.md), Unterkunft [W18 E.16](wireframes/w18-unterkunft-swipen.md); Daten/Rechte `docs/product/features.md` R.9. Prototyp `mockups/reise-managen/index.html` `#/data*` ist **überholt** in: Geburtsdatum (jetzt drei Felder), Einwilligungstext (Regel + „derzeit am …“), Demo-Hinweis (nicht wegklickbar, `DEMO`-Präfix), „Wer bucht?“ (jetzt Unterschritt von „Wer ist dabei?“), Maskierung Dokumentnummer. **Blockierend für den Bau (R.9 „Voraussetzung“): D-64 (Icons + Chip), D-67 (Leer-Illustration); Motion UM-20, UM-21.**
+
+### 16.1 Punkte an den Designer (D-64 – D-71)
+| ID | Thema | Bitte |
+|---|---|---|
+| **D-64** | **Icons + Chip «Bucht»** | Neu im Sprite: `id-card` (Bereich Reisedaten, V4/D3, Kachel, Chip, Reisemenü «Wer bucht? …») und `shield` (Datenschutz-Hinweise, Einwilligung, Taste «An Lena freigeben»). Chip «Bucht» / «Booking» mit `id-card` 16 + Text, unterscheidbar vom Orga-Chip (Krone) ohne Farbe allein. **Blockierend.** |
+| **D-65** | **Hinweis-Stile** | (a) `note demo` – Amber + `warning`, **nicht schließbar**, auch Dark Mode ≥ 4,5 : 1; (b) Warnhinweis Dokumentnummer (Amber, direkt unter dem Schalter); (c) Verantwortungs-Hinweis „Bucht“ und „Wer sieht was?“ (Info + `shield`). Masken «K•••», «••.••.••••», «C••••7»: Figtree tabular wie D-62, Punkte in `text-muted` mit ≥ 4,5 : 1. |
+| **D-66** | **Formular „Angaben“ / „Freigeben“** | Schritt-Balken (2 Segmente, wie vorhandene Zwei-Schritt-Abläufe); Datum als **drei Felder** Tag 4 em · Monat 4 em · Jahr 6 em mit sichtbaren Labels, bei < 22 em zweizeilig; Einwilligung als **Karte mit Checkbox** (ganze Karte klickbar, angehakt: 2 px `selected`-Rand + Tönung, nicht nur Farbe); Zusammenfassung „Das gibst du frei“ als `<dl>`. |
+| **D-67** | **Leer-Illustration** `empty-travel-data.svg` | Stil B wie `empty-costs`, Motiv z. B. Ausweiskarte mit Schild/Schloss, Minze-Wellen; ohne Text, ohne Gesicht/Foto auf der Karte; Ebenen `data-anim`. Für „Reisedaten gelöscht“ und „Gerade nichts zu tun“. **Blockierend** (R.9). |
+| **D-68** | **Bereichsfarbe Reisedaten** | design-system §9.23 (Entwurf, parallel) nennt Lavendel-200 / Indigo (`travel-area-*`) – **UX einverstanden**, Bedingung: Unterkunft nutzt ebenfalls Lavendel, also müssen Kacheln/Stationen sich über Icon (`bed` vs. `id-card`) und Titel unterscheiden (tun sie). Nicht Koralle (Aufgabe), nicht Amber (Warnung). |
+| **D-69** | **Personen-Karte (Sicht „Bucht“)** | Kopf Avatar · Name (h4) · Status-Chip (freigegeben = Minze + ✓, offen = Uhr, klärt es direkt = neutral, noch nicht dabei = wie Platzhalter); `<dl>`-Zeilen Label/Wert + Kopieren-Icon-Taste 44 px rechts; «Anzeigen»/«Verbergen» (`eye`/`eye-off`) sekundär klein + 13 px «geändert am …»; ab 960 px zwei Spalten. Zählkarte für fremde Anfragen (nur Zahl + Chips). |
+| **D-70** | **Zugriffsprotokoll + Karte „Freigegeben an …“** | Siegel 40 (vorhandenes `seal.svg`, wie D-63) neben h3; Protokoll als ruhige Liste (Icon `eye` bzw. `copy` 16, Text, Zeit rechts oder darunter), keine Tabellenoptik; destruktiv-leise Text-Taste «Freigabe zurückziehen …». |
+| **D-71** | **Unterschritt „Wer bucht?“** | Schalter-Zeilen wie Bewegungs-Schalter (design-system Schalter), Avatar links, gesperrt mit Grund; Zähler «2 von 3 vergeben»; Info-Zeile «Noch niemand bucht …» für die Orga. Reisemenü-Punkt mit `id-card`. |
+
+### 16.2 Punkte an den Motion Designer (UM-20 – UM-24, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-20** | Freigegeben | Karte „Freigegeben an …“ tritt ein, **Siegel 40 ploppt** (wie Festlegen der Unterkunft), **kein Konfetti** (R.9: kein Konfetti in diesem Bereich) | ohne Bewegung (Überblenden) |
+| **UM-21** | Anzeigen ↔ Verbergen | je Feld **Überblenden 140 ms**, keine Buchstaben-/„Entschlüsseln“-Animation (R.9) | sofort |
+| **UM-22** | Kopieren | Icon `copy` → `check` mit Pop (`fast`), 1,2 s, zurück | Wechsel ohne Pop |
+| **UM-23** | Widerruf / Abschließen / Löschung / Markierung entzogen | Karte überblendet in den neuen Zustand; **kein** Schredder-/Auflösungseffekt | sofort |
+| **UM-24** | Schalter „Wer bucht?“, Chip «Bucht» | Standard-Schalter; Chip blendet in der Liste ein/aus (`fast`); keine Haptik | sofort |
+Alle Momente nur bei eigener Aktion im Client. **M-U14** (Fokus nach «Als gebucht markieren») ist in W18 E.16 bestätigt.
+
+### 16.3 Fragen
+Keine an den Auftraggeber. An PM/CEO (nicht blockierend): Widerruf, solange die Festlegung aufgehoben ist (W20 H.17 – Empfehlung Zeile im Konto).
+
+### 16.4 Abstimmungsstand Runde 7
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-64, D-67 | neu, **blockierend** | Designer |
+| D-65, D-66, D-68 – D-71 | neu (mit vorhandenen Tokens baubar) | Designer |
+| UM-20, UM-21 | neu, **blockierend** (R.9) | Motion Designer |
+| UM-22 – UM-24 | neu | Motion Designer |
+| M-U14 | von UX bestätigt (W18 E.16) | – |
+| Widerruf in Phase 2 | Empfehlung | PM/CEO |
+
+## 17. Runde 8 – Geschlossene Beta „Stufe B“ & installierte Web-App (W23, 2026-10-23)
+
+Struktur, Abläufe und Texte: [W23](wireframes/w23-beta-und-installation.md), Regeln [ux-spec §15](ux-spec.md). Die App wird in der Beta vor allem **als Web-App vom iPhone-Home-Bildschirm** genutzt – damit werden App-Symbol, Startbild und Statusleiste zum ersten Eindruck.
+
+### 17.1 Punkte an den Designer (D-72 – D-80)
+
+| Nr. | Thema | Bitte | Bezug |
+|---|---|---|---|
+| **D-72** | **Etikett „Beta“** | Kleiner Chip rechts neben der Wortmarke im globalen Header (hell/dunkel), Text „Beta“ (DE = EN), Kontrast ≥ 4,5 : 1, gleiche Höhe wie Wortmarke-x-Höhe o. Ä.; muss bei 320 px neben Bildmarke + Sprachumschalter passen. **Blockierend** (klein, mit vorhandenen Tokens lösbar). | W23 D.1 |
+| **D-73** | **Install-Skizzen iOS** | Drei kleine, schematische Skizzen (kein Screenshot, kein Apple-Markenmaterial): (1) Safari-Leiste unten mit hervorgehobenem „⋯“ bzw. Teilen-Symbol, (2) Teilen-Blatt mit hervorgehobener Zeile „Zum Home-Bildschirm“, (3) Dialog mit unserem Symbol, Name, Schalter „Als Web-App öffnen“ an, „Hinzufügen“. Je DE/EN-Beschriftung (oder textfrei + Text daneben – bevorzugt **textfrei**, dann eine Version für beide Sprachen), hell/dunkel, SVG, max. 328 px breit. Plus optional Android-Skizze „⋮ → App installieren“. **Blockierend für die Endfassung** von `/install` – bis dahin baut der Developer die Text-Anleitung ohne Bilder. | W23 B.2, B.3, F |
+| **D-74** | **App-Symbol-Varianten** | Prüfen/liefern: `apple-touch-icon` 180 px **randlos, ohne Transparenz** (iOS füllt Transparenz schwarz), Motiv mit genug Rand für die iOS-Maske; Symbol auf hellem **und** dunklem Home-Bildschirm testen. Kein „Beta“ im Symbol (bleibt nach der Beta stehen). | W23 C.1 |
+| **D-75** | **Statusleiste & Theme-Farbe** | Auf dem iPhone ist die Statusleisten-Schrift in der App immer **weiß** (`black-translucent`). Bitte (a) die Fläche hinter der Statusleiste auf hellen Seiten (Login, Meine Reisen, Konto, Hilfe, Rechtstexte, Offline) gestalten – Vorschlag: Indigo-Band in Höhe der Safe Area, ggf. Meine-Reisen-Kopf insgesamt in Indigo; (b) Dark-Mode-Wert für `theme-color` (Android) und das Band nennen. | W23 C.3 |
+| **D-76** | **Startbild & Offline** | (a) `background_color` des Manifests: Vorschlag Indigo statt `#F4F2FB`, damit es im Dark Mode keinen hellen Blitz gibt – bitte bestätigen; (b) iOS-Startbilder (`apple-touch-startup-image`) ja/nein – Empfehlung UX: **nein** in der Beta (viele Gerätegrößen, Pflegeaufwand), sofern (a) den Blitz verhindert; (c) kleine Illustration für die Offline-Seite (oder vorhandene wiederverwenden). | W23 C.2, C.3 |
+| D-77 | Illustration `/beta` (optional) | Kleine Willkommens-Illustration für Schritt 1, ≤ 120 px hoch; vorhandene wiederverwenden ist ok. | W23 A.3 |
+| D-78 | Icons | Neu im Sprite, falls nicht vorhanden: `share-ios` (Quadrat mit Pfeil nach oben, für die Anleitung), `plus-square` („Zum Home-Bildschirm“), `external` (Link verlässt die App), `feedback` (Sprechblase), `download-app` (Menü „App installieren“). | W23 B, C.6, D |
+| D-79 | Maskable / monochrome | Eigenes **maskable** 512er (Motiv in der 80-%-Sicherheitszone) statt Wiederverwendung des normalen 512er; optional `monochrome`-Symbol für Android-Themen-Icons. | W23 C.1 |
+| D-80 | Sichtprüfung | `/beta` (beide Schritte) und `/install` bei 320 px und 200 % Text – Abstände, Skizzengröße. Nach dem Bau. | W23 F |
+
+### 17.2 Punkte an den Motion Designer (über den CEO)
+
+- **UM-25:** `/install` und `/beta` ohne neue Bewegung (Standard-Eintritt reicht). Keine animierten Pfeile auf die Safari-Leiste (Lage je iOS-Layout verschieden). Offline-Seite: kein Lade-Spinner-Loop außer `aria-busy` auf der Taste. Bitte nur bestätigen.
+
+### 17.3 Abstimmungsstand Runde 8
+
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-72, D-73 | neu, **blockierend** (D-73 nur für die Endfassung) | Designer |
+| D-74 – D-80 | neu | Designer |
+| UM-25 | neu (Bestätigung) | Motion Designer |
+| B-E2 (Einladung ersetzt Beta-Code), Löschversprechen, Feedback-Kanal, Beta-Code-Modell | Empfehlung | CEO / Operations |
+
+## 18. Runde 9 – Kosten v2 nach Auftraggeber-Feedback (W19 E, W16 v2.17, 2026-10-23)
+
+Struktur, Texte und Regeln: [W19 E](wireframes/w19-kosten.md) (gilt vor W19 D), Cockpit [W16 v2.17](wireframes/w16-cockpit.md) (gilt vor v2.15). Klickbarer Vorher/Nachher-Vergleich (Tokens 1:1 aus `tokens.css`): [`mockups/kosten-v2/index.html`](mockups/kosten-v2/index.html). Anlass: Auftraggeber findet Kosten unterwegs schwer erreichbar, die Kosten-Seite überladen und Begriffe („bezahlt“, „Ausgaben gesamt“) missverständlich; beim Ausgleich sollen die eigenen Überweisungen ausführlich, die der anderen nur kompakt erscheinen.
+
+### 18.1 Punkte an den Designer (D-81 – D-87)
+| ID | Thema | Bitte | Bezug |
+|---|---|---|---|
+| **D-81** | **Kosten-Leiste** (Cockpit *Unterwegs*/*Danach*) – **Fassung 2** (Auftraggeber 2026-10-23: „+ Ausgabe“ zu dominant, Leiste nur als Abkürzung) | Fixierte Leiste unten (`surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Safe Area). **Links** eigenes Tap-Ziel als Fläche (`surface-sunken`, Radius `md`, Rahmen `border-subtle`, ≥ 56 px): Icon-Kachel `wallet` + «Kosten · Verlauf ›» (Link-Farbe) + Stand-Satz. **Rechts** Primär-Taste kompakt (48 px, ohne Glow-Schatten). Beide Hälften sollen gleichrangig wirken. Dazu Kachel „Kosten“ mit Link-Zeile «Alle Ausgaben ansehen ›». Leiste blendet aus, sobald die Kachel sichtbar wird. Statische Form (Variante A) als Rückfall. **Blockierend** (klein). | W16 v2.17 Fassung 2 |
+| **D-82** | **„Dein Stand“ v2** | Getönte Karte statt weißer Karte: zurückzahlen = `primary-tint`, bekommen = `accent-tint`, Rahmen `border-subtle`, ohne Schatten (Abgrenzung zur Gruppen-Ebene). Satz 24/800 Jakarta. Innen: Kurzsatz 14/700, Sekundär-Taste volle Breite, Text-Taste «So rechnen wir ▾» und Rechenweg-Box (weiße Fläche, `<dl>` zweispaltig, Summenlinie `border-strong`). Bitte bestätigen oder Alternative – Bedingung: **Ich-Ebene** und **Gruppen-Ebene** müssen auch ohne Farbe unterscheidbar sein (Eyebrow + Abstand `space-8`). | W19 E.3, E.4 |
+| **D-83** | **Ausgaben-Zeile v2** | Tagessumme und Chip «nach Beträgen» entfallen; Tages-Trenner als 12/800 Versal `text-muted`. Rechte Spalte «auf dich 25,00 €» / «ohne dich» 12–13 px. Bitte prüfen, ob die Zeile damit ruhiger genug ist. | W19 E.3 |
+| **D-84** | **Eigene Überweisung** | Karte je Überweisung: «An Lena · 64,00 €» (17/800), Zahlungsinfo-Block, Taste «Hab ich überwiesen» (Primär, erste) bzw. «Ist angekommen» (Sekundär) + Text-Taste «{Name} erinnern» **in einer Zeile** (bei 360 px; bei 200 % untereinander). Erledigt-Chip «✓ Erledigt» (`cost-paid-*`). | W19 E.5 Block 2 |
+| **D-85** | **Kompaktzeile „Ausgleiche der anderen“** | Eine Zeile 44 px: Avatar 20 · Name → Avatar 20 · Name · Betrag 14/800 rechts · Status «offen» (muted) / «✓ erledigt» (`cost-paid-fg`). Keine Karte je Zeile, Trennlinien `border-subtle`, nicht antippbar (kein Hover/Chevron). Akkordeon-Kopf als h2-Button mit Chevron. | W19 E.5 Block 6 |
+| **D-86** | **Karte „Wohin soll das Geld?“** und **„Für dich als Orga“** | Ruhige Karten (keine Koralle – es sind keine „du bist dran“-Aufgaben). Orga-Zeilen wie Kompaktzeile + Text-Taste «Als erledigt markieren». | W19 E.5 Block 3, 5 |
+| D-87 | **Salden-Balken** | Entfallen (D-57 optionaler Teil). Tokens `--ww-cost-bar-*` können bleiben oder als „ungenutzt“ markiert werden – Entscheidung Designer. | W19 E.5 |
+**Glossar** (W19 E.2) gilt auch für Illustrations-Texte/Alt-Texte und Mockups des Designers: kein «bezahlt», «Salden», «Ausgaben gesamt», «schuldest» mehr; neu «ausgelegt», «zurückzahlen», «Überweisung», «quitt».
+
+### 18.2 Punkte an den Motion Designer (UM-26 – UM-27, über den CEO)
+| ID | Moment | Vorschlag UX | Reduziert |
+|---|---|---|---|
+| **UM-26** | Kosten-Leiste – **Fassung 2** | Ausblenden, sobald die Kachel „Kosten“ oberhalb der Leiste sichtbar wird: nach unten gleiten + ausblenden (`base`, `ease-exit`); Einblenden beim Hochscrollen (`base`, `ease-enter`); Hysterese 24 px; nie ausblenden, solange der Fokus in der Leiste liegt. Kein Eintritt beim Laden; Stand-Wechsel = UM-14. | sofort (kein Gleiten, kein Fade) |
+| **UM-27** | Akkordeons «So rechnen wir», «Ausgleiche der anderen», «Erledigt» | Standard-Akkordeon `base`, Chevron dreht `base`. UM-16/UM-17 feiern jetzt «Du bist quitt ✓» / «Alle sind quitt ✓» (gleiches Verhalten). | sofort |
+
+### 18.3 Abstimmungsstand Runde 9
+| Punkt | Status | Offen bei |
+|---|---|---|
+| D-81 | neu, **blockierend** | Designer |
+| D-82 – D-87 | neu (mit Tokens baubar) | Designer |
+| UM-26, UM-27 | neu (Bestätigung) | Motion Designer |
+| K-1 Leiste C vs. Karte A | **entschieden: C**, Fassung 2 (Abkürzung, blendet aus) | – |
+| K-2 „quitt“ | **bestätigt** | – |
+| App startet in laufender Reise (W16 v2.18) | spezifiziert, keine Design-Bitte (nutzt Snackbar und „Meine Reisen“-Karten) | – |
+| Abweichungen von R.8 (Sichtbarkeit, Salden-Liste, Segment) | Hinweis | PM / CEO |
+
 ## Changelog
+- 2026-10-23 (Runde 9b): D-81/UM-26 auf Fassung 2 (Leiste als Abkürzung, blendet aus; linke Hälfte eigenes Tap-Ziel); K-1/K-2 entschieden; W16 v2.18 App-Start.
+- 2026-10-23 (Runde 9, Kosten v2): §18 – Feedback Auftraggeber zu Inkrement 10: Punkte D-81–D-87, UM-26–UM-27; W19 E, W16 v2.17, Mockup `mockups/kosten-v2/`.
+- 2026-10-23 (Runde 8): §17 – Beta „Stufe B“ & installierte Web-App (W23): Punkte D-72 – D-80, UM-25.
+- 2026-10-23 (Runde 7, Inkrement 11): §16 – Punkte D-64–D-71 (Designer), UM-20–UM-24 (Motion), M-U14 bestätigt; W20 H, W16 v2.16, W22 E, W18 E.16 (an R.9 angeglichen).
 - 2026-10-23 (Runde 6, Inkrement 10): §15 – Punkte D-56–D-63 (Designer), UM-14–UM-19 (Motion), CEO-Fragen Notiz/„Als Ausgabe eintragen“; W19 D, W16 v2.15 (an R.8 und CEO-Entscheidungen a/b angeglichen).
 - 2026-10-23 (Runde 5, Inkrement 9): §14 – Punkte D-46–D-55 (Designer), UM-8–UM-13 (Motion), Frage UX-10; W17 F, W18 E, W16 v2.14, W22 D.
 - 2026-10-22 (Runde 4b): §13 – Antworten U-23–U-30, Bewertung UM-4, Abnahme D-36–D-45; W16 v2.12/v2.13 (Inkrement-8-Schnitt), W22 baureif.

@@ -312,7 +312,11 @@
       "policy": "Privacy policy",
       "export": "Download my data (JSON)",
       "exportHint": "Everything we store about you – only your own entries.",
-      "delete": "Delete account"
+      "delete": "Delete account",
+      "travelTitle": "Shared travel details",
+      "travelRow": "Travel details for {trip} shared with {name} (“{purpose}”)",
+      "travelWithdraw": "Withdraw sharing …",
+      "travelHint": "While the dates are open again, you can withdraw here. Once they're fixed, you'll find it under “Travel details” in the trip."
     },
     "back": "Back to account",
     "email": {
@@ -365,7 +369,9 @@
       "dialogTitle": "Delete your account for good?",
       "dialogText": "Your account and your data are deleted right away. This can't be undone.",
       "dialogConfirm": "Delete account",
-      "planOutdated": "Something changed in your trips in the meantime. Please check your choices and try again – nothing was deleted."
+      "planOutdated": "Something changed in your trips in the meantime. Please check your choices and try again – nothing was deleted.",
+      "travelMember": "Your shared travel details will be deleted right away.",
+      "travelBooker": "Your open requests will be closed and all shares deleted."
     }
   },
   "regions": {
@@ -747,7 +753,8 @@
       "unfix": "Undo locked dates",
       "cancelPoll": "Cancel the vote",
       "remind": "Remind the group",
-      "decided": "How you decided"
+      "decided": "How you decided",
+      "bookers": "Who's booking? …"
     },
     "dialogs": {
       "leaveTitle": "Leave “{trip}”?",
@@ -788,7 +795,12 @@
       "cancelPollText": "All options and votes will be deleted. Everyone's dates are kept and the trip goes back to ‘Collecting dates’.",
       "cancelPollKeep": "Keep vote",
       "cancelPollConfirm": "Cancel vote",
-      "cancelPollDone": "Vote cancelled"
+      "cancelPollDone": "Vote cancelled",
+      "leaveTravelMember": "Your shared travel details will be deleted right away.",
+      "leaveTravelBooker": "Your requests will be closed and all travel details shared with you deleted right away.",
+      "removeTravelMember": "The travel details {name} shared will be deleted right away.",
+      "removeTravelBooker": "{name}'s requests will be closed and all travel details shared with {name} deleted right away.",
+      "unfixTravel": "Shared travel details are kept for at most 30 days – without new dates by then, they're deleted."
     },
     "notFoundTitle": "Trip not found",
     "notFoundText": "This trip doesn't exist or you're not part of it. If you were invited, open the invite link from your group chat.",
@@ -884,7 +896,10 @@
       "stayBook": "Hey {booker}, we’ve picked {stay} – could you book it? {link}",
       "settle": "Hey {name}, according to the {trip} expenses you still owe me {amount}. Thanks! {link}",
       "settleAll": "Hey all, {count, plural, one {one payment is} other {# payments are}} still open for {trip} – take a quick look: {link}",
-      "settleOther": "Hey {name}, according to the {trip} expenses you still owe {to} {amount}. {link}"
+      "settleOther": "Hey {name}, according to the {trip} expenses you still owe {to} {amount}. {link}",
+      "travelData": "Hey {name}, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}",
+      "travelDataAll": "Hey all, I still need your travel details for “{purpose}” – please share them in the app, not here in the chat: {link}",
+      "travelDataJoin": "Hey {name}, could you join {trip}? I'll then need your travel details for “{purpose}” – please share them in the app, not in the chat: {link}"
     }
   },
   "tripSettings": {
@@ -1613,7 +1628,7 @@
       "infoMeeting": "Meeting point set",
       "infoCheckIn": "Check-in from {time}",
       "infoAddress": "Address added",
-      "infoEmpty": "Still empty – {orga} will add it",
+      "infoEmpty": "Still empty – {names} will add {count, plural, one {it} other {it}}",
       "infoEmptyOrga": "Add info",
       "stay": "Place to stay",
       "stayBooked": "{title} · booked ✓",
@@ -1627,7 +1642,12 @@
       "costsOwed": "you’re owed {amount}",
       "costsSquareMe": "you’re all square ✓",
       "costsSquare": "all square ✓",
-      "costsClosed": "Closed"
+      "costsClosed": "Closed",
+      "travel": "Travel details",
+      "travelMine": "{released} of {total} shared",
+      "travelMineMany": "{count} requests",
+      "travelShared": "Shared with {names} ✓",
+      "travelDeleteOn": "deleted on {date}"
     },
     "moreTitle": "More about the trip",
     "decided": {
@@ -1650,12 +1670,15 @@
       "withoutAppChip": "without the app",
       "notJoined": "Hasn’t joined yet – personal link open",
       "withoutApp": "Joins without the app (ticked by {orga})",
-      "manage": "Manage placeholders"
+      "manage": "Manage placeholders",
+      "booker": "Booking",
+      "subBookers": "{names} {count, plural, one {is booking} other {are booking}} · {rest}"
     },
     "remind": {
       "listTitle": "Not joined yet",
       "personal": "Personal link – only for {name}, don’t post it in the group.",
-      "orgaText": "Only {orga} has the personal link. Give them a quick heads-up so they can pass it on."
+      "orgaText": "Only {orga} has the personal link. Give them a quick heads-up so they can pass it on.",
+      "travelTitle": "Who's still missing?"
     },
     "toast": {
       "withoutApp": "“{name} joins without the app” is ticked – everyone can see it.",
@@ -1694,15 +1717,16 @@
       "remind": "Remind",
       "remindName": "Remind everyone who hasn’t rated yet",
       "memberFix": "Everyone’s rated – {orga} will pick one.",
-      "memberBook": "{orga} is booking {title}.",
-      "memberRebook": "New dates – {orga} is rebooking {title}.",
+      "memberBook": "{bookers} is booking {title}.",
+      "memberRebook": "New dates – {bookers} is rebooking {title}.",
       "nudgeFixName": "Let {orga} know it’s time to pick a place",
-      "nudgeBookName": "Let {orga} know {title} can be booked",
+      "nudgeBookName": "Let {bookers} know that {title} can be booked",
       "shortRate": "ratings for the place to stay",
       "shortFix": "{orga} to pick the place",
-      "shortBook": "{orga} to book {title}",
+      "shortBook": "{bookers} booking {title}",
       "withoutAppDone": "Ticked off as sorted outside the app.",
-      "withoutAppUndone": "“Sorted outside the app” removed."
+      "withoutAppUndone": "“Sorted outside the app” removed.",
+      "nudgeBookers": "Let them know"
     },
     "addExpense": "Expense",
     "addExpenseName": "Add an expense",
@@ -1737,6 +1761,47 @@
       "d1CloseTitle": "All square – close the expenses?",
       "d1CloseStatus": "After that nobody can change expenses. You can reopen them.",
       "reopen": "Reopen expenses"
+    },
+    "v4": {
+      "title": "Travel details",
+      "titleFor": "Travel details for {by}",
+      "titleMany": "Travel details – {count} requests",
+      "asks": "{by} is asking for your travel details",
+      "asksMany": "{names} are asking for your travel details",
+      "asksLong": "For “{purpose}”: {fields}. Only {by} sees them.",
+      "share": "Share details",
+      "allIn": "Everyone has answered – {released} of {total} shared. You can book now.",
+      "toArea": "Go to travel details",
+      "waiting": "{released} of {total} have shared · still open: {names}",
+      "shortMine": "shares for your request",
+      "remind": "Remind",
+      "remindName": "Remind everyone who hasn't answered yet",
+      "collecting": "{by} is collecting travel details · {released} of {total}",
+      "collectingMany": "{names} are collecting travel details",
+      "shortOthers": "{by} collecting travel details",
+      "later": "Only if the booking needs it: ask here instead of in the chat.",
+      "doneClosed": "Closed – details deleted",
+      "doneNobody": "Nobody shared – you're sorting it out directly",
+      "doneMine": "{released} of {total} shared",
+      "doneMany": "{count} requests answered",
+      "doneShared": "Shared with {by} ✓",
+      "doneDeclined": "You're sorting it out with {by}",
+      "doneOthers": "{by} has every answer",
+      "doneDeleted": "Details deleted",
+      "field": {
+        "legal_name": "name as on ID",
+        "birth_date": "date of birth",
+        "sex": "sex as on ID",
+        "nationality": "nationality",
+        "document": "ID number",
+        "document_expiry": "expiry date",
+        "issuing_country": "issuing country"
+      }
+    },
+    "d3": {
+      "title": "Travel details deleted",
+      "before": "Will be deleted on {date} – you can still view them until then.",
+      "done": "Deleted on {date} – as promised."
     }
   },
   "tripInfo": {
@@ -1760,7 +1825,7 @@
     "emergency": "Emergency contact of the place",
     "updatedBy": "Last changed by {name}, {date}",
     "updatedAt": "Last changed on {date}",
-    "emptyMember": "No info yet – {orga} will add the address, check-in and meeting point here.",
+    "emptyMember": "No info yet – {names} will add the address, check-in and meeting point here.",
     "emptyOrga": "No info yet – add the address, check-in and meeting point so everyone finds them here.",
     "emptyAction": "Add info",
     "form": {
@@ -1797,7 +1862,9 @@
       "discard": "Discard",
       "keep": "Keep editing",
       "reloadTitle": "Reload?",
-      "reloadText": "Your entries will be lost and you’ll see the new version."
+      "reloadText": "Your entries will be lost and you’ll see the new version.",
+      "notesHintTravel": "Don't enter ID or booking numbers here – request ID details via “Travel details”. Links (https) are detected automatically.",
+      "noLongerAllowed": "You can't edit the info any more – {orga} changed who's booking."
     },
     "fromStay": "Copy from “{title}”",
     "fromStayDone": "Name copied – now add the address and check-in.",
@@ -1940,7 +2007,7 @@
       "booked": "booked",
       "bookedBy": "on {date} by {name}",
       "bookedOn": "on {date}",
-      "waitMember": "{orga} is booking it – you’ll see “booked ✓” here once it’s done.",
+      "waitMember": "{bookers} is booking it – you'll see “booked ✓” here once it's done.",
       "markBooked": "Mark as booked",
       "unbook": "Not booked after all",
       "bookedToast": "Marked as booked.",
@@ -1949,7 +2016,8 @@
       "seeInfo": "See it in the info",
       "share": "Our place for {trip}: {title} {link}",
       "shareTitle": "Share the place",
-      "likes": "♥ {count}"
+      "likes": "♥ {count}",
+      "orgaCanBook": "{bookers} is booking – you can mark it yourself too."
     },
     "unfix": {
       "action": "Unpick …",
@@ -2003,7 +2071,9 @@
       "context": "{name} still has {count, plural, one {one place} other {# places}} to rate.",
       "contextAll": "Reminds everyone who hasn’t rated everything yet.",
       "fixContext": "Everyone’s rated. Give {orga} a nudge to pick one.",
-      "bookContext": "{title} is picked. Give {orga} a nudge to book it."
+      "bookContext": "{title} is picked. Give {orga} a nudge to book it.",
+      "bookersTitle": "Who should you tell?",
+      "bookersContext": "{title} is settled. Who should you tell that it's time to book?"
     }
   },
   "stayForm": {
@@ -2330,5 +2400,360 @@
     "accountTitle": "You’re not all square on {count, plural, one {one trip} other {# trips}} yet:",
     "accountOwe": "{trip} – you owe {amount}",
     "accountOwed": "{trip} – you’re owed {amount}"
+  },
+  "booking": {
+    "none": "Nobody's booking yet – mark who books the place and tickets.",
+    "start": "Who's booking? ›",
+    "change": "Change who's booking ›",
+    "menu": "Who's booking? …",
+    "sentence": "{names} {count, plural, one {books} other {book}} for you and may request travel details.",
+    "sentenceNoData": "{names} {count, plural, one {books} other {book}} for you.",
+    "sheet": {
+      "title": "Who's booking?",
+      "intro": "People who book can request travel details and only see what others share with them – the organiser doesn't see anything otherwise. They can also edit the info page and mark the place as booked. Up to 3; everyone can see who's booking.",
+      "introNoData": "People who book can edit the info page and mark the place as booked. Up to 3; everyone can see who's booking.",
+      "you": "You ({name})",
+      "switchName": "{name} is booking",
+      "counter": "{count} of 3 assigned",
+      "back": "Back to “Who's going?”"
+    },
+    "on": "{name} is booking now.",
+    "off": "{name} isn't booking any more.",
+    "max": "Up to 3 – switch someone off first.",
+    "placeholder": "Can book once they've joined",
+    "revoke": {
+      "title": "{name} won't be booking any more",
+      "body": "Their {count, plural, one {request} other {# requests}} will be closed and all details shared with {name} ({released, plural, =0 {none so far} one {from one person} other {from # people}}) deleted right away. This can't be undone.",
+      "confirm": "Remove",
+      "done": "{name} isn't booking any more – the travel details are deleted."
+    },
+    "error": "That didn't work – please reload.",
+    "notAllowed": "Only {bookers} or the organiser can do that right now.",
+    "chip": "Booking"
+  },
+  "travelData": {
+    "title": "Travel details",
+    "pageTitle": "Travel details · {trip}",
+    "newPageTitle": "Request travel details · {trip}",
+    "answerPageTitle": "Travel details for {name} · step {step} of 2 · {trip}",
+    "chip": "Booking",
+    "formerMember": "former member",
+    "more": "{count} more",
+    "generic": "That didn't work – please reload.",
+    "limited": "Too many actions in a short time. Please wait a few minutes.",
+    "offline": "Needs a connection.",
+    "print": "Travel details are not printed.",
+    "closeHint": "Close notice",
+    "fields": {
+      "legal_name": "Name as on ID",
+      "birth_date": "Date of birth",
+      "sex": "Sex as on ID",
+      "nationality": "Nationality",
+      "document": "ID or passport number",
+      "document_expiry": "Document expiry date",
+      "issuing_country": "Issuing country"
+    },
+    "values": {
+      "given_name": "Given name(s)",
+      "family_name": "Surname(s)",
+      "birth_date": "Date of birth",
+      "sex": "Sex",
+      "nationality": "Nationality",
+      "document_type": "Document type",
+      "document_number": "Document number",
+      "document_expiry": "Expiry date",
+      "issuing_country": "Issuing country"
+    },
+    "sex": {
+      "F": "F (female)",
+      "M": "M (male)",
+      "X": "X (diverse / unspecified)"
+    },
+    "sexOption": {
+      "F": "F – female",
+      "M": "M – male",
+      "X": "X – diverse / unspecified"
+    },
+    "documentType": {
+      "passport": "Passport",
+      "id_card": "ID card"
+    },
+    "log": {
+      "title": "Who has accessed them?",
+      "today": "today, {time}",
+      "yesterday": "yesterday, {time}",
+      "date": "{date}, {time}",
+      "viewed": "{name} viewed your details · {when}",
+      "viewedMany": "{name} viewed your details {count} times · last {when}",
+      "copied": "{name} copied “{field}” · {when}",
+      "copiedMany": "{name} copied “{field}” {count} times · last {when}",
+      "empty": "{name} hasn't viewed your details yet.",
+      "showAll": "Show all access"
+    },
+    "demo": {
+      "area": "Demo – please only enter made-up details: no real names from your ID, no real date of birth, no real ID numbers.",
+      "form": "Demo – please don't enter real ID details.",
+      "formDoc": "Demo – please don't enter real ID details. ID numbers must start with DEMO.",
+      "fill": "Fill in made-up details",
+      "filled": "Made-up details filled in.",
+      "request": "Demo – only made-up details are collected here.",
+      "release": "Demo – please don't share real ID details. “Reset demo” deletes everything.",
+      "docHelp": "Preview: only made-up numbers starting with DEMO – e.g. DEMO12345.",
+      "tag": "Preview"
+    },
+    "hints": {
+      "marked": "{name} marked you as “Booking”. You can request travel details – you only see what people share with you.",
+      "revoked": "You're no longer marked as “Booking”. Your requests are closed and all details deleted."
+    },
+    "datesChanged": {
+      "member": "Your trip has new dates – your details will now be deleted on {date}. You can withdraw at any time.",
+      "booker": "Your dates have changed ({range}) – check whether you need to rebook. The details stay available until {date}."
+    },
+    "toMe": {
+      "title": "Requests to you"
+    },
+    "mine": {
+      "title": "Your requests",
+      "header": "Your request · {date}",
+      "count": "{released} of {total} have shared",
+      "deleteOn": "All details will be deleted on {date}.",
+      "menu": "Manage request “{purpose}”",
+      "addPeople": "Add people …",
+      "removePerson": "Remove a person …",
+      "close": "Close request …",
+      "noEdit": "Need other details? Make a new request.",
+      "closeAll": "All booked? Close the request",
+      "closed": "Closed on {date} – details deleted",
+      "expired": "Expired – details deleted",
+      "closedGroup": "Closed ({count})",
+      "newMembers": "New here: {names} – not asked yet.",
+      "addNew": "Add …",
+      "remind": "Remind",
+      "remindName": "Remind everyone who hasn't answered for “{purpose}”",
+      "placeholderInfo": "Gets the request as soon as {name} joins.",
+      "changedOn": "changed on {date}",
+      "none": "No request of your own yet",
+      "noneAction": "Request travel details ›"
+    },
+    "booker": {
+      "note": "You only see what people explicitly share with you. What you do with it outside the app (e.g. entering it in a booking form) is your responsibility – please don't forward it in chats."
+    },
+    "status": {
+      "released": "shared",
+      "open": "open",
+      "declined": "sorting it out directly",
+      "placeholder": "not joined yet"
+    },
+    "others": {
+      "title": "Other requests",
+      "card": "{name} is collecting travel details for “{purpose}”"
+    },
+    "emptyBooker": {
+      "title": "No requests yet",
+      "text": "Only ask for what a booking really needs – within Europe the name is usually enough. Everyone you ask decides for themselves whether to share.",
+      "cta": "Request travel details"
+    },
+    "emptyMember": {
+      "title": "Nothing to do right now",
+      "text": "If {names} {count, plural, one {needs} other {need}} your details for a booking, they'll ask here. You decide what you share.",
+      "textNobody": "If someone needs your details for a booking, they'll ask here. You decide what you share."
+    },
+    "who": {
+      "title": "Who sees what?",
+      "s1": "Only the person asking (marked “Booking”) sees your details – and only if you share them.",
+      "s2": "The organiser and others who book only see the status (“shared”, “open”); everyone else only sees numbers.",
+      "s3": "Everything is stored encrypted; no ID scans, no free text.",
+      "s4": "Deleted automatically 7 days after the trip (currently on {date}) – or right away if you withdraw."
+    },
+    "deleted": {
+      "title": "Travel details deleted",
+      "body": "On {date} – 7 days after the trip, as promised. The access log is gone too."
+    },
+    "member": {
+      "asks": "{name} is booking “{purpose}”",
+      "asksFor": "{name} is asking for:",
+      "onlyFor": "Only {name} sees your details. Deleted automatically 7 days after the trip (currently on {date}).",
+      "docNote": "{name} is also asking for your ID or passport number.",
+      "afterTrip": "The trip is over – only needed if {name} still has to book something.",
+      "enter": "Enter details",
+      "askedOn": "asked on {date}"
+    },
+    "released": {
+      "title": "Shared with {name}",
+      "meta": "For “{purpose}” · on {date}",
+      "deleteOn": "Will be deleted automatically on {date}.",
+      "change": "Change details",
+      "withdraw": "Withdraw sharing …",
+      "expiresSoon": "Your document expires before the return trip ({date}). Check you can get a new one in time.",
+      "expiredDoc": "This document has expired."
+    },
+    "declinedCard": {
+      "title": "You're sorting it out with {name} directly",
+      "text": "“{purpose}” – {name} only sees “sorting it out directly”, no reason.",
+      "undo": "Share after all"
+    },
+    "expiredCard": {
+      "closedByBooker": "{name} has finished booking – your details have been deleted.",
+      "bookerRevoked": "{name} isn't booking any more – your details for “{purpose}” have been deleted.",
+      "requesterLeft": "{name} has left – your details have been deleted.",
+      "unfixed": "The dates were open again for more than 30 days – your details have been deleted.",
+      "expired": "Your details for “{purpose}” have been deleted.",
+      "hide": "Hide"
+    },
+    "decline": "I'll sort it out with {name} directly",
+    "declined": "{name} sees: “sorting it out directly”.",
+    "revoke": {
+      "title": "Withdraw sharing?",
+      "body": "{name} won't see your details any more – they'll be deleted right away, including the access log.",
+      "confirm": "Withdraw",
+      "done": "Sharing withdrawn – your details are deleted."
+    },
+    "reveal": "Show",
+    "hide": "Hide",
+    "hidden": "hidden",
+    "revealName": "Show {name}'s details",
+    "hideName": "Hide {name}'s details",
+    "shown": "Showing {name}'s details.",
+    "hiddenAnnounce": "{name}'s details hidden.",
+    "copy": "Copy {field} of {name}",
+    "copied": "Copied – please don't forward it in chats.",
+    "copyBlocked": "Copying doesn't work here – tap “Show” and copy it by hand.",
+    "loadFailed": "Couldn't load that right now – please try again.",
+    "close": {
+      "title": "Close this request?",
+      "body": "All details shared for “{purpose}” will be deleted right away – you won't see them either. Have you booked everything?",
+      "confirm": "Close and delete",
+      "done": "Request closed – the details are deleted."
+    },
+    "removePerson": {
+      "title": "Who should be removed from the request?",
+      "confirmTitle": "Remove {name} from the request?",
+      "body": "The shared details will be deleted right away.",
+      "confirm": "Remove from request",
+      "done": "{name} is no longer asked."
+    },
+    "addPeople": {
+      "title": "Add people",
+      "submit": "Add",
+      "done": "{count, plural, one {One person} other {# people}} added – they can see the request now."
+    },
+    "reauth": {
+      "title": "Quick confirmation",
+      "intro": "To protect ID numbers: please confirm with a code that it's you.",
+      "send": "Send code",
+      "sent": "We've sent a code to {email}.",
+      "confirm": "Confirm"
+    },
+    "request": {
+      "cta": "Request travel details",
+      "ctaShort": "+ Request",
+      "title": "Request travel details",
+      "purpose": "What do you need the details for?",
+      "help": "Everyone you ask sees this – e.g. “Flights Munich – Split”. Please don't put personal details in it.",
+      "purposeError": "Please say what you need the details for.",
+      "purposeCounter": "{count} characters left",
+      "fieldsLegend": "Which details?",
+      "always": "Always included",
+      "onlyWithDoc": "Only together with the document number",
+      "docWarning": "Only ask if the booking really needs it – within Europe the name is usually enough. We'll ask you for a code before you first view it.",
+      "never": "Never asked: ID photos or scans, address, free text. Deleted automatically 7 days after the trip (currently on {date}).",
+      "whoLegend": "Who are you asking?",
+      "afterJoin": "gets it after joining",
+      "whoError": "Please choose at least one person.",
+      "whoHint": "If someone joins later, you can add them afterwards.",
+      "submit": "Send request",
+      "sent": "Request sent to {count, plural, one {one person} other {# people}} – they'll see it in their overview.",
+      "docConfirmTitle": "Really ask for document numbers?",
+      "docConfirmBody": "{count, plural, one {One person} other {# people}} will be asked for their ID or passport number. Do you need it for “{purpose}”?",
+      "docConfirmBack": "Back",
+      "docConfirmYes": "Yes, ask",
+      "limit": "Close a request first – at most 3 at a time.",
+      "discardTitle": "Discard request?",
+      "discardText": "Your entries won't be saved.",
+      "keep": "Keep editing",
+      "discard": "Discard",
+      "noOne": "Nobody to ask yet – invite someone first.",
+      "fieldWithDoc": "Document (type + number)"
+    },
+    "fill": {
+      "step": "Step {step} of 2",
+      "step1": "Details",
+      "step2": "Share",
+      "forPurpose": "For “{purpose}” · only {name} sees your details",
+      "exact": "Enter everything exactly as on your ID, including middle names – otherwise the provider may refuse the booking.",
+      "givenNames": "Given name(s) as on ID",
+      "familyNames": "Surname(s) as on ID",
+      "birth": "Date of birth",
+      "day": "Day",
+      "month": "Month",
+      "year": "Year",
+      "dateHelp": "e.g. 07 04 1995",
+      "dateHelpUs": "e.g. 04 07 1995",
+      "sexLegend": "Sex as on ID",
+      "sexHelp": "Airlines ask for this as your title.",
+      "nationality": "Nationality",
+      "choose": "Please choose",
+      "docLegend": "Document",
+      "docNumber": "Document number",
+      "expiry": "Document expiry date",
+      "country": "Issuing country",
+      "next": "Next",
+      "summary": "{count, plural, one {One detail is still missing} other {# details are still missing}}",
+      "reuse": "Copy from what you shared with {name}",
+      "reused": "Details copied – please check them.",
+      "discardTitle": "Discard details?",
+      "discardText": "Your entries won't be saved.",
+      "discard": "Discard",
+      "keep": "Keep editing",
+      "declineTitle": "Discard your details and sort it out with {name} directly?",
+      "declineConfirm": "Sort it out directly",
+      "declineBack": "Back",
+      "back": "Back",
+      "closedByBooker": "{name} has closed the request in the meantime – nothing was saved.",
+      "noLongerBooker": "{name} isn't booking any more – nothing was saved."
+    },
+    "errors": {
+      "givenRequired": "Please enter your given names – all of them, as on your ID.",
+      "givenInvalid": "Please use only letters, spaces, hyphens, apostrophes or full stops.",
+      "familyRequired": "Please enter your surname, as on your ID.",
+      "familyInvalid": "Please use only letters, spaces, hyphens, apostrophes or full stops.",
+      "dateIncomplete": "Please enter your full date of birth.",
+      "dateInvalid": "That date doesn't exist – please check the day and month.",
+      "dateFuture": "Your date of birth can't be in the future.",
+      "dateYear": "Please check the year.",
+      "sexRequired": "Please choose what your ID says.",
+      "nationalityRequired": "Please choose your nationality.",
+      "documentTypeRequired": "Please choose the document type.",
+      "documentNumberInvalid": "Please enter the number exactly as on the document – letters and digits only.",
+      "documentDemo": "In the demo, only made-up numbers starting with DEMO.",
+      "expiryIncomplete": "Please enter the full expiry date.",
+      "expiryInvalid": "That date doesn't exist – please check the day and month.",
+      "countryRequired": "Please choose the issuing country."
+    },
+    "consent": {
+      "summary": "What you're sharing",
+      "change": "Change details",
+      "text": "I'm sharing these details with {name} for “{purpose}”. They're stored encrypted, only {name} can see them, and they'll be deleted automatically 7 days after the trip (currently on {date}). I can withdraw this at any time.",
+      "privacy": "Privacy notice",
+      "missing": "Please confirm the sharing – or sort it out with {name} directly.",
+      "release": "Share with {name}",
+      "releaseChange": "Share changes",
+      "released": "Shared with {name}.",
+      "failed": "That didn't work – your details aren't shared yet. Please try again.",
+      "textRich": "I'm sharing these details with <b>{name}</b> for “{purpose}”. They're stored encrypted, only {name} can see them, and they'll be <b>deleted automatically 7 days after the trip (currently on {date})</b>. I can withdraw this at any time."
+    },
+    "remind": {
+      "title": "Who's still missing?",
+      "open": "Open ({count})",
+      "declined": "Sorting it out directly ({count})",
+      "pending": "Not joined yet ({count})",
+      "all": "Remind everyone ({count})",
+      "allShort": "Remind everyone",
+      "context": "{name} hasn't answered for “{purpose}” yet.",
+      "contextAll": "Reminds everyone who hasn't answered for “{purpose}” yet.",
+      "contextJoin": "{name} hasn't joined yet – the message contains the personal link.",
+      "nudgeOrgaName": "Let {orga} know that {name} hasn't joined yet"
+    },
+    "visibleTag": "visible"
   }
 }

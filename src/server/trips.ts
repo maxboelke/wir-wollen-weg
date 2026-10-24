@@ -16,6 +16,7 @@ import {
   retireParty,
 } from "./costs/db";
 import { db } from "./db/client";
+import { claimPlaceholderRequests, closeRequestsOfRequester } from "./travel-data/db";
 import {
   MAX_TRIP_MEMBERS,
   pollVote,
@@ -62,6 +63,8 @@ export interface MemberView {
   /** Last change of days/comment (F-007 «abgegeben · zuletzt geändert …»). */
   availabilityUpdatedAt: Date | null;
   comment: string | null;
+  /** Marking «Bucht» since (F-056) – null = not marked. */
+  bookerSince: Date | null;
 }
 
 /** Members of a trip in joining order – only call after `findMembership` succeeded. */
@@ -76,6 +79,7 @@ export async function listMembers(tripId: string): Promise<MemberView[]> {
       votedAt: tripMember.votedAt,
       availabilityUpdatedAt: tripMember.availabilityUpdatedAt,
       comment: tripMember.comment,
+      bookerSince: tripMember.bookerSince,
     })
     .from(tripMember)
     .where(eq(tripMember.tripId, tripId))
@@ -315,6 +319,9 @@ export async function removeMember(tripId: string, userId: string): Promise<bool
       )
       .returning({ userId: tripMember.userId });
     if (removed.length === 0) return false;
+    // Travel details (R.9 I11-10): the person's own answers and releases went with the
+    // membership (composite key); requests they asked as «Bucht» close, releases to them go.
+    await closeRequestsOfRequester(tx, tripId, userId);
     // Costs (R.8 I10-04): the party stays with all amounts as «ehemaliges Mitglied»; the
     // payment details went with the membership row.
     await retireParty(tx, tripId, userId);
@@ -763,6 +770,8 @@ async function joinLocked(
       await claimPlaceholderParty(tx, row.id, claiming.id, userId);
     }
     await tx.insert(tripMember).values({ tripId: row.id, userId, displayName: clean });
+    // Travel details (R.9 I11-09): the person takes over the placeholder's open requests.
+    if (claiming) await claimPlaceholderRequests(tx, claiming.id, userId);
     await tx.update(trip).set({ updatedAt: now }).where(eq(trip.id, row.id));
     return { ok: true, publicId: row.publicId, alreadyMember: false } as const;
   });

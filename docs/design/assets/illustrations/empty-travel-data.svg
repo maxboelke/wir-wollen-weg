@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 180" width="240" height="180" aria-hidden="true" focusable="false">
+  <title>Noch keine Anfrage</title>
+  <desc>Leerzustand „Reisedaten“ (W20 H.3 Block 5 und 7, F-054, D-67): eine Ausweiskarte ohne Inhalt, davor ein Schild in Indigo mit Minze-Haken, Sonne und Minze-Wellen in einer Lavendel-Kachel. Dekorativ.</desc>
+  <!-- v1.3 (2026-10-23), Stil B wie empty-costs.svg: flach, ohne Kontur, Kachel statt Teller, keine Texte, keine Koralle,
+       keine Gesichter (Passbild nur als Kreis und Schultern). Ebenen (M-D3): plate, sun, sea, card, shield, sparks. -->
+  <style>
+    .wi-plate { fill: var(--ww-illu-plate, #ECE6FF); }
+    .wi-paper { fill: var(--ww-illu-paper, #FFFFFF); }
+    .wi-brand { fill: var(--ww-illu-brand, #2B2266); }
+    .wi-violet { fill: var(--ww-illu-violet, #5B48C9); }
+    .wi-mint { fill: var(--ww-illu-mint, #52E5B8); }
+    .wi-mintd { fill: var(--ww-illu-mint-deep, #1FBF94); }
+    .wi-sun { fill: var(--ww-illu-sun, #FFCF4A); }
+    .wi-s-mint { stroke: var(--ww-illu-mint, #52E5B8); }
+    @media (prefers-color-scheme: dark) {
+      .wi-plate { fill: var(--ww-illu-plate, #221C4A); }
+      .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
+      .wi-brand { fill: var(--ww-illu-brand, #5B48C9); }
+      .wi-violet { fill: var(--ww-illu-violet, #A79AF2); }
+    }
+  </style>
+  <defs>
+    <clipPath id="wwetd-plate"><rect x="28" y="12" width="184" height="156" rx="32"/></clipPath>
+  </defs>
+  <g data-anim="plate"><rect class="wi-plate" x="28" y="12" width="184" height="156" rx="32"/></g>
+  <g clip-path="url(#wwetd-plate)">
+    <g data-anim="sun">
+      <circle class="wi-sun" cx="172" cy="46" r="24" opacity=".3"/>
+      <circle class="wi-sun" cx="172" cy="46" r="15"/>
+    </g>
+    <g data-anim="sea">
+      <path class="wi-mint" d="M28 136c18-6 36-6 54 0s36 6 54 0 36-6 54 0 22 4 30 2v32H28z"/>
+      <path class="wi-mintd" d="M28 152c18-5 36-5 54 0s36 5 54 0 36-5 54 0 22 4 30 2v16H28z"/>
+    </g>
+  </g>
+  <g data-anim="card">
+    <g transform="rotate(-6 112 88)">
+      <rect class="wi-paper" x="64" y="56" width="96" height="64" rx="10"/>
+      <rect class="wi-violet" x="64" y="56" width="96" height="16" rx="8" opacity=".35"/>
+      <circle class="wi-violet" cx="86" cy="91" r="8.5"/>
+      <path class="wi-violet" d="M73 112c1.6-6 6.4-9 13-9s11.4 3 13 9z" opacity=".5"/>
+      <rect class="wi-brand" x="106" y="84" width="40" height="6" rx="3"/>
+      <rect class="wi-violet" x="106" y="96" width="30" height="5" rx="2.5" opacity=".5"/>
+      <rect class="wi-violet" x="106" y="106" width="36" height="5" rx="2.5" opacity=".5"/>
+    </g>
+  </g>
+  <g data-anim="shield">
+    <path class="wi-brand" d="M166 92l20 7.5v15c0 11.5-8 20.5-20 24-12-3.5-20-12.5-20-24v-15z"/>
+    <path class="wi-s-mint" d="M157 114.5l6.5 6.5 11.5-12" fill="none" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g data-anim="sparks">
+    <path class="wi-sun" d="M52 36l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/>
+    <path class="wi-violet" d="M198 82l1.5 3.5 3.5 1.5-3.5 1.5-1.5 3.5-1.5-3.5-3.5-1.5 3.5-1.5z"/>
+  </g>
+</svg>

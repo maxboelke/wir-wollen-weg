@@ -2,7 +2,12 @@ import "server-only";
 import { and, eq, isNotNull } from "drizzle-orm";
 import { auth } from "./auth";
 import { hashPassword, verifyPassword } from "./auth/password-hash";
-import { isReauthenticatedIn, markReauthenticatedIn, reauthIdentifier } from "./auth/reauth";
+import {
+  isReauthenticatedIn,
+  markReauthenticatedIn,
+  markTravelReauthenticatedIn,
+  reauthIdentifier,
+} from "./auth/reauth";
 import { db } from "./db/client";
 import { account } from "./db/schema";
 
@@ -67,4 +72,9 @@ export async function isReauthenticated(sessionId: string): Promise<boolean> {
 export async function clearReauthentication(sessionId: string): Promise<void> {
   const ctx = await context();
   await ctx.internalAdapter.deleteVerificationByIdentifier(reauthIdentifier(sessionId));
+}
+
+/** Confirmed by CODE: document numbers of travel details may be shown for 12 hours (R.9 I11-08). */
+export async function markTravelReauthenticated(sessionId: string): Promise<void> {
+  await markTravelReauthenticatedIn((await context()).internalAdapter, sessionId);
 }

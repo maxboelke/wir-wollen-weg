@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Promo v2 · B „Kinetic Type“ · Wir wollen weg / When do we go?</title>
+<!--
+  Promo v2, Stil B „Kinetic Type“ (Motion Designer, 2026-10-23) – mutig, harte Schnitte im Takt (120 BPM = 500 ms),
+  große Typo auf Farbflächen, Handy als Ausschnitt mit Kamerafahrten/Zooms auf Details. Für TikTok/Reels.
+  Storyboard: ../storyboard.md §9 · Aufnahme: ../README.md
+  Bühne 360 × 640 CSS-px (× 3 = 1080 × 1920). Rein zeitbasiert, deterministisch.
+  Parameter: ?lang=en · ?scene=0..12 · ?t=ms · ?pause=1 · ?loop=1 · ?debug=1 · ?scale=n
+  API: window.__promoReady, __promoDone, __promoDuration, __promoRender(ms)
+  Barrierefreiheit Video: Farbschnitte höchstens 2 pro Sekunde (WCAG 2.3.1: < 3 Blitze/s), kein Rot-Flackern.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Figtree:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800&display=swap">
+<link rel="stylesheet" href="../shared/promo-screens.css">
+<style>
+#stage{background:#2b2266}
+.bgc{position:absolute;inset:0;opacity:0;visibility:hidden}
+#bgI{background:radial-gradient(260px 200px at 100% 0,rgb(82 229 184/.20),rgb(82 229 184/0)),radial-gradient(260px 220px at 0 0,rgb(167 154 242/.30),rgb(167 154 242/0)),#2b2266}
+#bgM{background:#52e5b8}
+#bgS{background:#ffcf4a}
+#bgL{background:#a79af2}
+#bgC{background:#f0503f}
+#kSun{position:absolute;left:-120px;top:60px;width:600px;height:600px;border-radius:50%;background:radial-gradient(closest-side,rgb(255 207 74/.55),rgb(255 207 74/0));opacity:0;visibility:hidden}
+
+/* Hook-Typo */
+.k-type{position:absolute;inset:0;z-index:20;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 16px 60px;text-align:center;opacity:0;visibility:hidden}
+.k-type b{display:block;font:800 80px/1 var(--ww-font-display);letter-spacing:-.05em}
+.k-type b.m{font-size:64px}
+.k-type b.huge{font-size:170px;line-height:.9}
+.k-type span{display:block;margin-top:8px;font:800 30px/1.05 var(--ww-font-display);letter-spacing:-.03em}
+.k-type b.two{font-size:50px;line-height:1.02;letter-spacing:-.04em}
+.k-type em{font-style:normal;color:var(--ww-mint-400)}
+.ink{color:var(--ww-ink-900)}.wht{color:#fff}
+
+/* Schritt-Karten */
+.k-step{position:absolute;inset:0;z-index:20;opacity:0;visibility:hidden}
+.k-step .lab{position:absolute;left:24px;top:96px;font:800 12px/1 var(--ww-font-sans);letter-spacing:.1em;text-transform:uppercase}
+.k-step .num{position:absolute;left:12px;top:108px;font:800 250px/.9 var(--ww-font-display);letter-spacing:-.06em;transform-origin:0 100%}
+.k-sl{position:absolute;left:22px;overflow:hidden;padding:0 4px 4px}
+.k-sl .tx{display:block;font:800 48px/1.04 var(--ww-font-display);letter-spacing:-.04em;white-space:nowrap}
+
+/* Untertitel als Farbstreifen */
+.k-cap{position:absolute;left:16px;right:16px;top:80px;z-index:20;visibility:hidden}
+.k-chip{display:inline-flex;align-items:center;gap:6px;height:24px;padding:0 10px 0 3px;border-radius:999px;background:#fff;color:var(--ww-ink-900);
+  font:800 11.5px/1 var(--ww-font-sans);white-space:nowrap;box-shadow:0 8px 18px -10px rgb(20 17 46/.6)}
+.k-chip b{width:18px;height:18px;border-radius:50%;background:var(--ww-indigo-800);color:#fff;display:grid;place-items:center;font:800 10px/1 var(--ww-font-display)}
+.k-line{position:relative;display:block;width:fit-content;margin-top:6px;overflow:hidden;transform:rotate(-2deg);transform-origin:0 50%}
+.k-line .bgx{position:absolute;inset:0;transform-origin:0 50%}
+.k-line .tx{position:relative;display:block;padding:3px 10px 5px;font:800 31px/1.05 var(--ww-font-display);letter-spacing:-.035em;white-space:nowrap}
+.sc-w .bgx{background:#fff}.sc-w .tx{color:var(--ww-ink-900)}
+.sc-m .bgx{background:var(--ww-mint-400)}.sc-m .tx{color:var(--ww-indigo-800)}
+.sc-s .bgx{background:var(--ww-sun-400)}.sc-s .tx{color:var(--ww-ink-900)}
+.sc-i .bgx{background:var(--ww-indigo-800)}.sc-i .tx{color:#fff}
+
+#cam{position:absolute;left:0;top:0;width:252px;height:528px;transform-origin:0 0;z-index:10;opacity:0;visibility:hidden}
+#cam .ph{box-shadow:inset 0 0 0 1.5px rgb(255 255 255/.16),0 30px 60px -20px rgb(20 17 46/.7)}
+
+/* Endkarte */
+#end{position:absolute;inset:0;z-index:25;pointer-events:none}
+#endLogo{position:absolute;left:20px;top:100px;width:72px;height:72px;opacity:0;visibility:hidden}
+.e-l{position:absolute;left:20px;overflow:hidden;padding:0 4px 6px}
+.e-l .tx{display:block;font:800 54px/1 var(--ww-font-display);letter-spacing:-.045em;color:#fff;white-space:nowrap}
+#eL2 .tx{font-size:96px;line-height:.95;color:var(--ww-mint-400)}
+#endTag{position:absolute;left:24px;right:24px;top:356px;font:700 17px/1.3 var(--ww-font-sans);color:var(--ww-lavender-250);text-wrap:balance;opacity:0;visibility:hidden}
+#endChips{position:absolute;left:20px;right:20px;top:420px;display:flex;flex-wrap:wrap;gap:6px}
+#endChips span{height:28px;padding:0 11px 0 4px;border-radius:999px;background:rgb(255 255 255/.12);display:inline-flex;align-items:center;gap:6px;
+  font:800 12px/1 var(--ww-font-sans);color:#fff;white-space:nowrap;opacity:0;visibility:hidden}
+#endChips span b{width:20px;height:20px;border-radius:50%;background:var(--ww-mint-400);color:var(--ww-indigo-800);display:grid;place-items:center;font:800 10.5px/1 var(--ww-font-display)}
+#endNote{position:absolute;left:24px;right:24px;top:488px;font:700 12px/1.3 var(--ww-font-sans);color:var(--ww-lavender-250);opacity:0;visibility:hidden}
+#conf{position:absolute;inset:0;pointer-events:none;z-index:30}
+</style>
+</head>
+<body>
+<div id="vp">
+  <div id="stage" aria-hidden="true">
+    <div class="bgc" id="bgI"></div><div class="bgc" id="bgM"></div><div class="bgc" id="bgS"></div><div class="bgc" id="bgL"></div><div class="bgc" id="bgC"></div>
+    <div id="kSun"></div>
+    <div id="cam"></div>
+    <div id="types"></div>
+    <div id="steps"></div>
+    <div id="caps"></div>
+    <div id="end">
+      <div id="endLogo"></div>
+      <div class="e-l" id="eL1" style="top:190px"><span class="tx"></span></div>
+      <div class="e-l" id="eL2" style="top:244px"><span class="tx"></span></div>
+      <div id="endTag"></div>
+      <div id="endChips"></div>
+      <div id="endNote"></div>
+    </div>
+    <div id="conf"></div>
+  </div>
+</div>
+<script src="../shared/promo-core.js"></script>
+<script src="../shared/promo-screens.js"></script>
+<script>
+(function(){
+'use strict';
+var C=window.PromoCore,PS=window.PromoScreens,$=C.$,S=C.S,O=C.O,pr=C.pr,ez=C.ez,mix=C.mix,bump=C.bump,E=C.E;
+
+/* ---------- Texte ---------- */
+var TXT={
+de:{
+  hook:['<b class="wht">Wann?</b>','<b class="ink">Juli?</b>','<b class="ink m">August?!</b>','<b class="wht huge">47</b><span class="wht">neue Nachrichten</span>','<b class="wht two">Geht auch<br><em>einfacher.</em></b>'],
+  stepLab:'Schritt {n} von 4',
+  steps:[['Zeitraum','finden'],['Unterkunft','finden'],['Kosten','tracken'],['Verrechnen','']],
+  chips:['Zeitraum finden','Unterkunft finden','Kosten tracken','Verrechnen'],
+  lines:{paint:[['Alle tragen ihre','w'],['freien Tage ein.','m']],heat:[['Grün heißt:','m'],['alle können.','w']],vote:[['Abstimmen.','w'],['Ein Tipp.','m']],
+    party:[['Termin steht.','w'],['Vorfreude an!','s']],swipe:[['Vorschlagen.','i'],['Alle swipen.','w']],costs:[['Unterwegs:','i'],['+ Ausgabe. Fertig.','w']],
+    settle:[['Am Ende:','i'],['alle quitt ✓','m']]},
+  end1:'Wir wollen',end2:'weg',tag:'Euren gemeinsamen Urlaub finden – ohne Chat-Chaos.',endChips:['Zeitraum','Unterkunft','Kosten','Verrechnen'],note:'Einladen per Link · läuft im Browser'},
+en:{
+  hook:['<b class="wht">When?</b>','<b class="ink">July?</b>','<b class="ink m">August?!</b>','<b class="wht huge">47</b><span class="wht">new messages</span>','<b class="wht two">There’s an<br><em>easier way.</em></b>'],
+  stepLab:'Step {n} of 4',
+  steps:[['Find','the dates'],['Find','a place'],['Track','costs'],['Settle','up']],
+  chips:['Find the dates','Find a place','Track costs','Settle up'],
+  lines:{paint:[['Everyone adds','w'],['their free days.','m']],heat:[['Green means:','m'],['everyone’s free.','w']],vote:[['Vote.','w'],['One tap.','m']],
+    party:[['Dates set.','w'],['Countdown on!','s']],swipe:[['Suggest.','i'],['Everyone swipes.','w']],costs:[['On the trip:','i'],['+ expense. Done.','w']],
+    settle:[['In the end:','i'],['all square ✓','m']]},
+  end1:'When do we',end2:'go?',tag:'Find your holiday together – no group-chat chaos.',endChips:['Dates','Place','Costs','Settle up'],note:'Invite by link · runs in your browser'}
+};
+var X=TXT[C.LANG];
+
+/* ---------- Zeitleiste (ms) – Schnitte auf 250-ms-Raster ---------- */
+var TYPES=[{t0:0,t1:500,bg:'I'},{t0:500,t1:1000,bg:'L'},{t0:1000,t1:1500,bg:'S'},{t0:1500,t1:2250,bg:'C',shake:true},{t0:2250,t1:3000,bg:'I'}];
+var STEPS=[{t0:3000,t1:3750,n:1,bg:'M',fg:'var(--ww-indigo-800)',numc:'var(--ww-indigo-800)'},{t0:15100,t1:15850,n:2,bg:'L',fg:'var(--ww-ink-900)',numc:'#fff'},
+  {t0:18650,t1:19400,n:3,bg:'S',fg:'var(--ww-ink-900)',numc:'var(--ww-indigo-800)'},{t0:22400,t1:23150,n:4,bg:'I',fg:'#fff',numc:'var(--ww-mint-400)'}];
+/* Kamera: [lt, Maßstab, Fokus-x, Fokus-y (Bildschirm-Px), Easing] – Fokus landet auf Bühne (180|410) */
+var SHOTS=[
+  {k:'paint',t0:3750,t1:6750,bg:'I',step:1,cam:[[0,1.2,120,230],[350,1.55,120,205,E.emph],[1950,1.55,120,205],[2200,1.3,120,300,E.emph],[3000,1.3,120,300]]},
+  {k:'heat',t0:6750,t1:9750,bg:'I',step:1,cam:[[0,1.25,120,215],[800,1.25,120,215],[1100,1.6,120,200,E.emph],[1500,1.6,120,200],[1800,1.25,120,330,E.emph],[3000,1.25,120,330]]},
+  {k:'vote',t0:9750,t1:12100,bg:'I',step:1,cam:[[0,1.3,120,240],[1050,1.3,120,240],[1300,1.3,120,330,E.emph],[2350,1.3,120,330]]},
+  {k:'party',t0:12100,t1:15100,bg:'I',step:1,cam:[[0,1.12,120,200],[3000,1.05,120,200,C.E.lin]]},
+  {k:'swipe',t0:15850,t1:18650,bg:'M',step:2,cam:[[0,1.3,120,240],[2800,1.36,120,240,C.E.lin]]},
+  {k:'costs',t0:19400,t1:22400,bg:'S',step:3,cam:[[0,1.3,120,330],[1650,1.3,120,330],[2000,1.3,120,215,E.emph],[3000,1.3,120,215]]},
+  {k:'settle',t0:23150,t1:26150,bg:'L',step:4,cam:[[0,1.3,120,215],[850,1.3,120,215],[1050,1.25,120,300,E.emph],[1550,1.25,120,300],[1750,1.5,120,135,E.emph],[3000,1.5,120,135]]}
+];
+var END=26150, DUR=29000;
+var SCENES=[0,3000,3750,6750,9750,12100,15100,15850,18650,19400,22400,23150,END];
+
+/* ---------- Aufbau ---------- */
+var BG={I:$('bgI'),M:$('bgM'),S:$('bgS'),L:$('bgL'),C:$('bgC')};
+var typeEls=TYPES.map(function(s,i){var el=C.div('k-type',X.hook[i]);$('types').appendChild(el);return el;});
+var stepEls=STEPS.map(function(s){
+  var l=X.steps[s.n-1];
+  var el=C.div('k-step','<div class="lab" data-k="lab" style="color:'+s.fg+'">'+X.stepLab.replace('{n}',s.n)+'</div>'+
+    '<div class="num" data-k="num" style="color:'+s.numc+'">'+s.n+'</div>'+
+    '<div class="k-sl" style="top:338px"><span class="tx" data-k="l1" style="color:'+s.fg+'">'+l[0]+'</span></div>'+
+    (l[1]?'<div class="k-sl" style="top:390px"><span class="tx" data-k="l2" style="color:'+s.fg+'">'+l[1]+'</span></div>':''));
+  $('steps').appendChild(el);return {el:el,k:C.keys(el)};});
+var capEls=SHOTS.map(function(s){
+  var h='<span class="k-chip" data-k="chip"><b>'+s.step+'</b>'+X.chips[s.step-1]+'</span>';
+  X.lines[s.k].forEach(function(l,i){h+='<span class="k-line sc-'+l[1]+'" data-k="ln'+i+'"><span class="bgx"></span><span class="tx">'+l[0]+'</span></span>';});
+  var el=C.div('k-cap',h);$('caps').appendChild(el);return {el:el,k:C.keys(el),n:X.lines[s.k].length};});
+
+var ph=PS.phone();$('cam').appendChild(ph.el);
+var SC={};
+SHOTS.forEach(function(s){SC[s.k]=PS.SCR[s.k]();ph.slot.appendChild(SC[s.k].el);});
+var seq=PS.sequence(SHOTS.map(function(s,i){return {s:SC[s.k],tin:s.t0,mode:i?'cut':undefined};}));
+
+function camAt(sh,lt){var v=C.track(sh.cam,lt),s=v[0]*(1+.06*(1-ez(lt,0,300,E.emph)));return {s:s,x:180-(6+v[1])*s,y:410-(6+v[2])*s};}
+
+/* Konfetti aus dem Ring (Kamera-Stand zum Burst) */
+var PARTY=SHOTS[3],BURST=PARTY.t0+SC.party.burstAt,cb=camAt(PARTY,SC.party.burstAt);
+var conf=C.confetti($('conf'),20270710);
+conf.burst(80,BURST,cb.x+(6+SC.party.ring.x)*cb.s,cb.y+(6+SC.party.ring.y)*cb.s,'burst',90);
+conf.burst(48,BURST+110,0,0,'rain',650);
+
+/* Endkarte */
+$('endLogo').innerHTML=C.logo(72,'brand','el');var ek=C.keys($('endLogo'));
+$('eL1').firstElementChild.textContent=X.end1;$('eL2').firstElementChild.textContent=X.end2;
+$('endTag').textContent=X.tag;
+$('endChips').innerHTML=X.endChips.map(function(c,i){return '<span data-k="ec'+i+'"><b>'+(i+1)+'</b>'+c+'</span>';}).join('');
+var ck=C.keys($('endChips'));
+$('endNote').textContent=X.note;
+
+/* ---------- render ---------- */
+function rise(el,lt,t0,d){S(el,{y:mix(d||60,0,ez(lt,t0,340,E.emph))});}
+function render(t){
+  /* Hintergrund-Farbfläche: harte Schnitte */
+  var bg='I',i,s;
+  for(i=0;i<TYPES.length;i++)if(t>=TYPES[i].t0&&t<TYPES[i].t1)bg=TYPES[i].bg;
+  for(i=0;i<STEPS.length;i++)if(t>=STEPS[i].t0&&t<STEPS[i].t1)bg=STEPS[i].bg;
+  for(i=0;i<SHOTS.length;i++)if(t>=SHOTS[i].t0&&t<SHOTS[i].t1)bg=SHOTS[i].bg;
+  if(t>=END)bg='I';
+  for(var b in BG)O(BG[b],b===bg?1:0);
+  S($('kSun'),{s:1+.06*bump(t,BURST,700),o:.95*pr(t,BURST-120,380)*(1-pr(t,PARTY.t1-500,500))});
+
+  /* Hook-Typo */
+  for(i=0;i<TYPES.length;i++){s=TYPES[i];var el=typeEls[i];
+    if(t<s.t0||t>=s.t1){O(el,0);continue;}
+    var lt=t-s.t0,k=ez(lt,0,260,E.emph),sh=s.shake?Math.sin(lt/22)*3.2*(1-pr(lt,0,520)):0;
+    S(el,{x:sh,s:mix(1.22,1,k)*(1+.03*lt/(s.t1-s.t0)),o:pr(lt,0,50)});}
+
+  /* Schritt-Karten */
+  for(i=0;i<STEPS.length;i++){s=STEPS[i];var st=stepEls[i];
+    if(t<s.t0||t>=s.t1){O(st.el,0);continue;}
+    var ls=t-s.t0;O(st.el,1);
+    var kn=ez(ls,0,320,E.emph);S(st.k.num,{y:mix(80,0,kn)-12*pr(ls,0,750),s:mix(1.18,1,kn)});
+    O(st.k.lab,pr(ls,60,120));
+    rise(st.k.l1,ls,120);if(st.k.l2)rise(st.k.l2,ls,200);}
+
+  /* Handy-Ausschnitte + Untertitel */
+  var on=null;
+  for(i=0;i<SHOTS.length;i++){s=SHOTS[i];var ce=capEls[i];
+    if(t<s.t0||t>=s.t1){O(ce.el,0);continue;}
+    on=s;var lc=t-s.t0;O(ce.el,1);
+    S(ce.k.chip,{s:mix(.7,1,ez(lc,0,360,E.bouncy)),o:pr(lc,0,80)});
+    for(var j=0;j<ce.n;j++){var ln=ce.k['ln'+j],t0=80+j*110;
+      S(ln.children[0],{sx:ez(lc,t0,260,E.emph)});
+      S(ln.children[1],{y:mix(44,0,ez(lc,t0+70,320,E.emph))});}}
+  var cam=$('cam');
+  if(on){var lt2=t-on.t0,cv=camAt(on,lt2);
+    cam.style.transform='translate('+cv.x.toFixed(2)+'px,'+cv.y.toFixed(2)+'px) scale('+cv.s.toFixed(4)+')';O(cam,1);seq(t);}
+  else O(cam,0);
+
+  conf.render(t);
+
+  /* Endkarte */
+  if(t>=END){var le=t-END;
+    S($('endLogo'),{s:mix(.4,1,ez(le,120,560,E.bouncy)),r:mix(-12,0,ez(le,120,560,E.soft)),o:pr(le,120,100)});
+    C.logoAnim(ek.elSun,ek.elWaves,le,300);
+    O($('eL1'),1);O($('eL2'),1);
+    rise($('eL1').firstElementChild,le,240,64);
+    S($('eL2').firstElementChild,{y:mix(100,0,ez(le,360,380,E.emph)),s:mix(1.15,1,ez(le,360,520,E.soft))});
+    S($('endTag'),{y:14*(1-ez(le,760,420,E.emph)),o:pr(le,760,160)});
+    for(var c=0;c<4;c++){var tc=1000+c*80;S(ck['ec'+c],{s:mix(.6,1,ez(le,tc,420,E.bouncy)),o:pr(le,tc,100)});}
+    O($('endNote'),pr(le,1400,240));
+  }else{O($('endLogo'),0);O($('eL1'),0);O($('eL2'),0);O($('endTag'),0);O($('endNote'),0);for(var c2=0;c2<4;c2++)O(ck['ec'+c2],0);}
+}
+
+C.player({stage:$('stage'),duration:DUR,scenes:SCENES,render:render,name:'B'});
+})();
+</script>
+</body>
+</html>

@@ -238,6 +238,25 @@
 <path d="M3.5 5.5v5.2a2 2 0 0 0 .6 1.4l8.3 8.3a2 2 0 0 0 2.8 0l5.2-5.2a2 2 0 0 0 0-2.8L12.1 4.1a2 2 0 0 0-1.4-.6H5.5a2 2 0 0 0-2 2z" fill="currentColor" fill-opacity=".16"/>
 <circle cx="8" cy="8" r="1.6" fill="currentColor" stroke="none"/>
 </symbol>
+<symbol id="ww-icon-shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<path d="M12 3.5l7 2.6v5.6c0 4.3-2.9 7.6-7 8.8-4.1-1.2-7-4.5-7-8.8V6.1z" fill="currentColor" fill-opacity=".16"/>
+<path d="M9 12.2l2.2 2.2 3.9-4.1"/>
+</symbol>
+<symbol id="ww-icon-id-card" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<rect x="2.5" y="5" width="19" height="14" rx="3" fill="currentColor" fill-opacity=".16"/>
+<circle cx="8.5" cy="10.6" r="2.1"/>
+<path d="M5.6 15.6c.5-1.4 1.6-2.2 2.9-2.2s2.4.8 2.9 2.2M14.5 10h4M14.5 13.5h2.8"/>
+</symbol>
+<symbol id="ww-icon-history" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="12" cy="12" r="8.5" fill="currentColor" fill-opacity=".16" stroke="none"/>
+<path d="M3.5 12A8.5 8.5 0 1 0 6 6L3.5 8.5"/>
+<path d="M3.5 4v4.5H8"/>
+<path d="M12 7.5V12l3 2"/>
+</symbol>
+<symbol id="ww-icon-key" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+<circle cx="8" cy="15.5" r="4.5" fill="currentColor" fill-opacity=".16"/>
+<path d="M11.2 12.3l8.3-8.3M16.3 7.2l2.5 2.5M14 9.5l2 2"/>
+</symbol>
 <symbol id="ww-icon-all-available" viewBox="0 0 24 24">
 <circle cx="12" cy="12" r="10.2" fill="currentColor" style="stroke: var(--ww-icon-ring, transparent)" stroke-width="1.8"/>
 <path d="M7.4 12.4l3 3 6.2-6.5" fill="none" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" style="stroke: var(--ww-icon-knockout, #2B2266)"/>

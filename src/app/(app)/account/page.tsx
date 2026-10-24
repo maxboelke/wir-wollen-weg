@@ -17,6 +17,8 @@ import { isCountry, isWeekStart } from "@/lib/region";
 import { hasPassword } from "@/server/account";
 import { serverEnv } from "@/server/env";
 import { getSession } from "@/server/session";
+import { releasesOutsideFixed } from "@/server/travel-data/db";
+import { AccountTravelWithdraw } from "@/features/travel-data/components/account-withdraw";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("account");
@@ -34,7 +36,12 @@ export default async function AccountPage() {
   const t = await getTranslations("account");
   const tCommon = await getTranslations("common");
   const { user } = session;
-  const passwordSet = await hasPassword(user.id);
+  const [passwordSet, travelReleases, tTravel] = await Promise.all([
+    hasPassword(user.id),
+    // Withdrawing while the dates of a trip are open again (W20 H.17, CEO 2026-10-23).
+    releasesOutsideFixed(user.id),
+    getTranslations("travelData"),
+  ]);
   const contact = serverEnv().CONTACT_EMAIL;
   const locale = isLocale(user.locale) ? user.locale : "en";
 
@@ -93,6 +100,7 @@ export default async function AccountPage() {
             </a>
             <p className={styles.muted}>{t("privacy.exportHint")}</p>
           </div>
+          <AccountTravelWithdraw releases={travelReleases} formerName={tTravel("formerMember")} />
           <p className={styles.muted}>
             {t.rich("privacy.request", {
               contact,

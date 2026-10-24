@@ -8,6 +8,8 @@ import { formatTime, linkParts, mapsHref, telHref } from "@/lib/trip-info";
 import type { TripInfoView } from "@/server/cockpit";
 import type { TripView } from "../../trips/load";
 import { orgaName } from "../../trips/remind";
+import { bookersOf } from "../../trips/bookers";
+import { nameList } from "../../trips/format";
 import styles from "./info.module.css";
 
 /** Free text with line breaks; only https links become links (new tab, W22 B). */
@@ -62,12 +64,23 @@ export async function InfoView({
       info.emergencyName ||
       info.emergencyPhone);
   const empty = !info || (!stay && !info.meetingPoint && !info.notes);
+  // Organiser + «Bucht» people, organiser first, no doubles, max. 4 (W22 E).
+  const infoNames = [
+    ...new Set([orgaName(view), ...bookersOf(view.members).map((m) => m.displayName)]),
+  ].slice(0, 4);
 
   if (empty) {
     return (
       <section className={styles.empty}>
         <Tile icon="info" tone="lavender" />
-        <p>{canEdit ? t("emptyOrga") : t("emptyMember", { orga: orgaName(view) })}</p>
+        <p>
+          {canEdit
+            ? t("emptyOrga")
+            : t("emptyMember", {
+                names: nameList(infoNames, view.format.locale, String),
+                count: infoNames.length,
+              })}
+        </p>
         {canEdit ? (
           <ButtonLink href={editHref} size="lg" block>
             {t("emptyAction")}

@@ -36,7 +36,8 @@ export function Card({
   );
 }
 
-export type TileTone = "lavender" | "mint" | "sun" | "coral" | "brand";
+/** `travel`: area «Reisedaten» (design-system §9.23, D-68 – Lavendel/Indigo). */
+export type TileTone = "lavender" | "mint" | "sun" | "coral" | "brand" | "travel";
 
 interface TileProps {
   icon: IconName;

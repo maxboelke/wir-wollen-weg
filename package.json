@@ -20,10 +20,12 @@
     "i18n:check": "node scripts/i18n-check.ts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:db": "vitest run --config vitest.db.config.ts",
     "test:e2e": "playwright test",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:seed:demo": "node --env-file-if-exists=.env.local scripts/seed-demo.ts",
+    "travel-data:rotate": "node --env-file-if-exists=.env.local scripts/travel-data-rotate.ts",
     "demo:up": "docker compose -f docker/compose.demo.yml --env-file .env.demo up -d --build && pnpm demo:migrate",
     "demo:migrate": "docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:migrate",
     "demo:seed": "docker compose -f docker/compose.demo.yml --env-file .env.demo run --rm tools pnpm db:seed:demo",
@@ -44,7 +46,7 @@
     "react-dom": "19.3.0",
     "server-only": "^0.0.1",
     "undici": "8.12.3",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",
