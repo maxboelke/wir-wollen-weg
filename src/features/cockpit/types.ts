@@ -76,10 +76,23 @@ export interface TileView {
   area: string;
   title: string;
   status: string;
+  /** «Alle Ausgaben ansehen» (W16 v2.17 Fassung 2). */
+  linkLabel?: string;
   ariaLabel: string;
   href: string;
   icon: IconName;
   tone: Exclude<TileTone, "brand">;
+}
+
+/** Cost shortcut bar (W16 v2.17 Fassung 2) – texts resolved. */
+export interface DockView {
+  kind: "add" | "settle";
+  /** Link «Kosten · Verlauf ›» → `/costs`. */
+  costsHref: string;
+  /** `[+ Ausgabe]` → new expense / `[Ausgleichen]` → settle up (from the cockpit). */
+  actionHref: string;
+  status: string;
+  tone: "owe" | "owed" | "square";
 }
 
 export interface RouteView {
@@ -96,6 +109,7 @@ export interface RouteView {
   later: StationView[];
   goal: GoalView;
   tiles: TileView[];
+  dock: DockView | null;
   more: {
     decided: { title: string; sub: string };
     members: { title: string; sub: string };
@@ -116,10 +130,6 @@ export interface TicketView {
   range: string;
   crew: { avatars: { id: string; name: string }[]; more: number; text: string };
   calendar: { icsHref: string; googleHref: string } | null;
-  /** Unterwegs: «+ Ausgabe» → new expense (W16 v2.15). */
-  addExpense: string | null;
-  /** Danach: «Ausgleichen» → settle up (only open and not closed). */
-  settle: string | null;
   celebrate: boolean;
   departureDue: boolean;
 }

@@ -32,6 +32,8 @@ interface TripCockpitProps {
   hub?: { phaseText: string; phaseLead: ReactNode; srSentence: string } | undefined;
   /** Extra button in row 1 before «⋯» (e.g. «Bearbeiten» on the info page, W22 C). */
   action?: ReactNode;
+  /** Back button target and name instead of «Meine Reisen» / «Zurück zur Reise». */
+  back?: { href: string; label: string } | undefined;
 }
 
 /**
@@ -39,7 +41,15 @@ interface TripCockpitProps {
  * trips; Indigo head with back button, trip name + phase line, «⋯» trip menu and the tab
  * pills. Phase line «Tage sammeln · 5/7 fertig» reads «5 von 7 fertig» to screen readers.
  */
-export async function TripCockpit({ view, tab, subtitle, kpi, hub, action }: TripCockpitProps) {
+export async function TripCockpit({
+  view,
+  tab,
+  subtitle,
+  kpi,
+  hub,
+  action,
+  back,
+}: TripCockpitProps) {
   const [t, menuContext] = await Promise.all([getTranslations("trip"), sheetContext(view, tab)]);
   const { trip, phase, progress, members } = view;
   const tabs: TabLink[] = TAB_ORDER.map((key) => ({
@@ -75,8 +85,8 @@ export async function TripCockpit({ view, tab, subtitle, kpi, hub, action }: Tri
         <div className={styles.row}>
           <Link
             className={styles.round}
-            href={tab ? "/trips" : tripPath(trip.publicId)}
-            aria-label={tab ? t("back") : t("backToTrip")}
+            href={back?.href ?? (tab ? "/trips" : tripPath(trip.publicId))}
+            aria-label={back?.label ?? (tab ? t("back") : t("backToTrip"))}
           >
             <Icon name="arrow-left" size={20} />
           </Link>

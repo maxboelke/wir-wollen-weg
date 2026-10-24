@@ -36,7 +36,7 @@ Wortmarken liegen als `<text>` in **Plus Jakarta Sans 800, 28 px, −0,02 em** v
 - **Sprite** `icons.svg` mit `<symbol id="ww-icon-…">`. Einbindung: `<svg width="20" height="20" aria-hidden="true"><use href="/icons.svg#ww-icon-calendar"/></svg>`.
 - Stil B: 24er Raster, 2 px Strich (Häkchen/Kreuz 2,6 px, Chevrons 2,25 px), runde Enden, `currentColor`, **weiche Duoton-Füllung** (16 % der Strichfarbe) bei Flächen-Icons. Größen 16/20/24 px; in Kacheln 22 px.
 - **Alle IDs aus v0.5 bleiben gültig** (kein Umbau im Code nötig). Neu in v1.0: `chevron-down`, `arrow-right`, `calendar-plus`, `sun`, `star`, `sparkle`, `chart`, `plane`, `login` (D-29). Geändert: `filter` ist jetzt ein Regler-Symbol (drei Linien) statt Trichter.
-- `ww-icon-all-available` = Heatmap-Siegel „Alle: Geht“ (nur bei x = n, U-4). Farben per CSS: `color` = Kreis, `--ww-icon-knockout` = Häkchen, `--ww-icon-ring` = Ring. Hell: `color: var(--ww-hm-seal-bg); --ww-icon-knockout: var(--ww-hm-seal-fg); --ww-icon-ring: var(--ww-hm-seal-ring)`; dunkel schalten die Tokens automatisch (Mitternacht-Kreis, Minze-Haken, ohne Ring).
+- `ww-icon-all-available` = Heatmap-Siegel „Alle: Geht“ (nur bei x = n, U-4; seit M-P4 hell Indigo-Kreis mit Minze-Haken auf Minze-Zelle). Farben per CSS: `color` = Kreis, `--ww-icon-knockout` = Häkchen, `--ww-icon-ring` = Ring. Hell: `color: var(--ww-hm-seal-bg); --ww-icon-knockout: var(--ww-hm-seal-fg); --ww-icon-ring: var(--ww-hm-seal-ring)`; dunkel schalten die Tokens automatisch (Mitternacht-Kreis, Minze-Haken, ohne Ring).
 - Barrierefreiheit: Icons neben Text `aria-hidden="true"`; Icon-Buttons → Name am `<button>`.
 
 | ID (`ww-icon-…`) | Bedeutung | ID | Bedeutung |
@@ -76,7 +76,7 @@ Einzeldateien (Ansicht, gleiche Formen): `calendar`, `share`, `vote`, `crown`, `
 
 | Datei | Inhalt |
 |---|---|
-| `heatmap-legend.svg` | sechs Stufen der **Indigo-Rampe** hell + dunkel, Zahl „x/n“, ◐ unten links, Siegel unten rechts (nur „alle“) |
+| `heatmap-legend.svg` | sechs Stufen der **Indigo-Rampe** hell + dunkel, Zahl „x/n“, ◐ unten links, Siegel unten rechts (nur „alle“). **v1.1 (M-P4, 2026-10-24):** „alle“ auch hell Minze `#52E5B8`, Zahl/Datum Indigo, Siegel Indigo mit Minze-Haken + weißem Ring. Ebenso angepasst: `heatmap-markers.svg` (Zellen „alle“ hell Minze, Vorschlag-Band bleibt Indigo), `icons/all-available.svg`, `illustrations/hero.svg` (Zellen „alle“ über `--ww-hm-all-bg`, Siegelpunkte `--ww-hm-seal-bg`, Zeitraum-Rahmen in Tinte statt Minze). **Developer:** `node scripts/sync-design-assets.ts` (hero → `illustrations.json`). |
 | `availability-legend.svg` | Meine Tage: Geht (glatt, Minze), Zur Not (Sonnenstreifen + ◐-Plakette), Geht nicht (Kreuzschraffur + ✕-Plakette), dazu Pinsel-Mini-Felder – hell + dunkel |
 | `heatmap-markers.svg` | Feiertag (Eselsohr mit Kerbe), Heute (Ring), Ausgewählt (Doppelrahmen), Fokus (Ring mit Hof), Vorschlag-Band in der Zeilenfuge, Wochenend-Spur – hell + dunkel |
 | `heatmap-patterns.svg` | `<pattern>`-Definitionen (IDs `ww-pat-…`); in der App die CSS-Verläufe `--ww-pattern-*` verwenden |

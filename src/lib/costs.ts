@@ -120,15 +120,8 @@ export function amountInput(cents: number, locale: string): string {
   return `${String(whole)}${locale.startsWith("de") ? "," : "."}${fraction}`;
 }
 
-/** Exact amount for balances/settling up: always two decimals («86,00 €» / «€86.00»). */
-export function formatExact(cents: number, currency: string, intl: string): string {
-  return new Intl.NumberFormat(intl, {
-    style: "currency",
-    currency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  }).format(cents / 100);
-}
+/** Exact amount for balances/settling up – the shared formatter of src/lib/money.ts. */
+export { formatMoneyExact as formatExact } from "./money";
 
 /* ------------------------------------------------------------------------------------------ */
 /* Splitting (R.8 rules 3–4)                                                                    */

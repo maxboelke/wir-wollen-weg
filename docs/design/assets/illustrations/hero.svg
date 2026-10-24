@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 358 210" width="358" height="210" aria-hidden="true" focusable="false">
   <title>Startseite: Übersichtskarte</title>
-  <desc>Produkt als Illustration: eine weiße Übersichtskarte mit Fortschrittsring, Avataren und einer Indigo-Heatmap, zwei Zeiträume, an denen alle können, sind minzgrün eingerahmt. Dahinter eine gekippte Lavendel-Karte, oben rechts die Sonne. Dekorativ.</desc>
+  <desc>Produkt als Illustration: eine weiße Übersichtskarte mit Fortschrittsring, Avataren und einer Lavendel-Heatmap; die Tage, an denen alle können, sind minzgrün mit Indigo-Siegelpunkt (M-P4) und als zwei Zeiträume dunkel eingerahmt. Dahinter eine gekippte Lavendel-Karte, oben rechts die Sonne. Dekorativ.</desc>
   <!-- W01 (v1.0). Liegt halb auf dem Indigo-Cockpit, halb auf Nebel (Karte ragt ca. 90 px in den hellen Bereich).
        Ebenen für den Eintritt (M-D3): plate, calendar, ring, friends, cells, band, sun, seal. Statischer Endzustand = diese Datei.
        Gruppen mit transform-Attribut liegen in einer äußeren data-anim-Gruppe. IDs mit Präfix wwhero. Keine Texte. -->
@@ -18,7 +18,12 @@
     .wi-s-mint { stroke: var(--ww-illu-mint, #52E5B8); }
     .wi-s-paper { stroke: var(--ww-illu-paper, #FFFFFF); }
     .wi-s-seal { stroke: var(--ww-seal-fg, #2B2266); }
+    .wi-hmall { fill: var(--ww-hm-all-bg, #52E5B8); }
+    .wi-hmseal { fill: var(--ww-hm-seal-bg, #2B2266); }
+    .wi-s-band { stroke: var(--ww-illu-ink, #1E1A3D); }
     @media (prefers-color-scheme: dark) {
+      .wi-hmseal { fill: var(--ww-hm-seal-bg, #14112E); }
+      .wi-s-band { stroke: var(--ww-illu-ink, #F3F1FF); }
       .wi-paper { fill: var(--ww-illu-paper, #2E2860); }
       .wi-ink { fill: var(--ww-illu-ink, #F3F1FF); }
       .wi-lavl { fill: var(--ww-illu-lavender-light, #362C7A); }
@@ -53,12 +58,12 @@
     </g>
   </g>
   <g data-anim="cells">
-    <rect class="wi-lavl" x="31" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="117" y="108" width="38" height="24" rx="7"/><rect class="wi-violet" x="160" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="203" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="246" y="108" width="38" height="24" rx="7"/><rect class="wi-brand" x="289" y="108" width="38" height="24" rx="7"/>
-    <rect class="wi-brand" x="31" y="138" width="38" height="24" rx="7"/><rect class="wi-brand" x="74" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="117" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="160" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="203" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="246" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="289" y="138" width="38" height="24" rx="7"/>
+    <rect class="wi-lavl" x="31" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="108" width="38" height="24" rx="7"/><rect class="wi-lav" x="117" y="108" width="38" height="24" rx="7"/><rect class="wi-violet" x="160" y="108" width="38" height="24" rx="7"/><rect class="wi-hmall" x="203" y="108" width="38" height="24" rx="7"/><rect class="wi-hmall" x="246" y="108" width="38" height="24" rx="7"/><rect class="wi-hmall" x="289" y="108" width="38" height="24" rx="7"/>
+    <rect class="wi-hmall" x="31" y="138" width="38" height="24" rx="7"/><rect class="wi-hmall" x="74" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="117" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="160" y="138" width="38" height="24" rx="7"/><rect class="wi-lav" x="203" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="246" y="138" width="38" height="24" rx="7"/><rect class="wi-violet" x="289" y="138" width="38" height="24" rx="7"/>
     <rect class="wi-violet" x="31" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="74" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="117" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="160" y="168" width="38" height="24" rx="7"/><rect class="wi-none" x="203" y="168" width="38" height="24" rx="7"/><rect class="wi-lavl" x="246" y="168" width="38" height="24" rx="7"/><rect class="wi-lav" x="289" y="168" width="38" height="24" rx="7"/>
-    <g class="wi-mint"><circle cx="232" cy="124" r="4.5"/><circle cx="275" cy="124" r="4.5"/><circle cx="318" cy="124" r="4.5"/><circle cx="60" cy="154" r="4.5"/><circle cx="103" cy="154" r="4.5"/></g>
+    <g class="wi-hmseal"><circle cx="232" cy="124" r="4.5"/><circle cx="275" cy="124" r="4.5"/><circle cx="318" cy="124" r="4.5"/><circle cx="60" cy="154" r="4.5"/><circle cx="103" cy="154" r="4.5"/></g>
   </g>
-  <g data-anim="band" class="wi-s-mint" fill="none" stroke-width="3">
+  <g data-anim="band" class="wi-s-band" fill="none" stroke-width="3">
     <rect x="199" y="104" width="132" height="32" rx="10"/>
     <rect x="27" y="134" width="89" height="32" rx="10"/>
   </g>

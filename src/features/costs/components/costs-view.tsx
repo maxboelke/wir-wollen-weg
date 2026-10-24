@@ -1,11 +1,12 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 import {
   useCallback,
   useEffect,
+  useId,
   useLayoutEffect,
   useMemo,
   useRef,
@@ -22,7 +23,9 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Chip } from "@/components/ui/chip";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
+import { SharePanel } from "@/features/trips/components/share-panel";
 import { costsPath } from "@/features/trips/paths";
+import type { Locale } from "@/i18n/config";
 import { formatExact } from "@/lib/costs";
 import { cx } from "@/lib/cx";
 import { formatDate } from "@/lib/dates";
@@ -35,14 +38,16 @@ import {
   undoSettlementAction,
 } from "../actions";
 import {
-  balanceRows,
   balancesFor,
   dayGroups,
   personLabel,
   proposalFor,
   rowKey,
-  splitRows,
+  settleSections,
+  shortNames,
+  standOf,
   type EffectiveSettlement,
+  type StandNumbers,
 } from "../derive";
 import type { CostExpenseView, CostPersonView, CostsModel } from "../load";
 import type { CostRemindData } from "../remind-types";
@@ -67,13 +72,13 @@ const CATEGORY_ICON: Record<string, IconName> = {
   other: "tag",
 };
 
-/** Proposal row marked in THIS view (W19-A `recentlyPaid`) – stays at its place until unmount. */
+/** Transfer marked in THIS view (W19-A `recentlyPaid`) – stays at its place until unmount. */
 interface RecentRow {
   key: string;
   from: string;
   to: string;
   cents: number;
-  section: "yours" | "others";
+  section: "mine" | "orga";
   index: number;
   /** Temporary id until the server answered, then the settlement id. */
   id: string;
@@ -83,7 +88,15 @@ type Sheet =
   | { kind: "detail"; id: string }
   | { kind: "remind"; step: CostRemindStep }
   | { kind: "close" }
-  | { kind: "currency" };
+  | { kind: "currency" }
+  | { kind: "share" };
+
+export interface CostsShare {
+  link: string;
+  texts: Record<Locale, string>;
+  defaultLocale: Locale;
+  tripName: string;
+}
 
 interface CostsViewProps {
   model: CostsModel;
@@ -91,10 +104,14 @@ interface CostsViewProps {
   remind: CostRemindData | null;
   /** W19-09: id of the expense saved just before (tint once). */
   freshId: string | null;
+  /** «Übersicht teilen» on `/balances` (W19 E.5 block 8) – null without expenses. */
+  share: CostsShare | null;
   sealSmall: ReactNode;
   sealLarge: ReactNode;
   emptyIllustration: ReactNode;
 }
+
+type Name = (key: string, options?: { inline?: boolean; you?: boolean }) => string;
 
 /** Text cross-fade W19-01 (0,35 → 1, 140 ms) – only when the text really changed. */
 function useTextFade<T extends HTMLElement>(text: string) {
@@ -112,6 +129,7 @@ function useTextFade<T extends HTMLElement>(text: string) {
 }
 
 const SEEN_KEY = "ww-costs-seen";
+const SEEN_EVENT = "ww-costs-seen";
 
 function readSeen(): string {
   try {
@@ -138,19 +156,20 @@ function subscribeSeen(onChange: () => void) {
   };
 }
 
-const SEEN_EVENT = "ww-costs-seen";
-
 /**
- * «Kosten» `/costs` and «Ausgleich» `/costs/balances` (W19 D): «Dein Stand», the list grouped by
- * day, settling up with marking, balances, payment details, closing. Mobile shows one view per
- * URL (segment); ≥ 960 px both side by side. Deleting and marking are optimistic (with undo);
- * balances and the proposal are recomputed in the client with the server's pure functions.
+ * «Kosten» `/costs` and «Ausgleichen» `/costs/balances` (W19 E, v2 after the client's feedback):
+ * three levels, three questions, visibly separated – «Dein Stand» (me, tinted card, one
+ * sentence + «So rechnen wir» on demand) · «Ausgaben der Gruppe» (neutral list) · «Ausgleichen»
+ * (own page: own transfers in detail, the others' compact and folded, with amounts). Deleting
+ * and marking are optimistic (with undo); balances and the proposal are recomputed in the
+ * client with the server's pure functions. ≥ 960 px: `/costs` two columns.
  */
 export function CostsView({
   model,
   view,
   remind,
   freshId,
+  share,
   sealSmall,
   sealLarge,
   emptyIllustration,
@@ -172,7 +191,6 @@ export function CostsView({
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const [lastSheet, setLastSheet] = useState<Sheet>({ kind: "close" });
   const [showAll, setShowAll] = useState(false);
-  const [doneOpen, setDoneOpen] = useState(false);
   const [moment, setMoment] = useState<"none" | "me" | "all">("none");
   const [pending, setPending] = useState(false);
   const seenRaw = useSyncExternalStore(subscribeSeen, readSeen, () => null);
@@ -187,8 +205,8 @@ export function CostsView({
     [currency, intl],
   );
   const byKey = useMemo(() => new Map(model.people.map((p) => [p.key, p])), [model.people]);
-  const name = useCallback(
-    (key: string, options: { inline?: boolean; you?: boolean } = {}) =>
+  const name = useCallback<Name>(
+    (key, options = {}) =>
       personLabel(byKey.get(key), t as unknown as Parameters<typeof personLabel>[1], options),
     [byKey, t],
   );
@@ -211,35 +229,13 @@ export function CostsView({
     [model, expenses, settlements],
   );
   const proposal = useMemo(() => proposalFor(model, balances), [model, balances]);
-  const myBalance = balances.get(me) ?? 0;
+  const stand = standOf(me, expenses, settlements);
   const allSettled = [...balances.values()].every((v) => v === 0);
   const total = expenses.reduce((sum, e) => sum + e.amountCents, 0);
-  const myShare = expenses.reduce(
-    (sum, e) => sum + (e.shares.find((s) => s.party === me)?.cents ?? 0),
-    0,
+  const sections = useMemo(
+    () => settleSections(proposal, me, model.people),
+    [proposal, me, model.people],
   );
-  const myPaid = expenses.reduce((sum, e) => sum + (e.payer === me ? e.amountCents : 0), 0);
-  const mySettled = settlements.reduce(
-    (sum, s) => sum + (s.from === me ? s.cents : s.to === me ? -s.cents : 0),
-    0,
-  );
-
-  // Rows of the proposal + this view's marked rows at their old index (W19-A).
-  const sections = useMemo(() => {
-    const split = splitRows(proposal, me);
-    const place = (list: typeof split.yours, section: "yours" | "others") => {
-      const rows: (
-        ({ kind: "open" } & (typeof list)[number]) | { kind: "paid"; row: RecentRow }
-      )[] = list.map((tr) => ({ kind: "open" as const, ...tr }));
-      const keys = new Set(list.map(rowKey));
-      for (const r of recent.filter((x) => x.section === section)) {
-        if (keys.has(r.key)) continue;
-        rows.splice(Math.min(r.index, rows.length), 0, { kind: "paid", row: r });
-      }
-      return rows;
-    };
-    return { yours: place(split.yours, "yours"), others: place(split.others, "others") };
-  }, [proposal, me, recent]);
 
   useLayoutEffect(() => {
     const target = focusAfter.current;
@@ -270,6 +266,33 @@ export function CostsView({
   );
 
   /* ---------------- delete / restore (W19-10) ---------------- */
+  // Strg/Cmd+Z undoes the last delete while its snackbar is up (D.4.3).
+  const undoRef = useRef<{ until: number; run: () => void } | null>(null);
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "z") return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest("input, textarea, [contenteditable]")) return;
+      const undo = undoRef.current;
+      if (!undo || Date.now() > undo.until) return;
+      event.preventDefault();
+      undoRef.current = null;
+      undo.run();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+    };
+  }, []);
+
+  function unhide(id: string) {
+    setDeleted((set) => {
+      const copy = new Set(set);
+      copy.delete(id);
+      return copy;
+    });
+  }
+
   function remove(expense: CostExpenseView) {
     setSheet(null);
     // W19-10: the row fades out (opacity + scale only) while the sheet closes, then goes.
@@ -293,7 +316,7 @@ export function CostsView({
     } else {
       hide();
     }
-    // Focus: the next row, otherwise the day heading (D.4.3).
+    // Focus: the next row, otherwise the list heading (D.4.3).
     const rows = [...document.querySelectorAll<HTMLElement>("[data-expense-row]")];
     const index = rows.findIndex((el) => el.dataset.expenseRow === expense.id);
     const next = rows[index + 1] ?? rows[index - 1];
@@ -301,11 +324,7 @@ export function CostsView({
       ? `[data-expense-row="${next.dataset.expenseRow ?? ""}"]`
       : "#costs-title";
     const restore = () => {
-      setDeleted((set) => {
-        const copy = new Set(set);
-        copy.delete(expense.id);
-        return copy;
-      });
+      unhide(expense.id);
       void restoreExpenseAction(model.publicId, expense.id).then((result) => {
         if (!result.ok) showBanner(errorText(result.error));
         refresh();
@@ -321,73 +340,49 @@ export function CostsView({
           });
           refresh();
         } else {
-          setDeleted((set) => {
-            const copy = new Set(set);
-            copy.delete(expense.id);
-            return copy;
-          });
+          unhide(expense.id);
           showBanner(errorText(result.error));
           refresh();
         }
       })
       .catch(() => {
-        setDeleted((set) => {
-          const copy = new Set(set);
-          copy.delete(expense.id);
-          return copy;
-        });
+        unhide(expense.id);
         showBanner(t("error"));
       });
   }
 
-  // Strg/Cmd+Z undoes the last delete while its snackbar is up (D.4.3).
-  const undoRef = useRef<{ until: number; run: () => void } | null>(null);
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (!(event.ctrlKey || event.metaKey) || event.key.toLowerCase() !== "z") return;
-      const target = event.target as HTMLElement | null;
-      if (target?.closest("input, textarea, [contenteditable]")) return;
-      const undo = undoRef.current;
-      if (!undo || Date.now() > undo.until) return;
-      event.preventDefault();
-      undoRef.current = null;
-      undo.run();
-    };
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("keydown", onKey);
-    };
-  }, []);
+  /* ---------------- mark / take back (W19-02 … W19-08, E.5) ---------------- */
+  function markedText(tr: { from: string; to: string; cents: number }): string {
+    const amount = money(tr.cents);
+    if (tr.from === me) return tb("markedOut", { name: name(tr.to, { inline: true }), amount });
+    if (tr.to === me) return tb("markedIn", { name: name(tr.from, { inline: true }), amount });
+    return tb("markedOrga", { from: name(tr.from), to: name(tr.to, { inline: true }), amount });
+  }
 
-  /* ---------------- mark / take back (W19-02 … W19-08) ---------------- */
-  function mark(
-    tr: { from: string; to: string; cents: number },
-    section: "yours" | "others",
-    index: number,
-  ) {
+  function mark(tr: { from: string; to: string; cents: number }, section: RecentRow["section"]) {
     const temp = `tmp-${String(Date.now())}-${String(Math.random()).slice(2, 8)}`;
     const key = rowKey(tr);
     const beforeMine = balances.get(me) ?? 0;
-    setAdded((list) => [...list, { id: temp, ...tr }]);
-    setRecent((list) => [...list, { key, ...tr, section, index, id: temp }]);
+    const list = section === "mine" ? [...sections.out, ...sections.in] : sections.orga;
+    const index = Math.max(
+      0,
+      list.findIndex((x) => rowKey(x) === key),
+    );
+    setAdded((rows) => [...rows, { id: temp, ...tr }]);
+    setRecent((rows) => [...rows, { key, ...tr, section, index, id: temp }]);
     focusAfter.current = `[data-undo-row="${CSS.escape(key)}"]`;
     const after = balancesFor(model, expenses, [...settlements, { id: temp, ...tr }]);
     const nowAllSettled = [...after.values()].every((v) => v === 0);
-    const fromName = name(tr.from, { you: true });
-    const toName = name(tr.to, { you: true, inline: true });
+    const message = markedText(tr);
     void markSettlementAction(model.publicId, tr.from, tr.to, tr.cents)
       .then((result) => {
         if (result.ok) {
-          setAdded((list) => list.map((a) => (a.id === temp ? { ...a, id: result.id } : a)));
-          setRecent((list) => list.map((r) => (r.id === temp ? { ...r, id: result.id } : r)));
+          setAdded((rows) => rows.map((a) => (a.id === temp ? { ...a, id: result.id } : a)));
+          setRecent((rows) => rows.map((r) => (r.id === temp ? { ...r, id: result.id } : r)));
           if (nowAllSettled) setMoment("all");
           else if (beforeMine !== 0 && (after.get(me) ?? 0) === 0) setMoment("me");
           toast({
-            message: tb(nowAllSettled ? "markedSquare" : "marked", {
-              from: fromName,
-              to: toName,
-              amount: money(tr.cents),
-            }),
+            message,
             action: {
               label: t("undo"),
               onAction: () => {
@@ -397,18 +392,18 @@ export function CostsView({
           });
           refresh();
         } else {
-          setAdded((list) => list.filter((a) => a.id !== temp));
-          setRecent((list) => list.filter((r) => r.id !== temp));
+          setAdded((rows) => rows.filter((a) => a.id !== temp));
+          setRecent((rows) => rows.filter((r) => r.id !== temp));
           showBanner(errorText(result.error));
           refresh();
         }
       })
       .catch(() => {
-        setAdded((list) => list.filter((a) => a.id !== temp));
-        setRecent((list) => list.filter((r) => r.id !== temp));
+        setAdded((rows) => rows.filter((a) => a.id !== temp));
+        setRecent((rows) => rows.filter((r) => r.id !== temp));
         showBanner(t("error"), () => {
           setBanner(null);
-          mark(tr, section, index);
+          mark(tr, section);
         });
       });
   }
@@ -419,10 +414,17 @@ export function CostsView({
     const server = model.settlements.find((s) => s.id === id);
     const settlement = recentRow ?? server ?? added.find((a) => a.id === id);
     setRemoved((set) => new Set(set).add(id));
-    setAdded((list) => list.filter((a) => a.id !== id));
-    setRecent((list) => list.filter((r) => r.id !== id));
+    setAdded((rows) => rows.filter((a) => a.id !== id));
+    setRecent((rows) => rows.filter((r) => r.id !== id));
     setMoment("none");
     if (key) focusAfter.current = `[data-mark-row="${CSS.escape(key)}"]`;
+    const restore = () => {
+      setRemoved((set) => {
+        const copy = new Set(set);
+        copy.delete(id);
+        return copy;
+      });
+    };
     void undoSettlementAction(model.publicId, id)
       .then((result) => {
         if (result.ok) {
@@ -437,7 +439,7 @@ export function CostsView({
                         model.publicId,
                         settlement.from,
                         settlement.to,
-                        "cents" in settlement ? settlement.cents : 0,
+                        settlement.cents,
                       ).then((again) => {
                         if (!again.ok) showBanner(errorText(again.error));
                         refresh();
@@ -448,21 +450,13 @@ export function CostsView({
               : {}),
           });
         } else {
-          setRemoved((set) => {
-            const copy = new Set(set);
-            copy.delete(id);
-            return copy;
-          });
+          restore();
           showBanner(errorText(result.error));
         }
         refresh();
       })
       .catch(() => {
-        setRemoved((set) => {
-          const copy = new Set(set);
-          copy.delete(id);
-          return copy;
-        });
+        restore();
         showBanner(t("error"));
       });
   }
@@ -501,13 +495,16 @@ export function CostsView({
       });
   }
 
-  /* ---------------- paid-to-you notice (D.8.3, M-U18) ---------------- */
+  /* ---------------- «an dich überwiesen» (D.8.3 / E.2, M-U18) ---------------- */
   const paidToMe =
     seen === null || closed
       ? []
       : model.settlements.filter(
           (s) => s.to === me && !s.markedByMe && !seen.has(s.id) && !removed.has(s.id),
         );
+  const paidToMeNames = [...new Set(paidToMe.map((s) => name(s.from)))].join(", ");
+  const paidToMeCount = new Set(paidToMe.map((s) => s.from)).size;
+  const paidToMeAmount = money(paidToMe.reduce((sum, s) => sum + s.cents, 0));
   const dismissPaid = () => {
     const next = new Set(seen ?? []);
     for (const s of paidToMe) next.add(s.id);
@@ -519,10 +516,6 @@ export function CostsView({
     window.dispatchEvent(new Event(SEEN_EVENT));
   };
 
-  const groups = dayGroups(expenses);
-  const shownGroups = showAll ? groups : limitGroups(groups, 100);
-  const hidden = expenses.length - shownGroups.reduce((n, g) => n + g.items.length, 0);
-  const activeCount = model.people.filter((p) => p.active).length;
   const detail =
     shown.kind === "detail" ? model.expenses.find((e) => e.id === shown.id) : undefined;
   const remindTitle = useCostRemindTitle(
@@ -535,89 +528,187 @@ export function CostsView({
       allTexts: null,
     },
   );
+  const hasData = model.expenses.length > 0 || model.settlements.length > 0;
+  const balancesHref = costsPath(model.publicId, "balances");
+  const canClose = model.isOrganizer && !closed;
 
-  const segment = (
-    <nav className={styles.segment} aria-label={t("tabs")}>
-      <Link
-        className={styles.segmentLink}
-        href={costsPath(model.publicId)}
-        aria-current={view === "list" ? "page" : undefined}
+  const closedBanner = model.closed ? (
+    <Banner
+      tone="info"
+      role="note"
+      action={
+        model.isOrganizer ? (
+          <Button
+            variant="text"
+            size="sm"
+            loading={pending}
+            onClick={() => {
+              setClosed(false);
+            }}
+          >
+            {t("closed.reopen")}
+          </Button>
+        ) : null
+      }
+    >
+      {t("closed.note", {
+        orga: model.closed.byName ?? t("former"),
+        date: formatDate(model.closed.on, intl, { weekday: false }),
+      })}
+    </Banner>
+  ) : null;
+
+  const errorBanner = banner ? (
+    <div ref={bannerRef} tabIndex={-1}>
+      <Banner
+        tone="warning"
+        role="alert"
+        action={
+          banner.retry ? (
+            <Button variant="secondary" size="sm" onClick={banner.retry}>
+              {t("retry")}
+            </Button>
+          ) : null
+        }
       >
-        {t("tabExpenses")}
-      </Link>
-      <Link
-        className={styles.segmentLink}
-        href={costsPath(model.publicId, "balances")}
-        aria-current={view === "balances" ? "page" : undefined}
-      >
-        {t("tabBalances")}
-      </Link>
-    </nav>
+        {banner.text}
+      </Banner>
+    </div>
+  ) : null;
+
+  const standCard = hasData ? (
+    <Stand
+      stand={stand}
+      money={money}
+      closed={closed}
+      allSettled={allSettled}
+      othersOpen={sections.others.length + sections.orga.length}
+      seal={sealSmall}
+      pop={moment === "me"}
+      extra={
+        view === "list" ? (
+          <StandListExtras
+            model={model}
+            stand={stand}
+            allSettled={allSettled}
+            othersOpen={sections.others.length + sections.orga.length}
+            out={sections.out.map((x) => name(x.to, { inline: true }))}
+            incoming={sections.in.map((x) => name(x.from, { inline: true }))}
+            balancesHref={balancesHref}
+            canClose={canClose}
+            paidToMe={
+              paidToMe.length > 0
+                ? t("mine.paidToYou", {
+                    names: paidToMeNames,
+                    count: paidToMeCount,
+                    amount: paidToMeAmount,
+                  })
+                : null
+            }
+          />
+        ) : null
+      }
+    />
+  ) : null;
+
+  const sheetNode = (
+    <BottomSheet
+      open={sheet !== null}
+      onClose={() => {
+        setSheet(null);
+      }}
+      title={
+        shown.kind === "detail"
+          ? (detail?.title ?? "")
+          : shown.kind === "remind"
+            ? remindTitle(shown.step)
+            : shown.kind === "close"
+              ? tClose("title")
+              : shown.kind === "share"
+                ? t("shareTitle")
+                : t("currency.title")
+      }
+      closeLabel={tCommon("close")}
+      focusKey={
+        shown.kind +
+        (shown.kind === "detail" ? shown.id : "") +
+        (shown.kind === "remind" ? (shown.step.key ?? "") : "")
+      }
+      back={
+        shown.kind === "remind" &&
+        shown.step.key &&
+        remind &&
+        firstCostStep(remind, "settle").key === undefined
+          ? {
+              label: tCommon("back"),
+              onClick: () => {
+                setSheet({ kind: "remind", step: { occasion: "settle" } });
+              },
+            }
+          : undefined
+      }
+    >
+      {shown.kind === "detail" && detail ? (
+        <ExpenseDetail
+          expense={detail}
+          model={model}
+          money={money}
+          name={name}
+          closed={closed}
+          onDelete={() => {
+            remove(detail);
+          }}
+        />
+      ) : null}
+      {shown.kind === "remind" && remind ? (
+        <CostRemindBody
+          data={remind}
+          step={shown.step}
+          onStep={(step) => {
+            setSheet({ kind: "remind", step });
+          }}
+        />
+      ) : null}
+      {shown.kind === "close" ? (
+        <CloseCostsBody
+          open={proposal.length}
+          pending={pending}
+          onConfirm={() => {
+            setClosed(true);
+          }}
+          onCancel={() => {
+            setSheet(null);
+          }}
+        />
+      ) : null}
+      {shown.kind === "currency" ? (
+        <CurrencySheet
+          publicId={model.publicId}
+          current={currency}
+          locale={model.locale}
+          onDone={() => {
+            setSheet(null);
+            refresh();
+          }}
+        />
+      ) : null}
+      {shown.kind === "share" && share ? (
+        <SharePanel
+          link={share.link}
+          texts={share.texts}
+          defaultLocale={share.defaultLocale}
+          tripName={share.tripName}
+        />
+      ) : null}
+    </BottomSheet>
   );
 
-  const hasData = model.expenses.length > 0 || model.settlements.length > 0;
-
-  return (
-    <>
-      <div className={styles.page} data-view={view}>
-        <div className={styles.top}>
-          {banner ? (
-            <div ref={bannerRef} tabIndex={-1}>
-              <Banner
-                tone="warning"
-                role="alert"
-                action={
-                  banner.retry ? (
-                    <Button variant="secondary" size="sm" onClick={banner.retry}>
-                      {t("retry")}
-                    </Button>
-                  ) : null
-                }
-              >
-                {banner.text}
-              </Banner>
-            </div>
-          ) : null}
-          {model.closed ? (
-            <Banner
-              tone="info"
-              role="note"
-              action={
-                model.isOrganizer ? (
-                  <Button
-                    variant="text"
-                    size="sm"
-                    loading={pending}
-                    onClick={() => {
-                      setClosed(false);
-                    }}
-                  >
-                    {t("closed.reopen")}
-                  </Button>
-                ) : null
-              }
-            >
-              {t("closed.note", {
-                orga: model.closed.byName ?? t("former"),
-                date: formatDate(model.closed.on, intl, { weekday: false }),
-              })}
-            </Banner>
-          ) : null}
-          {hasData ? (
-            <Stand
-              balance={myBalance}
-              share={myShare}
-              paid={myPaid}
-              settled={mySettled}
-              total={total}
-              money={money}
-              closed={closed}
-              showLink={view === "list" && myBalance !== 0}
-              balancesHref={costsPath(model.publicId, "balances")}
-              seal={sealSmall}
-              pop={moment === "me"}
-            />
-          ) : null}
+  if (view === "balances") {
+    return (
+      <>
+        <div className={styles.balancesPage}>
+          {errorBanner}
+          {closedBanner}
           {paidToMe.length > 0 ? (
             <Banner
               tone="info"
@@ -629,16 +720,84 @@ export function CostsView({
               }
             >
               {t("paidToYou", {
-                names: [...new Set(paidToMe.map((s) => name(s.from)))].join(", "),
-                count: new Set(paidToMe.map((s) => s.from)).size,
-                amount: money(paidToMe.reduce((sum, s) => sum + s.cents, 0)),
+                names: paidToMeNames,
+                count: paidToMeCount,
+                amount: paidToMeAmount,
               })}
             </Banner>
           ) : null}
-          {model.expenses.length > 0 ? segment : null}
+          {standCard}
+          {hasData ? (
+            <Settle
+              model={model}
+              sections={sections}
+              recent={recent}
+              settlements={settlements}
+              stand={stand}
+              allSettled={allSettled}
+              closed={closed}
+              money={money}
+              name={name}
+              moment={moment}
+              sealLarge={sealLarge}
+              remind={remind}
+              onMark={mark}
+              onTakeBack={takeBack}
+              onRemind={(key) => {
+                if (remind) setSheet({ kind: "remind", step: { occasion: "settle", key } });
+              }}
+              onClose={() => {
+                setSheet({ kind: "close" });
+              }}
+            />
+          ) : (
+            <p className={styles.muted}>{t("empty.title")}</p>
+          )}
+          {share ? (
+            <Button
+              variant="text"
+              size="md"
+              icon="share"
+              className={styles.shareButton}
+              aria-haspopup="dialog"
+              aria-label={tb("shareName")}
+              onClick={() => {
+                setSheet({ kind: "share" });
+              }}
+            >
+              {tb("share")}
+            </Button>
+          ) : null}
+        </div>
+        {sheetNode}
+      </>
+    );
+  }
+
+  const groups = dayGroups(expenses);
+  const shownGroups = showAll ? groups : limitGroups(groups, 100);
+  const hidden = expenses.length - shownGroups.reduce((n, g) => n + g.items.length, 0);
+  const activeCount = model.people.filter((p) => p.active).length;
+
+  return (
+    <>
+      <div className={styles.page}>
+        <div className={styles.top}>
+          {errorBanner}
+          {closedBanner}
+          {standCard}
+          {hasData && (sections.out.length > 0 || sections.in.length > 0) ? (
+            <OwnCompact
+              rows={[...sections.out, ...sections.in]}
+              me={me}
+              money={money}
+              name={name}
+              byKey={byKey}
+            />
+          ) : null}
         </div>
 
-        <div className={cx(styles.col, styles.listCol)}>
+        <div className={styles.listCol}>
           {model.expenses.length === 0 ? (
             <Empty
               model={model}
@@ -649,18 +808,16 @@ export function CostsView({
               }}
             />
           ) : (
-            <section aria-label={t("tabExpenses")}>
+            <section className={styles.groupLevel} aria-labelledby="costs-group">
+              <h2 className={styles.h2} id="costs-group" tabIndex={-1}>
+                {t("group.title")}
+              </h2>
+              <p className={styles.groupTotal}>{t("group.total", { total: money(total) })}</p>
               {shownGroups.map((group) => (
                 <div key={group.date} className={styles.day}>
-                  <h2 className={styles.dayHead} id={`day-${group.date}`} tabIndex={-1}>
-                    <span>{formatDate(group.date, intl, { weekday: true, year: false })}</span>
-                    <span className={styles.daySum}>
-                      <span aria-hidden="true">{money(group.sum)}</span>
-                      <span className="visually-hidden">
-                        {t("day.sum", { amount: money(group.sum) })}
-                      </span>
-                    </span>
-                  </h2>
+                  <h3 className={styles.dayHead} id={`day-${group.date}`} tabIndex={-1}>
+                    {formatDate(group.date, intl, { weekday: true, year: false })}
+                  </h3>
                   <ul className={styles.card}>
                     {group.items.map((e) => (
                       <li key={e.id}>
@@ -705,120 +862,8 @@ export function CostsView({
             </div>
           ) : null}
         </div>
-
-        <div className={cx(styles.col, styles.balancesCol)}>
-          {hasData ? (
-            <Balances
-              model={model}
-              sections={sections}
-              proposalCount={proposal.length}
-              allSettled={allSettled}
-              closed={closed}
-              balances={balances}
-              settlements={settlements}
-              money={money}
-              name={name}
-              moment={moment}
-              sealLarge={sealLarge}
-              doneOpen={doneOpen}
-              onToggleDone={() => {
-                setDoneOpen((v) => !v);
-              }}
-              onMark={mark}
-              onTakeBack={takeBack}
-              onRemind={(key) => {
-                if (remind) setSheet({ kind: "remind", step: { occasion: "settle", key } });
-              }}
-              onClose={() => {
-                setSheet({ kind: "close" });
-              }}
-              remind={remind}
-              focusOnLoad={view === "balances"}
-            />
-          ) : null}
-          <PayInfoCard model={model} />
-        </div>
       </div>
-
-      <BottomSheet
-        open={sheet !== null}
-        onClose={() => {
-          setSheet(null);
-        }}
-        title={
-          shown.kind === "detail"
-            ? (detail?.title ?? "")
-            : shown.kind === "remind"
-              ? remindTitle(shown.step)
-              : shown.kind === "close"
-                ? tClose("title")
-                : t("currency.title")
-        }
-        closeLabel={tCommon("close")}
-        focusKey={
-          shown.kind +
-          (shown.kind === "detail" ? shown.id : "") +
-          (shown.kind === "remind" ? (shown.step.key ?? "") : "")
-        }
-        back={
-          shown.kind === "remind" &&
-          shown.step.key &&
-          remind &&
-          firstCostStep(remind, "settle").key === undefined
-            ? {
-                label: tCommon("back"),
-                onClick: () => {
-                  setSheet({ kind: "remind", step: { occasion: "settle" } });
-                },
-              }
-            : undefined
-        }
-      >
-        {shown.kind === "detail" && detail ? (
-          <ExpenseDetail
-            expense={detail}
-            model={model}
-            money={money}
-            name={name}
-            closed={closed}
-            onDelete={() => {
-              remove(detail);
-            }}
-          />
-        ) : null}
-        {shown.kind === "remind" && remind ? (
-          <CostRemindBody
-            data={remind}
-            step={shown.step}
-            onStep={(step) => {
-              setSheet({ kind: "remind", step });
-            }}
-          />
-        ) : null}
-        {shown.kind === "close" ? (
-          <CloseCostsBody
-            open={proposal.length}
-            pending={pending}
-            onConfirm={() => {
-              setClosed(true);
-            }}
-            onCancel={() => {
-              setSheet(null);
-            }}
-          />
-        ) : null}
-        {shown.kind === "currency" ? (
-          <CurrencySheet
-            publicId={model.publicId}
-            current={currency}
-            locale={model.locale}
-            onDone={() => {
-              setSheet(null);
-              refresh();
-            }}
-          />
-        ) : null}
-      </BottomSheet>
+      {sheetNode}
     </>
   );
 }
@@ -843,55 +888,76 @@ export function currencyName(code: string, locale: string): string {
   }
 }
 
-/* ---------------- «Dein Stand» ---------------- */
+/** Accordion button with a turning chevron (UM-27: standard accordion, reduced = instant). */
+function Disclosure({
+  open,
+  onToggle,
+  controls,
+  className,
+  children,
+  ...rest
+}: {
+  open: boolean;
+  onToggle: () => void;
+  controls: string;
+  className?: string | undefined;
+  children: ReactNode;
+} & Record<`data-${string}`, string>) {
+  return (
+    <button
+      type="button"
+      className={cx(styles.disclosure, className)}
+      aria-expanded={open}
+      aria-controls={controls}
+      onClick={onToggle}
+      {...rest}
+    >
+      <span>{children}</span>
+      <span className={styles.chevron} aria-hidden="true">
+        <Icon name="chevron-down" size={20} />
+      </span>
+    </button>
+  );
+}
+
+/* ---------------- «Dein Stand» (W19 E.4, D-82) ---------------- */
 
 function Stand({
-  balance,
-  share,
-  paid,
-  settled,
-  total,
+  stand,
   money,
   closed,
-  showLink,
-  balancesHref,
+  allSettled,
+  othersOpen,
   seal,
   pop,
+  extra,
 }: {
-  balance: number;
-  share: number;
-  paid: number;
-  settled: number;
-  total: number;
+  stand: StandNumbers;
   money: (cents: number) => string;
   closed: boolean;
-  showLink: boolean;
-  balancesHref: string;
+  allSettled: boolean;
+  othersOpen: number;
   seal: ReactNode;
   pop: boolean;
+  extra: ReactNode;
 }) {
   const t = useTranslations("costs");
+  const ids = useId();
+  const [calcOpen, setCalcOpen] = useState(false);
+  const balance = stand.balance;
   const sentence =
     balance > 0
       ? t("mine.owed", { amount: money(balance) })
       : balance < 0
         ? t("mine.owe", { amount: money(-balance) })
-        : t("mine.square");
-  const detail =
-    settled !== 0
-      ? t("mine.detailPayments", {
-          share: money(share),
-          paid: money(paid),
-          settled: money(Math.abs(settled)),
-        })
-      : t("mine.detail", { share: money(share), paid: money(paid) });
-  const totalText = t("mine.total", { total: money(total) });
+        : allSettled && othersOpen === 0
+          ? t("mine.allSquare")
+          : t("mine.square");
   const sentenceRef = useTextFade<HTMLParagraphElement>(sentence);
-  const detailRef = useTextFade<HTMLParagraphElement>(detail);
-  const totalRef = useTextFade<HTMLParagraphElement>(totalText);
+  const tone = balance > 0 ? "owed" : balance < 0 ? "owe" : "square";
   return (
-    <section className={styles.stand} aria-labelledby="costs-stand">
-      <h2 className={styles.eyebrow} id="costs-stand">
+    <section className={cx(styles.stand, styles[`stand-${tone}`])} aria-labelledby={`${ids}-h`}>
+      <h2 className={styles.eyebrow} id={`${ids}-h`}>
         {t("mine.label")}
       </h2>
       {closed ? (
@@ -899,25 +965,18 @@ function Stand({
           <Chip icon="lock">{t("closed.chip")}</Chip>
         </span>
       ) : null}
-      {balance === 0 ? (
-        pop ? (
-          <SealMotion size="sm" className={styles.standSeal}>
-            {seal}
-          </SealMotion>
-        ) : (
-          <span className={cx(styles.standSeal, styles.noSparks)} aria-hidden="true">
-            {seal}
-          </span>
-        )
-      ) : (
-        <span
-          className={cx(styles.standTile, balance > 0 ? styles.tileOwed : styles.tileOwe)}
-          aria-hidden="true"
-        >
-          <Icon name={balance > 0 ? "wallet" : "transfer"} size={22} />
-        </span>
-      )}
-      <div className={styles.standText}>
+      <div className={styles.standMain}>
+        {balance === 0 ? (
+          pop ? (
+            <SealMotion size="sm" className={styles.standSeal}>
+              {seal}
+            </SealMotion>
+          ) : (
+            <span className={cx(styles.standSeal, styles.noSparks)} aria-hidden="true">
+              {seal}
+            </span>
+          )
+        ) : null}
         <p
           ref={sentenceRef}
           className={cx(
@@ -928,20 +987,171 @@ function Stand({
         >
           {sentence}
         </p>
-        <p ref={detailRef} className={styles.standLine}>
-          {detail}
-        </p>
-        <p ref={totalRef} className={styles.standLine}>
-          {totalText}
-        </p>
-        {showLink ? (
-          <Link className={styles.textLink} href={balancesHref}>
-            {t("mine.toBalances")}
-            <Icon name="chevron-right" size={18} />
-          </Link>
-        ) : null}
+      </div>
+      {extra}
+      <Disclosure
+        open={calcOpen}
+        onToggle={() => {
+          setCalcOpen((v) => !v);
+        }}
+        controls={`${ids}-calc`}
+        className={styles.calcToggle}
+      >
+        {t("calc.toggle")}
+      </Disclosure>
+      <div id={`${ids}-calc`} className={styles.calc} hidden={!calcOpen}>
+        <dl>
+          <div>
+            <dt>{t("calc.paid")}</dt>
+            <dd>{money(stand.paid)}</dd>
+          </div>
+          <div>
+            <dt>{t("calc.share")}</dt>
+            <dd>
+              <span className="visually-hidden">{`${t("calc.minus")} `}</span>
+              <span aria-hidden="true">{"− "}</span>
+              {money(stand.share)}
+            </dd>
+          </div>
+          {stand.sent !== 0 ? (
+            <div>
+              <dt>{t("calc.sent")}</dt>
+              <dd>
+                <span className="visually-hidden">{`${t("calc.plus")} `}</span>
+                <span aria-hidden="true">{"+ "}</span>
+                {money(stand.sent)}
+              </dd>
+            </div>
+          ) : null}
+          {stand.received !== 0 ? (
+            <div>
+              <dt>{t("calc.received")}</dt>
+              <dd>
+                <span className="visually-hidden">{`${t("calc.minus")} `}</span>
+                <span aria-hidden="true">{"− "}</span>
+                {money(stand.received)}
+              </dd>
+            </div>
+          ) : null}
+          <div className={styles.calcSum}>
+            <dt>
+              <strong>
+                {balance > 0 ? t("calc.owed") : balance < 0 ? t("calc.owe") : t("calc.square")}
+              </strong>
+            </dt>
+            <dd>
+              <strong>{money(Math.abs(balance))}</strong>
+            </dd>
+          </div>
+        </dl>
+        <p>{t("calc.hint")}</p>
       </div>
     </section>
+  );
+}
+
+/** `/costs` only: recipients/senders, «Ausgleichen ›», the one-line «als überwiesen markiert». */
+function StandListExtras({
+  model,
+  stand,
+  allSettled,
+  othersOpen,
+  out,
+  incoming,
+  balancesHref,
+  canClose,
+  paidToMe,
+}: {
+  model: CostsModel;
+  stand: StandNumbers;
+  allSettled: boolean;
+  othersOpen: number;
+  out: string[];
+  incoming: string[];
+  balancesHref: string;
+  canClose: boolean;
+  paidToMe: string | null;
+}) {
+  const t = useTranslations("costs");
+  const balance = stand.balance;
+  let line: string | null = null;
+  if (balance < 0 && out.length > 0) {
+    const short = shortNames(out, model.locale);
+    line =
+      short.kind === "names"
+        ? t("mine.to", { names: short.names })
+        : t("mine.toCount", { count: short.count });
+  } else if (balance > 0 && incoming.length > 0) {
+    const short = shortNames(incoming, model.locale);
+    line =
+      short.kind === "names"
+        ? t("mine.from", { names: short.names })
+        : t("mine.fromCount", { count: short.count });
+  } else if (balance === 0 && othersOpen > 0) {
+    line = t("mine.othersOpen", { count: othersOpen });
+  }
+  return (
+    <>
+      {line ? <p className={styles.standShort}>{line}</p> : null}
+      {paidToMe ? (
+        <Link className={styles.textLink} href={balancesHref} data-paid-to-me="">
+          {paidToMe}
+          <Icon name="chevron-right" size={18} />
+        </Link>
+      ) : null}
+      {balance !== 0 || othersOpen > 0 ? (
+        <ButtonLink
+          href={balancesHref}
+          variant="secondary"
+          size="lg"
+          block
+          className={styles.settleButton}
+        >
+          {t("mine.settle")}
+          <Icon name="chevron-right" size={20} />
+        </ButtonLink>
+      ) : allSettled && canClose ? (
+        <Link className={styles.textLink} href={`${balancesHref}#close`}>
+          {t("mine.closeLink")}
+          <Icon name="chevron-right" size={18} />
+        </Link>
+      ) : null}
+    </>
+  );
+}
+
+/** ≥ 960 px beside the list: own transfers, compact, without payment details (W19 E.10). */
+function OwnCompact({
+  rows,
+  me,
+  money,
+  name,
+  byKey,
+}: {
+  rows: { from: string; to: string; cents: number }[];
+  me: string;
+  money: (cents: number) => string;
+  name: Name;
+  byKey: Map<string, CostPersonView>;
+}) {
+  const tb = useTranslations("balances");
+  return (
+    <ul className={styles.ownCompact}>
+      {rows.map((row) => {
+        const other = row.from === me ? row.to : row.from;
+        const label =
+          row.from === me
+            ? tb("to", { name: name(other, { inline: true }) })
+            : tb("from", { name: name(other, { inline: true }) });
+        return (
+          <li key={rowKey(row)}>
+            <PersonAvatar person={byKey.get(other)} small />
+            <span className={styles.compactWho}>{label}</span>
+            <span className={styles.compactAmount}>{money(row.cents)}</span>
+          </li>
+        );
+      })}
+    </ul>
   );
 }
 
@@ -960,7 +1170,7 @@ function ExpenseRow({
   me: string;
   activeCount: number;
   money: (cents: number) => string;
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string;
+  name: Name;
   fresh: boolean;
   onOpen: () => void;
 }) {
@@ -1001,9 +1211,6 @@ function ExpenseRow({
           {" · "}
           {who}
         </span>
-        {expense.mode === "amounts" ? (
-          <span className={styles.tagChipRow}>{t("row.custom")}</span>
-        ) : null}
       </span>
       <span className={styles.rowRight}>
         <span className={styles.rowAmount}>{money(expense.amountCents)}</span>
@@ -1015,22 +1222,16 @@ function ExpenseRow({
 
 type T = ReturnType<typeof useTranslations<"costs">>;
 
-function paidText(
-  payer: string,
-  me: string,
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string,
-  t: T,
-): string {
+function paidText(payer: string, me: string, name: Name, t: T): string {
   if (payer === me) return t("row.paidMe");
-  const label = name(payer);
-  return t("row.paid", { name: label });
+  return t("row.paid", { name: name(payer) });
 }
 
 function forText(
   expense: CostExpenseView,
   me: string,
   activeCount: number,
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string,
+  name: Name,
   t: T,
 ): string {
   const parties = expense.shares.map((s) => s.party);
@@ -1059,7 +1260,7 @@ function ExpenseDetail({
   expense: CostExpenseView;
   model: CostsModel;
   money: (cents: number) => string;
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string;
+  name: Name;
   closed: boolean;
   onDelete: () => void;
 }) {
@@ -1105,7 +1306,7 @@ function ExpenseDetail({
             <li key={s.party} className={styles.splitItem}>
               <PersonAvatar person={person} />
               <span className={styles.splitName}>
-                {name(s.party)}
+                {name(s.party, { you: true })}
                 {person?.kind === "placeholder" ? (
                   <span className={styles.tagChip}>{t("placeholder")}</span>
                 ) : null}
@@ -1148,11 +1349,20 @@ function ExpenseDetail({
   );
 }
 
-export function PersonAvatar({ person }: { person: CostPersonView | undefined }) {
+export function PersonAvatar({
+  person,
+  small = false,
+}: {
+  person: CostPersonView | undefined;
+  small?: boolean;
+}) {
   if (!person || person.kind === "former") {
     return (
-      <span className={styles.formerAvatar} aria-hidden="true">
-        <Icon name="user" size={18} />
+      <span
+        className={cx(styles.formerAvatar, small && styles.formerAvatarSmall)}
+        aria-hidden="true"
+      >
+        <Icon name="user" size={small ? 14 : 18} />
       </span>
     );
   }
@@ -1161,6 +1371,7 @@ export function PersonAvatar({ person }: { person: CostPersonView | undefined })
       id={person.avatarId}
       name={person.name ?? ""}
       size="sm"
+      className={small ? styles.avatarSmall : undefined}
       open={person.kind === "placeholder"}
     />
   );
@@ -1214,80 +1425,60 @@ function Empty({
   );
 }
 
-/* ---------------- settle up (D.7) ---------------- */
+/* ---------------- «Ausgleichen» (W19 E.5) ---------------- */
 
-type SectionRow =
-  { kind: "open"; from: string; to: string; cents: number } | { kind: "paid"; row: RecentRow };
+type Transfer = { from: string; to: string; cents: number };
 
-function Balances({
+function Settle({
   model,
   sections,
-  proposalCount,
+  recent,
+  settlements,
+  stand,
   allSettled,
   closed,
-  balances,
-  settlements,
   money,
   name,
   moment,
   sealLarge,
-  doneOpen,
-  onToggleDone,
+  remind,
   onMark,
   onTakeBack,
   onRemind,
   onClose,
-  remind,
-  focusOnLoad,
 }: {
   model: CostsModel;
-  sections: { yours: SectionRow[]; others: SectionRow[] };
-  proposalCount: number;
+  sections: { out: Transfer[]; in: Transfer[]; orga: Transfer[]; others: Transfer[] };
+  recent: RecentRow[];
+  settlements: EffectiveSettlement[];
+  stand: StandNumbers;
   allSettled: boolean;
   closed: boolean;
-  balances: ReadonlyMap<string, number>;
-  settlements: EffectiveSettlement[];
   money: (cents: number) => string;
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string;
+  name: Name;
   moment: "none" | "me" | "all";
   sealLarge: ReactNode;
-  doneOpen: boolean;
-  onToggleDone: () => void;
-  onMark: (
-    tr: { from: string; to: string; cents: number },
-    section: "yours" | "others",
-    index: number,
-  ) => void;
+  remind: CostRemindData | null;
+  onMark: (tr: Transfer, section: RecentRow["section"]) => void;
   onTakeBack: (id: string, key: string | null) => void;
   onRemind: (key: string) => void;
   onClose: () => void;
-  remind: CostRemindData | null;
-  focusOnLoad: boolean;
 }) {
   const tb = useTranslations("balances");
   const tRemind = useTranslations("remind");
   const t = useTranslations("costs");
   const tClose = useTranslations("closeCosts");
+  const ids = useId();
   const { me } = model;
   const byKey = new Map(model.people.map((p) => [p.key, p]));
-  const firstDebt = sections.yours.findIndex((r) => r.kind === "open" && r.from === me);
-  // The first own debt is the primary button – fixed for this view (W19-02: no later restyle).
-  const [primaryIndex] = useState(firstDebt);
-  const yoursHeading = useRef<HTMLHeadingElement>(null);
-  const othersHeading = useRef<HTMLHeadingElement>(null);
-  const doneCount = settlements.length;
-  const doneLabel = tb("done", { count: doneCount });
-  const doneRef = useTextFade<HTMLSpanElement>(doneLabel);
-  const countText = tb("count", { count: proposalCount });
-  const countRef = useTextFade<HTMLParagraphElement>(countText);
+  const [doneOpen, setDoneOpen] = useState(false);
+  const [othersOpen, setOthersOpen] = useState(false);
   const settledRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!focusOnLoad || window.matchMedia("(max-width: 959px)").matches) return;
-    (yoursHeading.current ?? othersHeading.current)?.focus({ preventScroll: true });
-    // Only on the first paint of /balances (≥ 960 px, D.14).
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const out = sections.out;
+  const incoming = sections.in;
+  // The first own transfer is the primary button – fixed for this view (W19-02: no restyle).
+  const [primaryKey] = useState(() => (out[0] ? rowKey(out[0]) : null));
+  const isOrga = model.isOrganizer;
 
   useLayoutEffect(() => {
     if (moment !== "all") return;
@@ -1303,157 +1494,169 @@ function Balances({
     );
   }, [moment]);
 
-  const renderRow = (row: SectionRow, section: "yours" | "others", index: number) => {
-    if (row.kind === "paid") {
-      const r = row.row;
+  // Rows of a section + this view's marked rows at their old index (W19-A).
+  const place = (list: Transfer[], section: RecentRow["section"]) => {
+    const result: ({ kind: "open"; tr: Transfer } | { kind: "done"; row: RecentRow })[] = list.map(
+      (tr) => ({ kind: "open" as const, tr }),
+    );
+    const keys = new Set(list.map(rowKey));
+    for (const r of recent.filter((x) => x.section === section)) {
+      if (keys.has(r.key)) continue;
+      result.splice(Math.min(r.index, result.length), 0, { kind: "done", row: r });
+    }
+    return result;
+  };
+  const mineRows = place([...out, ...incoming], "mine");
+  const orgaRows = isOrga ? place(sections.orga, "orga") : [];
+  const recentIds = new Set(recent.map((r) => r.id));
+
+  // Block 4 «Erledigt» – my settlements (organiser: also the rows only they mark), newest first.
+  const serverById = new Map(model.settlements.map((s) => [s.id, s]));
+  const doneMine = [...settlements]
+    .filter((s) => {
+      if (recentIds.has(s.id)) return false;
+      const server = serverById.get(s.id);
+      if (!server) return s.from === me || s.to === me;
+      return server.mine || (isOrga && server.orgaOnly);
+    })
+    .reverse();
+  // Block 6 – everybody else's: open rows (block 5 rows only for non-organisers) + done ones.
+  const othersOpenRows = isOrga ? sections.others : [...sections.others, ...sections.orga];
+  const othersDone = model.settlements
+    .filter((s) => !s.mine && !(isOrga && s.orgaOnly) && settlements.some((x) => x.id === s.id))
+    .reverse();
+  const othersCount = othersOpenRows.length + othersDone.length;
+  const openTotal = out.length + incoming.length + sections.orga.length + sections.others.length;
+  const nothingOpen = openTotal === 0 && !recent.some((r) => r.section === "mine");
+
+  const transferRow = (
+    item: { kind: "open"; tr: Transfer } | { kind: "done"; row: RecentRow },
+    section: RecentRow["section"],
+  ) => {
+    if (item.kind === "done") {
+      const r = item.row;
       return (
-        <li key={`paid-${r.key}`} data-transfer={r.key}>
-          <TransferHead
-            from={r.from}
-            to={r.to}
-            cents={r.cents}
-            money={money}
-            name={name}
-            byKey={byKey}
-          />
+        <li key={`done-${r.key}`} data-transfer={r.key} className={styles.transfer}>
+          <TransferHead tr={r} me={me} money={money} name={name} byKey={byKey} />
           <div className={styles.transferActions}>
             <span className={styles.paidChip}>
               <Icon name="check" size={16} />
-              {`${tb("paidChip")} · ${money(r.cents)}`}
+              {tb("doneChip")}
             </span>
-            <Button
-              variant="text"
-              size="sm"
-              data-undo-row={r.key}
-              aria-label={tb("undoPayName", {
-                from: name(r.from, { you: true }),
-                to: name(r.to, { inline: true }),
-              })}
-              onClick={() => {
-                onTakeBack(r.id, r.key);
-              }}
-            >
-              {tb("undoPay")}
-            </Button>
+            {closed ? null : (
+              <Button
+                variant="text"
+                size="sm"
+                data-undo-row={r.key}
+                aria-label={tb("undoName", {
+                  from: name(r.from, { you: true }),
+                  to: name(r.to, { you: true, inline: true }),
+                })}
+                onClick={() => {
+                  onTakeBack(r.id, r.key);
+                }}
+              >
+                {tb("undo")}
+              </Button>
+            )}
           </div>
         </li>
       );
     }
-    const from = byKey.get(row.from);
-    const to = byKey.get(row.to);
-    const viewerParty = model.myParty;
-    const mine = viewerParty !== null && (row.from === viewerParty || row.to === viewerParty);
-    const canMark = !closed && (mine || (model.isOrganizer && !from?.account && !to?.account));
-    const key = rowKey(row);
-    const who =
-      from?.account && to?.account
-        ? tb("whoBoth", { a: name(row.from), b: name(row.to) })
-        : from?.account
-          ? tb("whoOne", { a: name(row.from) })
-          : to?.account
-            ? tb("whoOne", { a: name(row.to) })
-            : tb("whoOrga");
-    const iPay = row.from === viewerParty;
-    const toMe = row.to === viewerParty;
-    const remindRow = toMe ? remind?.mine.find((m) => m.key === row.from) : undefined;
-    const primary = section === "yours" && index === primaryIndex && iPay;
+    const tr = item.tr;
+    const key = rowKey(tr);
+    const iPay = tr.from === me;
+    const toMe = tr.to === me;
+    const recipient = byKey.get(tr.to);
+    const debtor = byKey.get(tr.from);
+    const remindRow = toMe ? remind?.mine.find((m) => m.key === tr.from) : undefined;
+    if (section === "orga") {
+      return (
+        <li key={key} data-transfer={key} className={styles.compactRow}>
+          <CompactPair tr={tr} money={money} name={name} byKey={byKey} />
+          {closed ? null : (
+            <Button
+              variant="text"
+              size="sm"
+              data-mark-row={key}
+              aria-label={tb("orgaDoneName", {
+                from: name(tr.from),
+                to: name(tr.to, { inline: true }),
+              })}
+              onClick={() => {
+                onMark(tr, "orga");
+              }}
+            >
+              {tb("orgaDone")}
+            </Button>
+          )}
+        </li>
+      );
+    }
     return (
-      <li key={key} data-transfer={key}>
-        <TransferHead
-          from={row.from}
-          to={row.to}
-          cents={row.cents}
-          money={money}
-          name={name}
-          byKey={byKey}
-        />
-        {to?.kind === "member" && !to.me ? (
-          <RecipientPay person={to} name={name(row.to)} iPay={iPay} />
+      <li key={key} data-transfer={key} className={styles.transfer}>
+        <TransferHead tr={tr} me={me} money={money} name={name} byKey={byKey} />
+        {iPay && recipient?.kind === "member" ? (
+          <RecipientPay person={recipient} name={name(tr.to)} />
         ) : null}
-        {closed ? null : canMark ? (
+        {closed ? null : (
           <div className={styles.transferActions}>
             <Button
-              variant={primary ? "primary" : "secondary"}
-              size={primary ? "md" : "sm"}
+              variant={iPay && key === primaryKey ? "primary" : "secondary"}
+              size={iPay && key === primaryKey ? "md" : "sm"}
               icon="check"
               data-mark-row={key}
               onClick={() => {
-                onMark({ from: row.from, to: row.to, cents: row.cents }, section, index);
+                onMark(tr, "mine");
               }}
             >
-              {toMe ? tb("markReceived") : tb("markPaid")}
+              {toMe ? tb("received") : tb("sent")}
             </Button>
-            {toMe && from && from.kind !== "former" && remindRow?.texts ? (
+            {toMe && debtor && debtor.kind !== "former" && remindRow?.texts ? (
               <Button
-                variant="secondary"
+                variant="text"
                 size="sm"
                 icon="remind"
                 aria-haspopup="dialog"
                 onClick={() => {
-                  onRemind(row.from);
+                  onRemind(tr.from);
                 }}
               >
-                {tb("remind", { name: name(row.from) })}
+                {tb("remind", { name: name(tr.from) })}
               </Button>
-            ) : toMe && from && remindRow?.orgaTexts && remind ? (
+            ) : toMe && debtor && remindRow?.orgaTexts && remind ? (
               // R-082: members cannot remind a placeholder – the organiser has the link.
               <Button
-                variant="secondary"
+                variant="text"
                 size="sm"
                 icon="remind"
                 aria-haspopup="dialog"
-                aria-label={tb("nudgeOrgaName", { orga: remind.orgaName, name: name(row.from) })}
+                aria-label={tb("nudgeOrgaName", { orga: remind.orgaName, name: name(tr.from) })}
                 onClick={() => {
-                  onRemind(row.from);
+                  onRemind(tr.from);
                 }}
               >
                 {tRemind("orgaTitle", { orga: remind.orgaName })}
               </Button>
             ) : null}
           </div>
-        ) : (
-          <p className={styles.small}>{who}</p>
         )}
       </li>
     );
   };
 
-  const hasYours = sections.yours.length > 0;
-  const recentlyPaidOthers = sections.others.some((r) => r.kind === "paid");
-  const showProposals = !allSettled || sections.yours.length > 0 || recentlyPaidOthers;
-  const doneItems = [...settlements].reverse();
+  const senders = incoming.map((x) => name(x.from, { inline: true }));
+  const payInfo =
+    stand.balance > 0 ? (
+      <PayInfoCard model={model} variant="where" senders={senders} />
+    ) : (
+      <PayInfoCard model={model} variant="collapsed" />
+    );
 
   return (
     <>
       {closed ? <p className={styles.muted}>{tb("closed")}</p> : null}
-      {hasYours ? (
-        <section className={styles.section} aria-labelledby="costs-yours">
-          <h2 className={styles.h2} id="costs-yours" ref={yoursHeading} tabIndex={-1}>
-            {tb("yours")}
-          </h2>
-          <ul className={styles.transfers}>
-            {sections.yours.map((r, i) => renderRow(r, "yours", i))}
-          </ul>
-        </section>
-      ) : null}
-      {showProposals && (sections.others.length > 0 || !hasYours) ? (
-        <section className={styles.section} aria-labelledby="costs-others">
-          <h2 className={styles.h2} id="costs-others" ref={othersHeading} tabIndex={-1}>
-            {hasYours ? tb("others") : tb("othersOnly")}
-          </h2>
-          {proposalCount > 0 ? (
-            <p ref={countRef} className={styles.muted}>
-              {countText}
-            </p>
-          ) : null}
-          {sections.others.length > 0 ? (
-            <ul className={styles.transfers}>
-              {sections.others.map((r, i) => renderRow(r, "others", i))}
-            </ul>
-          ) : null}
-        </section>
-      ) : null}
-      {allSettled ? (
+      {allSettled && nothingOpen ? (
         <div ref={settledRef} className={styles.settled} data-all-settled="">
           {moment === "all" ? (
             <SealMotion size="md">{sealLarge}</SealMotion>
@@ -1462,153 +1665,263 @@ function Balances({
               {sealLarge}
             </span>
           )}
-          <h3>{tb("allSquareTitle")}</h3>
+          <h2 className={styles.settledTitle}>{tb("allSquareTitle")}</h2>
           <p>{tb("allSquareText")}</p>
-          {model.isOrganizer && !closed ? (
-            <Button variant="secondary" size="md" onClick={onClose}>
-              {tClose("action")}
-            </Button>
-          ) : null}
         </div>
       ) : null}
-      {doneCount > 0 ? (
-        <section className={styles.section}>
-          <button
-            type="button"
-            className={styles.doneToggle}
-            aria-expanded={doneOpen}
-            onClick={onToggleDone}
-            data-done-toggle=""
-          >
-            <span ref={doneRef}>{doneLabel}</span>
-            <span className={styles.chevron}>
-              <Icon name="chevron-down" size={20} />
-            </span>
-          </button>
-          {doneOpen ? (
-            <ul className={styles.doneList}>
-              {doneItems.map((s) => {
-                const server = model.settlements.find((x) => x.id === s.id);
-                const markedBy =
-                  server?.markedByName ?? (server ? t("formerInline") : name(model.me));
-                const on = server?.markedOn ?? model.today;
-                return (
-                  <li key={s.id} className={styles.doneItem}>
-                    <span className={styles.doneText}>
-                      <span>
-                        {`${name(s.from, { you: true })} → ${name(s.to, { you: true, inline: true })}: ${money(s.cents)}`}
-                      </span>
-                      <span className={styles.small}>
-                        {server?.markedByOrga
-                          ? tb("doneOrga", {
-                              name: markedBy,
-                              date: formatDate(on, model.intl, { weekday: false, year: false }),
-                            })
-                          : tb("doneMeta", {
-                              name: markedBy,
-                              date: formatDate(on, model.intl, { weekday: false, year: false }),
-                            })}
-                      </span>
-                    </span>
-                    {!closed && (server?.canUndo ?? true) && !s.id.startsWith("tmp-") ? (
-                      <Button
-                        variant="text"
-                        size="sm"
-                        aria-label={tb("undoPayName", {
-                          from: name(s.from, { you: true }),
-                          to: name(s.to, { inline: true }),
-                        })}
-                        onClick={() => {
-                          onTakeBack(s.id, rowKey(s));
-                        }}
-                      >
-                        {tb("undoPay")}
-                      </Button>
-                    ) : null}
-                  </li>
-                );
-              })}
-            </ul>
-          ) : null}
+      {mineRows.length > 0 ? (
+        <section className={styles.section} aria-labelledby={`${ids}-mine`}>
+          <h2 className={styles.h2} id={`${ids}-mine`} tabIndex={-1}>
+            {incoming.length > 0 || (out.length === 0 && recent.some((r) => r.to === me))
+              ? tb("mineIn")
+              : mineRows.length > 1
+                ? tb("mineOutMany")
+                : tb("mineOut")}
+          </h2>
+          <ul className={styles.transfers}>{mineRows.map((row) => transferRow(row, "mine"))}</ul>
         </section>
       ) : null}
-      <section className={styles.section} aria-labelledby="costs-balances">
-        <h2 className={styles.h2} id="costs-balances">
-          {tb("list")}
-        </h2>
-        <BalanceList model={model} balances={balances} money={money} name={name} />
+      {stand.balance > 0 ? payInfo : null}
+      {doneMine.length > 0 ? (
+        <section className={styles.section}>
+          <h2 className={styles.h3}>
+            <Disclosure
+              open={doneOpen}
+              onToggle={() => {
+                setDoneOpen((v) => !v);
+              }}
+              controls={`${ids}-done`}
+              data-done-toggle=""
+            >
+              {tb("done", { count: doneMine.length })}
+            </Disclosure>
+          </h2>
+          <ul id={`${ids}-done`} className={styles.doneList} hidden={!doneOpen}>
+            {doneMine.map((s) => {
+              const server = serverById.get(s.id);
+              const text =
+                s.from === me
+                  ? tb("to", { name: name(s.to, { inline: true }) })
+                  : s.to === me
+                    ? tb("from", { name: name(s.from, { inline: true }) })
+                    : `${name(s.from)} → ${name(s.to, { inline: true })}`;
+              const on = server?.markedOn ?? model.today;
+              const date = formatDate(on, model.intl, { weekday: false, year: false });
+              const meta =
+                !server || server.markedByMe
+                  ? tb("doneMetaMe", { date })
+                  : tb("doneMeta", { name: server.markedByName ?? t("formerInline"), date });
+              return (
+                <li key={s.id} className={styles.doneItem}>
+                  <span className={styles.doneText}>
+                    <span>{`${text} · ${money(s.cents)}`}</span>
+                    <span className={styles.small}>{meta}</span>
+                  </span>
+                  {!closed && (server?.canUndo ?? true) && !s.id.startsWith("tmp-") ? (
+                    <Button
+                      variant="text"
+                      size="sm"
+                      aria-label={tb("undoName", {
+                        from: name(s.from, { you: true }),
+                        to: name(s.to, { you: true, inline: true }),
+                      })}
+                      onClick={() => {
+                        onTakeBack(s.id, rowKey(s));
+                      }}
+                    >
+                      {tb("undo")}
+                    </Button>
+                  ) : null}
+                </li>
+              );
+            })}
+          </ul>
+        </section>
+      ) : null}
+      {orgaRows.length > 0 ? (
+        <section className={styles.quietCard} aria-labelledby={`${ids}-orga`}>
+          <h2 className={styles.h3} id={`${ids}-orga`}>
+            {tb("orgaTitle")}
+          </h2>
+          <p className={styles.muted}>{tb("orgaText")}</p>
+          <ul className={styles.compactList}>{orgaRows.map((row) => transferRow(row, "orga"))}</ul>
+        </section>
+      ) : null}
+      <section className={styles.section} aria-labelledby={`${ids}-others`}>
+        {othersCount > 0 ? (
+          <h2 className={styles.h3} id={`${ids}-others`}>
+            <Disclosure
+              open={othersOpen}
+              onToggle={() => {
+                setOthersOpen((v) => !v);
+              }}
+              controls={`${ids}-others-list`}
+              data-others-toggle=""
+            >
+              {tb("others", { count: othersCount })}
+            </Disclosure>
+          </h2>
+        ) : null}
+        {openTotal > 0 ? (
+          <p className={styles.muted} id={othersCount > 0 ? undefined : `${ids}-others`}>
+            {tb("groupOpen", { count: openTotal })}
+          </p>
+        ) : null}
+        {othersCount > 0 ? (
+          <ul
+            id={`${ids}-others-list`}
+            className={cx(styles.compactList, styles.othersList)}
+            hidden={!othersOpen}
+            data-others-list=""
+          >
+            {othersOpenRows.map((tr) => (
+              <OtherRow
+                key={rowKey(tr)}
+                tr={tr}
+                done={false}
+                money={money}
+                name={name}
+                byKey={byKey}
+              />
+            ))}
+            {othersDone.map((s) => (
+              <OtherRow key={s.id} tr={s} done money={money} name={name} byKey={byKey} />
+            ))}
+          </ul>
+        ) : null}
       </section>
-      {model.isOrganizer && !closed && !allSettled ? (
-        <div className={styles.section}>
+      {stand.balance > 0 ? null : payInfo}
+      {isOrga && !closed ? (
+        <div className={styles.section} id="close">
           <Button variant="secondary" size="md" onClick={onClose}>
             {tClose("action")}
           </Button>
-          {model.subphase !== "after" ? <p className={styles.small}>{tb("usually")}</p> : null}
+          {!allSettled && model.subphase !== "after" ? (
+            <p className={styles.small}>{tb("usually")}</p>
+          ) : null}
         </div>
       ) : null}
     </>
   );
 }
 
+/** «An Lena · 64,00 €» / «Von Sara · 134,00 €» – head of an own transfer (D-84). */
 function TransferHead({
-  from,
-  to,
-  cents,
+  tr,
+  me,
   money,
   name,
   byKey,
 }: {
-  from: string;
-  to: string;
-  cents: number;
+  tr: Transfer;
+  me: string;
   money: (cents: number) => string;
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string;
+  name: Name;
   byKey: Map<string, CostPersonView>;
 }) {
   const tb = useTranslations("balances");
   const t = useTranslations("costs");
-  const fromLabel = name(from, { you: true });
-  const toLabel = name(to, { you: true, inline: true });
+  const other = tr.from === me ? tr.to : tr.from;
+  const person = byKey.get(other);
+  const label =
+    tr.from === me
+      ? tb("to", { name: name(other, { inline: true }) })
+      : tb("from", { name: name(other, { inline: true }) });
   return (
     <div className={styles.transferHead}>
-      <span className={styles.transferNames} aria-hidden="true">
-        <PersonAvatar person={byKey.get(from)} />
-        <span>{fromLabel}</span>
-        {byKey.get(from)?.kind === "placeholder" ? (
-          <span className={styles.tagChip}>{t("placeholder")}</span>
-        ) : null}
-        <span className={styles.arrow}>
-          <Icon name="arrow-right" size={16} />
-        </span>
-        <PersonAvatar person={byKey.get(to)} />
-        <span>{toLabel}</span>
-        {byKey.get(to)?.kind === "placeholder" ? (
+      <span className={styles.transferNames}>
+        <PersonAvatar person={person} />
+        <span>{label}</span>
+        {person?.kind === "placeholder" ? (
           <span className={styles.tagChip}>{t("placeholder")}</span>
         ) : null}
       </span>
-      <span className={styles.transferAmount} aria-hidden="true">
-        {money(cents)}
-      </span>
-      <span className="visually-hidden">
-        {tb("to", { from: fromLabel, to: toLabel, amount: money(cents) })}
-      </span>
+      <span className={styles.transferAmount}>{money(tr.cents)}</span>
     </div>
   );
 }
 
-function RecipientPay({
-  person,
+/** «Sara → Lena · 134,00 €» – compact, two small avatars (D-85). */
+function CompactPair({
+  tr,
+  money,
   name,
-  iPay,
+  byKey,
 }: {
-  person: CostPersonView;
-  name: string;
-  iPay: boolean;
+  tr: Transfer;
+  money: (cents: number) => string;
+  name: Name;
+  byKey: Map<string, CostPersonView>;
 }) {
+  const t = useTranslations("costs");
+  const from = byKey.get(tr.from);
+  const to = byKey.get(tr.to);
+  return (
+    <>
+      <span className={styles.compactWho}>
+        {/* Avatar and name stay together when the row wraps (R-085). */}
+        <span className={styles.compactPerson}>
+          <PersonAvatar person={from} small />
+          <span>{name(tr.from)}</span>
+          {from?.kind === "placeholder" ? (
+            <span className={styles.tagChip}>{t("placeholder")}</span>
+          ) : null}
+        </span>
+        <span className={styles.arrow} aria-hidden="true">
+          <Icon name="arrow-right" size={16} />
+        </span>
+        <span className={styles.compactPerson}>
+          <PersonAvatar person={to} small />
+          <span>{name(tr.to, { inline: true })}</span>
+          {to?.kind === "placeholder" ? (
+            <span className={styles.tagChip}>{t("placeholder")}</span>
+          ) : null}
+        </span>
+      </span>
+      <span className={styles.compactAmount}>{money(tr.cents)}</span>
+    </>
+  );
+}
+
+/** Block 6 row: names, amount, state – nothing to tap, no payment details (W19 E.5/E.6). */
+function OtherRow({
+  tr,
+  done,
+  money,
+  name,
+  byKey,
+}: {
+  tr: Transfer;
+  done: boolean;
+  money: (cents: number) => string;
+  name: Name;
+  byKey: Map<string, CostPersonView>;
+}) {
+  const tb = useTranslations("balances");
+  const state = done ? tb("doneState") : tb("open");
+  return (
+    <li className={styles.compactRow} data-other-row={done ? "done" : "open"}>
+      <span className="visually-hidden">
+        {tb("othersRow", {
+          from: name(tr.from),
+          to: name(tr.to, { inline: true }),
+          amount: money(tr.cents),
+          state,
+        })}
+      </span>
+      <span className={styles.compactVisual} aria-hidden="true">
+        <CompactPair tr={tr} money={money} name={name} byKey={byKey} />
+        <span className={cx(styles.compactState, done && styles.compactDone)}>{state}</span>
+      </span>
+    </li>
+  );
+}
+
+function RecipientPay({ person, name }: { person: CostPersonView; name: string }) {
   const t = useTranslations("payInfo");
   const pay = person.pay;
   if (!pay?.iban && !pay?.note) {
-    return iPay ? <p className={styles.small}>{t("missing", { name })}</p> : null;
+    return <p className={styles.small}>{t("missing", { name })}</p>;
   }
   return (
     <div className={styles.payInfo}>
@@ -1632,77 +1945,6 @@ function NoteLine({ note, owner }: { note: string; owner: string }) {
           toast({ message: t("noteCopied") });
         }}
       />
-    </span>
-  );
-}
-
-function BalanceList({
-  model,
-  balances,
-  money,
-  name,
-}: {
-  model: CostsModel;
-  balances: ReadonlyMap<string, number>;
-  money: (cents: number) => string;
-  name: (key: string, options?: { inline?: boolean; you?: boolean }) => string;
-}) {
-  const tb = useTranslations("balances");
-  const t = useTranslations("costs");
-  const rows = balanceRows(model.people, balances);
-  const max = Math.max(1, ...rows.map((p) => Math.abs(balances.get(p.key) ?? 0)));
-  const bars = rows.length >= 3;
-  return (
-    <ul className={styles.balances}>
-      {rows.map((p) => {
-        const cents = balances.get(p.key) ?? 0;
-        const scope = p.me ? "me" : "other";
-        const text =
-          cents > 0
-            ? tb(`${scope}.owed`, { amount: money(cents) })
-            : cents < 0
-              ? tb(scope === "me" ? "me.owes" : "other.owes", { amount: money(-cents) })
-              : tb(`${scope}.square`);
-        return (
-          <li key={p.key} data-balance-row={p.key}>
-            <span className={styles.balanceLine}>
-              <span className={styles.balanceName}>
-                <PersonAvatar person={p} />
-                <span>{p.me ? t("you") : name(p.key)}</span>
-                {p.kind === "placeholder" ? (
-                  <span className={styles.tagChip}>{t("placeholder")}</span>
-                ) : null}
-              </span>
-              <BalanceValue text={text} cents={cents} />
-            </span>
-            {bars ? (
-              <span className={styles.bar} aria-hidden="true">
-                {cents !== 0 ? (
-                  <span
-                    className={cx(styles.barFill, cents > 0 ? styles.barGet : styles.barOwe)}
-                    style={{ width: `${String((Math.abs(cents) / max) * 50)}%` }}
-                  />
-                ) : null}
-              </span>
-            ) : null}
-          </li>
-        );
-      })}
-    </ul>
-  );
-}
-
-function BalanceValue({ text, cents }: { text: string; cents: number }) {
-  const ref = useTextFade<HTMLSpanElement>(text);
-  return (
-    <span
-      ref={ref}
-      className={cx(
-        styles.balanceValue,
-        cents > 0 ? styles.owed : cents < 0 ? styles.owe : styles.square,
-      )}
-    >
-      {text}
     </span>
   );
 }

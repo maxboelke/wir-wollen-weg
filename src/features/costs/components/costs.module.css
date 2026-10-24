@@ -1,29 +1,23 @@
 /* Costs – W19 D, design-system §9.22 (tokens.css v1.2 --ww-cost-*) */
 
-/* ---------------- page layout (D.3, D.14) ---------------- */
+/* ---------------- page layout (W19 E.3, E.10) ---------------- */
+/* Mobile: «Dein Stand» (me) → space-8 → «Ausgaben der Gruppe» (group). ≥ 960 px: the group
+   list left, «Dein Stand» sticky on the right (DOM order stays mobile). */
 .page {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: var(--ww-space-5);
+  gap: var(--ww-space-8);
   max-width: var(--ww-size-content-narrow, 640px);
   margin-inline: auto;
   padding-bottom: var(--ww-space-16);
   container-type: inline-size;
 }
 
-.col {
+.listCol {
   display: flex;
   flex-direction: column;
   gap: var(--ww-space-5);
   min-width: 0;
-}
-
-/* Mobile: one view per URL (segment); the other column stays out of the a11y tree. */
-@media (max-width: 959px) {
-  .page[data-view="list"] .balancesCol,
-  .page[data-view="balances"] .listCol {
-    display: none;
-  }
 }
 
 @media (min-width: 960px) {
@@ -35,26 +29,28 @@
     align-items: start;
   }
 
-  /* W19 D.14: left the list, right «Dein Stand» + settling up (DOM order stays mobile). */
   .top {
+    position: sticky;
+    top: var(--ww-space-4);
     grid-column: 2;
     grid-row: 1;
-    margin-bottom: var(--ww-space-5);
   }
 
   .listCol {
     grid-column: 1;
-    grid-row: 1 / span 2;
+    grid-row: 1;
   }
+}
 
-  .balancesCol {
-    grid-column: 2;
-    grid-row: 2;
-  }
-
-  .top .segment {
-    display: none;
-  }
+/* `/balances`: one task, one column (640 px). */
+.balancesPage {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-6);
+  max-width: var(--ww-size-content-narrow, 640px);
+  margin-inline: auto;
+  padding-bottom: var(--ww-space-16);
+  container-type: inline-size;
 }
 
 .top {
@@ -111,22 +107,28 @@
   gap: var(--ww-space-3);
 }
 
-/* ---------------- «Dein Stand» (D.6, D-57) ---------------- */
+/* ---------------- «Dein Stand» (W19 E.4, D-82) ---------------- */
+/* Me-level: tinted card without shadow (pays back = primary tint, gets back / square = accent
+   tint); the group level below is a neutral white list – told apart also by eyebrow + space-8. */
 .stand {
   position: relative;
-  display: grid;
-  grid-template-columns: var(--ww-cost-stand-tile) minmax(0, 1fr);
-  gap: var(--ww-space-2) var(--ww-space-3);
-  padding: var(--ww-space-4);
-  border: var(--ww-border-forced);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  padding: var(--ww-space-4) var(--ww-space-4) var(--ww-space-3);
+  border: 1.5px solid var(--ww-color-border-subtle);
   border-radius: var(--ww-radius-card);
-  background: var(--ww-color-surface);
-  box-shadow: var(--ww-shadow-1);
+  background: var(--ww-color-primary-tint);
+}
+
+.stand-owed,
+.stand-square {
+  background: var(--ww-color-accent-tint);
 }
 
 .eyebrow {
-  grid-column: 1 / -1;
   margin: 0;
+  padding-inline-end: var(--ww-space-16);
   color: var(--ww-color-text-muted);
   font-size: var(--ww-text-xs);
   font-weight: var(--ww-font-weight-extrabold);
@@ -134,57 +136,102 @@
   text-transform: uppercase;
 }
 
-.standTile {
-  display: grid;
-  place-items: center;
-  width: var(--ww-cost-stand-tile);
-  height: var(--ww-cost-stand-tile);
-  border-radius: var(--ww-radius-tile);
-}
-
-.tileOwed {
-  background: var(--ww-cost-get-tile-bg);
-  color: var(--ww-cost-get-tile-fg);
-}
-
-.tileOwe {
-  background: var(--ww-cost-owe-tile-bg);
-  color: var(--ww-cost-owe-tile-fg);
+.standMain {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  min-width: 0;
 }
 
 .standSeal {
   display: grid;
+  flex: none;
   place-items: center;
   width: var(--ww-cost-stand-tile);
   height: var(--ww-cost-stand-tile);
 }
 
-.standText {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ww-space-1);
-  min-width: 0;
-}
-
 .balanceSentence {
   margin: 0;
+  min-width: 0;
   font-family: var(--ww-font-display);
-  font-size: var(--ww-cost-amount-hero);
+  font-size: 1.5rem;
   font-weight: var(--ww-font-weight-display);
   letter-spacing: -0.02em;
   line-height: 1.2;
   font-variant-numeric: var(--ww-cost-numeric);
-  /* R-081: long words («schuldest») at 200 % text – break instead of sticking out */
+  /* R-081: long words at 200 % text – break instead of sticking out */
   overflow-wrap: break-word;
   hyphens: auto;
 }
 
-/* R-081: very large text (≈ 200 % on a phone) – tile above the text, the sentence gets the
-   full card width. Normal text sizes keep the tile beside the text. */
-@container (max-width: 15em) {
-  .stand {
-    grid-template-columns: minmax(0, 1fr);
-  }
+.standShort {
+  margin: 0;
+  color: var(--ww-color-text);
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+}
+
+.settleButton {
+  margin-top: var(--ww-space-1);
+}
+
+.calcToggle {
+  align-self: flex-start;
+  width: auto;
+  min-height: var(--ww-size-touch-min);
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-sm);
+}
+
+.calc {
+  padding: var(--ww-space-3) 14px;
+  border-radius: 14px;
+  background: var(--ww-color-surface);
+  font-size: var(--ww-text-sm);
+}
+
+.calc dl {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin: 0;
+}
+
+.calc dl > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--ww-space-3);
+}
+
+.calc dt {
+  color: var(--ww-color-text-muted);
+  font-weight: var(--ww-font-weight-semibold);
+}
+
+.calc dd {
+  margin: 0;
+  font-weight: var(--ww-font-weight-bold);
+  font-variant-numeric: var(--ww-cost-numeric);
+  text-align: end;
+  white-space: nowrap;
+}
+
+.calc .calcSum {
+  padding-top: 6px;
+  border-top: 1.5px solid var(--ww-color-border-strong);
+}
+
+.calcSum dt,
+.calcSum dd {
+  color: var(--ww-color-text);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.calc p {
+  margin: var(--ww-space-2) 0 0;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
 }
 
 .owed {
@@ -197,14 +244,6 @@
 
 .square {
   color: var(--ww-cost-even-fg);
-}
-
-.standLine {
-  margin: 0;
-  color: var(--ww-color-text-muted);
-  font-size: var(--ww-text-sm);
-  font-weight: var(--ww-font-weight-medium);
-  font-variant-numeric: var(--ww-cost-numeric);
 }
 
 .textLink {
@@ -229,44 +268,25 @@
   right: var(--ww-space-3);
 }
 
-/* ---------------- segment (D.3) ---------------- */
-.segment {
+/* ---------------- «Ausgaben der Gruppe» (W19 E.3, D-83) ---------------- */
+.groupLevel {
   display: flex;
-  gap: var(--ww-space-1);
-  padding: var(--ww-space-1);
-  border-radius: var(--ww-radius-segment);
-  background: var(--ww-color-surface-sunken);
+  flex-direction: column;
+  gap: var(--ww-space-2);
 }
 
-.segmentLink {
-  display: inline-flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  min-width: 0;
-  min-height: var(--ww-size-touch-min);
-  padding: 0 var(--ww-space-2);
-  overflow-wrap: anywhere;
-  text-align: center;
-  border-radius: calc(var(--ww-radius-segment) - 4px);
+.groupTotal {
+  margin: 0 0 var(--ww-space-2);
   color: var(--ww-color-text-muted);
   font-size: var(--ww-text-sm);
-  font-weight: var(--ww-font-weight-bold);
-  text-decoration: none;
+  font-weight: var(--ww-font-weight-semibold);
+  font-variant-numeric: var(--ww-cost-numeric);
 }
 
-.segmentLink[aria-current="page"] {
-  background: var(--ww-color-surface);
-  box-shadow: var(--ww-shadow-1);
-  color: var(--ww-color-text);
+.more {
+  align-self: center;
+  margin-top: var(--ww-space-4);
 }
-
-.segmentLink:focus-visible {
-  outline: var(--ww-focus-ring);
-  outline-offset: var(--ww-focus-offset);
-}
-
-/* ---------------- expense list (D.4) ---------------- */
 .day {
   display: flex;
   flex-direction: column;
@@ -278,20 +298,18 @@
   margin-top: 0;
 }
 
+/* Day divider without a day sum (D-83): 12/800 capitals, muted. */
 .dayHead {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--ww-space-3);
   margin: 0;
-  font-size: var(--ww-text-sm);
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
   font-weight: var(--ww-font-weight-extrabold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
 }
 
-.daySum {
-  color: var(--ww-color-text-muted);
-  font-size: var(--ww-cost-amount-meta);
-  font-weight: var(--ww-font-weight-semibold);
-  font-variant-numeric: var(--ww-cost-numeric);
+.dayHead:focus {
+  outline: none;
 }
 
 .card {
@@ -495,12 +513,6 @@
   vertical-align: middle;
 }
 
-.tagChipRow {
-  composes: tagChip;
-  align-self: flex-start;
-  margin-inline-start: 0;
-}
-
 @container (max-width: 22em) {
   .row {
     grid-template-columns: var(--ww-cost-tile) minmax(0, 1fr);
@@ -642,7 +654,8 @@
   list-style: none;
 }
 
-.transfers > li {
+.transfers > li,
+.transfer {
   display: flex;
   flex-direction: column;
   gap: var(--ww-space-2);
@@ -760,43 +773,11 @@
   text-align: center;
 }
 
-.settled h3 {
-  margin: 0;
-  font-family: var(--ww-font-display);
-  font-size: var(--ww-text-xl);
-  font-weight: var(--ww-font-weight-display);
-}
-
 .settled p {
   margin: 0;
   color: var(--ww-cost-settled-muted);
   font-size: var(--ww-text-sm);
   font-weight: var(--ww-font-weight-medium);
-}
-
-.doneToggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  min-height: 48px;
-  padding: 0;
-  border: 0;
-  background: none;
-  color: inherit;
-  font: inherit;
-  font-weight: var(--ww-font-weight-extrabold);
-  cursor: pointer;
-}
-
-.doneToggle:focus-visible {
-  border-radius: var(--ww-radius-xs);
-  outline: var(--ww-focus-ring);
-  outline-offset: var(--ww-focus-offset);
-}
-
-.doneToggle[aria-expanded="true"] .chevron {
-  transform: rotate(180deg);
 }
 
 .doneList {
@@ -824,95 +805,6 @@
   min-width: 0;
 }
 
-/* ---------------- balances list (D-57) ---------------- */
-.balances {
-  margin: 0;
-  padding: var(--ww-space-1) var(--ww-space-4);
-  border: var(--ww-border-forced);
-  border-radius: var(--ww-radius-card);
-  background: var(--ww-color-surface);
-  list-style: none;
-}
-
-.balances > li {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ww-space-1-5);
-  padding: var(--ww-space-3) 0;
-}
-
-.balances > li + li {
-  border-top: 1px solid var(--ww-color-border-subtle);
-}
-
-.balanceLine {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--ww-space-1) var(--ww-space-2);
-  min-height: 32px;
-}
-
-.balanceName {
-  display: inline-flex;
-  flex: 1;
-  align-items: center;
-  gap: var(--ww-space-1-5);
-  min-width: 0;
-  font-size: 0.9375rem;
-  font-weight: var(--ww-font-weight-bold);
-  overflow-wrap: anywhere;
-}
-
-.balanceValue {
-  margin-inline-start: auto;
-  font-size: var(--ww-cost-amount-row);
-  font-weight: var(--ww-font-weight-extrabold);
-  font-variant-numeric: var(--ww-cost-numeric);
-}
-
-.bar {
-  position: relative;
-  display: block;
-  height: var(--ww-cost-bar-h);
-  border-radius: var(--ww-radius-pill);
-  background: var(--ww-cost-bar-track);
-}
-
-.bar::before {
-  position: absolute;
-  top: -2px;
-  bottom: -2px;
-  left: 50%;
-  width: 1px;
-  background: var(--ww-cost-bar-axis);
-  content: "";
-}
-
-.barFill {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  min-width: 4px;
-  border-radius: var(--ww-radius-pill);
-}
-
-.barGet {
-  left: 50%;
-  background: var(--ww-cost-bar-get);
-}
-
-.barOwe {
-  right: 50%;
-  background: var(--ww-cost-bar-owe);
-}
-
-@container (max-width: 20em) {
-  .bar {
-    display: none;
-  }
-}
-
 .formerAvatar {
   display: inline-grid;
   flex: none;
@@ -924,15 +816,214 @@
   color: var(--ww-cost-former-fg);
 }
 
+.formerAvatarSmall {
+  width: 20px;
+  height: 20px;
+}
+
+.avatarSmall.avatarSmall {
+  width: 20px;
+  height: 20px;
+  font-size: 9px;
+}
+
+/* ---------------- «Ausgleichen» compact rows (W19 E.5 blocks 5/6, D-85) ---------------- */
+.compactList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* «Ausgleiche der anderen» on a surface – dividers on the page background were 1.1:1 (D-86). */
+.othersList {
+  padding: 0 var(--ww-space-4);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+}
+
+.compactRow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1) var(--ww-space-2);
+  min-height: var(--ww-size-touch-min);
+  padding: var(--ww-space-1) 0;
+  border-bottom: 1px solid var(--ww-color-border-subtle);
+  font-size: var(--ww-text-sm);
+}
+
+.compactRow:last-child {
+  border-bottom: 0;
+}
+
+.compactVisual {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1) var(--ww-space-2);
+  min-width: 0;
+}
+
+.compactWho {
+  display: inline-flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+  font-weight: var(--ww-font-weight-semibold);
+  overflow-wrap: anywhere;
+}
+
+.compactPerson {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
+.compactAmount {
+  font-weight: var(--ww-font-weight-extrabold);
+  font-variant-numeric: var(--ww-cost-numeric);
+  white-space: nowrap;
+}
+
+.compactState {
+  min-width: 4.5rem;
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-bold);
+  text-align: end;
+}
+
+.compactDone {
+  color: var(--ww-cost-paid-fg);
+}
+
+/* own transfers beside the list – only ≥ 960 px (W19 E.10) */
+.ownCompact {
+  display: none;
+}
+
+@media (min-width: 960px) {
+  .ownCompact {
+    display: flex;
+    flex-direction: column;
+    margin: var(--ww-space-3) 0 0;
+    padding: 0 var(--ww-space-4);
+    border: var(--ww-border-forced);
+    border-radius: var(--ww-radius-card);
+    background: var(--ww-color-surface);
+    list-style: none;
+  }
+
+  .ownCompact > li {
+    display: flex;
+    align-items: center;
+    gap: var(--ww-space-2);
+    min-height: var(--ww-size-touch-min);
+    font-size: var(--ww-text-sm);
+  }
+
+  .ownCompact > li + li {
+    border-top: 1px solid var(--ww-color-border-subtle);
+  }
+}
+
+/* «Für dich als Orga», «Wohin soll das Geld?» – quiet cards, no coral (D-86) */
+.quietCard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+  padding: var(--ww-space-4);
+  border: 1.5px solid var(--ww-color-border-subtle);
+  border-radius: var(--ww-radius-card);
+  background: var(--ww-color-surface);
+}
+
+.disclosure {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ww-space-2);
+  width: 100%;
+  min-height: 48px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: var(--ww-font-weight-extrabold);
+  text-align: start;
+  cursor: pointer;
+}
+
+.disclosure:focus-visible {
+  border-radius: var(--ww-radius-xs);
+  outline: var(--ww-focus-ring);
+  outline-offset: var(--ww-focus-offset);
+}
+
+.chevron {
+  display: inline-grid;
+  flex: none;
+  place-items: center;
+  transition: transform var(--ww-duration-base) var(--ww-ease-standard, ease);
+}
+
+.disclosure[aria-expanded="true"] .chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .chevron {
+    transition: none;
+  }
+}
+
+:global([data-motion="reduce"]) .chevron {
+  transition: none;
+}
+
+.disclosureBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.disclosureBody[hidden],
+.calc[hidden],
+.doneList[hidden],
+.compactList[hidden] {
+  display: none;
+}
+
+.settledTitle {
+  margin: 0;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-xl);
+  font-weight: var(--ww-font-weight-display);
+}
+
+.shareButton {
+  align-self: flex-start;
+}
+
 /* ---------------- payment details card ---------------- */
 .payCard {
   display: flex;
   flex-direction: column;
   gap: var(--ww-space-2);
   padding: var(--ww-space-4);
-  border: var(--ww-border-forced);
+  border: 1.5px solid var(--ww-color-border-subtle);
   border-radius: var(--ww-radius-card);
   background: var(--ww-color-surface);
+}
+
+.payCardQuiet {
+  padding-block: var(--ww-space-1);
 }
 
 .payCardHead {

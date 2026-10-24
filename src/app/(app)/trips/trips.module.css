@@ -105,3 +105,43 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* «Läuft gerade» (W16 v2.18): two or more trips running today – big cards on top */
+.nowCard {
+  display: flex;
+  align-items: center;
+  gap: var(--ww-space-3);
+  min-height: 72px;
+  padding: var(--ww-space-4) var(--ww-space-5);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-primary);
+  color: var(--ww-color-text-on-primary);
+  box-shadow: var(--ww-shadow-1);
+  text-decoration: none;
+}
+
+.nowCard:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.nowText {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.nowName {
+  overflow-wrap: anywhere;
+  font-family: var(--ww-font-display);
+  font-size: var(--ww-text-lg);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.nowDay {
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-semibold);
+}

@@ -21,7 +21,8 @@ export default async function MagicLinkPage({ searchParams }: PageProps<"/auth/m
   const token = typeof query.token === "string" ? query.token : "";
   const next = toSafeInternalPath(
     typeof query.next === "string" ? query.next : undefined,
-    "/trips",
+    // W16 v2.18: without `next` the app start decides (running trip or «Meine Reisen»).
+    "/",
   );
   const inviteToken = inviteTokenFromPath(next);
   const [trip, session] = await Promise.all([

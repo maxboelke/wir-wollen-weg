@@ -22,6 +22,8 @@ interface TripShellProps {
   hub?: { phaseText: string; phaseLead: ReactNode; srSentence: string } | undefined;
   /** Extra button in row 1 (e.g. «Bearbeiten» on the info page). */
   action?: ReactNode;
+  /** Overrides the back button of row 1 (e.g. «Ausgleichen» → «Kosten», W19 E.5). */
+  back?: { href: string; label: string } | undefined;
   /** Wraps the page (e.g. the cockpit's sheet provider around head AND content). */
   frame?: ((content: ReactNode) => ReactNode) | undefined;
   children: ReactNode;
@@ -40,6 +42,7 @@ export async function TripShell({
   kpi,
   hub,
   action,
+  back,
   frame,
   children,
 }: TripShellProps) {
@@ -66,7 +69,15 @@ export async function TripShell({
     <>
       <SkipLink />
       <DemoBanner />
-      <TripCockpit view={view} tab={tab} subtitle={subtitle} kpi={kpi} hub={hub} action={action} />
+      <TripCockpit
+        view={view}
+        tab={tab}
+        subtitle={subtitle}
+        kpi={kpi}
+        hub={hub}
+        action={action}
+        back={back}
+      />
       <main id="content" className={styles.main} data-cockpit="">
         <TabContent index={tab ? TAB_ORDER.indexOf(tab) : -1}>
           {banner}

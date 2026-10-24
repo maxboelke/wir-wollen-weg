@@ -344,7 +344,7 @@
   </symbol>
 
   <!-- Badge „Alle: Geht“ (x = n, U-4): Kreis in currentColor, Häkchen in ww-icon-knockout, optionaler Ring in ww-icon-ring.
-       Heatmap hell: color = hm-seal-bg (Minze), knockout = hm-seal-fg (Indigo), ring = hm-seal-ring (Weiß).
+       Heatmap hell: color = hm-seal-bg (Indigo, seit M-P4), knockout = hm-seal-fg (Minze), ring = hm-seal-ring (Weiß).
        Heatmap dunkel: color = Mitternacht, knockout = Minze, ring = transparent. -->
   <symbol id="ww-icon-all-available" viewBox="0 0 24 24">
     <title>Alle: Geht</title>

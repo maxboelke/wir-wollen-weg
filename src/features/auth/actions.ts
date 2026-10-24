@@ -8,6 +8,7 @@ import type { AuthErrorKey } from "./auth-errors";
 import { inviteTokenFromPath, toSafeInternalPath } from "@/lib/safe-path";
 import { auth, withTrustedClientIp } from "@/server/auth";
 import { getSession } from "@/server/session";
+import { startTargetFor } from "@/server/start";
 
 export interface ActionResult {
   error?: Extract<
@@ -37,7 +38,9 @@ export async function saveName(returnTo: string, name: string): Promise<ActionRe
   if (!parsed.success) return { error: "nameRequired" };
 
   await auth().api.updateUser({ body: { name: parsed.data }, headers: await headers() });
-  redirect(toSafeInternalPath(returnTo, "/trips"));
+  const target = toSafeInternalPath(returnTo, "/");
+  // The app start (W16 v2.18) – resolved here, so the browser follows ONE redirect.
+  redirect(target === "/" ? await startTargetFor(session.user.id) : target);
 }
 
 /** Form variant of saveName for the server-rendered name step on /login. */
@@ -69,12 +72,12 @@ export async function redeemMagicLink(
 ): Promise<MagicLinkResult> {
   const token = magicTokenSchema.safeParse(formData.get("token"));
   const rawNext = formData.get("next");
-  const next = toSafeInternalPath(typeof rawNext === "string" ? rawNext : undefined, "/trips");
+  const next = toSafeInternalPath(typeof rawNext === "string" ? rawNext : undefined, "/");
   if (!token.success) return { error: "invalid" };
 
   // Session IP only from the trusted proxy header, never a client-sent one (R-010).
   const requestHeaders = withTrustedClientIp(await headers());
-  let user: { name: string };
+  let user: { id: string; name: string };
   try {
     const previous = await auth().api.getSession({ headers: requestHeaders });
     const result = await auth().api.magicLinkVerify({
@@ -98,5 +101,5 @@ export async function redeemMagicLink(
   if (!user.name && !inviteTokenFromPath(next)) {
     redirect(`/login?next=${encodeURIComponent(next)}`);
   }
-  redirect(next);
+  redirect(next === "/" ? await startTargetFor(user.id) : next);
 }

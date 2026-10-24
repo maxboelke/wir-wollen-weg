@@ -1,14 +1,12 @@
 import "server-only";
+import { currencySymbol } from "@/lib/money";
 import type { StayFormProps } from "./components/stay-form";
 import type { TripView } from "../trips/load";
 import type { StaysModel } from "./load";
 
 /** «€» / «£» / «CHF» – the currency sign of the trip in the viewer's format. */
 export function currencySign(currency: string, intl: string): string {
-  const part = new Intl.NumberFormat(intl, { style: "currency", currency })
-    .formatToParts(1)
-    .find((p) => p.type === "currency");
-  return part?.value ?? currency;
+  return currencySymbol(currency, intl).symbol;
 }
 
 /** Shared props of «Vorschlagen» and «Bearbeiten» (W17 F). */

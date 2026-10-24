@@ -965,3 +965,10 @@ export async function setAccountLocale(email: string, locale: "de" | "en"): Prom
     ]);
   });
 }
+
+/** Region of an account (F-046) – drives date formats, NOT money (W19 E.0 #7). */
+export async function setAccountCountry(email: string, country: string): Promise<void> {
+  await withClient(async (client) => {
+    await client.query(`update "user" set country = $2 where email = $1`, [email, country]);
+  });
+}

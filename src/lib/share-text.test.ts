@@ -82,14 +82,14 @@ describe("remind texts (ux-spec §14.1, §14.2)", () => {
     }
   });
 
-  it("cost reminders name the own amount and never payment details (R.8 I10-09)", () => {
+  it("cost reminders name the own amount and never payment details (R.8 I10-09, W19 E.9)", () => {
     const t = createTranslator({ locale: "de", messages: de, namespace: "share.remind" });
     expect(t("settle", values)).toBe(
-      `Hey Kemal, laut Abrechnung von ${TRIP} bekomme ich noch 1.234,56 € von dir. Danke! ${LINK}`,
+      `Hey Kemal, bei ${TRIP} bekomme ich laut App noch 1.234,56 € von dir zurück. Danke! ${LINK}`,
     );
     const tEn = createTranslator({ locale: "en", messages: en, namespace: "share.remind" });
     expect(tEn("settleAll", { ...values, count: 1 })).toBe(
-      `Hey all, one payment is still open for ${TRIP} – take a quick look: ${LINK}`,
+      `Hey all, one transfer is still open for ${TRIP} – take a quick look: ${LINK}`,
     );
     for (const key of ["settle", "settleAll", "settleOther"] as const) {
       expect(t(key, values)).not.toMatch(/IBAN|PayPal/);

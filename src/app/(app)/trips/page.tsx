@@ -7,9 +7,11 @@ import { PageShell } from "@/components/page-shell";
 import { StaggerEnter } from "@/components/stagger-enter";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Icon } from "@/components/ui/icon";
+import Link from "next/link";
 import { TripListCard, type TripListCardData } from "@/features/trips/components/trip-list-card";
 import { tripPath } from "@/features/trips/paths";
 import { isoDateInZone, todayIso } from "@/lib/dates";
+import { runningTrips } from "@/lib/start-trip";
 import {
   compareTrips,
   daysUntil,
@@ -103,6 +105,18 @@ export default async function TripsPage() {
   const todo = cards.filter((card) => card.todo && card.phase !== "past");
   const running = cards.filter((card) => !card.todo && card.phase !== "past");
   const past = cards.filter((card) => card.phase === "past");
+  // W16 v2.18: with two or more trips running today the start does not guess – they stand on
+  // top as big cards («Läuft gerade»). One running trip opens directly from `/` instead.
+  const runningNow = runningTrips(
+    items.map(({ trip }) => ({
+      publicId: trip.publicId,
+      name: trip.name,
+      phase: trip.phase,
+      fixedStart: trip.fixedStart,
+      fixedEnd: trip.fixedEnd,
+    })),
+    today,
+  );
 
   return (
     <PageShell width="wide">
@@ -128,6 +142,30 @@ export default async function TripsPage() {
           </section>
         ) : (
           <StaggerEnter sessionKey="trips-list" className={styles.sections}>
+            {runningNow.length > 1 ? (
+              <section aria-labelledby="trips-now" className={styles.section}>
+                <h2 id="trips-now">{t("runningNow")}</h2>
+                <ul className={styles.list}>
+                  {runningNow.map((trip) => (
+                    <li key={trip.publicId}>
+                      <Link
+                        className={styles.nowCard}
+                        href={tripPath(trip.publicId)}
+                        data-running-now={trip.publicId}
+                      >
+                        <span className={styles.nowText}>
+                          <span className={styles.nowName}>{trip.name}</span>
+                          <span className={styles.nowDay}>
+                            {t("runningDay", { day: trip.day, total: trip.total })}
+                          </span>
+                        </span>
+                        <Icon name="arrow-right" size={24} />
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            ) : null}
             {todo.length > 0 ? (
               <section aria-labelledby="trips-todo" className={styles.section}>
                 <h2 id="trips-todo">{t("todoTitle", { count: todo.length })}</h2>
