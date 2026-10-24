@@ -16,10 +16,13 @@ import { balancesOf, type CostsRaw } from "@/server/costs/db";
 import type { TripView } from "../trips/load";
 
 /**
- * Viewer model of the cost pages (F-035/F-036, W19 D). Everything here is visible to every
- * member of the trip (Q35 – transparency); non-members never get here (404 via the membership).
- * The client recomputes balances and the settle-up proposal with the same pure functions
- * (src/lib/costs.ts) for its optimistic steps (delete, mark), the server is the truth after
+ * Viewer model of the cost pages (F-035/F-036, W19 D/E). Expenses with their split are visible
+ * to every member (gemeinsame Kasse); non-members never get here (404 via the membership).
+ * W19 E.6 narrows the rest: payment details only of the people the viewer sends money to (per
+ * the current proposal) – never everybody's; «markiert von / am» only for the viewer's own
+ * settlements and, for the organiser, the rows only they may mark (placeholder/former on both
+ * sides). The client recomputes balances and the proposal with the same pure functions
+ * (src/lib/costs.ts) for its optimistic steps (delete, mark); the server is the truth after
  * every refresh.
  */
 
@@ -42,7 +45,10 @@ export interface CostPersonView {
   active: boolean;
   /** Avatar colour seed. */
   avatarId: string;
-  /** Voluntary payment details (members only). */
+  /**
+   * Voluntary payment details – only the viewer's own and those of the people the viewer sends
+   * money to (W19 E.6); null for everybody else.
+   */
   pay: { iban: string | null; note: string | null; updatedOn: IsoDate | null } | null;
 }
 
@@ -72,7 +78,12 @@ export interface CostSettlementView {
   from: string;
   to: string;
   cents: number;
-  markedOn: IsoDate;
+  /** The viewer is the paying or the receiving side (block «Erledigt», W19 E.5). */
+  mine: boolean;
+  /** Neither side has an account – only the organiser marks it (block «Für dich als Orga»). */
+  orgaOnly: boolean;
+  /** null for other people's settlements (W19 E.6: no «markiert von/am»). */
+  markedOn: IsoDate | null;
   markedByName: string | null;
   markedByMe: boolean;
   /** The organiser marked it for two sides without an account («markiert von Lena (Orga)»). */
@@ -194,9 +205,17 @@ function peopleOf(view: TripView, raw: CostsRaw): CostPersonView[] {
 
 export function costsModel(view: TripView, raw: CostsRaw): CostsModel {
   const { trip, me, isOrganizer, members, format, today } = view;
-  const people = peopleOf(view, raw);
-  const mine = people.find((p) => p.me);
+  const all = peopleOf(view, raw);
+  const mine = all.find((p) => p.me);
   const myParty = mine && !mine.key.includes(":") ? mine.key : null;
+  // W19 E.6: payment details leave the server only for the viewer and the recipients of the
+  // viewer's open transfers (current proposal) – not only hidden in the client.
+  const recipients = new Set(
+    myParty ? proposalOf(raw).transfers.filter((t) => t.from === myParty).map((t) => t.to) : [],
+  );
+  const people = all.map((p) =>
+    p.me || recipients.has(p.key) || p.pay === null ? p : { ...p, pay: null },
+  );
   const viewer = { userId: me.userId, partyId: myParty, organizer: isOrganizer };
   const closed = raw.closed !== null;
   const nameOfParty = new Map(people.map((p) => [p.key, p]));
@@ -235,11 +254,22 @@ export function costsModel(view: TripView, raw: CostsRaw): CostsModel {
   const settlements: CostSettlementView[] = raw.settlements.map((s) => {
     const fromUser = raw.parties.find((p) => p.id === s.from)?.userId ?? null;
     const toUser = raw.parties.find((p) => p.id === s.to)?.userId ?? null;
+    const own = myParty !== null && (s.from === myParty || s.to === myParty);
+    const orgaOnly = !nameOfParty.get(s.from)?.account && !nameOfParty.get(s.to)?.account;
+    const base = { id: s.id, from: s.from, to: s.to, cents: s.amountCents, mine: own, orgaOnly };
+    if (!own && !(orgaOnly && isOrganizer)) {
+      // Other people's transfer: amount and state only (W19 E.6).
+      return {
+        ...base,
+        markedOn: null,
+        markedByName: null,
+        markedByMe: false,
+        markedByOrga: false,
+        canUndo: false,
+      };
+    }
     return {
-      id: s.id,
-      from: s.from,
-      to: s.to,
-      cents: s.amountCents,
+      ...base,
       markedOn: isoDateInZone(s.markedAt),
       markedByName: s.markedByName,
       markedByMe: s.markedBy === me.userId,

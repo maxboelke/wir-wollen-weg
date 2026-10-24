@@ -313,13 +313,20 @@ export function ExpenseForm({
     })
       .then((answer) => {
         if (answer.ok) {
-          const saved = money(answer.amountCents);
+          // W19 E.7: the snackbar names the new result (shows the effect of the expense).
+          const balance = answer.balanceCents;
+          const saved =
+            balance < 0
+              ? t("savedOwe", { amount: money(-balance) })
+              : balance > 0
+                ? t("savedOwed", { amount: money(balance) })
+                : t("savedSquare");
           if (edit) {
             toast({ message: t("savedEdit") });
             router.push(`${costsPath(model.publicId)}?saved=${encodeURIComponent(answer.id)}`);
           } else if (fromCockpit) {
             toast({
-              message: t("saved", { amount: saved }),
+              message: saved,
               action: {
                 label: t("view"),
                 onAction: () => {
@@ -329,7 +336,7 @@ export function ExpenseForm({
             });
             router.push(`${tripPath(model.publicId)}?focus=add-expense`);
           } else {
-            toast({ message: t("saved", { amount: saved }) });
+            toast({ message: saved });
             router.push(`${costsPath(model.publicId)}?saved=${encodeURIComponent(answer.id)}`);
           }
           router.refresh();
