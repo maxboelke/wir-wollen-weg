@@ -6,6 +6,7 @@ import { useId, useState, type SubmitEvent } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 import { TextField } from "@/components/ui/field";
+import { Icon } from "@/components/ui/icon";
 import { useToast } from "@/components/ui/toast";
 import {
   COST_LIMITS,
@@ -14,6 +15,7 @@ import {
   validatePayInfo,
   type PayInfoErrors,
 } from "@/lib/costs";
+import { cx } from "@/lib/cx";
 import { formatDate } from "@/lib/dates";
 import { textLength } from "@/lib/trip-info";
 import { savePayInfoAction } from "../actions";
@@ -22,11 +24,23 @@ import { IbanLine } from "./iban";
 import styles from "./costs.module.css";
 
 /**
- * «Deine Zahlungsinfo (freiwillig)» (W19 D.8.4, R.8 I10-07): card + sheet with two optional
- * fields – a checked IBAN and «anderer Weg» (plain text ≤ 100, never linked). Allowed also when
- * the costs are closed. Both empty = delete. Nothing is kept in cookies or storage.
+ * Payment details (W19 D.8.4 / E.5 block 3, R.8 I10-07): sheet with two optional fields – a
+ * checked IBAN and «anderer Weg» (plain text ≤ 100, never linked). Allowed also when the costs
+ * are closed. Both empty = delete. Nothing is kept in cookies or storage.
+ *
+ * `where`: the viewer gets money back – card «Wohin soll das Geld?» (open, names the people who
+ * will see it). `collapsed`: everybody else – a closed disclosure «Deine Zahlungsinfo ▸».
  */
-export function PayInfoCard({ model }: { model: CostsModel }) {
+export function PayInfoCard({
+  model,
+  variant,
+  senders = [],
+}: {
+  model: CostsModel;
+  variant: "where" | "collapsed";
+  /** «Sara, Max und Jonas» – the people sending money to the viewer. */
+  senders?: string[];
+}) {
   const t = useTranslations("payInfo");
   const tCommon = useTranslations("common");
   const router = useRouter();
@@ -39,6 +53,7 @@ export function PayInfoCard({ model }: { model: CostsModel }) {
   const [note, setNote] = useState(pay?.note ?? "");
   const [errors, setErrors] = useState<PayInfoErrors>({});
   const [pending, setPending] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   if (!me) return null;
   const filled = Boolean(pay?.iban ?? pay?.note);
 
@@ -81,38 +96,73 @@ export function PayInfoCard({ model }: { model: CostsModel }) {
 
   const previous = { iban: pay?.iban ?? "", note: pay?.note ?? "" };
   const noteLength = textLength(note);
+  const openSheet = () => {
+    setIban(pay?.iban ? ibanGroups(pay.iban).join(" ") : "");
+    setNote(pay?.note ?? "");
+    setErrors({});
+    setOpen(true);
+  };
+  const details = filled ? (
+    <div className={styles.payInfo}>
+      {pay?.iban ? <IbanLine iban={pay.iban} owner={me.name ?? ""} mine /> : null}
+      {pay?.note ? <span className={styles.payNote}>{pay.note}</span> : null}
+      {pay?.updatedOn ? (
+        <span className={styles.small}>
+          {t("updated", { date: formatDate(pay.updatedOn, model.intl, { weekday: false }) })}
+        </span>
+      ) : null}
+    </div>
+  ) : null;
+  const editButton = (
+    <Button variant="secondary" size="sm" aria-haspopup="dialog" onClick={openSheet}>
+      {filled ? t("change") : t("add")}
+    </Button>
+  );
+  const names = new Intl.ListFormat(model.locale, { type: "conjunction" }).format(senders);
   return (
-    <section className={styles.payCard} aria-labelledby={`${ids}-title`}>
-      <div className={styles.payCardHead}>
-        <h2 className={styles.h3} id={`${ids}-title`}>
-          {t("title")}
-        </h2>
-        <Button
-          variant="secondary"
-          size="sm"
-          aria-haspopup="dialog"
-          onClick={() => {
-            setIban(pay?.iban ? ibanGroups(pay.iban).join(" ") : "");
-            setNote(pay?.note ?? "");
-            setErrors({});
-            setOpen(true);
-          }}
-        >
-          {filled ? t("change") : t("add")}
-        </Button>
-      </div>
-      {filled ? (
-        <div className={styles.payInfo}>
-          {pay?.iban ? <IbanLine iban={pay.iban} owner={me.name ?? ""} mine /> : null}
-          {pay?.note ? <span className={styles.payNote}>{pay.note}</span> : null}
-          {pay?.updatedOn ? (
-            <span className={styles.small}>
-              {t("updated", { date: formatDate(pay.updatedOn, model.intl, { weekday: false }) })}
-            </span>
-          ) : null}
-        </div>
+    <section
+      className={cx(styles.payCard, variant === "collapsed" && styles.payCardQuiet)}
+      aria-labelledby={`${ids}-title`}
+      data-pay-info={variant}
+    >
+      {variant === "where" ? (
+        <>
+          <div className={styles.payCardHead}>
+            <h2 className={styles.h3} id={`${ids}-title`}>
+              {t("whereTitle")}
+            </h2>
+            {filled ? editButton : null}
+          </div>
+          {details ?? (
+            <>
+              <p className={styles.muted}>{t("whereText", { names })}</p>
+              <span>{editButton}</span>
+            </>
+          )}
+        </>
       ) : (
-        <p className={styles.muted}>{t("empty")}</p>
+        <>
+          <h2 className={styles.h3} id={`${ids}-title`}>
+            <button
+              type="button"
+              className={styles.disclosure}
+              aria-expanded={expanded}
+              aria-controls={`${ids}-body`}
+              onClick={() => {
+                setExpanded((v) => !v);
+              }}
+            >
+              <span>{t("title")}</span>
+              <span className={styles.chevron} aria-hidden="true">
+                <Icon name="chevron-down" size={20} />
+              </span>
+            </button>
+          </h2>
+          <div id={`${ids}-body`} className={styles.disclosureBody} hidden={!expanded}>
+            {details ?? <p className={styles.muted}>{t("empty")}</p>}
+            <span>{editButton}</span>
+          </div>
+        </>
       )}
       <BottomSheet
         open={open}

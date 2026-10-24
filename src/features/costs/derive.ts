@@ -1,4 +1,4 @@
-import { computeBalances, ownRowsFirst, settleUp, type Transfer } from "@/lib/costs";
+import { computeBalances, settleUp, type Transfer } from "@/lib/costs";
 import type { CostExpenseView, CostPersonView, CostsModel } from "./load";
 
 /**
@@ -38,23 +38,72 @@ export function proposalFor(
 
 export const rowKey = (t: { from: string; to: string }) => `${t.from}->${t.to}`;
 
-/** «Deine Ausgleiche» (debts first, then claims) and «Weitere Ausgleiche» (W19 D.7). */
-export function splitRows(transfers: readonly Transfer[], me: string) {
-  const ordered = ownRowsFirst(transfers, me);
+/**
+ * Sections of «Ausgleichen» (W19 E.5): the viewer's own transfers – out (I pay) and in (I get;
+ * `settleUp` lets a person only pay OR receive, so one of both is empty) –, the rows only the
+ * organiser may mark (no account on either side, block 5) and everybody else's (block 6), each
+ * in proposal order.
+ */
+export function settleSections(
+  transfers: readonly Transfer[],
+  me: string,
+  people: readonly Pick<CostPersonView, "key" | "account">[],
+) {
+  const account = new Map(people.map((p) => [p.key, p.account]));
+  const orgaOnly = (t: Transfer) => !account.get(t.from) && !account.get(t.to);
+  const others = transfers.filter((t) => t.from !== me && t.to !== me);
   return {
-    yours: ordered.filter((t) => t.from === me || t.to === me),
-    others: ordered.filter((t) => t.from !== me && t.to !== me),
+    out: transfers.filter((t) => t.from === me),
+    in: transfers.filter((t) => t.to === me),
+    orga: others.filter(orgaOnly),
+    others: others.filter((t) => !orgaOnly(t)),
   };
 }
 
-/** Everybody in balances: active people (also 0) + former members ≠ 0; me first, then seq. */
-export function balanceRows(
-  people: readonly CostPersonView[],
-  balances: ReadonlyMap<string, number>,
-): CostPersonView[] {
-  return people
-    .filter((p) => p.active || (balances.get(p.key) ?? 0) !== 0)
-    .sort((a, b) => (a.me ? -1 : b.me ? 1 : a.seq - b.seq));
+/** «Dein Stand» with its way of working it out (W19 E.4) – all in cents of the trip currency. */
+export interface StandNumbers {
+  /** «Du hast für die Gruppe ausgelegt». */
+  paid: number;
+  /** «Auf dich entfällt» – the viewer's parts of all expenses. */
+  share: number;
+  /** «Schon zurückgezahlt» – settlements the viewer sent. */
+  sent: number;
+  /** «Schon zurückbekommen» – settlements the viewer received. */
+  received: number;
+  /** paid − share + sent − received: > 0 gets back, < 0 pays back (= the balance). */
+  balance: number;
+}
+
+export function standOf(
+  me: string,
+  expenses: readonly Pick<CostExpenseView, "payer" | "amountCents" | "shares">[],
+  settlements: readonly Pick<EffectiveSettlement, "from" | "to" | "cents">[],
+): StandNumbers {
+  let paid = 0;
+  let share = 0;
+  for (const e of expenses) {
+    if (e.payer === me) paid += e.amountCents;
+    share += e.shares.find((s) => s.party === me)?.cents ?? 0;
+  }
+  let sent = 0;
+  let received = 0;
+  for (const s of settlements) {
+    if (s.from === me) sent += s.cents;
+    if (s.to === me) received += s.cents;
+  }
+  return { paid, share, sent, received, balance: paid - share + sent - received };
+}
+
+/** «An Lena.» · «An Lena und Kemal.» · «An 3 Personen.» – at most two names (W19 E.4). */
+export function shortNames(
+  names: readonly string[],
+  locale: string,
+): { kind: "names"; names: string } | { kind: "count"; count: number } {
+  if (names.length > 2) return { kind: "count", count: names.length };
+  return {
+    kind: "names",
+    names: new Intl.ListFormat(locale, { type: "conjunction" }).format(names),
+  };
 }
 
 type Translate = (key: string, values?: Record<string, string | number>) => string;
