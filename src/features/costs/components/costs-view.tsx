@@ -1859,19 +1859,24 @@ function CompactPair({
   return (
     <>
       <span className={styles.compactWho}>
-        <PersonAvatar person={from} small />
-        <span>{name(tr.from)}</span>
-        {from?.kind === "placeholder" ? (
-          <span className={styles.tagChip}>{t("placeholder")}</span>
-        ) : null}
+        {/* Avatar and name stay together when the row wraps (R-085). */}
+        <span className={styles.compactPerson}>
+          <PersonAvatar person={from} small />
+          <span>{name(tr.from)}</span>
+          {from?.kind === "placeholder" ? (
+            <span className={styles.tagChip}>{t("placeholder")}</span>
+          ) : null}
+        </span>
         <span className={styles.arrow} aria-hidden="true">
           <Icon name="arrow-right" size={16} />
         </span>
-        <PersonAvatar person={to} small />
-        <span>{name(tr.to, { inline: true })}</span>
-        {to?.kind === "placeholder" ? (
-          <span className={styles.tagChip}>{t("placeholder")}</span>
-        ) : null}
+        <span className={styles.compactPerson}>
+          <PersonAvatar person={to} small />
+          <span>{name(tr.to, { inline: true })}</span>
+          {to?.kind === "placeholder" ? (
+            <span className={styles.tagChip}>{t("placeholder")}</span>
+          ) : null}
+        </span>
       </span>
       <span className={styles.compactAmount}>{money(tr.cents)}</span>
     </>

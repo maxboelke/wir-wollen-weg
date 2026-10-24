@@ -877,6 +877,13 @@
   overflow-wrap: anywhere;
 }
 
+.compactPerson {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ww-space-1-5);
+  min-width: 0;
+}
+
 .compactAmount {
   font-weight: var(--ww-font-weight-extrabold);
   font-variant-numeric: var(--ww-cost-numeric);
