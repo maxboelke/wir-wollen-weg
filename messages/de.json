@@ -228,7 +228,9 @@
     "deletion": {
       "afterTrip": "Wird am {date} gelöscht (90 Tage nach Reiseende).",
       "inactive": "Wird am {date} gelöscht (12 Monate ohne Aktivität)."
-    }
+    },
+    "runningNow": "Läuft gerade",
+    "runningDay": "Unterwegs · Tag {day} von {total}"
   },
   "settings": {
     "motion": {
@@ -2755,5 +2757,9 @@
       "nudgeOrgaName": "{orga} Bescheid geben, dass {name} noch nicht dabei ist"
     },
     "visibleTag": "sichtbar"
+  },
+  "start": {
+    "hint": "Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.",
+    "action": "Meine Reisen"
   }
 }

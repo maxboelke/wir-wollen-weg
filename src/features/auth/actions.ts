@@ -37,7 +37,7 @@ export async function saveName(returnTo: string, name: string): Promise<ActionRe
   if (!parsed.success) return { error: "nameRequired" };
 
   await auth().api.updateUser({ body: { name: parsed.data }, headers: await headers() });
-  redirect(toSafeInternalPath(returnTo, "/trips"));
+  redirect(toSafeInternalPath(returnTo, "/"));
 }
 
 /** Form variant of saveName for the server-rendered name step on /login. */
@@ -69,7 +69,7 @@ export async function redeemMagicLink(
 ): Promise<MagicLinkResult> {
   const token = magicTokenSchema.safeParse(formData.get("token"));
   const rawNext = formData.get("next");
-  const next = toSafeInternalPath(typeof rawNext === "string" ? rawNext : undefined, "/trips");
+  const next = toSafeInternalPath(typeof rawNext === "string" ? rawNext : undefined, "/");
   if (!token.success) return { error: "invalid" };
 
   // Session IP only from the trusted proxy header, never a client-sent one (R-010).

@@ -18,7 +18,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const { next } = await searchParams;
   const t = await getTranslations("auth");
-  const returnTo = toSafeInternalPath(typeof next === "string" ? next : undefined, "/trips");
+  const returnTo = toSafeInternalPath(typeof next === "string" ? next : undefined, "/");
   const session = await getSession();
 
   if (session) {

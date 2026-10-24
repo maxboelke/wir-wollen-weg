@@ -228,7 +228,9 @@
     "deletion": {
       "afterTrip": "Will be deleted on {date} (90 days after the trip).",
       "inactive": "Will be deleted on {date} (12 months without activity)."
-    }
+    },
+    "runningNow": "Happening now",
+    "runningDay": "On the road · day {day} of {total}"
   },
   "settings": {
     "motion": {
@@ -2755,5 +2757,9 @@
       "nudgeOrgaName": "Let {orga} know that {name} hasn't joined yet"
     },
     "visibleTag": "visible"
+  },
+  "start": {
+    "hint": "Your current trip opened right away. All trips are at the top left.",
+    "action": "My trips"
   }
 }

@@ -10,6 +10,7 @@ import { CockpitProvider } from "./cockpit-provider";
 import { FocusOnParam } from "./focus-on-param";
 import { MiniRing } from "./mini-ring";
 import { RouteSection } from "./route-view";
+import { StartHint } from "./start-hint";
 import { Ticket } from "./ticket";
 
 /**
@@ -21,10 +22,13 @@ export async function CockpitOverview({
   view,
   welcome,
   focusTitle,
+  started = false,
 }: {
   view: TripView;
   welcome: boolean;
   focusTitle: boolean;
+  /** Opened automatically from the app start `/` (W16 v2.18) – one-off hint. */
+  started?: boolean;
 }) {
   const data = await loadCockpit(view);
   const [route, ticket, sheets, tTrip] = await Promise.all([
@@ -46,6 +50,7 @@ export async function CockpitOverview({
       frame={(page) => <CockpitProvider data={sheets}>{page}</CockpitProvider>}
     >
       {focusTitle ? <FocusOnParam targetId="trip-title" param="fixed" /> : null}
+      {started ? <StartHint publicId={view.trip.publicId} /> : null}
       {welcome ? (
         <WelcomeHint
           title={tTrip("welcomeTitle")}
