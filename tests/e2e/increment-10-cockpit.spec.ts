@@ -14,8 +14,9 @@ import {
 } from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
 
-// Increment 10 – cockpit (W16 v2.15, features.md R.8 I10-09): A1 at the threshold, the tile,
-// «+ Ausgabe» while travelling (back to the cockpit), D1 per role in «Danach» (remind «settle»,
+// Increment 10 – cockpit (W16 v2.15, features.md R.8 I10-09; v2.17 since 11a): A1 at the
+// threshold, the tile, «+ Ausgabe» in the cost bar while travelling (back to the cockpit), D1 per
+// role in «Danach» (remind «settle»,
 // organiser closes), the retention job (soft-deleted expenses after 24 h, deployment.md §0.10)
 // and the data export (I10-10). Accounts: en-GB; only visible elements, `expect.poll`.
 
@@ -69,8 +70,9 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
     await page.reload();
     await hydrated(page);
     await expect(main(page).getByText(/You owe Lena Berg/)).toHaveCount(0);
+    // W19 E.9: the tile shows the own result only – no group total.
     await expect(
-      main(page).getByRole("link", { name: /Expenses\. €49\.99 in total · you owe €49\.99/ }),
+      main(page).getByRole("link", { name: /^Expenses\. You owe €49\.99$/ }),
     ).toBeVisible();
     await addExpense(trip.tripId, {
       title: "Cent",
@@ -90,26 +92,29 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
     expect(id).toBeTruthy();
   });
 
-  test("Unterwegs: «+ Expense» → save → back in the cockpit with «View»", async ({ page }) => {
+  test("Unterwegs: bar «+ Expense» → save → back in the cockpit with «View»", async ({ page }) => {
     const trip = await cockpitTrip(page, [-1, 5]);
     await page.goto(`/trips/${trip.publicId}`);
     await hydrated(page);
-    await page.getByRole("link", { name: r.addExpenseName }).click();
+    await page.getByRole("link", { name: r.dock.addName }).click();
     await expect(page).toHaveURL(/\/costs\/new\?date=today&from=cockpit$/);
     await hydrated(page);
     await page.getByLabel(en.costForm.amount, { exact: false }).first().fill("45");
     await page.getByLabel(en.costForm.what).fill("Groceries");
     await page.getByRole("button", { name: en.costForm.save }).click();
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}(\\?.*)?$`));
+    // W19 E.7: the snackbar names the new result.
     const toast = page
       .getByRole("status")
-      .filter({ hasText: fill(en.costForm.saved, { amount: "€45.00" }) });
+      .filter({ hasText: fill(en.costForm.savedOwed, { amount: "€30.00" }) });
     await expect(toast).toBeVisible();
     await expect(toast.getByRole("button", { name: en.costForm.view })).toBeVisible();
-    await expect(page.getByRole("link", { name: r.addExpenseName })).toBeFocused();
+    await expect(page.getByRole("link", { name: r.dock.addName })).toBeFocused();
     await expect(
-      main(page).getByRole("link", { name: /Expenses\. €45 in total · you’re owed €30/ }),
-    ).toBeVisible();
+      main(page).getByRole("link", {
+        name: `Expenses. You get €30.00 back. ${r.tiles.costsAll}`,
+      }),
+    ).toBeAttached();
     await expectNoSeriousAxeViolations(page, "cockpit travelling with costs");
   });
 
@@ -127,7 +132,9 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
     await page.goto(`/trips/${trip.publicId}`);
     await hydrated(page);
     await expect(page.getByText(r.phase.afterSettle).first()).toBeVisible();
-    await expect(page.locator('[data-head-action="settle"]')).toBeVisible();
+    // W16 v2.17: «Ausgleichen» sits in the cost bar (the head button is gone).
+    await expect(page.locator('[data-dock-action="settle"]')).toBeVisible();
+    await expect(page.locator("[data-head-action]")).toHaveCount(0);
     await expect(
       main(page).getByText(fill(r.costs.owedOne, { amount: "€20.00", name: "Member 1" })),
     ).toBeVisible();
@@ -136,9 +143,7 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
       .first()
       .click();
     const sheet = page.getByRole("dialog");
-    await expect(
-      sheet.getByText(/according to the .* expenses you still owe me €20\.00/),
-    ).toBeVisible();
+    await expect(sheet.getByText(/according to the app you still owe me €20\.00/)).toBeVisible();
     await expect(sheet.getByText(/DE89/)).toHaveCount(0);
     await expect(sheet.getByText(/PayPal/)).toHaveCount(0);
   });
@@ -236,7 +241,7 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
     const area = sheet.getByRole("textbox", { name: en.remind.messageLabel });
     await expect
       .poll(() => area.inputValue())
-      .toMatch(/according to the .* expenses you still owe me €30\.00/);
+      .toMatch(/according to the app you still owe me €30\.00/);
     const body = await area.inputValue();
     expect(body).toContain(`/i/${personal}`);
     expect(body).not.toContain(general);

@@ -13,7 +13,8 @@ import {
 } from "./helpers/db";
 import { uniqueEmail } from "./helpers/mailpit";
 
-// Increment 10 (F-035 «Kosten teilen», features.md R.8, W19 D): area, empty state, currency,
+// Increment 10 (F-035 «Kosten teilen», features.md R.8, W19 D; texts W19 E since 11a): area,
+// empty state, currency,
 // the expense form (equal with rest cent, by amounts, «12,50» on EN), list and detail, delete
 // with undo, conflicts, rights per row, closed costs, a11y / 320 px / 200 % / reduced motion.
 // Accounts: en-GB. Only visible elements and `expect.poll` (WebKit/iPhone in CI).
@@ -89,8 +90,9 @@ test.describe("W19 D – expenses", () => {
     await page.getByRole("button", { name: cf.save }).click();
 
     await expect(page).toHaveURL(new RegExp(`/trips/${trip.publicId}/costs`));
+    // W19 E.7: the snackbar names the new result.
     await expect(
-      page.getByRole("status").getByText(fill(cf.saved, { amount: "€10.00" })),
+      page.getByRole("status").getByText(fill(cf.savedOwed, { amount: "€6.67" })),
     ).toBeVisible();
     await expect(
       main(page).getByText(fill(c.mine.owed, { amount: "€6.67" }), { exact: true }),
@@ -137,7 +139,8 @@ test.describe("W19 D – expenses", () => {
     const rows = await costRows(trip.tripId);
     // Member 1 has no amount → not included.
     expect(rows.shares.map((s) => s.share_cents)).toEqual([2000, 1250, 2750]);
-    await expect(main(page).getByText(c.row.custom)).toBeVisible();
+    // W19 E.3: no chip «by amounts» in the row any more – the row shows my part.
+    await expect(main(page).getByText(fill(c.row.share, { amount: "€12.50" }))).toBeVisible();
   });
 
   test("delete without a dialog, undo restores it (soft delete)", async ({ page }) => {
@@ -313,7 +316,7 @@ test.describe("W19 D.14 – a11y, 320 px, 200 %, reduced motion", () => {
     await expectNoSeriousAxeViolations(page, "balances 200 %");
   });
 
-  test("R-081: German list at 360 px / 200 % – «dein Anteil …» and «Du schuldest» wrap", async ({
+  test("R-081: German list at 360 px / 200 % – «auf dich …» and «Du zahlst … zurück» wrap", async ({
     page,
   }) => {
     const trip = await costTrip(page, { extraMembers: 2 });
@@ -327,9 +330,9 @@ test.describe("W19 D.14 – a11y, 320 px, 200 %, reduced motion", () => {
     await page.setViewportSize({ width: 360, height: 640 });
     await page.goto(`/trips/${trip.publicId}/costs`);
     await hydrated(page);
-    await expect(main(page).getByText(/dein Anteil 460,12\s€/)).toBeVisible();
+    await expect(main(page).getByText(/auf dich 460,12\s€/)).toBeVisible();
     await expect(main(page).locator("[data-balance-sentence]")).toHaveText(
-      /Du schuldest 460,12\s€/,
+      /Du zahlst noch 460,12\s€ zurück\./,
     );
     await expectNothingSticksOut(page);
   });

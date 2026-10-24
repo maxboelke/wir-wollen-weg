@@ -1,10 +1,7 @@
 import { redirect } from "next/navigation";
 import { resolveRequestLocale } from "@/i18n/request";
-import { todayIso } from "@/lib/dates";
-import { START_PARAM, startTrip } from "@/lib/start-trip";
-import { tripPath } from "@/features/trips/paths";
 import { getSession } from "@/server/session";
-import { listTripsForUser } from "@/server/trips";
+import { startTargetFor } from "@/server/start";
 
 /**
  * `/` – the app start (home-screen icon, bookmark, login without `next`). Signed in: the ONE
@@ -14,19 +11,6 @@ import { listTripsForUser } from "@/server/trips";
  */
 export default async function RootRedirect() {
   const session = await getSession();
-  if (session) {
-    const items = await listTripsForUser(session.user.id);
-    const target = startTrip(
-      items.map(({ trip }) => ({
-        publicId: trip.publicId,
-        name: trip.name,
-        phase: trip.phase,
-        fixedStart: trip.fixedStart,
-        fixedEnd: trip.fixedEnd,
-      })),
-      todayIso(),
-    );
-    redirect(target.kind === "trip" ? `${tripPath(target.publicId)}?${START_PARAM}=1` : "/trips");
-  }
+  if (session) redirect(await startTargetFor(session.user.id));
   redirect(`/${await resolveRequestLocale()}`);
 }
