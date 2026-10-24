@@ -30,6 +30,7 @@ import { useWasServerPainted } from "@/lib/use-hydration";
 import type { CockpitAction, CockpitLink, RouteView, StationView } from "../types";
 import { firstCostStep } from "@/features/costs/components/cost-remind";
 import { useCockpit } from "./cockpit-provider";
+import { CostDock } from "./cost-dock";
 import styles from "./route.module.css";
 
 const MAX_TODAY = 3;
@@ -530,405 +531,418 @@ export function RouteSection({ view }: { view: RouteView }) {
   const heuteExtra = todayItems.slice(MAX_TODAY);
 
   return (
-    <div className={styles.cols} ref={rootRef}>
-      <div className={styles.main}>
-        {offline ? (
-          <Banner tone="warning" role="status" className={styles.offline}>
-            {t("offline")}
-          </Banner>
-        ) : null}
-        <section className={styles.waySection} aria-labelledby="route-title">
-          <div className={styles.secRow}>
-            <h2 id="route-title" className={styles.sec}>
-              {view.wayTitle}
-            </h2>
-            {view.meta ? <span className={styles.meta}>{view.meta}</span> : null}
-          </div>
-          <ol className={styles.way}>
-            {view.done.length > 0 ? (
-              <li
-                className={cx(styles.step, styles.stepDone, fresh.length > 0 && styles.fresh)}
-                data-way-item=""
-              >
-                <span
-                  className={cx(styles.line, styles.lineDone)}
-                  data-line="done"
-                  aria-hidden="true"
-                />
-                <div className={styles.head}>
-                  <Marker kind="done" coins={coins} />
-                  <button
-                    type="button"
-                    className={styles.doneRow}
-                    aria-expanded={doneOpen}
-                    aria-controls={doneId}
-                    onClick={() => {
-                      setDoneOpen(!doneOpen);
-                      if (!doneOpen) {
-                        requestAnimationFrame(() => {
-                          revealEntries(document.getElementById(doneId));
-                        });
-                      }
-                    }}
-                  >
-                    <span className={styles.doneText}>{doneSummary}</span>
-                    <span className={styles.chevronDown} aria-hidden="true">
-                      <Icon name="chevron-down" size={20} />
-                    </span>
-                  </button>
-                </div>
-                <Expand id={doneId} open={doneOpen}>
-                  <ul className={styles.doneList}>
-                    {view.done.map((station) => (
-                      <li key={station.id}>
-                        <Target
-                          link={station.link}
-                          sessionKey={sessionKey}
-                          returnKey={`done:${station.id}`}
-                          className={styles.doneItem}
-                          ariaLabel={station.ariaLabel}
-                        >
-                          <span
-                            className={cx(styles.check, station.unused && styles.checkUnused)}
-                            aria-hidden="true"
+    <>
+      {view.dock ? <CostDock dock={view.dock} /> : null}
+      <div className={cx(styles.cols, view.dock && styles.withDock)} ref={rootRef}>
+        <div className={styles.main}>
+          {offline ? (
+            <Banner tone="warning" role="status" className={styles.offline}>
+              {t("offline")}
+            </Banner>
+          ) : null}
+          <section className={styles.waySection} aria-labelledby="route-title">
+            <div className={styles.secRow}>
+              <h2 id="route-title" className={styles.sec}>
+                {view.wayTitle}
+              </h2>
+              {view.meta ? <span className={styles.meta}>{view.meta}</span> : null}
+            </div>
+            <ol className={styles.way}>
+              {view.done.length > 0 ? (
+                <li
+                  className={cx(styles.step, styles.stepDone, fresh.length > 0 && styles.fresh)}
+                  data-way-item=""
+                >
+                  <span
+                    className={cx(styles.line, styles.lineDone)}
+                    data-line="done"
+                    aria-hidden="true"
+                  />
+                  <div className={styles.head}>
+                    <Marker kind="done" coins={coins} />
+                    <button
+                      type="button"
+                      className={styles.doneRow}
+                      aria-expanded={doneOpen}
+                      aria-controls={doneId}
+                      onClick={() => {
+                        setDoneOpen(!doneOpen);
+                        if (!doneOpen) {
+                          requestAnimationFrame(() => {
+                            revealEntries(document.getElementById(doneId));
+                          });
+                        }
+                      }}
+                    >
+                      <span className={styles.doneText}>{doneSummary}</span>
+                      <span className={styles.chevronDown} aria-hidden="true">
+                        <Icon name="chevron-down" size={20} />
+                      </span>
+                    </button>
+                  </div>
+                  <Expand id={doneId} open={doneOpen}>
+                    <ul className={styles.doneList}>
+                      {view.done.map((station) => (
+                        <li key={station.id}>
+                          <Target
+                            link={station.link}
+                            sessionKey={sessionKey}
+                            returnKey={`done:${station.id}`}
+                            className={styles.doneItem}
+                            ariaLabel={station.ariaLabel}
                           >
-                            {station.unused ? null : <Icon name="check" size={16} />}
-                          </span>
-                          <span className={styles.grow}>
-                            <span className={styles.doneTitle}>{station.title}</span>
-                            <span className={styles.status}>
-                              {station.unused
-                                ? `${t("done.unused")} – ${station.status}`
-                                : station.status}
+                            <span
+                              className={cx(styles.check, station.unused && styles.checkUnused)}
+                              aria-hidden="true"
+                            >
+                              {station.unused ? null : <Icon name="check" size={16} />}
                             </span>
-                          </span>
-                          <Chevron />
-                        </Target>
-                        {station.offline || station.textActions?.length ? (
-                          <div className={styles.doneExtra}>
-                            {station.offline ? (
-                              <span className={cx(styles.chip, styles.chipOk)}>
-                                {t("done.offline")}
+                            <span className={styles.grow}>
+                              <span className={styles.doneTitle}>{station.title}</span>
+                              <span className={styles.status}>
+                                {station.unused
+                                  ? `${t("done.unused")} – ${station.status}`
+                                  : station.status}
                               </span>
-                            ) : null}
-                            {station.textActions?.map((item) => (
-                              <ActionButton
-                                key={item.label}
-                                action={item.action}
-                                sessionKey={sessionKey}
-                                returnKey={station.id}
-                                variant="text"
-                                offline={offline}
-                              >
-                                {item.label}
-                              </ActionButton>
-                            ))}
-                          </div>
-                        ) : null}
-                      </li>
-                    ))}
-                  </ul>
-                </Expand>
-              </li>
-            ) : null}
-
-            <li className={cx(styles.step, styles.stepToday)} data-way-item="">
-              <span className={styles.line} aria-hidden="true" />
-              <div className={styles.head}>
-                <span
-                  className={cx(styles.marker, styles["marker-today"], pulse && styles.pulse)}
-                  data-route-marker="today"
-                  aria-hidden="true"
-                >
-                  <Icon name="sun" size={22} />
-                </span>
-                <h3 id="route-today" className={styles.today} tabIndex={-1}>
-                  <span aria-hidden="true">{view.heute.short}</span>
-                  <span className="visually-hidden">{view.heute.long}</span>
-                </h3>
-              </div>
-              <p className={styles.sentence}>{view.heute.sentence}</p>
-              {heuteVisible.length > 0 ? (
-                <ul className={styles.todayList}>
-                  {heuteVisible.map((station, index) => (
-                    <li key={station.id}>
-                      <StationCard
-                        station={station}
-                        big={index === 0}
-                        sessionKey={sessionKey}
-                        offline={offline}
-                      />
-                      <StationActions station={station} sessionKey={sessionKey} offline={offline} />
-                    </li>
-                  ))}
-                </ul>
+                            </span>
+                            <Chevron />
+                          </Target>
+                          {station.offline || station.textActions?.length ? (
+                            <div className={styles.doneExtra}>
+                              {station.offline ? (
+                                <span className={cx(styles.chip, styles.chipOk)}>
+                                  {t("done.offline")}
+                                </span>
+                              ) : null}
+                              {station.textActions?.map((item) => (
+                                <ActionButton
+                                  key={item.label}
+                                  action={item.action}
+                                  sessionKey={sessionKey}
+                                  returnKey={station.id}
+                                  variant="text"
+                                  offline={offline}
+                                >
+                                  {item.label}
+                                </ActionButton>
+                              ))}
+                            </div>
+                          ) : null}
+                        </li>
+                      ))}
+                    </ul>
+                  </Expand>
+                </li>
               ) : null}
-              {heuteExtra.length > 0 ? (
-                <MoreToggle
-                  storageKey={`ww-route-open:${sessionKey}:today`}
-                  label={t("more.showMore", { count: heuteExtra.length })}
-                >
-                  <ul className={styles.todayList}>
-                    {heuteExtra.map((station) => (
-                      <li key={station.id}>
-                        <StationCard
-                          station={station}
-                          big={false}
-                          sessionKey={sessionKey}
-                          offline={offline}
-                        />
-                        <StationActions
-                          station={station}
-                          sessionKey={sessionKey}
-                          offline={offline}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </MoreToggle>
-              ) : null}
-            </li>
 
-            {view.waiting.slice(0, MAX_WAITING).map((station) => (
-              <li key={station.id} className={cx(styles.step, styles.stepWait)} data-way-item="">
+              <li className={cx(styles.step, styles.stepToday)} data-way-item="">
                 <span className={styles.line} aria-hidden="true" />
                 <div className={styles.head}>
-                  <Marker kind="wait" />
-                  <span className={styles.label}>{t("label.waiting")}</span>
-                </div>
-                <StationCard
-                  station={station}
-                  big={false}
-                  sessionKey={sessionKey}
-                  offline={offline}
-                />
-                <StationActions station={station} sessionKey={sessionKey} offline={offline} />
-              </li>
-            ))}
-            {view.waiting.length > MAX_WAITING ? (
-              <li className={cx(styles.step, styles.stepMore)} data-way-item="">
-                <span className={styles.line} aria-hidden="true" />
-                <MoreToggle
-                  storageKey={`ww-route-open:${sessionKey}:waiting`}
-                  label={t("more.showMoreWaiting", { count: view.waiting.length - MAX_WAITING })}
-                >
-                  <ul className={styles.subList}>
-                    {view.waiting.slice(MAX_WAITING).map((station) => (
-                      <li key={station.id}>
-                        <span className={styles.label}>{t("label.waiting")}</span>
-                        <StationCard
-                          station={station}
-                          big={false}
-                          sessionKey={sessionKey}
-                          offline={offline}
-                        />
-                        <StationActions
-                          station={station}
-                          sessionKey={sessionKey}
-                          offline={offline}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                </MoreToggle>
-              </li>
-            ) : null}
-
-            {view.next ? (
-              <li className={cx(styles.step, styles.stepNext)} data-way-item="">
-                <span className={styles.line} aria-hidden="true" />
-                <div className={styles.head}>
-                  <Marker kind="next" />
-                  <span className={cx(styles.label, styles.labelStrong)}>{t("label.next")}</span>
-                </div>
-                <StationCard
-                  station={view.next}
-                  big={false}
-                  sessionKey={sessionKey}
-                  offline={offline}
-                />
-                <StationActions station={view.next} sessionKey={sessionKey} offline={offline} />
-              </li>
-            ) : null}
-
-            {view.later.slice(0, MAX_LATER).map((station) => (
-              <li key={station.id} className={cx(styles.step, styles.stepLater)} data-way-item="">
-                <span className={styles.line} aria-hidden="true" />
-                <div className={styles.head}>
-                  <Marker kind="later" />
-                  <Target
-                    link={station.link}
-                    sessionKey={sessionKey}
-                    returnKey={station.id}
-                    className={styles.slim}
-                    ariaLabel={station.ariaLabel}
+                  <span
+                    className={cx(styles.marker, styles["marker-today"], pulse && styles.pulse)}
+                    data-route-marker="today"
+                    aria-hidden="true"
                   >
+                    <Icon name="sun" size={22} />
+                  </span>
+                  <h3 id="route-today" className={styles.today} tabIndex={-1}>
+                    <span aria-hidden="true">{view.heute.short}</span>
+                    <span className="visually-hidden">{view.heute.long}</span>
+                  </h3>
+                </div>
+                <p className={styles.sentence}>{view.heute.sentence}</p>
+                {heuteVisible.length > 0 ? (
+                  <ul className={styles.todayList}>
+                    {heuteVisible.map((station, index) => (
+                      <li key={station.id}>
+                        <StationCard
+                          station={station}
+                          big={index === 0}
+                          sessionKey={sessionKey}
+                          offline={offline}
+                        />
+                        <StationActions
+                          station={station}
+                          sessionKey={sessionKey}
+                          offline={offline}
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                {heuteExtra.length > 0 ? (
+                  <MoreToggle
+                    storageKey={`ww-route-open:${sessionKey}:today`}
+                    label={t("more.showMore", { count: heuteExtra.length })}
+                  >
+                    <ul className={styles.todayList}>
+                      {heuteExtra.map((station) => (
+                        <li key={station.id}>
+                          <StationCard
+                            station={station}
+                            big={false}
+                            sessionKey={sessionKey}
+                            offline={offline}
+                          />
+                          <StationActions
+                            station={station}
+                            sessionKey={sessionKey}
+                            offline={offline}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </MoreToggle>
+                ) : null}
+              </li>
+
+              {view.waiting.slice(0, MAX_WAITING).map((station) => (
+                <li key={station.id} className={cx(styles.step, styles.stepWait)} data-way-item="">
+                  <span className={styles.line} aria-hidden="true" />
+                  <div className={styles.head}>
+                    <Marker kind="wait" />
+                    <span className={styles.label}>{t("label.waiting")}</span>
+                  </div>
+                  <StationCard
+                    station={station}
+                    big={false}
+                    sessionKey={sessionKey}
+                    offline={offline}
+                  />
+                  <StationActions station={station} sessionKey={sessionKey} offline={offline} />
+                </li>
+              ))}
+              {view.waiting.length > MAX_WAITING ? (
+                <li className={cx(styles.step, styles.stepMore)} data-way-item="">
+                  <span className={styles.line} aria-hidden="true" />
+                  <MoreToggle
+                    storageKey={`ww-route-open:${sessionKey}:waiting`}
+                    label={t("more.showMoreWaiting", { count: view.waiting.length - MAX_WAITING })}
+                  >
+                    <ul className={styles.subList}>
+                      {view.waiting.slice(MAX_WAITING).map((station) => (
+                        <li key={station.id}>
+                          <span className={styles.label}>{t("label.waiting")}</span>
+                          <StationCard
+                            station={station}
+                            big={false}
+                            sessionKey={sessionKey}
+                            offline={offline}
+                          />
+                          <StationActions
+                            station={station}
+                            sessionKey={sessionKey}
+                            offline={offline}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  </MoreToggle>
+                </li>
+              ) : null}
+
+              {view.next ? (
+                <li className={cx(styles.step, styles.stepNext)} data-way-item="">
+                  <span className={styles.line} aria-hidden="true" />
+                  <div className={styles.head}>
+                    <Marker kind="next" />
+                    <span className={cx(styles.label, styles.labelStrong)}>{t("label.next")}</span>
+                  </div>
+                  <StationCard
+                    station={view.next}
+                    big={false}
+                    sessionKey={sessionKey}
+                    offline={offline}
+                  />
+                  <StationActions station={view.next} sessionKey={sessionKey} offline={offline} />
+                </li>
+              ) : null}
+
+              {view.later.slice(0, MAX_LATER).map((station) => (
+                <li key={station.id} className={cx(styles.step, styles.stepLater)} data-way-item="">
+                  <span className={styles.line} aria-hidden="true" />
+                  <div className={styles.head}>
+                    <Marker kind="later" />
+                    <Target
+                      link={station.link}
+                      sessionKey={sessionKey}
+                      returnKey={station.id}
+                      className={styles.slim}
+                      ariaLabel={station.ariaLabel}
+                    >
+                      <span className={styles.grow}>
+                        <span className={styles.label}>{t("label.later")}</span>
+                        <span className={styles.slimTitle}>{station.title}</span>
+                      </span>
+                      <Chevron />
+                    </Target>
+                  </div>
+                </li>
+              ))}
+              {view.later.length > MAX_LATER ? (
+                <li className={cx(styles.step, styles.stepMore)} data-way-item="">
+                  <span className={styles.line} aria-hidden="true" />
+                  <MoreToggle
+                    storageKey={`ww-route-open:${sessionKey}:later`}
+                    label={t("more.showMoreLater", { count: view.later.length - MAX_LATER })}
+                  >
+                    <ul className={styles.subList}>
+                      {view.later.slice(MAX_LATER).map((station) => (
+                        <li key={station.id}>
+                          <Target
+                            link={station.link}
+                            sessionKey={sessionKey}
+                            returnKey={station.id}
+                            className={styles.slim}
+                            ariaLabel={station.ariaLabel}
+                          >
+                            <span className={styles.grow}>
+                              <span className={styles.label}>{t("label.later")}</span>
+                              <span className={styles.slimTitle}>{station.title}</span>
+                            </span>
+                            <Chevron />
+                          </Target>
+                        </li>
+                      ))}
+                    </ul>
+                  </MoreToggle>
+                </li>
+              ) : null}
+
+              <li className={cx(styles.step, styles.stepGoal)} data-way-item="">
+                <div className={styles.head}>
+                  <Marker kind="goal" />
+                  <span className={cx(styles.label, styles.labelStrong)}>{view.goal.label}</span>
+                </div>
+                {view.goal.button ? (
+                  <>
+                    <div className={cx(styles.card, styles.goal, styles.goalColumn)}>
+                      <span className={styles.goalRow}>
+                        <span className={styles.goalTile} aria-hidden="true">
+                          <Icon name={view.goal.icon} size={20} />
+                        </span>
+                        <span className={styles.grow}>
+                          <span className={styles.title}>{view.goal.title}</span>
+                          <span className={styles.status}>{view.goal.status}</span>
+                        </span>
+                      </span>
+                      <Link href={view.goal.button.href} className={styles.goalButton}>
+                        <Icon name="plus" size={20} />
+                        <span>{view.goal.button.label}</span>
+                      </Link>
+                    </div>
+                    {view.goal.note ? <p className={styles.goalNote}>{view.goal.note}</p> : null}
+                  </>
+                ) : view.goal.link ? (
+                  <Target
+                    link={view.goal.link}
+                    sessionKey={sessionKey}
+                    returnKey="goal"
+                    className={cx(styles.card, styles.compact, styles.goal)}
+                    ariaLabel={view.goal.ariaLabel}
+                  >
+                    <span className={styles.goalTile} aria-hidden="true">
+                      <Icon name={view.goal.icon} size={20} />
+                    </span>
                     <span className={styles.grow}>
-                      <span className={styles.label}>{t("label.later")}</span>
-                      <span className={styles.slimTitle}>{station.title}</span>
+                      <span className={styles.title}>{view.goal.title}</span>
+                      <span className={styles.status}>{view.goal.status}</span>
                     </span>
                     <Chevron />
                   </Target>
-                </div>
-              </li>
-            ))}
-            {view.later.length > MAX_LATER ? (
-              <li className={cx(styles.step, styles.stepMore)} data-way-item="">
-                <span className={styles.line} aria-hidden="true" />
-                <MoreToggle
-                  storageKey={`ww-route-open:${sessionKey}:later`}
-                  label={t("more.showMoreLater", { count: view.later.length - MAX_LATER })}
-                >
-                  <ul className={styles.subList}>
-                    {view.later.slice(MAX_LATER).map((station) => (
-                      <li key={station.id}>
-                        <Target
-                          link={station.link}
-                          sessionKey={sessionKey}
-                          returnKey={station.id}
-                          className={styles.slim}
-                          ariaLabel={station.ariaLabel}
-                        >
-                          <span className={styles.grow}>
-                            <span className={styles.label}>{t("label.later")}</span>
-                            <span className={styles.slimTitle}>{station.title}</span>
-                          </span>
-                          <Chevron />
-                        </Target>
-                      </li>
-                    ))}
-                  </ul>
-                </MoreToggle>
-              </li>
-            ) : null}
-
-            <li className={cx(styles.step, styles.stepGoal)} data-way-item="">
-              <div className={styles.head}>
-                <Marker kind="goal" />
-                <span className={cx(styles.label, styles.labelStrong)}>{view.goal.label}</span>
-              </div>
-              {view.goal.button ? (
-                <>
-                  <div className={cx(styles.card, styles.goal, styles.goalColumn)}>
-                    <span className={styles.goalRow}>
-                      <span className={styles.goalTile} aria-hidden="true">
-                        <Icon name={view.goal.icon} size={20} />
-                      </span>
-                      <span className={styles.grow}>
-                        <span className={styles.title}>{view.goal.title}</span>
-                        <span className={styles.status}>{view.goal.status}</span>
-                      </span>
+                ) : (
+                  <div className={cx(styles.card, styles.compact, styles.goal)}>
+                    <span className={styles.goalTile} aria-hidden="true">
+                      <Icon name={view.goal.icon} size={20} />
                     </span>
-                    <Link href={view.goal.button.href} className={styles.goalButton}>
-                      <Icon name="plus" size={20} />
-                      <span>{view.goal.button.label}</span>
-                    </Link>
+                    <span className={styles.grow}>
+                      <span className={styles.title}>{view.goal.title}</span>
+                      <span className={styles.status}>{view.goal.status}</span>
+                    </span>
                   </div>
-                  {view.goal.note ? <p className={styles.goalNote}>{view.goal.note}</p> : null}
-                </>
-              ) : view.goal.link ? (
-                <Target
-                  link={view.goal.link}
-                  sessionKey={sessionKey}
-                  returnKey="goal"
-                  className={cx(styles.card, styles.compact, styles.goal)}
-                  ariaLabel={view.goal.ariaLabel}
-                >
-                  <span className={styles.goalTile} aria-hidden="true">
-                    <Icon name={view.goal.icon} size={20} />
-                  </span>
-                  <span className={styles.grow}>
-                    <span className={styles.title}>{view.goal.title}</span>
-                    <span className={styles.status}>{view.goal.status}</span>
-                  </span>
-                  <Chevron />
-                </Target>
-              ) : (
-                <div className={cx(styles.card, styles.compact, styles.goal)}>
-                  <span className={styles.goalTile} aria-hidden="true">
-                    <Icon name={view.goal.icon} size={20} />
-                  </span>
-                  <span className={styles.grow}>
-                    <span className={styles.title}>{view.goal.title}</span>
-                    <span className={styles.status}>{view.goal.status}</span>
-                  </span>
-                </div>
-              )}
-            </li>
-          </ol>
-        </section>
-      </div>
-
-      <div className={styles.aside}>
-        {view.tiles.length > 0 ? (
-          <section aria-labelledby="route-tiles" data-build="">
-            <h2 id="route-tiles" className={cx(styles.sec, styles.secGap)}>
-              {t("tiles.title")}
-            </h2>
-            <ul className={styles.tiles}>
-              {view.tiles.map((tile) => (
-                <li key={tile.area}>
-                  <Link
-                    href={tile.href}
-                    className={styles.tile}
-                    aria-label={tile.ariaLabel}
-                    data-return-key={`tile:${tile.area}`}
-                    onClick={() => {
-                      rememberReturn(sessionKey, `tile:${tile.area}`);
-                    }}
-                  >
-                    <span className={styles.tileTop}>
-                      <Tile icon={tile.icon} tone={tile.tone} size="sm" />
-                      <Chevron />
-                    </span>
-                    <span className={styles.tileTitle}>{tile.title}</span>
-                    <span className={styles.tileStatus}>{tile.status}</span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
+                )}
+              </li>
+            </ol>
           </section>
-        ) : null}
-        <section aria-labelledby="route-more" data-build="">
-          <h2 id="route-more" className={cx(styles.sec, styles.secGap)}>
-            {t("moreTitle")}
-          </h2>
-          <div className={styles.listCard}>
-            <button
-              type="button"
-              className={styles.row}
-              aria-haspopup="dialog"
-              data-return-key="more:decided"
-              onClick={() => {
-                cockpit?.open({ kind: "decided" });
-              }}
-            >
-              <Tile icon="vote" tone="lavender" size="sm" />
-              <span className={styles.grow}>
-                <span className={styles.rowTitle}>{view.more.decided.title}</span>
-                <span className={styles.status}>{view.more.decided.sub}</span>
-              </span>
-              <Chevron />
-            </button>
-            <button
-              type="button"
-              className={styles.row}
-              aria-haspopup="dialog"
-              data-return-key="more:members"
-              onClick={() => {
-                cockpit?.open({ kind: "members" });
-              }}
-            >
-              <Tile icon="users" tone="mint" size="sm" />
-              <span className={styles.grow}>
-                <span className={styles.rowTitle}>{view.more.members.title}</span>
-                <span className={styles.status}>{view.more.members.sub}</span>
-              </span>
-              <Chevron />
-            </button>
-          </div>
-        </section>
+        </div>
+
+        <div className={styles.aside}>
+          {view.tiles.length > 0 ? (
+            <section aria-labelledby="route-tiles" data-build="">
+              <h2 id="route-tiles" className={cx(styles.sec, styles.secGap)}>
+                {t("tiles.title")}
+              </h2>
+              <ul className={styles.tiles}>
+                {view.tiles.map((tile) => (
+                  <li key={tile.area}>
+                    <Link
+                      href={tile.href}
+                      className={styles.tile}
+                      aria-label={tile.ariaLabel}
+                      data-return-key={`tile:${tile.area}`}
+                      onClick={() => {
+                        rememberReturn(sessionKey, `tile:${tile.area}`);
+                      }}
+                    >
+                      <span className={styles.tileTop}>
+                        <Tile icon={tile.icon} tone={tile.tone} size="sm" />
+                        <Chevron />
+                      </span>
+                      <span className={styles.tileTitle}>{tile.title}</span>
+                      <span className={styles.tileStatus}>{tile.status}</span>
+                      {tile.linkLabel ? (
+                        <span className={styles.tileLink} aria-hidden="true">
+                          {tile.linkLabel}
+                          <Icon name="chevron-right" size={16} />
+                        </span>
+                      ) : null}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+          <section aria-labelledby="route-more" data-build="">
+            <h2 id="route-more" className={cx(styles.sec, styles.secGap)}>
+              {t("moreTitle")}
+            </h2>
+            <div className={styles.listCard}>
+              <button
+                type="button"
+                className={styles.row}
+                aria-haspopup="dialog"
+                data-return-key="more:decided"
+                onClick={() => {
+                  cockpit?.open({ kind: "decided" });
+                }}
+              >
+                <Tile icon="vote" tone="lavender" size="sm" />
+                <span className={styles.grow}>
+                  <span className={styles.rowTitle}>{view.more.decided.title}</span>
+                  <span className={styles.status}>{view.more.decided.sub}</span>
+                </span>
+                <Chevron />
+              </button>
+              <button
+                type="button"
+                className={styles.row}
+                aria-haspopup="dialog"
+                data-return-key="more:members"
+                onClick={() => {
+                  cockpit?.open({ kind: "members" });
+                }}
+              >
+                <Tile icon="users" tone="mint" size="sm" />
+                <span className={styles.grow}>
+                  <span className={styles.rowTitle}>{view.more.members.title}</span>
+                  <span className={styles.status}>{view.more.members.sub}</span>
+                </span>
+                <Chevron />
+              </button>
+            </div>
+          </section>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

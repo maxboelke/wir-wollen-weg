@@ -211,7 +211,11 @@ export function costsModel(view: TripView, raw: CostsRaw): CostsModel {
   // W19 E.6: payment details leave the server only for the viewer and the recipients of the
   // viewer's open transfers (current proposal) – not only hidden in the client.
   const recipients = new Set(
-    myParty ? proposalOf(raw).transfers.filter((t) => t.from === myParty).map((t) => t.to) : [],
+    myParty
+      ? proposalOf(raw)
+          .transfers.filter((t) => t.from === myParty)
+          .map((t) => t.to)
+      : [],
   );
   const people = all.map((p) =>
     p.me || recipients.has(p.key) || p.pay === null ? p : { ...p, pay: null },

@@ -1775,7 +1775,14 @@ function Settle({
             data-others-list=""
           >
             {othersOpenRows.map((tr) => (
-              <OtherRow key={rowKey(tr)} tr={tr} done={false} money={money} name={name} byKey={byKey} />
+              <OtherRow
+                key={rowKey(tr)}
+                tr={tr}
+                done={false}
+                money={money}
+                name={name}
+                byKey={byKey}
+              />
             ))}
             {othersDone.map((s) => (
               <OtherRow key={s.id} tr={s} done money={money} name={name} byKey={byKey} />

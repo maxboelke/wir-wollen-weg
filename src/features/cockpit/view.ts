@@ -283,11 +283,15 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
   const tiles: TileView[] = route.tiles.map((tile) => {
     const title = text(ctx, tile.title);
     const status = tile.status.map((part) => text(ctx, part)).join(" · ");
+    const linkLabel = tile.linkLabel ? text(ctx, tile.linkLabel) : null;
     return {
       area: tile.area,
       title,
       status,
-      ariaLabel: sentence(title, status),
+      ...(linkLabel ? { linkLabel } : {}),
+      ariaLabel: linkLabel
+        ? `${sentence(title, status)}${/[.!?…✓]$/.test(status) ? "" : "."} ${linkLabel}`
+        : sentence(title, status),
       href: path(view, tile.href),
       icon:
         tile.area === "stay"
@@ -321,6 +325,23 @@ export async function routeView(view: TripView, data: CockpitData): Promise<Rout
     later: route.groups.later.map((s) => station(ctx, view, s)),
     goal: goal(ctx, view, route.goal),
     tiles,
+    dock: route.costDock
+      ? {
+          kind: route.costDock.kind,
+          costsHref: costsPath(view.trip.publicId),
+          actionHref:
+            route.costDock.kind === "add"
+              ? `${costsPath(view.trip.publicId, "new")}?date=today&from=cockpit`
+              : `${costsPath(view.trip.publicId, "balances")}?from=cockpit`,
+          status: text(ctx, route.costDock.status),
+          tone:
+            route.costDock.balanceCents < 0
+              ? "owe"
+              : route.costDock.balanceCents > 0
+                ? "owed"
+                : "square",
+        }
+      : null,
     more: {
       decided: { title: t("decided.title"), sub: t("decided.sub") },
       members: {
@@ -386,10 +407,6 @@ export async function ticketView(view: TripView, data: CockpitData): Promise<Tic
       more: Math.max(0, members.length - 3),
       text: t("crew", { count: members.length, nights: nightsOf({ start, end }) }),
     },
-    addExpense: route.headActions.includes("addExpense")
-      ? `${costsPath(trip.publicId, "new")}?date=today&from=cockpit`
-      : null,
-    settle: route.headActions.includes("settle") ? costsPath(trip.publicId, "balances") : null,
     calendar: route.headActions.includes("calendar")
       ? {
           icsHref: `${tripPath(trip.publicId)}/event.ics`,

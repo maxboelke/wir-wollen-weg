@@ -26,9 +26,7 @@ export default async function RootRedirect() {
       })),
       todayIso(),
     );
-    redirect(
-      target.kind === "trip" ? `${tripPath(target.publicId)}?${START_PARAM}=1` : "/trips",
-    );
+    redirect(target.kind === "trip" ? `${tripPath(target.publicId)}?${START_PARAM}=1` : "/trips");
   }
   redirect(`/${await resolveRequestLocale()}`);
 }

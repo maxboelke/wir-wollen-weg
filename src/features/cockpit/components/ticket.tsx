@@ -1,6 +1,6 @@
 import type { TicketView } from "../types";
 import { TicketRing } from "./ticket-ring";
-import { CalendarButton, CostHeadButtons, CrewButton } from "./ticket-stub";
+import { CalendarButton, CrewButton } from "./ticket-stub";
 import styles from "./ticket.module.css";
 
 /**
@@ -51,7 +51,6 @@ export function Ticket({ publicId, ticket }: { publicId: string; ticket: TicketV
                 googleHref={ticket.calendar.googleHref}
               />
             ) : null}
-            <CostHeadButtons addExpense={ticket.addExpense} settle={ticket.settle} />
           </div>
         </div>
       </div>

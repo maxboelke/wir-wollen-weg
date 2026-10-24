@@ -145,6 +145,21 @@ export interface TripTile {
   /** Parts of the one status line, joined with « · ». */
   status: Msg[];
   href: RouteTarget;
+  /** Extra link line («Alle Ausgaben ansehen ›», W16 v2.17 Fassung 2). */
+  linkLabel?: Msg;
+}
+
+/**
+ * Cost shortcut bar (W16 v2.17 «Fassung 2»): Unterwegs (not closed) `add`, Danach with an own
+ * result ≠ 0 (not closed) `settle`. Only a shortcut to the tile «Kosten» – it hides once the
+ * tile is visible, so the tile is always there as well.
+ */
+export interface CostDock {
+  kind: "add" | "settle";
+  /** The viewer's result as a sentence («Du zahlst noch 64,00 € zurück»). */
+  status: Msg;
+  /** < 0 pays back, > 0 gets back, 0 square (colour of the sentence). */
+  balanceCents: number;
 }
 
 export type RingModel =
@@ -163,10 +178,12 @@ export interface TripRoute {
   /** Accessible name of the ring button («Vorfreude: noch 41 Tage»). */
   ringLabel: Msg;
   /**
-   * Buttons in the ticket stub (W16 v2.2/v2.15): Vorbereitung «Kalender», Unterwegs
-   * «+ Ausgabe», Danach «Ausgleichen» (only with open balances, not closed).
+   * Buttons in the ticket stub (W16 v2.2): Vorbereitung «Kalender». The cost head buttons of
+   * v2.15 moved into the cost shortcut bar (`costDock`, W16 v2.17).
    */
-  headActions: ("calendar" | "addExpense" | "settle")[];
+  headActions: "calendar"[];
+  /** Cost shortcut bar (W16 v2.17) – null: no bar. */
+  costDock: CostDock | null;
   wayTitle: Msg;
   meta: Msg | null;
   /** Summary of the collapsed done row; null → «{n} erledigt: {titles}». */
@@ -958,23 +975,48 @@ export function d1Station(
   return { ...base, state: "done", status: msg("costs.d1DoneSquare") };
 }
 
-/** Tile «Kosten» (W16 v2.15): status «… gesamt · du schuldest …», «Noch keine Ausgaben» … */
-function costsTile(costs: CostStatus): TripTile {
-  const parts: Msg[] = [];
-  if (costs.closed) parts.push(msg("tiles.costsClosed"));
+/**
+ * The viewer's result as one sentence (W19 E.9) – tile, shortcut bar: «Noch keine Ausgaben» ·
+ * «Du zahlst noch {amount} zurück» · «Du bekommst noch {amount} zurück» · «Du bist quitt ✓» ·
+ * «Alle sind quitt ✓»; closed with the prefix «Abgeschlossen · …». No group total any more.
+ */
+export function costSentence(costs: CostStatus): Msg {
+  const amount = money(costs.myBalanceCents, costs.currency);
   if (costs.expenseCount === 0) {
-    parts.push(msg("tiles.costsEmpty"));
-  } else {
-    parts.push(
-      msg("tiles.costsTotal", { total: { money: costs.totalCents, currency: costs.currency } }),
-    );
-    const amount: MsgValue = { money: Math.abs(costs.myBalanceCents), currency: costs.currency };
-    if (costs.myBalanceCents < 0) parts.push(msg("tiles.costsOwe", { amount }));
-    else if (costs.myBalanceCents > 0) parts.push(msg("tiles.costsOwed", { amount }));
-    else if (!costs.allSettled) parts.push(msg("tiles.costsSquareMe"));
-    else parts.push(msg("tiles.costsSquare"));
+    return costs.closed ? msg("tiles.costsClosed") : msg("tiles.costsEmpty");
   }
-  return { area: "costs", title: msg("tiles.costs"), status: parts, href: COSTS };
+  const me = costs.myBalanceCents;
+  if (costs.closed) {
+    if (me < 0) return msg("tiles.costsClosedOwe", { amount });
+    if (me > 0) return msg("tiles.costsClosedOwed", { amount });
+    return costs.allSettled ? msg("tiles.costsClosedSquare") : msg("tiles.costsClosedSquareMe");
+  }
+  if (me < 0) return msg("tiles.costsOwe", { amount });
+  if (me > 0) return msg("tiles.costsOwed", { amount });
+  return costs.allSettled ? msg("tiles.costsSquare") : msg("tiles.costsSquareMe");
+}
+
+/** Tile «Kosten» (W16 v2.15/v2.17): the own result; Unterwegs/Danach + «Alle Ausgaben ansehen ›». */
+function costsTile(costs: CostStatus, sub: Subphase): TripTile {
+  return {
+    area: "costs",
+    title: msg("tiles.costs"),
+    status: [costSentence(costs)],
+    href: COSTS,
+    ...(sub === "before" ? {} : { linkLabel: msg("tiles.costsAll") }),
+  };
+}
+
+/** Cost shortcut bar (W16 v2.17 Fassung 2) – see `CostDock`. */
+export function costDockOf(costs: CostStatus | null, sub: Subphase): CostDock | null {
+  if (!costs || costs.closed) return null;
+  if (sub === "during") {
+    return { kind: "add", status: costSentence(costs), balanceCents: costs.myBalanceCents };
+  }
+  if (sub === "after" && costs.myBalanceCents !== 0) {
+    return { kind: "settle", status: costSentence(costs), balanceCents: costs.myBalanceCents };
+  }
+  return null;
 }
 
 /* ------------------------------------------------------------------------------------------ */
@@ -1197,7 +1239,10 @@ export function tripRoute(
   const stay = areas.stay ?? null;
   const costs = areas.costs ?? null;
   const travel = areas.travelData ?? null;
-  const d1 = costs && sub === "after" ? d1Station(costs, viewer, trip.orgaName) : null;
+  const costDock = costDockOf(costs, sub);
+  const d1Raw = costs && sub === "after" ? d1Station(costs, viewer, trip.orgaName) : null;
+  // W16 v2.17: with the shortcut bar D1 is a place on the way without an own button.
+  const d1 = d1Raw && costDock && d1Raw.primary ? withoutPrimary(d1Raw) : d1Raw;
   const v4 = travel ? v4Station(travel, viewer, sub) : null;
   const d3 = travel ? d3Station(travel, sub) : null;
   // V4 «später» (row 5) is a quiet line: never «als Nächstes», not counted (W16 v2.16).
@@ -1212,7 +1257,8 @@ export function tripRoute(
   ];
   const tasks = [
     ...(sub === "before" ? [infoTask(viewer, areas, daysToGo)] : []),
-    ...(costs && sub !== "after" ? [a1Task(costs)] : []),
+    // W16 v2.17: A1 only in Vorbereitung – Unterwegs the shortcut bar carries the costs.
+    ...(costs && sub === "before" ? [a1Task(costs)] : []),
   ];
   const all: TripStation[] = [
     ...stations,
@@ -1246,7 +1292,10 @@ export function tripRoute(
           },
         ]
       : [];
-  const items = [...plans, ...yours];
+  // W16 v2.17 primary rule: with the bar, ITS button is the page's only primary.
+  const items = [...plans, ...yours].map((s) =>
+    costDock && s.primary ? { ...s, primary: { ...s.primary, secondary: true } } : s,
+  );
   const sentence = heuteSentence(
     sub,
     index,
@@ -1292,16 +1341,8 @@ export function tripRoute(
         : sub === "during"
           ? msg("ring.during", { day: index, total })
           : msg("ring.after"),
-    headActions:
-      sub === "before"
-        ? ["calendar"]
-        : sub === "during"
-          ? costs && !costs.closed
-            ? ["addExpense"]
-            : []
-          : costsOpen
-            ? ["settle"]
-            : [],
+    headActions: sub === "before" ? ["calendar"] : [],
+    costDock,
     wayTitle: msg(`way.${sub}`),
     meta:
       sub === "before"
@@ -1347,13 +1388,22 @@ export function tripRoute(
             ),
           ]
         : []),
-      // Costs: always in Vorbereitung/Unterwegs; in Danach only without a visible D1 station.
-      ...(costs && (sub !== "after" || d1 === null || d1Done) ? [costsTile(costs)] : []),
+      // Costs: always in Vorbereitung/Unterwegs; in Danach without a visible D1 station – or
+      // when the shortcut bar is there (the tile is its anchor, W16 v2.17 Fassung 2).
+      ...(costs && (sub !== "after" || d1 === null || d1Done || costDock)
+        ? [costsTile(costs, sub)]
+        : []),
       ...(info ? [infoTile(viewer, trip, info)] : []),
       ...(travel ? [travelTile(travel, viewer, sub, v4)] : []),
     ].filter((tile): tile is TripTile => tile !== null),
     departureDay: today === trip.start,
   };
+}
+
+function withoutPrimary(station: TripStation): TripStation {
+  const rest = { ...station };
+  delete rest.primary;
+  return rest;
 }
 
 function stripLater(station: TripStation & { laterOnly?: boolean }): TripStation {
