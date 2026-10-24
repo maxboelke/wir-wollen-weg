@@ -47,14 +47,27 @@ export function CostDock({ dock }: { dock: DockView }) {
     };
   }, [mode, animated]);
 
-  // Back from «Ausgabe speichern» (W19 D.5.6): focus on «+ Ausgabe», then drop the parameter.
+  // Back from «Ausgabe speichern» (W19 D.5.6): focus on «+ Ausgabe» (the bar shows for it –
+  // focus protection keeps it there), then drop the parameter.
+  const focusAdd = useRef(false);
   useLayoutEffect(() => {
     const url = new URL(window.location.href);
     if (url.searchParams.get("focus") !== "add-expense") return;
-    ref.current?.querySelector<HTMLElement>('[data-dock-action="add-expense"]')?.focus();
+    focusAdd.current = true;
     url.searchParams.delete("focus");
     window.history.replaceState(window.history.state, "", url.pathname + url.search + url.hash);
   }, []);
+  useLayoutEffect(() => {
+    if (!focusAdd.current || mode === "pending") return;
+    focusAdd.current = false;
+    if (mode === "hidden") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- show the bar for the focus
+      setMode("shown");
+      focusAdd.current = true;
+      return;
+    }
+    ref.current?.querySelector<HTMLElement>('[data-dock-action="add-expense"]')?.focus();
+  }, [mode]);
 
   // Rückfall (variant A): taller than 20 % of the window → static card under the head.
   useEffect(() => {

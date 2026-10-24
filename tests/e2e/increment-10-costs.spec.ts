@@ -263,7 +263,7 @@ test.describe("W19 D – expenses", () => {
     await page.reload();
     await hydrated(page);
     await expect(main(page).getByRole("button", { name: c.currency.changeName })).toHaveCount(0);
-    await expect(main(page).getByText("£12.00").first()).toBeVisible();
+    await expect(main(page).getByText(fill(c.group.total, { total: "£12.00" }))).toBeVisible();
   });
 
   test("non-members get the shared 404", async ({ page, browser }) => {

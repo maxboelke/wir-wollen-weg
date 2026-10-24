@@ -75,7 +75,9 @@ test.describe("W19 E.5 – settling up (own transfers in detail, the others comp
       main(page).getByText(fill(c.mine.owe, { amount: "€20.00" }), { exact: true }),
     ).toBeVisible();
     await expect(main(page).getByRole("heading", { level: 2, name: b.mineOut })).toBeVisible();
-    await expect(main(page).getByText(fill(b.to, { name: "Lena Berg" }))).toBeVisible();
+    await expect(
+      main(page).getByText(fill(b.to, { name: "Lena Berg" }), { exact: true }),
+    ).toBeVisible();
     // Never «minimal» – the neutral count sentence only, always visible.
     await expect(main(page).getByText(plural(b.groupOpen, 2))).toBeVisible();
     // The others' transfers: folded, with amounts once opened, never with buttons.

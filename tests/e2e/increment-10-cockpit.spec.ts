@@ -94,6 +94,10 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
 
   test("Unterwegs: bar «+ Expense» → save → back in the cockpit with «View»", async ({ page }) => {
     const trip = await cockpitTrip(page, [-1, 5]);
+    // Phones: the bar only shows while the tile «Expenses» is below the fold (W16 v2.17) – a
+    // short window keeps the tile out of the first screen.
+    const width = page.viewportSize()?.width ?? 1280;
+    if (width < 960) await page.setViewportSize({ width, height: 600 });
     await page.goto(`/trips/${trip.publicId}`);
     await hydrated(page);
     await page.getByRole("link", { name: r.dock.addName }).click();
