@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { buttonClassName } from "@/components/ui/button-styles";
 import type { FeedbackConfig } from "@/lib/beta-config";
@@ -25,24 +25,29 @@ export function Feedback({ config, open, onClose }: FeedbackProps) {
   const t = useTranslations("feedback");
   const tCommon = useTranslations("common");
   const tApp = useTranslations("app");
+  // The text is built while rendering the opened sheet (state adjusted during render), so the
+  // links never show – or get tapped – with an empty text: an effect would fill it only after
+  // the first paint of the open sheet. `open` is false on the server and during hydration, so
+  // the browser-only values (title, path, user agent) are read on the client only.
   const [body, setBody] = useState("");
-
-  useEffect(() => {
-    if (!open) return;
-    const device = feedbackDevice(navigator.userAgent, navigator.maxTouchPoints);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- page title/user agent only readable in the browser
-    setBody(
-      t("body", {
-        area: feedbackArea(document.title, tApp("name"), window.location.pathname, {
-          invite: t("areas.invite"),
-          travelData: t("areas.travelData"),
+  const [builtFor, setBuiltFor] = useState(false);
+  if (open !== builtFor) {
+    setBuiltFor(open);
+    if (open) {
+      const device = feedbackDevice(navigator.userAgent, navigator.maxTouchPoints);
+      setBody(
+        t("body", {
+          area: feedbackArea(document.title, tApp("name"), window.location.pathname, {
+            invite: t("areas.invite"),
+            travelData: t("areas.travelData"),
+          }),
+          device: t(`devices.${device}`),
+          installed: isStandalone() ? t("yes") : t("no"),
+          version: APP_VERSION,
         }),
-        device: t(`devices.${device}`),
-        installed: isStandalone() ? t("yes") : t("no"),
-        version: APP_VERSION,
-      }),
-    );
-  }, [open, t, tApp]);
+      );
+    }
+  }
 
   return (
     <>

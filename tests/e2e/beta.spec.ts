@@ -196,7 +196,8 @@ test.describe("sign-up and sign-in", () => {
     await page.getByRole("button", { name: de.menu.feedback }).click();
     const sheet = page.getByRole("dialog", { name: de.feedback.heading });
     const whatsapp = sheet.getByRole("link", { name: de.feedback.whatsapp });
-    await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/4915100000000\?text=/);
+    // The text is there as soon as the sheet shows (never an empty WhatsApp message).
+    await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/4915100000000\?text=.+/);
     const text = decodeURIComponent((await whatsapp.getAttribute("href")) ?? "");
     expect(text).toContain("Feedback zu Wir wollen weg (Beta)");
     expect(text).toContain("Gerät: Android");
@@ -355,7 +356,9 @@ test.describe("review hardening (R-086, deployment.md §0.12.5)", () => {
     await page.getByRole("button", { name: de.menu.open.replace("{name}", "Fee") }).click();
     await page.getByRole("button", { name: de.menu.feedback }).click();
     const sheet = page.getByRole("dialog", { name: de.feedback.heading });
-    const href = await sheet.getByRole("link", { name: de.feedback.whatsapp }).getAttribute("href");
+    const whatsapp = sheet.getByRole("link", { name: de.feedback.whatsapp });
+    await expect(whatsapp).toHaveAttribute("href", /\?text=.+/);
+    const href = await whatsapp.getAttribute("href");
     const text = decodeURIComponent(href ?? "");
     expect(text).toContain(`Bereich: ${de.feedback.areas.invite}`);
     expect(text).not.toContain("Geheimreise");
