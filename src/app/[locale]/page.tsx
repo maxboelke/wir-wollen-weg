@@ -14,6 +14,7 @@ import { Tile, type TileTone } from "@/components/ui/card";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { LanguageSwitchLink } from "@/features/locale/language-switch";
 import { isLocale, type Locale } from "@/i18n/config";
+import { StandaloneRedirect } from "@/features/beta/components/standalone-redirect";
 import { betaPath } from "@/features/beta/paths";
 import { isBeta } from "@/lib/app-env";
 import styles from "./landing.module.css";
@@ -144,6 +145,7 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
       </main>
       <SiteFooter alternateHref={`/${other}`} />
       <FlashToast />
+      <StandaloneRedirect to="/login" />
     </>
   );
 }
