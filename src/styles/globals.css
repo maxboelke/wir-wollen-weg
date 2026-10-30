@@ -141,3 +141,26 @@ body {
 html:has(main[data-cockpit]) {
   scroll-padding-top: calc(var(--ww-size-cockpit-compact-h) + var(--ww-space-2));
 }
+
+/*
+ * Installed web app (W23 C.3, C.4, C.7): iOS draws the status bar (white text,
+ * `black-translucent`) over the page – a dark brand band fills the safe area at the top on every
+ * page, the content starts below it. No pull-to-refresh/rubber band on the app container.
+ * Outside the installed app nothing changes (the insets are 0 in Safari anyway).
+ */
+@media (display-mode: standalone) {
+  body {
+    padding-top: env(safe-area-inset-top);
+    overscroll-behavior-y: contain;
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    z-index: 1000;
+    height: env(safe-area-inset-top);
+    background: var(--ww-cockpit-bg);
+    pointer-events: none;
+  }
+}

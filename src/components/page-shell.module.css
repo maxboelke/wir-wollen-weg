@@ -86,3 +86,21 @@
 .main.wide {
   max-width: var(--ww-size-content-wide);
 }
+
+/* «Beta» badge next to the word mark (W23 D.1, D-72): text carries the meaning, ≥ 4.5 : 1. */
+.betaBadge {
+  flex: none;
+  margin-inline-start: var(--ww-space-2);
+  padding: 2px var(--ww-space-2);
+  border-radius: var(--ww-radius-pill);
+  background: var(--ww-color-primary-tint);
+  color: var(--ww-color-primary-text);
+  font-size: var(--ww-text-xs);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: 1.4;
+}
+
+.betaBadgeOnBrand {
+  background: var(--ww-color-accent);
+  color: var(--ww-color-on-accent);
+}

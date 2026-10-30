@@ -8,6 +8,7 @@ import type { AuthErrorKey } from "./auth-errors";
 import { inviteTokenFromPath, toSafeInternalPath } from "@/lib/safe-path";
 import { auth, withTrustedClientIp } from "@/server/auth";
 import { getSession } from "@/server/session";
+import { afterSignupTarget } from "@/server/beta";
 import { startTargetFor } from "@/server/start";
 
 export interface ActionResult {
@@ -37,10 +38,13 @@ export async function saveName(returnTo: string, name: string): Promise<ActionRe
   const parsed = nameSchema.safeParse(name);
   if (!parsed.success) return { error: "nameRequired" };
 
+  const isNew = !session.user.name;
   await auth().api.updateUser({ body: { name: parsed.data }, headers: await headers() });
   const target = toSafeInternalPath(returnTo, "/");
   // The app start (W16 v2.18) – resolved here, so the browser follows ONE redirect.
-  redirect(target === "/" ? await startTargetFor(session.user.id) : target);
+  const resolved = target === "/" ? await startTargetFor(session.user.id) : target;
+  // Friends beta: a new account sees the install step once (W23 B.5).
+  redirect(isNew ? await afterSignupTarget(session.user.id, resolved) : resolved);
 }
 
 /** Form variant of saveName for the server-rendered name step on /login. */
@@ -54,8 +58,24 @@ export async function saveNameFormAction(
 }
 
 export interface MagicLinkResult {
-  /** "invalid": expired, used or unknown token (H.5 3b) · "generic": server error (3e). */
-  error?: "invalid" | "generic";
+  /**
+   * "invalid": expired, used or unknown token (H.5 3b) · "generic": server error (3e) ·
+   * "betaMissing"/"betaFull": friends beta refused the new account (W23 A.5).
+   */
+  error?: "invalid" | "generic" | "betaMissing" | "betaFull";
+}
+
+/** Error code Better Auth put into the redirect of a failed magic-link verification. */
+function redirectErrorCode(error: unknown): string | null {
+  if (!isAPIError(error)) return null;
+  const headers: unknown = error.headers;
+  const location = headers instanceof Headers ? headers.get("location") : null;
+  if (!location) return null;
+  try {
+    return new URL(location, "http://internal.invalid").searchParams.get("error");
+  } catch {
+    return null;
+  }
 }
 
 const magicTokenSchema = z.string().min(1).max(256);
@@ -92,7 +112,12 @@ export async function redeemMagicLink(
     }
   } catch (error) {
     // Better Auth answers invalid/expired/used tokens with a redirect carrying ?error=…
-    if (isAPIError(error) && error.status === "FOUND") return { error: "invalid" };
+    if (isAPIError(error) && error.status === "FOUND") {
+      const code = redirectErrorCode(error);
+      if (code === "BETA_SIGNUP_REQUIRED") return { error: "betaMissing" };
+      if (code === "BETA_FULL") return { error: "betaFull" };
+      return { error: "invalid" };
+    }
     console.error("magic link: verification failed", error instanceof Error ? error.message : "");
     return { error: "generic" };
   }

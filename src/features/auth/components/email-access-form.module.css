@@ -236,3 +236,10 @@ h2.heading {
 .demoInbox .inlineLink {
   color: inherit;
 }
+
+/* Friends beta, invite way (W23 A.8): short privacy notice + consent above «Code senden». */
+.consent {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}

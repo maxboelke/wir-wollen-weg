@@ -35,7 +35,8 @@
     "notAllowed": "Das darf nur die Orga.",
     "privacy": "Datenschutz",
     "imprint": "Impressum",
-    "demoInboxLink": "Demo-Postfach öffnen"
+    "demoInboxLink": "Demo-Postfach öffnen",
+    "contactPage": "Anbieter & Kontakt"
   },
   "landing": {
     "titleLead": "Vom Gruppenchat zum",
@@ -100,7 +101,10 @@
       "joinInvalid": "Dieser Einladungslink funktioniert nicht mehr. Bitte frag im Gruppenchat nach dem aktuellen Link.",
       "joinRateLimited": "Gerade sind sehr viele Beitritte. Bitte versuch es in {minutes} Min. nochmal.",
       "nameTaken": "Diesen Namen gibt es schon in der Reise.",
-      "tripInvalid": "Die Reisedaten passen nicht mehr. Bitte prüf das Formular."
+      "tripInvalid": "Die Reisedaten passen nicht mehr. Bitte prüf das Formular.",
+      "betaMissing": "Fast – dir fehlt noch der Beta-Code.",
+      "betaFull": "Die Beta ist gerade voll. Melde dich bei der Person, die dir den Link geschickt hat.",
+      "consentRequired": "Bitte bestätige kurz, dass du einverstanden bist."
     },
     "codeSendingTo": "Wir schicken dir gerade einen Code an <b>{email}</b>.",
     "statusSending": "Code wird gesendet …",
@@ -131,7 +135,11 @@
     "sessionExpired": "Bitte melde dich an – danach geht es dort weiter, wo du warst.",
     "privacyNote": "Mit dem Fortfahren bestätigst du, dass du den <link>Datenschutzhinweis</link> gelesen hast.",
     "demoInboxHint": "Vorschau: Es werden keine echten Mails verschickt. Deinen Code findest du im Demo-Postfach.",
-    "demoInboxOpen": "Demo-Postfach öffnen"
+    "demoInboxOpen": "Demo-Postfach öffnen",
+    "pwaNote": "Bitte den Code eingeben – der Link in der Mail öffnet Safari statt der App.",
+    "appHeading": "Schön, dass du die App hast!",
+    "appIntro": "Melde dich hier einmal an – mit deiner E-Mail und einem Code.",
+    "appNewHere": "Neu hier? Beta-Code eingeben"
   },
   "magic": {
     "title": "Anmelden",
@@ -147,7 +155,9 @@
     "invalid": "Er ist 15 Minuten gültig und funktioniert nur einmal. Hol dir einfach einen neuen Code.",
     "requestNew": "Neuen Code anfordern",
     "failed": "Das hat nicht geklappt. Bitte versuch es nochmal.",
-    "retry": "Nochmal versuchen"
+    "retry": "Nochmal versuchen",
+    "pwaNote": "Du nutzt die App auf dem Home-Bildschirm? Dann gib dort lieber den 6-stelligen Code aus der Mail ein. Dieser Link meldet dich nur hier in Safari an.",
+    "pwaButton": "Trotzdem hier anmelden"
   },
   "invite": {
     "title": "Einladung",
@@ -245,7 +255,9 @@
     "myTrips": "Meine Reisen",
     "account": "Konto",
     "help": "Hilfe",
-    "signOut": "Abmelden"
+    "signOut": "Abmelden",
+    "install": "App installieren",
+    "feedback": "Feedback geben"
   },
   "pending": {
     "join": "Du warst gerade dabei, „{trip}“ beizutreten.",
@@ -374,7 +386,8 @@
       "planOutdated": "Bei deinen Reisen hat sich inzwischen etwas geändert. Bitte prüf deine Auswahl und versuch es nochmal – es wurde nichts gelöscht.",
       "travelMember": "Deine freigegebenen Reisedaten werden sofort gelöscht.",
       "travelBooker": "Deine offenen Anfragen werden geschlossen und alle Freigaben gelöscht."
-    }
+    },
+    "version": "Version {version} (Beta) · {build}"
   },
   "regions": {
     "countries": {
@@ -505,6 +518,11 @@
         "q": "Wie lange speichert ihr meine Daten?",
         "a": "Nicht ewig: Eine Reise löschen wir 90 Tage nach ihrem Ende, ohne festen Termin 12 Monate nach der letzten Änderung – die Orga bekommt 14 Tage vorher Bescheid. Konten, die 24 Monate nicht genutzt wurden, löschen wir nach einer Erinnerung. Wir setzen keine Tracker und keine Werbe-Cookies ein.",
         "action": "Zur Datenschutzerklärung"
+      },
+      "app": {
+        "q": "Wie lege ich die App auf den Home-Bildschirm?",
+        "a": "iPhone: In Safari auf ⋯ → „Teilen“ → „Zum Home-Bildschirm“. Android: Menü ⋮ → „App installieren“. Danach öffnest du {product} über das Symbol. Auf dem iPhone meldest du dich dort einmal mit Code an.",
+        "action": "Anleitung öffnen"
       }
     },
     "contactTitle": "Noch Fragen?",
@@ -524,7 +542,10 @@
       "codeIntro": "Dein Code:",
       "linkIntro": "Oder tippe hier, um dich anzumelden:",
       "linkText": "Anmelden",
-      "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail."
+      "validity": "Gültig für 15 Minuten. Du hast das nicht angefordert? Dann ignoriere diese Mail.",
+      "betaCodeIntro": "Dein Code – gib ihn in der App oder im Browser ein:",
+      "betaLinkIntro": "Du bist im Browser (nicht in der App vom Home-Bildschirm)? Dann geht es auch mit diesem Link:",
+      "betaLinkText": "Im Browser anmelden"
     },
     "reset": {
       "subject": "{code} ist dein Code zum Zurücksetzen des Passworts",
@@ -575,7 +596,9 @@
       "keepIntro": "Du willst es behalten? Melde dich einfach einmal an:",
       "keep": "Anmelden",
       "service": "Dies ist ein Servicehinweis, keine Werbung."
-    }
+    },
+    "betaFooter": "Private Test-Version von Wir wollen weg",
+    "privacy": "Datenschutz"
   },
   "tripForm": {
     "titleNew": "Neue Reise planen",
@@ -2787,5 +2810,196 @@
   "start": {
     "hint": "Deine laufende Reise ist direkt geöffnet. Alle Reisen findest du oben links.",
     "action": "Meine Reisen"
+  },
+  "beta": {
+    "badge": "Beta",
+    "title": "Beta",
+    "brandLabel": "{product} – Beta",
+    "back": "Zurück",
+    "code": {
+      "heading": "Willkommen in der Beta!",
+      "intro": "Mit {product} findet eure Gruppe den Termin für den gemeinsamen Urlaub. Gib den Beta-Code aus deiner Einladung ein.",
+      "label": "Beta-Code",
+      "hint": "Steht in der Nachricht, mit der du den Link bekommen hast.",
+      "submit": "Weiter",
+      "checking": "Wird geprüft …",
+      "haveAccount": "Schon ein Konto? Anmelden",
+      "errorEmpty": "Bitte gib den Beta-Code ein.",
+      "errorWrong": "Dieser Beta-Code stimmt nicht. Schau nochmal in die Nachricht mit dem Link.",
+      "errorRate": "Zu viele Versuche. Bitte versuch es in {min} Minuten nochmal.",
+      "errorFull": "Die Beta ist gerade voll. Melde dich bei der Person, die dir den Link geschickt hat.",
+      "inAppTip": "Tipp: Öffne diese Seite in Safari, dann kannst du sie später als App installieren.",
+      "inAppHow": "So geht’s"
+    },
+    "privacy": {
+      "heading": "Kurz zum Datenschutz",
+      "p1": "Wir speichern nur, was die App braucht: E-Mail, deinen Namen und was du in Reisen einträgst.",
+      "p2": "Deine Angaben sehen nur die Leute in deinen Reisen.",
+      "p3": "Keine Werbung, kein Tracking.",
+      "p4": "Die Daten liegen in Frankfurt. Die App läuft bei Vercel, einem US-Anbieter – mehr dazu im Datenschutzhinweis.",
+      "p5": "Es ist eine Test-Version. Du kannst dein Konto jederzeit selbst löschen; Reisen löschen wir automatisch 90 Tage nach dem Reiseende.",
+      "p6": "Bitte trag keine Ausweis- oder Gesundheitsdaten in Notizen ein.",
+      "more": "Alles Weitere: <link>Datenschutzhinweis</link>",
+      "consent": "Ich habe das gelesen und bin einverstanden.",
+      "errorConsent": "Bitte bestätige kurz, dass du einverstanden bist.",
+      "toggle": "Kurz zum Datenschutz",
+      "submit": "Weiter"
+    },
+    "invite": {
+      "noCode": "{name} hat dich zur Beta eingeladen – du brauchst keinen Beta-Code.",
+      "needCode": "Neu hier? Für die Beta brauchst du einen Beta-Code – frag {name} danach."
+    },
+    "signup": {
+      "missingHeading": "Fast – dir fehlt noch der Beta-Code",
+      "missingText": "Zu {email} gibt es noch kein Konto. Gerade sind wir in einer geschlossenen Beta – dafür brauchst du einen Beta-Code.",
+      "missingCta": "Beta-Code eingeben",
+      "missingInvite": "Du hast einen Einladungslink zu einer Reise? Öffne einfach den.",
+      "fullHeading": "Die Beta ist gerade voll",
+      "fullText": "Melde dich bei der Person, die dir den Link geschickt hat."
+    },
+    "login": {
+      "firstTime": "Zum ersten Mal hier? Mit Beta-Code registrieren",
+      "emailHeading": "Deine E-Mail",
+      "emailLead": "Wir schicken dir einen 6-stelligen Code. Ein Passwort brauchst du nicht."
+    },
+    "landing": {
+      "note": "Wir sind gerade in einer geschlossenen Beta. Den Beta-Code bekommst du von uns.",
+      "cta": "Ich habe einen Beta-Code",
+      "signIn": "Schon dabei? Anmelden"
+    }
+  },
+  "install": {
+    "title": "App installieren",
+    "heading": {
+      "ios": "Hol dir die App auf den Home-Bildschirm",
+      "android": "Hol dir die App auf den Startbildschirm"
+    },
+    "intro": "Dann startet {product} wie eine App – ohne Adresszeile, mit eigenem Symbol.",
+    "ios": {
+      "step0": "Du bist in WhatsApp? Steht oben „Fertig“? Dann tippe unten rechts auf das Kompass-Symbol – die Seite öffnet sich in Safari.",
+      "step0Summary": "Du bist in WhatsApp?",
+      "step1": "Tippe unten auf ⋯ und dann auf „Teilen“. Siehst du das Teilen-Symbol direkt? Dann gleich darauf tippen.",
+      "step2": "Wähle „Zum Home-Bildschirm“ (evtl. nach unten scrollen oder „Mehr“ tippen).",
+      "step3": "„Als Web-App öffnen“ an lassen und oben rechts auf „Hinzufügen“ tippen.",
+      "step4": "Öffne die App über das neue Symbol und melde dich dort einmal mit deinem Code an.",
+      "otherBrowser": "Findest du es nicht? Öffne die Seite in Safari."
+    },
+    "android": {
+      "button": "App installieren",
+      "manual": "Tippe oben rechts auf ⋮ und dann auf „App installieren“ oder „Zum Startbildschirm hinzufügen“.",
+      "installing": "Die App wird installiert."
+    },
+    "desktop": "Am Computer brauchst du nichts zu installieren. Auf dem Handy geht es so:",
+    "iosLabel": "iPhone und iPad",
+    "androidLabel": "Android",
+    "done": "Fertig – ist drauf",
+    "later": "Später",
+    "menu": "App installieren",
+    "inapp": {
+      "heading": "Öffne die Seite in Safari",
+      "headingAndroid": "Öffne die Seite in Chrome",
+      "text": "Hier in {app} lässt sich die App nicht installieren.",
+      "textGeneric": "In dieser Ansicht lässt sich die App nicht installieren.",
+      "step1": "Tippe auf ⋯ (oben oder unten rechts).",
+      "step2": "Wähle „In Safari öffnen“ bzw. „Im Browser öffnen“.",
+      "copy": "Link kopieren",
+      "copied": "Link kopiert",
+      "copyHint": "Klappt nicht? Link kopieren und in Safari einfügen.",
+      "relogin": "In Safari meldest du dich einmal neu an – mit Code.",
+      "skip": "Weiter ohne App"
+    },
+    "inviteHint": "Du hast die App schon auf dem Home-Bildschirm? Link kopieren und in der App unter „Meine Reisen → Einladungslink einfügen“ einfügen.",
+    "installed": "Du nutzt die App schon vom Home-Bildschirm – alles erledigt."
+  },
+  "pwa": {
+    "paste": {
+      "button": "Einladungslink einfügen",
+      "intro": "Links aus WhatsApp oder Mails öffnen sich in Safari. Kopier den Link und füg ihn hier ein.",
+      "label": "Link",
+      "paste": "Einfügen",
+      "open": "Öffnen",
+      "error": "Das ist kein Einladungslink von {product}."
+    },
+    "offline": {
+      "title": "Keine Verbindung",
+      "heading": "Keine Verbindung",
+      "text": "{product} braucht Internet, um eure Reisen zu zeigen. Prüf WLAN oder mobile Daten.",
+      "retry": "Nochmal versuchen",
+      "retrying": "Einen Moment …",
+      "auto": "Sobald du wieder online bist, geht es automatisch weiter."
+    }
+  },
+  "feedback": {
+    "menu": "Feedback geben",
+    "heading": "Feedback geben",
+    "intro": "Was ist dir aufgefallen? Schreib uns direkt – gern mit Screenshot.",
+    "whatsapp": "Per WhatsApp schreiben",
+    "mail": "Per E-Mail schreiben",
+    "privacy": "Wir sehen dabei nur, was du selbst schickst.",
+    "helpBox": "Du testest die Beta – danke!",
+    "subject": "Feedback zur Beta",
+    "body": "Feedback zu Wir wollen weg (Beta)\nBereich: {area}\nGerät: {device} · App installiert: {installed} · Version {version}\n\n",
+    "devices": {
+      "iphone": "iPhone",
+      "android": "Android",
+      "computer": "Computer"
+    },
+    "yes": "ja",
+    "no": "nein"
+  },
+  "legalBeta": {
+    "versionLine": "Version beta-1, Stand 30. Oktober 2026",
+    "privacy": {
+      "title": "Datenschutzhinweis zur privaten Beta",
+      "sections": {
+        "controller": {
+          "title": "1. Wer ist verantwortlich?",
+          "body": "{name} (Privatperson). Kontakt: {contact}. Die Beta ist ein privates, nicht-kommerzielles Testprojekt für einen geschlossenen Freundeskreis."
+        },
+        "data": {
+          "title": "2. Welche Daten verarbeiten wir?",
+          "body": "Konto: E-Mail-Adresse, Anzeigename, Sprache, Region, optional ein Passwort (nur als sicherer Hash).\n\nReisen: Mitgliedschaften und Rollen, deine freien und belegten Tage, Kommentare, Stimmen, Inhalte der Infoseite, Unterkunftsvorschläge und Bewertungen, Ausgaben und Salden, freiwillig hinterlegte Zahlungsinfo (z. B. IBAN).\n\nRegistrierung: Zeitpunkt und Version deiner Zustimmung zu diesem Hinweis, ob du über Beta-Code oder Einladung gekommen bist.\n\nTechnik: IP-Adresse, Zeitpunkt und Art der Anfrage in kurzlebigen Server-Protokollen, ein Anmelde-Cookie, während der Registrierung kurz ein Cookie, das den geprüften Beta-Code bzw. die Einladung festhält (ohne den Code selbst)."
+        },
+        "purpose": {
+          "title": "3. Wofür und auf welcher Rechtsgrundlage?",
+          "body": "Damit die App für dich und deine Reisegruppen funktioniert (Art. 6 Abs. 1 lit. b DSGVO) und um sie vor Missbrauch zu schützen, z. B. durch Begrenzung von Anmeldeversuchen (Art. 6 Abs. 1 lit. f DSGVO). Die Teilnahme ist freiwillig; bei der Registrierung bestätigst du, diesen Hinweis gelesen zu haben."
+        },
+        "recipients": {
+          "title": "4. Wer sieht deine Daten?",
+          "body": "Die Mitglieder einer Reise sehen innerhalb dieser Reise deinen Namen, deine Verfügbarkeiten, Stimmen, Vorschläge und Ausgaben – sonst niemand. Keine Werbung, kein Tracking, kein Verkauf von Daten."
+        },
+        "processors": {
+          "title": "5. Dienstleister",
+          "body": "Vercel Inc. (USA) betreibt die App (Server-Region Frankfurt); dabei können Daten in die USA übermittelt werden – Vercel ist unter dem EU-US Data Privacy Framework zertifiziert. Neon (USA, Teil von Databricks) speichert die Datenbank in Frankfurt (Amazon Web Services). Lettermint B.V. (Niederlande) verschickt die Anmelde-Mails. Diese Dienstleister verarbeiten Daten nur in unserem Auftrag."
+        },
+        "device": {
+          "title": "6. Cookies und Speicher auf deinem Gerät",
+          "body": "Nur technisch notwendige (Anmeldung, Sprache, Darstellung). Installierst du die App auf dem Home-Bildschirm, speichert sie eine Offline-Seite und Programmdateien – keine persönlichen Daten."
+        },
+        "retention": {
+          "title": "7. Wie lange?",
+          "body": "Dein Konto, bis du es löschst, spätestens nach 24 Monaten ohne Anmeldung (mit Hinweis-Mail vorher). Reisen 90 Tage nach dem Reiseende bzw. 12 Monate nach der letzten Aktivität. Server-Protokolle nur wenige Tage. Diese Fristen gelten auch während und nach der Test-Phase. Ändern wir etwas Wesentliches – etwa einen Umzug zu einem anderen Hosting-Anbieter –, sagen wir dir vorher Bescheid; du kannst dann dein Konto löschen."
+        },
+        "rights": {
+          "title": "8. Deine Rechte",
+          "body": "Auskunft (auch als Datenexport in der App), Berichtigung, Löschung (Konto löschen in der App), Einschränkung, Widerspruch und Datenübertragbarkeit. Schreib dafür an {contact}. Du kannst dich außerdem bei einer Datenschutz-Aufsichtsbehörde beschweren, z. B. der deines Wohnorts."
+        },
+        "required": {
+          "title": "9. Pflicht zur Angabe?",
+          "body": "Ohne E-Mail-Adresse kein Konto; alles andere ist freiwillig. Es gibt keine automatisierten Entscheidungen."
+        },
+        "feedback": {
+          "title": "10. Feedback",
+          "body": "Wenn du über „Feedback geben“ per WhatsApp oder E-Mail schreibst, siehst du vorher den Text; er enthält Gerät, App-Version und die Ansicht – keine Reisen oder Namen. Für die Übermittlung gelten die Bedingungen von WhatsApp bzw. deines Mail-Anbieters. Wir nutzen Feedback nur, um die App zu verbessern."
+        }
+      }
+    },
+    "contact": {
+      "title": "Anbieter & Kontakt",
+      "text": "Private, nicht-kommerzielle Test-Version für einen geschlossenen Freundeskreis.",
+      "operator": "Verantwortlich: {name}",
+      "email": "Kontakt: <mail>{contact}</mail>"
+    },
+    "translationNote": "Diese deutsche Fassung ist verbindlich."
   }
 }

@@ -7,6 +7,9 @@ import { regionGroups } from "@/features/trips/region-options";
 import { todayIso } from "@/lib/dates";
 import { emptyDraft } from "@/lib/trip-input";
 import { getSession } from "@/server/session";
+import { redirect } from "next/navigation";
+import { betaPath } from "@/features/beta/paths";
+import { isBeta } from "@/lib/app-env";
 import { viewerFormat } from "@/server/viewer";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -17,6 +20,8 @@ export async function generateMetadata(): Promise<Metadata> {
 /** W05 «Neue Reise planen» (F-001) – also without an account (Flow G: value before hurdle). */
 export default async function NewTripPage() {
   const session = await getSession();
+  // Friends beta (W23 A.2): no trip without an account – signed out goes through /beta first.
+  if (!session && isBeta()) redirect(betaPath(undefined, "/trips/new"));
   const [format, regions] = await Promise.all([viewerFormat(session), regionGroups()]);
   return (
     <PageShell>

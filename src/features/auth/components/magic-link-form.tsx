@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { unstable_rethrow } from "next/navigation";
 import { useTranslations } from "next-intl";
 import {
@@ -30,6 +31,8 @@ interface MagicLinkFormProps {
   signedInAs?: string | undefined;
   /** Decorative illustration, rendered on the server. */
   illustration?: ReactNode;
+  /** The code was requested in the installed app (W23 A.6): advise the code instead. */
+  fromApp?: boolean | undefined;
 }
 
 /**
@@ -45,8 +48,10 @@ export function MagicLinkForm({
   tripName,
   signedInAs,
   illustration,
+  fromApp = false,
 }: MagicLinkFormProps) {
   const t = useTranslations("magic");
+  const tBeta = useTranslations("beta");
   const ids = useId();
   const [serverState, formAction, formPending] = useActionState<MagicLinkResult, FormData>(
     redeemMagicLink,
@@ -61,8 +66,30 @@ export function MagicLinkForm({
 
   // Announce the error state by moving focus to its heading (W02 A11y).
   useEffect(() => {
-    if (state.error === "invalid") invalidHeadingRef.current?.focus();
+    if (state.error && state.error !== "generic") invalidHeadingRef.current?.focus();
   }, [state.error]);
+
+  if (state.error === "betaMissing" || state.error === "betaFull") {
+    // W23 A.5 after the link: no account was created.
+    const missing = state.error === "betaMissing";
+    return (
+      <div className={styles.step}>
+        <div className={styles.intro}>
+          <h1 ref={invalidHeadingRef} tabIndex={-1} className={styles.heading}>
+            {missing ? tBeta("signup.missingHeading") : tBeta("signup.fullHeading")}
+          </h1>
+          <p className={styles.lead}>
+            {missing ? tBeta("signup.missingInvite") : tBeta("signup.fullText")}
+          </p>
+        </div>
+        {missing ? (
+          <Link className={buttonClassName({ block: true })} href="/beta">
+            {tBeta("signup.missingCta")}
+          </Link>
+        ) : null}
+      </div>
+    );
+  }
 
   if (state.error === "invalid") {
     return (
@@ -92,6 +119,11 @@ export function MagicLinkForm({
       {tripName ? (
         <Banner tone="info" role="note">
           {t("joining", { trip: tripName })}
+        </Banner>
+      ) : null}
+      {fromApp ? (
+        <Banner tone="info" role="note">
+          {t("pwaNote")}
         </Banner>
       ) : null}
       {signedInAs ? (
@@ -126,11 +158,12 @@ export function MagicLinkForm({
           ref={buttonRef}
           type="submit"
           block
+          variant={fromApp ? "secondary" : undefined}
           loading={busy}
           loadingLabel={t("pending")}
           aria-describedby={state.error === "generic" ? errorId : undefined}
         >
-          {state.error === "generic" ? t("retry") : t("continue")}
+          {state.error === "generic" ? t("retry") : fromApp ? t("pwaButton") : t("continue")}
         </Button>
       </form>
       <p className={styles.small}>

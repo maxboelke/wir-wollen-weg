@@ -6,6 +6,10 @@ import { brandMetadata, brandViewport, DocumentHead } from "@/components/documen
 import { MotionPreferenceSync } from "@/components/motion-preference-sync";
 import { ToastProvider } from "@/components/ui/toast";
 import { isLocale, locales } from "@/i18n/config";
+import { resolveAppEnv } from "@/lib/app-env";
+import { serviceWorkerEnabled } from "@/lib/beta-config";
+import { ServiceWorker } from "@/components/service-worker";
+import { connection } from "next/server";
 import "@/styles/globals.css";
 
 // Root layout for public content pages WITH locale prefix (/de, /en, later /de/hilfe …).
@@ -35,6 +39,9 @@ export const viewport = brandViewport;
 export default async function LocaleLayout({ children, params }: LayoutProps<"/[locale]">) {
   const { locale } = await params;
   if (!isLocale(locale)) notFound();
+  // Rendered per request: the mode (beta landing, beta privacy notice with the operator's name,
+  // service worker) is runtime configuration, not build configuration (deployment.md §0.12).
+  await connection();
   // eslint-disable-next-line @typescript-eslint/no-deprecated -- see src/i18n/request.ts
   setRequestLocale(locale);
 
@@ -48,6 +55,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           <ToastProvider>{children}</ToastProvider>
         </NextIntlClientProvider>
         <MotionPreferenceSync />
+        <ServiceWorker enabled={serviceWorkerEnabled(resolveAppEnv(), process.env)} />
       </body>
     </html>
   );

@@ -212,3 +212,15 @@
     text-align: start;
   }
 }
+
+/* Friends beta (W23 A.2): «Schon dabei? Anmelden» under the beta-code CTA, on the cockpit. */
+.betaSignIn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--ww-size-touch-min);
+  color: var(--ww-cockpit-text);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}

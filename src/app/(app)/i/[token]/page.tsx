@@ -9,6 +9,7 @@ import { Banner } from "@/components/ui/banner";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Tile } from "@/components/ui/card";
 import { EmailAccessForm } from "@/features/auth/components/email-access-form";
+import { InstalledAppHint } from "@/features/beta/components/installed-app-hint";
 import { joinTrip, joinTripFormAction } from "@/features/invite/actions";
 import { JoinGate } from "@/features/invite/join-gate";
 import { JoinPanel } from "@/features/invite/join-panel";
@@ -16,6 +17,8 @@ import { TripCard } from "@/features/invite/trip-card";
 import { nightsText, rangeText } from "@/features/trips/format";
 import { tripPath } from "@/features/trips/paths";
 import { isLocale } from "@/i18n/config";
+import { isBeta } from "@/lib/app-env";
+import { betaInviteSignupEnabled } from "@/lib/beta-config";
 import { formatDate, todayIso } from "@/lib/dates";
 import { INVITE_MISS_LIMIT } from "@/lib/invite-limits";
 import { defaultTab, uiPhase } from "@/lib/trip-status";
@@ -107,6 +110,11 @@ export default async function InvitePage({ params }: Params) {
   }
 
   const format = await viewerFormat(session);
+  // Friends beta (W23 A.8): variant B – the invitation replaces the beta code unless the kill
+  // switch BETA_INVITE_SIGNUP=false is set (then the beta code is needed, A.5).
+  const beta = isBeta();
+  const inviteSignup = beta && betaInviteSignupEnabled(process.env);
+  const tBeta = await getTranslations("beta");
   const today = todayIso();
   const phase = uiPhase(preview, today);
   const orga = preview.organizerFirstName;
@@ -162,6 +170,13 @@ export default async function InvitePage({ params }: Params) {
               {t("placeholderUsed")}
             </Banner>
           ) : null}
+          {beta && !session ? (
+            <p className={styles.hello} role="note">
+              {inviteSignup
+                ? tBeta("invite.noCode", { name: orga })
+                : tBeta("invite.needCode", { name: orga })}
+            </p>
+          ) : null}
           {phase === "vote" ? <Banner tone="info">{t("phaseVote")}</Banner> : null}
           {phase === "fixed" && preview.fixedStart && preview.fixedEnd ? (
             <Banner tone="info">
@@ -207,7 +222,9 @@ export default async function InvitePage({ params }: Params) {
               tripName={preview.name}
               defaultName={claiming?.name}
               codeIllustration={<Illustration name="code-sent" />}
+              beta={inviteSignup ? { inviteToken: token } : beta ? {} : undefined}
             />
+            {beta ? <InstalledAppHint /> : null}
           </JoinGate>
         )}
       </div>

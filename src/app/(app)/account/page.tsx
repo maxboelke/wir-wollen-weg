@@ -3,6 +3,8 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 import { PageShell } from "@/components/page-shell";
+import { isBeta } from "@/lib/app-env";
+import { APP_VERSION } from "@/lib/pwa";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { signOut } from "@/features/account/actions";
@@ -123,6 +125,15 @@ export default async function AccountPage() {
             {tCommon("signOut")}
           </Button>
         </form>
+        {isBeta() ? (
+          // W23 D.1: helps with feedback.
+          <p className={styles.muted}>
+            {t("version", {
+              version: APP_VERSION,
+              build: process.env.APP_BUILD_ID || "dev",
+            })}
+          </p>
+        ) : null}
       </div>
     </PageShell>
   );

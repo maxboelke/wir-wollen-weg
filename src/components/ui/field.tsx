@@ -84,6 +84,7 @@ export function TextField({
 interface CheckboxProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "type"> {
   label: ReactNode;
   hint?: ReactNode;
+  ref?: Ref<HTMLInputElement> | undefined;
 }
 
 /** Native checkbox (24 px, whole row ≥ 44 px tappable). */

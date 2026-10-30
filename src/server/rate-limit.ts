@@ -1,7 +1,13 @@
 import "server-only";
-import { and, asc, eq, gt, lt, sql } from "drizzle-orm";
+import { and, asc, eq, gt, inArray, lt, notInArray, or, sql } from "drizzle-orm";
 import { headers } from "next/headers";
-import { isOverLimit, minutesUntilFree, type LimitRule } from "@/lib/invite-limits";
+import {
+  DAY_LIMIT_KINDS,
+  isOverLimit,
+  LONGEST_LIMIT_WINDOW_MS,
+  minutesUntilFree,
+  type LimitRule,
+} from "@/lib/invite-limits";
 import { CLIENT_IP_HEADER, rateLimitSubject } from "./auth/client-ip";
 import { deriveEmailLimitKey, hmacHex } from "./auth/email-limit-key";
 import { withTrustedClientIp } from "./auth";
@@ -84,14 +90,27 @@ export async function recordEvent(rule: LimitRule, subject: string): Promise<voi
 }
 
 /**
- * Nothing older than the longest window (1 h) is needed; keys are pseudonymous IP data, so
- * old rows must not pile up (runs after both recordEvent and takeLimit).
+ * Nothing older than the window of its rule is needed; keys are pseudonymous IP data, so old
+ * rows must not pile up (runs after both recordEvent and takeLimit). Most rules have windows up
+ * to 1 h (kept 2 h); the day rules of the friends beta are kept 25 h.
  */
 async function housekeeping(): Promise<void> {
   if (Math.random() >= 0.05) return;
+  const now = Date.now();
   await db()
     .delete(rateLimitEvent)
-    .where(lt(rateLimitEvent.createdAt, new Date(Date.now() - 2 * 60 * 60 * 1000)));
+    .where(
+      or(
+        and(
+          notInArray(rateLimitEvent.kind, [...DAY_LIMIT_KINDS]),
+          lt(rateLimitEvent.createdAt, new Date(now - 2 * 60 * 60 * 1000)),
+        ),
+        and(
+          inArray(rateLimitEvent.kind, [...DAY_LIMIT_KINDS]),
+          lt(rateLimitEvent.createdAt, new Date(now - LONGEST_LIMIT_WINDOW_MS - 60 * 60 * 1000)),
+        ),
+      ),
+    );
 }
 
 /** Atomically: still allowed? then count this event. */

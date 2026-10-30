@@ -1,5 +1,6 @@
 import { getLocale, getTranslations } from "next-intl/server";
 import { isLocale } from "@/i18n/config";
+import { isBeta } from "@/lib/app-env";
 import { helpHref } from "@/lib/help";
 import { IMPRINT_PATHS, PRIVACY_PATHS } from "@/lib/legal";
 import { LanguageSegment } from "./language-segment";
@@ -30,7 +31,8 @@ export async function SiteFooter({ alternateHref }: { alternateHref?: string | u
             </li>
             <li>
               <a className={styles.link} href={IMPRINT_PATHS[locale]}>
-                {t("imprint")}
+                {/* Friends beta: «Anbieter & Kontakt» instead of an imprint (compliance §13.3). */}
+                {isBeta() ? t("contactPage") : t("imprint")}
               </a>
             </li>
           </ul>

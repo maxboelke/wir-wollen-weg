@@ -5,9 +5,14 @@ import { useTranslations } from "next-intl";
 import { useEffect, useId, useRef, useState } from "react";
 import { Avatar } from "@/components/ui/avatar";
 import { Icon } from "@/components/ui/icon";
+import { clearAppCaches } from "@/components/service-worker";
 import { signOut } from "@/features/account/actions";
 import { setLanguage } from "@/features/locale/actions";
 import type { Locale } from "@/i18n/config";
+import { Feedback } from "@/features/beta/components/feedback";
+import { installPath } from "@/features/beta/paths";
+import type { FeedbackConfig } from "@/lib/beta-config";
+import { isStandalone } from "@/lib/use-standalone";
 import { DURATION, EASING, enter, SCALE } from "@/lib/motion";
 import styles from "./account-menu.module.css";
 
@@ -16,6 +21,8 @@ interface AccountMenuProps {
   name: string;
   locale: Locale;
   helpHref: string;
+  /** Friends beta: «Feedback geben» (W23 D.2) – null/absent = no entry. */
+  feedback?: FeedbackConfig | null | undefined;
 }
 
 /**
@@ -25,10 +32,18 @@ interface AccountMenuProps {
  * panel closes it too, without moving focus (R-031, WCAG 2.4.11 – the panel must not cover
  * the newly focused element).
  */
-export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps) {
+export function AccountMenu({ userId, name, locale, helpHref, feedback }: AccountMenuProps) {
   const t = useTranslations();
   const id = useId();
   const [open, setOpen] = useState(false);
+  // «App installieren» (W23 B.5): touch devices outside the installed app only.
+  const [installable, setInstallable] = useState(false);
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- media queries only readable after mounting
+    setInstallable(!isStandalone() && window.matchMedia("(pointer: coarse)").matches);
+  }, []);
+  const hasFeedback = Boolean(feedback && (feedback.whatsapp || feedback.email));
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const other: Locale = locale === "de" ? "en" : "de";
@@ -104,6 +119,29 @@ export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps
               </button>
             </form>
           </li>
+          {installable ? (
+            <li>
+              <Link className={styles.item} href={installPath("/trips")}>
+                <Icon name="plus" size={20} />
+                <span>{t("menu.install")}</span>
+              </Link>
+            </li>
+          ) : null}
+          {hasFeedback ? (
+            <li>
+              <button
+                type="button"
+                className={styles.item}
+                onClick={() => {
+                  setOpen(false);
+                  setFeedbackOpen(true);
+                }}
+              >
+                <Icon name="comment" size={20} />
+                <span>{t("menu.feedback")}</span>
+              </button>
+            </li>
+          ) : null}
           <li>
             <a className={styles.item} href={helpHref}>
               <Icon name="help" size={20} />
@@ -111,7 +149,13 @@ export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps
             </a>
           </li>
           <li>
-            <form action={signOut}>
+            <form
+              action={signOut}
+              onSubmit={() => {
+                // No personal data is cached, but sign-out leaves nothing behind (§0.12.6 Nr. 6).
+                void clearAppCaches().catch(() => undefined);
+              }}
+            >
               <button type="submit" className={styles.item}>
                 <Icon name="logout" size={20} />
                 <span>{t("menu.signOut")}</span>
@@ -120,6 +164,16 @@ export function AccountMenu({ userId, name, locale, helpHref }: AccountMenuProps
           </li>
         </ul>
       </div>
+      {hasFeedback && feedback ? (
+        <Feedback
+          config={feedback}
+          open={feedbackOpen}
+          onClose={() => {
+            setFeedbackOpen(false);
+            buttonRef.current?.focus();
+          }}
+        />
+      ) : null}
     </div>
   );
 }

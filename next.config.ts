@@ -38,9 +38,15 @@ const CSP_STAGE_1 = [
   "base-uri 'self'",
   "form-action 'self'",
   "frame-ancestors 'none'",
+  // PWA (deployment.md §0.12.7): service worker and manifest only from the own origin.
+  "worker-src 'self'",
+  "manifest-src 'self'",
 ].join("; ");
 /** Every path except the image proxy (`/api/stays/image`, own CSP). */
 const CSP_SOURCE = "/((?!api/stays/image).*)";
+
+/** Short build id: the commit on Vercel, otherwise the build time (base 36). */
+const BUILD_ID = (process.env.VERCEL_GIT_COMMIT_SHA ?? Date.now().toString(36)).slice(0, 12);
 
 const nextConfig: NextConfig = {
   // Self-hosting in Docker (docs/ops/deployment.md): the image build (OPS-3) sets
@@ -53,7 +59,8 @@ const nextConfig: NextConfig = {
   images: { unoptimized: true },
   // R-072: «today» is the calendar day in the app time zone – inline it so server and client
   // agree (src/lib/dates.ts appTimeZone(), default Europe/Berlin).
-  env: { APP_TIME_ZONE: process.env.APP_TIME_ZONE ?? "" },
+  // APP_BUILD_ID: cache name of the service worker and «Build» in the account (W23 D.1).
+  env: { APP_TIME_ZONE: process.env.APP_TIME_ZONE ?? "", APP_BUILD_ID: BUILD_ID },
   // Phone tests in the LAN with `pnpm dev -H 0.0.0.0` (deployment.md §0.3), e.g. "192.168.178.20".
   ...(process.env.DEV_ALLOWED_ORIGINS
     ? { allowedDevOrigins: process.env.DEV_ALLOWED_ORIGINS.split(",").map((o) => o.trim()) }
@@ -86,6 +93,8 @@ const nextConfig: NextConfig = {
         source,
         headers: [{ key: "Referrer-Policy", value: "same-origin" }],
       })),
+      // Account deleted: drop the app caches of this device too (deployment.md §0.12.6 Nr. 6).
+      { source: "/goodbye", headers: [{ key: "Clear-Site-Data", value: '"cache"' }] },
       ...NO_STORE_ROUTES.map((source) => ({
         source,
         headers: [{ key: "Cache-Control", value: "no-store, max-age=0" }],

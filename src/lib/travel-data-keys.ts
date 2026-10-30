@@ -124,8 +124,13 @@ export function keySource(appEnv: string, env: Env): KeySource {
   return { kind: "none" };
 }
 
-/** The area is usable: switched on AND a key is available (R.9 I11-12, fail closed). */
+/**
+ * The area is usable: switched on AND a key is available (R.9 I11-12, fail closed). Never in the
+ * friends beta (real people, US hosting – off until G1b, deployment.md §0.12.4 Nr. 6; the start
+ * guard refuses TRAVEL_DATA_ENABLED=true there as well).
+ */
 export function travelDataEnabled(appEnv: string, env: Env): boolean {
+  if (appEnv === "beta") return false;
   return travelDataSwitchOn(appEnv, env) && keySource(appEnv, env).kind !== "none";
 }
 

@@ -145,6 +145,11 @@ const requestBody = z.object({
   /** Internal path to return to after sign-in; anything else falls back to "/". */
   callbackURL: z.string().max(512).optional(),
   locale: z.enum(["de", "en"]).optional(),
+  /**
+   * The request comes from the installed app (W23 A.6): the magic-link landing page then
+   * advises to type the code in the app instead (the link opens Safari, not the app).
+   */
+  app: z.boolean().optional(),
 });
 
 function bodyField(body: unknown, field: string): string | undefined {
@@ -352,6 +357,7 @@ export function emailAccess(options: EmailAccessOptions) {
             const landing = new URL(landingPath, ctx.context.baseURL);
             landing.searchParams.set("token", collected.token);
             landing.searchParams.set("next", returnTo);
+            if (ctx.body.app) landing.searchParams.set("app", "1");
             // Do not await: identical response time for known/unknown addresses
             // (no account enumeration, tech-stack.md §3.2).
             ctx.context.runInBackground(

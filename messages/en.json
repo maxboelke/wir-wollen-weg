@@ -35,7 +35,8 @@
     "notAllowed": "Only the organizer can do that.",
     "privacy": "Privacy",
     "imprint": "Legal notice",
-    "demoInboxLink": "Open demo inbox"
+    "demoInboxLink": "Open demo inbox",
+    "contactPage": "Provider & contact"
   },
   "landing": {
     "titleLead": "From the group chat to",
@@ -100,7 +101,10 @@
       "joinInvalid": "This invite link doesn't work any more. Please ask your group chat for the current link.",
       "joinRateLimited": "Lots of people are joining right now. Please try again in {minutes} min.",
       "nameTaken": "Someone in this trip already has this name.",
-      "tripInvalid": "The trip details no longer fit. Please check the form."
+      "tripInvalid": "The trip details no longer fit. Please check the form.",
+      "betaMissing": "Almost – you still need a beta code.",
+      "betaFull": "The beta is full right now. Get in touch with the person who sent you the link.",
+      "consentRequired": "Please confirm that you agree."
     },
     "codeSendingTo": "We’re sending a code to <b>{email}</b>.",
     "statusSending": "Sending code …",
@@ -131,7 +135,11 @@
     "sessionExpired": "Please sign in – you’ll continue right where you were.",
     "privacyNote": "By continuing, you confirm that you have read the <link>privacy notice</link>.",
     "demoInboxHint": "Preview: no real mails are sent. Your code is waiting in the demo inbox.",
-    "demoInboxOpen": "Open demo inbox"
+    "demoInboxOpen": "Open demo inbox",
+    "pwaNote": "Please enter the code – the link in the email opens Safari, not the app.",
+    "appHeading": "Great to have you in the app!",
+    "appIntro": "Sign in here once – with your email and a code.",
+    "appNewHere": "New here? Enter beta code"
   },
   "magic": {
     "title": "Sign in",
@@ -147,7 +155,9 @@
     "invalid": "It’s valid for 15 minutes and works only once. Just get a new code.",
     "requestNew": "Get a new code",
     "failed": "That didn’t work. Please try again.",
-    "retry": "Try again"
+    "retry": "Try again",
+    "pwaNote": "Using the app on your Home Screen? Then enter the 6-digit code from the email there instead. This link only signs you in here in Safari.",
+    "pwaButton": "Sign in here anyway"
   },
   "invite": {
     "title": "Invite",
@@ -245,7 +255,9 @@
     "myTrips": "My trips",
     "account": "Account",
     "help": "Help",
-    "signOut": "Sign out"
+    "signOut": "Sign out",
+    "install": "Install the app",
+    "feedback": "Give feedback"
   },
   "pending": {
     "join": "You were just joining “{trip}”.",
@@ -374,7 +386,8 @@
       "planOutdated": "Something changed in your trips in the meantime. Please check your choices and try again – nothing was deleted.",
       "travelMember": "Your shared travel details will be deleted right away.",
       "travelBooker": "Your open requests will be closed and all shares deleted."
-    }
+    },
+    "version": "Version {version} (beta) · {build}"
   },
   "regions": {
     "countries": {
@@ -505,6 +518,11 @@
         "q": "How long do you keep my data?",
         "a": "Not forever: we delete a trip 90 days after it ends, or 12 months after the last change if no dates were fixed – the organizer hears from us 14 days before. Accounts not used for 24 months are deleted after a reminder. We use no trackers and no advertising cookies.",
         "action": "Read the privacy policy"
+      },
+      "app": {
+        "q": "How do I add the app to my Home Screen?",
+        "a": "iPhone: in Safari tap ⋯ → \"Share\" → \"Add to Home Screen\". Android: menu ⋮ → \"Install app\". Then open {product} from the icon. On iPhone, sign in there once with a code.",
+        "action": "Open the guide"
       }
     },
     "contactTitle": "Still got questions?",
@@ -524,7 +542,10 @@
       "codeIntro": "Your code:",
       "linkIntro": "Or tap here to sign in:",
       "linkText": "Sign in",
-      "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email."
+      "validity": "Valid for 15 minutes. Didn’t request this? Just ignore this email.",
+      "betaCodeIntro": "Your code – enter it in the app or your browser:",
+      "betaLinkIntro": "In a browser (not the app on your Home Screen)? Then this link works too:",
+      "betaLinkText": "Sign in in browser"
     },
     "reset": {
       "subject": "{code} is your password reset code",
@@ -575,7 +596,9 @@
       "keepIntro": "Want to keep it? Just sign in once:",
       "keep": "Sign in",
       "service": "This is a service notice, not marketing."
-    }
+    },
+    "betaFooter": "Private test version of When do we go?",
+    "privacy": "Privacy"
   },
   "tripForm": {
     "titleNew": "Plan a new trip",
@@ -2787,5 +2810,196 @@
   "start": {
     "hint": "Your current trip opened right away. All trips are at the top left.",
     "action": "My trips"
+  },
+  "beta": {
+    "badge": "Beta",
+    "title": "Beta",
+    "brandLabel": "{product} – beta",
+    "back": "Back",
+    "code": {
+      "heading": "Welcome to the beta!",
+      "intro": "With {product}, your group finds the dates for your trip together. Enter the beta code from your invite.",
+      "label": "Beta code",
+      "hint": "It's in the message you got the link with.",
+      "submit": "Continue",
+      "checking": "Checking …",
+      "haveAccount": "Already have an account? Sign in",
+      "errorEmpty": "Please enter the beta code.",
+      "errorWrong": "That beta code isn't right. Check the message with the link again.",
+      "errorRate": "Too many attempts. Please try again in {min} minutes.",
+      "errorFull": "The beta is full right now. Get in touch with the person who sent you the link.",
+      "inAppTip": "Tip: open this page in Safari, then you can install it as an app later.",
+      "inAppHow": "How it works"
+    },
+    "privacy": {
+      "heading": "Privacy in short",
+      "p1": "We only store what the app needs: your email, your name and what you add to trips.",
+      "p2": "Only the people in your trips see what you add.",
+      "p3": "No ads, no tracking.",
+      "p4": "Your data is stored in Frankfurt. The app runs on Vercel, a US provider – more in the privacy notice.",
+      "p5": "This is a test version. You can delete your account yourself at any time; we delete trips automatically 90 days after they end.",
+      "p6": "Please don't put ID or health details in notes.",
+      "more": "All the details: <link>privacy notice</link>",
+      "consent": "I've read this and I agree.",
+      "errorConsent": "Please confirm that you agree.",
+      "toggle": "Privacy in short",
+      "submit": "Continue"
+    },
+    "invite": {
+      "noCode": "{name} invited you to the beta – you don't need a beta code.",
+      "needCode": "New here? You need a beta code for the beta – ask {name} for it."
+    },
+    "signup": {
+      "missingHeading": "Almost – you still need a beta code",
+      "missingText": "There's no account for {email} yet. We're in a closed beta right now – you need a beta code to join.",
+      "missingCta": "Enter beta code",
+      "missingInvite": "Got an invite link to a trip? Just open that.",
+      "fullHeading": "The beta is full right now",
+      "fullText": "Get in touch with the person who sent you the link."
+    },
+    "login": {
+      "firstTime": "First time here? Sign up with a beta code",
+      "emailHeading": "Your email",
+      "emailLead": "We'll send you a 6-digit code. You don't need a password."
+    },
+    "landing": {
+      "note": "We're in a closed beta right now. You'll get the beta code from us.",
+      "cta": "I have a beta code",
+      "signIn": "Already in? Sign in"
+    }
+  },
+  "install": {
+    "title": "Install the app",
+    "heading": {
+      "ios": "Add the app to your Home Screen",
+      "android": "Add the app to your home screen"
+    },
+    "intro": "Then {product} opens like an app – no address bar, with its own icon.",
+    "ios": {
+      "step0": "In WhatsApp? See \"Done\" at the top? Tap the compass icon at the bottom right – the page opens in Safari.",
+      "step0Summary": "In WhatsApp?",
+      "step1": "Tap ⋯ at the bottom, then \"Share\". See the Share icon right away? Just tap it.",
+      "step2": "Choose \"Add to Home Screen\" (you may need to scroll down or tap \"More\").",
+      "step3": "Leave \"Open as Web App\" on and tap \"Add\" at the top right.",
+      "step4": "Open the app from the new icon and sign in there once with your code.",
+      "otherBrowser": "Can't find it? Open the page in Safari."
+    },
+    "android": {
+      "button": "Install app",
+      "manual": "Tap ⋮ at the top right, then \"Install app\" or \"Add to home screen\".",
+      "installing": "Installing the app."
+    },
+    "desktop": "On a computer there's nothing to install. On your phone it works like this:",
+    "iosLabel": "iPhone and iPad",
+    "androidLabel": "Android",
+    "done": "Done – it's on my screen",
+    "later": "Later",
+    "menu": "Install the app",
+    "inapp": {
+      "heading": "Open this page in Safari",
+      "headingAndroid": "Open this page in Chrome",
+      "text": "You can't install the app from inside {app}.",
+      "textGeneric": "You can't install the app from this view.",
+      "step1": "Tap ⋯ (top or bottom right).",
+      "step2": "Choose \"Open in Safari\" or \"Open in browser\".",
+      "copy": "Copy link",
+      "copied": "Link copied",
+      "copyHint": "Doesn't work? Copy the link and paste it into Safari.",
+      "relogin": "In Safari you'll sign in once more – with a code.",
+      "skip": "Continue without the app"
+    },
+    "inviteHint": "Already have the app on your Home Screen? Copy the link and paste it in the app under \"My trips → Paste invite link\".",
+    "installed": "You're already using the app from your Home Screen – all set."
+  },
+  "pwa": {
+    "paste": {
+      "button": "Paste invite link",
+      "intro": "Links from WhatsApp or emails open in Safari. Copy the link and paste it here.",
+      "label": "Link",
+      "paste": "Paste",
+      "open": "Open",
+      "error": "That's not an invite link from {product}."
+    },
+    "offline": {
+      "title": "No connection",
+      "heading": "No connection",
+      "text": "{product} needs the internet to show your trips. Check your Wi-Fi or mobile data.",
+      "retry": "Try again",
+      "retrying": "One moment …",
+      "auto": "As soon as you're back online, it continues automatically."
+    }
+  },
+  "feedback": {
+    "menu": "Give feedback",
+    "heading": "Give feedback",
+    "intro": "Noticed something? Message us directly – screenshots welcome.",
+    "whatsapp": "Message on WhatsApp",
+    "mail": "Send an email",
+    "privacy": "We only see what you send yourself.",
+    "helpBox": "You're testing the beta – thank you!",
+    "subject": "Beta feedback",
+    "body": "Feedback on When do we go? (beta)\nArea: {area}\nDevice: {device} · Installed app: {installed} · Version {version}\n\n",
+    "devices": {
+      "iphone": "iPhone",
+      "android": "Android",
+      "computer": "Computer"
+    },
+    "yes": "yes",
+    "no": "no"
+  },
+  "legalBeta": {
+    "versionLine": "Version beta-1, as of 30 October 2026",
+    "privacy": {
+      "title": "Privacy notice for the private beta",
+      "sections": {
+        "controller": {
+          "title": "1. Who is responsible?",
+          "body": "{name} (private individual). Contact: {contact}. The beta is a private, non-commercial test project for a closed circle of friends."
+        },
+        "data": {
+          "title": "2. Which data do we process?",
+          "body": "Account: email address, display name, language, region, optionally a password (only as a secure hash).\n\nTrips: memberships and roles, your free and busy days, comments, votes, contents of the info page, stay suggestions and ratings, expenses and balances, payment details you add voluntarily (e.g. IBAN).\n\nSign-up: time and version of your consent to this notice, whether you came via beta code or invitation.\n\nTechnical: IP address, time and type of request in short-lived server logs, a sign-in cookie, and during sign-up briefly a cookie that remembers the checked beta code or the invitation (without the code itself)."
+        },
+        "purpose": {
+          "title": "3. What for and on which legal basis?",
+          "body": "So the app works for you and your travel groups (Art. 6(1)(b) GDPR) and to protect it against misuse, e.g. by limiting sign-in attempts (Art. 6(1)(f) GDPR). Taking part is voluntary; when signing up you confirm that you have read this notice."
+        },
+        "recipients": {
+          "title": "4. Who sees your data?",
+          "body": "The members of a trip see your name, availability, votes, suggestions and expenses within that trip – nobody else. No ads, no tracking, no selling of data."
+        },
+        "processors": {
+          "title": "5. Service providers",
+          "body": "Vercel Inc. (USA) runs the app (server region Frankfurt); data may be transferred to the USA – Vercel is certified under the EU-US Data Privacy Framework. Neon (USA, part of Databricks) stores the database in Frankfurt (Amazon Web Services). Lettermint B.V. (Netherlands) sends the sign-in emails. These providers process data only on our behalf."
+        },
+        "device": {
+          "title": "6. Cookies and storage on your device",
+          "body": "Only technically necessary ones (sign-in, language, display). If you add the app to your Home Screen, it stores an offline page and program files – no personal data."
+        },
+        "retention": {
+          "title": "7. How long?",
+          "body": "Your account until you delete it, at the latest after 24 months without sign-in (with a notice email beforehand). Trips 90 days after the trip ends or 12 months after the last activity. Server logs only a few days. These periods also apply during and after the test phase. If we change something essential – such as moving to another hosting provider – we'll tell you beforehand; you can then delete your account."
+        },
+        "rights": {
+          "title": "8. Your rights",
+          "body": "Access (also as a data export in the app), rectification, erasure (delete account in the app), restriction, objection and data portability. Write to {contact}. You can also complain to a data protection supervisory authority, e.g. the one where you live."
+        },
+        "required": {
+          "title": "9. Do you have to provide data?",
+          "body": "No account without an email address; everything else is voluntary. There are no automated decisions."
+        },
+        "feedback": {
+          "title": "10. Feedback",
+          "body": "If you write via \"Give feedback\" on WhatsApp or by email, you see the text first; it contains device, app version and the view – no trips or names. The terms of WhatsApp or your email provider apply to the transfer. We only use feedback to improve the app."
+        }
+      }
+    },
+    "contact": {
+      "title": "Provider & contact",
+      "text": "Private, non-commercial test version for a closed circle of friends.",
+      "operator": "Responsible: {name}",
+      "email": "Contact: <mail>{contact}</mail>"
+    },
+    "translationNote": "Translation – the German version applies."
   }
 }

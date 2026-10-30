@@ -9,6 +9,7 @@ import { isInviteTokenShape } from "@/lib/tokens";
 import { todayIso } from "@/lib/dates";
 import { defaultTab, uiPhase } from "@/lib/trip-status";
 import { auth } from "@/server/auth";
+import { afterSignupTarget } from "@/server/beta";
 import { requestLimitSubject, takeLimit } from "@/server/rate-limit";
 import { getSession } from "@/server/session";
 import { findInvite, joinByToken } from "@/server/trips";
@@ -68,7 +69,9 @@ export async function joinTrip(token: string, name: string): Promise<ActionResul
     submittedAt: null,
     votedAt: null,
   });
-  redirect(`${tripPath(outcome.publicId, tab)}${outcome.alreadyMember ? "" : "?welcome=1"}`);
+  const target = `${tripPath(outcome.publicId, tab)}${outcome.alreadyMember ? "" : "?welcome=1"}`;
+  // Friends beta: first join with a NEW account → the install step once (W23 A.8 Nr. 3, B.5).
+  redirect(!session.user.name ? await afterSignupTarget(session.user.id, target) : target);
 }
 
 /** Form variant of joinTrip – works before hydration (progressive enhancement). */
