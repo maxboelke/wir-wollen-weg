@@ -5,20 +5,39 @@ import { expect, type Page } from "@playwright/test";
  * Waits until every finite animation/transition on the page has finished. Cross-fades stay
  * even with reduced motion (M-D2, G-01, G-14); measured mid-fade, text has an intermediate
  * opacity and axe reports a false colour-contrast violation. Infinite animations (spinners)
- * are ignored. Loops a few rounds because finished animations can start follow-ups.
+ * are ignored.
+ *
+ * «Quiet» must hold over two animation frames: a transition can start one frame after the
+ * last check – IntersectionObserver callbacks are delivered after rendering, React then
+ * commits the new state (e.g. the cost bar `data-cost-dock` hidden → shown, UM-26) and only
+ * that frame starts the fade. A single check missed it on WebKit: axe measured the bar status
+ * text at opacity ≈ 0.97 (#00775a on #ece9f7 = 4.64 : 1 at rest, 4.38 : 1 mid-fade).
  */
 export async function waitForAnimations(page: Page): Promise<void> {
   await page.evaluate(async () => {
-    for (let round = 0; round < 5; round++) {
-      const running = document
+    const nextFrame = () =>
+      new Promise<void>((resolve) => {
+        requestAnimationFrame(() => {
+          resolve();
+        });
+      });
+    const running = () =>
+      document
         .getAnimations()
         .filter(
           (animation) =>
             animation.playState !== "finished" &&
             animation.effect?.getComputedTiming().endTime !== Infinity,
         );
-      if (running.length === 0) return;
-      await Promise.all(running.map((animation) => animation.finished.catch(() => undefined)));
+    for (let round = 0; round < 10; round++) {
+      const active = running();
+      if (active.length === 0) {
+        await nextFrame();
+        await nextFrame();
+        if (running().length === 0) return;
+        continue;
+      }
+      await Promise.all(active.map((animation) => animation.finished.catch(() => undefined)));
     }
   });
 }

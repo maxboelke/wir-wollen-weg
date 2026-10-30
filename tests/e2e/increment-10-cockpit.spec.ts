@@ -119,6 +119,8 @@ test.describe("W16 v2.15 – costs in the cockpit", () => {
         name: `Expenses. You get €30.00 back. ${r.tiles.costsAll}`,
       }),
     ).toBeAttached();
+    // The bar has settled (shown for the focus, UM-26) before axe measures its text.
+    await expect(page.locator("[data-cost-dock]")).toHaveAttribute("data-cost-dock", "shown");
     await expectNoSeriousAxeViolations(page, "cockpit travelling with costs");
   });
 
