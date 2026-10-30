@@ -147,6 +147,7 @@ export default async function TripOverviewPage({ params, searchParams }: Params)
         view={view}
         welcome={query.welcome === "1"}
         focusTitle={query.fixed === "1" && isOrganizer}
+        started={query.start === "1"}
       />
     );
   }

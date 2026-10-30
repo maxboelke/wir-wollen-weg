@@ -39,6 +39,7 @@ import {
   type SplitMode,
 } from "@/lib/costs";
 import { cx } from "@/lib/cx";
+import { currencySymbol } from "@/lib/money";
 import { formatDate } from "@/lib/dates";
 import { textLength } from "@/lib/trip-info";
 import { costsPath, tripPath } from "@/features/trips/paths";
@@ -103,12 +104,7 @@ function valuesOf(expense: CostExpenseView | null, model: CostsModel, date: stri
 }
 
 /** Currency symbol position by language (DE «60,00 €», EN «€60.00»). */
-function symbolOf(currency: string, intl: string): { symbol: string; before: boolean } {
-  const parts = new Intl.NumberFormat(intl, { style: "currency", currency }).formatToParts(1);
-  const index = parts.findIndex((p) => p.type === "currency");
-  const integer = parts.findIndex((p) => p.type === "integer");
-  return { symbol: parts[index]?.value ?? currency, before: index < integer };
-}
+const symbolOf = currencySymbol;
 
 function currencyName(code: string, locale: string): string {
   try {
@@ -317,13 +313,20 @@ export function ExpenseForm({
     })
       .then((answer) => {
         if (answer.ok) {
-          const saved = money(answer.amountCents);
+          // W19 E.7: the snackbar names the new result (shows the effect of the expense).
+          const balance = answer.balanceCents;
+          const saved =
+            balance < 0
+              ? t("savedOwe", { amount: money(-balance) })
+              : balance > 0
+                ? t("savedOwed", { amount: money(balance) })
+                : t("savedSquare");
           if (edit) {
             toast({ message: t("savedEdit") });
             router.push(`${costsPath(model.publicId)}?saved=${encodeURIComponent(answer.id)}`);
           } else if (fromCockpit) {
             toast({
-              message: t("saved", { amount: saved }),
+              message: saved,
               action: {
                 label: t("view"),
                 onAction: () => {
@@ -333,7 +336,7 @@ export function ExpenseForm({
             });
             router.push(`${tripPath(model.publicId)}?focus=add-expense`);
           } else {
-            toast({ message: t("saved", { amount: saved }) });
+            toast({ message: saved });
             router.push(`${costsPath(model.publicId)}?saved=${encodeURIComponent(answer.id)}`);
           }
           router.refresh();

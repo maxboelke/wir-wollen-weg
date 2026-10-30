@@ -120,7 +120,7 @@ export function ResetPasswordForm({ initialEmail }: { initialEmail: string }) {
       setCodeStatus("success");
       const signIn = await postAuth("/sign-in/email", { email, password, rememberMe: true });
       toast({ message: t("done") });
-      router.push(signIn.ok ? "/trips" : "/login");
+      router.push(signIn.ok ? "/" : "/login");
     } catch {
       setError({ key: "generic" });
       setCodeStatus("idle");

@@ -1,0 +1,164 @@
+/* Cost shortcut bar – W16 v2.17 «Fassung 2», D-81 (Designer), UM-26 (Motion) */
+
+/* Static form (variant A): a card right under the ticket head – desktop, low windows, 200 %. */
+.dock {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  gap: var(--ww-space-2) 10px;
+  margin: 0 0 var(--ww-space-4);
+  padding: var(--ww-space-3);
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-lg);
+  background: var(--ww-color-surface-raised);
+  box-shadow: var(--ww-shadow-1);
+}
+
+.stand {
+  display: flex;
+  flex: 1 1 14rem;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+  min-height: 56px;
+  padding: var(--ww-space-2) 10px;
+  border: 1.5px solid var(--ww-color-border-subtle);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-surface-sunken);
+  color: var(--ww-color-text);
+  text-decoration: none;
+}
+
+.stand:hover {
+  border-color: var(--ww-color-border-strong);
+}
+
+.stand:active {
+  transform: scale(var(--ww-motion-scale-press, 0.98));
+}
+
+.stand:focus-visible,
+.action:focus-visible {
+  outline: none;
+  box-shadow: var(--ww-focus-ring);
+}
+
+.tile {
+  flex: none;
+}
+
+.text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.title {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  color: var(--ww-color-link);
+  font-size: var(--ww-text-meta);
+  font-weight: var(--ww-font-weight-extrabold);
+}
+
+.status {
+  font-size: var(--ww-text-sm);
+  font-weight: var(--ww-font-weight-bold);
+  line-height: 1.25;
+  font-variant-numeric: var(--ww-cost-numeric);
+  overflow-wrap: anywhere;
+}
+
+.owe {
+  color: var(--ww-cost-owe-fg);
+}
+
+.owed,
+.square {
+  color: var(--ww-cost-get-fg);
+}
+
+/* Compact primary: filled, 48 px, width by content, NO glow shadow – both halves weigh the same. */
+.action {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ww-space-1);
+  min-height: 48px;
+  padding: 0 14px;
+  border: var(--ww-border-forced);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-btn-primary-bg, var(--ww-color-primary));
+  box-shadow: var(--ww-shadow-1);
+  color: var(--ww-btn-primary-fg, var(--ww-color-text-on-primary));
+  font-weight: var(--ww-font-weight-extrabold);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.action:active {
+  transform: scale(var(--ww-motion-scale-press, 0.98));
+}
+
+/* Static card at 200 % text / low windows (W16 v2.17, D-82): the button takes the full width. */
+.static .action {
+  flex: 1 1 100%;
+}
+
+/* Phones: fixed bar at the bottom, in the thumb zone, above the home indicator. */
+@media (max-width: 959.98px) and (min-height: 560px) {
+  .dock:not(.static) {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 20;
+    flex-wrap: nowrap;
+    margin: 0;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+    border-radius: var(--ww-radius-xl) var(--ww-radius-xl) 0 0;
+    box-shadow: var(--ww-shadow-sticky-bottom);
+  }
+
+  .dock:not(.static)[data-cost-dock="pending"],
+  .dock:not(.static)[data-cost-dock="hidden"] {
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(105%);
+  }
+
+  /* UM-26: slide down + fade out (base, exit) / up + in (base, enter); visibility after it. */
+  .dock.animated:not(.static) {
+    transition:
+      transform var(--ww-duration-base) var(--ww-ease-enter),
+      opacity var(--ww-duration-base) var(--ww-ease-enter),
+      visibility 0s linear 0s;
+  }
+
+  .dock.animated:not(.static)[data-cost-dock="hidden"] {
+    transition:
+      transform var(--ww-duration-base) var(--ww-ease-exit),
+      opacity var(--ww-duration-base) var(--ww-ease-exit),
+      visibility 0s linear var(--ww-duration-base);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dock.animated,
+  .dock.animated[data-cost-dock="hidden"] {
+    transition: none;
+  }
+}
+
+:global([data-motion="reduce"]) .dock.animated,
+:global([data-motion="reduce"]) .dock.animated[data-cost-dock="hidden"] {
+  transition: none;
+}
+
+@media (forced-colors: active) {
+  .dock {
+    border-top: var(--ww-border-forced);
+  }
+}

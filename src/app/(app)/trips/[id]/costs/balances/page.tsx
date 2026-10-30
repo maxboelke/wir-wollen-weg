@@ -14,9 +14,10 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return { title: t("pageTitleBalances", { trip: view.trip.name }) };
 }
 
-/** W19 D.7 «Ausgleich» (F-036): proposal, marking, «Bereits bezahlt», balances, payment details. */
-export default async function CostsBalancesPage({ params }: Params) {
+/** W19 E.5 «Ausgleichen» (F-036): own transfers in detail, the others' compact, payment details. */
+export default async function CostsBalancesPage({ params, searchParams }: Params) {
   const { id } = await params;
+  const { from } = await searchParams;
   const view = await loadTripView(id, `/trips/${id}/costs/balances`);
-  return <CostsPage view={view} page="balances" saved={null} />;
+  return <CostsPage view={view} page="balances" saved={null} fromCockpit={from === "cockpit"} />;
 }

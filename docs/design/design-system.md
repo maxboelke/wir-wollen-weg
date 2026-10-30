@@ -105,9 +105,9 @@ Methode: relative Luminanz nach WCAG 2.x, Kontrast `(L1 + 0,05) / (L2 + 0,05)`, 
 | Tinte 2 | `#57527A` | `text-muted` | 7,2 · 6,5 · 6,0 | Sekundärtext |
 | Tinte 3 | `#6E6992` | `text-subtle` | 5,1 · 4,6 · **nicht auf vertieft** (4,2) | Meta, Platzhalter |
 | Rahmen | `#8A86A8` | `border-strong` | 3,4 · 3,1 | Inputs, Optionen, leere Code-Kästchen (1.4.11) |
-| **Indigo** | `#2B2266` | `primary`, `cockpit-bg`, `hm-all-bg`, `hm-suggest` | Weiß darauf **13,7** · gegen Nebel 12,4 | Cockpit, Haupt-Taste, Heatmap „alle“, Vorschlag-Band |
+| **Indigo** | `#2B2266` | `primary`, `cockpit-bg`, `hm-all-fg`, `hm-seal-bg`, `hm-suggest` | Weiß darauf **13,7** · gegen Nebel 12,4 · gegen Minze 8,7 | Cockpit, Haupt-Taste, Zahl + Siegel auf Heatmap „alle“ (M-P4), Vorschlag-Band |
 | Indigo Hover / Gedrückt | `#3A2F86` / `#221B52` | `primary-hover` / `-active` | Weiß ≥ 11 | Tastenzustände |
-| **Minze** | `#52E5B8` | `accent`, `cockpit-accent`, `seal-bg` | Indigo darauf **8,7** · gegen Weiß **1,5** | Taste auf Indigo, Siegel, Ring, Fortschritt im Kopf. **Nie Text auf Hell** |
+| **Minze** | `#52E5B8` | `accent`, `cockpit-accent`, `seal-bg`, `hm-all-bg` (M-P4) | Indigo darauf **8,7** · gegen Weiß **1,5** | Taste auf Indigo, Siegel, Ring, Fortschritt im Kopf. **Nie Text auf Hell** |
 | Minze tief | `#1FBF94` | – | dekorativ | zweite Welle Logo/Illustration |
 | Minze-Text / Minze-100 | `#00775A` / `#D9F8EC` | `accent-text`, `success-*`, `vote-yes-*`, `avail-yes-*` | 5,5 Weiß · 5,0 Nebel · 4,9 auf Minze-100; Tinte auf Minze-100 14,6 | „Geht“, „Ja“, „Gespeichert“ |
 | Lavendel-Text / -100 | `#5A3FD0` / `#ECE6FF` | `link`, `primary-text`, `info-*`, `phase-vote-*` | 6,8 Weiß · 6,1 Nebel · 5,6 auf Lavendel-100 | Links, Text-Tasten, Abstimmung |
@@ -230,9 +230,9 @@ Score s = (geht + ½ · zur Not) / abgegeben. Stufen und Siegel-Regel wie v0.5 (
 | wenige | 0 < s < 0,5 | `#D6CFFA` / Tinte | 11,1 | `#362C7A` / `#F3F1FF` | 10,4 | Zahl |
 | einige | 0,5 ≤ s < 0,75 | `#A79AF2` / Tinte | 6,7 | `#5B48C9` / Weiß | 6,5 | Zahl |
 | viele | 0,75 ≤ s < 1 | `#5B48C9` / Weiß | 6,5 | `#A79AF2` / `#14112E` | 7,4 | Zahl |
-| alle | s = 1 | `#2B2266` / Weiß | 13,7 | Minze `#52E5B8` / `#14112E` | 11,5 | Zahl + **Siegel** (hell Minze mit weißem Ring, Minze gegen Zelle 8,7; dunkel Mitternacht-Kreis mit Minze-Haken) |
+| alle | s = 1 | **Minze `#52E5B8` / Indigo `#2B2266`** (M-P4, seit 2026-10-23) | 8,7 | Minze `#52E5B8` / `#14112E` | 11,5 | Zahl + **Siegel** (hell Indigo-Kreis mit Minze-Haken und weißem Ring, Indigo gegen Zelle 8,7; dunkel Mitternacht-Kreis mit Minze-Haken) |
 
-Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen und Farbfehlsichtigkeit behalten die Reihenfolge; Nachbarstufen Fläche zu Fläche 1,2–2,6 – wie bisher nicht alle ≥ 3 : 1, die Information steckt in Zahl, Schraffur, Siegel und ◐ (1.4.1 erfüllt). Pflicht-Simulation im Review (§12). Referenz: `assets/heatmap/heatmap-legend.svg`.
+**M-P4 (entschieden 2026-10-23, Auftraggeber: ja):** „alle können“ ist auch im Hellmodus **grün** (Minze-Fläche, Indigo-Zahl, Indigo-Siegel) – wie im Dunkelmodus und im Werbevideo; „Grün heißt: alle können“. Tokens `--ww-hm-all-*`/`--ww-hm-seal-*` (tokens.css); die Rang-Pille auf dem Vorschlags-Band nutzt seitdem `--ww-hm-suggest-fg` statt `hm-all-fg`. Folge: Die Luminanz-Rampe ist hell bis „viele“ monoton (0,85 → 0,66 → 0,38 → 0,11), „alle“ springt bewusst auf 0,61 – „alle“ ist zusätzlich durch Zahl x = n **und** Siegel kodiert, „viele“ ↔ „alle“ Fläche zu Fläche 4,1 : 1; Minze gegen Weiß 1,6 : 1 (Zellgrenze nicht informationstragend, 1.4.11 erfüllt über Zahl/Siegel). Vorher: Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen und Farbfehlsichtigkeit behalten die Reihenfolge; Nachbarstufen Fläche zu Fläche 1,2–2,6 – wie bisher nicht alle ≥ 3 : 1, die Information steckt in Zahl, Schraffur, Siegel und ◐ (1.4.1 erfüllt). Pflicht-Simulation im Review (§12). Referenz: `assets/heatmap/heatmap-legend.svg`.
 
 ### 6.3 Markierungen
 | Zustand | Darstellung | Kontrast |
@@ -245,7 +245,7 @@ Luminanz monoton (hell 0,85 → 0,66 → 0,38 → 0,11 → 0,03) → Graustufen 
 | Vorschlag | **Indigo-Band** (dunkel Minze) 4 px in der Zeilenfuge, Endkappen nur an An-/Abreisetag, an Umbrüchen offen | 13,7 gegen Weiß / 10,2 dunkel |
 | Außerhalb / vergangen | ohne Fläche, Datum `hm-outside-fg` | 3,4 / 3,9 |
 
-„Alle können“ und „Vorschlag“ teilen die Markenfarbe – gewollt: der beste Zeitraum ist der indigofarbene. Referenz: `heatmap-markers.svg`.
+„Vorschlag“ bleibt hell das Indigo-Band; „alle können“ ist seit M-P4 grün (Minze) – Grün = frei, Indigo-Band = unser Vorschlag. Referenz: `heatmap-markers.svg`.
 
 ### 6.4 Meine Tage (F-005)
 | Zustand | Hell | Dunkel | Muster | Symbol |
@@ -506,6 +506,16 @@ Zeile 3: «Als bezahlt markieren» / «Als erhalten markieren» mit `check` 20 �
 
 **Desktop ≥ 960 px:** wie §9.21 (`minmax(0,600px) minmax(0,340px)`, Lücke 40, rechte Spalte sticky `top: 16px`): links Ausgaben, rechts „Dein Stand“ · Ausgleich · Salden · Zahlungsinfo. Detail-Sheet als Dialog 480.
 
+#### 9.22.1 Kosten v2 (Inkrement 11a, W19 E / W16 v2.17 Fassung 2, D-81 – D-87, 2026-10-24)
+Gilt vor den Abschnitten oben, wo sie sich widersprechen. Glossar W19 E.2: kein «bezahlt», «Salden», «schuldest», «Ausgaben gesamt». Abgenommen gegen den gebauten Stand (`cost-dock.*`, `costs.module.css`).
+- **Kosten-Leiste (D-81):** Fläche `surface-raised`, Radius oben `radius-xl`, `shadow-sticky-bottom`, Polster 10/12 + Safe Area. Links eigene Link-Fläche (`surface-sunken`, 1,5 px `border-subtle`, Radius `md`, ≥ 56 px, Hover Rahmen `border-strong`, Gedrückt `scale-press`): Icon-Kachel 32 `cost-area-*` + `wallet` · «Kosten · Verlauf ›» 13/800 `link` · Stand-Satz 14/700 in `cost-owe-fg` / `cost-get-fg`. Rechts Primär-Füllung kompakt 48 px, Breite nach Inhalt, nur `shadow-1` (kein Glow). Kontraste auf vertieft: Link 5,6, Minze-Text 4,6 (≥ 4,5, knapp – Stand-Satz deshalb 700, nicht 500). Rückfall statisch (200 %, < 560 px Höhe) und ≥ 960 px als Karte; im Rückfall Taste **volle Breite** unter der Link-Fläche.
+- **„Dein Stand“ (D-82):** getönte Karte ohne Schatten – zurückzahlen `primary-tint`, bekommen/quitt `accent-tint`, 1,5 px `border-subtle`. Satz 24/800 Jakarta; Kurzsatz 14/700 `text`; Sekundär volle Breite; «So rechnen wir ▾» Text-Taste `link`; Rechenweg-Box `surface`, Radius 14, `<dl>` zweispaltig, Summenlinie 1,5 px `border-strong`. Kontraste: Minze-Text auf Minze-100 4,9, Tinte 2 auf Minze-100 6,3, Link auf Lavendel-100 ≥ 5,6. Ebenen ohne Farbe unterscheidbar über Eyebrow «DEIN STAND» + `space-8` + h2 «Ausgaben der Gruppe».
+- **Ausgaben-Zeile (D-83):** ohne Tagessumme und ohne Chip «nach Beträgen»; Tages-Trenner 12/800 Versal `text-muted`; rechts Betrag 16/800 + «auf dich 25,00 €» / «ohne dich» 13/600 `text-muted`. Ruhig genug – keine weitere Reduktion.
+- **Eigene Überweisung (D-84):** Kopf Avatar 24 · «An Lena» / «Von Sara» 17/800 · Betrag rechts 17/800 tabular. Tasten: «Hab ich überwiesen» Primär (nur erste), sonst / «Ist angekommen» Sekundär klein + Text-Taste «{Name} erinnern» in einer Zeile (umbrechen erlaubt, < 22 em untereinander). Markiert: Chip «✓ Erledigt» (`cost-paid-*`, 28, 13/800) + «Zurücknehmen».
+- **Kompaktzeile „Ausgleiche der anderen“ (D-85):** 44 px, Avatare 20, Pfeil `cost-arrow-fg`, Namen 14/600, Betrag 14/800, Status 12/700 «offen» `text-muted` / «✓ erledigt» `cost-paid-fg` (5,5). Keine Karte je Zeile, keine Hover-/Tap-Optik. **Liste als Ganzes** in einer ruhigen Fläche (`surface`, Radius `card`, Polster 0/16, ohne Schatten) – Trennlinien `border-subtle` allein sind auf Nebel zu schwach (1,1 : 1). Akkordeon-Kopf h2-Button 48 px + Chevron.
+- **Ruhige Karten (D-86):** «Für dich als Orga» und «Wohin soll das Geld?»: `surface`, 1,5 px `border-subtle`, Radius `card`, Polster 16, **kein** Schatten, **keine** Koralle. Orga-Zeilen = Kompaktzeile + Text-Taste «Als erledigt markieren».
+- **Salden-Balken (D-87):** entfallen. Tokens `--ww-cost-bar-*` bleiben in tokens.css **reserviert/ungenutzt** (kein Bruch für Abhängige, kein Code nutzt sie); beim nächsten Token-Aufräumen entfernen, falls bis Go-Live ungenutzt.
+
 **Kontraste (gerechnet, hell / dunkel):** bekommt/ausgeglichen 5,5 (Nebel 5,0) / 10,2 · schuldet 16,5 / 14,5 · Bereich Sonne 6,2 / 9,6 · Kategorie-Kacheln ≥ 4,9 / ≥ 6,5 · Dein-Stand-Kacheln 4,9 bzw. 6,0 / 7,6 bzw. 7,1 · Karte „Alles ausgeglichen“ Text 14,6 / 10,8, Text 2 6,4 / 6,1 · Chip „Bezahlt“ 4,9 / 7,6 · IBAN-Punkte 5,1 / 5,9 · Pfeil 5,1 / 5,9 · Balken bekommt 5,5 / 10,2, schuldet 3,4 / 3,9 (Grafik ≥ 3 : 1) · Live-Zeile Amber ≥ 6,2 / 9,6 · Avatar „ehemalig“ 6,0 / 7,1.
 
 ### 9.23 Reisedaten + „Bucht“ (F-054/F-056, Inkrement 11 – v1.3, 2026-10-23)
@@ -678,6 +688,7 @@ Textlängen in B (geprüft, D-35):
 5. Aufräumen (CEO/Developer): `logo-mark-a-sonnenkalender.svg` (Alias), `logo-mark-b-weghaken.svg`, `logo-mark-c-treffpunkt.svg` (Archiv) können gelöscht werden.
 
 ### Changelog
+- **2026-10-24 (Inkrement 11a):** §9.22.1 Kosten v2 (D-81 – D-87 gegen gebauten Stand abgenommen; Salden-Balken entfallen, `--ww-cost-bar-*` reserviert). M-P4 in Assets nachgezogen: `heatmap-legend.svg` v1.1, `heatmap-markers.svg` v1.1, `all-available.svg`, `hero.svg`; §4.1 Palette (Indigo/Minze-Rollen für „alle“).
 - **v1.3 (2026-10-23):** Inkrement 11 „Bucht“ + Reisedaten (F-056/F-054): §9.23 (Bereichsfarbe Lavendel-200/Indigo, Chip «Bucht», Anfrage-Karte, Einwilligungs-Karte, Dokument-Warnung, maskierte Felder mit Anzeigen/Kopieren und Zustand „sichtbar“, Status-Chips, Löschfrist-Zeile, Zugriffsprotokoll, Vorschau-Hinweis „Nur Fantasiedaten“, Kachel, Desktop/Druck, Datum in drei Feldern), Bereichsfarbe Lavendel/Indigo (D-68), Antworten D-64–D-71; Tokens `--ww-travel-*`, `--ww-pattern-travel-demo`; Icons `shield`, `id-card`, `history`, `key`; `empty-travel-data.svg`, `travel-data-deleted.svg`; Freigabe-Siegel = `seal.svg`. **Developer:** `node scripts/sync-design-assets.ts` + `ICON_NAMES` um `shield`, `id-card`, `history`, `key` ergänzen.
 - **v1.2 (2026-10-23):** Inkrement 10 „Kosten teilen“ (F-035/F-036): §9.22 (Bereichsfarbe Sonne, Betrags-Typografie, Ausgaben-Zeile, Kategorie-Kacheln, „Dein Stand“ in drei Zuständen, Salden mit Mittelachsen-Balken, Ausgleichszeile mit maskierter IBAN, Karte/Siegel „Alles ausgeglichen“, Formular, Kachel, Desktop), §4.4 Geld-Regel, Antworten D-56–D-63; Tokens `--ww-cost-*`; Icons `wallet`, `transfer`, `receipt`, `food`, `car`, `ticket`, `tag`; `empty-costs.svg`. **Developer:** `node scripts/sync-design-assets.ts` + `ICON_NAMES` ergänzen.
 - **v1.1 (2026-10-23):** Inkrement 9 „Unterkünfte“ (F-031): §9.21 (Swipe-Karte, Stempel zweistufig, Bewertungstasten, Vorschlags-/Ranglisten-Zeile, „Eure Unterkunft“, Hinweise, Kachel, Desktop), Antworten D-46–D-55; Tokens `--ww-stay-*`, `--ww-stamp-*`, `--ww-pattern-stay-placeholder`; Icons `bed`, `heart`, `heart-filled`, `external`; `empty-stays.svg`; Platzhalter + 8 Demo-Bilder (`assets/unterkuenfte/`).

@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 18" width="80" height="36" role="img" aria-labelledby="t d">
   <title id="t">Alle: Geht</title>
-  <desc id="d">Heatmap-Siegel, nur bei x = n (alle, die abgegeben haben, haben Geht). Links hell auf Indigo-Zelle: Minze-Kreis mit weißem Ring und Indigo-Häkchen. Rechts dunkel auf Minze-Zelle: Mitternacht-Kreis mit Minze-Häkchen.</desc>
+  <desc id="d">Heatmap-Siegel, nur bei x = n (alle, die abgegeben haben, haben Geht). Seit M-P4 ist die Zelle „alle“ in beiden Modi Minze. Links hell: Indigo-Kreis mit weißem Ring und Minze-Häkchen. Rechts dunkel: Mitternacht-Kreis mit Minze-Häkchen.</desc>
   <g>
-    <circle cx="9" cy="9" r="7.8" fill="#52E5B8" stroke="#FFFFFF" stroke-width="1.4"/>
-    <path d="M5.5 9.3l2.3 2.3 4.6-4.9" fill="none" stroke="#2B2266" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="9" cy="9" r="7.8" fill="#2B2266" stroke="#FFFFFF" stroke-width="1.4"/>
+    <path d="M5.5 9.3l2.3 2.3 4.6-4.9" fill="none" stroke="#52E5B8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
   </g>
   <g transform="translate(22 0)">
     <circle cx="9" cy="9" r="7.8" fill="#14112E"/>

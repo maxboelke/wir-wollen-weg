@@ -545,10 +545,12 @@
   --ww-hm-some-fg: var(--ww-ink-900);             /*  6,7 */
   --ww-hm-many-bg: var(--ww-indigo-500);          /* L 0,11 */
   --ww-hm-many-fg: var(--ww-mist-0);              /*  6,5 */
-  --ww-hm-all-bg: var(--ww-indigo-800);           /* L 0,026 */
-  --ww-hm-all-fg: var(--ww-mist-0);               /* 13,7 */
-  --ww-hm-seal-bg: var(--ww-mint-400);            /* gegen Zelle 8,7 */
-  --ww-hm-seal-fg: var(--ww-indigo-800);
+  /* M-P4 (Auftraggeber 2026-10-23): „alle können“ auch hell GRÜN – Minze-Fläche, Indigo-Zahl,
+     Indigo-Siegel mit Minze-Haken (wie Dunkelmodus und Werbevideo). */
+  --ww-hm-all-bg: var(--ww-mint-400);             /* L 0,62 – Zahl Indigo 8,7 */
+  --ww-hm-all-fg: var(--ww-indigo-800);           /*  8,7 */
+  --ww-hm-seal-bg: var(--ww-indigo-800);          /* gegen Minze-Zelle 8,7 */
+  --ww-hm-seal-fg: var(--ww-mint-400);            /* Haken 8,7 */
   --ww-hm-seal-ring: var(--ww-mist-0);            /* 1,4 px */
 
   --ww-hm-weekend-lane: rgb(167 154 242 / 0.16);  /* Spur hinter Sa/So */
@@ -559,6 +561,7 @@
   --ww-hm-selected-outer: var(--ww-ink-900);
   --ww-hm-selected-inner: var(--ww-mist-0);
   --ww-hm-suggest: var(--ww-indigo-800);          /* Band 4 px, 13,7 gegen Weiß */
+  --ww-hm-suggest-fg: var(--ww-mist-0);           /* Rang-Pille auf dem Band, 13,7 */
   --ww-hm-suggest-tint: var(--ww-lavender-100);
   --ww-hm-outside-fg: var(--ww-ink-500);          /* 3,4 / 3,1 */
 
@@ -869,6 +872,7 @@
     --ww-hm-selected-outer: var(--ww-ink-50);
     --ww-hm-selected-inner: var(--ww-night-950);
     --ww-hm-suggest: var(--ww-mint-400);          /* 10,2 gegen Fläche */
+    --ww-hm-suggest-fg: var(--ww-night-950);      /* 11,5 */
     --ww-hm-suggest-tint: var(--ww-night-760);
     --ww-hm-outside-fg: var(--ww-night-500);      /* 3,9 */
 
@@ -1164,6 +1168,7 @@
   --ww-hm-selected-outer: var(--ww-ink-50);
   --ww-hm-selected-inner: var(--ww-night-950);
   --ww-hm-suggest: var(--ww-mint-400);
+  --ww-hm-suggest-fg: var(--ww-night-950);
   --ww-hm-suggest-tint: var(--ww-night-760);
   --ww-hm-outside-fg: var(--ww-night-500);
 

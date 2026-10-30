@@ -9,6 +9,7 @@ import {
 } from "@/lib/costs";
 import type { LimitRule } from "@/lib/invite-limits";
 import {
+  balancesOf,
   changeCurrency,
   deleteExpense,
   loadCostsRaw,
@@ -67,7 +68,8 @@ const actorOf = (found: Membership): CostActor => ({
 });
 
 export type SaveExpenseState =
-  | { ok: true; id: string; amountCents: number }
+  /** `balanceCents`: the saver's new result for the snackbar (W19 E.7) – > 0 gets back. */
+  | { ok: true; id: string; amountCents: number; balanceCents: number }
   | { ok: false; error: CostError }
   | { ok: false; error: "invalid"; errors: ExpenseErrors }
   | { ok: false; error: "conflict"; current: CostExpenseView | null }
@@ -119,7 +121,16 @@ export async function saveExpenseAction(
     ...(data.idempotencyKey ? { idempotencyKey: data.idempotencyKey } : {}),
     ...(data.edit ? { edit: data.edit } : {}),
   });
-  if (result.ok) return { ok: true, id: result.id, amountCents: result.amountCents };
+  if (result.ok) {
+    const raw = await loadCostsRaw(trip.id);
+    const party = raw.parties.find((p) => p.userId === found.member.userId);
+    return {
+      ok: true,
+      id: result.id,
+      amountCents: result.amountCents,
+      balanceCents: party ? (balancesOf(raw).get(party.id) ?? 0) : 0,
+    };
+  }
   if (result.error === "conflict") {
     const view = await loadTripView(publicId, costsPath(publicId));
     const model = costsModel(view, await loadCostsRaw(trip.id));

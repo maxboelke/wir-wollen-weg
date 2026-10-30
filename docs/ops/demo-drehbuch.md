@@ -106,6 +106,8 @@ Am Ende steht eine **Feedback-Checkliste**. Am besten hältst du sie beim Durchk
 
 Ohne selbst etwas anzulegen, kannst du jeden Zustand sofort zeigen. Anmelden mit der genannten Adresse, Code aus Mailpit. Ein Klick auf eine Reise in „Meine Reisen“ führt direkt zum nächsten sinnvollen Schritt.
 
+**Seit Inkrement 11a (W16 v2.18):** Wer gerade in genau **einer** laufenden Reise ist, landet nach dem Anmelden (ohne Ziel-Link) direkt in deren Übersicht – bei Anna, Ben, Carla und Emma ist das „Roadtrip Schottland“ (läuft ab heute). Einmalig erscheint der Hinweis „Deine laufende Reise ist direkt geöffnet …“; „Meine Reisen“ erreichst du über ← oben links. `/trips` öffnet immer „Meine Reisen“.
+
 | Zeigen möchte ich … | Anmelden als | Reise | Was man sieht |
 |---|---|---|---|
 | „Meine Reisen“ mit allem: Zu tun, laufende, vergangene Reisen, Lösch-Hinweis | `anna@demo.test` | – | Bereiche „Zu tun (3)“, „Laufende Reisen“, „Vergangene Reisen (2)“; bei „Kroatien Segeln“: „Wird am … gelöscht“ |

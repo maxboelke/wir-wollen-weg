@@ -12,8 +12,8 @@ import styles from "./costs.module.css";
 /**
  * IBAN of a recipient (R.8 I10-07, W19 D.8.4): masked by default – «DE89 •••• •••• •••• ••••
  * 3000», screen readers hear «IBAN von Kemal, endet auf 3000». `[Anzeigen]` shows it in full
- * on this device until the page is left (state only – never stored); `[Kopieren]` copies it
- * WITHOUT spaces. Masking protects against shoulder surfing and screenshots, not access.
+ * on this device until the page is left (state only – never stored); `[Kopieren]` (first, W19
+ * E.5) copies it WITHOUT spaces. Masking protects against shoulder surfing and screenshots, not access.
  */
 export function IbanLine({
   iban,
@@ -72,6 +72,14 @@ export function IbanLine({
           </>
         )}
       </span>
+      <CopyButton
+        text={iban}
+        label={t("copy")}
+        name={t("copyIbanName", { name: owner })}
+        done={() => {
+          toast({ message: t("ibanCopied") });
+        }}
+      />
       <Button
         variant="text"
         size="sm"
@@ -84,14 +92,6 @@ export function IbanLine({
       >
         {visible ? t("hide") : t("show")}
       </Button>
-      <CopyButton
-        text={iban}
-        label={t("copy")}
-        name={t("copyIbanName", { name: owner })}
-        done={() => {
-          toast({ message: t("ibanCopied") });
-        }}
-      />
     </span>
   );
 }

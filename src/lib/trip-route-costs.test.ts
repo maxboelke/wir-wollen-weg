@@ -11,8 +11,9 @@ import {
   type TripStation,
 } from "./trip-route";
 
-// Costs in the way (W16 v2.15, features.md R.8 I10-09): A1 at the threshold, D1 per table row
-// and role, tile, phase line, H-5/H-5b, head buttons per sub-phase incl. closed.
+// Costs in the way (W16 v2.15 + v2.17, features.md R.8 I10-09): A1 at the threshold, D1 per
+// table row and role, tile, phase line, H-5/H-5b, the cost shortcut bar per sub-phase × result ×
+// role incl. closed.
 const trip = (patch: Partial<RouteTrip> = {}): RouteTrip => ({
   start: "2027-06-12",
   end: "2027-06-19",
@@ -118,8 +119,8 @@ describe("A1 «Du schuldest …» (Vorbereitung/Unterwegs)", () => {
       values: { name1: "Lena", count: 2 },
     });
   });
-  it("also while travelling; not when closed; never in Danach (D1 takes over)", () => {
-    expect(find(route(debt(8_600), MEMBER, DURING), "A1")).toBeDefined();
+  it("only in Vorbereitung (v2.17: Unterwegs the bar); not when closed; never in Danach", () => {
+    expect(find(route(debt(8_600), MEMBER, DURING), "A1")).toBeUndefined();
     expect(find(route({ ...debt(8_600), closed: true }), "A1")).toBeUndefined();
     expect(find(route(debt(8_600), MEMBER, AFTER), "A1")).toBeUndefined();
   });
@@ -161,14 +162,16 @@ describe("D1 «Kosten ausgleichen» (Danach) – one test per row and role", () 
     expect(r.headActions).toEqual([]);
     expect(r.phaseLine.key).toBe("phase.afterSquare");
   });
-  it("row 3: I owe → yours, rank 2, A1 title, any amount (also below the A1 threshold)", () => {
+  it("row 3: I owe → yours, rank 2, A1 title, any amount; no own button – the bar has it", () => {
     for (const viewer of [MEMBER, ORGA]) {
-      expect(d1(debt(100), viewer)).toMatchObject({
+      const station = d1(debt(100), viewer);
+      expect(station).toMatchObject({
         state: "yours",
         rank: 2,
         title: { key: "costs.debtTitleOne" },
-        primary: { action: { kind: "page", page: "costsBalances" } },
+        href: { kind: "page", page: "costsBalances" },
       });
+      expect(station?.primary).toBeUndefined();
     }
   });
   it("row 4: I am owed → waiting with «settle» reminder (no former members)", () => {
@@ -238,12 +241,18 @@ describe("D1 «Kosten ausgleichen» (Danach) – one test per row and role", () 
       primary: { action: { kind: "closeCosts", open: 0 }, secondary: true },
     });
   });
-  it("D1 open: no tile, «Zurück · Kosten ausgleichen», [Ausgleichen], meta 0 von 1", () => {
+  it("D1 open with own result ≠ 0: bar [Ausgleichen] + tile as its anchor, meta 0 von 1", () => {
     const r = route(debt(2_000), MEMBER, AFTER);
-    expect(r.tiles.map((t) => t.area)).not.toContain("costs");
+    expect(r.tiles.map((t) => t.area)).toContain("costs");
+    expect(r.costDock).toMatchObject({ kind: "settle", balanceCents: -2_000 });
     expect(r.phaseLine.key).toBe("phase.afterSettle");
-    expect(r.headActions).toEqual(["settle"]);
+    expect(r.headActions).toEqual([]);
     expect(r.meta).toEqual({ key: "meta.done", values: { done: 0, total: 1 } });
+  });
+  it("D1 open, I am square: no bar, no tile (one entry: D1)", () => {
+    const r = route(costs({ openTransfers: 3 }), MEMBER, AFTER);
+    expect(r.costDock).toBeNull();
+    expect(r.tiles.map((t) => t.area)).not.toContain("costs");
   });
   it("D1 done: tile again, H-5, «alles ausgeglichen», done summary with «Ausgleich»", () => {
     const r = route(costs({ allSettled: true, openTransfers: 0 }), MEMBER, AFTER);
@@ -264,34 +273,28 @@ describe("D1 «Kosten ausgleichen» (Danach) – one test per row and role", () 
   });
 });
 
-describe("tile «Kosten» and head buttons", () => {
+describe("tile «Kosten» (W19 E.9) and the cost shortcut bar (W16 v2.17 Fassung 2)", () => {
   const tile = (c: CostStatus, today = BEFORE) =>
     route(c, MEMBER, today).tiles.find((t) => t.area === "costs");
-  it("status per row", () => {
-    expect(tile(costs({ expenseCount: 0, totalCents: 0 }))?.status.map((m) => m.key)).toEqual([
-      "tiles.costsEmpty",
-    ]);
-    expect(tile(debt(8_600))?.status.map((m) => m.key)).toEqual([
-      "tiles.costsTotal",
-      "tiles.costsOwe",
-    ]);
-    expect(tile(costs({ myBalanceCents: 4_200 }))?.status.map((m) => m.key)).toEqual([
-      "tiles.costsTotal",
-      "tiles.costsOwed",
-    ]);
-    expect(tile(costs())?.status.map((m) => m.key)).toEqual([
-      "tiles.costsTotal",
-      "tiles.costsSquareMe",
-    ]);
-    expect(tile(costs({ allSettled: true }))?.status.map((m) => m.key)).toEqual([
-      "tiles.costsTotal",
-      "tiles.costsSquare",
-    ]);
-    expect(tile(costs({ closed: true, allSettled: true }))?.status.map((m) => m.key)).toEqual([
-      "tiles.costsClosed",
-      "tiles.costsTotal",
-      "tiles.costsSquare",
-    ]);
+  it("status = the own result, no group total", () => {
+    const keys = (c: CostStatus) => tile(c)?.status.map((m) => m.key);
+    expect(keys(costs({ expenseCount: 0, totalCents: 0 }))).toEqual(["tiles.costsEmpty"]);
+    expect(keys(debt(8_600))).toEqual(["tiles.costsOwe"]);
+    expect(tile(debt(8_600))?.status[0]?.values).toEqual({
+      amount: { money: 8_600, currency: "EUR", exact: true },
+    });
+    expect(keys(costs({ myBalanceCents: 4_200 }))).toEqual(["tiles.costsOwed"]);
+    expect(keys(costs())).toEqual(["tiles.costsSquareMe"]);
+    expect(keys(costs({ allSettled: true }))).toEqual(["tiles.costsSquare"]);
+    expect(keys(costs({ closed: true, allSettled: true }))).toEqual(["tiles.costsClosedSquare"]);
+    expect(keys(costs({ closed: true, myBalanceCents: -100 }))).toEqual(["tiles.costsClosedOwe"]);
+    expect(keys(costs({ closed: true, myBalanceCents: 100 }))).toEqual(["tiles.costsClosedOwed"]);
+    expect(keys(costs({ closed: true }))).toEqual(["tiles.costsClosedSquareMe"]);
+  });
+  it("«Alle Ausgaben ansehen ›» only Unterwegs and Danach", () => {
+    expect(tile(costs())?.linkLabel).toBeUndefined();
+    expect(tile(costs(), DURING)?.linkLabel).toEqual({ key: "tiles.costsAll" });
+    expect(tile(debt(100), AFTER)?.linkLabel).toEqual({ key: "tiles.costsAll" });
   });
   it("tile order: Unterkunft · Kosten · Infos; always in Vorbereitung and Unterwegs", () => {
     const r = tripRoute(
@@ -319,16 +322,75 @@ describe("tile «Kosten» and head buttons", () => {
     expect(r.tiles.map((t) => t.area)).toEqual(["stay", "costs", "info"]);
     expect(tile(costs(), DURING)).toBeDefined();
   });
-  it("head buttons: Vorbereitung «Kalender», Unterwegs «+ Ausgabe» (not when closed)", () => {
-    expect(route(costs(), MEMBER, BEFORE).headActions).toEqual(["calendar"]);
-    expect(route(costs(), MEMBER, DURING).headActions).toEqual(["addExpense"]);
-    expect(route(costs({ closed: true }), MEMBER, DURING).headActions).toEqual([]);
-    expect(route(null, MEMBER, DURING).headActions).toEqual([]);
+  it("head buttons: only «Kalender» in Vorbereitung – the cost buttons moved into the bar", () => {
+    for (const viewer of [MEMBER, ORGA]) {
+      expect(route(costs(), viewer, BEFORE).headActions).toEqual(["calendar"]);
+      expect(route(costs(), viewer, DURING).headActions).toEqual([]);
+      expect(route(debt(100), viewer, AFTER).headActions).toEqual([]);
+    }
+  });
+  it.each([
+    ["Vorbereitung", BEFORE, -8_600, false, null],
+    ["Unterwegs, pays back", DURING, -8_600, false, "add"],
+    ["Unterwegs, gets back", DURING, 4_200, false, "add"],
+    ["Unterwegs, square", DURING, 0, false, "add"],
+    ["Unterwegs, closed", DURING, -8_600, true, null],
+    ["Danach, pays back", AFTER, -8_600, false, "settle"],
+    ["Danach, gets back", AFTER, 4_200, false, "settle"],
+    ["Danach, square", AFTER, 0, false, null],
+    ["Danach, closed", AFTER, -8_600, true, null],
+  ] as const)("bar: %s → %s", (_label, today, balance, closed, kind) => {
+    for (const viewer of [MEMBER, ORGA]) {
+      const c = costs({
+        myBalanceCents: balance,
+        closed,
+        ...(balance < 0 ? { myDebts: [person("Kemal", -balance)] } : {}),
+        ...(balance > 0 ? { owedToMe: [person("Ben", balance)] } : {}),
+      });
+      const r = route(c, viewer, today);
+      expect(r.costDock?.kind ?? null).toBe(kind);
+      // The bar is only a shortcut: the tile is always there as well.
+      if (kind) expect(r.tiles.map((t) => t.area)).toContain("costs");
+    }
+  });
+  it("bar status sentence; no expenses yet → «Noch keine Ausgaben»", () => {
+    expect(route(debt(8_600), MEMBER, DURING).costDock?.status.key).toBe("tiles.costsOwe");
+    expect(route(costs({ expenseCount: 0, totalCents: 0 }), MEMBER, DURING).costDock).toMatchObject(
+      { kind: "add", status: { key: "tiles.costsEmpty" } },
+    );
+    expect(route(null, MEMBER, DURING).costDock).toBeNull();
+  });
+  it("primary rule: with the bar every «Heute» card button is secondary", () => {
+    const r = tripRoute(
+      trip(),
+      MEMBER,
+      {
+        group: { placeholders: [] },
+        info: { meeting: "10 Uhr Bahnhof", checkIn: null, checkOut: null, hasAddress: false },
+        costs: costs(),
+      },
+      "2027-06-12",
+    );
+    expect(r.costDock?.kind).toBe("add");
+    const meet = r.heute.items.find((s) => s.id === "T-meet");
+    expect(meet?.primary?.secondary).toBe(true);
+    const without = tripRoute(
+      trip(),
+      MEMBER,
+      {
+        group: { placeholders: [] },
+        info: { meeting: "10 Uhr Bahnhof", checkIn: null, checkOut: null, hasAddress: false },
+        costs: costs({ closed: true }),
+      },
+      "2027-06-12",
+    );
+    expect(without.heute.items.find((s) => s.id === "T-meet")?.primary?.secondary).toBeFalsy();
   });
   it("without the costs adapter nothing changes (older callers)", () => {
     const r = route(null, MEMBER, AFTER);
     expect(find(r, "D1")).toBeUndefined();
     expect(r.tiles).toEqual([]);
+    expect(r.costDock).toBeNull();
     expect(r.heute.sentence.key).toBe("sentence.h5b");
   });
 });

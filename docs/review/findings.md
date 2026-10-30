@@ -960,3 +960,29 @@ Geprüft gegen features.md R.9 (Rechte-Tabelle, Feldliste, Verschlüsselung Nr. 
 - **Bewusst toleriert:** Die eigene Dokumentnummer ist für die Person ohne Re-Auth abrufbar (W20 D „Anzeigen“, Formular „Angaben ändern“ vorbelegt) – die Re-Auth-Sperre im Export (I11-11, Should) schützt bei übernommener Sitzung daher nur begrenzt. Für G1b bewerten.
 - **Klein, später:** Zugriffsprotokoll > 1 000 Einträge löscht die ältesten statt sie zusammenzufassen (R.9: „zusammengefasst“). D3 «erledigt» erscheint nach Löschdatum erst nach dem nächsten Löschjob-Lauf (Lese-Pfad liefert vorher schon nichts). Runbook A Schritt 5 (UI-Hinweis nach `--purge-unreadable`) fehlt – vor G1b. `readOwnRelease` liefert der Person ihre eigenen Werte bei aufgehobener Festlegung > 30 Tage noch bis zum Job (nur eigene Daten). Bei 200 % Schrift ist das Dokument 3 px breiter als 360 px (außerhalb von `main`, auch im Cockpit – nicht Inkrement 11).
 - **E2E-Flake:** `increment-9-stays.spec.ts:242` (axe `document-title` während des Streamings) – 1× rot im Volllauf, 4/4 grün einzeln; vom Entwickler bereits beobachtet, CI-Retry fängt es ab. Laufzeit lokal 25,1 min für 3 Projekte (4 Kerne); CI-Puffer 45 min mit WebKit knapp ausreichend – beobachten.
+
+
+## Review Inkrement 11a – Kosten v2, Kosten-Leiste, App-Start in der laufenden Reise, Geldformat, M-P4 (Reviewer 2026-10-24, Commit e2a34f9 → c025eec + Nachtrag)
+
+Geprüft gegen W19 E (E.2 Glossar, E.4, E.5, E.6, E.10, E.12), Mockup `kosten-v2`, W16 v2.17 Fassung 2 und v2.18, `src/lib/money.ts`, `tokens.css` (M-P4). Lint, Typecheck, i18n, Format, 906 Unit-Tests, 27 DB-Tests, Build und volle E2E-Suite gegen `pnpm build && pnpm start` (desktop-, mobile-, preview-chromium: **512 grün, 4 übersprungen, kein Flake**); nach den Review-Fixes erneut Build + `increment-10*`/`increment-11a` (79 grün). Eigene Proben (Playwright, 412 px/1280 px, hell/dunkel, DE, Konto AT): Kosten, Ausgleichen, Cockpit-Leiste, 200 % Schrift, App-Start, Login-`next`.
+
+### R-085: Kompaktzeile „Ausgleiche der anderen“ trennt Avatar und Name beim Umbruch
+- Schwere: niedrig
+- Datei: src/features/costs/components/costs-view.tsx (`CompactPair`), costs.module.css
+- Problem / Reproduktion: 412 px, Zeile «Lena Berg → Member 1 · 100,00 € · offen» → Umbruch zwischen Avatar „M1“ und dem Namen „Member 1“ (Avatar am Zeilenende, Name allein in Zeile 2).
+- Erwartetes Verhalten: E.10 – Zeile darf zweizeilig werden, Person (Avatar + Name) bleibt zusammen.
+- Status: verifiziert (Reviewer selbst behoben): je Person ein `compactPerson`-Span (inline-flex); Screenshot geprüft, E2E grün.
+
+#### Selbst behoben / umgesetzt (Inkrement 11a)
+- `src/lib/costs.test.ts` „server path < 100 ms“: auch ohne Last 1 von 3 Läufen rot (267 ms, GC-Pause bei 300 000 Zeilen) → Bestwert aus drei Läufen; 5/5 grün.
+- Designer-Nachträge D-81–D-87: Leisten-Taste in der statischen Karte volle Breite (200 %: Taste 298 von 348 px), Leisten-Titel `--ww-text-meta`, „Ausgleiche der anderen“ auf Fläche (`surface`, `radius-card`), `.payCard`-Rahmen 1,5 px `border-subtle`; `illustrations.json` per `sync-design-assets.ts` mit den M-P4-Assets (hero/heatmap) synchronisiert – ohne Sync schlug `scripts/design-assets.test.ts` fehl.
+
+#### Hinweise ohne Finding (Inkrement 11a)
+- **Sicherheit E.6:** `costsModel()` gibt Zahlungsinfos nur für die eigene Person und die Empfänger der eigenen offenen Überweisungen heraus, `markiert von/am` nur für eigene bzw. Orga-only-Zeilen; Salden anderer werden nicht als Liste geliefert (aus Ausgaben + Aufteilung ableitbar – laut E.6 sichtbar, also kein Leck). Unit-Tests `load.test.ts` + E2E (HTML/RSC ohne fremde IBAN) grün. Weitere Datenpfade (`sheet-context`, `remind`, `costStatus`) geben keine fremden Zahlungsinfos heraus.
+- **Open Redirect:** Neue Start-Weiterleitung nutzt nur `tripPath(publicId)` aus der DB; alle `next`-Werte laufen weiter durch `toSafeInternalPath`. Probe `/login?next=//evil.example` und `?next=https://evil.example` → App-Start (laufende Reise), `next=/trips/{id}/costs` → Ziel.
+- **App-Start:** `/` mit 0/1/2 laufenden Reisen, Abreisetag ja/Vortag nein, `/trips` leitet nie weiter, einmaliger Hinweis, `next` hat Vorrang – E2E grün. Wortmarke angemeldet → `/trips`, ← im Cockpit «Meine Reisen».
+- **Geld:** ein Formatierer, Sprache statt Region (`de-CH`/`de-AT` → «1.200,00 €», `en-US` → «€1,200.00»); Probe mit AT-Konto ohne «€ 500,00».
+- **Kontrast:** Leisten-Stand Minze auf `surface-sunken` 4,64:1 bei 700 (AA erfüllt, Fettung muss bleiben); dunkel deutlich höher. M-P4: Zahl Indigo auf Minze 8,7:1, Rang-Pille eigene Farbe `--ww-hm-suggest-fg` (13,7 / 11,5).
+- **Glossar:** keine «bezahlt», «Saldo/Salden», «Ausgaben gesamt», «schuldest», «ausgeglichen» in `de.json`, Mails, Teilen-Texten.
+- **Bewertete Abweichungen:** (1) „Erledigt“-Block der Orga enthält auch erledigte Orga-only-Zeilen (Platzhalter ↔ ehemalig) – sinnvoll, sonst wären sie nirgends rücknehmbar; ok. (2) Akkordeons ohne Höhen-Animation (E.11 „Standard-Akkordeon base“) – für „Politur vor der Beta“ vormerken. (3) Leiste erscheint nicht, wenn die Kachel sofort sichtbar ist – entspricht W16 v2.17 („Seite kürzer als ein Bildschirm“), keine Abweichung.
+- **Hinweis Arbeitsweise:** Während des Reviews lagen unkommittierte Designer-Änderungen im selben Arbeitsverzeichnis (Assets ohne Sync → Unit-Test rot). Asset-Änderungen künftig immer zusammen mit `node scripts/sync-design-assets.ts` committen.
