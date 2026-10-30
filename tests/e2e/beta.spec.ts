@@ -189,6 +189,25 @@ test.describe("sign-up and sign-in", () => {
     await page.getByRole("button", { name: de.install.later }).click();
     await expect(page).toHaveURL(/\/trips$/);
 
+    // Avatar menu (W23 B.5, D.2): «App installieren» (touch device) and «Feedback geben» – the
+    // pre-filled text has no names, e-mail or trip names.
+    await page.getByRole("button", { name: de.menu.open.replace("{name}", "Bea") }).click();
+    await expect(page.getByRole("link", { name: de.menu.install })).toBeVisible();
+    await page.getByRole("button", { name: de.menu.feedback }).click();
+    const sheet = page.getByRole("dialog", { name: de.feedback.heading });
+    const whatsapp = sheet.getByRole("link", { name: de.feedback.whatsapp });
+    await expect(whatsapp).toHaveAttribute("href", /^https:\/\/wa\.me\/4915100000000\?text=/);
+    const text = decodeURIComponent((await whatsapp.getAttribute("href")) ?? "");
+    expect(text).toContain("Feedback zu Wir wollen weg (Beta)");
+    expect(text).toContain("Gerät: Android");
+    expect(text).not.toContain("Bea");
+    expect(text).not.toContain(email);
+    await expect(sheet.getByRole("link", { name: de.feedback.mail })).toHaveAttribute(
+      "href",
+      /^mailto:feedback@wirwollenweg\.de\?subject=/,
+    );
+    await page.keyboard.press("Escape");
+
     const [row] = await query<{
       beta_consent_version: string;
       beta_signup_via: string;
