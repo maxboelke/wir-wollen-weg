@@ -72,7 +72,8 @@ export async function HelpPage({ locale }: { locale: Locale }) {
           </section>
         ) : null}
         <div className={styles.list}>
-          {HELP_TOPICS.map((topic) => {
+          {/* «#app» (install the app) belongs to the friends beta (W23 B.5). */}
+          {HELP_TOPICS.filter((topic) => topic !== "app" || isBeta()).map((topic) => {
             const action = actionHref(topic, locale);
             return (
               <details key={topic} id={HELP_ANCHORS[topic][locale]} className={styles.item}>

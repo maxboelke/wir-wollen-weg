@@ -121,6 +121,7 @@ export async function PageShell({
               locale={locale}
               helpHref={helpHref(locale)}
               feedback={isBeta() ? feedbackConfig(process.env) : null}
+              installEntry={isBeta()}
             />
           ) : alternate ? (
             <LanguageSwitchLink href={alternate.href} locale={alternate.locale} />

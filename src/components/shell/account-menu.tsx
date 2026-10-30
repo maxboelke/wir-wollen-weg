@@ -23,6 +23,8 @@ interface AccountMenuProps {
   helpHref: string;
   /** Friends beta: «Feedback geben» (W23 D.2) – null/absent = no entry. */
   feedback?: FeedbackConfig | null | undefined;
+  /** Friends beta: «App installieren» on touch devices outside the app (W23 B.5). */
+  installEntry?: boolean | undefined;
 }
 
 /**
@@ -32,7 +34,14 @@ interface AccountMenuProps {
  * panel closes it too, without moving focus (R-031, WCAG 2.4.11 – the panel must not cover
  * the newly focused element).
  */
-export function AccountMenu({ userId, name, locale, helpHref, feedback }: AccountMenuProps) {
+export function AccountMenu({
+  userId,
+  name,
+  locale,
+  helpHref,
+  feedback,
+  installEntry = false,
+}: AccountMenuProps) {
   const t = useTranslations();
   const id = useId();
   const [open, setOpen] = useState(false);
@@ -40,8 +49,10 @@ export function AccountMenu({ userId, name, locale, helpHref, feedback }: Accoun
   const [installable, setInstallable] = useState(false);
   useEffect(() => {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- media queries only readable after mounting
-    setInstallable(!isStandalone() && window.matchMedia("(pointer: coarse)").matches);
-  }, []);
+    setInstallable(
+      installEntry && !isStandalone() && window.matchMedia("(pointer: coarse)").matches,
+    );
+  }, [installEntry]);
   const hasFeedback = Boolean(feedback && (feedback.whatsapp || feedback.email));
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
