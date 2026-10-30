@@ -212,3 +212,13 @@ export function canonicalRedirect(
   if (!host || host === canonical.host.toLowerCase()) return null;
   return `${canonical.origin}${request.pathname}${request.search}`;
 }
+
+/**
+ * Branch each Vercel project builds (deployment.md §0.12.2): the preview builds `main`, the
+ * beta builds the release branch `beta`. Other modes do not build on Vercel (null).
+ */
+export function branchForAppEnv(appEnv: string): string | null {
+  if (appEnv === "preview") return "main";
+  if (appEnv === "beta") return "beta";
+  return null;
+}

@@ -4,11 +4,13 @@
   "regions": ["fra1"],
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm vercel-build",
+  "ignoreCommand": "node scripts/vercel-ignore.ts",
   "crons": [{ "path": "/api/internal/retention", "schedule": "17 3 * * *" }],
   "git": {
     "deploymentEnabled": {
       "**": false,
-      "main": true
+      "main": true,
+      "beta": true
     }
   }
 }

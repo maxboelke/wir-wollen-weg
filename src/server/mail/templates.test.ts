@@ -165,3 +165,29 @@ describe("privacy mails (F-013, F-043)", () => {
     expect(mail.html).toContain('href="https://app.example/login"');
   });
 });
+
+describe("friends beta (W23 A.5, compliance §13.6)", () => {
+  it("code first «in the app or browser», link «in the browser», footer without imprint", () => {
+    const previous = { env: process.env.APP_ENV, url: process.env.APP_URL };
+    process.env.APP_ENV = "beta";
+    process.env.APP_URL = "https://app.wirwollenweg.de";
+    try {
+      const mail = renderAccessEmail({
+        locale: "de",
+        code: "123456",
+        magicLinkUrl: "https://app.wirwollenweg.de/auth/magic?token=x",
+      });
+      expect(mail.text.indexOf("123456")).toBeLessThan(mail.text.indexOf("Du bist im Browser"));
+      expect(mail.text).toContain("Dein Code – gib ihn in der App oder im Browser ein:");
+      expect(mail.text).toContain("Private Test-Version von Wir wollen weg");
+      expect(mail.text).toContain("Datenschutz: https://app.wirwollenweg.de/de/datenschutz");
+      expect(mail.html).not.toContain("Impressum");
+      expect(mail.html).not.toContain("PLATZHALTER");
+    } finally {
+      process.env.APP_ENV = previous.env;
+      process.env.APP_URL = previous.url;
+      if (previous.env === undefined) delete process.env.APP_ENV;
+      if (previous.url === undefined) delete process.env.APP_URL;
+    }
+  });
+});

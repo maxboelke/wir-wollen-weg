@@ -92,7 +92,7 @@ self.addEventListener("fetch", (event) => {
       ),
     );
   }
-  // Everything else is not touched: HTML, RSC, Server Actions, /api, /auth, /i, /trips, …
+  // Everything else is neither answered nor cached.
 });
 `;
 }

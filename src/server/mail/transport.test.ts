@@ -45,3 +45,31 @@ describe("mail transport", () => {
     expect(stored).not.toHaveBeenCalled();
   });
 });
+
+describe("smtpOptions (deployment.md §0.12.9)", () => {
+  it("implicit TLS on 465, STARTTLS required for remote hosts, timeouts, no pool", async () => {
+    const { smtpOptions } = await import("./transport");
+    const secure = smtpOptions({
+      SMTP_HOST: "smtp.lettermint.co",
+      SMTP_PORT: 465,
+      SMTP_SECURE: true,
+      SMTP_USER: "lettermint",
+      SMTP_PASSWORD: "t",
+    });
+    expect(secure).toMatchObject({
+      secure: true,
+      connectionTimeout: 10_000,
+      greetingTimeout: 10_000,
+      socketTimeout: 20_000,
+      pool: false,
+      auth: { user: "lettermint", pass: "t" },
+    });
+    expect(secure).not.toHaveProperty("requireTLS");
+    expect(
+      smtpOptions({ SMTP_HOST: "smtp.lettermint.co", SMTP_PORT: 587, SMTP_SECURE: false }),
+    ).toMatchObject({ requireTLS: true });
+    expect(
+      smtpOptions({ SMTP_HOST: "localhost", SMTP_PORT: 1025, SMTP_SECURE: false }),
+    ).not.toHaveProperty("requireTLS");
+  });
+});

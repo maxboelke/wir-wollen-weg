@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  branchForAppEnv,
+  canonicalRedirect,
+  isBeta,
+  travelDataOn,
   demoResetAvailable,
   inboxEnabled,
   resolveAppEnv,
@@ -191,5 +195,85 @@ describe("previewTrustedOrigins", () => {
     expect(previewTrustedOrigins({ ...vercel, APP_ENV: "production" }, "a.vercel.app")).toEqual([]);
     expect(previewTrustedOrigins({ APP_ENV: "preview" }, "a.vercel.app")).toEqual([]);
     expect(previewTrustedOrigins({ APP_ENV: "development" }, "a.vercel.app")).toEqual([]);
+  });
+});
+
+describe("APP_ENV=beta (deployment.md §0.12.4)", () => {
+  const betaEnv = {
+    APP_ENV: "beta",
+    MAIL_TRANSPORT: "smtp",
+    SMTP_HOST: "smtp.lettermint.co",
+    SMTP_USER: "lettermint",
+    SMTP_PASSWORD: "token",
+    MAIL_FROM: "login@mail.wirwollenweg.de",
+    BETA_ACCESS_CODES: "Sonne-Koffer-27",
+    LEGAL_OPERATOR_NAME: "Max Muster",
+    CONTACT_EMAIL: "max@wirwollenweg.de",
+    CRON_SECRET: "x".repeat(40),
+  };
+  const beta: StartupInput = {
+    ...base,
+    appEnv: "beta",
+    authUrl: "https://app.wirwollenweg.de",
+    mailTransport: "smtp",
+    onVercel: true,
+    env: betaEnv,
+  };
+
+  it("Nr. 1: beta is a known mode, may run on Vercel and needs https", () => {
+    expect(startupProblems(beta)).toEqual([]);
+    expect(startupProblems({ ...beta, authUrl: "http://app.wirwollenweg.de" }).join()).toContain(
+      "https://",
+    );
+  });
+
+  it("never the demo inbox, never placeholders, never travel details", () => {
+    expect(startupProblems({ ...beta, mailTransport: "inbox" }).join()).toContain("inbox");
+    expect(startupProblems({ ...beta, placeholders: ["legalBeta.x"] }).join()).toContain(
+      "placeholder",
+    );
+    expect(
+      startupProblems({ ...beta, env: { ...betaEnv, TRAVEL_DATA_ENABLED: "true" } }).join(),
+    ).toContain("TRAVEL_DATA_ENABLED");
+    expect(travelDataOn({ ...betaEnv, TRAVEL_DATA_ENABLED: "true" })).toBe(false);
+  });
+
+  it("no demo banner, no inbox, no extra trusted origins", () => {
+    expect(showsDemoBanner({ APP_ENV: "beta" })).toBe(false);
+    expect(inboxEnabled({ APP_ENV: "beta", MAIL_TRANSPORT: "inbox" })).toBe(false);
+    expect(demoResetAvailable({ APP_ENV: "beta", MAIL_TRANSPORT: "inbox" })).toBe(false);
+    expect(
+      previewTrustedOrigins(
+        { APP_ENV: "beta", VERCEL: "1", VERCEL_URL: "x.vercel.app" },
+        "x.vercel.app",
+      ),
+    ).toEqual([]);
+    expect(isBeta({ APP_ENV: "beta" })).toBe(true);
+    expect(isBeta({ APP_ENV: "preview" })).toBe(false);
+  });
+
+  it("Nr. 9: canonical host – 308 target except cron and health", () => {
+    const env = { APP_ENV: "beta", APP_URL: "https://app.wirwollenweg.de" };
+    expect(
+      canonicalRedirect(env, { host: "ww-beta.vercel.app", pathname: "/trips", search: "?a=1" }),
+    ).toBe("https://app.wirwollenweg.de/trips?a=1");
+    expect(
+      canonicalRedirect(env, { host: "app.wirwollenweg.de", pathname: "/trips", search: "" }),
+    ).toBeNull();
+    for (const pathname of ["/api/internal/retention", "/api/health"]) {
+      expect(canonicalRedirect(env, { host: "x.vercel.app", pathname, search: "" })).toBeNull();
+    }
+    expect(
+      canonicalRedirect(
+        { APP_ENV: "preview", APP_URL: "https://a.example" },
+        { host: "b.example", pathname: "/", search: "" },
+      ),
+    ).toBeNull();
+  });
+
+  it("each Vercel project builds its own branch", () => {
+    expect(branchForAppEnv("preview")).toBe("main");
+    expect(branchForAppEnv("beta")).toBe("beta");
+    expect(branchForAppEnv("production")).toBeNull();
   });
 });
