@@ -3,7 +3,12 @@ import pg from "pg";
 import { addDays, todayIso } from "../../../src/lib/dates";
 import { deriveEmailLimitKey, hmacHex } from "../../../src/server/auth/email-limit-key";
 
-const databaseUrl = process.env.DATABASE_URL ?? "postgres://app:app@localhost:5432/wirwollenweg";
+let databaseUrl = process.env.DATABASE_URL ?? "postgres://app:app@localhost:5432/wirwollenweg";
+
+/** Points the helpers at another database (beta E2E server: own database, like the beta). */
+export function setDatabaseUrl(url: string): void {
+  databaseUrl = url;
+}
 
 async function withClient<T>(work: (client: pg.Client) => Promise<T>): Promise<T> {
   const client = new pg.Client({ connectionString: databaseUrl });
@@ -971,4 +976,12 @@ export async function setAccountCountry(email: string, country: string): Promise
   await withClient(async (client) => {
     await client.query(`update "user" set country = $2 where email = $1`, [email, country]);
   });
+}
+
+/** Runs SQL against the current database (beta E2E: account limit, cleanup). */
+export async function query<T extends pg.QueryResultRow = pg.QueryResultRow>(
+  sql: string,
+  values: unknown[] = [],
+): Promise<T[]> {
+  return withClient(async (client) => (await client.query<T>(sql, values)).rows);
 }
