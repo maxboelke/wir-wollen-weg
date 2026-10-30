@@ -53,6 +53,25 @@ describe("feedback text parts (W23 D.2)", () => {
     expect(feedbackArea("Wir wollen weg", "Wir wollen weg")).toBe("Wir wollen weg");
   });
 
+  it("never the trip name of the invite page or a person's name (R-086)", () => {
+    const labels = { invite: "Einladung", travelData: "Reisedaten" };
+    const product = "Wir wollen weg";
+    expect(feedbackArea("Sommer in Lissabon · Wir wollen weg", product, "/i/abc", labels)).toBe(
+      "Einladung",
+    );
+    expect(
+      feedbackArea(
+        "Reisedaten für Anna · Schritt 1 von 2 · Lissabon",
+        product,
+        "/trips/x/travel-data/r1",
+        labels,
+      ),
+    ).toBe("Reisedaten");
+    expect(
+      feedbackArea("Kosten · Lissabon · Wir wollen weg", product, "/trips/x/costs", labels),
+    ).toBe("Kosten");
+  });
+
   it("device without model or OS version", () => {
     expect(feedbackDevice(IPHONE)).toBe("iphone");
     expect(feedbackDevice(ANDROID)).toBe("android");

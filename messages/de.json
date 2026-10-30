@@ -2944,6 +2944,10 @@
       "android": "Android",
       "computer": "Computer"
     },
+    "areas": {
+      "invite": "Einladung",
+      "travelData": "Reisedaten"
+    },
     "yes": "ja",
     "no": "nein"
   },

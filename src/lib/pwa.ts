@@ -78,8 +78,17 @@ export function feedbackDevice(
 /**
  * Area of the current view for the feedback text: the page title without the trip name and
  * without the product suffix («Meine Tage · Sommer 2027 · Wir wollen weg» → «Meine Tage»).
+ * Pages whose title STARTS with personal content get a fixed label instead: the invite page
+ * `/i/<token>` is titled with the trip name, travel-details pages may start with a person's name.
  */
-export function feedbackArea(title: string, product: string): string {
+export function feedbackArea(
+  title: string,
+  product: string,
+  pathname = "/",
+  labels: { invite: string; travelData: string } = { invite: product, travelData: product },
+): string {
+  if (pathname.startsWith("/i/")) return labels.invite;
+  if (/^\/trips\/[^/]+\/travel-data(?:\/|$)/.test(pathname)) return labels.travelData;
   const parts = title
     .split(" · ")
     .map((part) => part.trim())

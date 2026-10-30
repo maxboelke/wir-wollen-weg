@@ -986,3 +986,58 @@ Geprüft gegen W19 E (E.2 Glossar, E.4, E.5, E.6, E.10, E.12), Mockup `kosten-v2
 - **Glossar:** keine «bezahlt», «Saldo/Salden», «Ausgaben gesamt», «schuldest», «ausgeglichen» in `de.json`, Mails, Teilen-Texten.
 - **Bewertete Abweichungen:** (1) „Erledigt“-Block der Orga enthält auch erledigte Orga-only-Zeilen (Platzhalter ↔ ehemalig) – sinnvoll, sonst wären sie nirgends rücknehmbar; ok. (2) Akkordeons ohne Höhen-Animation (E.11 „Standard-Akkordeon base“) – für „Politur vor der Beta“ vormerken. (3) Leiste erscheint nicht, wenn die Kachel sofort sichtbar ist – entspricht W16 v2.17 („Seite kürzer als ein Bildschirm“), keine Abweichung.
 - **Hinweis Arbeitsweise:** Während des Reviews lagen unkommittierte Designer-Änderungen im selben Arbeitsverzeichnis (Assets ohne Sync → Unit-Test rot). Asset-Änderungen künftig immer zusammen mit `node scripts/sync-design-assets.ts` committen.
+
+## Review P1-B0 „Freundes-Beta Stufe B“ (Gate G0) – `APP_ENV=beta`, Beta-Code/Pässe, PWA, Rechtstexte (Reviewer 2026-10-30, Commits 9ced08e → c955dca)
+
+Geprüft: alle Commits seit `origin/main`. Lint, Typecheck, i18n, Format, Unit (947 + neue), test:db (27), Build, E2E komplett gegen Produktions-Build (desktop 252, mobile 254, preview 6, beta 13 → nach Review 16; 4 viewport-bedingte Skips) – alles grün.
+
+### R-086: Feedback-Text enthält auf der Einladungsseite den Reisenamen
+- Schwere: mittel
+- Datei: src/lib/pwa.ts:84 (`feedbackArea`), src/features/beta/components/feedback.tsx:36
+- Problem / Reproduktion: Angemeldet `/i/<token>` einer Reise „Geheimreise Porto“ öffnen → Avatar-Menü → „Feedback geben“. Der Bereich wird aus `document.title` genommen; die Einladungsseite heißt `„<Reisename> · Wir wollen weg“` → vorausgefüllter WhatsApp-/Mail-Text „Bereich: Geheimreise Porto“. Verstößt gegen §0.12.4 Nr. 11 / W23 D.2 / compliance §13.4 Nr. 10 („keine Reisen oder Namen“). Dasselbe gälte für `travelData.answerPageTitle` („Reisedaten für {name} …“, in beta aus).
+- Erwartetes Verhalten: Bereich ohne Reisenamen/Personennamen.
+- Vorschlag: feste Bezeichnung je Pfad für Seiten, deren Titel mit Nutzerinhalt beginnt.
+- Status: verifiziert (Reviewer selbst behoben: `/i/*` → „Einladung“, `/trips/*/travel-data*` → „Reisedaten“, i18n `feedback.areas.*`; Unit-Test `pwa.test.ts`, E2E `beta.spec.ts` „feedback text on an invite page never carries the trip name“)
+
+### R-087: Beta-/Einladungs-Pass fiel ohne `BETTER_AUTH_SECRET` auf einen öffentlich bekannten Schlüssel zurück
+- Schwere: niedrig (Startschutz verhindert den Fall bereits, Verteidigung in der Tiefe)
+- Datei: src/server/beta/index.ts:52 (`secret()`)
+- Problem / Reproduktion: Fehlt `BETTER_AUTH_SECRET` in einer Instanz, in der `instrumentation.ts` nicht lief, signiert `secret()` mit dem im öffentlichen Repo stehenden Wert `dev-only-beta-pass-secret-…` → Pässe mit Zustimmung wären fälschbar → Konto ohne Beta-Code.
+- Erwartetes Verhalten: fail closed wie `deriveEmailLimitKey` (R-028).
+- Status: verifiziert (Reviewer selbst behoben: fester Schlüssel nur in `development`/`ci`, sonst Fehler)
+
+### R-088: `vercel-ignore.ts` baut Branch-/Preview-Deployments, die `vercel-build.ts` dann rot abbricht
+- Schwere: niedrig
+- Datei: scripts/vercel-ignore.ts:13
+- Problem / Reproduktion: Beta-Projekt, Push auf `main` (Vercel-Preview-Deployment). Ist `APP_ENV` dort nur für „Production“ gesetzt, gilt auf Vercel `preview` → `branchForAppEnv` = `main` = Zweig → „building“ → `vercel-build.ts` bricht mit „only the production deployment“ ab → jeder `main`-Push erzeugt ein rotes Deployment im Beta-Projekt (keine Migration, aber Verwirrung beim Auftraggeber, Fall B der Anleitung).
+- Erwartetes Verhalten: Nicht-Production-Deployments werden übersprungen.
+- Status: verifiziert (Reviewer selbst behoben: `VERCEL_ENV` ≠ `production` → Exit 0; Unit-Test `scripts/vercel-ignore.test.ts`)
+
+### R-089: E-Mail-Adresse in `sessionStorage` nicht in compliance §13.5 beschrieben
+- Schwere: niedrig (Doku, Operations)
+- Datei: src/features/auth/components/email-access-form.tsx (Übergabe A.5 → `/beta` → `/login?from=beta`, `BETA_EMAIL_STORAGE_KEY`)
+- Problem / Reproduktion: Neue Adresse auf `/login` ohne Pass → Code richtig → „Fast – dir fehlt noch der Beta-Code“ → Taste → Adresse liegt in `sessionStorage`, bis `/login?from=beta` sie liest oder der Tab geschlossen wird. §13.5 nennt `sessionStorage` nur „Formularzustand, nur App-Modus, keine Codes“.
+- Erwartetes Verhalten: Zeile in §13.5 ergänzen („E-Mail-Adresse zur Übergabe zwischen Beta-Schritten, endet mit dem Tab bzw. beim Lesen gelöscht“). Code-Änderung nicht nötig.
+- Status: offen
+
+#### Bewertete Abweichungen des Developers (alle akzeptiert)
+1. **Zustimmung vor „Code senden“ im Einladungsweg** (W23: Z4a beim Namen): technisch zwingend – das Konto entsteht beim Prüfen des Codes, der Hook braucht die Zustimmung vorher; vorher ist ohne Konto-Ermittlung nicht bekannt, ob die Adresse neu ist. Folge: auch Bestandskonten sehen auf `/i/*` den Haken (W23 Z4b „keine Checkbox“) – vertretbar. UX bitte W23 A.8 nachziehen.
+2. **E-Mail-Übergabe per `sessionStorage`**: ok, Doku siehe R-089.
+3. **`Clear-Site-Data` nur bei HTTP-Abmeldung und `/goodbye`** + clientseitiges Leeren der `ww-*`-Caches bei der Server-Action-Abmeldung: ok – der Cache enthält nachweislich keine personenbezogenen Daten (E2E-Cache-Inspektion).
+4. **Kontenlimit ohne Advisory-Lock**: ok für 50 Personen (gleichzeitige Registrierungen bei 49 können 51–52 ergeben).
+5. **Landing/Hilfe/Rechtstexte pro Anfrage gerendert** (`connection()`): richtig – Modus ist Laufzeitkonfiguration; Build zeigt nur `/_not-found` und `/offline` statisch (beide modusunabhängig).
+6. **Rate-Limit-Ereignisse 25 h**: ok (Tagesfenster + 1 h, Schlüssel pseudonym).
+7. **Inline-Script auf `/offline`**: ok (CSP Stufe 1 ohne `script-src`; vor CSP Stufe 2/G1 Hash ergänzen).
+8. **Nicht gebaut** (Akkordeon-Animation, Feedback im Reise-Menü, einige Zurück-Wege, Variante-A-UI, Lettermint-HTTP-Fallback): nicht blockierend für G0; Fallback nur bauen, falls der erste SMTP-Versand von Vercel scheitert.
+9. **Konto entsteht im Einladungsweg schon beim Code** (§0.12.5 Nr. 9 „Konto nur, wenn der Beitritt gelingt“): Hook prüft Einladung + Platz vorab; bricht die Person beim Namen ab, bleibt ein Konto ohne Reise – unkritisch.
+
+#### Hinweise ohne Finding (P1-B0)
+- **Fail closed auf allen Wegen:** Konten entstehen nur über `internalAdapter.createUser` (E-Mail-OTP, Magic Link; `/sign-up/email` ist `disableSignUp`) → `databaseHooks.user.create.before` → `enforceBetaSignup`. Ohne Header/Cookie → `BETA_SIGNUP_REQUIRED`. Neue E2E-Tests: Magic Link ohne Pass → kein Konto, A.5-Zustand; `POST /api/auth/sign-up/email` → abgelehnt, kein Konto.
+- **Pässe:** HMAC-SHA-256, Schlüssel per HKDF mit eigenem `info` je Cookie, `timingSafeEqual`, Alter ≤ 24 h (+60 s Uhrversatz), `kid`-Bindung (Rotation beendet offene Pässe), kein Code/keine Adresse/kein Token im Cookie. E2E neu: `httpOnly`, `Secure`, `SameSite=Lax`, Laufzeit 24 h, manipulierte Zustimmung → wertlos. Code-Vergleich über alle Codes ohne frühe Rückkehr.
+- **Konto-Ermittlung:** `/beta` adressunabhängig; Code-Anforderung neutral (Versand im Hintergrund, 30/Tag-Kappe still); Ablehnung erst nach bewiesenem Postfach. Logs im E2E-Lauf nur Zähler (`beta_code.*`, `beta_signup.*`) – keine Adressen, Codes, IPs.
+- **Kanonischer Host:** Ziel immer `APP_URL`-Origin + Pfad → kein Open Redirect; Ausnahmen nur Löschjob/Health.
+- **Service Worker:** nur GET/gleiche Origin, Navigation network-first → `/offline`, Cache nur Precache + `/_next/static`; Notschalter löscht `ww-*` und meldet ab; in preview/dev nicht registriert (E2E).
+- **Startschutz:** Regeln Nr. 1–16 mit Unit-Tests; Platzhalter-Prüfung in beta auf `beta`, `legalBeta`, `mail` – die übrigen `[PLATZHALTER`-Texte (`legal.privacy/imprint`) sind in beta nicht erreichbar (`LegalPage` → `BetaLegalPage`).
+- **Rechtstexte:** `legalBeta` entspricht compliance §13.4 wörtlich, `beta.privacy.p1–p6` §13.6, Mail-Footer §13.6.
+- **Bestehende Modi:** preview weiter Basic Auth + Demo-Postfach (E2E preview grün), Migration 0013 nur nullable Spalten (rückwärtskompatibel), `vercel-build` ohne Seed in beta, beta nur aus Zweig `beta`.
+- **Nebenbefund:** im E2E-Log einmal `pg` DeprecationWarning „client.query() when the client is already executing a query“ (vermutlich parallele Abfragen auf einem Client) – nicht beta-spezifisch, beobachten.

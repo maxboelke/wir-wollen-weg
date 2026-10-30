@@ -33,7 +33,10 @@ export function Feedback({ config, open, onClose }: FeedbackProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect -- page title/user agent only readable in the browser
     setBody(
       t("body", {
-        area: feedbackArea(document.title, tApp("name")),
+        area: feedbackArea(document.title, tApp("name"), window.location.pathname, {
+          invite: t("areas.invite"),
+          travelData: t("areas.travelData"),
+        }),
         device: t(`devices.${device}`),
         installed: isStandalone() ? t("yes") : t("no"),
         version: APP_VERSION,

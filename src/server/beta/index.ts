@@ -2,7 +2,7 @@ import "server-only";
 import { APIError } from "better-auth/api";
 import { and, count, eq, isNull } from "drizzle-orm";
 import { cookies } from "next/headers";
-import { isBeta, resolveAppUrl } from "@/lib/app-env";
+import { isBeta, resolveAppEnv, resolveAppUrl } from "@/lib/app-env";
 import {
   BETA_CONSENT_VERSION,
   betaInviteSignupEnabled,
@@ -49,10 +49,19 @@ export const BETA_SIGNUP_REQUIRED = "BETA_SIGNUP_REQUIRED";
 export const BETA_FULL = "BETA_FULL";
 
 const GLOBAL = "global";
+/** Modes that may sign passes with the fixed local key (like deriveEmailLimitKey). */
+const LOCAL_SECRET_ENVS = new Set(["development", "ci"]);
 
 function secret(): string {
-  // In beta the start guard requires BETTER_AUTH_SECRET (deriveEmailLimitKey, R-028).
-  return serverEnv().BETTER_AUTH_SECRET ?? "dev-only-beta-pass-secret-0123456789";
+  // In beta the start guard requires BETTER_AUTH_SECRET (deriveEmailLimitKey, R-028). The fixed
+  // local key is only for development/CI – never a publicly known signing key for the passes,
+  // even if the start guard did not run in this instance (fail closed).
+  const configured = serverEnv().BETTER_AUTH_SECRET;
+  if (configured) return configured;
+  if (!LOCAL_SECRET_ENVS.has(resolveAppEnv())) {
+    throw new Error("BETTER_AUTH_SECRET is required for the beta passes");
+  }
+  return "dev-only-beta-pass-secret-0123456789";
 }
 
 function configuredCodes(): string[] {

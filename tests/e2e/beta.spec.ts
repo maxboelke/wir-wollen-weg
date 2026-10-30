@@ -291,6 +291,77 @@ test.describe("sign-up and sign-in", () => {
   });
 });
 
+test.describe("review hardening (R-086, deployment.md §0.12.5)", () => {
+  test("beta pass: httpOnly, Secure, SameSite=Lax, 24 h – a tampered pass is worthless", async ({
+    page,
+    context,
+  }) => {
+    await page.goto("/beta");
+    await enterCode(page, CODE);
+    await expect(page.getByRole("heading", { name: de.beta.privacy.heading })).toBeVisible();
+    const pass = (await context.cookies()).find((cookie) => cookie.name === "ww_beta_pass");
+    expect(pass).toMatchObject({ httpOnly: true, secure: true, sameSite: "Lax", path: "/" });
+    const lifetime = (pass?.expires ?? 0) - Date.now() / 1000;
+    expect(lifetime).toBeGreaterThan(23 * 3600);
+    expect(lifetime).toBeLessThanOrEqual(24 * 3600 + 60);
+    // Neither the code nor its normalised form is in the cookie.
+    const payload = Buffer.from((pass?.value ?? "").split(".")[0] ?? "", "base64url").toString();
+    expect(payload.toLowerCase()).not.toContain("e2ebetacode2026");
+    expect(payload).not.toContain(CODE);
+
+    // Forged consent (payload changed, old signature) → back to step 1.
+    const forged = JSON.stringify({ ...(JSON.parse(payload) as object), consent: "beta-1" });
+    if (!pass) throw new Error("no beta pass");
+    await context.addCookies([
+      {
+        ...pass,
+        value: `${Buffer.from(forged).toString("base64url")}.${pass.value.split(".")[1] ?? ""}`,
+      },
+    ]);
+    await page.goto("/beta");
+    await expect(page.getByLabel(de.beta.code.label)).toBeVisible();
+  });
+
+  test("magic link without beta pass creates no account; /sign-up/email stays closed", async ({
+    page,
+    baseURL,
+  }) => {
+    const email = uniqueEmail("magic");
+    await page.goto("/login");
+    await page.getByLabel(de.auth.emailLabel).fill(email);
+    await page.getByRole("button", { name: de.auth.sendCode }).click();
+    const mail = await waitForAccessMail(email);
+    // The link points to APP_URL (https://localhost:…) – same server over http in the test.
+    const link = new URL(mail.magicLink);
+    await page.goto(`${baseURL ?? ""}${link.pathname}${link.search}`);
+    const go = page.getByRole("button", { name: de.magic.continue });
+    if (await go.isVisible()) await go.click();
+    await expect(page.getByRole("heading", { name: de.beta.signup.missingHeading })).toBeVisible();
+    expect(await query(`select id from "user" where email = $1`, [email])).toHaveLength(0);
+
+    const signUp = await page.request.post("/api/auth/sign-up/email", {
+      data: { email: uniqueEmail("signup"), password: "a-long-password-123!", name: "X" },
+      headers: { origin: baseURL ?? "" },
+    });
+    expect(signUp.ok()).toBe(false);
+    expect(await query(`select id from "user" where email like 'signup-%'`)).toHaveLength(0);
+  });
+
+  test("feedback text on an invite page never carries the trip name", async ({ page }) => {
+    await signUpViaBeta(page, "Fee");
+    await expect(page).toHaveURL(/\/install\?/);
+    const trip = await seedTrip("Geheimreise Porto", { organizer: "Lena Berg" });
+    await page.goto(`/i/${trip.token}`);
+    await page.getByRole("button", { name: de.menu.open.replace("{name}", "Fee") }).click();
+    await page.getByRole("button", { name: de.menu.feedback }).click();
+    const sheet = page.getByRole("dialog", { name: de.feedback.heading });
+    const href = await sheet.getByRole("link", { name: de.feedback.whatsapp }).getAttribute("href");
+    const text = decodeURIComponent(href ?? "");
+    expect(text).toContain(`Bereich: ${de.feedback.areas.invite}`);
+    expect(text).not.toContain("Geheimreise");
+  });
+});
+
 test.describe("PWA (deployment.md §0.12.6)", () => {
   test("manifest, offline page and service worker without personal data in the cache", async ({
     page,

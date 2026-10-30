@@ -10,6 +10,15 @@ const appEnv = resolveAppEnv();
 const branch = process.env.VERCEL_GIT_COMMIT_REF ?? "";
 const wanted = branchForAppEnv(appEnv);
 
+// Only production deployments are ever built (scripts/vercel-build.ts refuses the rest) – skip
+// branch/PR deployments here instead of producing a red deployment.
+const vercelEnv = process.env.VERCEL_ENV;
+if (vercelEnv && vercelEnv !== "production") {
+  console.log(
+    `[vercel-ignore] skipped: VERCEL_ENV=${vercelEnv} – only production deployments build`,
+  );
+  process.exit(0);
+}
 if (wanted && branch !== wanted) {
   console.log(`[vercel-ignore] skipped: branch ${branch || "?"} – this project builds ${wanted}`);
   process.exit(0);
