@@ -123,7 +123,8 @@ test.describe("brand assets", () => {
     expect(manifest).toMatchObject({
       short_name: "When do we go?",
       theme_color: "#2B2266",
-      background_color: "#F4F2FB",
+      // W23 C.3 / D-76: indigo start surface – no bright flash in dark mode.
+      background_color: "#2B2266",
     });
     const manifestDe = (await (await request.get("/manifest-de.webmanifest")).json()) as {
       short_name: string;
