@@ -197,6 +197,11 @@ test.describe("Flow J dialogs", () => {
       page.getByRole("status").filter({ hasText: "Ben is now the organizer." }),
     ).toBeVisible();
     expect(await organizerName(publicId)).toBe("Ben");
+    // Wait for the router.refresh() after the hand-over to land (Lena loses the organizer
+    // actions). A goto while it is still in flight aborts its RSC fetch, and Next.js answers a
+    // failed refresh with a hard navigation to the current URL (/trips/<id>) – on WebKit that
+    // interrupted the goto below («interrupted by another navigation»).
+    await expect(page.getByRole("button", { name: "Actions for Ben" })).toHaveCount(0);
     await page.goto(`/trips/${publicId}/settings`);
     await expect(page).toHaveURL(new RegExp(`/trips/${publicId}$`));
     await ben.page.goto(`/trips/${publicId}/settings`);
