@@ -57,7 +57,7 @@ async function signUpViaBeta(page: Page, name: string): Promise<string> {
   return email;
 }
 
-function rawGet(url: string, host: string): Promise<{ status: number; location?: string }> {
+function rawGet(url: string, host: string): Promise<{ status: number; location: string | undefined }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest(url, { headers: { host } }, (res) => {
       res.resume();
