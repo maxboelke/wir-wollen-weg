@@ -297,7 +297,7 @@ export async function handleAuthRequest(request: Request): Promise<Response> {
   }
   const response = await auth().handler(new Request(request.url, init));
   // Sign-out over HTTP: leave no app caches behind on this device (deployment.md §0.12.6 Nr. 6).
-  if (new URL(request.url).pathname.endsWith("/sign-out") && response.ok) {
+  if (new URL(request.url).pathname.endsWith("/sign-out")) {
     const headers = new Headers(response.headers);
     headers.set("Clear-Site-Data", '"cache"');
     return new Response(response.body, {

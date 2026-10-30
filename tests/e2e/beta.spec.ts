@@ -27,6 +27,15 @@ test.use({ locale: "de-DE" });
 // One database for all tests of this file (the account count matters): in order, one worker.
 test.describe.configure({ mode: "default" });
 
+// Better Auth allows 3 code requests per minute and IP – every test gets its own address.
+let ipCounter = 0;
+test.beforeEach(async ({ context }) => {
+  ipCounter += 1;
+  await context.setExtraHTTPHeaders({
+    "x-forwarded-for": `198.18.${String(Math.floor(Math.random() * 250))}.${String(ipCounter)}`,
+  });
+});
+
 test.beforeAll(async () => {
   await query(
     `truncate "user", trip, rate_limit_event, rate_limit, auth_attempt, verification cascade`,
@@ -57,7 +66,10 @@ async function signUpViaBeta(page: Page, name: string): Promise<string> {
   return email;
 }
 
-function rawGet(url: string, host: string): Promise<{ status: number; location: string | undefined }> {
+function rawGet(
+  url: string,
+  host: string,
+): Promise<{ status: number; location: string | undefined }> {
   return new Promise((resolve, reject) => {
     const req = httpRequest(url, { headers: { host } }, (res) => {
       res.resume();
@@ -201,7 +213,11 @@ test.describe("sign-up and sign-in", () => {
     expect(mail.text).not.toContain("Impressum");
 
     // Existing accounts sign in on /login without a beta code – and see no install step.
-    const other = await browser.newContext({ baseURL: baseURL ?? "", locale: "de-DE" });
+    const other = await browser.newContext({
+      baseURL: baseURL ?? "",
+      locale: "de-DE",
+      extraHTTPHeaders: { "x-forwarded-for": "198.19.0.12" },
+    });
     const second = await other.newPage();
     const seen = await mailIds(email);
     await second.goto("/login");
@@ -318,8 +334,10 @@ test.describe("PWA (deployment.md §0.12.6)", () => {
 
     // Sign-out over HTTP sends Clear-Site-Data (§0.12.6 Nr. 6).
     const signOut = await page.request.post("/api/auth/sign-out", {
-      headers: { origin: baseURL ?? "" },
+      headers: { origin: baseURL ?? "", "content-type": "application/json" },
+      data: {},
     });
+    expect(signOut.status(), await signOut.text()).toBe(200);
     expect(signOut.headers()["clear-site-data"]).toBe('"cache"');
   });
 
