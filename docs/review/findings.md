@@ -1018,7 +1018,7 @@ Geprüft: alle Commits seit `origin/main`. Lint, Typecheck, i18n, Format, Unit (
 - Datei: src/features/auth/components/email-access-form.tsx (Übergabe A.5 → `/beta` → `/login?from=beta`, `BETA_EMAIL_STORAGE_KEY`)
 - Problem / Reproduktion: Neue Adresse auf `/login` ohne Pass → Code richtig → „Fast – dir fehlt noch der Beta-Code“ → Taste → Adresse liegt in `sessionStorage`, bis `/login?from=beta` sie liest oder der Tab geschlossen wird. §13.5 nennt `sessionStorage` nur „Formularzustand, nur App-Modus, keine Codes“.
 - Erwartetes Verhalten: Zeile in §13.5 ergänzen („E-Mail-Adresse zur Übergabe zwischen Beta-Schritten, endet mit dem Tab bzw. beim Lesen gelöscht“). Code-Änderung nicht nötig.
-- Status: offen
+- Status: behoben (CEO 2026-10-30, compliance §13.5 ergänzt)
 
 #### Bewertete Abweichungen des Developers (alle akzeptiert)
 1. **Zustimmung vor „Code senden“ im Einladungsweg** (W23: Z4a beim Namen): technisch zwingend – das Konto entsteht beim Prüfen des Codes, der Hook braucht die Zustimmung vorher; vorher ist ohne Konto-Ermittlung nicht bekannt, ob die Adresse neu ist. Folge: auch Bestandskonten sehen auf `/i/*` den Haken (W23 Z4b „keine Checkbox“) – vertretbar. UX bitte W23 A.8 nachziehen.
