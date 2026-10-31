@@ -13,6 +13,7 @@ import { RadioGroup } from "@/components/ui/radio-group";
 import type { DeletionChoice } from "@/lib/account-deletion";
 import { formatExact } from "@/lib/costs";
 import { formatDate, isoDateInZone } from "@/lib/dates";
+import { clearAppCaches } from "@/components/service-worker";
 import { deleteAccountAction } from "../actions";
 import { ReauthStep } from "./reauth-step";
 import styles from "./account.module.css";
@@ -83,6 +84,8 @@ export function DeleteAccountFlow({
     setError(null);
     const plan = Object.fromEntries(organized.map((trip) => [trip.publicId, choiceOf(trip)]));
     startTransition(async () => {
+      // Installed app: drop the app caches on this device (deployment.md §0.12.6 Nr. 6).
+      await clearAppCaches().catch(() => undefined);
       const result = await deleteAccountAction(plan);
       // Success redirects to /goodbye and resolves without a result.
       if (!result.error) return;

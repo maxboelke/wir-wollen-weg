@@ -1,6 +1,6 @@
 # Beta-Anleitung – geschlossene Freundes-Beta (Gate G0) auf Vercel + Neon
 
-Stand: 2026-10-23 (v1.0) · Gepflegt von: Operations Manager · Zielgruppe: Teil A Auftraggeber (Windows-PC + iPhone, keine Programmierkenntnisse nötig), Teil B Developer/Reviewer, Teil C alle · Entscheidung: CEO + Auftraggeber 2026-10-23 („Stufe B“, Gate **G0 Beta**) · Oberfläche und Texte: [W23 – Beta & Installation](../ux/wireframes/w23-beta-und-installation.md) · Technik im Detail: [deployment.md §0.12](deployment.md) · Recht: [compliance-checklist.md §13](compliance-checklist.md) · Gate: [go-live.md – Gate G0](go-live.md)
+Stand: 2026-10-30 (v1.1 – Beta-Modus gebaut, P1-B0; Einladungsweg = Variante B) · Gepflegt von: Operations Manager · Zielgruppe: Teil A Auftraggeber (Windows-PC + iPhone, keine Programmierkenntnisse nötig), Teil B Developer/Reviewer, Teil C alle · Entscheidung: CEO + Auftraggeber 2026-10-23 („Stufe B“, Gate **G0 Beta**) · Oberfläche und Texte: [W23 – Beta & Installation](../ux/wireframes/w23-beta-und-installation.md) · Technik im Detail: [deployment.md §0.12](deployment.md) · Recht: [compliance-checklist.md §13](compliance-checklist.md) · Gate: [go-live.md – Gate G0](go-live.md)
 
 Mit dieser Anleitung bekommt die App eine **eigene Adresse** (z. B. `https://app.deine-domain.de`), verschickt **echte Login-Mails** und lässt sich auf dem iPhone **wie eine App auf den Home-Bildschirm legen**. Deine Freundinnen und Freunde registrieren sich mit einem **Beta-Code**, den nur ihr kennt. Die bestehende Vorschau (Demo-Daten, Zugangspasswort) bleibt unverändert daneben bestehen.
 
@@ -30,7 +30,7 @@ Mit dieser Anleitung bekommt die App eine **eigene Adresse** (z. B. `https://app
 - [ ] Domain gekauft, Zwei-Faktor-Anmeldung beim Registrar an (Kapitel 1)
 - [ ] Lettermint-Konto, AVV (DPA) gespeichert, Absender-Domain **verifiziert** (SPF, DKIM, DMARC), Tracking aus, SMTP-Token notiert (Kapitel 2)
 - [ ] Neon-Projekt `wir-wollen-weg-beta` (Frankfurt, Postgres 18), zwei Adressen kopiert (Kapitel 3)
-- [ ] **Team sagt: Beta-Modus ist fertig** (P1-B0 gemergt, Zweig `beta` existiert)
+- [ ] **Team sagt: Beta-Modus ist fertig** (P1-B0 vom Reviewer freigegeben und gemergt, Zweig `beta` vom Team angelegt)
 - [ ] Zufallswerte, Beta-Code, Name/Kontakt, Feedback-Kontakt in der Notiz (Kapitel 4)
 - [ ] Vercel: KI-Training abgeschaltet, Projekt `wir-wollen-weg-beta` mit Variablen angelegt, Zweig `beta` eingestellt (Kapitel 5)
 - [ ] `app.<deine-domain>` mit Vercel verbunden, `.vercel.app`-Adresse leitet um (Kapitel 6)
@@ -230,7 +230,7 @@ Die Beta bekommt nicht jede Änderung sofort, sondern nur Stände, die das Team 
    - Tippe absichtlich einmal einen **falschen** Code: Es muss sofort „Dieser Beta-Code stimmt nicht …“ erscheinen.
 4. **„Kurz zum Datenschutz“** lesen → Häkchen setzen → **„Weiter“**.
 5. Deine echte E-Mail-Adresse → **„Code senden“**. Die Mail kommt innerhalb von ca. 1 Minute von `login@mail.<deine-domain>` – **oben steht der 6-stellige Code**. **Nicht da?** Im **Spam-Ordner** nachsehen (Kapitel 10, Fall C).
-6. Code eingeben → Namen eingeben → es erscheint einmal **„Hol dir die App auf den Home-Bildschirm“** (am PC einfach **„Später“**). Lege eine Test-Reise an.
+6. Code eingeben → Namen eingeben → es erscheint einmal **„Hol dir die App auf den Home-Bildschirm“** (am PC steht dort eine kurze Anleitung fürs Handy – einfach **„Später“**). Lege eine Test-Reise an.
 
 ### 7.2 Am iPhone (als App auf dem Home-Bildschirm)
 
@@ -261,9 +261,7 @@ Android (Chrome): Die App bietet nach der Registrierung **„App installieren“
    > Kurz zum Datenschutz: Das ist eine private Test-Version. Die Daten liegen in Frankfurt, die App läuft bei Vercel (US-Anbieter), Mails kommen über Lettermint (NL). Bitte keine Ausweis- oder Gesundheitsdaten in Notizen. Du kannst dein Konto jederzeit in der App löschen – Details unter „Datenschutz“.
 
    Englische Fassung: W23 A.1. Bequemer (optional): Link mit vorausgefülltem Code `https://app.{deine-domain}/beta#code={BETA-CODE}` – der Code steht trotzdem lesbar in der Nachricht.
-2. **Wer weitere Freunde in eine Reise holt**, nutzt wie gewohnt den Einladungslink der Reise. Ob diese Neulinge **zusätzlich** den Beta-Code brauchen, entscheidest du (E-G0-2, Status-Board):
-   - **Variante B – Einladungslink ersetzt den Beta-Code** *(Empfehlung UX, Operations trägt mit)*: Wer einen Einladungslink bekommt, registriert sich direkt dabei (nur Datenschutz-Häkchen). Die Höchstzahl an Konten (Standard 50) gilt trotzdem; bei Missbrauch gibt es einen Notschalter (Kapitel 9).
-   - **Variante A – jeder braucht den Beta-Code**: Neulinge brauchen vorher eine Nachricht von dir oder der Orga mit dem Code; der Code wandert dadurch eher in Gruppenchats.
+2. **Wer weitere Freunde in eine Reise holt**, nutzt wie gewohnt den Einladungslink der Reise. **Entschieden (E-G0-2, 2026-10-23): Variante B – der Einladungslink ersetzt den Beta-Code.** Wer einen Einladungslink bekommt, registriert sich direkt dabei: Auf der Einladungsseite steht „{Orga} hat dich zur Beta eingeladen – du brauchst keinen Beta-Code.“; vor „Code senden“ setzt die Person einmal das Datenschutz-Häkchen (die Kurzfassung lässt sich dort aufklappen). Die Höchstzahl an Konten (Standard 50) gilt trotzdem; bei Missbrauch gibt es einen Notschalter (Kapitel 9) – dann brauchen auch Eingeladene wieder den Beta-Code.
 3. Rückmeldungen kommen über „Feedback geben“ per WhatsApp/Mail bei dir an. Sammle sie an einer Stelle und gib sie dem CEO (ohne Namen der Tester, wenn nicht nötig).
 
 ---
@@ -356,7 +354,7 @@ Kurzfassung; verbindliche Details in [deployment.md §0.12](deployment.md), Ober
 | B2 | Env-Liste | Pflicht: `APP_ENV`, `APP_URL`, `BETTER_AUTH_SECRET`, `DATABASE_URL`, `DATABASE_URL_UNPOOLED`, `MAIL_TRANSPORT`, `SMTP_HOST`, `SMTP_PORT`, `SMTP_SECURE`, `SMTP_USER`, `SMTP_PASSWORD`, `MAIL_FROM`, `CONTACT_EMAIL`, `LEGAL_OPERATOR_NAME`, `BETA_ACCESS_CODES`, `CRON_SECRET`, `TRAVEL_DATA_ENABLED=false`. Optional: `MAIL_REPLY_TO`, `MAIL_FROM_NAME_DE/_EN`, `BETA_MAX_ACCOUNTS`, `BETA_INVITE_SIGNUP`, `FEEDBACK_WHATSAPP_NUMBER`, `FEEDBACK_EMAIL`, `PWA_SW_ENABLED`, `PASSWORD_BREACH_CHECK`, `APP_TIME_ZONE`. `.env.example` um die neuen Namen ergänzen (ohne Werte) | §0.12.3, §4 |
 | B3 | Beta-Code serverseitig | Eigene Seite `/beta`: Code wird **vor** jedem Mailversand geprüft, klare Fehlermeldung (verrät nichts über Konten). Normalisierung + zeitkonstanter Vergleich gegen alle Codes; Codes nie loggen/an Client. Signiertes httpOnly-Cookie `ww_beta_pass` (24 h, HKDF aus `BETTER_AUTH_SECRET`, `kid` → Rotation beendet offene Pässe). Durchsetzung ausschließlich in `databaseHooks.user.create.before` (fail closed) inkl. `BETA_MAX_ACCOUNTS`; Zustimmung (`betaConsentVersion`, `betaConsentAt`, `betaSignupVia`) am Konto | §0.12.5 Nr. 1–6 |
 | B4 | Rate-Limit + Rotation | `/beta`: 5 Fehlversuche/15 Min. und 20/Tag pro IP (/64), global 200/Tag → 1 h zu; Mails an Adressen ohne Konto und ohne Pass max. 30/Tag global. Rotation über Reihenfolge in `BETA_ACCESS_CODES` (erster = aktuell, bis 5 Einträge) | §0.12.5 Nr. 4, 7, 8 |
-| B5 | Einladungsweg | Entscheidung E-G0-2 offen beim Auftraggeber; Hook so bauen, dass Variante A ↔ B eine Bedingung ist. Variante B: `ww_invite_pass` + Prüfung „Einladung noch gültig“, Notschalter `BETA_INVITE_SIGNUP=false`. Variante A: UI W23 A.8 „Variante streng“ | §0.12.5 Nr. 9 |
+| B5 | Einladungsweg | **Entschieden E-G0-2 = Variante B** (2026-10-23, gebaut in P1-B0); Hook so bauen, dass Variante A ↔ B eine Bedingung ist. Variante B: `ww_invite_pass` + Prüfung „Einladung noch gültig“, Notschalter `BETA_INVITE_SIGNUP=false`. Variante A: UI W23 A.8 „Variante streng“ | §0.12.5 Nr. 9 |
 | B6 | PWA | Manifest `id: "/"`, `start_url: "/"`, `scope: "/"`, Name ohne „Beta“, kein `orientation`; `appleWebApp` mit `statusBarStyle: "black-translucent"` + Safe-Area-Band; `apple-touch-icon` 180×180 ohne Transparenz (vorhanden); `viewport-fit=cover`; `theme-color` hell/dunkel; Routen **`/beta`** (nur beta), **`/install`**, **`/offline`**; „Einladungslink einfügen“ nur im App-Modus; Login in der App per 6-stelligem Code, „Angemeldet bleiben“ immer an | §0.12.6, W23 B, C |
 | B7 | Service Worker | `/sw.js`, nur in `beta`/`production`, Notschalter `PWA_SW_ENABLED=false`. Precache **nur** `/offline` + Logo, Schriften, Tokens-CSS; `/_next/static/*` cache-first; Navigationen Netz zuerst, Fallback `/offline`; **nichts sonst** beantworten oder cachen (kein HTML, kein RSC, keine Server Actions, kein `/api`, `/auth`, `/i`, `/trips`, `/account`). **Keine personenbezogenen Daten im Cache** – E2E-Test prüft den Cache-Inhalt. Abmelden/Konto löschen: `Clear-Site-Data: "cache"` | §0.12.6 |
 | B8 | CSP | Stufe 1 um `worker-src 'self'` und `manifest-src 'self'` ergänzen; keine externen Quellen; `Permissions-Policy` nicht um `clipboard-read` einschränken | §0.12.7 |

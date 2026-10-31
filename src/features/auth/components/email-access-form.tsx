@@ -14,12 +14,17 @@ import {
 } from "react";
 import { flushSync } from "react-dom";
 import { Button } from "@/components/ui/button";
+import { buttonClassName } from "@/components/ui/button-styles";
 import { CodeField, type CodeFieldStatus } from "@/components/ui/code-field";
-import { Checkbox, TextField } from "@/components/ui/field";
+import { Checkbox, FieldError, TextField } from "@/components/ui/field";
 import { PRIVACY_PATHS } from "@/lib/legal";
 import { Icon } from "@/components/ui/icon";
 import { PasswordField } from "@/components/ui/password-field";
 import { savePassword } from "@/features/account/actions";
+import { startInviteSignup } from "@/features/beta/actions";
+import { PasteLink } from "@/features/beta/components/paste-link";
+import { PrivacySummary } from "@/features/beta/components/privacy-summary";
+import { BETA_EMAIL_STORAGE_KEY, betaPath } from "@/features/beta/paths";
 import { useDemoInbox } from "@/features/demo/demo-inbox-context";
 import { demoInboxHref } from "@/lib/demo-inbox";
 import { isLocale } from "@/i18n/config";
@@ -27,6 +32,7 @@ import { CODE_LENGTH, normalizeCode } from "@/lib/code";
 import { helpHref } from "@/lib/help";
 import { formString } from "@/lib/form";
 import { DISTANCE, enter } from "@/lib/motion";
+import { useStandalone } from "@/lib/use-standalone";
 import { checkPassword } from "@/lib/password-policy";
 import {
   clearPendingAuth,
@@ -48,13 +54,13 @@ import styles from "./email-access-form.module.css";
 import { NoMailHelp } from "./no-mail-help";
 import { ResendCode } from "./resend-code";
 
-type Step = "email" | "code" | "name";
+type Step = "email" | "code" | "name" | "beta";
 type SendState = "sending" | "sent";
 
 /** Success state stays visible this long before the next step (W02-05: ≤ 450 ms). */
 export const SUCCESS_HOLD_MS = 450;
 
-const STEP_ORDER: Record<Step, number> = { email: 0, code: 1, name: 2 };
+const STEP_ORDER: Record<Step, number> = { email: 0, code: 1, name: 2, beta: 2 };
 const STEP_PARAM = "step";
 const PASSWORD_PROBLEMS = {
   tooShort: "passwordTooShort",
@@ -82,6 +88,12 @@ interface EmailAccessFormProps {
   notice?: ReactNode;
   /** Pre-filled name of the name step – the placeholder's name on a personal link (F-007). */
   defaultName?: string | undefined;
+  /**
+   * Friends beta (W23 A.5–A.8, deployment.md §0.12.5): `fromBeta` = coming from /beta (consent
+   * given); `inviteToken` = invite way of variant B – short privacy notice + consent before the
+   * code is requested (sets the invite pass).
+   */
+  beta?: { fromBeta?: boolean; inviteToken?: string | undefined } | undefined;
 }
 
 function urlWithStep(step: Step | null): string {
@@ -112,11 +124,15 @@ export function EmailAccessForm({
   notice,
   onSignedIn,
   defaultName,
+  beta,
 }: EmailAccessFormProps) {
   const t = useTranslations("auth");
   const tCommon = useTranslations("common");
   const tInvite = useTranslations("invite");
   const tTripForm = useTranslations("tripForm");
+  const tBeta = useTranslations("beta");
+  const tApp = useTranslations("app");
+  const standalone = useStandalone();
   const rawLocale = useLocale();
   const locale = isLocale(rawLocale) ? rawLocale : "en";
   const router = useRouter();
@@ -146,6 +162,8 @@ export function EmailAccessForm({
   const [restored, setRestored] = useState(false);
   const [inApp, setInApp] = useState(false);
   const [now, setNow] = useState(() => Date.now());
+  const [betaBlock, setBetaBlock] = useState<"missing" | "full">("missing");
+  const consentRef = useRef<HTMLInputElement>(null);
 
   // W02-01: the new step fades in from the right (back: from the left); reduced = fade.
   useLayoutEffect(() => {
@@ -167,6 +185,13 @@ export function EmailAccessForm({
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect -- browser storage is only readable after mounting */
     setInApp(isInAppBrowser(navigator.userAgent));
+    if (beta?.fromBeta) {
+      const stored = window.sessionStorage.getItem(BETA_EMAIL_STORAGE_KEY);
+      if (stored) {
+        window.sessionStorage.removeItem(BETA_EMAIL_STORAGE_KEY);
+        setEmail(stored);
+      }
+    }
     const pending = loadPendingAuth();
     if (pending && pending.origin === origin) {
       setEmail(pending.email);
@@ -179,7 +204,7 @@ export function EmailAccessForm({
       window.history.replaceState(window.history.state, "", urlWithStep(null));
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [origin]);
+  }, [origin, beta?.fromBeta]);
 
   // Browser back from the code step returns to the e-mail step (ux-spec §3), e-mail stays.
   useEffect(() => {
@@ -217,6 +242,8 @@ export function EmailAccessForm({
         email: value,
         callbackURL: returnTo,
         locale,
+        // Installed app: the magic-link page advises to use the code instead (W23 A.6).
+        ...(standalone ? { app: true } : {}),
       });
       return response.ok ? null : await readAuthError(response);
     } catch {
@@ -249,7 +276,9 @@ export function EmailAccessForm({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const value = formText(formData, "email").toLowerCase();
-    const remember = variant === "login" ? formData.get("rememberMe") === "on" : true;
+    // Installed app: «Angemeldet bleiben» is always on and not shown (W23 A.7).
+    const remember =
+      variant === "login" && !standalone ? formData.get("rememberMe") === "on" : true;
     setEmail(value);
     setRememberMe(remember);
     setError(null);
@@ -260,6 +289,14 @@ export function EmailAccessForm({
     }
     if (mode === "password") {
       void signInWithPassword(value, formString(formData, "password"), remember);
+      return;
+    }
+    // Friends beta, invite way (variant B): consent to the short notice first (W23 A.8).
+    const inviteToken = beta?.inviteToken;
+    const consent = formData.get("betaConsent") === "on";
+    if (inviteToken && !consent) {
+      setError({ key: "consentRequired" });
+      consentRef.current?.focus();
       return;
     }
     // Optimistic (M-U5): switch and focus in the same tap, so iOS opens the keyboard.
@@ -274,6 +311,13 @@ export function EmailAccessForm({
     });
     codeRef.current?.focus();
     void (async () => {
+      if (inviteToken) {
+        const usable = await startInviteSignup(inviteToken, consent).catch(() => false);
+        if (!usable) {
+          backToEmail({ key: "joinInvalid" });
+          return;
+        }
+      }
       const problem = await requestCode(value);
       if (problem) {
         backToEmail(problem);
@@ -353,6 +397,15 @@ export function EmailAccessForm({
       const response = await postAuth("/sign-in/email-otp", { email, otp: value, rememberMe });
       if (!response.ok) {
         const read = await readAuthError(response);
+        // Friends beta: no account without beta code/invitation (W23 A.5) or beta full.
+        if (read.key === "betaMissing" || read.key === "betaFull") {
+          clearPendingAuth();
+          setBetaBlock(read.key === "betaFull" ? "full" : "missing");
+          setCodeStatus("idle");
+          window.history.replaceState(window.history.state, "", urlWithStep(null));
+          setStep("beta");
+          return;
+        }
         // Address locked (R-021): entering codes is paused, the link in the mail still works.
         const problem: AuthError = read.key === "locked" ? { key: "lockedUseLink" } : read;
         setError(problem);
@@ -444,20 +497,62 @@ export function EmailAccessForm({
     : null;
   const passwordError = error?.key.startsWith("password") ? errorText : null;
 
+  if (step === "beta") {
+    // W23 A.5 – the address is proven (code was right), but there is no account and no
+    // beta pass/invitation – or the beta is full. No account was created.
+    const missing = betaBlock === "missing";
+    return (
+      <div ref={rootRef} className={styles.step}>
+        <div className={styles.intro}>
+          <Heading className={styles.heading} tabIndex={-1} ref={(node) => node?.focus()}>
+            {missing ? tBeta("signup.missingHeading") : tBeta("signup.fullHeading")}
+          </Heading>
+          <p className={styles.lead}>
+            {missing ? tBeta("signup.missingText", { email }) : tBeta("signup.fullText")}
+          </p>
+        </div>
+        {missing ? (
+          <>
+            <Link
+              className={buttonClassName({ variant: "primary", block: true })}
+              href={betaPath(undefined, returnTo === "/" ? undefined : returnTo)}
+              onClick={() => {
+                window.sessionStorage.setItem(BETA_EMAIL_STORAGE_KEY, email);
+              }}
+            >
+              {tBeta("signup.missingCta")}
+            </Link>
+            <p className={styles.small}>{tBeta("signup.missingInvite")}</p>
+          </>
+        ) : null}
+      </div>
+    );
+  }
+
   if (step === "email") {
     const passwordMode = mode === "password";
+    const fromBeta = beta?.fromBeta === true;
+    const appStart = standalone && variant === "login" && !fromBeta;
     return (
       <div ref={rootRef} className={styles.step}>
         <div className={styles.intro}>
           <Heading className={styles.heading}>
-            {variant === "login"
-              ? t("loginTitle")
-              : variant === "createTrip"
-                ? tTripForm("authTitle")
-                : tInvite("emailTitle")}
+            {appStart
+              ? t("appHeading")
+              : fromBeta && variant === "login"
+                ? tBeta("login.emailHeading")
+                : variant === "login"
+                  ? t("loginTitle")
+                  : variant === "createTrip"
+                    ? tTripForm("authTitle")
+                    : tInvite("emailTitle")}
           </Heading>
           {notice}
-          {variant === "login" ? <p className={styles.lead}>{t("loginLead")}</p> : null}
+          {variant === "login" ? (
+            <p className={styles.lead}>
+              {appStart ? t("appIntro") : fromBeta ? tBeta("login.emailLead") : t("loginLead")}
+            </p>
+          ) : null}
         </div>
         <form
           key="email"
@@ -476,7 +571,9 @@ export function EmailAccessForm({
             inputMode="email"
             required
             defaultValue={email}
-            error={error && !passwordMode ? errorText : undefined}
+            error={
+              error && !passwordMode && error.key !== "consentRequired" ? errorText : undefined
+            }
           />
           {passwordMode ? (
             <PasswordField
@@ -506,16 +603,55 @@ export function EmailAccessForm({
               {t("forgotPassword")}
             </Link>
           ) : null}
-          {variant === "login" ? (
+          {variant === "login" && !standalone ? (
             <Checkbox
               name="rememberMe"
               defaultChecked={rememberMe}
               label={t("rememberMe")}
               hint={t("rememberMeHint")}
             />
-          ) : (
+          ) : variant === "login" ? null : (
             <p className={styles.small}>{t("rememberMeInline")}</p>
           )}
+          {beta?.inviteToken && !passwordMode ? (
+            // W23 A.8 (variant B): short notice + consent BEFORE the code – the account is
+            // created when the code is verified, so the consent must already be there.
+            <div className={styles.consent}>
+              <details className={styles.optional}>
+                <summary className={styles.noMailSummary}>
+                  <span>{tBeta("privacy.toggle")}</span>
+                  <Icon name="chevron-down" size={18} className={styles.chevron} />
+                </summary>
+                <PrivacySummary />
+                <p className={styles.small}>
+                  {tBeta.rich("privacy.more", {
+                    link: (chunks) => (
+                      <a
+                        className={styles.inlineLink}
+                        href={PRIVACY_PATHS[locale]}
+                        target={standalone ? undefined : "_blank"}
+                        rel="noopener"
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
+                </p>
+              </details>
+              <Checkbox
+                ref={consentRef}
+                name="betaConsent"
+                label={tBeta("privacy.consent")}
+                aria-invalid={error?.key === "consentRequired" ? true : undefined}
+                aria-describedby={
+                  error?.key === "consentRequired" ? `${ids}-consent-error` : undefined
+                }
+              />
+              {error?.key === "consentRequired" ? (
+                <FieldError id={`${ids}-consent-error`}>{errorText}</FieldError>
+              ) : null}
+            </div>
+          ) : null}
           <Button
             type="submit"
             block
@@ -524,7 +660,7 @@ export function EmailAccessForm({
           >
             {passwordMode ? t("signInPassword") : t("sendCode")}
           </Button>
-          {passwordMode ? null : (
+          {passwordMode || fromBeta || beta?.inviteToken ? null : (
             // F-013, ux-spec §11: short privacy notice on sign-up and joining – opens in a new
             // tab so the flow (and a code already on its way) is kept.
             <p className={styles.small}>
@@ -553,9 +689,19 @@ export function EmailAccessForm({
         >
           {passwordMode ? t("withCode") : t("withPassword")}
         </button>
-        {variant === "login" && !passwordMode ? (
+        {variant === "login" && !passwordMode && !beta ? (
           <p className={styles.small}>{t("newHere")}</p>
         ) : null}
+        {variant === "login" && beta && !fromBeta ? (
+          // Friends beta (W23 A.5/A.7): new people sign up with a beta code on /beta.
+          <Link
+            className={styles.textLink}
+            href={betaPath(undefined, returnTo === "/" ? undefined : returnTo)}
+          >
+            {standalone ? t("appNewHere") : tBeta("login.firstTime")}
+          </Link>
+        ) : null}
+        {variant === "login" ? <PasteLink product={tApp("name")} /> : null}
       </div>
     );
   }
@@ -644,6 +790,11 @@ export function EmailAccessForm({
           {locked ? null : (
             <ResendCode secondsLeft={secondsLeft} busy={busy} onResend={() => void resendCode()} />
           )}
+          {standalone ? (
+            <p className={styles.small} role="note">
+              {t("pwaNote")}
+            </p>
+          ) : null}
           <p className={styles.small}>{t("spamHint")}</p>
           {inApp ? <p className={styles.small}>{t("inAppTip")}</p> : null}
           <p className={styles.small}>{t("magicHint")}</p>

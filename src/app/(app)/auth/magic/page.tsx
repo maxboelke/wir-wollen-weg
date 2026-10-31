@@ -41,6 +41,7 @@ export default async function MagicLinkPage({ searchParams }: PageProps<"/auth/m
       tripName={trip?.name}
       signedInAs={session ? session.user.name || session.user.email : undefined}
       illustration={<Illustration name={trip ? "invite" : "code-sent"} />}
+      fromApp={query.app === "1"}
     />
   );
 }

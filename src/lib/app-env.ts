@@ -5,9 +5,22 @@
  * (may run outside the Node.js runtime on a CDN), `src/server/env.ts`, scripts and unit tests.
  */
 
+import { betaStartupProblems } from "./beta-config.ts";
 import { travelDataEnabled, travelDataStartupProblems } from "./travel-data-keys.ts";
 
-export const APP_ENVS = ["development", "demo", "ci", "staging", "preview", "production"] as const;
+/**
+ * `beta` = closed friends beta «Stufe B» on Vercel + Neon with real data (Gate G0,
+ * deployment.md §0.12): no Basic Auth, beta code at sign-up, real mails, PWA.
+ */
+export const APP_ENVS = [
+  "development",
+  "demo",
+  "ci",
+  "staging",
+  "preview",
+  "beta",
+  "production",
+] as const;
 export type AppEnv = (typeof APP_ENVS)[number];
 
 type Env = Record<string, string | undefined>;
@@ -45,7 +58,7 @@ export function resolveAuthUrl(env: Env = process.env): string {
 }
 
 /** Modes that face the internet and therefore need HTTPS (R-064). */
-const HTTPS_ENVS = new Set(["staging", "preview", "production"]);
+const HTTPS_ENVS = new Set(["staging", "preview", "beta", "production"]);
 /** Modes that must never run on Vercel (no password protection, local shortcuts). */
 const LOCAL_ONLY_ENVS = new Set(["development", "ci", "demo"]);
 /**
@@ -65,7 +78,10 @@ export interface StartupInput {
   previewPassword: string | undefined;
   mailTransport: string | undefined;
   onVercel: boolean;
-  /** `[PLATZHALTER` markers left in the legal texts (only evaluated for production). */
+  /**
+   * `[PLATZHALTER` markers left in the texts that are delivered: all legal texts in production,
+   * the beta texts (privacy notice, contact page, mail footer) in beta (§0.12.4 Nr. 8).
+   */
   placeholders: readonly string[];
   /**
    * Environment for the travel-data rules (TRAVEL_DATA_ENABLED, TRAVEL_DATA_KEYS,
@@ -105,10 +121,11 @@ export function startupProblems(input: StartupInput): string[] {
     );
   }
   problems.push(...travelDataStartupProblems(appEnv, input.env ?? {}));
-  if (appEnv === "production" && input.placeholders.length > 0) {
+  if (appEnv === "beta") problems.push(...betaStartupProblems(input.env ?? {}));
+  if ((appEnv === "production" || appEnv === "beta") && input.placeholders.length > 0) {
     const shown = input.placeholders.slice(0, 5).join(", ");
     problems.push(
-      `APP_ENV=production: placeholder texts left (${shown}${input.placeholders.length > 5 ? ", …" : ""}) – compliance-checklist §0a`,
+      `APP_ENV=${appEnv}: placeholder texts left (${shown}${input.placeholders.length > 5 ? ", …" : ""}) – compliance-checklist §0a`,
     );
   }
   return problems;
@@ -164,4 +181,44 @@ export function previewTrustedOrigins(
  */
 export function travelDataOn(env: Env = process.env): boolean {
   return travelDataEnabled(resolveAppEnv(env), env);
+}
+
+/** Closed friends beta (Gate G0, deployment.md §0.12). */
+export function isBeta(env: Env = process.env): boolean {
+  return resolveAppEnv(env) === "beta";
+}
+
+/**
+ * Canonical host (deployment.md §0.12.4 Nr. 9): in beta every request for another host (e.g.
+ * the `*.vercel.app` address) is redirected to APP_URL – except the retention job and the
+ * health check (Vercel Cron may call the vercel.app host and does not follow redirects).
+ * Returns the target URL or null.
+ */
+export function canonicalRedirect(
+  env: Env,
+  request: { host: string | null; pathname: string; search: string },
+): string | null {
+  if (resolveAppEnv(env) !== "beta") return null;
+  if (request.pathname === "/api/internal/retention" || request.pathname === "/api/health") {
+    return null;
+  }
+  let canonical: URL;
+  try {
+    canonical = new URL(resolveAppUrl(env));
+  } catch {
+    return null;
+  }
+  const host = request.host?.trim().toLowerCase();
+  if (!host || host === canonical.host.toLowerCase()) return null;
+  return `${canonical.origin}${request.pathname}${request.search}`;
+}
+
+/**
+ * Branch each Vercel project builds (deployment.md §0.12.2): the preview builds `main`, the
+ * beta builds the release branch `beta`. Other modes do not build on Vercel (null).
+ */
+export function branchForAppEnv(appEnv: string): string | null {
+  if (appEnv === "preview") return "main";
+  if (appEnv === "beta") return "beta";
+  return null;
 }

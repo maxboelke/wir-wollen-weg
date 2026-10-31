@@ -17,9 +17,19 @@ export function DocumentHead() {
   return <script dangerouslySetInnerHTML={{ __html: MOTION_BOOTSTRAP_SCRIPT }} />;
 }
 
-/** Favicons, app icon and the per-language manifest (short_name = full name, CEO U-16). */
-export function brandMetadata(locale: Locale): Pick<Metadata, "icons" | "manifest"> {
+/** Product name per language (Q11) – the name under the Home Screen icon, never «Beta». */
+const APP_TITLE: Record<Locale, string> = { de: "Wir wollen weg", en: "When do we go?" };
+
+/**
+ * Favicons, app icon and the per-language manifest (short_name = full name, CEO U-16), plus the
+ * iOS web-app meta (W23 C.1/C.3): status bar `black-translucent` – content runs below the white
+ * status-bar text, so every page has a dark brand band there (globals.css, standalone only).
+ */
+export function brandMetadata(
+  locale: Locale,
+): Pick<Metadata, "icons" | "manifest" | "appleWebApp"> {
   return {
+    appleWebApp: { capable: true, title: APP_TITLE[locale], statusBarStyle: "black-translucent" },
     icons: {
       icon: [
         { url: "/favicon.ico", sizes: "16x16 32x32" },
@@ -31,7 +41,16 @@ export function brandMetadata(locale: Locale): Pick<Metadata, "icons" | "manifes
   };
 }
 
+/**
+ * Theme colour per scheme (W23 C.3): light = indigo-800 (brand), dark = indigo-900 (cockpit
+ * background in dark mode, tokens.css – until the designer names D-75). `viewport-fit=cover`
+ * so `env(safe-area-inset-*)` works on the iPhone (C.4); zoom stays allowed (ux-spec §2).
+ */
 export const brandViewport: Viewport = {
-  themeColor: "#2B2266",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#2B2266" },
+    { media: "(prefers-color-scheme: dark)", color: "#221B52" },
+  ],
   colorScheme: "light dark",
+  viewportFit: "cover",
 };

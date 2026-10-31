@@ -39,3 +39,49 @@ export function minutesUntilFree(oldest: number | undefined, rule: LimitRule, no
   if (oldest === undefined) return 1;
   return Math.max(1, Math.ceil((oldest + rule.windowMs - now) / MINUTE_MS));
 }
+
+// ---------------------------------------------------------------------------
+// Friends beta (Gate G0, deployment.md §0.12.5 Nr. 4, 7)
+// ---------------------------------------------------------------------------
+
+const DAY_MS = 24 * 60 * MINUTE_MS;
+
+/** Wrong beta codes per IP (IPv6: /64): 5 in 15 minutes … */
+export const BETA_CODE_IP_LIMIT: LimitRule = {
+  kind: "beta-code-ip",
+  limit: 5,
+  windowMs: 15 * MINUTE_MS,
+};
+/** … and 20 a day. */
+export const BETA_CODE_IP_DAY_LIMIT: LimitRule = {
+  kind: "beta-code-ip-day",
+  limit: 20,
+  windowMs: DAY_MS,
+};
+/** All wrong beta codes together: 200 a day … */
+export const BETA_CODE_GLOBAL_LIMIT: LimitRule = {
+  kind: "beta-code-global",
+  limit: 200,
+  windowMs: DAY_MS,
+};
+/** … then the beta entry closes for everybody for one hour (existing accounts unaffected). */
+export const BETA_LOCK: LimitRule = { kind: "beta-lock", limit: 1, windowMs: 60 * MINUTE_MS };
+/**
+ * Code mails to addresses without an account and without a beta/invite pass (someone types a
+ * new address on /login): 30 a day for the whole beta – protects the mail quota (Lettermint
+ * free: 300/month). Above it such mails are silently skipped (same answer).
+ */
+export const BETA_SIGNUP_MAIL_LIMIT: LimitRule = {
+  kind: "beta-signup-mail",
+  limit: 30,
+  windowMs: DAY_MS,
+};
+
+/** Longest window of all rules – the store keeps events this long (housekeeping). */
+export const LONGEST_LIMIT_WINDOW_MS = DAY_MS;
+/** Kinds with a window longer than two hours (kept for a day by the housekeeping). */
+export const DAY_LIMIT_KINDS: readonly string[] = [
+  BETA_CODE_IP_DAY_LIMIT.kind,
+  BETA_CODE_GLOBAL_LIMIT.kind,
+  BETA_SIGNUP_MAIL_LIMIT.kind,
+];

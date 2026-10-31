@@ -45,4 +45,11 @@ describe("authErrorFromResponse (Flow A.2 texts)", () => {
     );
     expect(authErrorFromResponse(500, {}, null).key).toBe("generic");
   });
+
+  it("maps the friends-beta sign-up refusals (deployment.md §0.12.5 Nr. 5)", () => {
+    expect(authErrorFromResponse(403, { code: "BETA_SIGNUP_REQUIRED" }, null).key).toBe(
+      "betaMissing",
+    );
+    expect(authErrorFromResponse(403, { code: "BETA_FULL" }, null).key).toBe("betaFull");
+  });
 });

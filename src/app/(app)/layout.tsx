@@ -7,7 +7,9 @@ import { MotionPreferenceSync } from "@/components/motion-preference-sync";
 import { FlashToast } from "@/components/shell/flash-toast";
 import { ToastProvider } from "@/components/ui/toast";
 import { DemoInboxProvider } from "@/features/demo/demo-inbox-context";
-import { inboxEnabled } from "@/lib/app-env";
+import { inboxEnabled, resolveAppEnv } from "@/lib/app-env";
+import { serviceWorkerEnabled } from "@/lib/beta-config";
+import { ServiceWorker } from "@/components/service-worker";
 import { getSession } from "@/server/session";
 import "@/styles/globals.css";
 
@@ -48,6 +50,7 @@ export default async function AppLayout({ children }: { children: ReactNode }) {
           </DemoInboxProvider>
         </NextIntlClientProvider>
         <MotionPreferenceSync account={accountReduces} />
+        <ServiceWorker enabled={serviceWorkerEnabled(resolveAppEnv(), process.env)} />
       </body>
     </html>
   );

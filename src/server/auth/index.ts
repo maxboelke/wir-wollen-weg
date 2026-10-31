@@ -20,6 +20,7 @@ import {
 } from "../mail/templates";
 import { sendLocalizedMail } from "../mail/transport";
 import { runAfterResponse } from "../background";
+import { enforceBetaSignup, PASS_COOKIES, signupMailAllowed } from "../beta";
 import { findTripByInviteToken } from "../trips";
 import { validateNewPassword } from "./breach-check";
 import { CLIENT_IP_HEADER, parseTrustedProxies, resolveClientIp } from "./client-ip";
@@ -55,6 +56,8 @@ async function accountLocale(
 }
 
 async function sendAccessEmail(payload: AccessEmailPayload): Promise<void> {
+  // Friends beta: mail quota guard for unknown addresses without a pass (§0.12.5 Nr. 4).
+  if (!(await signupMailAllowed(payload.email, payload.headers))) return;
   // New address: language of the UI that asked for the code; existing account: its language.
   const locale =
     (await accountLocale({ email: payload.email })) ??
@@ -130,6 +133,11 @@ function createAuth() {
         subdivision: { type: "string", required: false, input: false },
         weekStart: { type: "string", required: false, defaultValue: "auto", input: false },
         reduceMotion: { type: "boolean", required: false, defaultValue: false, input: false },
+        // Friends beta (§0.12.5 Nr. 5) – set only by the sign-up hook below.
+        betaConsentVersion: { type: "string", required: false, input: false },
+        betaConsentAt: { type: "date", required: false, input: false },
+        betaSignupVia: { type: "string", required: false, input: false },
+        installHintSeenAt: { type: "date", required: false, input: false },
       },
     },
     // Optional password (F-040/F-042). Never a sign-up path of its own: accounts are created
@@ -151,18 +159,31 @@ function createAuth() {
         create: {
           // New accounts take the language currently shown and a region guessed from the
           // browser (F-040, Flow F.1/F.3) – silently, changeable in the account.
-          before: (user, context) => {
+          before: async (user, context) => {
             const headers = context?.headers;
+            // Friends beta: the ONE gate for new accounts – throws without beta/invite pass
+            // or when the beta is full (deployment.md §0.12.5 Nr. 5, fail closed).
+            const beta = await enforceBetaSignup(headers);
             const choice = browserLanguageChoice(headers);
             const locale = choice?.locale ?? requestLocale(headers);
-            return Promise.resolve({
+            return {
               data: {
                 ...user,
+                ...beta,
                 locale,
                 localeChosenAt: choice?.at ?? null,
                 country: regionFromAcceptLanguage(headers?.get("accept-language"), locale),
               },
-            });
+            };
+          },
+          after: (user, context) => {
+            // The beta/invite pass is spent with the account (Max-Age=0).
+            if (user.betaSignupVia && context) {
+              for (const name of PASS_COOKIES) {
+                context.setCookie(name, "", { path: "/", maxAge: 0 });
+              }
+            }
+            return Promise.resolve();
           },
         },
       },
@@ -274,7 +295,18 @@ export async function handleAuthRequest(request: Request): Promise<Response> {
     init.body = request.body;
     init.duplex = "half"; // required by undici for stream bodies
   }
-  return auth().handler(new Request(request.url, init));
+  const response = await auth().handler(new Request(request.url, init));
+  // Sign-out over HTTP: leave no app caches behind on this device (deployment.md §0.12.6 Nr. 6).
+  if (new URL(request.url).pathname.endsWith("/sign-out")) {
+    const headers = new Headers(response.headers);
+    headers.set("Clear-Site-Data", '"cache"');
+    return new Response(response.body, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  }
+  return response;
 }
 
 /**

@@ -47,6 +47,21 @@ async function firstDates(page: Page, count: number): Promise<string[]> {
   return all.slice(0, count);
 }
 
+/**
+ * The first `count` editable days that lie in ONE month. The first editable days depend on the
+ * run date: at the end of a month (e.g. 30 Oct → 2 Nov) they span two month grids, with the
+ * month heading in between – on a short phone (iPhone 15) the first day then sits under the
+ * sticky head once the last one is centred, and the drag starts on the head instead of a day.
+ */
+async function sameMonthDates(page: Page, count: number): Promise<string[]> {
+  const all = await firstDates(page, 62);
+  for (let index = 0; index + count <= all.length; index += 1) {
+    const run = all.slice(index, index + count);
+    if (run.every((date) => date.slice(0, 7) === run[0]?.slice(0, 7))) return run;
+  }
+  throw new Error("no editable run within one month");
+}
+
 test.describe("F-005 painting", () => {
   test("tap paints with the brush, a second tap resets – saved and still there after reload", async ({
     page,
@@ -75,7 +90,8 @@ test.describe("F-005 painting", () => {
   }) => {
     const { email, publicId } = await setUp(page);
     await pickBrush(page, days.brush.maybe);
-    const [a, , , d] = await firstDates(page, 4);
+    const range = await sameMonthDates(page, 4);
+    const [a, , , d] = range;
     if (!a || !d) throw new Error("not enough days");
     // R-078: the drag must stay clear of the auto-scroll zones (48 px below the sticky head and
     // above the bottom bar on phones). `scrollIntoViewIfNeeded` left day d right above the bar on
@@ -97,7 +113,7 @@ test.describe("F-005 painting", () => {
     await expect(cell(page, d)).toHaveAttribute("data-preview", "");
     expect(await scrollY()).toBe(before);
     await page.mouse.up();
-    for (const date of await firstDates(page, 4)) {
+    for (const date of range) {
       await expect(cell(page, date)).toHaveAttribute("data-state", "maybe");
     }
     // Snackbar with undo for ≥ 2 days.

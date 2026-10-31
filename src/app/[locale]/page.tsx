@@ -14,6 +14,9 @@ import { Tile, type TileTone } from "@/components/ui/card";
 import { Icon, type IconName } from "@/components/ui/icon";
 import { LanguageSwitchLink } from "@/features/locale/language-switch";
 import { isLocale, type Locale } from "@/i18n/config";
+import { StandaloneRedirect } from "@/features/beta/components/standalone-redirect";
+import { betaPath } from "@/features/beta/paths";
+import { isBeta } from "@/lib/app-env";
 import styles from "./landing.module.css";
 
 /** "Plan a trip" leads to W05 – the form works without an account (Flow G: value before hurdle). */
@@ -33,7 +36,12 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
   setRequestLocale(locale);
   const t = await getTranslations("landing");
   const tCommon = await getTranslations("common");
+  const tBeta = await getTranslations("beta");
   const other: Locale = locale === "de" ? "en" : "de";
+  // Friends beta (W23 A.2): the primary way in is the beta code; planning without an account
+  // leads through /beta (a trip can't be created without the account at the end).
+  const beta = isBeta();
+  const planHref = beta ? betaPath(undefined, PLAN_HREF) : PLAN_HREF;
 
   return (
     <>
@@ -79,10 +87,26 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
                 {t("titleLead")} <span className={styles.highlight}>{t("titleHighlight")}</span>
               </h1>
               <p className={styles.lead}>{t("lead")}</p>
-              <ButtonLink href={PLAN_HREF} variant="accent" block iconEnd="arrow-right">
-                {t("cta")}
-              </ButtonLink>
-              <p className={styles.note}>{t("ctaNote")}</p>
+              {beta ? (
+                <>
+                  <ButtonLink href={betaPath()} variant="accent" block iconEnd="arrow-right">
+                    {tBeta("landing.cta")}
+                  </ButtonLink>
+                  <Link className={styles.betaSignIn} href="/login">
+                    {tBeta("landing.signIn")}
+                  </Link>
+                  <p className={styles.note} role="note">
+                    {tBeta("landing.note")}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <ButtonLink href={PLAN_HREF} variant="accent" block iconEnd="arrow-right">
+                    {t("cta")}
+                  </ButtonLink>
+                  <p className={styles.note}>{t("ctaNote")}</p>
+                </>
+              )}
             </div>
             <IllustrationMotion
               choreography="hero"
@@ -113,7 +137,7 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
           <section className={styles.invited} aria-labelledby="invited-title" data-reveal>
             <h2 id="invited-title">{t("invitedTitle")}</h2>
             <p>{t("invitedText")}</p>
-            <ButtonLink href={PLAN_HREF} variant="secondary" size="md">
+            <ButtonLink href={planHref} variant="secondary" size="md">
               {t("cta")}
             </ButtonLink>
           </section>
@@ -121,6 +145,7 @@ export default async function LandingPage({ params }: PageProps<"/[locale]">) {
       </main>
       <SiteFooter alternateHref={`/${other}`} />
       <FlashToast />
+      <StandaloneRedirect to="/login" />
     </>
   );
 }

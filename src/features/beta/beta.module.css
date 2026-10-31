@@ -1,0 +1,116 @@
+/* Friends beta (W23 A.3/A.4, B) – calm on light like the sign-in steps (W02). */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-5);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-2);
+}
+
+.heading {
+  font-size: var(--ww-text-3xl);
+}
+
+.lead {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-md);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-4);
+}
+
+.small {
+  color: var(--ww-color-text-muted);
+  font-size: var(--ww-text-sm);
+}
+
+.note {
+  padding: var(--ww-space-3) var(--ww-space-4);
+  border-radius: var(--ww-radius-md);
+  background: var(--ww-color-info-tint);
+  color: var(--ww-color-text);
+  font-size: var(--ww-text-sm);
+}
+
+.points {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.point {
+  display: flex;
+  gap: var(--ww-space-3);
+  align-items: flex-start;
+}
+
+.pointIcon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--ww-color-success-text);
+}
+
+.textLink,
+.back {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  min-height: 44px;
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.back {
+  gap: var(--ww-space-2);
+  text-decoration: none;
+}
+
+.inlineLink {
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+
+.consentBox {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+}
+
+.details summary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  color: var(--ww-color-link);
+  font-weight: var(--ww-font-weight-bold);
+  cursor: pointer;
+}
+
+.details[open] summary {
+  margin-bottom: var(--ww-space-3);
+}
+
+.subheading {
+  font-size: var(--ww-text-lg);
+}
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ww-space-3);
+  margin: 0;
+  padding-inline-start: var(--ww-space-6);
+}

@@ -1,6 +1,6 @@
 import { createTranslator } from "next-intl";
 import type { Locale } from "@/i18n/config";
-import { resolveAppUrl } from "@/lib/app-env";
+import { isBeta, resolveAppUrl } from "@/lib/app-env";
 import { appTimeZone } from "@/lib/dates";
 import de from "../../../messages/de.json";
 import en from "../../../messages/en.json";
@@ -99,14 +99,20 @@ function render({ locale, subject, preheader, heading, blocks }: Layout): Render
   // Mail footer links to the imprint (compliance-checklist §0a, §11) – placeholder page in the
   // offline demo. Absolute URL from APP_URL (templates stay free of the env module).
   const base = resolveAppUrl();
-  const imprintUrl = `${base}${locale === "de" ? "/de/impressum" : "/en/imprint"}`;
-  const imprint = t("imprint");
+  // Friends beta (compliance §13.6): «Private Test-Version … · Datenschutz: <url>» – no
+  // placeholder imprint.
+  const beta = isBeta();
+  const footerUrl = beta
+    ? `${base}${locale === "de" ? "/de/datenschutz" : "/en/privacy"}`
+    : `${base}${locale === "de" ? "/de/impressum" : "/en/imprint"}`;
+  const footerLabel = beta ? t("privacy") : t("imprint");
+  const footerLead = beta ? t("betaFooter") : signature;
   const text = [
     heading,
     "",
     ...blocks.flatMap(blockText),
-    signature,
-    `${imprint}: ${imprintUrl}`,
+    footerLead,
+    `${footerLabel}: ${footerUrl}`,
   ].join("\n");
 
   const html = `<!doctype html>
@@ -130,7 +136,7 @@ function render({ locale, subject, preheader, heading, blocks }: Layout): Render
 <h1 style="margin:0 0 16px;font-family:${FONT};font-size:24px;line-height:1.25;font-weight:800;color:${C.text}">${escapeHtml(heading)}</h1>
 ${blocks.map(renderBlock).join("\n")}
 </td></tr>
-<tr><td style="padding:16px 24px;font-size:13px;line-height:1.5;color:${C.muted}">${escapeHtml(signature)} · <a href="${escapeHtml(imprintUrl)}" style="color:${C.muted}">${escapeHtml(imprint)}</a></td></tr>
+<tr><td style="padding:16px 24px;font-size:13px;line-height:1.5;color:${C.muted}">${escapeHtml(footerLead)} · <a href="${escapeHtml(footerUrl)}" style="color:${C.muted}">${escapeHtml(footerLabel)}</a></td></tr>
 </table>
 </td></tr>
 </table>
@@ -159,18 +165,21 @@ export function renderAccessEmail({
   tripName,
 }: AccessEmailInput): RenderedEmail {
   const t = translator(locale);
+  // Friends beta (W23 A.5): code first «in the app or browser», the link only «in the browser»
+  // – it opens Safari, not the app on the Home Screen.
+  const beta = isBeta();
   return render({
     locale,
     subject: t("access.subject", { code }),
     preheader: t("access.validity"),
     heading: tripName ? t("access.tripLine", { trip: tripName }) : t("access.heading"),
     blocks: [
-      { kind: "text", text: t("access.codeIntro") },
+      { kind: "text", text: beta ? t("access.betaCodeIntro") : t("access.codeIntro") },
       { kind: "code", code },
       {
         kind: "button",
-        intro: t("access.linkIntro"),
-        label: t("access.linkText"),
+        intro: beta ? t("access.betaLinkIntro") : t("access.linkIntro"),
+        label: beta ? t("access.betaLinkText") : t("access.linkText"),
         href: magicLinkUrl,
       },
       { kind: "text", text: t("access.validity"), muted: true },

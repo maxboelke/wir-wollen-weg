@@ -1,9 +1,11 @@
-// Build of the online preview on Vercel (PRD Q25, deployment.md §0.7) – `pnpm vercel-build`,
-// configured as buildCommand in vercel.json. Steps:
-//   1. guard: only production deployments of `main` (branch/PR deployments would migrate the
-//      shared demo database with unreviewed code) and only APP_ENV=preview,
+// Build on Vercel – `pnpm vercel-build`, configured as buildCommand in vercel.json. Two
+// projects use it: the online preview (APP_ENV=preview, branch `main`, PRD Q25, deployment.md
+// §0.7) and the friends beta (APP_ENV=beta, branch `beta`, deployment.md §0.12.2). Steps:
+//   1. guard: only production deployments (branch/PR deployments would migrate the database
+//      with unreviewed code), only APP_ENV=preview|beta, and the beta only from branch `beta`,
 //   2. database migrations (drizzle-kit, Neon direct connection if available),
-//   3. demo data – only if no @demo.test person exists yet (data survives deployments),
+//   3. demo data – preview only, and only if no @demo.test person exists yet (never in beta:
+//      real people, no demo persons),
 //   4. `next build`.
 // Runs with plain Node 24 (built-in TypeScript type stripping).
 import { spawnSync } from "node:child_process";
@@ -27,8 +29,17 @@ if (process.env.VERCEL === "1" && vercelEnv !== "production") {
   process.exit(1);
 }
 const appEnv = resolveAppEnv();
-if (appEnv !== "preview") {
-  console.error(`[vercel-build] APP_ENV=${appEnv}: this build is only for APP_ENV=preview.`);
+if (appEnv !== "preview" && appEnv !== "beta") {
+  console.error(
+    `[vercel-build] APP_ENV=${appEnv}: this build is only for APP_ENV=preview or APP_ENV=beta.`,
+  );
+  process.exit(1);
+}
+const branch = process.env.VERCEL_GIT_COMMIT_REF;
+if (appEnv === "beta" && process.env.VERCEL === "1" && branch !== "beta") {
+  console.error(
+    `[vercel-build] APP_ENV=beta: this build is only for branch beta (got ${branch ?? "?"}) – deployment.md §0.12.2.`,
+  );
   process.exit(1);
 }
 if (!process.env.DATABASE_URL) {
@@ -37,5 +48,5 @@ if (!process.env.DATABASE_URL) {
 }
 
 run("migrations", "pnpm", ["exec", "drizzle-kit", "migrate"]);
-run("demo data", "node", ["scripts/seed-demo.ts", "--if-empty"]);
+if (appEnv === "preview") run("demo data", "node", ["scripts/seed-demo.ts", "--if-empty"]);
 run("next build", "pnpm", ["exec", "next", "build"]);

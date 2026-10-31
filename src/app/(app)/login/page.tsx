@@ -6,6 +6,7 @@ import { PageShell } from "@/components/page-shell";
 import { saveName, saveNameFormAction } from "@/features/auth/actions";
 import { EmailAccessForm } from "@/features/auth/components/email-access-form";
 import { NameForm } from "@/features/auth/components/name-form";
+import { isBeta } from "@/lib/app-env";
 import { toSafeInternalPath } from "@/lib/safe-path";
 import { getSession } from "@/server/session";
 
@@ -16,7 +17,8 @@ export async function generateMetadata(): Promise<Metadata> {
 
 /** W02 – sign in / sign up (e-mail → code → name). */
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
-  const { next } = await searchParams;
+  const { next, from } = await searchParams;
+  const beta = isBeta();
   const t = await getTranslations("auth");
   const returnTo = toSafeInternalPath(typeof next === "string" ? next : undefined, "/");
   const session = await getSession();
@@ -37,7 +39,14 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
         returnTo={returnTo}
         variant="login"
         // H.1: sent here from a protected page → it continues there afterwards.
-        notice={typeof next === "string" ? <p role="note">{t("sessionExpired")}</p> : undefined}
+        notice={
+          typeof next === "string" && from !== "beta" ? (
+            <p role="note">{t("sessionExpired")}</p>
+          ) : undefined
+        }
+        // Friends beta (W23 A.5): from /beta the consent is given; otherwise new people are
+        // pointed to /beta.
+        beta={beta ? { fromBeta: from === "beta" } : undefined}
         onNameSubmit={saveName.bind(null, returnTo)}
         // Sign-in stays calm (energy level E0): static illustration.
         codeIllustration={<Illustration name="code-sent" />}

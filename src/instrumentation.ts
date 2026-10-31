@@ -15,13 +15,22 @@ export async function register(): Promise<void> {
   // runs with the placeholder legal texts of the offline demo; preview/staging/production only
   // with https; the online preview only with its access password.
   let placeholders: string[] = [];
-  if (appEnv === "production") {
+  if (appEnv === "production" || appEnv === "beta") {
     const { findPlaceholderMarkers } = await import("./lib/legal");
     const [de, en] = await Promise.all([
       import("../messages/de.json"),
       import("../messages/en.json"),
     ]);
-    placeholders = [...findPlaceholderMarkers(de.default), ...findPlaceholderMarkers(en.default)];
+    // production: every text. beta: only what the beta delivers instead of the demo legal pages
+    // – privacy notice, contact page, mail footer, sign-up texts (deployment.md §0.12.4 Nr. 8).
+    const delivered = (catalog: typeof de.default) =>
+      appEnv === "production"
+        ? catalog
+        : { beta: catalog.beta, legalBeta: catalog.legalBeta, mail: catalog.mail };
+    placeholders = [
+      ...findPlaceholderMarkers(delivered(de.default)),
+      ...findPlaceholderMarkers(delivered(en.default)),
+    ];
   }
   const problems = startupProblems({
     appEnv,
@@ -33,4 +42,8 @@ export async function register(): Promise<void> {
     env: process.env,
   });
   if (problems.length > 0) throw new Error(`Start refused: ${problems.join(" · ")}`);
+  if (appEnv === "beta") {
+    const { betaStartupWarnings } = await import("./lib/beta-config");
+    for (const warning of betaStartupWarnings(process.env)) console.warn(`beta: ${warning}`);
+  }
 }

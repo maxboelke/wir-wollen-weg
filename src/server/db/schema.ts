@@ -59,6 +59,15 @@ export const user = pgTable("user", {
   lastActiveAt: timestamp("last_active_at", { withTimezone: true }).notNull().defaultNow(),
   /** When the inactivity notice was sent; cleared as soon as the account is used again. */
   inactivityNoticeSentAt: timestamp("inactivity_notice_sent_at", { withTimezone: true }),
+  /**
+   * Friends beta (Gate G0, deployment.md §0.12.5 Nr. 5): version and time of the consent to the
+   * beta privacy notice and the way of sign-up (`code` | `invite`) – null outside the beta.
+   */
+  betaConsentVersion: text("beta_consent_version"),
+  betaConsentAt: timestamp("beta_consent_at", { withTimezone: true }),
+  betaSignupVia: text("beta_signup_via"),
+  /** The one-off «add to Home Screen» step was shown (W23 B.5) – null = not yet. */
+  installHintSeenAt: timestamp("install_hint_seen_at", { withTimezone: true }),
   createdAt: createdAt(),
   updatedAt: updatedAt(),
 });

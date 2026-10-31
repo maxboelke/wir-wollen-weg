@@ -3,7 +3,8 @@ import type { ReactNode } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { LanguageSwitch, LanguageSwitchLink } from "@/features/locale/language-switch";
 import { isLocale, type Locale } from "@/i18n/config";
-import { inboxEnabled } from "@/lib/app-env";
+import { inboxEnabled, isBeta } from "@/lib/app-env";
+import { feedbackConfig } from "@/lib/beta-config";
 import { DEMO_INBOX_PATH } from "@/lib/demo-inbox";
 import { cx } from "@/lib/cx";
 import { helpHref } from "@/lib/help";
@@ -57,9 +58,21 @@ export async function BrandLink({
   tone?: "auto" | "onBrand";
 }) {
   const t = await getTranslations("app");
+  const beta = isBeta();
+  const tBeta = await getTranslations("beta");
   return (
-    <Link className={cx(styles.brand, tone === "onBrand" && styles.brandOnBrand)} href={href}>
+    <Link
+      className={cx(styles.brand, tone === "onBrand" && styles.brandOnBrand)}
+      href={href}
+      // Friends beta (W23 D.1): the badge is part of the link's name, not only colour.
+      aria-label={beta ? tBeta("brandLabel", { product: t("name") }) : undefined}
+    >
       <Wordmark lead={t("nameLead")} accent={t("nameAccent")} tone={tone} />
+      {beta ? (
+        <span className={cx(styles.betaBadge, tone === "onBrand" && styles.betaBadgeOnBrand)}>
+          {tBeta("badge")}
+        </span>
+      ) : null}
     </Link>
   );
 }
@@ -107,6 +120,8 @@ export async function PageShell({
               name={session.user.name || session.user.email}
               locale={locale}
               helpHref={helpHref(locale)}
+              feedback={isBeta() ? feedbackConfig(process.env) : null}
+              installEntry={isBeta()}
             />
           ) : alternate ? (
             <LanguageSwitchLink href={alternate.href} locale={alternate.locale} />

@@ -36,27 +36,88 @@ const E2E_PREVIEW = {
 } as const;
 const PREVIEW_SPEC = /preview\.spec\.ts/;
 
+// Friends beta (Gate G0, deployment.md §0.12.4 «Tests»): two more servers of the same build with
+// APP_ENV=beta and their own database (like the real beta). «beta» = normal configuration,
+// «beta-strict» = kill switches on (BETA_INVITE_SIGNUP=false, PWA_SW_ENABLED=false) and an
+// account limit of 1 («Beta voll»). Mails go to Mailpit via the test-only exception
+// E2E_ALLOW_LOCAL_SMTP (effective only with CI set). Runs in CI or with E2E_BETA=1.
+const betaEnabled = isCI || process.env.E2E_BETA === "1";
+const BETA_PORT = Number(process.env.E2E_BETA_PORT ?? 3200);
+const BETA_STRICT_PORT = BETA_PORT + 1;
+const mainDatabase = process.env.DATABASE_URL ?? "postgres://app:app@localhost:5432/wirwollenweg";
+/** Test-only values (not secrets) – repeated in tests/e2e/beta.spec.ts. */
+const E2E_BETA = {
+  baseURL: `http://localhost:${String(BETA_PORT)}`,
+  strictURL: `http://localhost:${String(BETA_STRICT_PORT)}`,
+  codes: "E2E-Beta-Code-2026,Alter-Beta-Code-2025",
+  database: (() => {
+    const url = new URL(mainDatabase);
+    url.pathname = `${url.pathname}_beta`;
+    return url.toString();
+  })(),
+} as const;
+const BETA_SPEC = /beta\.spec\.ts/;
+const ONLY_MAIN = [PREVIEW_SPEC, BETA_SPEC];
+
+function betaServerEnv(port: number, extra: Record<string, string>): Record<string, string> {
+  const origin = `http://localhost:${String(port)}`;
+  return {
+    PORT: String(port),
+    APP_ENV: "beta",
+    // https base URL on the same host:port (canonical-host rule) – Chromium keeps `Secure`
+    // cookies on http://localhost.
+    APP_URL: `https://localhost:${String(port)}`,
+    BETTER_AUTH_URL: `https://localhost:${String(port)}`,
+    AUTH_TRUSTED_ORIGINS: origin,
+    DATABASE_URL: E2E_BETA.database,
+    MAIL_TRANSPORT: "smtp",
+    SMTP_HOST: "localhost",
+    SMTP_PORT: "1025",
+    SMTP_SECURE: "false",
+    MAIL_FROM: "login@mail.example.org",
+    E2E_ALLOW_LOCAL_SMTP: "1",
+    CI: "true",
+    BETA_ACCESS_CODES: E2E_BETA.codes,
+    LEGAL_OPERATOR_NAME: "Erika Beta",
+    CONTACT_EMAIL: "kontakt@wirwollenweg.de",
+    FEEDBACK_WHATSAPP_NUMBER: "4915100000000",
+    FEEDBACK_EMAIL: "feedback@wirwollenweg.de",
+    CRON_SECRET: "e2e-only-beta-cron-secret-0123456789abcdef",
+    TRAVEL_DATA_ENABLED: "false",
+    ...extra,
+  };
+}
+
 // Projects per tech-stack.md §2.4. Locally the WebKit project can be skipped with
 // E2E_PROJECTS=desktop-chromium,mobile-chromium if WebKit is not installed.
 const selected = process.env.E2E_PROJECTS?.split(",").map((p) => p.trim());
 const projects = [
   {
     name: "desktop-chromium",
-    testIgnore: PREVIEW_SPEC,
+    testIgnore: ONLY_MAIN,
     use: { ...devices["Desktop Chrome"], ...chromiumLaunch },
   },
   {
     name: "mobile-chromium",
-    testIgnore: PREVIEW_SPEC,
+    testIgnore: ONLY_MAIN,
     use: { ...devices["Pixel 7"], ...chromiumLaunch },
   },
-  { name: "mobile-webkit", testIgnore: PREVIEW_SPEC, use: { ...devices["iPhone 15"] } },
+  { name: "mobile-webkit", testIgnore: ONLY_MAIN, use: { ...devices["iPhone 15"] } },
   ...(previewEnabled
     ? [
         {
           name: "preview-chromium",
           testMatch: PREVIEW_SPEC,
           use: { ...devices["Pixel 7"], ...chromiumLaunch, baseURL: E2E_PREVIEW.baseURL },
+        },
+      ]
+    : []),
+  ...(betaEnabled
+    ? [
+        {
+          name: "beta-chromium",
+          testMatch: BETA_SPEC,
+          use: { ...devices["Pixel 7"], ...chromiumLaunch, baseURL: E2E_BETA.baseURL },
         },
       ]
     : []),
@@ -110,6 +171,29 @@ export default defineConfig({
               CRON_SECRET: E2E_PREVIEW.cronSecret,
               RATE_LIMIT_ENABLED: "false",
             },
+          },
+        ]
+      : []),
+    ...(betaEnabled
+      ? [
+          {
+            // Own database, created and migrated before the start.
+            command: `node scripts/e2e-beta-db.ts ${E2E_BETA.database} && pnpm start`,
+            url: `${E2E_BETA.baseURL}/api/health`,
+            reuseExistingServer: !isCI,
+            timeout: 180_000,
+            env: betaServerEnv(BETA_PORT, {}),
+          },
+          {
+            command: `node scripts/e2e-beta-db.ts ${E2E_BETA.database} && pnpm start`,
+            url: `${E2E_BETA.strictURL}/api/health`,
+            reuseExistingServer: !isCI,
+            timeout: 180_000,
+            env: betaServerEnv(BETA_STRICT_PORT, {
+              BETA_INVITE_SIGNUP: "false",
+              PWA_SW_ENABLED: "false",
+              BETA_MAX_ACCOUNTS: "1",
+            }),
           },
         ]
       : []),

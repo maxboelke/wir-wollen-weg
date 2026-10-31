@@ -4,6 +4,7 @@ import { getTranslations } from "next-intl/server";
 import { Illustration } from "@/components/illustrations/illustration";
 import { IllustrationMotion } from "@/components/illustrations/illustration-motion";
 import { PageShell } from "@/components/page-shell";
+import { PasteLink } from "@/features/beta/components/paste-link";
 import { StaggerEnter } from "@/components/stagger-enter";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Icon } from "@/components/ui/icon";
@@ -96,6 +97,7 @@ export default async function TripsPage() {
   const session = await getSession();
   if (!session) redirect("/login?next=/trips");
   const t = await getTranslations("trips");
+  const tApp = await getTranslations("app");
   const today = todayIso();
   const [items, format] = await Promise.all([
     listTripsForUser(session.user.id),
@@ -222,6 +224,8 @@ export default async function TripsPage() {
             ) : null}
           </StaggerEnter>
         )}
+        {/* Installed app only (W23 C.8): links from WhatsApp/mails open Safari, not the app. */}
+        <PasteLink product={tApp("name")} />
       </div>
     </PageShell>
   );

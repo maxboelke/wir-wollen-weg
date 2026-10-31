@@ -152,6 +152,9 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium webkit
       - run: pnpm run --if-present build
+      # Includes the projects preview-chromium (APP_ENV=preview) and beta-chromium (APP_ENV=beta,
+      # friends beta – two more `next start` servers of the same build with their own database
+      # wirwollenweg_beta, created by scripts/e2e-beta-db.ts; P1-B0, ~1 min).
       - run: pnpm run --if-present test:e2e
       - name: Upload Playwright report
         if: ${{ !cancelled() }}

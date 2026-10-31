@@ -7,9 +7,12 @@ import { HELP_ANCHORS, HELP_PATHS, HELP_TOPICS, type HelpTopic } from "@/lib/hel
 import { IMPRINT_PATHS, LICENSES_ANCHOR, PRIVACY_PATHS } from "@/lib/legal";
 import { serverEnv } from "@/server/env";
 import { HelpAnchors } from "./help-anchors";
+import { FeedbackButton } from "@/features/beta/components/feedback-button";
+import { isBeta } from "@/lib/app-env";
+import { feedbackConfig } from "@/lib/beta-config";
 import styles from "./help.module.css";
 
-type ActionTopic = "link" | "motion" | "account" | "retention";
+type ActionTopic = "link" | "app" | "motion" | "account" | "retention";
 
 /**
  * Optional action under an answer (W15: «Anmelden» for a lost link, «Zum Konto» for motion;
@@ -18,6 +21,7 @@ type ActionTopic = "link" | "motion" | "account" | "retention";
 function actionHref(topic: HelpTopic, locale: Locale): string | undefined {
   const actions: Record<ActionTopic, string> = {
     link: "/login",
+    app: "/install",
     motion: "/account",
     account: "/account/delete",
     retention: PRIVACY_PATHS[locale],
@@ -48,7 +52,11 @@ export async function HelpPage({ locale }: { locale: Locale }) {
   const t = await getTranslations({ locale, namespace: "help" });
   const env = serverEnv();
   const other: Locale = locale === "de" ? "en" : "de";
-  const values = { sender: env.MAIL_FROM, contact: env.CONTACT_EMAIL };
+  const tApp = await getTranslations({ locale, namespace: "app" });
+  const tFeedback = await getTranslations({ locale, namespace: "feedback" });
+  const values = { sender: env.MAIL_FROM, contact: env.CONTACT_EMAIL, product: tApp("name") };
+  // Friends beta (W23 D.2): «Du testest die Beta – danke!» with the feedback sheet on top.
+  const feedback = isBeta() ? feedbackConfig(process.env) : null;
 
   return (
     <PageShell alternate={{ href: HELP_PATHS[other], locale: other }}>
@@ -57,8 +65,15 @@ export async function HelpPage({ locale }: { locale: Locale }) {
           <h1>{t("title")}</h1>
           <p className={styles.lead}>{t("lead")}</p>
         </div>
+        {feedback && (feedback.whatsapp || feedback.email) ? (
+          <section className={styles.contact} aria-label={tFeedback("menu")}>
+            <p>{tFeedback("helpBox")}</p>
+            <FeedbackButton config={feedback} label={tFeedback("menu")} />
+          </section>
+        ) : null}
         <div className={styles.list}>
-          {HELP_TOPICS.map((topic) => {
+          {/* «#app» (install the app) belongs to the friends beta (W23 B.5). */}
+          {HELP_TOPICS.filter((topic) => topic !== "app" || isBeta()).map((topic) => {
             const action = actionHref(topic, locale);
             return (
               <details key={topic} id={HELP_ANCHORS[topic][locale]} className={styles.item}>

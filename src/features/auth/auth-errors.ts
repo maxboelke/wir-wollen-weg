@@ -23,6 +23,9 @@ export type AuthErrorKey =
   | "joinRateLimited"
   | "nameTaken"
   | "tripInvalid"
+  | "betaMissing"
+  | "betaFull"
+  | "consentRequired"
   | "generic";
 
 export interface AuthError {
@@ -81,6 +84,11 @@ export function authErrorFromResponse(
       return { key: "passwordTooLong" };
     case "PASSWORD_COMMON":
       return { key: "passwordCommon" };
+    // Friends beta: the sign-up hook refused a new account (deployment.md §0.12.5 Nr. 5).
+    case "BETA_SIGNUP_REQUIRED":
+      return { key: "betaMissing" };
+    case "BETA_FULL":
+      return { key: "betaFull" };
     default:
       return status === 401 ? { key: "passwordWrong" } : { key: "generic" };
   }
